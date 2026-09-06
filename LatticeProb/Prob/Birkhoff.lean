@@ -671,6 +671,60 @@ theorem ae_tendsto_bAvg [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
   filter_upwards [ae_cauchySeq_bAvg hT hfm hf] with x hx
   exact cauchySeq_tendsto_of_complete hx
 
+/-- **Birkhoff's theorem with a named limit.**  The Birkhoff averages converge
+almost everywhere to `bLimsup T f`, which is measurable. -/
+theorem ae_tendsto_bLimsup [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hfm : Measurable f) (hf : Integrable f μ) :
+    ∀ᵐ x ∂μ, Tendsto (fun n => bAvg T f n x) atTop (𝓝 (bLimsup T f x)) := by
+  filter_upwards [ae_cauchySeq_bAvg hT hfm hf] with x hx
+  obtain ⟨L, hL⟩ := cauchySeq_tendsto_of_complete hx
+  have : bLimsup T f x = L := hL.limsup_eq
+  rw [this]
+  exact hL
+
+/-- The Birkhoff limit is invariant almost everywhere. -/
+theorem ae_bLimsup_comp [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hfm : Measurable f) (hf : Integrable f μ) :
+    ∀ᵐ x ∂μ, bLimsup T f (T x) = bLimsup T f x := by
+  have hshift : ∀ᵐ x ∂μ, Tendsto (fun n => bAvg T f n (T x)) atTop
+      (𝓝 (bLimsup T f (T x))) :=
+    hT.quasiMeasurePreserving.ae (ae_tendsto_bLimsup hT hfm hf)
+  filter_upwards [ae_tendsto_bLimsup hT hfm hf, hshift] with x hx hTx
+  -- `bAvg n (T x) = ((n+1)/n) * bAvg (n+1) x - f x / n`
+  have hkey : ∀ n : ℕ, 1 ≤ n →
+      bAvg T f n (T x)
+        = (((n : ℝ) + 1) / (n : ℝ)) * bAvg T f (n + 1) x - f x / (n : ℝ) := by
+    intro n hn
+    have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
+    have hn1 : ((n : ℝ) + 1) ≠ 0 := by positivity
+    have hS : birkhoffSum T f n (T x) = birkhoffSum T f (n + 1) x - f x := by
+      rw [birkhoffSum_succ']; ring
+    simp only [bAvg, hS]
+    push_cast
+    field_simp
+  have hlim2 : Tendsto (fun n : ℕ =>
+      (((n : ℝ) + 1) / (n : ℝ)) * bAvg T f (n + 1) x - f x / (n : ℝ)) atTop
+      (𝓝 (1 * bLimsup T f x - 0)) := by
+    refine Tendsto.sub (Tendsto.mul ?_ (hx.comp (tendsto_add_atTop_nat 1))) ?_
+    · have h1 : ∀ n : ℕ, 1 ≤ n → ((n : ℝ) + 1) / (n : ℝ) = 1 + 1 / (n : ℝ) := by
+        intro n hn
+        have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
+        field_simp
+      have h2 : Tendsto (fun n : ℕ => 1 + 1 / (n : ℝ)) atTop (𝓝 1) := by
+        have h3 : Tendsto (fun n : ℕ => (1 : ℝ) + 1 / (n : ℝ)) atTop (𝓝 ((1 : ℝ) + 0)) :=
+          tendsto_const_nhds.add tendsto_one_div_atTop_nhds_zero_nat
+        simpa using h3
+      refine h2.congr' ?_
+      filter_upwards [eventually_ge_atTop 1] with n hn
+      exact (h1 n hn).symm
+    · simpa using tendsto_const_div_atTop_nhds_zero_nat (f x)
+  have hlim3 : Tendsto (fun n => bAvg T f n (T x)) atTop (𝓝 (bLimsup T f x)) := by
+    rw [show bLimsup T f x = 1 * bLimsup T f x - 0 by ring]
+    refine hlim2.congr' ?_
+    filter_upwards [eventually_ge_atTop 1] with n hn
+    exact (hkey n hn).symm
+  exact tendsto_nhds_unique hTx hlim3
+
 end LatticeProb
 
 end
