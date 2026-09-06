@@ -643,4 +643,102 @@ theorem prob_disjointOcc_le {p : ι → ℝ} (h0 : ∀ i, 0 ≤ p i) (h1 : ∀ i
   rw [disjointOcc_eq_wit hA hB, ← prob₂_DEv_empty p A B, ← prob₂_DEv_univ p hA hB]
   exact prob₂_DEv_le_univ_aux h0 h1 A B _ ∅ rfl
 
+/-! ### The inequality for a product of Bernoulli measures -/
+
+open MeasureTheory
+
+/-- The disjoint occurrence with the certificates given as sets of coordinates.
+Over a finite index type this is `disjointOcc`. -/
+def disjointOccSet (A B : Set (ι → Bool)) : Set (ι → Bool) :=
+  {ω | ∃ K L : Set ι, Disjoint K L ∧
+        (∀ ω', (∀ i ∈ K, ω' i = ω i) → ω' ∈ A) ∧
+        (∀ ω', (∀ i ∈ L, ω' i = ω i) → ω' ∈ B)}
+
+omit [DecidableEq ι] in
+theorem disjointOccSet_eq (A B : Set (ι → Bool)) :
+    disjointOccSet A B = disjointOcc A B := by
+  classical
+  ext ω
+  constructor
+  · rintro ⟨K, L, hKL, hA, hB⟩
+    refine ⟨Finset.univ.filter (· ∈ K), Finset.univ.filter (· ∈ L), ?_, ?_, ?_⟩
+    · rw [Finset.disjoint_left]
+      intro i hi hj
+      rw [Finset.mem_filter] at hi hj
+      exact (Set.disjoint_left.mp hKL) hi.2 hj.2
+    · exact fun ω' h => hA ω' fun i hi =>
+        h i (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hi⟩)
+    · exact fun ω' h => hB ω' fun i hi =>
+        h i (Finset.mem_filter.mpr ⟨Finset.mem_univ i, hi⟩)
+  · rintro ⟨K, L, hKL, hA, hB⟩
+    exact ⟨↑K, ↑L, Finset.disjoint_coe.mpr hKL, fun ω' h => hA ω' fun i hi => h i hi,
+      fun ω' h => hB ω' fun i hi => h i hi⟩
+
+theorem measure_singleton_bool (ν : Measure Bool) [IsProbabilityMeasure ν] (b : Bool) :
+    (ν {b}).toReal = wgt ((ν {true}).toReal) b := by
+  cases b
+  · have hsplit : ν {false} + ν {true} = 1 := by
+      have : ({false} ∪ {true} : Set Bool) = Set.univ := by
+        ext b; cases b <;> simp
+      have hd : Disjoint ({false} : Set Bool) {true} := by
+        simp
+      rw [← measure_union hd (MeasurableSet.singleton _), this, measure_univ]
+    have h1 : ν {false} ≠ ⊤ := measure_ne_top _ _
+    have h2 : ν {true} ≠ ⊤ := measure_ne_top _ _
+    have := congrArg ENNReal.toReal hsplit
+    rw [ENNReal.toReal_add h1 h2] at this
+    simp only [ENNReal.toReal_one] at this
+    simp [wgt]
+    linarith
+  · simp [wgt]
+
+omit [DecidableEq ι] in
+theorem measure_pi_singleton (μ : ι → Measure Bool) [∀ i, IsProbabilityMeasure (μ i)]
+    (ω : ι → Bool) : Measure.pi μ {ω} = ∏ i, μ i {ω i} := by
+  have h : ({ω} : Set (ι → Bool)) = Set.univ.pi fun i => ({ω i} : Set Bool) := by
+    ext η
+    simp only [Set.mem_singleton_iff, Set.mem_univ_pi, Set.mem_singleton_iff]
+    exact ⟨fun h i => by rw [h], fun h => funext h⟩
+  rw [h, Measure.pi_pi]
+
+theorem measure_pi_toReal_eq_prob (μ : ι → Measure Bool) [∀ i, IsProbabilityMeasure (μ i)]
+    (X : Set (ι → Bool)) :
+    (Measure.pi μ X).toReal = prob (fun i => (μ i {true}).toReal) X := by
+  classical
+  have hX : ((Finset.univ.filter fun ω : ι → Bool => ω ∈ X : Finset (ι → Bool)) : Set (ι → Bool))
+      = X := by
+    ext ω; simp
+  have h1 : Measure.pi μ X = ∑ ω ∈ Finset.univ.filter fun ω : ι → Bool => ω ∈ X,
+      Measure.pi μ {ω} := by
+    rw [sum_measure_singleton, hX]
+  rw [h1, ENNReal.toReal_sum fun ω _ => measure_ne_top _ _]
+  rw [prob]
+  rw [Finset.sum_filter]
+  refine Finset.sum_congr rfl fun ω _ => ?_
+  by_cases hω : ω ∈ X
+  · rw [if_pos hω, Set.indicator_of_mem hω, measure_pi_singleton,
+      ENNReal.toReal_prod, weight]
+    exact Finset.prod_congr rfl fun i _ => measure_singleton_bool (μ i) (ω i)
+  · rw [if_neg hω, Set.indicator_of_notMem hω]
+
+/-- **The van den Berg-Kesten inequality** for a product of Bernoulli measures on
+a finite product of two-point spaces: two increasing measurable events occur
+disjointly with probability at most the product of their probabilities. -/
+theorem measure_pi_disjointOccSet_le (μ : ι → Measure Bool) [∀ i, IsProbabilityMeasure (μ i)]
+    {A B : Set (ι → Bool)} (hA : IsUpperSet A) (hB : IsUpperSet B) :
+    Measure.pi μ (disjointOccSet A B) ≤ Measure.pi μ A * Measure.pi μ B := by
+  classical
+  have h0 : ∀ i, 0 ≤ (μ i {true}).toReal := fun i => ENNReal.toReal_nonneg
+  have h1 : ∀ i, (μ i {true}).toReal ≤ 1 := by
+    intro i
+    rw [← ENNReal.toReal_one]
+    exact ENNReal.toReal_mono (by norm_num) (by simpa using prob_le_one)
+  rw [disjointOccSet_eq]
+  have hcore := prob_disjointOcc_le (p := fun i => (μ i {true}).toReal) h0 h1 hA hB
+  rw [← measure_pi_toReal_eq_prob, ← measure_pi_toReal_eq_prob,
+    ← measure_pi_toReal_eq_prob, ← ENNReal.toReal_mul] at hcore
+  have hfin : Measure.pi μ A * Measure.pi μ B ≠ ⊤ :=
+    ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
+  exact (ENNReal.toReal_le_toReal (measure_ne_top _ _) hfin).mp hcore
+
 end LatticeProb

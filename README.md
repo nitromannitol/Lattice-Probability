@@ -40,6 +40,8 @@ LatticeProb/Prob/ZeroOne.lean       the ergodic zero-one law for coordinate shif
 LatticeProb/Prob/Translation.lean   translation-invariant events of an i.i.d. field on the lattice
 LatticeProb/Prob/HewittSavage.lean  the Hewitt-Savage zero-one law for exchangeable events
 LatticeProb/Prob/HarrisCube.lean    the Harris inequality on the discrete and continuous cubes
+LatticeProb/Prob/BK.lean            the van den Berg-Kesten inequality on the finite cube
+LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
 LatticeProb/External/               statements taken from the literature, as explicit hypotheses
 ```
 
