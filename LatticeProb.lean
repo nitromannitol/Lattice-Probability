@@ -32,3 +32,5 @@ import LatticeProb.Prob.HarrisCube
 import LatticeProb.External.Kingman
 import LatticeProb.Walk.Markov
 import LatticeProb.Prob.BK
+import LatticeProb.Prob.InfinitePiSplit
+import LatticeProb.Prob.Coordinate
