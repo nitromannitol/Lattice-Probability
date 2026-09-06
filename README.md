@@ -30,6 +30,10 @@ LatticeProb/Walk/SRWGaussBound.lean the Gaussian upper bound on the simple kerne
 LatticeProb/Walk/SchedExtra.lean    the sharper schedule average behind the gradient bound
 LatticeProb/Walk/P1Grad.lean        the gradient of the one-dimensional lazy kernel
 LatticeProb/Walk/LazyGrad.lean      the gradient of the lazy kernel on the lattice
+LatticeProb/Walk/GaussSeries.lean   summing a Gaussian kernel bound over time
+LatticeProb/Walk/GreenIdentity.lean the lazy Green function is twice the simple one
+LatticeProb/Walk/SimpleTransfer.lean  the Green function of the simple walk
+LatticeProb/Walk/GRGrad.lean        the Green gradient bound, for both walks
 LatticeProb/Walk/Decomp.lean        the coordinate decomposition of the r-step kernel
 LatticeProb/Walk/Moment.lean        moments of the coordinate visit counts
 LatticeProb/Walk/LazyBox.lean       the r-step kernel on a box

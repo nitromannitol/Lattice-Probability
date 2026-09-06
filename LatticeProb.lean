@@ -23,6 +23,10 @@ import LatticeProb.Walk.SRWGaussBound
 import LatticeProb.Walk.SchedExtra
 import LatticeProb.Walk.P1Grad
 import LatticeProb.Walk.LazyGrad
+import LatticeProb.Walk.GreenIdentity
+import LatticeProb.Walk.SimpleTransfer
+import LatticeProb.Walk.GaussSeries
+import LatticeProb.Walk.GRGrad
 import LatticeProb.Walk.Poisson
 import LatticeProb.Walk.Path
 import LatticeProb.Walk.RangeBox
