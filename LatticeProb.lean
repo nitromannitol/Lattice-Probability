@@ -50,3 +50,4 @@ import LatticeProb.Graph.RWRepresentation
 import LatticeProb.Graph.Zd
 import LatticeProb.Graph.WalkAverage
 import LatticeProb.Graph.ZdRepresentation
+import LatticeProb.Prob.Birkhoff
