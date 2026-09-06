@@ -26,11 +26,20 @@ LatticeProb/Walk/GreenBounds.lean   the sup, oscillation and total variation bou
 LatticeProb/Walk/Green.lean         G_n(0,0) is of order sqrt n, log n, or bounded
 LatticeProb/Walk/Poisson.lean       the Poisson equation for the truncated Green function
 LatticeProb/Walk/RangeBox.lean      the range of a path fits in a box
+LatticeProb/Walk/Infinite.lean      the walk on infinite paths, and the finite marginals
+LatticeProb/Walk/Dirichlet.lean     the Dirichlet Laplacian, mean exit times, effective resistance
+LatticeProb/Walk/Harmonic.lean      the maximum principle, the Green function, one-point insertion
+LatticeProb/Walk/Energy.lean        the Dirichlet energy and the Thomson resistance comparison
+LatticeProb/Walk/BoxAverage.lean    the discrete Poincare inequality and the bound on T(A)
+LatticeProb/Walk/ExitTime.lean      the exit time bounds for a finite set
+LatticeProb/Walk/ExitBox.lean       the exit time of a box of radius r is of order r squared
 LatticeProb/Prob/Catalog.lean       Mathlib's probability theorems under this library's names
 LatticeProb/Prob/Harris.lean        the Harris inequality for product measures
 LatticeProb/Prob/HarrisVariants.lean  decreasing, mixed, and locally monotone forms
 LatticeProb/Prob/ZeroOne.lean       the ergodic zero-one law for coordinate shifts
 LatticeProb/Prob/Translation.lean   translation-invariant events of an i.i.d. field on the lattice
+LatticeProb/Prob/HewittSavage.lean  the Hewitt-Savage zero-one law for exchangeable events
+LatticeProb/Prob/HarrisCube.lean    the Harris inequality on the discrete and continuous cubes
 LatticeProb/External/               statements taken from the literature, as explicit hypotheses
 ```
 

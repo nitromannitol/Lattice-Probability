@@ -25,3 +25,9 @@ import LatticeProb.Prob.ZeroOne
 import LatticeProb.Prob.Catalog
 import LatticeProb.Prob.HarrisVariants
 import LatticeProb.Prob.Translation
+import LatticeProb.Walk.Infinite
+import LatticeProb.Walk.ExitBox
+import LatticeProb.Prob.HewittSavage
+import LatticeProb.Prob.HarrisCube
+import LatticeProb.External.BK
+import LatticeProb.External.Kingman
