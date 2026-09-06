@@ -55,6 +55,7 @@ LatticeProb/Prob/Coordinate.lean    one coordinate of an infinite product, again
 LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
 LatticeProb/Prob/Birkhoff.lean      the pointwise ergodic theorem
 LatticeProb/Prob/Kingman.lean       the subadditive ergodic theorem
+LatticeProb/Prob/SubGaussian.lean   sub-Gaussian behaviour on a range, and its Bernstein tail
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
 LatticeProb/Graph/                  the divisible sandpile and the walk on a general graph, and the
                                     random-walk (optimal-stopping) representation of the odometer,

@@ -44,6 +44,7 @@ import LatticeProb.Prob.InfinitePiSplit
 import LatticeProb.Prob.Coordinate
 import LatticeProb.Prob.MaximalErgodic
 import LatticeProb.Prob.Kingman
+import LatticeProb.Prob.SubGaussian
 import LatticeProb.Graph.Basic
 import LatticeProb.Graph.Scenery
 import LatticeProb.Graph.Walk
