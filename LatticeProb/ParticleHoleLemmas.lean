@@ -222,21 +222,24 @@ theorem holeCount_antitone (D : Driver d) (x : Site d) :
 def settledAt (D : Driver d) (t : ℕ) (x : Site d) : Finset (Label d) :=
   (arrivalsAt D (state D t) t x).filter fun p => settles D (state D t) t p
 
-/-- The ranks drawn in round `t` are pairwise distinct.  Under `rankLaw` this
-holds almost surely, and it is what makes the order in which the arrivals fill
-the holes a linear order. -/
-def RanksDistinct (D : Driver d) (t : ℕ) : Prop :=
-  Function.Injective fun p : Label d => D.rank (p, t)
-
 /-- The number of particles that settle at `x` in round `t + 1` is the smaller
-of the number of arrivals and the number of holes. -/
-theorem card_settledAt {D : Driver d} {t : ℕ} (h : RanksDistinct D t) (x : Site d) :
+of the number of arrivals and the number of holes.  The arrivals are filled in
+by increasing rank, ties broken by the order on labels, and that order is
+linear, so the arrivals whose rank is below the number of holes are exactly
+`min (arrivals) (holes)` of them. -/
+theorem card_settledAt {D : Driver d} (t : ℕ) (x : Site d) :
     (settledAt D t x).card
       = min ((arrivalsAt D (state D t) t x).card) (holeCount D t x) := by
   classical
   set S := state D t with hS
   set A := arrivalsAt D S t x with hA
-  set f : Label d → ℝ := fun p => D.rank (p, t) with hf
+  set f : Label d → Lex (ℝ × Lex (Lex (Fin d → ℤ) × ℕ)) :=
+    fun p => toLex (D.rank (p, t), labelKey p) with hf
+  have hfinj : Function.Injective f := by
+    intro p q h
+    have h' : ((D.rank (p, t), labelKey p) : ℝ × Lex (Lex (Fin d → ℤ) × ℕ))
+        = (D.rank (q, t), labelKey q) := toLex_inj.mp h
+    exact labelKey_injective (congrArg Prod.snd h')
   have hcongr : ∀ p ∈ A,
       (settles D S t p = true) ↔ ((A.filter fun q => f q < f p).card < holeCount D t x) := by
     intro p hp
@@ -247,15 +250,12 @@ theorem card_settledAt {D : Driver d} {t : ℕ} (h : RanksDistinct D t) (x : Sit
           ∨ (D.rank (q, t) = D.rank (p, t) ∧ labelLT q p))
         = A.filter fun q => f q < f p := by
       refine Finset.filter_congr fun q _ => ?_
-      constructor
-      · rintro (hlt | ⟨heq, hlab⟩)
-        · exact hlt
-        · exact absurd (h heq ▸ hlab) (lt_irrefl _)
-      · intro hlt; exact Or.inl hlt
+      rw [hf]
+      simp only [Prod.Lex.toLex_lt_toLex]
+      rfl
     unfold settles
     rw [hpos]
     simp only [decide_eq_true_eq, hact, true_and]
-
     rw [← hA, hfil]
     rfl
   have hfilter : settledAt D t x = A.filter fun p => (A.filter fun q => f q < f p).card
@@ -264,14 +264,13 @@ theorem card_settledAt {D : Driver d} {t : ℕ} (h : RanksDistinct D t) (x : Sit
     rw [← hS, ← hA]
     exact Finset.filter_congr hcongr
   rw [hfilter]
-  exact card_filter_rank_lt A f (h.injOn) _
+  exact card_filter_rank_lt A f hfinj.injOn _
 
 /-- The holes at `x` shrink by exactly the number of particles that settle
 there. -/
-theorem holeCount_succ_eq_sub_settled {D : Driver d} {t : ℕ} (h : RanksDistinct D t)
-    (x : Site d) :
+theorem holeCount_succ_eq_sub_settled {D : Driver d} (t : ℕ) (x : Site d) :
     holeCount D (t + 1) x = holeCount D t x - (settledAt D t x).card := by
-  rw [holeCount_succ, card_settledAt h x]
+  rw [holeCount_succ, card_settledAt t x]
   omega
 
 end LatticeProb

@@ -67,12 +67,53 @@ def initial {d : ℕ} (η : Site d → ℤ) : State d where
   holes := fun x => (-η x).toNat
   departures := fun _ => 0
 
-/-- Labels are ordered lexicographically; this fixes the reading order of the
-instructions and breaks ties among ranks. -/
-def labelLT {d : ℕ} (p q : Label d) : Prop :=
-  toLex (p.1, p.2) < toLex (q.1, q.2)
+/-- The key that orders labels: the start site, read as a function on `Fin d`
+and ordered lexicographically in the coordinates, and then the index. -/
+def labelKey {d : ℕ} (p : Label d) : Lex (Lex (Fin d → ℤ) × ℕ) := toLex (toLex p.1, p.2)
+
+theorem labelKey_injective {d : ℕ} : Function.Injective (labelKey (d := d)) := by
+  intro p q h
+  have h' : ((toLex p.1, p.2) : Lex (Fin d → ℤ) × ℕ) = (toLex q.1, q.2) := toLex_inj.mp h
+  have h1 : (toLex p.1 : Lex (Fin d → ℤ)) = toLex q.1 := congrArg Prod.fst h'
+  have h2 : p.2 = q.2 := congrArg Prod.snd h'
+  exact Prod.ext (toLex_inj.mp h1) h2
+
+/-- Labels are ordered lexicographically, in the start site first, itself ordered
+lexicographically in the coordinates, and then in the index.  This is a genuine
+linear order on labels; it fixes the reading order of the instructions when
+several particles leave a site in the same round, and it breaks ties among
+ranks. -/
+def labelLT {d : ℕ} (p q : Label d) : Prop := labelKey p < labelKey q
 
 instance {d : ℕ} : DecidableRel (labelLT (d := d)) := Classical.decRel _
+
+theorem labelLT_irrefl {d : ℕ} (p : Label d) : ¬ labelLT p p := lt_irrefl _
+
+theorem labelLT_trans {d : ℕ} {p q r : Label d} (h₁ : labelLT p q) (h₂ : labelLT q r) :
+    labelLT p r := lt_trans h₁ h₂
+
+/-- The order on labels is total: two distinct labels are comparable. -/
+theorem labelLT_trichotomous {d : ℕ} (p q : Label d) :
+    labelLT p q ∨ p = q ∨ labelLT q p := by
+  rcases lt_trichotomy (labelKey p) (labelKey q) with h | h | h
+  · exact Or.inl h
+  · exact Or.inr (Or.inl (labelKey_injective h))
+  · exact Or.inr (Or.inr h)
+
+/-- Two labels comparable in neither direction are equal, so `labelLT` linearly
+orders the labels. -/
+theorem eq_of_not_labelLT {d : ℕ} {p q : Label d} (h₁ : ¬ labelLT p q)
+    (h₂ : ¬ labelLT q p) : p = q := by
+  rcases labelLT_trichotomous p q with h | h | h
+  · exact absurd h h₁
+  · exact h
+  · exact absurd h h₂
+
+instance {d : ℕ} : Std.Trichotomous (labelLT (d := d)) :=
+  ⟨fun _ _ h₁ h₂ => eq_of_not_labelLT h₁ h₂⟩
+
+instance {d : ℕ} : Std.Irrefl (labelLT (d := d)) := ⟨labelLT_irrefl⟩
+
 
 /-- The particles active at `y` after round `t`, among the candidates. -/
 def activeAt {d : ℕ} (D : Driver d) (S : State d) (t : ℕ) (y : Site d) : Finset (Label d) :=
