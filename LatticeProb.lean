@@ -16,6 +16,10 @@ import LatticeProb.Walk.Decomp
 import LatticeProb.Walk.Moment
 import LatticeProb.Walk.LazyBox
 import LatticeProb.Walk.GreenBounds
+import LatticeProb.Walk.SRWSup
+import LatticeProb.Walk.S1Gauss
+import LatticeProb.Walk.SRWGreenSup
+import LatticeProb.Walk.SRWGaussBound
 import LatticeProb.Walk.Poisson
 import LatticeProb.Walk.Path
 import LatticeProb.Walk.RangeBox

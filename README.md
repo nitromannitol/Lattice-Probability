@@ -23,6 +23,10 @@ LatticeProb/Walk/OneDimGauss.lean   the Gaussian bound on the one-dimensional la
 LatticeProb/Walk/SRWOneDim.lean     the one-dimensional simple kernel against the lazy one
 LatticeProb/Walk/SRWDecomp.lean     the coordinate decomposition of the simple kernel
 LatticeProb/Walk/SRWGauss.lean      the ingredients of the Gaussian bound on the lattice
+LatticeProb/Walk/S1Gauss.lean       the Gaussian bound on the one-dimensional simple kernel
+LatticeProb/Walk/SRWSup.lean        the sup bound on the simple kernel
+LatticeProb/Walk/SRWGreenSup.lean   the truncated Green function of the simple walk by dimension
+LatticeProb/Walk/SRWGaussBound.lean the Gaussian upper bound on the simple kernel
 LatticeProb/Walk/Decomp.lean        the coordinate decomposition of the r-step kernel
 LatticeProb/Walk/Moment.lean        moments of the coordinate visit counts
 LatticeProb/Walk/LazyBox.lean       the r-step kernel on a box
