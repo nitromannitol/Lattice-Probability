@@ -29,6 +29,21 @@ open Finset
 
 variable {d : ℕ}
 
+/-! ### The lazy operator is the average of the identity and the walk operator -/
+
+/-- `Q = (I + P) / 2`: the lazy walk holds with probability `1/2` and otherwise
+takes one step of simple random walk, whose transition operator is
+`LatticeProb.walkOp`. -/
+theorem Q_eq_walkOp (f : Site d → ℝ) (x : Site d) :
+    Q f x = (f x + walkOp f x) / 2 := by
+  rw [Q, walkOp_eq_sum_dir]
+  rcases Nat.eq_zero_or_pos d with hd | hd
+  · subst hd
+    simp
+  · have hdR : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
+    field_simp
+    ring
+
 /-! ### The kernel and the truncated Green function -/
 
 /-- The point mass at `y`. -/

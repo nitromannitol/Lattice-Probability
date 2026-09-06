@@ -17,7 +17,7 @@ ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 
 DECL = re.compile(
     r"^\s*(?:@\[[^\]]*\]\s*)?(?:protected\s+|noncomputable\s+)*"
-    r"(?:theorem|lemma|def|abbrev|instance|structure)\s+([A-Za-z_][A-Za-z_0-9.'!?]*)",
+    r"(?:theorem|lemma|def|abbrev|instance|structure|alias)\s+([A-Za-z_][A-Za-z_0-9.'!?]*)",
     re.M)
 
 mods, names = [], []
