@@ -1,0 +1,28 @@
+Lattice-Probability
+Copyright 2026 Ahmed Bou-Rabee
+
+This product includes software developed at Anthropic, PBC.
+
+The following files are adapted from
+https://github.com/anthropics/formal-math, percolation subdirectory,
+commit 795efb86, Copyright 2026 Anthropic, PBC, and are used under the
+Apache License, Version 2.0 (see LICENSE):
+
+  LatticeProb/Prob/Harris.lean
+      adapted from percolation/Percolation/Literature/HarrisInequality.lean
+
+  LatticeProb/Prob/ZeroOne.lean
+      adapted from percolation/Percolation/Literature/ZeroOneLaw.lean
+      (the abstract and product sections only)
+
+  LatticeProb/Prob/HarrisVariants.lean
+      adapted from percolation/Percolation/Literature/LocallyMonotoneFKG.lean
+      (the product section only)
+
+The changes made to those files are: the namespace was changed from
+`Percolation.Literature` to `LatticeProb`, the percolation-specific sections and
+their imports were removed, and the module documentation was rewritten to
+describe the general statements alone.  The mathematical statements and their
+proofs are unchanged.
+
+Files not named above are original to this repository.

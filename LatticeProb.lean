@@ -15,3 +15,8 @@ import LatticeProb.Walk.Poisson
 import LatticeProb.Walk.Path
 import LatticeProb.Walk.RangeBox
 import LatticeProb.Walk.Green
+import LatticeProb.Prob.Harris
+import LatticeProb.Prob.ZeroOne
+import LatticeProb.Prob.Catalog
+import LatticeProb.Prob.HarrisVariants
+import LatticeProb.Prob.Translation

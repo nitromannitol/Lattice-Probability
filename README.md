@@ -14,10 +14,30 @@ LatticeProb/IID.lean                i.i.d. fields, instruction stacks and arriva
 LatticeProb/Rank.lean               ranking a finite set by an injective key
 LatticeProb/ParticleHole.lean       the particle-hole process: driver, state, one round
 LatticeProb/ParticleHoleLemmas.lean the leaf facts about that process
-LatticeProb/Walk/                   simple and lazy random walk on the lattice
-LatticeProb/Prob/                   the general probability facts the papers cite
+LatticeProb/Walk/Basic.lean         paths on the lattice: directions, positions, ranges, edges
+LatticeProb/Walk/Path.lean          path facts and the law of the first n steps of the walk
+LatticeProb/Walk/Lazy.lean          the lazy walk operator Q and the truncated Green function
+LatticeProb/Walk/OneDim.lean        the one-dimensional lazy kernel
+LatticeProb/Walk/Decomp.lean        the coordinate decomposition of the r-step kernel
+LatticeProb/Walk/Moment.lean        moments of the coordinate visit counts
+LatticeProb/Walk/LazyBox.lean       the r-step kernel on a box
+LatticeProb/Walk/Series.lean        the three series bounds
+LatticeProb/Walk/GreenBounds.lean   the sup, oscillation and total variation bounds
+LatticeProb/Walk/Green.lean         G_n(0,0) is of order sqrt n, log n, or bounded
+LatticeProb/Walk/Poisson.lean       the Poisson equation for the truncated Green function
+LatticeProb/Walk/RangeBox.lean      the range of a path fits in a box
+LatticeProb/Prob/Catalog.lean       Mathlib's probability theorems under this library's names
+LatticeProb/Prob/Harris.lean        the Harris inequality for product measures
+LatticeProb/Prob/HarrisVariants.lean  decreasing, mixed, and locally monotone forms
+LatticeProb/Prob/ZeroOne.lean       the ergodic zero-one law for coordinate shifts
+LatticeProb/Prob/Translation.lean   translation-invariant events of an i.i.d. field on the lattice
 LatticeProb/External/               statements taken from the literature, as explicit hypotheses
 ```
+
+## Attribution
+
+Three files under `LatticeProb/Prob/` are adapted from an Apache-2.0 licensed
+library; see `NOTICE`.
 
 ## Build
 
