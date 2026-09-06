@@ -5,6 +5,10 @@ import LatticeProb.Rank
 import LatticeProb.ParticleHoleLemmas
 import LatticeProb.Walk.Basic
 import LatticeProb.Walk.SRW
+import LatticeProb.Walk.OneDimGauss
+import LatticeProb.Walk.SRWOneDim
+import LatticeProb.Walk.SRWDecomp
+import LatticeProb.Walk.SRWGauss
 import LatticeProb.Walk.Series
 import LatticeProb.Walk.Lazy
 import LatticeProb.Walk.OneDim
