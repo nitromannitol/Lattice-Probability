@@ -62,6 +62,11 @@ LatticeProb/Prob/SubGaussian.lean   sub-Gaussian behaviour on a range, and its B
 LatticeProb/Prob/EfronStein.lean    the exponential Efron-Stein inequality on a product measure
 LatticeProb/Prob/WeightedConc.lean  weighted exponential concentration and its tail
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
+LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
+LatticeProb/Network/                electrical networks on a locally finite graph: the Dirichlet
+                                    energy and form, harmonic functions, the killed Green function
+                                    as a voltage, the maximum and Dirichlet principles, Rayleigh
+                                    monotonicity, Thomson's principle and the Nash-Williams bound
 LatticeProb/Graph/                  the divisible sandpile and the walk on a general graph, and the
                                     random-walk (optimal-stopping) representation of the odometer,
                                     with its specializations to the lattice
