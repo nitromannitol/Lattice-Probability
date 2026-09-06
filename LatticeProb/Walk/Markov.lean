@@ -575,6 +575,177 @@ theorem integral_comp_shiftPath (d : ℕ) [NeZero d] (n : ℕ) (x : Site d)
   rw [hmk]
   exact integral_apply_eq_walkOp_iterate d n (pathExpect d F) hpb x
 
+/-! ### The Markov property with the future functional depending on the past -/
+
+/-- **The Markov property at a fixed time, in conditional form.**  For a bounded
+jointly measurable `Φ` whose first argument is read only through the positions
+up to time `n`, the expectation of `Φ (past, future)` is the expectation of the
+expectation of `Φ (past, ·)` started from the position at time `n`. -/
+theorem markov_fixed_general (d : ℕ) [NeZero d] (n : ℕ) (x : Site d)
+    (Φ : (ℕ → Site d) → (ℕ → Site d) → ℝ)
+    (hΦm : Measurable (Function.uncurry Φ)) {C : ℝ} (hΦb : ∀ X Y, ‖Φ X Y‖ ≤ C)
+    (hpast : ∀ X X' Y : ℕ → Site d, (∀ k ≤ n, X k = X' k) → Φ X Y = Φ X' Y) :
+    ∫ X, Φ X (shiftPath n X) ∂(siteWalkLaw d x)
+      = ∫ X, (∫ Y, Φ X Y ∂(siteWalkLaw d (X n))) ∂(siteWalkLaw d x) := by
+  classical
+  set μ : Measure (ℕ → Site d) := incPathLaw d with hμ
+  set Ψ : (ℕ → Site d) → (ℕ → Site d) → ℝ :=
+    fun a b => Φ (sitePath x a) (sitePath (sitePath x a n) b) with hΨdef
+  have hΨm : Measurable (Function.uncurry Ψ) := by
+    have hmap : Measurable fun p : (ℕ → Site d) × (ℕ → Site d) =>
+        ((sitePath x p.1 : ℕ → Site d), (sitePath (sitePath x p.1 n) p.2 : ℕ → Site d)) :=
+      ((measurable_sitePath x).comp measurable_fst).prodMk
+        (measurable_sitePath_uncurry.comp
+          (((measurable_pi_apply n).comp ((measurable_sitePath x).comp measurable_fst)).prodMk
+            measurable_snd))
+    exact hΦm.comp hmap
+  have hΨb : ∀ a b, ‖Ψ a b‖ ≤ C := fun a b => hΦb _ _
+  have hkey : ∀ ξ : ℕ → Site d,
+      Φ (sitePath x ξ) (shiftPath n (sitePath x ξ)) = Ψ (truncInc n ξ) (shiftInc n ξ) := by
+    intro ξ
+    rw [hΨdef]
+    simp only
+    rw [sitePath_truncInc le_rfl x ξ, shiftPath_sitePath]
+    exact hpast _ _ _ fun k hk => (sitePath_truncInc hk x ξ).symm
+  have hinner : ∀ a : ℕ → Site d,
+      (∫ η, Ψ a η ∂μ) = ∫ Y, Φ (sitePath x a) Y ∂(siteWalkLaw d (sitePath x a n)) := by
+    intro a
+    have hma : Measurable fun Y : ℕ → Site d => Φ (sitePath x a) Y :=
+      hΦm.comp (measurable_const.prodMk measurable_id)
+    rw [siteWalkLaw, integral_map (measurable_sitePath _).aemeasurable
+      hma.aestronglyMeasurable]
+    rfl
+  have hdep : DependsUpTo n
+      (fun X : ℕ → Site d => ∫ Y, Φ X Y ∂(siteWalkLaw d (X n))) := by
+    intro X X' hXX'
+    have h1 : X n = X' n := hXX' n le_rfl
+    show ∫ Y, Φ X Y ∂(siteWalkLaw d (X n)) = ∫ Y, Φ X' Y ∂(siteWalkLaw d (X' n))
+    rw [h1]
+    exact integral_congr_ae (Filter.Eventually.of_forall fun Y => hpast X X' Y hXX')
+  have hm2 : Measurable fun X : ℕ → Site d => ∫ Y, Φ X Y ∂(siteWalkLaw d (X n)) :=
+    measurable_of_dependsUpTo hdep
+  have hm1 : Measurable fun X : ℕ → Site d => Φ X (shiftPath n X) :=
+    hΦm.comp (measurable_id.prodMk (measurable_shiftPath n))
+  calc ∫ X, Φ X (shiftPath n X) ∂(siteWalkLaw d x)
+      = ∫ ξ, Φ (sitePath x ξ) (shiftPath n (sitePath x ξ)) ∂μ := by
+        rw [siteWalkLaw, integral_map (measurable_sitePath x).aemeasurable
+          hm1.aestronglyMeasurable]
+        rfl
+    _ = ∫ ξ, Ψ (truncInc n ξ) (shiftInc n ξ) ∂μ :=
+        integral_congr_ae (Filter.Eventually.of_forall hkey)
+    _ = ∫ ξ, (∫ η, Ψ (truncInc n ξ) η ∂μ) ∂μ := integral_truncInc_shiftInc d n Ψ hΨm hΨb
+    _ = ∫ ξ, (∫ Y, Φ (sitePath x (truncInc n ξ)) Y
+          ∂(siteWalkLaw d (sitePath x (truncInc n ξ) n))) ∂μ :=
+        integral_congr_ae (Filter.Eventually.of_forall fun ξ => hinner _)
+    _ = ∫ ξ, (∫ Y, Φ (sitePath x ξ) Y ∂(siteWalkLaw d (sitePath x ξ n))) ∂μ := by
+        refine integral_congr_ae (Filter.Eventually.of_forall fun ξ => ?_)
+        exact hdep _ _ fun k hk => sitePath_truncInc hk x ξ
+    _ = ∫ X, (∫ Y, Φ X Y ∂(siteWalkLaw d (X n))) ∂(siteWalkLaw d x) := by
+        rw [siteWalkLaw, integral_map (measurable_sitePath x).aemeasurable
+          hm2.aestronglyMeasurable]
+        rfl
+
+/-- **The strong Markov property with the future functional depending on the
+past.**  `Φ k` is used on the event that the stopping time takes the value `k`,
+and reads the past only through the positions up to `k`. -/
+theorem markov_stopping_family (d : ℕ) [NeZero d] (N : ℕ) (x : Site d)
+    (τ : (ℕ → Site d) → ℕ) (hτ : IsWalkStopping τ) (hτN : ∀ X, τ X ≤ N)
+    (Φ : ℕ → (ℕ → Site d) → (ℕ → Site d) → ℝ)
+    (hΦm : ∀ k, Measurable (Function.uncurry (Φ k))) {C : ℝ}
+    (hΦb : ∀ k X Y, ‖Φ k X Y‖ ≤ C)
+    (hpast : ∀ (k : ℕ) (X X' Y : ℕ → Site d), (∀ j ≤ k, X j = X' j) → Φ k X Y = Φ k X' Y) :
+    ∫ X, Φ (τ X) X (shiftPath (τ X) X) ∂(siteWalkLaw d x)
+      = ∫ X, (∫ Y, Φ (τ X) X Y ∂(siteWalkLaw d (X (τ X)))) ∂(siteWalkLaw d x) := by
+  classical
+  have hC : 0 ≤ C := le_trans (norm_nonneg _) (hΦb 0 (fun _ => 0) fun _ => 0)
+  have hτm : Measurable τ := measurable_isWalkStopping hτ hτN
+  -- the functional used on the event `τ = k`, with the indicator folded in
+  set Ψ : ℕ → (ℕ → Site d) → (ℕ → Site d) → ℝ :=
+    fun k X Y => Φ k X Y * (if τ X = k then (1 : ℝ) else 0) with hΨ
+  have hindm : ∀ k : ℕ, Measurable fun X : ℕ → Site d => if τ X = k then (1 : ℝ) else 0 := by
+    intro k
+    have hset : MeasurableSet (τ ⁻¹' {k}) := hτm (MeasurableSet.singleton k)
+    have he : (fun X : ℕ → Site d => if τ X = k then (1 : ℝ) else 0)
+        = Set.indicator (τ ⁻¹' {k}) (fun _ => (1 : ℝ)) := by
+      funext X
+      by_cases h : τ X = k
+      · rw [if_pos h, Set.indicator_of_mem (show X ∈ τ ⁻¹' {k} from h)]
+      · rw [if_neg h, Set.indicator_of_notMem (show X ∉ τ ⁻¹' {k} from h)]
+    rw [he]
+    exact measurable_const.indicator hset
+  have hΨm : ∀ k, Measurable (Function.uncurry (Ψ k)) := by
+    intro k
+    exact (hΦm k).mul ((hindm k).comp measurable_fst)
+  have hΨb : ∀ k X Y, ‖Ψ k X Y‖ ≤ C := by
+    intro k X Y
+    rw [hΨ]
+    simp only [norm_mul]
+    by_cases h : τ X = k
+    · simpa [h] using hΦb k X Y
+    · simp [h, hC]
+  have hΨpast : ∀ (k : ℕ) (X X' Y : ℕ → Site d), (∀ j ≤ k, X j = X' j) →
+      Ψ k X Y = Ψ k X' Y := by
+    intro k X X' Y hXX'
+    rw [hΨ]
+    simp only
+    by_cases h : τ X = k
+    · rw [if_pos h, if_pos (hτ k X X' hXX' h), hpast k X X' Y hXX']
+    · have h' : τ X' ≠ k := fun hc => h (hτ k X' X (fun j hj => (hXX' j hj).symm) hc)
+      rw [if_neg h, if_neg h', mul_zero, mul_zero]
+  have hsplitL : ∀ X : ℕ → Site d,
+      Φ (τ X) X (shiftPath (τ X) X)
+        = ∑ k ∈ Finset.range (N + 1), Ψ k X (shiftPath k X) := by
+    intro X
+    rw [Finset.sum_eq_single_of_mem (τ X)
+      (Finset.mem_range.mpr (by have := hτN X; omega : τ X < N + 1))]
+    · simp [hΨ]
+    · intro b _ hb
+      simp [hΨ, Ne.symm hb]
+  have hsplitR : ∀ X : ℕ → Site d,
+      (∫ Y, Φ (τ X) X Y ∂(siteWalkLaw d (X (τ X))))
+        = ∑ k ∈ Finset.range (N + 1), ∫ Y, Ψ k X Y ∂(siteWalkLaw d (X k)) := by
+    intro X
+    rw [Finset.sum_eq_single_of_mem (τ X)
+      (Finset.mem_range.mpr (by have := hτN X; omega : τ X < N + 1))]
+    · simp [hΨ]
+    · intro b _ hb
+      simp [hΨ, Ne.symm hb]
+  have hintL : ∀ k ∈ Finset.range (N + 1),
+      Integrable (fun X => Ψ k X (shiftPath k X)) (siteWalkLaw d x) := by
+    intro k _
+    exact Integrable.of_bound
+      (((hΨm k).comp (measurable_id.prodMk (measurable_shiftPath k))).aestronglyMeasurable)
+      C (Filter.Eventually.of_forall fun X => hΨb k X _)
+  have hdep : ∀ k, DependsUpTo k (fun X : ℕ → Site d => ∫ Y, Ψ k X Y ∂(siteWalkLaw d (X k))) := by
+    intro k X X' hXX'
+    show ∫ Y, Ψ k X Y ∂(siteWalkLaw d (X k)) = ∫ Y, Ψ k X' Y ∂(siteWalkLaw d (X' k))
+    rw [hXX' k le_rfl]
+    exact integral_congr_ae (Filter.Eventually.of_forall fun Y => hΨpast k X X' Y hXX')
+  have hintR : ∀ k ∈ Finset.range (N + 1),
+      Integrable (fun X => ∫ Y, Ψ k X Y ∂(siteWalkLaw d (X k))) (siteWalkLaw d x) := by
+    intro k _
+    refine Integrable.of_bound (measurable_of_dependsUpTo (hdep k)).aestronglyMeasurable
+      C (Filter.Eventually.of_forall fun X => ?_)
+    refine le_trans (norm_integral_le_integral_norm _) ?_
+    refine le_trans (integral_mono_of_nonneg
+      (Filter.Eventually.of_forall fun _ => norm_nonneg _)
+      (integrable_const C) (Filter.Eventually.of_forall fun Y => hΨb k X Y)) ?_
+    simp
+  calc ∫ X, Φ (τ X) X (shiftPath (τ X) X) ∂(siteWalkLaw d x)
+      = ∫ X, ∑ k ∈ Finset.range (N + 1), Ψ k X (shiftPath k X) ∂(siteWalkLaw d x) :=
+        integral_congr_ae (Filter.Eventually.of_forall hsplitL)
+    _ = ∑ k ∈ Finset.range (N + 1), ∫ X, Ψ k X (shiftPath k X) ∂(siteWalkLaw d x) :=
+        integral_finsetSum _ hintL
+    _ = ∑ k ∈ Finset.range (N + 1),
+          ∫ X, (∫ Y, Ψ k X Y ∂(siteWalkLaw d (X k))) ∂(siteWalkLaw d x) :=
+        Finset.sum_congr rfl fun k _ =>
+          markov_fixed_general d k x (Ψ k) (hΨm k) (hΨb k) (hΨpast k)
+    _ = ∫ X, ∑ k ∈ Finset.range (N + 1),
+          (∫ Y, Ψ k X Y ∂(siteWalkLaw d (X k))) ∂(siteWalkLaw d x) :=
+        (integral_finsetSum _ hintR).symm
+    _ = ∫ X, (∫ Y, Φ (τ X) X Y ∂(siteWalkLaw d (X (τ X)))) ∂(siteWalkLaw d x) :=
+        integral_congr_ae (Filter.Eventually.of_forall fun X => (hsplitR X).symm)
+
 end LatticeProb
 
 end
