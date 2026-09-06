@@ -20,18 +20,73 @@ DECL = re.compile(
     r"(?:theorem|lemma|def|abbrev|instance|structure|alias)\s+([A-Za-z_][A-Za-z_0-9.'!?]*)",
     re.M)
 
+
+def strip_comments(text: str) -> str:
+    """Blank out block comments, docstrings, line comments and string literals.
+
+    Newlines are preserved so line-oriented scanning still lines up.  Without
+    this, ordinary prose in a header comment that happens to begin a line with
+    the word `theorem` is read as a declaration.
+    """
+    out = []
+    i, n, depth, in_str = 0, len(text), 0, False
+    while i < n:
+        c = text[i]
+        if depth == 0 and not in_str and text.startswith("/-", i):
+            depth, i = 1, i + 2
+            out.append("  ")
+            continue
+        if depth > 0:
+            if text.startswith("/-", i):
+                depth += 1
+                out.append("  ")
+                i += 2
+                continue
+            if text.startswith("-/", i):
+                depth -= 1
+                out.append("  ")
+                i += 2
+                continue
+            out.append("\n" if c == "\n" else " ")
+            i += 1
+            continue
+        if not in_str and text.startswith("--", i):
+            while i < n and text[i] != "\n":
+                out.append(" ")
+                i += 1
+            continue
+        if c == '"' and not in_str:
+            in_str = True
+            out.append(" ")
+            i += 1
+            continue
+        if in_str:
+            if c == "\\" and i + 1 < n:
+                out.append("  ")
+                i += 2
+                continue
+            if c == '"':
+                in_str = False
+            out.append("\n" if c == "\n" else " ")
+            i += 1
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
 mods, names = [], []
 for f in sorted(LIB.rglob("*.lean")):
     rel = f.relative_to(ROOT)
     mods.append(str(rel)[:-5].replace("/", "."))
-    text = f.read_text(encoding="utf-8")
+    text = strip_comments(f.read_text(encoding="utf-8"))
     ns = None
     for line in text.splitlines():
         m = re.match(r"^namespace\s+(\S+)", line)
         if m:
             ns = m.group(1)
         m = DECL.match(line)
-        if m and not line.lstrip().startswith("--"):
+        if m:
             nm = m.group(1)
             names.append(f"{ns}.{nm}" if ns and not nm.startswith(ns + ".") else nm)
 
