@@ -31,3 +31,4 @@ import LatticeProb.Prob.HewittSavage
 import LatticeProb.Prob.HarrisCube
 import LatticeProb.External.BK
 import LatticeProb.External.Kingman
+import LatticeProb.Walk.Markov
