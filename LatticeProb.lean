@@ -29,7 +29,6 @@ import LatticeProb.Walk.Infinite
 import LatticeProb.Walk.ExitBox
 import LatticeProb.Prob.HewittSavage
 import LatticeProb.Prob.HarrisCube
-import LatticeProb.External.Kingman
 import LatticeProb.Walk.Markov
 import LatticeProb.Prob.BK
 import LatticeProb.Prob.InfinitePiSplit

@@ -1,26 +1,28 @@
 /-
-Kingman's subadditive ergodic theorem: the part that is reachable, and what is
-missing.
+Kingman's subadditive ergodic theorem.
 
 A family `g n` is subadditive along `T` when `g (m + n) x ≤ g m x + g n (T^m x)`.
-Kingman's theorem says that if `T` preserves a probability measure and the means
-are bounded below then `g n / n` converges almost everywhere and in `L¹` to a
-`T`-invariant limit whose mean is `inf_n (∫ g n) / n`.
+Kingman's theorem says that if `T` preserves a finite measure and the family is
+bounded below then `g n / n` converges almost everywhere to a `T`-invariant
+limit, and that the means `(∫ g n) / n` converge to their infimum.
 
-What is proved here is the statement about the means: they form a subadditive
-sequence, because `T` preserves the measure, so Fekete's lemma applies and
-`(∫ g n) / n` converges to its infimum.  That is the deterministic half, and it
-is what identifies the limit once the almost sure convergence is known.
+Both halves are proved here.  The deterministic half is `tendsto_integral_div`:
+the means form a subadditive sequence because `T` preserves the measure, so
+Fekete's lemma applies.  The almost sure half is `ae_tendsto_gLow` for a
+nonnegative family, and `ae_tendsto_div` for a family bounded below by `c * n`,
+which is the form every application uses.  The limit is the lower limit `gLow`,
+which is invariant almost everywhere by `ae_gLow_comp`.
 
-The almost sure half is not proved here, and the obstruction is named: Mathlib
-4.32 has no pointwise (Birkhoff) ergodic theorem.  The first step of the chain
-that leads to one is `LatticeProb.maximal_ergodic`, proved in
-`LatticeProb/Prob/MaximalErgodic.lean`; from it Birkhoff follows by the standard
-argument on the invariant sets where the lower limit is below `α` and the upper
-limit above `β`, and Kingman follows from Birkhoff by Steele's argument.  Until
-those land, the full statement is `LatticeProb.External.KingmanSubadditive`.
--/
-import Mathlib
+The proof of the almost sure half is Steele's.  The upper bound comes from
+iterating subadditivity, which dominates `g n` by the `n`-th Birkhoff sum of
+`g 1`, so `ae_limsup_div_le` bounds the upper limit by the Birkhoff limit of
+`g 1`, using the pointwise ergodic theorem of `LatticeProb/Prob/Birkhoff.lean`.
+The lower bound is the block decomposition: for a horizon `N` and a tolerance
+`ε`, split `[0, m)` greedily into blocks on which the family already beats
+`gLow + ε` and single steps elsewhere; the cost of the single steps is
+`costFn`, whose mean tends to zero as `N` grows; the set where its Birkhoff
+averages stay large is then shrunk by the maximal ergodic theorem.
+-/import Mathlib
 import LatticeProb.Prob.Birkhoff
 
 noncomputable section
@@ -400,7 +402,405 @@ theorem ae_gLow_comp [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
     exact h
   exact Real.arctan_injective this
 
+/-! ### The cost as a function on the space -/
+
+open scoped Classical in
+/-- The cost charged at a point that is not good for the level `gLow + ε` within
+`N` steps. -/
+def costFn (g : ℕ → Ω → ℝ) (ε : ℝ) (N : ℕ) (y : Ω) : ℝ :=
+  if ∃ n, 1 ≤ n ∧ n ≤ N ∧ g n y < n * (gLow g y + ε) then 0
+  else max (g 1 y - (gLow g y + ε)) 0
+
+omit [MeasurableSpace Ω] in
+theorem costFn_nonneg (g : ℕ → Ω → ℝ) (ε : ℝ) (N : ℕ) (y : Ω) :
+    0 ≤ costFn g ε N y := by
+  classical
+  rw [costFn]
+  split
+  · exact le_rfl
+  · exact le_max_right _ _
+
+omit [MeasurableSpace Ω] in
+/-- The cost is dominated by the first term of the family. -/
+theorem costFn_le (hg : ∀ n y, 1 ≤ n → 0 ≤ g n y) {ε : ℝ} (hε : 0 ≤ ε) (N : ℕ)
+    {x : Ω} (hb : IsBoundedUnder (· ≤ ·) atTop fun n => g n x / (n : ℝ)) :
+    costFn g ε N x ≤ g 1 x := by
+  classical
+  rw [costFn]
+  split
+  · exact hg 1 x le_rfl
+  · refine max_le ?_ (hg 1 x le_rfl)
+    have := gLow_nonneg hg hb
+    linarith
+
+theorem measurable_costFn (hgm : ∀ n, Measurable (g n)) (ε : ℝ) (N : ℕ) :
+    Measurable (costFn g ε N) := by
+  classical
+  have hset : MeasurableSet
+      {y : Ω | ∃ n, 1 ≤ n ∧ n ≤ N ∧ g n y < n * (gLow g y + ε)} := by
+    have : {y : Ω | ∃ n, 1 ≤ n ∧ n ≤ N ∧ g n y < n * (gLow g y + ε)}
+        = ⋃ n ∈ Finset.Icc 1 N, {y : Ω | g n y < n * (gLow g y + ε)} := by
+      ext y
+      simp only [Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_Icc, exists_prop]
+      constructor
+      · rintro ⟨n, h1, h2, h3⟩; exact ⟨n, ⟨h1, h2⟩, h3⟩
+      · rintro ⟨n, ⟨h1, h2⟩, h3⟩; exact ⟨n, h1, h2, h3⟩
+    rw [this]
+    refine MeasurableSet.biUnion (Finset.countable_toSet _) fun n _ => ?_
+    exact measurableSet_lt (hgm n)
+      (measurable_const.mul ((measurable_gLow hgm).add measurable_const))
+  refine Measurable.ite hset measurable_const ?_
+  exact ((hgm 1).sub ((measurable_gLow hgm).add measurable_const)).max measurable_const
+
+omit [MeasurableSpace Ω] in
+/-- Enlarging the horizon does not increase the cost. -/
+theorem costFn_antitone (g : ℕ → Ω → ℝ) (ε : ℝ) {N N' : ℕ} (h : N ≤ N')
+    (y : Ω) : costFn g ε N' y ≤ costFn g ε N y := by
+  classical
+  rw [costFn, costFn]
+  by_cases hN : ∃ n, 1 ≤ n ∧ n ≤ N ∧ g n y < n * (gLow g y + ε)
+  · obtain ⟨n, h1, h2, h3⟩ := hN
+    rw [if_pos ⟨n, h1, le_trans h2 h, h3⟩, if_pos ⟨n, h1, h2, h3⟩]
+  · rw [if_neg hN]
+    split
+    · exact le_max_right _ _
+    · exact le_rfl
+
+omit [MeasurableSpace Ω] in
+/-- For a point whose averages are bounded, the cost vanishes once the horizon is
+large enough. -/
+theorem exists_costFn_eq_zero {ε : ℝ} (hε : 0 < ε)
+    {x : Ω} (hb : IsBoundedUnder (· ≤ ·) atTop fun n => g n x / (n : ℝ)) :
+    ∃ N, 1 ≤ N ∧ costFn g ε N x = 0 := by
+  classical
+  have hfreq : ∃ᶠ n in atTop, g n x / (n : ℝ) < gLow g x + ε :=
+    frequently_lt_of_liminf_lt hb.isCoboundedUnder_ge (by simp [gLow]; linarith)
+  obtain ⟨n, hn1, hn2⟩ := (hfreq.and_eventually (eventually_ge_atTop 1)).exists
+  have hn0 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)
+  refine ⟨n, hn2, ?_⟩
+  rw [div_lt_iff₀ hn0] at hn1
+  rw [costFn, if_pos ⟨n, hn2, le_rfl, by linarith⟩]
+
+/-! ### The upper limit is at most the lower limit plus the cost -/
+
+omit [MeasurableSpace Ω] in
+theorem sum_Ico_eq_birkhoffSum_sub (T : Ω → Ω) (h : Ω → ℝ) (x : Ω) {m N : ℕ}
+    (hNm : N ≤ m) :
+    ∑ k ∈ Finset.Ico (m - N) m, h (T^[k] x)
+      = birkhoffSum T h m x - birkhoffSum T h (m - N) x := by
+  have hsum : (∑ k ∈ Finset.Ico 0 (m - N), h (T^[k] x))
+      + ∑ k ∈ Finset.Ico (m - N) m, h (T^[k] x)
+      = ∑ k ∈ Finset.Ico 0 m, h (T^[k] x) :=
+    Finset.sum_Ico_consecutive _ (Nat.zero_le _) (by omega)
+  rw [birkhoffSum, birkhoffSum, Finset.range_eq_Ico, Finset.range_eq_Ico]
+  linarith
+
+omit [MeasurableSpace Ω] in
+/-- The block bound divided by `m`, then passed to the limit. -/
+theorem limsup_div_le_add_cost (hsub : SubadditiveAlong T g)
+    (hg : ∀ n y, 1 ≤ n → 0 ≤ g n y) {ε : ℝ} (hε : 0 < ε) {N : ℕ} (hN : 1 ≤ N)
+    {x : Ω} {L LC : ℝ}
+    (hinv : ∀ k, gLow g (T^[k] x) = gLow g x)
+    (hL : Tendsto (fun m => bAvg T (g 1) m x) atTop (𝓝 L))
+    (hLC : Tendsto (fun m => bAvg T (costFn g ε N) m x) atTop (𝓝 LC)) :
+    limsup (fun m => g m x / (m : ℝ)) atTop ≤ gLow g x + ε + LC := by
+  classical
+  set a : ℝ := gLow g x + ε with hadef
+  have hb : IsBoundedUnder (· ≤ ·) atTop fun n => g n x / (n : ℝ) :=
+    isBoundedUnder_div hsub hL
+  have ha : 0 ≤ a := by
+    have := gLow_nonneg hg hb
+    linarith
+  have hcost : ∀ k, blockCost T g a N x k = costFn g ε N (T^[k] x) := by
+    intro k
+    rw [blockCost, costFn, hinv k]
+  have htail : ∀ k, blockTail T g a x k = g 1 (T^[k] x) + a := fun k => rfl
+  -- the bound for `m ≥ N`
+  have hbound : ∀ m : ℕ, N ≤ m → g m x / (m : ℝ)
+      ≤ a + bAvg T (costFn g ε N) m x
+        + (bAvg T (g 1) m x - birkhoffSum T (g 1) (m - N) x / (m : ℝ))
+        + (N : ℝ) * a / (m : ℝ) := by
+    intro m hm
+    have hm1 : 1 ≤ m := le_trans hN hm
+    have hm0 : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+    have hblk := block_bound hsub hg x ha hN m hm1 0
+    simp only [Nat.zero_add] at hblk
+    have e1 : ∑ k ∈ Finset.Ico 0 m, blockCost T g a N x k
+        = birkhoffSum T (costFn g ε N) m x := by
+      rw [birkhoffSum, Finset.range_eq_Ico]
+      exact Finset.sum_congr rfl fun k _ => hcost k
+    have e2 : ∑ k ∈ Finset.Ico (m - N) m, blockTail T g a x k
+        = (birkhoffSum T (g 1) m x - birkhoffSum T (g 1) (m - N) x) + (N : ℝ) * a := by
+      have hcard : (Finset.Ico (m - N) m).card = N := by
+        rw [Nat.card_Ico]; omega
+      rw [Finset.sum_congr rfl fun k _ => htail k, Finset.sum_add_distrib,
+        sum_Ico_eq_birkhoffSum_sub T (g 1) x hm, Finset.sum_const, hcard, nsmul_eq_mul]
+    rw [e1, e2] at hblk
+    rw [div_le_iff₀ hm0]
+    have hexp : (a + bAvg T (costFn g ε N) m x
+        + (bAvg T (g 1) m x - birkhoffSum T (g 1) (m - N) x / (m : ℝ))
+        + (N : ℝ) * a / (m : ℝ)) * (m : ℝ)
+        = (m : ℝ) * a + birkhoffSum T (costFn g ε N) m x
+          + (birkhoffSum T (g 1) m x - birkhoffSum T (g 1) (m - N) x) + (N : ℝ) * a := by
+      rw [bAvg, bAvg]
+      field_simp
+    rw [hexp]
+    simp only [Function.iterate_zero, id_eq] at hblk
+    linarith [hblk]
+  -- the right-hand side converges
+  set w : ℕ → ℝ := fun m => a + bAvg T (costFn g ε N) m x
+      + (bAvg T (g 1) m x - birkhoffSum T (g 1) (m - N) x / (m : ℝ))
+      + (N : ℝ) * a / (m : ℝ) with hw
+  have hshift : Tendsto (fun m : ℕ => birkhoffSum T (g 1) (m - N) x / (m : ℝ)) atTop
+      (𝓝 L) := by
+    have hratio : Tendsto (fun m : ℕ => ((m - N : ℕ) : ℝ) / (m : ℝ)) atTop (𝓝 1) := by
+      have heq : ∀ m : ℕ, N ≤ m → ((m - N : ℕ) : ℝ) / (m : ℝ) = 1 - (N : ℝ) / (m : ℝ) := by
+        intro m hm
+        have hm0 : (m : ℝ) ≠ 0 := by
+          have : 0 < m := by omega
+          exact_mod_cast (by omega : m ≠ 0)
+        rw [Nat.cast_sub hm]
+        field_simp
+      have h1 : Tendsto (fun m : ℕ => 1 - (N : ℝ) / (m : ℝ)) atTop (𝓝 (1 - 0)) :=
+        tendsto_const_nhds.sub (tendsto_const_div_atTop_nhds_zero_nat (N : ℝ))
+      rw [show (1 : ℝ) = 1 - 0 by ring]
+      refine h1.congr' ?_
+      filter_upwards [eventually_ge_atTop N] with m hm
+      exact (heq m hm).symm
+    have hsub' : Tendsto (fun m : ℕ => bAvg T (g 1) (m - N) x) atTop (𝓝 L) :=
+      hL.comp (tendsto_sub_atTop_nat N)
+    have hprod := hratio.mul hsub'
+    rw [one_mul] at hprod
+    refine hprod.congr' ?_
+    filter_upwards [eventually_ge_atTop N] with m hm
+    rcases Nat.eq_zero_or_pos (m - N) with h0 | h0
+    · rw [h0]
+      simp [bAvg, birkhoffSum]
+    · have hmN : ((m - N : ℕ) : ℝ) ≠ 0 := by
+        have : 0 < m - N := h0
+        exact_mod_cast (by omega : m - N ≠ 0)
+      rw [bAvg]
+      field_simp
+  have hwlim : Tendsto w atTop (𝓝 (a + LC + (L - L) + 0)) := by
+    refine Tendsto.add (Tendsto.add (tendsto_const_nhds.add hLC) (hL.sub hshift)) ?_
+    simpa using (tendsto_const_div_atTop_nhds_zero_nat ((N : ℝ) * a))
+  rw [show a + LC + (L - L) + 0 = a + LC by ring] at hwlim
+  have hcob : IsCoboundedUnder (· ≤ ·) atTop fun m => g m x / (m : ℝ) :=
+    (isBoundedUnder_ge_of fun n => div_nonneg_of hg x n).isCoboundedUnder_le
+  have hle : limsup (fun m => g m x / (m : ℝ)) atTop ≤ limsup w atTop := by
+    refine limsup_le_limsup ?_ hcob hwlim.isBoundedUnder_le
+    filter_upwards [eventually_ge_atTop N] with m hm
+    exact hbound m hm
+  rwa [hwlim.limsup_eq] at hle
+
 end Low
+
+/-! ### The cost is eventually negligible -/
+
+section Cost
+
+variable {g : ℕ → Ω → ℝ}
+
+theorem ae_gLow_iterate [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hsub : SubadditiveAlong T g) (hg : ∀ n y, 1 ≤ n → 0 ≤ g n y)
+    (hgm : ∀ n, Measurable (g n)) (hg1 : Integrable (g 1) μ) :
+    ∀ᵐ x ∂μ, ∀ k : ℕ, gLow g (T^[k] x) = gLow g x := by
+  have hstep : ∀ k : ℕ, ∀ᵐ x ∂μ, gLow g (T^[k + 1] x) = gLow g (T^[k] x) := by
+    intro k
+    have h := (hT.iterate k).quasiMeasurePreserving.ae
+      (ae_gLow_comp hT hsub hg hgm hg1)
+    filter_upwards [h] with x hx
+    rw [show T^[k + 1] x = T (T^[k] x) by
+      rw [Function.iterate_succ_apply']]
+    exact hx
+  rw [← ae_all_iff] at hstep
+  filter_upwards [hstep] with x hx
+  intro k
+  induction k with
+  | zero => rfl
+  | succ k ih => rw [hx k, ih]
+
+theorem ae_isBoundedUnder_div [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hsub : SubadditiveAlong T g) (hgm : ∀ n, Measurable (g n))
+    (hg1 : Integrable (g 1) μ) :
+    ∀ᵐ x ∂μ, IsBoundedUnder (· ≤ ·) atTop fun n => g n x / (n : ℝ) := by
+  filter_upwards [ae_tendsto_bLimsup hT (hgm 1) hg1] with x hx
+  exact isBoundedUnder_div hsub hx
+
+theorem integrable_costFn [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hsub : SubadditiveAlong T g) (hg : ∀ n y, 1 ≤ n → 0 ≤ g n y)
+    (hgm : ∀ n, Measurable (g n)) (hg1 : Integrable (g 1) μ) {ε : ℝ} (hε : 0 < ε)
+    (N : ℕ) : Integrable (costFn g ε N) μ := by
+  refine Integrable.mono' hg1 (measurable_costFn hgm ε N).aestronglyMeasurable ?_
+  filter_upwards [ae_isBoundedUnder_div hT hsub hgm hg1] with x hx
+  rw [Real.norm_eq_abs, abs_of_nonneg (costFn_nonneg g ε N x)]
+  exact costFn_le hg (le_of_lt hε) N hx
+
+theorem tendsto_integral_costFn [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hsub : SubadditiveAlong T g) (hg : ∀ n y, 1 ≤ n → 0 ≤ g n y)
+    (hgm : ∀ n, Measurable (g n)) (hg1 : Integrable (g 1) μ) {ε : ℝ} (hε : 0 < ε) :
+    Tendsto (fun N : ℕ => ∫ x, costFn g ε (N + 1) x ∂μ) atTop (𝓝 0) := by
+  have hbnd := ae_isBoundedUnder_div hT hsub hgm hg1
+  have hmeas : ∀ N : ℕ, AEStronglyMeasurable (fun x => costFn g ε (N + 1) x) μ :=
+    fun N => (measurable_costFn hgm ε (N + 1)).aestronglyMeasurable
+  have hdom : ∀ N : ℕ, ∀ᵐ x ∂μ, ‖costFn g ε (N + 1) x‖ ≤ g 1 x := by
+    intro N
+    filter_upwards [hbnd] with x hx
+    rw [Real.norm_eq_abs, abs_of_nonneg (costFn_nonneg g ε (N + 1) x)]
+    exact costFn_le hg (le_of_lt hε) (N + 1) hx
+  have hlim : ∀ᵐ x ∂μ, Tendsto (fun N : ℕ => costFn g ε (N + 1) x) atTop (𝓝 0) := by
+    filter_upwards [hbnd] with x hx
+    obtain ⟨N₀, hN₀, hzero⟩ := exists_costFn_eq_zero hε hx
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [eventually_ge_atTop N₀] with N hN
+    have h1 : costFn g ε (N + 1) x ≤ costFn g ε N₀ x :=
+      costFn_antitone g ε (by omega) x
+    have h2 : 0 ≤ costFn g ε (N + 1) x := costFn_nonneg g ε (N + 1) x
+    rw [hzero] at h1
+    linarith
+  have := tendsto_integral_of_dominated_convergence (g 1) hmeas hg1 hdom hlim
+  simpa using this
+
+/-- Almost surely the Birkhoff limit of the cost can be made as small as
+wanted by taking the horizon large. -/
+theorem ae_exists_bLimsup_costFn_le [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hsub : SubadditiveAlong T g) (hg : ∀ n y, 1 ≤ n → 0 ≤ g n y)
+    (hgm : ∀ n, Measurable (g n)) (hg1 : Integrable (g 1) μ) {ε : ℝ} (hε : 0 < ε)
+    {lam : ℝ} (hlam : 0 < lam) :
+    ∀ᵐ x ∂μ, ∃ N : ℕ, 1 ≤ N ∧ bLimsup T (costFn g ε N) x ≤ lam := by
+  classical
+  set S : ℕ → Set Ω := fun N => {x | lam < bLimsup T (costFn g ε (N + 1)) x} with hS
+  have hsubset : ∀ N : ℕ, S N ⊆ maximalSet T (costFn g ε (N + 1)) lam := by
+    intro N x hx
+    have hnn : ∀ n : ℕ, (0 : ℝ) ≤ bAvg T (costFn g ε (N + 1)) n x := by
+      intro n
+      rcases Nat.eq_zero_or_pos n with hn | hn
+      · subst hn; simp [bAvg, birkhoffSum]
+      · exact div_nonneg (Finset.sum_nonneg fun k _ => costFn_nonneg g ε (N + 1) _)
+          (by positivity)
+    have hcob : IsCoboundedUnder (· ≤ ·) atTop
+        fun n => bAvg T (costFn g ε (N + 1)) n x :=
+      (isBoundedUnder_ge_of (C := 0) hnn).isCoboundedUnder_le
+    have hfreq : ∃ᶠ n in atTop, lam < bAvg T (costFn g ε (N + 1)) n x :=
+      frequently_lt_of_lt_limsup hcob hx
+    obtain ⟨n, hn⟩ := hfreq.exists
+    have habs : lam < |bAvg T (costFn g ε (N + 1)) n x| :=
+      lt_of_lt_of_le hn (le_abs_self _)
+    have hmem : x ∈ maximalSet T (fun y => |costFn g ε (N + 1) y|) lam :=
+      subset_maximalSet_abs T (costFn g ε (N + 1)) hlam ⟨n, habs⟩
+    have hfun : (fun y => |costFn g ε (N + 1) y|) = costFn g ε (N + 1) := by
+      funext y
+      exact abs_of_nonneg (costFn_nonneg g ε (N + 1) y)
+    rwa [hfun] at hmem
+  have hbound : ∀ N : ℕ, lam * (μ (⋂ K : ℕ, S K)).toReal
+      ≤ ∫ x, costFn g ε (N + 1) x ∂μ := by
+    intro N
+    have h1 : μ (⋂ K : ℕ, S K) ≤ μ (maximalSet T (costFn g ε (N + 1)) lam) :=
+      le_trans (measure_mono (Set.iInter_subset _ N)) (measure_mono (hsubset N))
+    have h2 := maximal_inequality hT (measurable_costFn hgm ε (N + 1))
+      (integrable_costFn hT hsub hg hgm hg1 hε (N + 1)) hlam
+    have h3 : ∫ x, |costFn g ε (N + 1) x| ∂μ = ∫ x, costFn g ε (N + 1) x ∂μ :=
+      integral_congr_ae (Filter.Eventually.of_forall fun x =>
+        abs_of_nonneg (costFn_nonneg g ε (N + 1) x))
+    have h4 : (μ (⋂ K : ℕ, S K)).toReal
+        ≤ (μ (maximalSet T (costFn g ε (N + 1)) lam)).toReal :=
+      ENNReal.toReal_mono (measure_ne_top _ _) h1
+    rw [h3] at h2
+    nlinarith [h2, h4, hlam]
+  have hzero : μ (⋂ K : ℕ, S K) = 0 := by
+    have hlim := tendsto_integral_costFn hT hsub hg hgm hg1 hε
+    have hle0 : lam * (μ (⋂ K : ℕ, S K)).toReal ≤ 0 := ge_of_tendsto' hlim hbound
+    have hnn : (0 : ℝ) ≤ (μ (⋂ K : ℕ, S K)).toReal := ENNReal.toReal_nonneg
+    have hle : (μ (⋂ K : ℕ, S K)).toReal ≤ 0 := by nlinarith
+    have heq := le_antisymm hle hnn
+    rcases (ENNReal.toReal_eq_zero_iff _).mp heq with h | h
+    · exact h
+    · exact absurd h (measure_ne_top μ _)
+  rw [ae_iff]
+  refine measure_mono_null ?_ hzero
+  intro x hx
+  simp only [Set.mem_setOf_eq, not_exists, not_and, not_le] at hx
+  exact Set.mem_iInter.mpr fun K => hx (K + 1) (by omega)
+
+/-! ### Kingman's subadditive ergodic theorem -/
+
+/-- **Kingman's subadditive ergodic theorem**, for a nonnegative subadditive
+family: `g n / n` converges almost everywhere to the lower limit `gLow g`, which
+is measurable and almost everywhere invariant. -/
+theorem ae_tendsto_gLow [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hsub : SubadditiveAlong T g) (hg : ∀ n y, 1 ≤ n → 0 ≤ g n y)
+    (hgm : ∀ n, Measurable (g n)) (hg1 : Integrable (g 1) μ) :
+    ∀ᵐ x ∂μ, Tendsto (fun n => g n x / (n : ℝ)) atTop (𝓝 (gLow g x)) := by
+  have hLC : ∀ᵐ x ∂μ, ∀ p : ℕ × ℕ,
+      Tendsto (fun m => bAvg T (costFn g (1 / ((p.1 : ℝ) + 1)) (p.2 + 1)) m x) atTop
+        (𝓝 (bLimsup T (costFn g (1 / ((p.1 : ℝ) + 1)) (p.2 + 1)) x)) := by
+    rw [ae_all_iff]
+    intro p
+    exact ae_tendsto_bLimsup hT (measurable_costFn hgm _ _)
+      (integrable_costFn hT hsub hg hgm hg1 (by positivity) _)
+  have hsmall : ∀ᵐ x ∂μ, ∀ p : ℕ × ℕ, ∃ N : ℕ, 1 ≤ N ∧
+      bLimsup T (costFn g (1 / ((p.1 : ℝ) + 1)) N) x ≤ 1 / ((p.2 : ℝ) + 1) := by
+    rw [ae_all_iff]
+    intro p
+    exact ae_exists_bLimsup_costFn_le hT hsub hg hgm hg1 (by positivity) (by positivity)
+  filter_upwards [ae_isBoundedUnder_div hT hsub hgm hg1,
+    ae_gLow_iterate hT hsub hg hgm hg1, ae_tendsto_bLimsup hT (hgm 1) hg1, hLC, hsmall]
+    with x hbnd hinv hL hLCx hsmallx
+  have hupper : limsup (fun n => g n x / (n : ℝ)) atTop ≤ gLow g x := by
+    refine le_of_forall_pos_le_add fun δ hδ => ?_
+    obtain ⟨j, hj⟩ := exists_nat_one_div_lt (show (0:ℝ) < δ / 2 by linarith)
+    obtain ⟨k, hk⟩ := exists_nat_one_div_lt (show (0:ℝ) < δ / 2 by linarith)
+    obtain ⟨N, hN1, hNle⟩ := hsmallx (j, k)
+    simp only at hNle
+    obtain ⟨M, rfl⟩ : ∃ M, N = M + 1 := ⟨N - 1, by omega⟩
+    have hLCjm := hLCx (j, M)
+    simp only at hLCjm
+    have hbound := limsup_div_le_add_cost hsub hg
+      (show (0:ℝ) < 1 / ((j : ℝ) + 1) by positivity) hN1 hinv hL hLCjm
+    linarith [hbound, hNle, hj, hk]
+  have hlower : gLow g x ≤ limsup (fun n => g n x / (n : ℝ)) atTop :=
+    liminf_le_limsup hbnd (isBoundedUnder_ge_of (C := 0) fun n => div_nonneg_of hg x n)
+  have heq : limsup (fun n => g n x / (n : ℝ)) atTop = gLow g x :=
+    le_antisymm hupper hlower
+  refine tendsto_of_liminf_eq_limsup rfl heq hbnd ?_
+  exact isBoundedUnder_ge_of (C := 0) fun n => div_nonneg_of hg x n
+
+/-- **Kingman's subadditive ergodic theorem** for a subadditive family bounded
+below linearly: `g n / n` converges almost everywhere.  This is the class every
+application uses; the nonnegative case is `c = 0`. -/
+theorem ae_tendsto_div [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
+    (hsub : SubadditiveAlong T g) (hgm : ∀ n, Measurable (g n))
+    (hg1 : Integrable (g 1) μ) {c : ℝ} (hlow : ∀ n y, 1 ≤ n → c * n ≤ g n y) :
+    ∀ᵐ x ∂μ, ∃ L : ℝ, Tendsto (fun n => g n x / (n : ℝ)) atTop (𝓝 L) := by
+  set g' : ℕ → Ω → ℝ := fun n y => g n y - c * n with hg'
+  have hsub' : SubadditiveAlong T g' := by
+    intro m n x
+    have := hsub m n x
+    simp only [hg']
+    push_cast
+    linarith
+  have hnn : ∀ n y, 1 ≤ n → 0 ≤ g' n y := by
+    intro n y hn
+    have := hlow n y hn
+    simp only [hg']
+    linarith
+  have hgm' : ∀ n, Measurable (g' n) := fun n => (hgm n).sub measurable_const
+  have hg1' : Integrable (g' 1) μ := by
+    simp only [hg']
+    exact hg1.sub (integrable_const _)
+  filter_upwards [ae_tendsto_gLow hT hsub' hnn hgm' hg1'] with x hx
+  refine ⟨gLow g' x + c, ?_⟩
+  have heq : ∀ n : ℕ, 1 ≤ n → g n x / (n : ℝ) = g' n x / (n : ℝ) + c := by
+    intro n hn
+    have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
+    simp only [hg']
+    field_simp
+    ring
+  refine (hx.add tendsto_const_nhds).congr' ?_
+  filter_upwards [eventually_ge_atTop 1] with n hn
+  exact (heq n hn).symm
+
+end Cost
 
 end LatticeProb
 

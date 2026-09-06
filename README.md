@@ -43,11 +43,13 @@ LatticeProb/Prob/HarrisCube.lean    the Harris inequality on the discrete and co
 LatticeProb/Prob/BK.lean            the van den Berg-Kesten inequality on the finite cube
 LatticeProb/Prob/InfinitePiSplit.lean  the head-tail decomposition of a product over the naturals
 LatticeProb/Prob/Coordinate.lean    one coordinate of an infinite product, against the rest
+LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
+LatticeProb/Prob/Birkhoff.lean      the pointwise ergodic theorem
+LatticeProb/Prob/Kingman.lean       the subadditive ergodic theorem
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
 LatticeProb/Graph/                  the divisible sandpile and the walk on a general graph, and the
                                     random-walk (optimal-stopping) representation of the odometer,
                                     with its specializations to the lattice
-LatticeProb/External/               statements taken from the literature, as explicit hypotheses
 ```
 
 ## Attribution
