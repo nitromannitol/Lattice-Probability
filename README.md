@@ -18,6 +18,7 @@ LatticeProb/Walk/Basic.lean         paths on the lattice: directions, positions,
 LatticeProb/Walk/Path.lean          path facts and the law of the first n steps of the walk
 LatticeProb/Walk/Lazy.lean          the lazy walk operator Q and the truncated Green function
 LatticeProb/Walk/OneDim.lean        the one-dimensional lazy kernel
+LatticeProb/Walk/SRW.lean           the simple random walk kernel, its support and parity
 LatticeProb/Walk/Decomp.lean        the coordinate decomposition of the r-step kernel
 LatticeProb/Walk/Moment.lean        moments of the coordinate visit counts
 LatticeProb/Walk/LazyBox.lean       the r-step kernel on a box
