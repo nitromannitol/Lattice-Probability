@@ -35,3 +35,4 @@ import LatticeProb.Prob.BK
 import LatticeProb.Prob.InfinitePiSplit
 import LatticeProb.Prob.Coordinate
 import LatticeProb.Prob.MaximalErgodic
+import LatticeProb.Prob.Kingman
