@@ -3,4 +3,12 @@ import LatticeProb.IID
 import LatticeProb.ParticleHole
 import LatticeProb.Rank
 import LatticeProb.ParticleHoleLemmas
+import LatticeProb.Walk.Basic
 import LatticeProb.Walk.Series
+import LatticeProb.Walk.Lazy
+import LatticeProb.Walk.OneDim
+import LatticeProb.Walk.Decomp
+import LatticeProb.Walk.Moment
+import LatticeProb.Walk.LazyBox
+import LatticeProb.Walk.GreenBounds
+import LatticeProb.Walk.Poisson
