@@ -20,6 +20,7 @@ import LatticeProb.Walk.SRWSup
 import LatticeProb.Walk.S1Gauss
 import LatticeProb.Walk.SRWGreenSup
 import LatticeProb.Walk.SRWGaussBound
+import LatticeProb.Walk.SchedExtra
 import LatticeProb.Walk.Poisson
 import LatticeProb.Walk.Path
 import LatticeProb.Walk.RangeBox
@@ -45,6 +46,8 @@ import LatticeProb.Prob.Coordinate
 import LatticeProb.Prob.MaximalErgodic
 import LatticeProb.Prob.Kingman
 import LatticeProb.Prob.SubGaussian
+import LatticeProb.Prob.EfronStein
+import LatticeProb.Prob.WeightedConc
 import LatticeProb.Graph.Basic
 import LatticeProb.Graph.Scenery
 import LatticeProb.Graph.Walk

@@ -27,6 +27,7 @@ LatticeProb/Walk/S1Gauss.lean       the Gaussian bound on the one-dimensional si
 LatticeProb/Walk/SRWSup.lean        the sup bound on the simple kernel
 LatticeProb/Walk/SRWGreenSup.lean   the truncated Green function of the simple walk by dimension
 LatticeProb/Walk/SRWGaussBound.lean the Gaussian upper bound on the simple kernel
+LatticeProb/Walk/SchedExtra.lean    the sharper schedule average behind the gradient bound
 LatticeProb/Walk/Decomp.lean        the coordinate decomposition of the r-step kernel
 LatticeProb/Walk/Moment.lean        moments of the coordinate visit counts
 LatticeProb/Walk/LazyBox.lean       the r-step kernel on a box
@@ -56,6 +57,8 @@ LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
 LatticeProb/Prob/Birkhoff.lean      the pointwise ergodic theorem
 LatticeProb/Prob/Kingman.lean       the subadditive ergodic theorem
 LatticeProb/Prob/SubGaussian.lean   sub-Gaussian behaviour on a range, and its Bernstein tail
+LatticeProb/Prob/EfronStein.lean    the exponential Efron-Stein inequality on a product measure
+LatticeProb/Prob/WeightedConc.lean  weighted exponential concentration and its tail
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
 LatticeProb/Graph/                  the divisible sandpile and the walk on a general graph, and the
                                     random-walk (optimal-stopping) representation of the odometer,
