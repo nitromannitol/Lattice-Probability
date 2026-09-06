@@ -1,5 +1,5 @@
 /-
-Sums of the product kernel over a originBox, and the two per-step estimates of
+Sums of the product kernel over a box, and the two per-step estimates of
 `lem:green` that follow from them.
 
 Everything in Section 8 is supported in a finite originBox, so a sum "over all of
@@ -31,7 +31,7 @@ lemma originBox_eq (d L : ℕ) :
 
 /-! ### The product kernel is a probability distribution -/
 
-/-- The product kernel vanishes at any site outside the originBox, so sums over all of ℤ^d can be replaced by finite sums over the originBox. -/
+/-- The product kernel vanishes at any site outside the box, so sums over all of ℤ^d can be replaced by finite sums over the box. -/
 lemma K_eq_zero_of_notMem_box {L : ℕ} {n : Fin d → ℕ} (h : ∀ i, n i ≤ L) {x : Site d}
     (hx : x ∉ originBox d L) : K n x = 0 := by
   obtain ⟨i, hi⟩ := exists_of_notMem_box hx
@@ -101,7 +101,7 @@ lemma iterate_delta0_le_sched (hd : 0 < d) (r : ℕ) (x : Site d) :
   refine Finset.prod_le_prod (fun i _ => P1_nonneg _ _) fun i _ => ?_
   exact le_trans (P1_le_max _ _) (P1_zero_le_inv_sqrt _)
 
-/-- The total variation of the `r`-step kernel along one coordinate, over a originBox
+/-- The total variation of the `r`-step kernel along one coordinate, over a box
 large enough to contain its support. -/
 lemma sum_box_abs_diff_iterate (hd : 0 < d) {r L : ℕ} (hrL : r + 1 ≤ L) (i₀ : Fin d) :
     ∑ x ∈ originBox d L, |Q^[r] (delta0 : Site d → ℝ) (x + dirVec ((i₀, true) : Dir d))

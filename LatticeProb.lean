@@ -15,6 +15,11 @@ import LatticeProb.Walk.Poisson
 import LatticeProb.Walk.Path
 import LatticeProb.Walk.RangeBox
 import LatticeProb.Walk.Green
+import LatticeProb.Walk.Dirichlet
+import LatticeProb.Walk.Harmonic
+import LatticeProb.Walk.Energy
+import LatticeProb.Walk.BoxAverage
+import LatticeProb.Walk.ExitTime
 import LatticeProb.Prob.Harris
 import LatticeProb.Prob.ZeroOne
 import LatticeProb.Prob.Catalog

@@ -406,7 +406,7 @@ lemma summable_abs_diff_P1 (m : ℕ) : Summable (fun k : ℤ => |P1 m (k + 1) - 
   summable_of_ne_finset_zero (s := Finset.Icc (-(m : ℤ) - 1) (m : ℤ))
     fun _ hk => abs_diff_P1_eq_zero_of_notMem hk
 
-/-! ### Sums over a originBox large enough to contain the support -/
+/-! ### Sums over a box large enough to contain the support -/
 
 /-- Supplies the vanishing case of the one-dimensional lazy walk kernel, showing the step mass p_m(k) is zero once the displacement k leaves the reachable range, so sums over a window can be truncated at the exit sites. -/
 lemma P1_eq_zero_of_notMem_Icc {m L : ℕ} (hmL : m ≤ L) {k : ℤ}
