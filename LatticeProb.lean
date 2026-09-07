@@ -106,3 +106,5 @@ import LatticeProb.Gauss.Limit
 import LatticeProb.Gauss.Coords
 import LatticeProb.Gauss.Isonormal
 import LatticeProb.Gauss.Process
+import LatticeProb.Gauss.WhiteNoise
+import LatticeProb.Gauss.Brownian
