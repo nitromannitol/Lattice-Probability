@@ -94,3 +94,6 @@ import LatticeProb.Network.FirstReturn
 import LatticeProb.Prob.Moments
 import LatticeProb.Prob.PowerIneq
 import LatticeProb.Prob.LpSmooth
+import LatticeProb.Prob.DagExploration
+import LatticeProb.Prob.PiSum
+import LatticeProb.ParticleDriven
