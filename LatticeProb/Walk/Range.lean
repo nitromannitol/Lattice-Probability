@@ -260,6 +260,17 @@ theorem integrable_rangeCard [NeZero d] (x : Site d) (t : ℕ) :
   have h : ((rangeCard X t : ℕ) : ℝ) ≤ ((t + 1 : ℕ) : ℝ) := Nat.cast_le.mpr (rangeCard_le_succ X t)
   simpa using h
 
+/-- `E_x|R_t| ≤ t + 1`: a walk of `t` steps visits at most `t + 1` sites. -/
+theorem integral_rangeCard_le [NeZero d] (x : Site d) (t : ℕ) :
+    ∫ X, (rangeCard X t : ℝ) ∂(siteWalkLaw d x) ≤ (t : ℝ) + 1 := by
+  calc ∫ X, (rangeCard X t : ℝ) ∂(siteWalkLaw d x)
+      ≤ ∫ _X : ℕ → Site d, ((t : ℝ) + 1) ∂(siteWalkLaw d x) := by
+        refine integral_mono (integrable_rangeCard x t) (integrable_const _) fun X => ?_
+        have h : ((rangeCard X t : ℕ) : ℝ) ≤ ((t + 1 : ℕ) : ℝ) :=
+          Nat.cast_le.mpr (rangeCard_le_succ X t)
+        simpa using h
+    _ = (t : ℝ) + 1 := by simp
+
 /-- **The expected range is the sum over the sites of the chance of reaching
 one**, in the reals. -/
 theorem integral_rangeCard_eq_tsum (hd : 1 ≤ d) [NeZero d] (x : Site d) (t : ℕ) :
