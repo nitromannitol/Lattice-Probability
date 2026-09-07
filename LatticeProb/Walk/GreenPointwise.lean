@@ -749,4 +749,218 @@ theorem exists_tsum_srwGreenInf_mul_le (k : ℕ) :
       mul_nonneg (by positivity) (srwHeat_nonneg s u)) (hW u).1).trans (hW u).2
   exact ⟨summable_of_sum_le hnn hF, Real.tsum_le_of_sum_le hnn hF⟩
 
+/-! ### The radial tail of the squared Green function -/
+
+/-- A nonnegative radial function summed over a finite set of sites all outside
+the box of radius `M-1` is at most its shell sum from `M` on. -/
+theorem sum_finset_radial_tail_le {d : ℕ} (f : ℕ → ℝ) (hf : ∀ j, 0 ≤ f j) {M : ℕ}
+    (hM : 1 ≤ M) (F : Finset (Site d)) (hF : ∀ z ∈ F, M ≤ supNorm z) :
+    ∑ z ∈ F, f (supNorm z)
+      ≤ ∑ j ∈ Finset.Icc M (F.sup supNorm), (shellCard d j : ℝ) * f j := by
+  classical
+  set n : ℕ := F.sup supNorm with hn
+  rcases Finset.eq_empty_or_nonempty F with rfl | hne
+  · simp
+    exact Finset.sum_nonneg fun j _ => mul_nonneg (by positivity) (hf j)
+  obtain ⟨z₀, hz₀⟩ := hne
+  have hMn : M ≤ n := le_trans (hF z₀ hz₀) (Finset.le_sup hz₀)
+  have hsub : F ⊆ (boxFinset (0 : Site d) n) \ (boxFinset (0 : Site d) (M - 1)) := by
+    intro z hz
+    rw [Finset.mem_sdiff, mem_boxFinset_zero_iff, mem_boxFinset_zero_iff]
+    exact ⟨Finset.le_sup hz, by have := hF z hz; omega⟩
+  have hstep : ∑ z ∈ F, f (supNorm z)
+      ≤ ∑ z ∈ (boxFinset (0 : Site d) n) \ (boxFinset (0 : Site d) (M - 1)),
+          f (supNorm z) :=
+    Finset.sum_le_sum_of_subset_of_nonneg hsub fun z _ _ => hf _
+  refine hstep.trans (le_of_eq ?_)
+  have hbox : (boxFinset (0 : Site d) (M - 1)) ⊆ boxFinset (0 : Site d) n :=
+    boxFinset_zero_subset (by omega)
+  have hsplit : ∑ z ∈ (boxFinset (0 : Site d) n) \ (boxFinset (0 : Site d) (M - 1)),
+        f (supNorm z)
+      = (∑ z ∈ boxFinset (0 : Site d) n, f (supNorm z))
+        - ∑ z ∈ boxFinset (0 : Site d) (M - 1), f (supNorm z) := by
+    rw [eq_sub_iff_add_eq, Finset.sum_sdiff hbox]
+  rw [hsplit, sum_box_radial, sum_box_radial]
+  have hIcc : ∑ j ∈ Finset.Icc 1 n, (shellCard d j : ℝ) * f j
+      = (∑ j ∈ Finset.Icc 1 (M - 1), (shellCard d j : ℝ) * f j)
+        + ∑ j ∈ Finset.Icc M n, (shellCard d j : ℝ) * f j := by
+    rw [← Finset.sum_union]
+    · congr 1
+      ext j
+      simp only [Finset.mem_union, Finset.mem_Icc]
+      omega
+    · rw [Finset.disjoint_left]
+      intro j hj hj'
+      rw [Finset.mem_Icc] at hj hj'
+      omega
+  rw [hIcc]
+  ring
+
+/-- **The radial tail of the squared Green function.**  For every finite set of
+sites outside the box of radius `M-1`, `∑ G(0,z)^2 ≤ C M^{4-d}`. -/
+theorem exists_sum_srwGreenInf_sq_tail_le (k : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ M : ℕ, 1 ≤ M → ∀ F : Finset (Site (k + 5)),
+      (∀ z ∈ F, M ≤ supNorm z) →
+        ∑ z ∈ F, srwGreenInf (k + 5) z ^ 2 ≤ C / (M : ℝ) ^ (k + 1) := by
+  obtain ⟨C₀, hC₀, hpt⟩ := exists_srwGreenInf_le (k + 1)
+  refine ⟨C₀ ^ 2 * (2 * ((k : ℝ) + 5) * 3 ^ (k + 4)) * 2, by positivity,
+    fun M hM F hF => ?_⟩
+  have hMpos : (0 : ℝ) < (M : ℝ) := by exact_mod_cast hM
+  set f : ℕ → ℝ := fun j => C₀ ^ 2 / (1 + (j : ℝ)) ^ (2 * k + 6) with hf
+  have hfnn : ∀ j, 0 ≤ f j := fun j => by rw [hf]; positivity
+  -- the pointwise bound in the sup norm
+  have hterm : ∀ z : Site (k + 5), srwGreenInf (k + 5) z ^ 2 ≤ f (supNorm z) := by
+    intro z
+    have h1 : (0 : ℝ) < 1 + ((supNorm z : ℕ) : ℝ) := by positivity
+    have hsg : ((supNorm z : ℕ) : ℝ) ≤ ((graphNorm z : ℕ) : ℝ) := by
+      exact_mod_cast supNorm_le_graphNorm z
+    have hb : srwGreenInf (k + 5) z ≤ C₀ / (1 + ((supNorm z : ℕ) : ℝ)) ^ (k + 3) := by
+      refine (hpt z).trans ?_
+      exact div_le_div_of_nonneg_left hC₀.le (by positivity)
+        (pow_le_pow_left₀ h1.le (by linarith) (k + 3))
+    have hnn : 0 ≤ srwGreenInf (k + 5) z := tsum_nonneg fun j => srwHeat_nonneg j z
+    have := pow_le_pow_left₀ hnn hb 2
+    refine this.trans (le_of_eq ?_)
+    rw [hf, div_pow, ← pow_mul]
+    congr 2
+    omega
+  refine (Finset.sum_le_sum fun z _ => hterm z).trans ?_
+  refine (sum_finset_radial_tail_le f hfnn hM F hF).trans ?_
+  -- the shell sum
+  have hshell : ∀ j ∈ Finset.Icc M (F.sup supNorm),
+      (shellCard (k + 5) j : ℝ) * f j
+        ≤ C₀ ^ 2 * (2 * ((k : ℝ) + 5) * 3 ^ (k + 4))
+          * ((M : ℝ) ^ k)⁻¹ * (((j : ℝ)) ^ 2)⁻¹ := by
+    intro j hj
+    rw [Finset.mem_Icc] at hj
+    have hj1 : 1 ≤ j := le_trans hM hj.1
+    have hjpos : (0 : ℝ) < (j : ℝ) := by exact_mod_cast hj1
+    have hjM : (M : ℝ) ≤ (j : ℝ) := by exact_mod_cast hj.1
+    have hsc : (shellCard (k + 5) j : ℝ) ≤ 2 * ((k : ℝ) + 5) * (2 * (j : ℝ) + 1) ^ (k + 4) := by
+      have h := shellCard_le (k + 5) hj1
+      have hd1 : ((k + 5) - 1 : ℕ) = k + 4 := by omega
+      rw [hd1] at h
+      refine h.trans (le_of_eq ?_)
+      push_cast
+      ring
+    have h3 : (2 * (j : ℝ) + 1) ^ (k + 4) ≤ 3 ^ (k + 4) * (1 + (j : ℝ)) ^ (k + 4) := by
+      rw [← mul_pow]
+      have hj1' : (1 : ℝ) ≤ (j : ℝ) := by exact_mod_cast hj1
+      exact pow_le_pow_left₀ (by positivity) (by linarith) _
+    have hfj : f j = C₀ ^ 2 / (1 + (j : ℝ)) ^ (2 * k + 6) := rfl
+    have hkey : (1 + (j : ℝ)) ^ (k + 4) / (1 + (j : ℝ)) ^ (2 * k + 6)
+        ≤ ((M : ℝ) ^ k)⁻¹ * (((j : ℝ)) ^ 2)⁻¹ := by
+      have hsplitp : (1 + (j : ℝ)) ^ (2 * k + 6)
+          = (1 + (j : ℝ)) ^ (k + 4) * ((1 + (j : ℝ)) ^ k * (1 + (j : ℝ)) ^ 2) := by
+        rw [← pow_add, ← pow_add]
+        congr 1
+        omega
+      rw [hsplitp]
+      have hpos1 : (0 : ℝ) < (1 + (j : ℝ)) ^ (k + 4) := by positivity
+      rw [show (1 + (j : ℝ)) ^ (k + 4) / ((1 + (j : ℝ)) ^ (k + 4)
+          * ((1 + (j : ℝ)) ^ k * (1 + (j : ℝ)) ^ 2))
+          = ((1 + (j : ℝ)) ^ k * (1 + (j : ℝ)) ^ 2)⁻¹ from by
+        rw [div_eq_iff (by positivity)]
+        field_simp]
+      have hMk : ((M : ℝ)) ^ k ≤ (1 + (j : ℝ)) ^ k :=
+        pow_le_pow_left₀ hMpos.le (by linarith) k
+      have hj2 : ((j : ℝ)) ^ 2 ≤ (1 + (j : ℝ)) ^ 2 := by nlinarith
+      rw [mul_inv]
+      refine mul_le_mul (inv_anti₀ (by positivity) hMk) (inv_anti₀ (by positivity) hj2)
+        (by positivity) (by positivity)
+    calc (shellCard (k + 5) j : ℝ) * f j
+        ≤ 2 * ((k : ℝ) + 5) * (3 ^ (k + 4) * (1 + (j : ℝ)) ^ (k + 4)) * f j := by
+          refine mul_le_mul_of_nonneg_right (hsc.trans ?_) (hfnn j)
+          exact mul_le_mul_of_nonneg_left h3 (by positivity)
+      _ = C₀ ^ 2 * (2 * ((k : ℝ) + 5) * 3 ^ (k + 4))
+            * ((1 + (j : ℝ)) ^ (k + 4) / (1 + (j : ℝ)) ^ (2 * k + 6)) := by
+          rw [hfj]; ring
+      _ ≤ C₀ ^ 2 * (2 * ((k : ℝ) + 5) * 3 ^ (k + 4))
+            * (((M : ℝ) ^ k)⁻¹ * (((j : ℝ)) ^ 2)⁻¹) :=
+          mul_le_mul_of_nonneg_left hkey (by positivity)
+      _ = C₀ ^ 2 * (2 * ((k : ℝ) + 5) * 3 ^ (k + 4))
+            * ((M : ℝ) ^ k)⁻¹ * (((j : ℝ)) ^ 2)⁻¹ := by ring
+  refine (Finset.sum_le_sum hshell).trans ?_
+  rw [← Finset.mul_sum]
+  have hIco : Finset.Icc M (F.sup supNorm) = Finset.Ico M (F.sup supNorm + 1) :=
+    (Finset.Ico_add_one_right_eq_Icc M (F.sup supNorm)).symm
+  rw [hIco]
+  have hser := sum_Ico_inv_sq_le hM (F.sup supNorm + 1)
+  have hAnn : (0 : ℝ) ≤ C₀ ^ 2 * (2 * ((k : ℝ) + 5) * 3 ^ (k + 4)) * ((M : ℝ) ^ k)⁻¹ := by
+    positivity
+  refine (mul_le_mul_of_nonneg_left hser hAnn).trans (le_of_eq ?_)
+  rw [div_eq_mul_inv, pow_succ]
+  field_simp
+  ring
+
+/-- **The Green tail bound** `∑_{|z| ≥ r} G(0,z)^2 ≤ C r^{4-d}` above dimension
+four, in the Euclidean norm, with its summability. -/
+theorem exists_tsum_srwGreenInf_sq_tail_le (k : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ r : ℕ, 1 ≤ r →
+      (Summable fun z : {z : Site (k + 5) // (r : ℝ) ≤ euclidNorm z} =>
+          srwGreenInf (k + 5) (z : Site (k + 5)) ^ 2) ∧
+        (∑' z : {z : Site (k + 5) // (r : ℝ) ≤ euclidNorm z},
+            srwGreenInf (k + 5) (z : Site (k + 5)) ^ 2)
+          ≤ C / (r : ℝ) ^ (k + 1) := by
+  classical
+  obtain ⟨C₁, hC₁, htail⟩ := exists_sum_srwGreenInf_sq_tail_le k
+  have hsd : (0 : ℝ) < Real.sqrt ((k + 5 : ℕ) : ℝ) := by
+    refine Real.sqrt_pos.mpr ?_
+    positivity
+  refine ⟨C₁ * Real.sqrt ((k + 5 : ℕ) : ℝ) ^ (k + 1), by positivity, fun r hr => ?_⟩
+  have hrpos : (0 : ℝ) < (r : ℝ) := by exact_mod_cast hr
+  set M : ℕ := ⌈(r : ℝ) / Real.sqrt ((k + 5 : ℕ) : ℝ)⌉₊ with hMdef
+  have hMge : (r : ℝ) / Real.sqrt ((k + 5 : ℕ) : ℝ) ≤ (M : ℝ) := Nat.le_ceil _
+  have hM1 : 1 ≤ M := by
+    rw [hMdef, Nat.one_le_ceil_iff]
+    positivity
+  have hMpos : (0 : ℝ) < (M : ℝ) := by exact_mod_cast hM1
+  have hsup : ∀ z : Site (k + 5), (r : ℝ) ≤ euclidNorm z → M ≤ supNorm z := by
+    intro z hz
+    rw [hMdef, Nat.ceil_le]
+    rw [div_le_iff₀ hsd]
+    have h := euclidNorm_le_sqrt_mul_supNorm z
+    have hcast : Real.sqrt ((k + 5 : ℕ) : ℝ) = Real.sqrt ((k + 5 : ℕ) : ℝ) := rfl
+    calc (r : ℝ) ≤ euclidNorm z := hz
+      _ ≤ Real.sqrt ((k + 5 : ℕ) : ℝ) * ((supNorm z : ℕ) : ℝ) := h
+      _ = ((supNorm z : ℕ) : ℝ) * Real.sqrt ((k + 5 : ℕ) : ℝ) := by ring
+  set c : ℝ := C₁ * Real.sqrt ((k + 5 : ℕ) : ℝ) ^ (k + 1) / (r : ℝ) ^ (k + 1) with hc
+  have hnn : ∀ z : {z : Site (k + 5) // (r : ℝ) ≤ euclidNorm z},
+      0 ≤ srwGreenInf (k + 5) (z : Site (k + 5)) ^ 2 := fun z => sq_nonneg _
+  have hF : ∀ F : Finset {z : Site (k + 5) // (r : ℝ) ≤ euclidNorm z},
+      ∑ z ∈ F, srwGreenInf (k + 5) (z : Site (k + 5)) ^ 2 ≤ c := by
+    intro F
+    have himg : ∑ z ∈ F, srwGreenInf (k + 5) (z : Site (k + 5)) ^ 2
+        = ∑ z ∈ F.image (Subtype.val), srwGreenInf (k + 5) z ^ 2 := by
+      rw [Finset.sum_image fun a _ b _ h => Subtype.ext h]
+    rw [himg]
+    have hmem : ∀ z ∈ F.image (Subtype.val : _ → Site (k + 5)), M ≤ supNorm z := by
+      intro z hz
+      obtain ⟨w, -, rfl⟩ := Finset.mem_image.mp hz
+      exact hsup _ w.2
+    refine (htail M hM1 _ hmem).trans ?_
+    rw [hc]
+    have hMk : ((r : ℝ) / Real.sqrt ((k + 5 : ℕ) : ℝ)) ^ (k + 1) ≤ (M : ℝ) ^ (k + 1) :=
+      pow_le_pow_left₀ (by positivity) hMge (k + 1)
+    have hden : (0 : ℝ) < ((r : ℝ) / Real.sqrt ((k + 5 : ℕ) : ℝ)) ^ (k + 1) := by positivity
+    have hstep : C₁ / (M : ℝ) ^ (k + 1)
+        ≤ C₁ / ((r : ℝ) / Real.sqrt ((k + 5 : ℕ) : ℝ)) ^ (k + 1) :=
+      div_le_div_of_nonneg_left hC₁.le hden hMk
+    refine hstep.trans (le_of_eq ?_)
+    rw [div_pow]
+    field_simp
+  exact ⟨summable_of_sum_le hnn hF, Real.tsum_le_of_sum_le hnn hF⟩
+
+/-- **The Green sup bound** `sup_{|z| ≥ r} G(0,z) ≤ C r^{2-d}`, in the
+Euclidean norm. -/
+theorem exists_srwGreenInf_sup_tail_le (k : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ r : ℕ, 1 ≤ r → ∀ z : Site (k + 5), (r : ℝ) ≤ euclidNorm z →
+      srwGreenInf (k + 5) z ≤ C / (r : ℝ) ^ (k + 3) := by
+  obtain ⟨C, hC, hpt⟩ := exists_srwGreenInf_euclid_le (k + 1)
+  refine ⟨C, hC, fun r hr z hz => ?_⟩
+  have hrpos : (0 : ℝ) < (r : ℝ) := by exact_mod_cast hr
+  refine (hpt z).trans ?_
+  refine div_le_div_of_nonneg_left hC.le (by positivity) ?_
+  exact pow_le_pow_left₀ hrpos.le (by linarith) (k + 3)
+
 end LatticeProb
