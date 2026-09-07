@@ -32,6 +32,8 @@ import LatticeProb.Walk.GreenIdentity
 import LatticeProb.Walk.SimpleTransfer
 import LatticeProb.Walk.GaussSeries
 import LatticeProb.Walk.GRGrad
+import LatticeProb.Walk.BinomWindow
+import LatticeProb.Walk.SRWGreenGrad
 import LatticeProb.Walk.Poisson
 import LatticeProb.Walk.Path
 import LatticeProb.Walk.RangeBox
