@@ -462,6 +462,17 @@ theorem sum_Ico_srwHeat_four_le {m : ℕ} (hm : 1 ≤ m) (N : ℕ) :
   rw [Finset.sum_congr rfl hcongr]
   exact sum_Ico_inv_sq_le hm N
 
+/-- The tail of the kernel over a window, at an arbitrary site. -/
+theorem sum_Ico_srwHeat_le' (hd : 0 < d) {m : ℕ} (hm : 1 ≤ m) (N : ℕ) (y : Site d) :
+    ∑ s ∈ Finset.Ico m N, srwHeat d s y
+      ≤ diagConst d * ∑ s ∈ Finset.Ico m N, (Real.sqrt (s : ℝ) ^ d)⁻¹ := by
+  rw [Finset.mul_sum]
+  refine Finset.sum_le_sum fun s hs => ?_
+  rw [Finset.mem_Ico] at hs
+  have hs1 : 1 ≤ s := le_trans hm hs.1
+  have h := srwHeat_sup_le hd hs1 y
+  rwa [div_eq_mul_inv] at h
+
 /-! ### The correlation against the target -/
 
 /-- **The correlation is at most a constant times the target.** -/
@@ -685,5 +696,52 @@ theorem exists_tsum_srwGreen_mul_le (hd : 1 ≤ d) (hd4 : d ≤ 4) :
     nlinarith [mul_le_mul_of_nonneg_left hprod
       (show (0 : ℝ) ≤ C₁ * corrRate d m n by positivity), hfac]
   exact (hT m n hm hmn).trans hstep
+
+/-! ### The tail of the kernel above dimension four -/
+
+/-- `∑_{m ≤ s < N} s^{-(k+4)/2} ≤ 2 / (m √m^k)`, the tail sum in every dimension
+above four.  It is `sum_Ico_inv_sq_le` with the extra `k` powers of `√s`
+estimated at `s = m`. -/
+theorem sum_Ico_inv_sqrt_pow_le (k : ℕ) {m : ℕ} (hm : 1 ≤ m) (N : ℕ) :
+    ∑ s ∈ Finset.Ico m N, (Real.sqrt (s : ℝ) ^ (k + 4))⁻¹
+      ≤ 2 / ((m : ℝ) * Real.sqrt (m : ℝ) ^ k) := by
+  have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm
+  have hsm : (0 : ℝ) < Real.sqrt (m : ℝ) := Real.sqrt_pos.mpr hmpos
+  have hterm : ∀ s ∈ Finset.Ico m N,
+      (Real.sqrt (s : ℝ) ^ (k + 4))⁻¹
+        ≤ (Real.sqrt (m : ℝ) ^ k)⁻¹ * (((s : ℝ)) ^ 2)⁻¹ := by
+    intro s hs
+    rw [Finset.mem_Ico] at hs
+    have hs1 : 1 ≤ s := le_trans hm hs.1
+    have hspos : (0 : ℝ) < (s : ℝ) := by exact_mod_cast hs1
+    have hss : (m : ℝ) ≤ (s : ℝ) := by exact_mod_cast hs.1
+    have hsps : (0 : ℝ) < Real.sqrt (s : ℝ) := Real.sqrt_pos.mpr hspos
+    have hmono : Real.sqrt (m : ℝ) ^ k ≤ Real.sqrt (s : ℝ) ^ k :=
+      pow_le_pow_left₀ (Real.sqrt_nonneg _) (Real.sqrt_le_sqrt hss) k
+    have hfac : Real.sqrt (s : ℝ) ^ (k + 4) = Real.sqrt (s : ℝ) ^ k * (s : ℝ) ^ 2 := by
+      rw [pow_add, sqrt_pow_four _ hspos.le]
+    rw [hfac, mul_inv]
+    have hinvle : (Real.sqrt (s : ℝ) ^ k)⁻¹ ≤ (Real.sqrt (m : ℝ) ^ k)⁻¹ := by
+      rw [← one_div, ← one_div]
+      exact one_div_le_one_div_of_le (by positivity) hmono
+    exact mul_le_mul_of_nonneg_right hinvle (by positivity)
+  refine (Finset.sum_le_sum hterm).trans ?_
+  rw [← Finset.mul_sum]
+  have h := sum_Ico_inv_sq_le hm N
+  calc (Real.sqrt (m : ℝ) ^ k)⁻¹ * ∑ s ∈ Finset.Ico m N, (((s : ℝ)) ^ 2)⁻¹
+      ≤ (Real.sqrt (m : ℝ) ^ k)⁻¹ * (2 / (m : ℝ)) :=
+        mul_le_mul_of_nonneg_left h (by positivity)
+    _ = 2 / ((m : ℝ) * Real.sqrt (m : ℝ) ^ k) := by
+        rw [div_eq_mul_inv, div_eq_mul_inv, mul_inv]
+        ring
+
+/-- **The time tail of the kernel above dimension four.**  In dimension
+`k + 5` the kernel summed from time `m` on is `O(m^{(2-d)/2})`, uniformly in the
+site. -/
+theorem sum_Ico_srwHeat_high_le {k : ℕ} {m : ℕ} (hm : 1 ≤ m) (N : ℕ) (y : Site (k + 4)) :
+    ∑ s ∈ Finset.Ico m N, srwHeat (k + 4) s y
+      ≤ diagConst (k + 4) * (2 / ((m : ℝ) * Real.sqrt (m : ℝ) ^ k)) := by
+  refine (sum_Ico_srwHeat_le' (d := k + 4) (by omega) hm N y).trans ?_
+  exact mul_le_mul_of_nonneg_left (sum_Ico_inv_sqrt_pow_le k hm N) (diagConst_pos _).le
 
 end LatticeProb
