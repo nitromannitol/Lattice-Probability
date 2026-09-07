@@ -339,6 +339,160 @@ theorem walkLaw_firstStep (x : V) (hx : 0 < G.degree x) :
 
 end FirstStep
 
+/-! ### Integrals against the first step -/
+
+section Integral
+
+variable [DecidableEq V]
+
+theorem integral_walkLaw_firstStep (x : V) (hx : 0 < G.degree x)
+    (f : (ℕ → V) → ℝ) (hfm : Measurable f) {C : ℝ} (hC : ∀ X, ‖f X‖ ≤ C) :
+    ∫ X, f X ∂(walkLaw G x)
+      = (G.degree x : ℝ)⁻¹ * ∑ y ∈ G.neighborFinset x, ∫ X, f (cons x X) ∂(walkLaw G y) := by
+  have hint : ∀ y : V, Integrable f ((walkLaw G y).map (cons x)) := by
+    intro y
+    haveI : IsProbabilityMeasure ((walkLaw G y).map (cons x)) :=
+      Measure.isProbabilityMeasure_map (measurable_cons x).aemeasurable
+    exact Integrable.mono' (integrable_const C) hfm.aestronglyMeasurable
+      (Filter.Eventually.of_forall hC)
+  rw [walkLaw_firstStep x hx, integral_smul_measure,
+    integral_finsetSum_measure (fun y _ => hint y)]
+  have hmap : ∀ y : V, ∫ X, f X ∂((walkLaw G y).map (cons x))
+      = ∫ X, f (cons x X) ∂(walkLaw G y) := fun y =>
+    integral_map (measurable_cons x).aemeasurable hfm.aestronglyMeasurable
+  simp only [hmap, smul_eq_mul]
+  congr 1
+  rw [ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
+end Integral
+
+/-! ### The Markov property at a fixed time -/
+
+section Markov
+
+variable [DecidableEq V]
+
+/-- `f` is settled by the positions up to time `n`. -/
+def DependsUpTo {α : Type*} (n : ℕ) (f : (ℕ → V) → α) : Prop :=
+  ∀ X Y : ℕ → V, (∀ k ≤ n, X k = Y k) → f X = f Y
+
+omit [DecidableEq V] in
+theorem measurable_of_dependsUpTo {α : Type*} [MeasurableSpace α] {n : ℕ}
+    {f : (ℕ → V) → α} (hf : DependsUpTo n f) : Measurable f := by
+  classical
+  set g : (Fin (n + 1) → V) → α :=
+    fun a => f fun k => if h : k < n + 1 then a ⟨k, h⟩ else a ⟨0, Nat.succ_pos n⟩ with hg
+  have hfact : f = g ∘ fun X : ℕ → V => fun i : Fin (n + 1) => X i := by
+    funext X
+    refine (hf X _ fun k hk => ?_).symm ▸ rfl
+    rw [dif_pos (by omega : k < n + 1)]
+  rw [hfact]
+  exact Measurable.of_discrete.comp (measurable_pi_lambda _ fun i => measurable_pi_apply _)
+
+/-- The path shifted by `n`. -/
+def shiftPath (n : ℕ) (X : ℕ → V) : ℕ → V := fun k => X (n + k)
+
+omit [DecidableEq V] in
+omit [MeasurableSingletonClass V] [Countable V] in
+theorem measurable_shiftPath (n : ℕ) : Measurable (shiftPath (V := V) n) :=
+  measurable_pi_lambda _ fun k => measurable_pi_apply (n + k)
+
+/-- The expectation of a bounded measurable functional of the path, as a
+function of the starting vertex. -/
+noncomputable def pathExp (G : SimpleGraph V) [G.LocallyFinite]
+    (F : (ℕ → V) → ℝ) (y : V) : ℝ := ∫ Y, F Y ∂(walkLaw G y)
+
+omit [DecidableEq V] in
+theorem measurable_pathExp (F : (ℕ → V) → ℝ) : Measurable (pathExp G F) :=
+  Measurable.of_discrete
+
+omit [DecidableEq V] in
+theorem norm_pathExp_le {F : (ℕ → V) → ℝ} {CF : ℝ} (hFb : ∀ X, ‖F X‖ ≤ CF) (y : V) :
+    ‖pathExp G F y‖ ≤ CF := by
+  have := norm_integral_le_of_norm_le_const (μ := walkLaw G y) (C := CF)
+    (Filter.Eventually.of_forall hFb)
+  simpa [pathExp, measureReal_def] using this
+
+omit [DecidableEq V] in
+theorem ae_walkLaw_start (x : V) : ∀ᵐ X ∂(walkLaw G x), X 0 = x := by
+  rw [ae_iff]
+  have hset : MeasurableSet {X : ℕ → V | ¬ X 0 = x} := by
+    have he : {X : ℕ → V | ¬ X 0 = x} = ((fun X : ℕ → V => X 0) ⁻¹' {x})ᶜ := rfl
+    rw [he]
+    exact (measurable_pi_apply 0 (MeasurableSet.singleton x)).compl
+  have hwl : walkLaw G x = driverLaw.map (walkPath G x) := rfl
+  rw [hwl, Measure.map_apply (measurable_walkPath x) hset]
+  have : (walkPath G x) ⁻¹' {X : ℕ → V | ¬ X 0 = x} = ∅ := by
+    ext ω
+    simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_not]
+    rfl
+  rw [this, measure_empty]
+
+/-- **The Markov property at a fixed time.**  For a bounded measurable `F` on
+paths and a bounded `H` settled by the positions up to time `n`,
+`E_x[F(θ_n X) H(X)] = E_x[E_{X_n}[F] H(X)]`. -/
+theorem markov_fixed (hdeg : ∀ v : V, 0 < G.degree v)
+    (F : (ℕ → V) → ℝ) (hFm : Measurable F) (CF : ℝ) (hFb : ∀ X, ‖F X‖ ≤ CF) :
+    ∀ (n : ℕ) (x : V) (H : (ℕ → V) → ℝ) (CH : ℝ), (∀ X, ‖H X‖ ≤ CH) → DependsUpTo n H →
+      ∫ X, F (shiftPath n X) * H X ∂(walkLaw G x)
+        = ∫ X, pathExp G F (X n) * H X ∂(walkLaw G x) := by
+  intro n
+  induction n with
+  | zero =>
+      intro x H CH hHb hH
+      have hHm : Measurable H := measurable_of_dependsUpTo hH
+      have hL : ∀ᵐ X ∂(walkLaw G x),
+          F (shiftPath 0 X) * H X = F X * H (fun _ => x) := by
+        filter_upwards [ae_walkLaw_start x] with X hX
+        have h1 : shiftPath 0 X = X := by funext k; simp [shiftPath]
+        have h2 : H X = H (fun _ => x) := hH X _ fun k hk => by
+          simpa [Nat.le_zero.mp hk] using hX
+        rw [h1, h2]
+      have hR : ∀ᵐ X ∂(walkLaw G x),
+          pathExp G F (X 0) * H X = pathExp G F x * H (fun _ => x) := by
+        filter_upwards [ae_walkLaw_start x] with X hX
+        have h2 : H X = H (fun _ => x) := hH X _ fun k hk => by
+          simpa [Nat.le_zero.mp hk] using hX
+        rw [hX, h2]
+      rw [integral_congr_ae hL, integral_congr_ae hR, integral_mul_const, integral_const]
+      simp [pathExp, mul_comm]
+  | succ n ih =>
+      intro x H CH hHb hH
+      have hHm : Measurable H := measurable_of_dependsUpTo hH
+      have hCF : 0 ≤ CF := le_trans (norm_nonneg _) (hFb fun _ => x)
+      have hCH : 0 ≤ CH := le_trans (norm_nonneg _) (hHb fun _ => x)
+      have hLm : Measurable fun X : ℕ → V => F (shiftPath (n + 1) X) * H X :=
+        (hFm.comp (measurable_shiftPath _)).mul hHm
+      have hRm : Measurable fun X : ℕ → V => pathExp G F (X (n + 1)) * H X :=
+        ((measurable_pathExp F).comp (measurable_pi_apply (n + 1))).mul hHm
+      have hLb : ∀ X : ℕ → V, ‖F (shiftPath (n + 1) X) * H X‖ ≤ CF * CH := fun X => by
+        rw [norm_mul]; exact mul_le_mul (hFb _) (hHb _) (norm_nonneg _) hCF
+      have hRb : ∀ X : ℕ → V, ‖pathExp G F (X (n + 1)) * H X‖ ≤ CF * CH := fun X => by
+        rw [norm_mul]
+        exact mul_le_mul (norm_pathExp_le hFb _) (hHb _) (norm_nonneg _) hCF
+      rw [integral_walkLaw_firstStep x (hdeg x) _ hLm hLb,
+        integral_walkLaw_firstStep x (hdeg x) _ hRm hRb]
+      congr 1
+      refine Finset.sum_congr rfl fun y _ => ?_
+      have hshift : ∀ X : ℕ → V, shiftPath (n + 1) (cons x X) = shiftPath n X := by
+        intro X
+        funext k
+        show (cons x X) (n + 1 + k) = X (n + k)
+        rw [show n + 1 + k = (n + k) + 1 by omega]
+        rfl
+      have hcons : ∀ X : ℕ → V, (cons x X) (n + 1) = X n := fun X => rfl
+      have hH' : DependsUpTo n (fun X : ℕ → V => H (cons x X)) := by
+        intro X Y hXY
+        refine hH _ _ fun k hk => ?_
+        cases k with
+        | zero => rfl
+        | succ k => exact hXY k (by omega)
+      have := ih y (fun X => H (cons x X)) CH (fun X => hHb _) hH'
+      simp only [hshift, hcons]
+      exact this
+
+end Markov
+
 end LatticeProb.Graph
 
 end
