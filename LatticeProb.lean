@@ -9,6 +9,7 @@ import LatticeProb.Walk.SRW
 import LatticeProb.Walk.OneDimGauss
 import LatticeProb.Walk.SRWOneDim
 import LatticeProb.Walk.SRWTail
+import LatticeProb.Walk.MaxDisp
 import LatticeProb.Walk.SRWDecomp
 import LatticeProb.Walk.SRWGauss
 import LatticeProb.Walk.Series
