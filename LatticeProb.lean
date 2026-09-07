@@ -122,4 +122,5 @@ import LatticeProb.Walk.SRWDiag
 import LatticeProb.Walk.GreenSq
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
+import LatticeProb.Walk.Correlation
 import LatticeProb.Prob.ExplorationCond
