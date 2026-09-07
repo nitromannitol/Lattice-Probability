@@ -127,4 +127,5 @@ import LatticeProb.Walk.GreenSq
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation
+import LatticeProb.Walk.GreenPointwise
 import LatticeProb.Prob.ExplorationCond
