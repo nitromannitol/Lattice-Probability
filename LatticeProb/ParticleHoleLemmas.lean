@@ -273,6 +273,251 @@ theorem holeCount_succ_eq_sub_settled {D : Driver d} (t : ℕ) (x : Site d) :
   rw [holeCount_succ, card_settledAt t x]
   omega
 
+
+/-! ### The process is local in space
+
+The state after `t` rounds reads the driving data only inside a finite box.
+Information travels at speed one, so the state at a label or a site of the box
+of radius `r` about `y` is decided by the configuration, the instruction stacks
+and the uniform variables on the box of radius `r + 2t²` about `y`.  The
+quadratic radius is not the physical light cone; it is what the syntactic
+recursion gives, because `activeAt` and `arrivalsAt` are written over the
+candidate sets, which look a further `t` steps outward at every round.  Any
+finite radius is what the martingale decompositions need.
+-/
+
+theorem boxFinset_mono {y : Site d} {r r' : ℕ} (h : r ≤ r') :
+    boxFinset y r ⊆ boxFinset y r' := by
+  intro x hx
+  rw [mem_boxFinset_iff] at hx ⊢
+  exact fun i => (hx i).trans (by exact_mod_cast h)
+
+theorem mem_boxFinset_add {y z x : Site d} {a b : ℕ} (hz : z ∈ boxFinset y a)
+    (hx : x ∈ boxFinset z b) : x ∈ boxFinset y (a + b) := by
+  rw [mem_boxFinset_iff] at hz hx ⊢
+  intro i
+  have hrw : x i - y i = (x i - z i) + (z i - y i) := by ring
+  have : |x i - y i| ≤ (b : ℤ) + (a : ℤ) := by
+    calc |x i - y i| ≤ |x i - z i| + |z i - y i| := by rw [hrw]; exact abs_add_le _ _
+      _ ≤ (b : ℤ) + (a : ℤ) := add_le_add (hx i) (hz i)
+  push_cast
+  linarith
+
+theorem mem_boxFinset_of_mem_candidates {η : Site d → ℤ} {y z : Site d} {a b : ℕ}
+    {p : Label d} (hz : z ∈ boxFinset y a) (hp : p ∈ candidates η z b) :
+    p.1 ∈ boxFinset y (a + b) :=
+  mem_boxFinset_add hz (mem_boxFinset_iff.mpr (mem_candidates_iff.mp hp).1)
+
+theorem pos_mem_boxFinset {D : Driver d} (hs : StepsToNeighbour D) {y : Site d} {r : ℕ}
+    (t : ℕ) {p : Label d} (hp : p.1 ∈ boxFinset y r) :
+    (state D t).pos p ∈ boxFinset y (r + t) :=
+  mem_boxFinset_add hp (mem_boxFinset_iff.mpr fun i => abs_pos_sub_start_le hs t p i)
+
+theorem nextPos_mem_boxFinset {D : Driver d} (hs : StepsToNeighbour D) {y : Site d} {r : ℕ}
+    (t : ℕ) {p : Label d} (hp : p.1 ∈ boxFinset y r) :
+    nextPos D (state D t) t p ∈ boxFinset y (r + (t + 1)) := by
+  refine mem_boxFinset_add hp (mem_boxFinset_iff.mpr fun i => ?_)
+  have h1 := abs_pos_sub_start_le hs t p i
+  have h2 := abs_nextPos_sub_le hs (state D t) t p i
+  have hrw : nextPos D (state D t) t p i - p.1 i
+      = (nextPos D (state D t) t p i - (state D t).pos p i)
+        + ((state D t).pos p i - p.1 i) := by ring
+  have : |nextPos D (state D t) t p i - p.1 i| ≤ 1 + (t : ℤ) := by
+    calc |nextPos D (state D t) t p i - p.1 i|
+        ≤ |nextPos D (state D t) t p i - (state D t).pos p i|
+          + |(state D t).pos p i - p.1 i| := by rw [hrw]; exact abs_add_le _ _
+      _ ≤ 1 + (t : ℤ) := add_le_add h2 h1
+  push_cast
+  linarith
+
+/-- Two drivers agree on the box of radius `r` about `y`. -/
+structure AgreeOn (D D' : Driver d) (y : Site d) (r : ℕ) : Prop where
+  /-- The configurations agree on the box. -/
+  eta : ∀ z ∈ boxFinset y r, D.eta z = D'.eta z
+  /-- The instruction stacks agree at every site of the box. -/
+  stack : ∀ z ∈ boxFinset y r, ∀ i : ℕ, D.stack (z, i) = D'.stack (z, i)
+  /-- The uniform variables agree for every particle starting in the box. -/
+  rank : ∀ p : Label d, p.1 ∈ boxFinset y r → ∀ s : ℕ, D.rank (p, s) = D'.rank (p, s)
+
+theorem AgreeOn.mono {D D' : Driver d} {y : Site d} {r r' : ℕ} (h : AgreeOn D D' y r')
+    (hr : r ≤ r') : AgreeOn D D' y r :=
+  ⟨fun z hz => h.eta z (boxFinset_mono hr hz),
+   fun z hz => h.stack z (boxFinset_mono hr hz),
+   fun p hp => h.rank p (boxFinset_mono hr hp)⟩
+
+/-- Two states agree on the box of radius `r` about `y`. -/
+structure StateAgreeOn (S S' : State d) (y : Site d) (r : ℕ) : Prop where
+  /-- The same particles of the box are active. -/
+  active : ∀ p : Label d, p.1 ∈ boxFinset y r → S.active p = S'.active p
+  /-- The particles of the box stand in the same places. -/
+  pos : ∀ p : Label d, p.1 ∈ boxFinset y r → S.pos p = S'.pos p
+  /-- The sites of the box carry the same numbers of holes. -/
+  holes : ∀ x ∈ boxFinset y r, S.holes x = S'.holes x
+  /-- The sites of the box have seen the same numbers of departures. -/
+  departures : ∀ x ∈ boxFinset y r, S.departures x = S'.departures x
+
+theorem StateAgreeOn.mono {S S' : State d} {y : Site d} {r r' : ℕ}
+    (h : StateAgreeOn S S' y r') (hr : r ≤ r') : StateAgreeOn S S' y r :=
+  ⟨fun p hp => h.active p (boxFinset_mono hr hp),
+   fun p hp => h.pos p (boxFinset_mono hr hp),
+   fun x hx => h.holes x (boxFinset_mono hr hx),
+   fun x hx => h.departures x (boxFinset_mono hr hx)⟩
+
+theorem activeAt_congr_box {D D' : Driver d} {S S' : State d} {y z : Site d} {a t : ℕ}
+    (hz : z ∈ boxFinset y a)
+    (heta : ∀ w ∈ boxFinset y (a + t), D.eta w = D'.eta w)
+    (hS : StateAgreeOn S S' y (a + t)) :
+    activeAt D S t z = activeAt D' S' t z := by
+  classical
+  have hcand : candidates D.eta z t = candidates D'.eta z t := by
+    ext p
+    rw [mem_candidates_iff, mem_candidates_iff]
+    constructor
+    · rintro ⟨hp, hi⟩
+      exact ⟨hp, by rwa [← heta p.1 (mem_boxFinset_add hz (mem_boxFinset_iff.mpr hp))]⟩
+    · rintro ⟨hp, hi⟩
+      exact ⟨hp, by rwa [heta p.1 (mem_boxFinset_add hz (mem_boxFinset_iff.mpr hp))]⟩
+  unfold activeAt
+  rw [hcand]
+  refine Finset.filter_congr fun p hp => ?_
+  have hp1 : p.1 ∈ boxFinset y (a + t) :=
+    mem_boxFinset_of_mem_candidates hz hp
+  rw [hS.active p hp1, hS.pos p hp1]
+
+theorem arrivalsAt_congr_box {D D' : Driver d} {S S' : State d} {y x : Site d} {a t : ℕ}
+    (hx : x ∈ boxFinset y a)
+    (heta : ∀ w ∈ boxFinset y (a + (t + 1)), D.eta w = D'.eta w)
+    (hact : ∀ p : Label d, p.1 ∈ boxFinset y (a + (t + 1)) → S.active p = S'.active p)
+    (hnext : ∀ p : Label d, p.1 ∈ boxFinset y (a + (t + 1)) →
+      nextPos D S t p = nextPos D' S' t p) :
+    arrivalsAt D S t x = arrivalsAt D' S' t x := by
+  classical
+  have hcand : candidates D.eta x (t + 1) = candidates D'.eta x (t + 1) := by
+    ext p
+    rw [mem_candidates_iff, mem_candidates_iff]
+    constructor
+    · rintro ⟨hp, hi⟩
+      exact ⟨hp, by rwa [← heta p.1 (mem_boxFinset_add hx (mem_boxFinset_iff.mpr hp))]⟩
+    · rintro ⟨hp, hi⟩
+      exact ⟨hp, by rwa [heta p.1 (mem_boxFinset_add hx (mem_boxFinset_iff.mpr hp))]⟩
+  unfold arrivalsAt
+  rw [hcand]
+  refine Finset.filter_congr fun p hp => ?_
+  have hp1 : p.1 ∈ boxFinset y (a + (t + 1)) := mem_boxFinset_of_mem_candidates hx hp
+  rw [hact p hp1, hnext p hp1]
+
+/-- **The state is a function of the data in a box.**  Two drivers that agree
+on the box of radius `r + 2t²` about `y` have, after `t` rounds, the same
+activity and the same positions for every particle started in the box of radius
+`r`, and the same holes and the same odometer at every site of that box. -/
+theorem state_agree_box {D D' : Driver d} (hs : StepsToNeighbour D) (y : Site d) :
+    ∀ (t r : ℕ), AgreeOn D D' y (r + 2 * t * t) →
+      StateAgreeOn (state D t) (state D' t) y r := by
+  classical
+  intro t
+  induction t with
+  | zero =>
+      intro r hA
+      have hA' : AgreeOn D D' y r := by simpa using hA
+      refine ⟨fun p hp => ?_, fun p _ => rfl, fun x hx => ?_, fun x _ => rfl⟩
+      · show decide (p.2 < (D.eta p.1).toNat) = decide (p.2 < (D'.eta p.1).toNat)
+        rw [hA'.eta p.1 hp]
+      · show (-D.eta x).toNat = (-D'.eta x).toNat
+        rw [hA'.eta x hx]
+  | succ t ih =>
+      intro r hA
+      have hrad : r + 2 * (t + 1) * (t + 1) = (r + 4 * t + 2) + 2 * t * t := by ring
+      have hAbig : AgreeOn D D' y ((r + 4 * t + 2) + 2 * t * t) := by rwa [hrad] at hA
+      have hS : StateAgreeOn (state D t) (state D' t) y (r + 4 * t + 2) :=
+        ih (r + 4 * t + 2) hAbig
+      have hAdata : AgreeOn D D' y (r + 4 * t + 2) := hA.mono (by nlinarith)
+      -- the step of round `t + 1` agrees on the box of radius `r + 2t + 2`
+      have hnext : ∀ q : Label d, q.1 ∈ boxFinset y (r + 2 * t + 2) →
+          nextPos D (state D t) t q = nextPos D' (state D' t) t q := by
+        intro q hq
+        have hq4 : q.1 ∈ boxFinset y (r + 4 * t + 2) := boxFinset_mono (by omega) hq
+        have hposq : (state D t).pos q = (state D' t).pos q := hS.pos q hq4
+        have hactq : (state D t).active q = (state D' t).active q := hS.active q hq4
+        have hpb : (state D t).pos q ∈ boxFinset y (r + 3 * t + 2) := by
+          have := pos_mem_boxFinset hs (y := y) (r := r + 2 * t + 2) t hq
+          exact boxFinset_mono (by omega) this
+        have hpb4 : (state D t).pos q ∈ boxFinset y (r + 4 * t + 2) :=
+          boxFinset_mono (by omega) hpb
+        have hactEq : activeAt D (state D t) t ((state D t).pos q)
+            = activeAt D' (state D' t) t ((state D t).pos q) := by
+          refine activeAt_congr_box (a := r + 3 * t + 2) hpb
+            (fun w hw => hAdata.eta w (boxFinset_mono (by omega) hw))
+            (hS.mono (by omega))
+        have key : instructionIndex D (state D t) t q
+            = instructionIndex D' (state D' t) t q := by
+          unfold instructionIndex
+          rw [← hposq, hS.departures _ hpb4, hactEq]
+        unfold nextPos
+        rw [hactq, hposq, key]
+        by_cases hb : (state D' t).active q = true
+        · rw [if_pos hb, if_pos hb]
+          exact hAdata.stack _ (by rwa [hposq] at hpb4) _
+        · rw [if_neg hb, if_neg hb]
+      have harr : ∀ x ∈ boxFinset y (r + t + 1),
+          arrivalsAt D (state D t) t x = arrivalsAt D' (state D' t) t x := by
+        intro x hx
+        refine arrivalsAt_congr_box (a := r + t + 1) hx
+          (fun w hw => hAdata.eta w (boxFinset_mono (by omega) hw))
+          (fun p hp => hS.active p (boxFinset_mono (by omega) hp))
+          (fun p hp => hnext p (boxFinset_mono (by omega) hp))
+      have hsettles : ∀ p : Label d, p.1 ∈ boxFinset y r →
+          settles D (state D t) t p = settles D' (state D' t) t p := by
+        intro p hp
+        have hnp : nextPos D (state D t) t p = nextPos D' (state D' t) t p :=
+          hnext p (boxFinset_mono (by omega) hp)
+        have hxb : nextPos D (state D t) t p ∈ boxFinset y (r + t + 1) := by
+          have := nextPos_mem_boxFinset hs (y := y) (r := r) t hp
+          exact boxFinset_mono (by omega) this
+        have hxb4 : nextPos D (state D t) t p ∈ boxFinset y (r + 4 * t + 2) :=
+          boxFinset_mono (by omega) hxb
+        have hfil : ((arrivalsAt D' (state D' t) t (nextPos D (state D t) t p)).filter
+              fun q => D.rank (q, t) < D.rank (p, t) ∨
+                (D.rank (q, t) = D.rank (p, t) ∧ labelLT q p))
+            = ((arrivalsAt D' (state D' t) t (nextPos D (state D t) t p)).filter
+              fun q => D'.rank (q, t) < D'.rank (p, t) ∨
+                (D'.rank (q, t) = D'.rank (p, t) ∧ labelLT q p)) := by
+          refine Finset.filter_congr fun q hq => ?_
+          have hq1 : q.1 ∈ boxFinset y (r + 2 * t + 2) := by
+            have := mem_boxFinset_of_mem_candidates (a := r + t + 1) hxb
+              (arrivalsAt_subset_candidates D' (state D' t) t _ hq)
+            exact boxFinset_mono (by omega) this
+          rw [hAdata.rank q (boxFinset_mono (by omega) hq1) t,
+            hAdata.rank p (boxFinset_mono (by omega) hp) t]
+        unfold settles
+        rw [hS.active p (boxFinset_mono (by omega) hp), ← hnp, harr _ hxb, hfil,
+          hS.holes _ hxb4]
+      refine ⟨fun p hp => ?_, fun p hp => ?_, fun x hx => ?_, fun x hx => ?_⟩
+      · show (step D (state D t) t).active p = (step D' (state D' t) t).active p
+        unfold step
+        simp only
+        rw [hS.active p (boxFinset_mono (by omega) hp), hsettles p hp]
+      · show (step D (state D t) t).pos p = (step D' (state D' t) t).pos p
+        exact hnext p (boxFinset_mono (by omega) hp)
+      · show (step D (state D t) t).holes x = (step D' (state D' t) t).holes x
+        unfold step
+        simp only
+        rw [hS.holes x (boxFinset_mono (by omega) hx),
+          harr x (boxFinset_mono (by omega) hx)]
+      · show (step D (state D t) t).departures x = (step D' (state D' t) t).departures x
+        unfold step
+        simp only
+        have hact : activeAt D (state D t) t x = activeAt D' (state D' t) t x := by
+          refine activeAt_congr_box (a := r) hx
+            (fun w hw => hAdata.eta w (boxFinset_mono (by omega) hw))
+            (hS.mono (by omega))
+        rw [hS.departures x (boxFinset_mono (by omega) hx), hact]
+
+/-- The odometer at a site of a box is a function of the data on a larger box. -/
+theorem particleOdometer_congr_box {D D' : Driver d} (hs : StepsToNeighbour D)
+    (y : Site d) (t r : ℕ) (hA : AgreeOn D D' y (r + 2 * t * t)) :
+    ∀ x ∈ boxFinset y r, particleOdometer D t x = particleOdometer D' t x :=
+  fun x hx => (state_agree_box hs y t r hA).departures x hx
+
 end LatticeProb
 
 end

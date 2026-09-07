@@ -627,4 +627,44 @@ theorem exp_conc_pi (ν : Measure ℝ) [IsProbabilityMeasure ν] (θ₀ K δ : �
             congr 1
             ring
 
+
+/-! ### Two leaf facts used by the square-function induction -/
+
+/-- Jensen for the square: the square of an integral is at most the integral of
+the square, against a probability measure. -/
+theorem sq_integral_le {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    [IsProbabilityMeasure μ] (h : Ω → ℝ) (hh : Integrable h μ)
+    (hh2 : Integrable (fun ω => h ω ^ 2) μ) :
+    (∫ ω, h ω ∂μ) ^ 2 ≤ ∫ ω, h ω ^ 2 ∂μ := by
+  set m : ℝ := ∫ ω, h ω ∂μ with hm
+  have hpt : ∀ ω, (h ω - m) ^ 2 = h ω ^ 2 - 2 * m * h ω + m ^ 2 := fun ω => by ring
+  have hint1 : Integrable (fun ω => h ω ^ 2 - 2 * m * h ω) μ := hh2.sub (hh.const_mul _)
+  have hexp : ∫ ω, (h ω - m) ^ 2 ∂μ = (∫ ω, h ω ^ 2 ∂μ) - m ^ 2 := by
+    rw [integral_congr_ae (Filter.Eventually.of_forall hpt),
+      integral_add hint1 (integrable_const _), integral_sub hh2 (hh.const_mul _),
+      integral_const_mul, integral_const]
+    simp only [smul_eq_mul, probReal_univ, one_mul]
+    rw [← hm]
+    ring
+  have hnn : 0 ≤ ∫ ω, (h ω - m) ^ 2 ∂μ := integral_nonneg fun ω => sq_nonneg _
+  linarith
+
+/-- Overwriting one coordinate is jointly measurable in the configuration and
+the new value. -/
+theorem measurable_update_pair (i : Fin N) :
+    Measurable fun p : (Fin N → ℝ) × ℝ => Function.update p.1 i p.2 := by
+  classical
+  refine measurable_pi_lambda _ fun j => ?_
+  by_cases h : j = i
+  · subst h
+    have he : (fun p : (Fin N → ℝ) × ℝ => Function.update p.1 j p.2 j) = fun p => p.2 := by
+      funext p; simp
+    rw [he]
+    exact measurable_snd
+  · have he : (fun p : (Fin N → ℝ) × ℝ => Function.update p.1 i p.2 j) = fun p => p.1 j := by
+      funext p
+      exact Function.update_of_ne h _ _
+    rw [he]
+    exact (measurable_pi_apply j).comp measurable_fst
+
 end LatticeProb

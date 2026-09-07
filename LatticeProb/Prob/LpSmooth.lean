@@ -768,4 +768,461 @@ theorem exists_lp_square_pi {p : ℝ} (hp : 2 ≤ p) :
               rw [htμdef, hκdef]
               ring
 
+/-! ### The head-tail split as a measure-preserving map -/
+
+/-- Gluing a head to a tail carries the product of the head law with the product
+of the tail laws to the product of all of them. -/
+theorem measurePreserving_cons (μ : Fin (N + 1) → Measure ℝ)
+    [∀ i, IsProbabilityMeasure (μ i)] :
+    MeasurePreserving (fun q : ℝ × (Fin N → ℝ) => (Fin.cons q.1 q.2 : Fin (N + 1) → ℝ))
+      ((μ 0).prod (Measure.pi fun j : Fin N => μ (Fin.succAbove 0 j))) (Measure.pi μ) := by
+  classical
+  have hmp : MeasurePreserving (MeasurableEquiv.piFinSuccAbove (fun _ : Fin (N + 1) => ℝ) 0)
+      (Measure.pi μ) ((μ 0).prod (Measure.pi fun j : Fin N => μ (Fin.succAbove 0 j))) :=
+    measurePreserving_piFinSuccAbove μ 0
+  have hsymm := hmp.symm (MeasurableEquiv.piFinSuccAbove (fun _ : Fin (N + 1) => ℝ) 0)
+  have heq : (fun q : ℝ × (Fin N → ℝ) => (Fin.cons q.1 q.2 : Fin (N + 1) → ℝ))
+      = ⇑(MeasurableEquiv.piFinSuccAbove (fun _ : Fin (N + 1) => ℝ) 0).symm := by
+    funext q
+    show (Fin.cons q.1 q.2 : Fin (N + 1) → ℝ) = _
+    rw [MeasurableEquiv.piFinSuccAbove_symm_apply]
+    simp [Fin.insertNthEquiv]
+  rw [heq]
+  exact hsymm
+
+/-! ### The two-smoothness inequality at `p = 2` -/
+
+theorem abs_rpow_two (a : ℝ) : |a| ^ (2 : ℝ) = a ^ 2 := by
+  rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, sq_abs]
+
+/-- The case `p = 2` of the two-smoothness inequality, written with the natural
+square. -/
+theorem exists_two_smooth_sq :
+    ∃ C : ℝ, 0 < C ∧
+      ∀ {α β : Type} [MeasurableSpace α] [MeasurableSpace β]
+        (κ : Measure α) (ρ : Measure β), IsProbabilityMeasure κ → IsProbabilityMeasure ρ →
+        ∀ (X : β → ℝ) (Y : α → β → ℝ),
+          Measurable X → Measurable (fun q : α × β => Y q.1 q.2) →
+          Integrable (fun b => X b ^ 2) ρ →
+          Integrable (fun q : α × β => Y q.1 q.2 ^ 2) (κ.prod ρ) →
+          (∀ b, ∫ a, Y a b ∂κ = 0) →
+          ∫ q : α × β, (X q.2 + Y q.1 q.2) ^ 2 ∂(κ.prod ρ)
+            ≤ ∫ b, X b ^ 2 ∂ρ + C * ∫ q : α × β, Y q.1 q.2 ^ 2 ∂(κ.prod ρ) := by
+  obtain ⟨C, hCpos, hsm⟩ := exists_lp_two_smooth (p := 2) le_rfl
+  refine ⟨C, hCpos, ?_⟩
+  intro α β _ _ κ ρ hκ hρ X Y hXm hYm hX2 hY2 hY0
+  haveI := hκ
+  haveI := hρ
+  have hX2' : Integrable (fun b => |X b| ^ (2 : ℝ)) ρ :=
+    hX2.congr (Filter.Eventually.of_forall fun b => (abs_rpow_two (X b)).symm)
+  have hY2' : Integrable (fun q : α × β => |Y q.1 q.2| ^ (2 : ℝ)) (κ.prod ρ) :=
+    hY2.congr (Filter.Eventually.of_forall fun q => (abs_rpow_two (Y q.1 q.2)).symm)
+  have h := hsm κ ρ hκ hρ X Y hXm hYm hX2' hY2' hY0
+  have e1 : ∫ q : α × β, |X q.2 + Y q.1 q.2| ^ (2 : ℝ) ∂(κ.prod ρ)
+      = ∫ q : α × β, (X q.2 + Y q.1 q.2) ^ 2 ∂(κ.prod ρ) :=
+    integral_congr_ae (Filter.Eventually.of_forall fun q => abs_rpow_two _)
+  have e2 : ∫ b, |X b| ^ (2 : ℝ) ∂ρ = ∫ b, X b ^ 2 ∂ρ :=
+    integral_congr_ae (Filter.Eventually.of_forall fun b => abs_rpow_two _)
+  have e3 : ∫ q : α × β, |Y q.1 q.2| ^ (2 : ℝ) ∂(κ.prod ρ)
+      = ∫ q : α × β, Y q.1 q.2 ^ 2 ∂(κ.prod ρ) :=
+    integral_congr_ae (Filter.Eventually.of_forall fun q => abs_rpow_two _)
+  rw [e1, e2, e3] at h
+  have h20 : (2 : ℝ) / 2 = 1 := by norm_num
+  rw [h20] at h
+  have hn1 : 0 ≤ ∫ q : α × β, (X q.2 + Y q.1 q.2) ^ 2 ∂(κ.prod ρ) :=
+    integral_nonneg fun q => sq_nonneg _
+  have hn2 : 0 ≤ ∫ b, X b ^ 2 ∂ρ := integral_nonneg fun b => sq_nonneg _
+  have hn3 : 0 ≤ ∫ q : α × β, Y q.1 q.2 ^ 2 ∂(κ.prod ρ) :=
+    integral_nonneg fun q => sq_nonneg _
+  rwa [Real.rpow_one, Real.rpow_one, Real.rpow_one] at h
+
+/-! ### Transport along a measure-preserving map -/
+
+theorem integral_comp_mp {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+    {μa : Measure α} {μb : Measure β} {g : α → β} (hg : MeasurePreserving g μa μb)
+    (f : β → ℝ) (hf : AEStronglyMeasurable f μb) :
+    ∫ y, f y ∂μb = ∫ x, f (g x) ∂μa := by
+  conv_lhs => rw [← hg.map_eq]
+  exact integral_map hg.measurable.aemeasurable (by rwa [hg.map_eq])
+
+theorem integrable_comp_mp {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+    {μa : Measure α} {μb : Measure β} {g : α → β} (hg : MeasurePreserving g μa μb)
+    (f : β → ℝ) (hf : AEStronglyMeasurable f μb) (h : Integrable f μb) :
+    Integrable (fun x => f (g x)) μa :=
+  (integrable_map_measure (by rwa [hg.map_eq]) hg.measurable.aemeasurable).mp
+    (by rwa [hg.map_eq])
+
+theorem integrable_of_comp_mp {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+    {μa : Measure α} {μb : Measure β} {g : α → β} (hg : MeasurePreserving g μa μb)
+    (f : β → ℝ) (hf : AEStronglyMeasurable f μb) (h : Integrable (fun x => f (g x)) μa) :
+    Integrable f μb := by
+  have := (integrable_map_measure (μ := μa) (f := g) (g := f)
+    (by rwa [hg.map_eq]) hg.measurable.aemeasurable).mpr h
+  rwa [hg.map_eq] at this
+
+
+/-! ### The Efron-Stein inequality, with no Lipschitz hypothesis -/
+
+/-- The resampling energy of the `i`-th coordinate, on the product of the field
+law with the one-site law of that coordinate. -/
+noncomputable def resampleEnergy {M : ℕ} (μ : Fin M → Measure ℝ)
+    (G : (Fin M → ℝ) → ℝ) (i : Fin M) : ℝ :=
+  ∫ q : (Fin M → ℝ) × ℝ, (G q.1 - G (Function.update q.1 i q.2)) ^ 2
+    ∂((Measure.pi μ).prod (μ i))
+
+theorem resampleEnergy_nonneg {M : ℕ} (μ : Fin M → Measure ℝ)
+    (G : (Fin M → ℝ) → ℝ) (i : Fin M) : 0 ≤ resampleEnergy μ G i :=
+  integral_nonneg fun _ => sq_nonneg _
+
+/-- **The Efron-Stein inequality.**  The variance of a square-integrable function
+of independent coordinates is at most a constant times the total resampling
+energy.  No Lipschitz hypothesis is imposed; the head term of the induction is
+bounded by Jensen against the resampling energy of the head coordinate rather
+than by a Lipschitz constant. -/
+theorem exists_efron_stein_L2 :
+    ∃ C : ℝ, 0 < C ∧
+      ∀ (M : ℕ) (μ : Fin M → Measure ℝ), (∀ i, IsProbabilityMeasure (μ i)) →
+        ∀ G : (Fin M → ℝ) → ℝ, Measurable G →
+          Integrable (fun ξ => G ξ ^ 2) (Measure.pi μ) →
+          (∀ i : Fin M, Integrable
+            (fun q : (Fin M → ℝ) × ℝ => (G q.1 - G (Function.update q.1 i q.2)) ^ 2)
+            ((Measure.pi μ).prod (μ i))) →
+          ∫ ξ, (G ξ - ∫ η, G η ∂(Measure.pi μ)) ^ 2 ∂(Measure.pi μ)
+            ≤ C * ∑ i, resampleEnergy μ G i := by
+  obtain ⟨C, hCpos, hsm⟩ := exists_two_smooth_sq
+  refine ⟨max C 1, lt_of_lt_of_le one_pos (le_max_right _ _), ?_⟩
+  set C' : ℝ := max C 1 with hC'def
+  have hCC' : C ≤ C' := le_max_left _ _
+  have hC'pos : 0 < C' := lt_of_lt_of_le one_pos (le_max_right _ _)
+  intro M
+  induction M with
+  | zero =>
+      intro μ hμ G hGm hG2 hE
+      haveI := hμ
+      have hsub : ∀ ξ : Fin 0 → ℝ, G ξ = G 0 := fun ξ => congrArg G (Subsingleton.elim _ _)
+      have hm : ∫ η, G η ∂(Measure.pi μ) = G 0 := by
+        rw [integral_congr_ae (Filter.Eventually.of_forall hsub)]
+        simp
+      have hz : ∀ ξ : Fin 0 → ℝ, (G ξ - ∫ η, G η ∂(Measure.pi μ)) ^ 2 = 0 := by
+        intro ξ
+        rw [hm, hsub ξ, sub_self]
+        ring
+      rw [integral_congr_ae (Filter.Eventually.of_forall hz)]
+      simp
+  | succ M ih =>
+      intro μ hμ G hGm hG2 hE
+      classical
+      haveI := hμ
+      set κ : Measure ℝ := μ 0 with hκdef
+      set tμ : Fin M → Measure ℝ := fun j => μ (Fin.succAbove 0 j) with htμdef
+      haveI htp : ∀ j, IsProbabilityMeasure (tμ j) := fun j => hμ _
+      set ρ : Measure (Fin M → ℝ) := Measure.pi tμ with hρdef
+      haveI : IsProbabilityMeasure ρ := by rw [hρdef]; infer_instance
+      haveI hκp : IsProbabilityMeasure κ := hμ 0
+      have hMP : MeasurePreserving
+          (fun q : ℝ × (Fin M → ℝ) => (Fin.cons q.1 q.2 : Fin (M + 1) → ℝ))
+          (κ.prod ρ) (Measure.pi μ) := measurePreserving_cons μ
+      have hGcm : Measurable (fun q : ℝ × (Fin M → ℝ) => G (Fin.cons q.1 q.2)) :=
+        hGm.comp measurable_cons_pair
+      -- integrability of `G` and of its square, on the split product
+      have hG1 : Integrable G (Measure.pi μ) := by
+        refine integrable_abs_of_rpow (p := 2) _ (by norm_num) G hGm.aestronglyMeasurable ?_
+        exact hG2.congr (Filter.Eventually.of_forall fun ξ => (abs_rpow_two (G ξ)).symm)
+      have hGc2 : Integrable (fun q : ℝ × (Fin M → ℝ) => G (Fin.cons q.1 q.2) ^ 2)
+          (κ.prod ρ) := integrable_prod_cons_fam μ (fun ξ => G ξ ^ 2) hG2
+      have hGc1 : Integrable (fun q : ℝ × (Fin M → ℝ) => G (Fin.cons q.1 q.2))
+          (κ.prod ρ) := integrable_prod_cons_fam μ G hG1
+      have hslice1 : ∀ᵐ η ∂ρ, Integrable (fun x => G (Fin.cons x η)) κ :=
+        hGc1.prod_left_ae
+      have hslice2 : ∀ᵐ η ∂ρ, Integrable (fun x => G (Fin.cons x η) ^ 2) κ :=
+        hGc2.prod_left_ae
+      -- the head average
+      set Φ : (Fin M → ℝ) → ℝ := fun η => ∫ x, G (Fin.cons x η) ∂κ with hΦdef
+      have hΦm : Measurable Φ := by
+        have hg : StronglyMeasurable (fun q : (Fin M → ℝ) × ℝ => G (Fin.cons q.2 q.1)) :=
+          (hGm.comp (measurable_cons_pair.comp
+            (measurable_snd.prodMk measurable_fst))).stronglyMeasurable
+        exact (hg.integral_prod_right').measurable
+      have hW : Integrable (fun η => ∫ x, G (Fin.cons x η) ^ 2 ∂κ) ρ :=
+        (hGc2.swap).integral_prod_left
+      have hΦ1 : Integrable Φ ρ := (hGc1.swap).integral_prod_left
+      have hΦ2 : Integrable (fun η => Φ η ^ 2) ρ := by
+        refine Integrable.mono' hW ((hΦm.pow_const 2).aestronglyMeasurable) ?_
+        filter_upwards [hslice1, hslice2] with η h1 h2
+        rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+        exact sq_integral_le κ (fun x => G (Fin.cons x η)) h1 h2
+      set m : ℝ := ∫ ξ, G ξ ∂(Measure.pi μ) with hmdef
+      have hmeq : m = ∫ η, Φ η ∂ρ := by
+        rw [hmdef, integral_prod_cons_fam μ G, integral_prod_symm _ hGc1]
+      -- the two summands
+      have hY0 : ∀ η : Fin M → ℝ, ∫ x, (G (Fin.cons x η) - Φ η) ∂κ = 0 := by
+        intro η
+        by_cases h : Integrable (fun x => G (Fin.cons x η)) κ
+        · rw [integral_sub h (integrable_const _)]
+          simp [hΦdef]
+        · rw [integral_undef]
+          intro hc
+          refine h ((hc.add (integrable_const (Φ η))).congr
+            (Filter.Eventually.of_forall fun x => ?_))
+          show (G (Fin.cons x η) - Φ η) + Φ η = G (Fin.cons x η)
+          ring
+      have hXm : Measurable (fun η => Φ η - m) := hΦm.sub measurable_const
+      have hYm : Measurable
+          (fun q : ℝ × (Fin M → ℝ) => G (Fin.cons q.1 q.2) - Φ q.2) :=
+        hGcm.sub (hΦm.comp measurable_snd)
+      have hX2 : Integrable (fun η => (Φ η - m) ^ 2) ρ := by
+        refine Integrable.mono' ((hΦ2.const_mul 2).add (integrable_const (2 * m ^ 2)))
+          ((hXm.pow_const 2).aestronglyMeasurable)
+          (Filter.Eventually.of_forall fun η => ?_)
+        rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+        simp only [Pi.add_apply]
+        nlinarith [sq_nonneg (Φ η + m)]
+      have hY2 : Integrable
+          (fun q : ℝ × (Fin M → ℝ) => (G (Fin.cons q.1 q.2) - Φ q.2) ^ 2) (κ.prod ρ) := by
+        refine Integrable.mono' ((hGc2.const_mul 2).add ((hΦ2.comp_snd κ).const_mul 2))
+          ((hYm.pow_const 2).aestronglyMeasurable)
+          (Filter.Eventually.of_forall fun q => ?_)
+        rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+        simp only [Pi.add_apply]
+        nlinarith [sq_nonneg (G (Fin.cons q.1 q.2) + Φ q.2)]
+      -- the two-smoothness step
+      have hkey := hsm κ ρ hκp inferInstance (fun η => Φ η - m)
+        (fun x η => G (Fin.cons x η) - Φ η) hXm hYm hX2 hY2 hY0
+      have hLHS : ∫ q : ℝ × (Fin M → ℝ),
+            ((Φ q.2 - m) + (G (Fin.cons q.1 q.2) - Φ q.2)) ^ 2 ∂(κ.prod ρ)
+          = ∫ ξ, (G ξ - m) ^ 2 ∂(Measure.pi μ) := by
+        rw [integral_prod_cons_fam μ (fun ξ => (G ξ - m) ^ 2)]
+        refine integral_congr_ae (Filter.Eventually.of_forall fun q => ?_)
+        show ((Φ q.2 - m) + (G (Fin.cons q.1 q.2) - Φ q.2)) ^ 2 = (G (Fin.cons q.1 q.2) - m) ^ 2
+        ring
+      rw [hLHS] at hkey
+      -- the head resampling energy, read on the split product
+      have hMPh : MeasurePreserving
+          (fun r : (ℝ × (Fin M → ℝ)) × ℝ =>
+            ((Fin.cons r.1.1 r.1.2 : Fin (M + 1) → ℝ), r.2))
+          ((κ.prod ρ).prod κ) ((Measure.pi μ).prod κ) :=
+        hMP.prod (MeasurePreserving.id κ)
+      have hmeas0 : Measurable (fun q : (Fin (M + 1) → ℝ) × ℝ =>
+          (G q.1 - G (Function.update q.1 0 q.2)) ^ 2) :=
+        (((hGm.comp measurable_fst).sub (hGm.comp (measurable_update_pair 0))).pow_const 2)
+      have hHcongr : ∀ r : (ℝ × (Fin M → ℝ)) × ℝ,
+          (G (Fin.cons r.1.1 r.1.2)
+              - G (Function.update (Fin.cons r.1.1 r.1.2 : Fin (M + 1) → ℝ) 0 r.2)) ^ 2
+            = (G (Fin.cons r.1.1 r.1.2) - G (Fin.cons r.2 r.1.2)) ^ 2 := by
+        intro r
+        rw [cons_update_zero]
+      have hHtrans : Integrable (fun r : (ℝ × (Fin M → ℝ)) × ℝ =>
+          (G (Fin.cons r.1.1 r.1.2) - G (Fin.cons r.2 r.1.2)) ^ 2) ((κ.prod ρ).prod κ) :=
+        (integrable_comp_mp hMPh _ hmeas0.aestronglyMeasurable (hE 0)).congr
+          (Filter.Eventually.of_forall hHcongr)
+      have hHeq : resampleEnergy μ G 0
+          = ∫ r : (ℝ × (Fin M → ℝ)) × ℝ,
+              (G (Fin.cons r.1.1 r.1.2) - G (Fin.cons r.2 r.1.2)) ^ 2 ∂((κ.prod ρ).prod κ) := by
+        rw [resampleEnergy, integral_comp_mp hMPh _ hmeas0.aestronglyMeasurable]
+        exact integral_congr_ae (Filter.Eventually.of_forall hHcongr)
+      have haeq : ∀ᵐ q ∂(κ.prod ρ),
+          Integrable (fun x => G (Fin.cons x q.2)) κ ∧
+            Integrable (fun x => G (Fin.cons x q.2) ^ 2) κ :=
+        measurePreserving_snd.quasiMeasurePreserving.ae (hslice1.and hslice2)
+      have hHead : ∫ q : ℝ × (Fin M → ℝ), (G (Fin.cons q.1 q.2) - Φ q.2) ^ 2 ∂(κ.prod ρ)
+          ≤ resampleEnergy μ G 0 := by
+        rw [hHeq, integral_prod _ hHtrans]
+        refine integral_mono_ae hY2 hHtrans.integral_prod_left ?_
+        filter_upwards [haeq] with q hq
+        obtain ⟨h1, h2⟩ := hq
+        set a : ℝ := G (Fin.cons q.1 q.2) with hadef
+        have hh1 : Integrable (fun y => a - G (Fin.cons y q.2)) κ :=
+          (integrable_const a).sub h1
+        have hh2 : Integrable (fun y => (a - G (Fin.cons y q.2)) ^ 2) κ := by
+          refine Integrable.mono' ((integrable_const (2 * a ^ 2)).add (h2.const_mul 2))
+            ((((measurable_const.sub (hGm.comp (measurable_cons_pair.comp
+              (measurable_id.prodMk measurable_const)))).pow_const 2))).aestronglyMeasurable
+            (Filter.Eventually.of_forall fun y => ?_)
+          rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+          simp only [Pi.add_apply]
+          nlinarith [sq_nonneg (a + G (Fin.cons y q.2))]
+        have hint : ∫ y, (a - G (Fin.cons y q.2)) ∂κ = a - Φ q.2 := by
+          rw [integral_sub (integrable_const a) h1]
+          simp [hΦdef]
+        have := sq_integral_le κ (fun y => a - G (Fin.cons y q.2)) hh1 hh2
+        rw [hint] at this
+        exact this
+      -- the tail resampling energies
+      have hTail : ∀ j : Fin M, ∀ᵐ w ∂(ρ.prod (tμ j)),
+          Integrable (fun x => G (Fin.cons x w.1)) κ := fun j =>
+        measurePreserving_fst.quasiMeasurePreserving.ae hslice1
+      have hAssoc : ∀ j : Fin M, MeasurePreserving
+          (⇑(MeasurableEquiv.prodAssoc :
+            ((ℝ × (Fin M → ℝ)) × ℝ) ≃ᵐ (ℝ × ((Fin M → ℝ) × ℝ))))
+          ((κ.prod ρ).prod (tμ j)) (κ.prod (ρ.prod (tμ j))) :=
+        fun j => measurePreserving_prodAssoc κ ρ (tμ j)
+      have hkeyTail : ∀ j : Fin M,
+          Integrable (fun s : ℝ × ((Fin M → ℝ) × ℝ) =>
+              (G (Fin.cons s.1 s.2.1)
+                - G (Fin.cons s.1 (Function.update s.2.1 j s.2.2))) ^ 2)
+            (κ.prod (ρ.prod (tμ j)))
+          ∧ resampleEnergy μ G (Fin.succAbove 0 j)
+            = ∫ s : ℝ × ((Fin M → ℝ) × ℝ),
+                (G (Fin.cons s.1 s.2.1)
+                  - G (Fin.cons s.1 (Function.update s.2.1 j s.2.2))) ^ 2
+                ∂(κ.prod (ρ.prod (tμ j))) := by
+        intro j
+        have hMPt : MeasurePreserving
+            (fun r : (ℝ × (Fin M → ℝ)) × ℝ =>
+              ((Fin.cons r.1.1 r.1.2 : Fin (M + 1) → ℝ), r.2))
+            ((κ.prod ρ).prod (tμ j)) ((Measure.pi μ).prod (tμ j)) :=
+          hMP.prod (MeasurePreserving.id (tμ j))
+        have hmeasj : Measurable (fun q : (Fin (M + 1) → ℝ) × ℝ =>
+            (G q.1 - G (Function.update q.1 (Fin.succAbove 0 j) q.2)) ^ 2) :=
+          (((hGm.comp measurable_fst).sub
+            (hGm.comp (measurable_update_pair (Fin.succAbove 0 j)))).pow_const 2)
+        have hcongr : ∀ r : (ℝ × (Fin M → ℝ)) × ℝ,
+            (G (Fin.cons r.1.1 r.1.2)
+                - G (Function.update (Fin.cons r.1.1 r.1.2 : Fin (M + 1) → ℝ)
+                  (Fin.succAbove 0 j) r.2)) ^ 2
+              = (G (Fin.cons r.1.1 r.1.2)
+                - G (Fin.cons r.1.1 (Function.update r.1.2 j r.2))) ^ 2 := by
+          intro r
+          rw [Fin.zero_succAbove, ← cons_update_succ]
+        have hmeass : Measurable (fun s : ℝ × ((Fin M → ℝ) × ℝ) =>
+            (G (Fin.cons s.1 s.2.1)
+              - G (Fin.cons s.1 (Function.update s.2.1 j s.2.2))) ^ 2) := by
+          have h1 : Measurable fun s : ℝ × ((Fin M → ℝ) × ℝ) =>
+              G (Fin.cons s.1 s.2.1) :=
+            hGm.comp (measurable_cons_pair.comp (measurable_fst.prodMk
+              (measurable_fst.comp measurable_snd)))
+          have h2 : Measurable fun s : ℝ × ((Fin M → ℝ) × ℝ) =>
+              G (Fin.cons s.1 (Function.update s.2.1 j s.2.2)) :=
+            hGm.comp (measurable_cons_pair.comp (measurable_fst.prodMk
+              ((measurable_update_pair j).comp measurable_snd)))
+          exact ((h1.sub h2).pow_const 2)
+        have htrans := (integrable_comp_mp hMPt _ hmeasj.aestronglyMeasurable
+          (hE (Fin.succAbove 0 j))).congr (Filter.Eventually.of_forall hcongr)
+        constructor
+        · exact integrable_of_comp_mp (hAssoc j) _ hmeass.aestronglyMeasurable htrans
+        · rw [resampleEnergy, integral_comp_mp hMPt _ hmeasj.aestronglyMeasurable,
+            integral_congr_ae (Filter.Eventually.of_forall hcongr),
+            integral_comp_mp (hAssoc j) _ hmeass.aestronglyMeasurable]
+          rfl
+      -- the head average inherits the resampling integrability, coordinate by coordinate
+      have hswap : ∀ j : Fin M, Integrable
+          (fun w : (Fin M → ℝ) × ℝ => ∫ x, (G (Fin.cons x w.1)
+            - G (Fin.cons x (Function.update w.1 j w.2))) ^ 2 ∂κ) (ρ.prod (tμ j)) :=
+        fun j => ((hkeyTail j).1.swap).integral_prod_left
+      have hslicej : ∀ j : Fin M, ∀ᵐ w ∂(ρ.prod (tμ j)),
+          Integrable (fun x => (G (Fin.cons x w.1)
+            - G (Fin.cons x (Function.update w.1 j w.2))) ^ 2) κ :=
+        fun j => (hkeyTail j).1.prod_left_ae
+      have hΦcmp : ∀ j : Fin M, ∀ᵐ w ∂(ρ.prod (tμ j)),
+          (Φ w.1 - Φ (Function.update w.1 j w.2)) ^ 2
+            ≤ ∫ x, (G (Fin.cons x w.1)
+                - G (Fin.cons x (Function.update w.1 j w.2))) ^ 2 ∂κ := by
+        intro j
+        filter_upwards [hTail j, hslicej j] with w h1 h2
+        set h : ℝ → ℝ := fun x => G (Fin.cons x w.1)
+          - G (Fin.cons x (Function.update w.1 j w.2)) with hhdef
+        have hhm : Measurable h := by
+          have e1 : Measurable fun x : ℝ => G (Fin.cons x w.1) :=
+            hGm.comp (measurable_cons_pair.comp (measurable_id.prodMk measurable_const))
+          have e2 : Measurable fun x : ℝ => G (Fin.cons x (Function.update w.1 j w.2)) :=
+            hGm.comp (measurable_cons_pair.comp (measurable_id.prodMk measurable_const))
+          exact e1.sub e2
+        have hhint : Integrable h κ := by
+          refine integrable_abs_of_rpow (p := 2) _ (by norm_num) h hhm.aestronglyMeasurable ?_
+          exact h2.congr (Filter.Eventually.of_forall fun x => (abs_rpow_two (h x)).symm)
+        have hupd : Integrable (fun x => G (Fin.cons x (Function.update w.1 j w.2))) κ :=
+          (h1.sub hhint).congr (Filter.Eventually.of_forall fun x => by
+            show G (Fin.cons x w.1) - h x = G (Fin.cons x (Function.update w.1 j w.2))
+            rw [hhdef]; ring)
+        have hrep : ∫ x, h x ∂κ = Φ w.1 - Φ (Function.update w.1 j w.2) := by
+          rw [hhdef, integral_sub h1 hupd]
+        have := sq_integral_le κ h hhint h2
+        rw [hrep] at this
+        exact this
+      have hEΦ : ∀ j : Fin M, Integrable
+          (fun w : (Fin M → ℝ) × ℝ => (Φ w.1 - Φ (Function.update w.1 j w.2)) ^ 2)
+          ((Measure.pi tμ).prod (tμ j)) := by
+        intro j
+        rw [← hρdef]
+        refine Integrable.mono' (hswap j)
+          ((((hΦm.comp measurable_fst).sub
+            (hΦm.comp (measurable_update_pair j))).pow_const 2)).aestronglyMeasurable ?_
+        filter_upwards [hΦcmp j] with w hw
+        rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+        exact hw
+      have hcmp : ∀ j : Fin M,
+          resampleEnergy tμ Φ j ≤ resampleEnergy μ G (Fin.succAbove 0 j) := by
+        intro j
+        rw [resampleEnergy, ← hρdef, (hkeyTail j).2, integral_prod_symm _ (hkeyTail j).1]
+        exact integral_mono_ae (by simpa [hρdef] using hEΦ j) (hswap j) (hΦcmp j)
+      -- the inductive hypothesis for the head average
+      have hIH := ih tμ htp Φ hΦm hΦ2 hEΦ
+      rw [← hρdef, ← hmeq] at hIH
+      -- assemble
+      have hsplit := Fin.sum_univ_succAbove (fun i : Fin (M + 1) => resampleEnergy μ G i) 0
+      rw [hsplit]
+      have hsum : ∑ j : Fin M, resampleEnergy tμ Φ j
+          ≤ ∑ j : Fin M, resampleEnergy μ G (Fin.succAbove 0 j) :=
+        Finset.sum_le_sum fun j _ => hcmp j
+      have hE0 : 0 ≤ resampleEnergy μ G 0 := resampleEnergy_nonneg μ G 0
+      have hYnn : 0 ≤ ∫ q : ℝ × (Fin M → ℝ),
+          (G (Fin.cons q.1 q.2) - Φ q.2) ^ 2 ∂(κ.prod ρ) :=
+        integral_nonneg fun q => sq_nonneg _
+      have hsumnn : 0 ≤ ∑ j : Fin M, resampleEnergy μ G (Fin.succAbove 0 j) :=
+        Finset.sum_nonneg fun j _ => resampleEnergy_nonneg μ G _
+      nlinarith [hkey, hIH, hHead, hsum, hE0, hYnn, hsumnn, hCC', hC'pos]
+
+/-! ### Resampling one coordinate preserves the product law -/
+
+/-- Reinserting a value at `i` into the restriction of a configuration off `i`
+is the same as updating it at `i`. -/
+theorem insertNth_succAbove_eq_update (i : Fin (N + 1)) (ξ : Fin (N + 1) → ℝ) (y : ℝ) :
+    (Fin.insertNth i y fun j : Fin N => ξ (i.succAbove j)) = Function.update ξ i y := by
+  funext k
+  refine Fin.succAboveCases i ?_ ?_ k <;> simp
+
+/-- Replacing the `i`-th coordinate by an independent sample carries the product
+of the field law with the one-site law back to the field law. -/
+theorem measurePreserving_update (μ : Fin (N + 1) → Measure ℝ)
+    [∀ i, IsProbabilityMeasure (μ i)] (i : Fin (N + 1)) :
+    MeasurePreserving (fun q : (Fin (N + 1) → ℝ) × ℝ => Function.update q.1 i q.2)
+      ((Measure.pi μ).prod (μ i)) (Measure.pi μ) := by
+  classical
+  set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (N + 1) => ℝ) i with hedef
+  set π' : Measure (Fin N → ℝ) := Measure.pi fun j : Fin N => μ (i.succAbove j) with hπ'
+  haveI : ∀ j : Fin N, IsProbabilityMeasure (μ (i.succAbove j)) := fun j => inferInstance
+  haveI : IsProbabilityMeasure π' := by rw [hπ']; infer_instance
+  have he : MeasurePreserving e (Measure.pi μ) ((μ i).prod π') :=
+    measurePreserving_piFinSuccAbove μ i
+  have h1 : MeasurePreserving (Prod.map (⇑e) (id : ℝ → ℝ))
+      ((Measure.pi μ).prod (μ i)) (((μ i).prod π').prod (μ i)) :=
+    he.prod (MeasurePreserving.id (μ i))
+  have h2 : MeasurePreserving
+      (Prod.map (Prod.snd : ℝ × (Fin N → ℝ) → (Fin N → ℝ)) (id : ℝ → ℝ))
+      (((μ i).prod π').prod (μ i)) (π'.prod (μ i)) :=
+    measurePreserving_snd.prod (MeasurePreserving.id (μ i))
+  have h3 : MeasurePreserving (Prod.swap : (Fin N → ℝ) × ℝ → ℝ × (Fin N → ℝ))
+      (π'.prod (μ i)) ((μ i).prod π') := Measure.measurePreserving_swap
+  have h4 : MeasurePreserving (⇑e.symm) ((μ i).prod π') (Measure.pi μ) := he.symm e
+  have hcomp := h4.comp (h3.comp (h2.comp h1))
+  refine hcomp.congr (measurable_update_pair i) (Filter.Eventually.of_forall fun q => ?_)
+  show e.symm (Prod.swap (Prod.map Prod.snd id (Prod.map (⇑e) id q)))
+      = Function.update q.1 i q.2
+  have : (Prod.swap (Prod.map (Prod.snd : ℝ × (Fin N → ℝ) → (Fin N → ℝ)) (id : ℝ → ℝ)
+      (Prod.map (⇑e) (id : ℝ → ℝ) q)) : ℝ × (Fin N → ℝ))
+      = (q.2, fun j : Fin N => q.1 (i.succAbove j)) := rfl
+  rw [this, hedef, MeasurableEquiv.piFinSuccAbove_symm_apply]
+  simp only [Fin.insertNthEquiv]
+  exact insertNth_succAbove_eq_update i q.1 q.2
+
+/-- The resampling map preserves the product law, for any number of
+coordinates. -/
+theorem measurePreserving_update' {M : ℕ} (μ : Fin M → Measure ℝ)
+    [∀ i, IsProbabilityMeasure (μ i)] (i : Fin M) :
+    MeasurePreserving (fun q : (Fin M → ℝ) × ℝ => Function.update q.1 i q.2)
+      ((Measure.pi μ).prod (μ i)) (Measure.pi μ) := by
+  have hM : 0 < M := i.pos
+  obtain ⟨K, rfl⟩ : ∃ K, M = K + 1 := ⟨M - 1, by omega⟩
+  exact measurePreserving_update μ i
+
 end LatticeProb
