@@ -14,6 +14,7 @@ off it.
 -/
 import Mathlib
 import LatticeProb.Graph.Walk
+import LatticeProb.Graph.WalkLemmas
 import LatticeProb.Prob.InfinitePiSplit
 
 open MeasureTheory
@@ -577,6 +578,40 @@ theorem markov_stopping (hdeg : ∀ v : V, 0 < G.degree v) (N : ℕ) (x : V)
         (integral_finsetSum _ hintR).symm
     _ = ∫ X, pathExp G F (X (τ X)) * H X ∂(walkLaw G x) :=
         integral_congr_ae (Filter.Eventually.of_forall fun X => (hsplitR X).symm)
+
+/-! ### The finite-horizon average is the integral against the law -/
+
+/-- **The walk operator and the law of the walk agree** on every bounded
+measurable functional settled by the positions up to the horizon.  This is the
+general-graph form of `LatticeProb.Graph.walkAverageIsIntegral`. -/
+theorem walkExp_eq_integral (hdeg : ∀ v : V, 0 < G.degree v) :
+    ∀ (n : ℕ) (x : V) (F : (ℕ → V) → ℝ), Measurable F → ∀ C : ℝ, (∀ X, ‖F X‖ ≤ C) →
+      DependsUpTo n F → walkExp G n x F = ∫ X, F X ∂(walkLaw G x) := by
+  intro n
+  induction n with
+  | zero =>
+      intro x F hFm C hFb hF
+      have hae : ∀ᵐ X ∂(walkLaw G x), F X = F (fun _ => x) := by
+        filter_upwards [ae_walkLaw_start x] with X hX
+        exact hF X _ fun k hk => by simpa [Nat.le_zero.mp hk] using hX
+      rw [integral_congr_ae hae, integral_const]
+      simp [walkExp, measureReal_def]
+  | succ n ih =>
+      intro x F hFm C hFb hF
+      have hFdeg : (0 : ℝ) < G.degree x := by exact_mod_cast hdeg x
+      rw [walkExp_succ, integral_walkLaw_firstStep x (hdeg x) F hFm hFb]
+      have hcons : ∀ y : V, walkExp G n y (fun X => F (cons x X))
+          = ∫ X, F (cons x X) ∂(walkLaw G y) := by
+        intro y
+        refine ih y (fun X => F (cons x X)) (hFm.comp (measurable_cons x)) C
+          (fun X => hFb _) ?_
+        intro X Y hXY
+        refine hF _ _ fun k hk => ?_
+        cases k with
+        | zero => rfl
+        | succ k => exact hXY k (by omega)
+      rw [Finset.sum_congr rfl fun y _ => hcons y]
+      field_simp
 
 end Markov
 
