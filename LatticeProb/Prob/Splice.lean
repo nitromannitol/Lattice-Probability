@@ -210,6 +210,31 @@ theorem integral_partialInt (S : Set ι) [DecidablePred (· ∈ S)] {F : (Π i, 
   rw [← h, integral_prod _ (integrable_comp_comb μ S hF)]
   rfl
 
+/-- Jensen for the partial integral: the square of the average is at most the
+average of the square. -/
+theorem sq_partialInt_le (S : Set ι) [DecidablePred (· ∈ S)] {F : (Π i, X i) → ℝ}
+    (hF : Integrable F (Measure.infinitePi μ))
+    (hF2 : Integrable (fun ω => F ω ^ 2) (Measure.infinitePi μ)) :
+    ∀ᵐ ω ∂(Measure.infinitePi μ),
+      (partialInt μ S F ω) ^ 2 ≤ partialInt μ S (fun x => F x ^ 2) ω := by
+  filter_upwards [(integrable_comp_comb μ S hF).prod_right_ae,
+    (integrable_comp_comb μ S hF2).prod_right_ae] with ω hω1 hω2
+  exact sq_integral_le _ _ hω1 hω2
+
+/-- The partial integral of a square-integrable functional is square
+integrable. -/
+theorem integrable_sq_partialInt (S : Set ι) [DecidablePred (· ∈ S)] {F : (Π i, X i) → ℝ}
+    (hFm : Measurable F) (hF : Integrable F (Measure.infinitePi μ))
+    (hF2 : Integrable (fun ω => F ω ^ 2) (Measure.infinitePi μ)) :
+    Integrable (fun ω => (partialInt μ S F ω) ^ 2) (Measure.infinitePi μ) := by
+  refine Integrable.mono (integrable_partialInt μ S hF2)
+    (((measurable_partialInt μ S hFm).pow_const 2).aestronglyMeasurable) ?_
+  filter_upwards [sq_partialInt_le μ S hF hF2] with ω hω
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
+  rw [abs_of_nonneg (show (0:ℝ) ≤ partialInt μ S (fun ω => F ω ^ 2) ω from
+    integral_nonneg fun _ => sq_nonneg _)]
+  exact hω
+
 /-- **The defining property of the partial integral.**  Against a functional
 that reads only the coordinates in `S`, the partial integral and the functional
 itself have the same integral.  Holding for every such multiplier is the
