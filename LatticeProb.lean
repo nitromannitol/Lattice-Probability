@@ -59,6 +59,7 @@ import LatticeProb.Prob.BK
 import LatticeProb.Prob.InfinitePiSplit
 import LatticeProb.Prob.Coordinate
 import LatticeProb.Prob.CoordIntegral
+import LatticeProb.Prob.MapPi
 import LatticeProb.Prob.Exploration
 import LatticeProb.Prob.Exposure
 import LatticeProb.Prob.CountableMeasurable
@@ -81,6 +82,8 @@ import LatticeProb.Graph.RWRepresentation
 import LatticeProb.Graph.Zd
 import LatticeProb.Graph.WalkAverage
 import LatticeProb.Graph.ZdRepresentation
+import LatticeProb.Graph.Killed
+import LatticeProb.Graph.ZdKilled
 import LatticeProb.Prob.Birkhoff
 import LatticeProb.Network.Basic
 import LatticeProb.Network.Killed
