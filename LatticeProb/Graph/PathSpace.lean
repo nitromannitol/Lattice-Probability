@@ -613,6 +613,84 @@ theorem walkExp_eq_integral (hdeg : ∀ v : V, 0 < G.degree v) :
       rw [Finset.sum_congr rfl fun y _ => hcons y]
       field_simp
 
+/-! ### The probability of following a prescribed walk -/
+
+omit [Countable V] [DecidableEq V] in
+theorem measurableSet_prefix (w : ℕ → V) (m : ℕ) :
+    MeasurableSet {X : ℕ → V | ∀ k ≤ m, X k = w k} := by
+  have he : {X : ℕ → V | ∀ k ≤ m, X k = w k}
+      = ⋂ k ∈ Finset.range (m + 1), (fun X : ℕ → V => X k) ⁻¹' {w k} := by
+    ext X
+    simp only [Set.mem_setOf_eq, Set.mem_iInter, Finset.mem_range, Set.mem_preimage,
+      Set.mem_singleton_iff]
+    exact ⟨fun h k hk => h k (by omega), fun h k hk => h k (by omega)⟩
+  rw [he]
+  exact MeasurableSet.biInter (Finset.range (m + 1)).countable_toSet
+    fun k _ => (measurable_pi_apply k) (MeasurableSet.singleton (w k))
+
+omit [DecidableEq V] in
+theorem walkLaw_prefix_of_ne (x : V) {w : ℕ → V} (hx : x ≠ w 0) (m : ℕ) :
+    walkLaw G x {X : ℕ → V | ∀ k ≤ m, X k = w k} = 0 := by
+  have hnull : walkLaw G x {X : ℕ → V | ¬ X 0 = x} = 0 := by
+    rw [← ae_iff]
+    exact ae_walkLaw_start (G := G) x
+  refine measure_mono_null (fun X hX => ?_) hnull
+  exact fun hc => hx (hc.symm.trans (hX 0 (Nat.zero_le m)))
+
+/-- **The probability of following a prescribed walk** is the product of the
+reciprocal degrees along it. -/
+theorem walkLaw_prefix (hdeg : ∀ v : V, 0 < G.degree v) :
+    ∀ (m : ℕ) (w : ℕ → V), (∀ k < m, G.Adj (w k) (w (k + 1))) →
+      walkLaw G (w 0) {X : ℕ → V | ∀ k ≤ m, X k = w k}
+        = ∏ k ∈ Finset.range m, ((G.degree (w k) : ℝ≥0∞))⁻¹ := by
+  classical
+  intro m
+  induction m with
+  | zero =>
+      intro w _
+      rw [Finset.range_zero, Finset.prod_empty]
+      have hz : walkLaw G (w 0) {X : ℕ → V | ∀ k ≤ 0, X k = w k}ᶜ = 0 := by
+        have hset : {X : ℕ → V | ∀ k ≤ 0, X k = w k}ᶜ
+            = {X : ℕ → V | ¬ ∀ k ≤ 0, X k = w k} := rfl
+        rw [hset, ← ae_iff]
+        filter_upwards [ae_walkLaw_start (G := G) (w 0)] with X hX k hk
+        rw [Nat.le_zero.mp hk]
+        exact hX
+      exact (prob_compl_eq_zero_iff (measurableSet_prefix w 0)).mp hz
+  | succ m ih =>
+      intro w hw
+      set x : V := w 0 with hx
+      set v : V := w 1 with hv
+      have hadj : G.Adj x v := hw 0 (by omega)
+      have hmem : v ∈ G.neighborFinset x := (SimpleGraph.mem_neighborFinset G x v).mpr hadj
+      rw [walkLaw_firstStep x (hdeg x), Measure.smul_apply, Measure.coe_finsetSum,
+        Finset.sum_apply, smul_eq_mul]
+      have hpre : ∀ y : V,
+          ((walkLaw G y).map (cons x)) {X : ℕ → V | ∀ k ≤ m + 1, X k = w k}
+            = walkLaw G y {X : ℕ → V | ∀ k ≤ m, X k = w (k + 1)} := by
+        intro y
+        rw [Measure.map_apply (measurable_cons x) (measurableSet_prefix w (m + 1))]
+        congr 1
+        ext X
+        simp only [Set.mem_preimage, Set.mem_setOf_eq]
+        constructor
+        · intro h k hk
+          exact h (k + 1) (by omega)
+        · intro h k hk
+          cases k with
+          | zero => rfl
+          | succ k => exact h k (by omega)
+      simp only [hpre]
+      have hterm : ∀ y ∈ G.neighborFinset x, y ≠ v →
+          walkLaw G y {X : ℕ → V | ∀ k ≤ m, X k = w (k + 1)} = 0 := by
+        intro y _ hy
+        exact walkLaw_prefix_of_ne y (by simpa [hv] using hy) m
+      have hshift : walkLaw G v {X : ℕ → V | ∀ k ≤ m, X k = w (k + 1)}
+          = ∏ k ∈ Finset.range m, ((G.degree (w (k + 1)) : ℝ≥0∞))⁻¹ :=
+        ih (fun k => w (k + 1)) fun k hk => hw (k + 1) (by omega)
+      rw [Finset.sum_eq_single_of_mem v hmem hterm, hshift, Finset.prod_range_succ']
+      exact mul_comm _ _
+
 end Markov
 
 end LatticeProb.Graph
