@@ -102,3 +102,6 @@ import LatticeProb.Prob.EfronSteinCov
 import LatticeProb.Prob.FiniteMarginal
 import LatticeProb.Prob.Splice
 import LatticeProb.Prob.EfronSteinCountable
+import LatticeProb.Gauss.Limit
+import LatticeProb.Gauss.Coords
+import LatticeProb.Gauss.Isonormal
