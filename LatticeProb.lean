@@ -99,3 +99,5 @@ import LatticeProb.Prob.PiSum
 import LatticeProb.ParticleDriven
 import LatticeProb.Prob.EfronSteinCov
 import LatticeProb.Prob.FiniteMarginal
+import LatticeProb.Prob.Splice
+import LatticeProb.Prob.EfronSteinCountable
