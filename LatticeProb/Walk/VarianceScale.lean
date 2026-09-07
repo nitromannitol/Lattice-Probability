@@ -250,6 +250,126 @@ theorem diagSum_le_three_of_five_le (hd : 5 ≤ d) (t : ℕ) : diagSum d t ≤ 3
   refine (Finset.sum_le_sum hterm).trans ?_
   exact sum_rpow_three_halves_le t
 
+/-! ### Lower bounds for the one-dimensional sum -/
+
+/-- The harmonic sum dominates the logarithm. -/
+theorem log_le_sum_inv (m : ℕ) :
+    Real.log (m : ℝ) ≤ ∑ n ∈ Finset.Ico 1 m, ((n : ℝ))⁻¹ := by
+  induction m with
+  | zero => simp
+  | succ m ih =>
+      rcases Nat.eq_zero_or_pos m with hm | hm
+      · subst hm; simp
+      · have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm
+        rw [Finset.sum_Ico_succ_top hm]
+        have hstep : Real.log ((m : ℝ) + 1) - Real.log (m : ℝ) ≤ ((m : ℝ))⁻¹ := by
+          have hdiv : Real.log (((m : ℝ) + 1) / (m : ℝ))
+              = Real.log ((m : ℝ) + 1) - Real.log (m : ℝ) :=
+            Real.log_div (by linarith) hmpos.ne'
+          have hle : Real.log (((m : ℝ) + 1) / (m : ℝ)) ≤ ((m : ℝ) + 1) / (m : ℝ) - 1 :=
+            Real.log_le_sub_one_of_pos (by positivity)
+          have heq : ((m : ℝ) + 1) / (m : ℝ) - 1 = ((m : ℝ))⁻¹ := by
+            field_simp
+            ring
+          rw [hdiv, heq] at hle
+          exact hle
+        have hcast : ((m + 1 : ℕ) : ℝ) = (m : ℝ) + 1 := by push_cast; ring
+        rw [hcast]
+        linarith
+
+theorem sum_Ico_cast (m : ℕ) :
+    ∑ s ∈ Finset.Ico 1 m, (s : ℝ) = (m : ℝ) * ((m : ℝ) - 1) / 2 := by
+  induction m with
+  | zero => simp
+  | succ m ih =>
+      rcases Nat.eq_zero_or_pos m with hm | hm
+      · subst hm; simp
+      · rw [Finset.sum_Ico_succ_top hm, ih]
+        push_cast
+        ring
+
+theorem diagSum_one_ge {m : ℕ} (hm : 2 ≤ m) : (m : ℝ) * Real.sqrt m / 4 ≤ diagSum 1 m := by
+  have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+  have hm2 : (2 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+  have hsm : (0 : ℝ) < Real.sqrt (m : ℝ) := Real.sqrt_pos.mpr hmpos
+  have hterm : ∀ s ∈ Finset.Ico 1 m, (s : ℝ) / Real.sqrt m ≤ (s : ℝ) / Real.sqrt s ^ 1 := by
+    intro s hs
+    rw [Finset.mem_Ico] at hs
+    have hspos : (0 : ℝ) < (s : ℝ) := by exact_mod_cast hs.1
+    have hss : (s : ℝ) ≤ (m : ℝ) := by exact_mod_cast hs.2.le
+    have hsp : (0 : ℝ) < Real.sqrt (s : ℝ) := Real.sqrt_pos.mpr hspos
+    rw [pow_one]
+    exact div_le_div_of_nonneg_left hspos.le hsp (Real.sqrt_le_sqrt hss)
+  have hsum : ∑ s ∈ Finset.Ico 1 m, (s : ℝ) / Real.sqrt m
+      = ((m : ℝ) * ((m : ℝ) - 1) / 2) / Real.sqrt m := by
+    rw [← Finset.sum_div, sum_Ico_cast]
+  refine le_trans ?_ (Finset.sum_le_sum hterm)
+  rw [hsum, div_div, le_div_iff₀ (by positivity : (0 : ℝ) < 2 * Real.sqrt (m : ℝ))]
+  have hsq : Real.sqrt (m : ℝ) ^ 2 = (m : ℝ) := Real.sq_sqrt hmpos.le
+  nlinarith [hsm.le, hsq, hm2]
+
+theorem diagSum_two_ge {m : ℕ} (hm : 2 ≤ m) : (m : ℝ) / 2 ≤ diagSum 2 m := by
+  rw [diagSum]
+  have hterm : ∀ s ∈ Finset.Ico 1 m, (1 : ℝ) = (s : ℝ) / Real.sqrt s ^ 2 := by
+    intro s hs
+    rw [Finset.mem_Ico] at hs
+    have hspos : (0 : ℝ) < (s : ℝ) := by exact_mod_cast hs.1
+    rw [Real.sq_sqrt hspos.le, div_self hspos.ne']
+  rw [← Finset.sum_congr rfl hterm, Finset.sum_const, Nat.card_Ico, nsmul_eq_mul, mul_one]
+  have h : ((m - 1 : ℕ) : ℝ) = (m : ℝ) - 1 := by
+    have hm1 : 1 ≤ m := by omega
+    rw [Nat.cast_sub hm1, Nat.cast_one]
+  rw [h]
+  have hm2 : (2 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+  linarith
+
+theorem diagSum_three_ge {m : ℕ} (hm : 2 ≤ m) : Real.sqrt m / 2 ≤ diagSum 3 m := by
+  have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+  have hm2 : (2 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+  have hsm : (0 : ℝ) < Real.sqrt (m : ℝ) := Real.sqrt_pos.mpr hmpos
+  rw [diagSum]
+  have hterm : ∀ s ∈ Finset.Ico 1 m, (1 : ℝ) / Real.sqrt m ≤ (s : ℝ) / Real.sqrt s ^ 3 := by
+    intro s hs
+    rw [Finset.mem_Ico] at hs
+    have hspos : (0 : ℝ) < (s : ℝ) := by exact_mod_cast hs.1
+    have hss : (s : ℝ) ≤ (m : ℝ) := by exact_mod_cast hs.2.le
+    have hsp : (0 : ℝ) < Real.sqrt (s : ℝ) := Real.sqrt_pos.mpr hspos
+    rw [sqrt_pow_three _ hspos.le]
+    have heq : (s : ℝ) / ((s : ℝ) * Real.sqrt s) = 1 / Real.sqrt s := by
+      field_simp
+    rw [heq]
+    exact div_le_div_of_nonneg_left (by norm_num) hsp (Real.sqrt_le_sqrt hss)
+  refine le_trans ?_ (Finset.sum_le_sum hterm)
+  rw [Finset.sum_const, Nat.card_Ico, nsmul_eq_mul]
+  have h : ((m - 1 : ℕ) : ℝ) = (m : ℝ) - 1 := by
+    have hm1 : 1 ≤ m := by omega
+    rw [Nat.cast_sub hm1, Nat.cast_one]
+  rw [h]
+  have hsq : Real.sqrt (m : ℝ) ^ 2 = (m : ℝ) := Real.sq_sqrt hmpos.le
+  rw [div_le_iff₀ (by norm_num : (0 : ℝ) < 2), mul_one_div, div_mul_eq_mul_div,
+    le_div_iff₀ hsm]
+  nlinarith [hsm.le, hsq, hm2]
+
+theorem diagSum_four_ge (m : ℕ) : Real.log (m : ℝ) ≤ diagSum 4 m := by
+  rw [diagSum]
+  have hterm : ∀ s ∈ Finset.Ico 1 m, ((s : ℝ))⁻¹ = (s : ℝ) / Real.sqrt s ^ 4 := by
+    intro s hs
+    rw [Finset.mem_Ico] at hs
+    have hspos : (0 : ℝ) < (s : ℝ) := by exact_mod_cast hs.1
+    rw [sqrt_pow_four _ hspos.le]
+    field_simp
+  rw [← Finset.sum_congr rfl hterm]
+  exact log_le_sum_inv m
+
+theorem one_le_diagSum {m : ℕ} (hm : 2 ≤ m) : 1 ≤ diagSum d m := by
+  rw [diagSum]
+  have h1 : (1 : ℕ) ∈ Finset.Ico 1 m := Finset.mem_Ico.mpr ⟨le_rfl, by omega⟩
+  have hterm : ∀ s ∈ Finset.Ico 1 m, (0 : ℝ) ≤ (s : ℝ) / Real.sqrt s ^ d := by
+    intro s _
+    positivity
+  refine le_trans ?_ (Finset.single_le_sum hterm h1)
+  norm_num
+
 /-! ### The tail term -/
 
 theorem tail_eq_one {t : ℕ} (ht : 1 ≤ t) :
@@ -386,5 +506,253 @@ theorem exists_tsum_srwGreen_sq_le (hd : 1 ≤ d) :
     have hB : (t : ℝ) ^ 2 / Real.sqrt t ^ d ≤ 1 := tail_le_one_of_four_le (by omega) ht1
     rw [hrate, mul_one]
     nlinarith [hmaster, hA, hKpos, hB]
+
+/-! ### The lower half of the table -/
+
+/-- **The even times carry the lower bound.**  Only times of the form `2n` have
+a positive return probability, and those alone already give `2c · diagSum`. -/
+theorem two_mul_diagSum_le {c : ℝ}
+    (hlow : ∀ n : ℕ, 1 ≤ n → c / Real.sqrt n ^ d ≤ srwHeat d (2 * n) 0) (t : ℕ) :
+    2 * c * diagSum d ((t + 1) / 2)
+      ≤ ∑ s ∈ Finset.range t, ((s : ℝ) + 1) * srwHeat d s 0 := by
+  classical
+  set m := (t + 1) / 2 with hm
+  have hstep : 2 * c * diagSum d m
+      = ∑ n ∈ Finset.Ico 1 m, 2 * c * ((n : ℝ) / Real.sqrt n ^ d) := by
+    rw [diagSum, Finset.mul_sum]
+  have hle1 : ∀ n ∈ Finset.Ico 1 m,
+      2 * c * ((n : ℝ) / Real.sqrt n ^ d)
+        ≤ (((2 * n : ℕ) : ℝ) + 1) * srwHeat d (2 * n) 0 := by
+    intro n hn
+    rw [Finset.mem_Ico] at hn
+    have hn1 : 1 ≤ n := hn.1
+    have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn1
+    have hp : c / Real.sqrt n ^ d ≤ srwHeat d (2 * n) 0 := hlow n hn1
+    have hpnn : (0 : ℝ) ≤ srwHeat d (2 * n) 0 := srwHeat_nonneg _ _
+    have hcast : ((2 * n : ℕ) : ℝ) = 2 * (n : ℝ) := by push_cast; ring
+    rw [hcast]
+    have h1 : 2 * c * ((n : ℝ) / Real.sqrt n ^ d) = (2 * (n : ℝ)) * (c / Real.sqrt n ^ d) := by
+      ring
+    rw [h1]
+    nlinarith
+  have hinj : ∀ a ∈ Finset.Ico 1 m, ∀ b ∈ Finset.Ico 1 m, 2 * a = 2 * b → a = b := by
+    intro a _ b _ h
+    omega
+  have himg : ∑ s ∈ (Finset.Ico 1 m).image (fun n : ℕ => 2 * n), ((s : ℝ) + 1) * srwHeat d s 0
+      = ∑ n ∈ Finset.Ico 1 m, (((2 * n : ℕ) : ℝ) + 1) * srwHeat d (2 * n) 0 := by
+    rw [Finset.sum_image hinj]
+  have hsub : (Finset.Ico 1 m).image (fun n : ℕ => 2 * n) ⊆ Finset.range t := by
+    intro s hs
+    obtain ⟨n, hn, rfl⟩ := Finset.mem_image.mp hs
+    rw [Finset.mem_Ico] at hn
+    rw [Finset.mem_range]
+    omega
+  calc 2 * c * diagSum d m
+      = ∑ n ∈ Finset.Ico 1 m, 2 * c * ((n : ℝ) / Real.sqrt n ^ d) := hstep
+    _ ≤ ∑ n ∈ Finset.Ico 1 m, (((2 * n : ℕ) : ℝ) + 1) * srwHeat d (2 * n) 0 :=
+        Finset.sum_le_sum hle1
+    _ = ∑ s ∈ (Finset.Ico 1 m).image (fun n : ℕ => 2 * n), ((s : ℝ) + 1) * srwHeat d s 0 :=
+        himg.symm
+    _ ≤ ∑ s ∈ Finset.range t, ((s : ℝ) + 1) * srwHeat d s 0 :=
+        Finset.sum_le_sum_of_subset_of_nonneg hsub
+          (fun (s : ℕ) _ _ => mul_nonneg (by positivity) (srwHeat_nonneg (d := d) s 0))
+
+/-- The variance scale is at least one, from the time `s = 0` alone. -/
+theorem one_le_tsum_srwGreen_sq {t : ℕ} (ht : 1 ≤ t) :
+    1 ≤ ∑' y : Site d, srwGreen d t y ^ 2 := by
+  refine le_trans ?_ (le_tsum_srwGreen_sq t)
+  have h0 : (0 : ℕ) ∈ Finset.range t := Finset.mem_range.mpr (by omega)
+  have hterm : ∀ s ∈ Finset.range t, (0 : ℝ) ≤ ((s : ℝ) + 1) * srwHeat d s 0 := by
+    intro s _
+    exact mul_nonneg (by positivity) (srwHeat_nonneg s 0)
+  refine le_trans ?_ (Finset.single_le_sum hterm h0)
+  have : srwHeat d 0 (0 : Site d) = 1 := by simp
+  rw [this]
+  norm_num
+
+theorem sqrt_two_le : Real.sqrt 2 ≤ 3 / 2 := by
+  have h : Real.sqrt 2 ^ 2 = 2 := Real.sq_sqrt (by norm_num)
+  nlinarith [Real.sqrt_nonneg (2 : ℝ)]
+
+theorem varianceRate_nonneg (d : ℕ) {t : ℕ} (ht : 2 ≤ t) : 0 ≤ varianceRate d t := by
+  have ht2 : (2 : ℝ) ≤ (t : ℝ) := by exact_mod_cast ht
+  rw [varianceRate]
+  split_ifs
+  · positivity
+  · linarith
+  · positivity
+  · exact Real.log_nonneg (by linarith)
+  · norm_num
+
+theorem varianceRate_two_le (d : ℕ) : varianceRate d 2 ≤ 3 := by
+  rw [varianceRate]
+  split_ifs
+  · have h2 : (0 : ℝ) < 2 := by norm_num
+    have hc2 : ((2 : ℕ) : ℝ) = (2 : ℝ) := by norm_num
+    rw [hc2, show (3 : ℝ) / 2 = 1 + 1 / 2 by norm_num, Real.rpow_add h2, Real.rpow_one,
+      ← Real.sqrt_eq_rpow]
+    have := sqrt_two_le
+    nlinarith
+  · norm_num
+  · have hc2 : ((2 : ℕ) : ℝ) = (2 : ℝ) := by norm_num
+    rw [hc2, ← Real.sqrt_eq_rpow]
+    have := sqrt_two_le
+    nlinarith
+  · have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 2 by norm_num)
+    push_cast
+    linarith
+  · norm_num
+
+/-- **The lower half of `eq:Qt-table`.**  In every dimension the variance scale
+`∑_y g_t(0,y)^2` is at least a constant times the rate. -/
+theorem exists_le_tsum_srwGreen_sq (hd : 1 ≤ d) :
+    ∃ c : ℝ, 0 < c ∧ ∀ t : ℕ, 2 ≤ t →
+      c * varianceRate d t ≤ ∑' y : Site d, srwGreen d t y ^ 2 := by
+  have hdpos : 0 < d := hd
+  obtain ⟨c₀, C₀, hc₀, hC₀, hbounds⟩ := exists_srwHeat_diag_bounds hdpos
+  have hlow : ∀ n : ℕ, 1 ≤ n → c₀ / Real.sqrt n ^ d ≤ srwHeat d (2 * n) 0 :=
+    fun n hn => (hbounds n hn).1
+  have hbase : ∀ t : ℕ, 2 * c₀ * diagSum d ((t + 1) / 2)
+      ≤ ∑' y : Site d, srwGreen d t y ^ 2 :=
+    fun t => (two_mul_diagSum_le hlow t).trans (le_tsum_srwGreen_sq t)
+  have hsmall : ∀ t : ℕ, 2 ≤ t → t < 3 →
+      (1 / 3 : ℝ) * varianceRate d t ≤ ∑' y : Site d, srwGreen d t y ^ 2 := by
+    intro t ht ht3
+    have ht2 : t = 2 := by omega
+    subst ht2
+    have h1 : (1 : ℝ) ≤ ∑' y : Site d, srwGreen d 2 y ^ 2 :=
+      one_le_tsum_srwGreen_sq (by omega)
+    have h2 := varianceRate_two_le d
+    linarith
+  have hcast : ∀ t : ℕ, 3 ≤ t → (t : ℝ) ≤ 2 * (((t + 1) / 2 : ℕ) : ℝ) := by
+    intro t ht
+    have : t ≤ 2 * ((t + 1) / 2) := by omega
+    exact_mod_cast this
+  have hm2 : ∀ t : ℕ, 3 ≤ t → 2 ≤ (t + 1) / 2 := by intro t ht; omega
+  by_cases h1 : d = 1
+  · subst h1
+    refine ⟨min (c₀ / 16) (1 / 3), by positivity, fun t ht => ?_⟩
+    by_cases ht3 : 3 ≤ t
+    · have hmm := hm2 t ht3
+      have hct := hcast t ht3
+      set m : ℕ := (t + 1) / 2 with hmdef
+      have htpos : (0 : ℝ) < (t : ℝ) := by exact_mod_cast (by omega : 0 < t)
+      have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+      have hu : Real.sqrt (m : ℝ) ^ 2 = (m : ℝ) := Real.sq_sqrt hmpos.le
+      have hv : Real.sqrt (t : ℝ) ^ 2 = (t : ℝ) := Real.sq_sqrt htpos.le
+      have hun : (0 : ℝ) ≤ Real.sqrt (m : ℝ) := Real.sqrt_nonneg _
+      have hvn : (0 : ℝ) ≤ Real.sqrt (t : ℝ) := Real.sqrt_nonneg _
+      have hvu : Real.sqrt (t : ℝ) ≤ 2 * Real.sqrt (m : ℝ) := by nlinarith
+      have hrate : varianceRate 1 t = (t : ℝ) * Real.sqrt t := by
+        rw [varianceRate, if_pos rfl, show (3 : ℝ) / 2 = 1 + 1 / 2 by norm_num,
+          Real.rpow_add htpos, Real.rpow_one, ← Real.sqrt_eq_rpow]
+      have hA := diagSum_one_ge hmm
+      have hb := hbase t
+      have hcube : (t : ℝ) * Real.sqrt t ≤ 8 * ((m : ℝ) * Real.sqrt m) := by nlinarith
+      have hstep : c₀ / 16 * varianceRate 1 t ≤ ∑' y : Site 1, srwGreen 1 t y ^ 2 := by
+        rw [hrate]
+        nlinarith
+      refine le_trans (mul_le_mul_of_nonneg_right (min_le_left _ _)
+        (varianceRate_nonneg 1 ht)) hstep
+    · exact le_trans (mul_le_mul_of_nonneg_right (min_le_right _ _)
+        (varianceRate_nonneg 1 ht)) (hsmall t ht (by omega))
+  by_cases h2 : d = 2
+  · subst h2
+    refine ⟨min (c₀ / 2) (1 / 3), by positivity, fun t ht => ?_⟩
+    by_cases ht3 : 3 ≤ t
+    · have hmm := hm2 t ht3
+      have hct := hcast t ht3
+      have hrate : varianceRate 2 t = (t : ℝ) := by
+        rw [varianceRate, if_neg (by norm_num), if_pos rfl]
+      have hA := diagSum_two_ge hmm
+      have hb := hbase t
+      have hstep : c₀ / 2 * varianceRate 2 t ≤ ∑' y : Site 2, srwGreen 2 t y ^ 2 := by
+        rw [hrate]
+        nlinarith
+      exact le_trans (mul_le_mul_of_nonneg_right (min_le_left _ _)
+        (varianceRate_nonneg 2 ht)) hstep
+    · exact le_trans (mul_le_mul_of_nonneg_right (min_le_right _ _)
+        (varianceRate_nonneg 2 ht)) (hsmall t ht (by omega))
+  by_cases h3 : d = 3
+  · subst h3
+    refine ⟨min (c₀ / 2) (1 / 3), by positivity, fun t ht => ?_⟩
+    by_cases ht3 : 3 ≤ t
+    · have hmm := hm2 t ht3
+      have hct := hcast t ht3
+      set m : ℕ := (t + 1) / 2 with hmdef
+      have htpos : (0 : ℝ) < (t : ℝ) := by exact_mod_cast (by omega : 0 < t)
+      have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+      have hu : Real.sqrt (m : ℝ) ^ 2 = (m : ℝ) := Real.sq_sqrt hmpos.le
+      have hv : Real.sqrt (t : ℝ) ^ 2 = (t : ℝ) := Real.sq_sqrt htpos.le
+      have hun : (0 : ℝ) ≤ Real.sqrt (m : ℝ) := Real.sqrt_nonneg _
+      have hvn : (0 : ℝ) ≤ Real.sqrt (t : ℝ) := Real.sqrt_nonneg _
+      have hvu : Real.sqrt (t : ℝ) ≤ 2 * Real.sqrt (m : ℝ) := by nlinarith
+      have hrate : varianceRate 3 t = Real.sqrt t := by
+        rw [varianceRate, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl,
+          ← Real.sqrt_eq_rpow]
+      have hA := diagSum_three_ge hmm
+      have hb := hbase t
+      have hstep : c₀ / 2 * varianceRate 3 t ≤ ∑' y : Site 3, srwGreen 3 t y ^ 2 := by
+        rw [hrate]
+        nlinarith
+      exact le_trans (mul_le_mul_of_nonneg_right (min_le_left _ _)
+        (varianceRate_nonneg 3 ht)) hstep
+    · exact le_trans (mul_le_mul_of_nonneg_right (min_le_right _ _)
+        (varianceRate_nonneg 3 ht)) (hsmall t ht (by omega))
+  by_cases h4 : d = 4
+  · subst h4
+    have hlog2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
+    refine ⟨min (2 * c₀ / (1 + Real.log 2)) (1 / 3), by positivity, fun t ht => ?_⟩
+    by_cases ht3 : 3 ≤ t
+    · have hmm := hm2 t ht3
+      have hct := hcast t ht3
+      set m : ℕ := (t + 1) / 2 with hmdef
+      have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+      have htpos : (0 : ℝ) < (t : ℝ) := by exact_mod_cast (by omega : 0 < t)
+      have hrate : varianceRate 4 t = Real.log (t : ℝ) := by
+        rw [varianceRate, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num),
+          if_pos rfl]
+      have hlogle : Real.log (t : ℝ) ≤ Real.log 2 + Real.log (m : ℝ) := by
+        have h2m : Real.log (t : ℝ) ≤ Real.log (2 * (m : ℝ)) :=
+          Real.log_le_log htpos hct
+        rwa [Real.log_mul (by norm_num) hmpos.ne'] at h2m
+      have hA := diagSum_four_ge m
+      have hA1 : (1 : ℝ) ≤ diagSum 4 m := one_le_diagSum hmm
+      have hb := hbase t
+      have hkey : Real.log (t : ℝ) ≤ (1 + Real.log 2) * diagSum 4 m := by nlinarith
+      have hstep : 2 * c₀ / (1 + Real.log 2) * varianceRate 4 t
+          ≤ ∑' y : Site 4, srwGreen 4 t y ^ 2 := by
+        rw [hrate, div_mul_eq_mul_div, div_le_iff₀ (by linarith)]
+        nlinarith
+      exact le_trans (mul_le_mul_of_nonneg_right (min_le_left _ _)
+        (varianceRate_nonneg 4 ht)) hstep
+    · exact le_trans (mul_le_mul_of_nonneg_right (min_le_right _ _)
+        (varianceRate_nonneg 4 ht)) (hsmall t ht (by omega))
+  · refine ⟨min (2 * c₀) (1 / 3), by positivity, fun t ht => ?_⟩
+    by_cases ht3 : 3 ≤ t
+    · have hmm := hm2 t ht3
+      have hrate : varianceRate d t = 1 := by
+        rw [varianceRate, if_neg h1, if_neg h2, if_neg h3, if_neg h4]
+      have hA : (1 : ℝ) ≤ diagSum d ((t + 1) / 2) := one_le_diagSum hmm
+      have hb := hbase t
+      have hstep : 2 * c₀ * varianceRate d t ≤ ∑' y : Site d, srwGreen d t y ^ 2 := by
+        rw [hrate, mul_one]
+        nlinarith
+      exact le_trans (mul_le_mul_of_nonneg_right (min_le_left _ _)
+        (varianceRate_nonneg d ht)) hstep
+    · exact le_trans (mul_le_mul_of_nonneg_right (min_le_right _ _)
+        (varianceRate_nonneg d ht)) (hsmall t ht (by omega))
+
+/-- **The variance scale `eq:Qt-table`, both directions.**  For `t ≥ 2` the
+`ℓ²` mass of the truncated Green function is comparable with `t^{3/2}`, `t`,
+`t^{1/2}`, `log t` and `1` in dimensions one, two, three, four, and five and
+above. -/
+theorem exists_tsum_srwGreen_sq_bounds (hd : 1 ≤ d) :
+    ∃ c C : ℝ, 0 < c ∧ 0 < C ∧ ∀ t : ℕ, 2 ≤ t →
+      c * varianceRate d t ≤ ∑' y : Site d, srwGreen d t y ^ 2 ∧
+        ∑' y : Site d, srwGreen d t y ^ 2 ≤ C * varianceRate d t := by
+  obtain ⟨c, hc, hlow⟩ := exists_le_tsum_srwGreen_sq hd
+  obtain ⟨C, hC, hup⟩ := exists_tsum_srwGreen_sq_le hd
+  exact ⟨c, C, hc, hC, fun t ht => ⟨hlow t ht, hup t ht⟩⟩
 
 end LatticeProb
