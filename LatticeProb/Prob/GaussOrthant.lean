@@ -15,9 +15,9 @@ noncomputable section
 
 namespace LatticeProb
 
-open MeasureTheory ProbabilityTheory Real
+open MeasureTheory ProbabilityTheory Real Matrix
 
-open scoped ENNReal NNReal
+open scoped ENNReal NNReal MatrixOrder
 
 /-! ### The product of one-dimensional Gaussian densities -/
 
@@ -257,6 +257,75 @@ theorem orthant_map_stdGaussian_le {ι : Type*} [Fintype ι]
     ((ENNReal.ofReal (√((1 + δ) / (1 - δ)))) ^ m) v hvne hle η
   rw [gaussianReal_Iic_eq v hvne η, hvc, ← mul_pow] at this
   exact this
+
+/-! ### The multivariate Gaussian -/
+
+open scoped RealInnerProductSpace in
+/-- The quadratic form of the covariance is the squared norm of the image under
+its square root. -/
+theorem norm_sq_toEuclideanCLM_sqrt {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {S : Matrix ι ι ℝ} (hS : S.PosSemidef) (x : EuclideanSpace ℝ ι) :
+    ‖Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) x‖ ^ 2 = x ⬝ᵥ S *ᵥ x := by
+  have hsa : IsSelfAdjoint (Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S)) :=
+    (CFC.sqrt_nonneg S).isSelfAdjoint.map _
+  rw [← real_inner_self_eq_norm_sq, ← ContinuousLinearMap.adjoint_inner_right, hsa.adjoint_eq,
+    ← ContinuousLinearMap.comp_apply, ← ContinuousLinearMap.mul_def, ← map_mul,
+    CFC.sqrt_mul_sqrt_self _ hS.nonneg, inner_toEuclideanCLM]
+
+/-- **The orthant bound for the multivariate Gaussian.**  If the quadratic form
+of the covariance lies between `1-δ` and `1+δ`, the probability that all
+coordinates are at most `η` is at most `[√((1+δ)/(1-δ)) Φ(η/√(1+δ))]^m`.
+
+The hypothesis that `S` is positive semidefinite cannot be dropped: for a matrix
+whose quadratic form is positive but which is not Hermitian, `CFC.sqrt S = 0`
+and `multivariateGaussian 0 S` is the Dirac mass at the origin, whose orthant
+probability is `1` for `η ≥ 0`. -/
+theorem multivariateGaussian_orthant_le {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (S : Matrix ι ι ℝ) (hS : S.PosSemidef) {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ < 1)
+    (hlo : ∀ v : EuclideanSpace ℝ ι, (1 - δ) * ‖v‖ ^ 2 ≤ v ⬝ᵥ S *ᵥ v)
+    (hhi : ∀ v : EuclideanSpace ℝ ι, v ⬝ᵥ S *ᵥ v ≤ (1 + δ) * ‖v‖ ^ 2) (η : ℝ) :
+    multivariateGaussian 0 S {y : EuclideanSpace ℝ ι | ∀ i, y i ≤ η}
+      ≤ (ENNReal.ofReal (√((1 + δ) / (1 - δ)))
+          * gaussianReal 0 1 (Set.Iic (η / √(1 + δ)))) ^ (Fintype.card ι) := by
+  have h1d : (0 : ℝ) < 1 - δ := by linarith
+  have hnorm : ∀ x : EuclideanSpace ℝ ι,
+      ‖Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) x‖ ^ 2 = x ⬝ᵥ S *ᵥ x :=
+    norm_sq_toEuclideanCLM_sqrt hS
+  have hinj : Function.Injective
+      (Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) : EuclideanSpace ℝ ι → EuclideanSpace ℝ ι) := by
+    intro x y hxy
+    have h0 : Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) (x - y) = 0 := by
+      rw [map_sub, hxy, sub_self]
+    have hq := hlo (x - y)
+    rw [← hnorm (x - y), h0] at hq
+    simp only [norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow] at hq
+    have hz1 : ‖x - y‖ ≤ 0 := by
+      by_contra hcon
+      push Not at hcon
+      have hpos : 0 < (1 - δ) * ‖x - y‖ ^ 2 := mul_pos h1d (pow_pos hcon 2)
+      linarith
+    exact sub_eq_zero.mp (norm_eq_zero.mp (le_antisymm hz1 (norm_nonneg _)))
+  have hsurj : Function.Surjective
+      (Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) :
+        EuclideanSpace ℝ ι → EuclideanSpace ℝ ι) :=
+    LinearMap.injective_iff_surjective.mp hinj
+  set A : EuclideanSpace ℝ ι ≃ₗ[ℝ] EuclideanSpace ℝ ι :=
+    LinearEquiv.ofBijective
+      ((Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) :
+          EuclideanSpace ℝ ι →L[ℝ] EuclideanSpace ℝ ι) :
+        EuclideanSpace ℝ ι →ₗ[ℝ] EuclideanSpace ℝ ι) ⟨hinj, hsurj⟩ with hAdef
+  have hAapp : ∀ x : EuclideanSpace ℝ ι,
+      A x = Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) x := fun x => rfl
+  have hfun : (fun x : EuclideanSpace ℝ ι => (0 : EuclideanSpace ℝ ι)
+      + Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) x) = ⇑A := by
+    funext x
+    rw [zero_add, hAapp]
+  rw [multivariateGaussian, hfun]
+  refine orthant_map_stdGaussian_le A hδ0 hδ1 (fun x => ?_) (fun x => ?_) η
+  · rw [hAapp, hnorm]
+    exact hlo x
+  · rw [hAapp, hnorm]
+    exact hhi x
 
 end LatticeProb
 
