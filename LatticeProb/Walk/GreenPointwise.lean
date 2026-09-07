@@ -18,6 +18,7 @@ so this form of the bound is the stronger one.
 import Mathlib
 import LatticeProb.Walk.Correlation
 import LatticeProb.Walk.SimpleTransfer
+import LatticeProb.Walk.Ball
 
 noncomputable section
 
@@ -314,5 +315,66 @@ theorem exists_srwGreenInf_le (k : ℕ) :
     have hC₀nn : 0 ≤ C₀ := hC₀pos.le
     nlinarith [hpow, hApos, hnnpos, hdenpos, hC₀nn,
       mul_nonneg hC₀nn hnnpos.le, mul_nonneg hApos.le hnnpos.le]
+
+/-! ### The Euclidean form, and square summability -/
+
+/-- The Euclidean norm is at most the graph norm. -/
+theorem euclidNorm_le_graphNorm (x : Site d) : euclidNorm x ≤ ((graphNorm x : ℕ) : ℝ) := by
+  have habs : ((graphNorm x : ℕ) : ℝ) = ∑ i : Fin d, |((x i : ℤ) : ℝ)| := by
+    rw [graphNorm]
+    push_cast
+    exact Finset.sum_congr rfl fun i _ => by
+      rw [Nat.cast_natAbs, Int.cast_abs]
+  have hsq : ∑ i : Fin d, ((x i : ℤ) : ℝ) ^ 2
+      ≤ (∑ i : Fin d, |((x i : ℤ) : ℝ)|) ^ 2 := by
+    have := Finset.sum_sq_le_sq_sum_of_nonneg
+      (s := (Finset.univ : Finset (Fin d))) (f := fun i => |((x i : ℤ) : ℝ)|)
+      (fun i _ => abs_nonneg _)
+    simpa [sq_abs] using this
+  have hnn : (0 : ℝ) ≤ ∑ i : Fin d, |((x i : ℤ) : ℝ)| :=
+    Finset.sum_nonneg fun i _ => abs_nonneg _
+  rw [euclidNorm, habs]
+  calc Real.sqrt (∑ i : Fin d, ((x i : ℤ) : ℝ) ^ 2)
+      ≤ Real.sqrt ((∑ i : Fin d, |((x i : ℤ) : ℝ)|) ^ 2) := Real.sqrt_le_sqrt hsq
+    _ = ∑ i : Fin d, |((x i : ℤ) : ℝ)| := Real.sqrt_sq hnn
+
+/-- The pointwise Green bound in the Euclidean norm of the notation section. -/
+theorem exists_srwGreenInf_euclid_le (k : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ z : Site (k + 4),
+      srwGreenInf (k + 4) z ≤ C / (1 + euclidNorm z) ^ (k + 2) := by
+  obtain ⟨C, hC, hbound⟩ := exists_srwGreenInf_le k
+  refine ⟨C, hC, fun z => ?_⟩
+  refine (hbound z).trans ?_
+  have h1 : (0 : ℝ) < 1 + euclidNorm z := by linarith [euclidNorm_nonneg z]
+  have h2 : (1 : ℝ) + euclidNorm z ≤ 1 + ((graphNorm z : ℕ) : ℝ) := by
+    linarith [euclidNorm_le_graphNorm z]
+  exact div_le_div_of_nonneg_left hC.le (by positivity)
+    (pow_le_pow_left₀ h1.le h2 (k + 2))
+
+/-- **The Green function is square summable above dimension four**, which is
+`eq:dgt4-green-l2`. -/
+theorem summable_srwGreenInf_sq (k : ℕ) :
+    Summable fun z : Site (k + 5) => srwGreenInf (k + 5) z ^ 2 := by
+  obtain ⟨C, hC, hbound⟩ := exists_srwGreenInf_euclid_le (k + 1)
+  have hdim : (((k + 5 : ℕ)) : ℝ) < 2 * (k : ℝ) + 6 := by push_cast; linarith
+  have hsum := (summable_one_add_euclidNorm_rpow (k + 5) hdim).mul_left (C ^ 2)
+  refine Summable.of_nonneg_of_le (fun z => sq_nonneg _) (fun z => ?_) hsum
+  have h1 : (0 : ℝ) < 1 + euclidNorm z := by linarith [euclidNorm_nonneg z]
+  have hb : srwGreenInf (k + 5) z ≤ C / (1 + euclidNorm z) ^ (k + 3) := hbound z
+  have hnn : 0 ≤ srwGreenInf (k + 5) z :=
+    tsum_nonneg fun j => srwHeat_nonneg j z
+  have hsq : srwGreenInf (k + 5) z ^ 2 ≤ (C / (1 + euclidNorm z) ^ (k + 3)) ^ 2 := by
+    exact pow_le_pow_left₀ hnn hb 2
+  refine hsq.trans (le_of_eq ?_)
+  rw [div_pow, ← pow_mul]
+  rw [show C ^ 2 * (1 + euclidNorm z) ^ (-(2 * (k : ℝ) + 6))
+      = C ^ 2 / (1 + euclidNorm z) ^ (2 * (k : ℝ) + 6) from by
+    rw [Real.rpow_neg h1.le, div_eq_mul_inv]]
+  congr 1
+  rw [show ((k + 3) * 2 : ℕ) = ((2 * k + 6 : ℕ)) from by ring,
+    ← Real.rpow_natCast (1 + euclidNorm z) (2 * k + 6)]
+  congr 1
+  push_cast
+  ring
 
 end LatticeProb
