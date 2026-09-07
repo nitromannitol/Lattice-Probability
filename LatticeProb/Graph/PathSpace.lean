@@ -365,6 +365,34 @@ theorem integral_walkLaw_firstStep (x : V) (hx : 0 < G.degree x)
   congr 1
   rw [ENNReal.toReal_inv, ENNReal.toReal_natCast]
 
+/-- The same first-step decomposition of an integral, with INTEGRABILITY in
+place of a uniform bound.  A payoff stopped at an exit time is integrable
+without being bounded, which is what this form is for. -/
+theorem integral_walkLaw_firstStep' (x : V) (hx : 0 < G.degree x)
+    (f : (ℕ → V) → ℝ) (hfm : Measurable f) (hf : Integrable f (walkLaw G x)) :
+    ∫ X, f X ∂(walkLaw G x)
+      = (G.degree x : ℝ)⁻¹ * ∑ y ∈ G.neighborFinset x, ∫ X, f (cons x X) ∂(walkLaw G y) := by
+  classical
+  have hdne : (G.degree x : ℝ≥0∞) ≠ 0 := by
+    simpa using (Nat.cast_ne_zero (R := ℝ≥0∞)).2 hx.ne'
+  have h0 : ((G.degree x : ℝ≥0∞))⁻¹ ≠ 0 := ENNReal.inv_ne_zero.2 (by simp)
+  have htop : ((G.degree x : ℝ≥0∞))⁻¹ ≠ ⊤ := ENNReal.inv_ne_top.2 hdne
+  rw [walkLaw_firstStep x hx] at hf ⊢
+  have hsum : Integrable f (∑ y ∈ G.neighborFinset x, (walkLaw G y).map (cons x)) :=
+    (integrable_smul_measure h0 htop).1 hf
+  have heach : ∀ y ∈ G.neighborFinset x, Integrable f ((walkLaw G y).map (cons x)) := by
+    intro y hy
+    refine hsum.mono_measure ?_
+    exact Finset.single_le_sum (f := fun y => (walkLaw G y).map (cons x))
+      (fun _ _ => bot_le) hy
+  rw [integral_smul_measure, integral_finsetSum_measure heach]
+  have hmap : ∀ y : V, ∫ X, f X ∂((walkLaw G y).map (cons x))
+      = ∫ X, f (cons x X) ∂(walkLaw G y) := fun y =>
+    integral_map (measurable_cons x).aemeasurable hfm.aestronglyMeasurable
+  simp only [hmap, smul_eq_mul]
+  congr 1
+  rw [ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
 end Integral
 
 /-! ### The Markov property at a fixed time -/
