@@ -265,6 +265,43 @@ theorem srwGreen_four_le (n : ℕ) (y : Site 4) :
     rw [Nat.cast_one, div_one] at h1
     linarith
 
+/-- **`eq:d4-window-l2` in the paper's own form**, with the shifted logarithm
+`log((n+2)/(m+2))` and the additive constant. -/
+theorem exists_tsum_srwWindow_sq_le :
+    ∃ C : ℝ, 0 < C ∧ ∀ m n : ℕ, 1 ≤ m → m ≤ n →
+      ∑' y : Site 4, srwWindow 4 m n y ^ 2
+        ≤ C * (1 + Real.log (((n : ℝ) + 2) / ((m : ℝ) + 2))) := by
+  have hK := diagConst_pos 4
+  have hlog3' : (0 : ℝ) ≤ Real.log 3 := Real.log_nonneg (by norm_num)
+  refine ⟨4 * diagConst 4 * (1 + Real.log 3), by nlinarith, fun m n hm hmn => ?_⟩
+  have hmR : (1 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+  have hmnR : (m : ℝ) ≤ (n : ℝ) := by exact_mod_cast hmn
+  have hmpos : (0 : ℝ) < (m : ℝ) := by linarith
+  have hnpos : (0 : ℝ) < (n : ℝ) := by linarith
+  have hlog3 : (0 : ℝ) ≤ Real.log 3 := Real.log_nonneg (by norm_num)
+  have hshift : (0 : ℝ) ≤ Real.log (((n : ℝ) + 2) / ((m : ℝ) + 2)) :=
+    Real.log_nonneg ((one_le_div (by linarith)).mpr (by linarith))
+  have hkey : Real.log (n : ℝ) - Real.log (m : ℝ)
+      ≤ Real.log 3 + Real.log (((n : ℝ) + 2) / ((m : ℝ) + 2)) := by
+    have hcmp : (n : ℝ) / (m : ℝ) ≤ 3 * (((n : ℝ) + 2) / ((m : ℝ) + 2)) := by
+      have h3 : 3 * (((n : ℝ) + 2) / ((m : ℝ) + 2)) = (3 * ((n : ℝ) + 2)) / ((m : ℝ) + 2) := by
+        ring
+      rw [h3, div_le_div_iff₀ hmpos (by linarith)]
+      nlinarith
+    have hle : Real.log ((n : ℝ) / (m : ℝ))
+        ≤ Real.log (3 * (((n : ℝ) + 2) / ((m : ℝ) + 2))) :=
+      Real.log_le_log (by positivity) hcmp
+    rw [Real.log_mul (by norm_num) (by positivity), Real.log_div hnpos.ne' hmpos.ne'] at hle
+    exact hle
+  have h := tsum_srwWindow_sq_le hm hmn
+  have e1 : (0 : ℝ) ≤ 4 * diagConst 4 := by linarith
+  have hstep : 4 * diagConst 4 * (Real.log (n : ℝ) - Real.log (m : ℝ))
+      ≤ 4 * diagConst 4 * (1 + Real.log 3)
+          * (1 + Real.log (((n : ℝ) + 2) / ((m : ℝ) + 2))) := by
+    nlinarith [hkey, hshift, hlog3, e1, mul_nonneg e1 (mul_nonneg hlog3 hshift),
+      mul_nonneg e1 hshift]
+  linarith [h, hstep]
+
 /-- **`eq:d4-full-window-bounds`, the `ℓ²` half**: the truncated Green function
 in dimension four has `ℓ²` mass at most `C log(n+2)`. -/
 theorem exists_tsum_srwGreen_four_sq_le :
