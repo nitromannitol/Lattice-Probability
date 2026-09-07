@@ -153,11 +153,10 @@ theorem sum_Icc_neg_le (n M : ℕ) :
   rw [hzero, zero_add]
   exact sum_Icc_zero_le n M
 
-/-- **The one-dimensional total-variation gradient**, in the explicit form
-`∑_k |p_m(k) - p_m(k+2)| ≤ 2(p_m(0) + p_m(1))`. -/
-theorem tsum_abs_S1_shift_le (n : ℕ) :
-    ∑' k : ℤ, |S1 n k - S1 n (k + 2)| ≤ 2 * (S1 n 0 + S1 n 1) := by
-  refine Real.tsum_le_of_sum_le (fun k => abs_nonneg _) fun F => ?_
+/-- Every finite partial sum of the two-step differences is below
+`2(p_m(0) + p_m(1))`. -/
+theorem sum_finset_abs_S1_shift_le (n : ℕ) (F : Finset ℤ) :
+    ∑ k ∈ F, |S1 n k - S1 n (k + 2)| ≤ 2 * (S1 n 0 + S1 n 1) := by
   obtain ⟨M, hM⟩ : ∃ M : ℕ, ∀ k ∈ F, k ∈ Finset.Icc (-(M : ℤ) - 2) (M : ℤ) := by
     classical
     refine ⟨(F.image (fun k : ℤ => k.natAbs)).sup id, fun k hk => ?_⟩
@@ -179,6 +178,40 @@ theorem tsum_abs_S1_shift_le (n : ℕ) :
     omega
   rw [hsplit, Finset.sum_union hdisj]
   linarith [sum_Icc_neg_le n M, sum_Icc_zero_le n M]
+
+theorem summable_abs_S1_shift (n : ℕ) : Summable fun k : ℤ => |S1 n k - S1 n (k + 2)| :=
+  summable_of_sum_le (fun _ => abs_nonneg _) (sum_finset_abs_S1_shift_le n)
+
+/-- **The one-dimensional total-variation gradient**, in the explicit form
+`∑_k |p_m(k) - p_m(k+2)| ≤ 2(p_m(0) + p_m(1))`. -/
+theorem tsum_abs_S1_shift_le (n : ℕ) :
+    ∑' k : ℤ, |S1 n k - S1 n (k + 2)| ≤ 2 * (S1 n 0 + S1 n 1) :=
+  Real.tsum_le_of_sum_le (fun _ => abs_nonneg _) (sum_finset_abs_S1_shift_le n)
+
+/-! ### The total mass of the one-dimensional kernel -/
+
+/-- The one-entry sites are the integers. -/
+def site1Equiv : ℤ ≃ Site 1 where
+  toFun k := ![k]
+  invFun x := x 0
+  left_inv k := by simp
+  right_inv x := by funext i; fin_cases i; simp
+
+theorem summable_srwHeat_one (n : ℕ) : Summable fun x : Site 1 => srwHeat 1 n x := by
+  simpa using summable_srwHeat_mul (d := 1) n (fun _ => (1 : ℝ))
+
+theorem summable_S1 (n : ℕ) : Summable fun k : ℤ => S1 n k :=
+  (site1Equiv.summable_iff (f := fun x : Site 1 => srwHeat 1 n x)).mpr
+    (summable_srwHeat_one n)
+
+theorem tsum_S1 (n : ℕ) : ∑' k : ℤ, S1 n k = 1 := by
+  rw [show (∑' k : ℤ, S1 n k) = ∑' k : ℤ, srwHeat 1 n (site1Equiv k) from rfl,
+    site1Equiv.tsum_eq (fun x : Site 1 => srwHeat 1 n x)]
+  exact tsum_srwHeat (d := 1) (by norm_num) n
+
+theorem sum_finset_S1_le (n : ℕ) (F : Finset ℤ) : ∑ k ∈ F, S1 n k ≤ 1 := by
+  have := Summable.sum_le_tsum F (fun k _ => S1_nonneg n k) (summable_S1 n)
+  rwa [tsum_S1] at this
 
 /-- The one-dimensional kernel is at most `C m^{-1/2}`, the `d = 1` case of the
 sup bound. -/
