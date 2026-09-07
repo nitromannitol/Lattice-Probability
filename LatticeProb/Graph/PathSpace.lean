@@ -491,6 +491,93 @@ theorem markov_fixed (hdeg : ∀ v : V, 0 < G.degree v)
       simp only [hshift, hcons]
       exact this
 
+/-! ### The Markov property at a bounded stopping time -/
+
+omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
+theorem dependsUpTo_of_isStopping {τ : (ℕ → V) → ℕ} (hτ : IsStopping τ)
+    {N : ℕ} (hτN : ∀ X, τ X ≤ N) : DependsUpTo N τ := fun X Y hXY =>
+  (hτ (τ X) X Y (fun j hj => hXY j (le_trans hj (hτN X))) rfl).symm
+
+omit [DecidableEq V] in
+theorem measurable_isStopping {τ : (ℕ → V) → ℕ} (hτ : IsStopping τ)
+    {N : ℕ} (hτN : ∀ X, τ X ≤ N) : Measurable τ :=
+  measurable_of_dependsUpTo (dependsUpTo_of_isStopping hτ hτN)
+
+/-- **The strong Markov property at a bounded stopping time.** -/
+theorem markov_stopping (hdeg : ∀ v : V, 0 < G.degree v) (N : ℕ) (x : V)
+    (τ : (ℕ → V) → ℕ) (hτ : IsStopping τ) (hτN : ∀ X, τ X ≤ N)
+    (F : (ℕ → V) → ℝ) (hFm : Measurable F) (CF : ℝ) (hFb : ∀ X, ‖F X‖ ≤ CF)
+    (H : (ℕ → V) → ℝ) (CH : ℝ) (hHb : ∀ X, ‖H X‖ ≤ CH)
+    (hHdep : ∀ (k : ℕ) (X Y : ℕ → V), (∀ j ≤ k, X j = Y j) → τ X = k → H X = H Y) :
+    ∫ X, F (shiftPath (τ X) X) * H X ∂(walkLaw G x)
+      = ∫ X, pathExp G F (X (τ X)) * H X ∂(walkLaw G x) := by
+  classical
+  have hCF : 0 ≤ CF := le_trans (norm_nonneg _) (hFb fun _ => x)
+  set Hk : ℕ → (ℕ → V) → ℝ := fun k X => H X * (if τ X = k then 1 else 0) with hHk
+  have hHkdep : ∀ k, DependsUpTo k (Hk k) := by
+    intro k X Y hXY
+    by_cases hk : τ X = k
+    · have hkY : τ Y = k := hτ k X Y hXY hk
+      have hHH : H X = H Y := hHdep k X Y hXY hk
+      simp [hHk, hk, hkY, hHH]
+    · have hkY : τ Y ≠ k := fun hc => hk (hτ k Y X (fun j hj => (hXY j hj).symm) hc)
+      simp [hHk, hk, hkY]
+  have hHkb : ∀ k X, ‖Hk k X‖ ≤ CH := by
+    intro k X
+    rw [hHk]
+    simp only
+    by_cases hk : τ X = k
+    · simpa [hk] using hHb X
+    · simpa [hk] using le_trans (norm_nonneg (H X)) (hHb X)
+  have hHkm : ∀ k, Measurable (Hk k) := fun k => measurable_of_dependsUpTo (hHkdep k)
+  have hsplitL : ∀ X : ℕ → V,
+      F (shiftPath (τ X) X) * H X
+        = ∑ k ∈ Finset.range (N + 1), F (shiftPath k X) * Hk k X := by
+    intro X
+    rw [Finset.sum_eq_single_of_mem (τ X)
+      (Finset.mem_range.mpr (by have := hτN X; omega : τ X < N + 1))]
+    · simp [hHk]
+    · intro b _ hb
+      simp [hHk, Ne.symm hb]
+  have hsplitR : ∀ X : ℕ → V,
+      pathExp G F (X (τ X)) * H X
+        = ∑ k ∈ Finset.range (N + 1), pathExp G F (X k) * Hk k X := by
+    intro X
+    rw [Finset.sum_eq_single_of_mem (τ X)
+      (Finset.mem_range.mpr (by have := hτN X; omega : τ X < N + 1))]
+    · simp [hHk]
+    · intro b _ hb
+      simp [hHk, Ne.symm hb]
+  have hintL : ∀ k ∈ Finset.range (N + 1),
+      Integrable (fun X => F (shiftPath k X) * Hk k X) (walkLaw G x) := by
+    intro k _
+    refine Integrable.of_bound
+      (((hFm.comp (measurable_shiftPath k)).mul (hHkm k)).aestronglyMeasurable)
+      (CF * CH) (Filter.Eventually.of_forall fun X => ?_)
+    rw [norm_mul]
+    exact mul_le_mul (hFb _) (hHkb k X) (norm_nonneg _) hCF
+  have hintR : ∀ k ∈ Finset.range (N + 1),
+      Integrable (fun X => pathExp G F (X k) * Hk k X) (walkLaw G x) := by
+    intro k _
+    refine Integrable.of_bound
+      ((((measurable_pathExp F).comp (measurable_pi_apply k)).mul
+        (hHkm k)).aestronglyMeasurable)
+      (CF * CH) (Filter.Eventually.of_forall fun X => ?_)
+    rw [norm_mul]
+    exact mul_le_mul (norm_pathExp_le hFb _) (hHkb k X) (norm_nonneg _) hCF
+  calc ∫ X, F (shiftPath (τ X) X) * H X ∂(walkLaw G x)
+      = ∫ X, ∑ k ∈ Finset.range (N + 1), F (shiftPath k X) * Hk k X ∂(walkLaw G x) :=
+        integral_congr_ae (Filter.Eventually.of_forall hsplitL)
+    _ = ∑ k ∈ Finset.range (N + 1), ∫ X, F (shiftPath k X) * Hk k X ∂(walkLaw G x) :=
+        integral_finsetSum _ hintL
+    _ = ∑ k ∈ Finset.range (N + 1), ∫ X, pathExp G F (X k) * Hk k X ∂(walkLaw G x) :=
+        Finset.sum_congr rfl fun k _ =>
+          markov_fixed hdeg F hFm CF hFb k x (Hk k) CH (hHkb k) (hHkdep k)
+    _ = ∫ X, ∑ k ∈ Finset.range (N + 1), pathExp G F (X k) * Hk k X ∂(walkLaw G x) :=
+        (integral_finsetSum _ hintR).symm
+    _ = ∫ X, pathExp G F (X (τ X)) * H X ∂(walkLaw G x) :=
+        integral_congr_ae (Filter.Eventually.of_forall fun X => (hsplitR X).symm)
+
 end Markov
 
 end LatticeProb.Graph
