@@ -115,3 +115,4 @@ import LatticeProb.Prob.Blocks
 import LatticeProb.Prob.DyadicChain
 import LatticeProb.Prob.Chentsov
 import LatticeProb.Gauss.BrownianCont
+import LatticeProb.Graph.PathSpace
