@@ -3,6 +3,7 @@ import LatticeProb.IID
 import LatticeProb.ParticleHole
 import LatticeProb.Rank
 import LatticeProb.ParticleHoleLemmas
+import LatticeProb.ReadIndex
 import LatticeProb.Walk.Basic
 import LatticeProb.Walk.SRW
 import LatticeProb.Walk.OneDimGauss
