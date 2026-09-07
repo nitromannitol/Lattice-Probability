@@ -545,6 +545,276 @@ theorem integral_sum_range_exitNat (hdeg : ∀ v : V, 0 < G.degree v) (C : Finse
     Summable.tsum_finsetSum hsummable]
   exact Finset.sum_congr rfl fun v _ => tsum_mul_right
 
+/-! ### The strong Markov property at the exit time -/
+
+open scoped Classical in
+/-- The exit time truncated at `N`: the first time at most `N` at which the walk
+is outside `C`, and `N` if there is none.  Unlike the exit time itself this IS a
+bounded stopping time, and off the event `stayIn C N` it agrees with the exit
+time. -/
+def exitTrunc (C : Set V) (N : ℕ) (X : ℕ → V) : ℕ :=
+  if X ∈ stayIn C N then N else (exitTime C X).toNat
+
+omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
+theorem exitTrunc_of_notMem {C : Set V} {N : ℕ} {X : ℕ → V} (h : X ∉ stayIn C N) :
+    exitTrunc C N X = (exitTime C X).toNat := by
+  rw [exitTrunc, if_neg h]
+
+omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
+/-- Off `stayIn C N` the walk has left `C` by time `N`, at the time the exit
+time names. -/
+theorem exitTime_eq_natCast_of_notMem {C : Set V} {N : ℕ} {X : ℕ → V}
+    (h : X ∉ stayIn C N) : exitTime C X = ((exitTime C X).toNat : ℕ∞) ∧
+      (exitTime C X).toNat ≤ N ∧ X ∉ stayIn C (exitTime C X).toNat := by
+  have hex : ∃ j ≤ N, X j ∉ C := by
+    by_contra hc
+    exact h fun j hj => by
+      by_contra hcc
+      exact hc ⟨j, hj, hcc⟩
+  obtain ⟨j, hjN, hj⟩ := hex
+  have hle : exitTime C X ≤ (j : ℕ∞) := sInf_le ⟨j, rfl, hj⟩
+  have hne : exitTime C X ≠ ⊤ := fun hc => by
+    rw [hc] at hle
+    exact absurd (top_le_iff.mp hle) (by simp)
+  obtain ⟨r, hr⟩ := ENat.ne_top_iff_exists.mp hne
+  have hrj : r ≤ j := by
+    rw [← hr] at hle
+    exact_mod_cast hle
+  refine ⟨by rw [← hr, ENat.toNat_coe], by rw [← hr, ENat.toNat_coe]; omega, ?_⟩
+  rw [← hr, ENat.toNat_coe, stayIn_eq_lt_exitTime, Set.mem_setOf_eq, ← hr]
+  exact_mod_cast lt_irrefl r
+
+omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
+theorem exitTrunc_le (C : Set V) (N : ℕ) (X : ℕ → V) : exitTrunc C N X ≤ N := by
+  classical
+  by_cases h : X ∈ stayIn C N
+  · rw [exitTrunc, if_pos h]
+  · rw [exitTrunc_of_notMem h]
+    exact (exitTime_eq_natCast_of_notMem h).2.1
+
+omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
+/-- The truncated exit time is a stopping time. -/
+theorem isStopping_exitTrunc (C : Set V) (N : ℕ) : IsStopping (exitTrunc C N) := by
+  classical
+  intro k X Y hXY hk
+  by_cases hX : X ∈ stayIn C N
+  · have hkN : k = N := by rw [exitTrunc, if_pos hX] at hk; exact hk.symm
+    subst hkN
+    have hY : Y ∈ stayIn C k := fun j hj => (hXY j hj) ▸ hX j hj
+    rw [exitTrunc, if_pos hY]
+  · obtain ⟨hEq, -, hnot⟩ := exitTime_eq_natCast_of_notMem hX
+    rw [exitTrunc_of_notMem hX] at hk
+    subst hk
+    have hout : X ((exitTime C X).toNat) ∉ C := by
+      by_contra hc
+      refine hnot fun j hj => ?_
+      rcases Nat.lt_or_ge j ((exitTime C X).toNat) with hj' | hj'
+      · have : X ∈ stayIn C j := by
+          rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, hEq]
+          exact_mod_cast hj'
+        exact this j le_rfl
+      · have : j = (exitTime C X).toNat := by omega
+        rw [this]; exact hc
+    have hin : ∀ i < (exitTime C X).toNat, X i ∈ C := by
+      intro i hi
+      have : X ∈ stayIn C i := by
+        rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, hEq]
+        exact_mod_cast hi
+      exact this i le_rfl
+    have hYout : Y ((exitTime C X).toNat) ∉ C := by
+      rw [← hXY _ le_rfl]; exact hout
+    have hYin : ∀ i < (exitTime C X).toNat, Y i ∈ C := fun i hi => by
+      rw [← hXY i (by omega)]; exact hin i hi
+    have hYnot : Y ∉ stayIn C N := fun hc =>
+      hYout (hc _ ((exitTime_eq_natCast_of_notMem hX).2.1))
+    rw [exitTrunc_of_notMem hYnot, exitTime_eq_natCast_of C hYout hYin, ENat.toNat_coe]
+
+omit [DecidableEq V] in
+theorem measurable_comp_shiftPath_stopping {τ : (ℕ → V) → ℕ} (hτ : IsStopping τ) {N : ℕ}
+    (hτN : ∀ X, τ X ≤ N) {f : (ℕ → V) → ℝ} (hf : Measurable f) :
+    Measurable fun X => f (shiftPath (τ X) X) := by
+  classical
+  have hτm : Measurable τ := measurable_isStopping hτ hτN
+  have hrepr : (fun X => f (shiftPath (τ X) X))
+      = fun X => ∑ k ∈ Finset.range (N + 1),
+          Set.indicator {Y : ℕ → V | τ Y = k} (fun Y => f (shiftPath k Y)) X := by
+    funext X
+    rw [Finset.sum_eq_single_of_mem (τ X)
+      (Finset.mem_range.mpr (by have := hτN X; omega))]
+    · exact (Set.indicator_of_mem (show X ∈ {Y : ℕ → V | τ Y = τ X} from rfl)
+        (fun Y => f (shiftPath (τ X) Y))).symm
+    · intro b _ hb
+      exact Set.indicator_of_notMem (fun hc => hb hc.symm) _
+  rw [hrepr]
+  exact Finset.measurable_sum _ fun k _ =>
+    (hf.comp (measurable_shiftPath k)).indicator (hτm (MeasurableSet.singleton k))
+
+omit [DecidableEq V] in
+theorem measurable_comp_apply_stopping {τ : (ℕ → V) → ℕ} (hτ : IsStopping τ) {N : ℕ}
+    (hτN : ∀ X, τ X ≤ N) {g : V → ℝ} (hg : Measurable g) :
+    Measurable fun X : ℕ → V => g (X (τ X)) := by
+  classical
+  have hτm : Measurable τ := measurable_isStopping hτ hτN
+  have hrepr : (fun X : ℕ → V => g (X (τ X)))
+      = fun X => ∑ k ∈ Finset.range (N + 1),
+          Set.indicator {Y : ℕ → V | τ Y = k} (fun Y => g (Y k)) X := by
+    funext X
+    rw [Finset.sum_eq_single_of_mem (τ X)
+      (Finset.mem_range.mpr (by have := hτN X; omega))]
+    · exact (Set.indicator_of_mem (show X ∈ {Y : ℕ → V | τ Y = τ X} from rfl)
+        (fun Y => g (Y (τ X)))).symm
+    · intro b _ hb
+      exact Set.indicator_of_notMem (fun hc => hb hc.symm) _
+  rw [hrepr]
+  exact Finset.measurable_sum _ fun k _ =>
+    (hg.comp (measurable_pi_apply k)).indicator (hτm (MeasurableSet.singleton k))
+
+omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
+theorem mem_stayIn_transfer (C : Set V) (N : ℕ) {X Y : ℕ → V} (h : ∀ j ≤ N, X j = Y j)
+    (hX : X ∈ stayIn C N) : Y ∈ stayIn C N := fun j hj => (h j hj) ▸ hX j hj
+
+omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
+/-- Off `stayIn C N` the truncated exit time IS the exit time, and both are
+transferred to any trajectory agreeing up to that time. -/
+theorem exitTrunc_spec (C : Set V) (N : ℕ) {k : ℕ} {X Y : ℕ → V}
+    (hXY : ∀ j ≤ k, X j = Y j) (hX : X ∉ stayIn C N) (hk : exitTrunc C N X = k) :
+    Y ∉ stayIn C N ∧ exitTime C X = (k : ℕ∞) ∧ exitTime C Y = (k : ℕ∞) := by
+  classical
+  obtain ⟨hEq, hleN, hnot⟩ := exitTime_eq_natCast_of_notMem hX
+  rw [exitTrunc_of_notMem hX] at hk
+  subst hk
+  have hout : X ((exitTime C X).toNat) ∉ C := by
+    by_contra hc
+    refine hnot fun j hj => ?_
+    rcases Nat.lt_or_ge j ((exitTime C X).toNat) with hj' | hj'
+    · have hmem : X ∈ stayIn C j := by
+        rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, hEq]
+        exact_mod_cast hj'
+      exact hmem j le_rfl
+    · have : j = (exitTime C X).toNat := by omega
+      rw [this]; exact hc
+  have hin : ∀ i < (exitTime C X).toNat, X i ∈ C := by
+    intro i hi
+    have hmem : X ∈ stayIn C i := by
+      rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, hEq]
+      exact_mod_cast hi
+    exact hmem i le_rfl
+  have hYout : Y ((exitTime C X).toNat) ∉ C := by rw [← hXY _ le_rfl]; exact hout
+  have hYin : ∀ i < (exitTime C X).toNat, Y i ∈ C := fun i hi => by
+    rw [← hXY i (by omega)]; exact hin i hi
+  exact ⟨fun hc => hYout (hc _ hleN), hEq, exitTime_eq_natCast_of C hYout hYin⟩
+
+omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
+/-- Beyond the exit time the trajectory is outside every `stayIn`. -/
+theorem notMem_stayIn_of_le {C : Set V} {X : ℕ → V} (hX : exitTime C X ≠ ⊤)
+    {N : ℕ} (hN : (exitTime C X).toNat ≤ N) : X ∉ stayIn C N := by
+  obtain ⟨r, hr⟩ := ENat.ne_top_iff_exists.mp hX
+  have hnot : X ∉ stayIn C ((exitTime C X).toNat) := by
+    rw [← hr, ENat.toNat_coe, stayIn_eq_lt_exitTime, Set.mem_setOf_eq, ← hr]
+    exact_mod_cast lt_irrefl r
+  exact fun hc => hnot (stayIn_antitone C hN hc)
+
+/-- **The strong Markov property at the exit time of a finite set.**  The exit
+time is unbounded, and `(exitTime C ·).toNat` is not a stopping time in the
+strict sense `markov_stopping` needs, because a trajectory that never leaves `C`
+is given the value `0`.  The statement is obtained from the bounded truncations
+`exitTrunc C N`, which ARE stopping times, together with the almost sure
+finiteness of the exit time. -/
+theorem markov_exitTime (hdeg : ∀ v : V, 0 < G.degree v) (C : Finset V)
+    (hesc : ∀ x : V, ∃ (q : V) (_ : G.Walk x q), q ∉ (C : Set V)) (x : V)
+    (F : (ℕ → V) → ℝ) (hFm : Measurable F) (CF : ℝ) (hFb : ∀ X, ‖F X‖ ≤ CF)
+    (H : (ℕ → V) → ℝ) (CH : ℝ) (hHb : ∀ X, ‖H X‖ ≤ CH)
+    (hHdep : ∀ (k : ℕ) (X Y : ℕ → V), (∀ j ≤ k, X j = Y j) →
+      exitTime (C : Set V) X = (k : ℕ∞) → H X = H Y) :
+    ∫ X, F (shiftPath ((exitTime (C : Set V) X).toNat) X) * H X ∂(walkLaw G x)
+      = ∫ X, pathExp G F (X ((exitTime (C : Set V) X).toNat)) * H X ∂(walkLaw G x) := by
+  classical
+  have hCF : 0 ≤ CF := le_trans (norm_nonneg _) (hFb fun _ => x)
+  have hCH : 0 ≤ CH := le_trans (norm_nonneg _) (hHb fun _ => x)
+  set HN : ℕ → (ℕ → V) → ℝ :=
+    fun N X => H X * (if X ∈ stayIn (C : Set V) N then 0 else 1) with hHNdef
+  have hHNb : ∀ (N : ℕ) (X : ℕ → V), ‖HN N X‖ ≤ CH := by
+    intro N X
+    rw [hHNdef]
+    by_cases h : X ∈ stayIn (C : Set V) N
+    · simpa [h] using hCH
+    · simpa [h] using hHb X
+  have hHNdep : ∀ (N k : ℕ) (X Y : ℕ → V), (∀ j ≤ k, X j = Y j) →
+      exitTrunc (C : Set V) N X = k → HN N X = HN N Y := by
+    intro N k X Y hXY hk
+    by_cases hX : X ∈ stayIn (C : Set V) N
+    · have hkN : k = N := by rw [exitTrunc, if_pos hX] at hk; exact hk.symm
+      subst hkN
+      have hY : Y ∈ stayIn (C : Set V) k := mem_stayIn_transfer _ _ hXY hX
+      simp [hHNdef, hX, hY]
+    · obtain ⟨hY, hEX, -⟩ := exitTrunc_spec (C : Set V) N hXY hX hk
+      rw [hHNdef]
+      simp only [hX, hY, if_false]
+      rw [hHdep k X Y hXY hEX]
+  have hHNdepUpTo : ∀ N : ℕ, DependsUpTo N (HN N) := by
+    intro N X Y hXY
+    exact hHNdep N (exitTrunc (C : Set V) N X) X Y
+      (fun j hj => hXY j (le_trans hj (exitTrunc_le (C : Set V) N X))) rfl
+  have hstop : ∀ N : ℕ,
+      ∫ X, F (shiftPath (exitTrunc (C : Set V) N X) X) * HN N X ∂(walkLaw G x)
+        = ∫ X, pathExp G F (X (exitTrunc (C : Set V) N X)) * HN N X ∂(walkLaw G x) :=
+    fun N => markov_stopping hdeg N x (exitTrunc (C : Set V) N)
+      (isStopping_exitTrunc (C : Set V) N) (exitTrunc_le (C : Set V) N)
+      F hFm CF hFb (HN N) CH (hHNb N) (hHNdep N)
+  set A : ℕ → (ℕ → V) → ℝ :=
+    fun N X => F (shiftPath (exitTrunc (C : Set V) N X) X) * HN N X with hAdef
+  set B : ℕ → (ℕ → V) → ℝ :=
+    fun N X => pathExp G F (X (exitTrunc (C : Set V) N X)) * HN N X with hBdef
+  have hAm : ∀ N, Measurable (A N) := fun N =>
+    (measurable_comp_shiftPath_stopping (isStopping_exitTrunc (C : Set V) N)
+        (exitTrunc_le (C : Set V) N) hFm).mul
+      (measurable_of_dependsUpTo (hHNdepUpTo N))
+  have hBm : ∀ N, Measurable (B N) := fun N =>
+    (measurable_comp_apply_stopping (isStopping_exitTrunc (C : Set V) N)
+        (exitTrunc_le (C : Set V) N) (measurable_pathExp F)).mul
+      (measurable_of_dependsUpTo (hHNdepUpTo N))
+  have hAb : ∀ (N : ℕ) (X : ℕ → V), ‖A N X‖ ≤ CF * CH := by
+    intro N X
+    rw [hAdef]
+    simp only [norm_mul]
+    exact mul_le_mul (hFb _) (hHNb N X) (norm_nonneg _) hCF
+  have hBb : ∀ (N : ℕ) (X : ℕ → V), ‖B N X‖ ≤ CF * CH := by
+    intro N X
+    rw [hBdef]
+    simp only [norm_mul]
+    exact mul_le_mul (norm_pathExp_le hFb _) (hHNb N X) (norm_nonneg _) hCF
+  have hlimA : ∀ᵐ X ∂(walkLaw G x),
+      Filter.Tendsto (fun N => A N X) Filter.atTop
+        (nhds (F (shiftPath ((exitTime (C : Set V) X).toNat) X) * H X)) := by
+    filter_upwards [ae_exitTime_ne_top hdeg C hesc x] with X hX
+    refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+    filter_upwards [Filter.eventually_ge_atTop ((exitTime (C : Set V) X).toNat)] with N hN
+    have hnot : X ∉ stayIn (C : Set V) N := notMem_stayIn_of_le hX hN
+    show F (shiftPath ((exitTime (C : Set V) X).toNat) X) * H X = A N X
+    rw [hAdef, hHNdef]
+    simp only [exitTrunc_of_notMem hnot, hnot, if_false, mul_one]
+  have hlimB : ∀ᵐ X ∂(walkLaw G x),
+      Filter.Tendsto (fun N => B N X) Filter.atTop
+        (nhds (pathExp G F (X ((exitTime (C : Set V) X).toNat)) * H X)) := by
+    filter_upwards [ae_exitTime_ne_top hdeg C hesc x] with X hX
+    refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+    filter_upwards [Filter.eventually_ge_atTop ((exitTime (C : Set V) X).toNat)] with N hN
+    have hnot : X ∉ stayIn (C : Set V) N := notMem_stayIn_of_le hX hN
+    show pathExp G F (X ((exitTime (C : Set V) X).toNat)) * H X = B N X
+    rw [hBdef, hHNdef]
+    simp only [exitTrunc_of_notMem hnot, hnot, if_false, mul_one]
+  have hAint := MeasureTheory.tendsto_integral_of_dominated_convergence
+    (μ := walkLaw G x) (F := A)
+    (f := fun X => F (shiftPath ((exitTime (C : Set V) X).toNat) X) * H X)
+    (fun _ => CF * CH) (fun N => (hAm N).aestronglyMeasurable)
+    (integrable_const _) (fun N => Filter.Eventually.of_forall (hAb N)) hlimA
+  have hBint := MeasureTheory.tendsto_integral_of_dominated_convergence
+    (μ := walkLaw G x) (F := B)
+    (f := fun X => pathExp G F (X ((exitTime (C : Set V) X).toNat)) * H X)
+    (fun _ => CF * CH) (fun N => (hBm N).aestronglyMeasurable)
+    (integrable_const _) (fun N => Filter.Eventually.of_forall (hBb N)) hlimB
+  exact tendsto_nhds_unique (hAint.congr fun N => hstop N) hBint
+
 end Kernel
 
 end LatticeProb.Graph
