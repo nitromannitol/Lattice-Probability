@@ -251,4 +251,34 @@ theorem returnProb_eq_mean_equilibrium (hG : G.Connected) (C : Finset V) {o q : 
   have h2 := escape_eq_inv hG C ho hq
   linarith
 
+/-! ### The simplest case, as a check on the normalization -/
+
+/-- From a one-point set the walk is dead after one step. -/
+theorem killedHeat_singleton_succ (o : V) (k : ℕ) :
+    killedHeat G ({o} : Set V) (k + 1) o o = 0 := by
+  rw [killedHeat_succ, if_pos (Set.mem_singleton o)]
+  have hz : ∀ z ∈ G.neighborFinset o, killedHeat G ({o} : Set V) k z o = 0 := by
+    intro z hz
+    have hadj : G.Adj o z := (SimpleGraph.mem_neighborFinset _ _ _).mp hz
+    refine killedHeat_of_source_not_mem ?_ k o
+    simp only [Set.mem_singleton_iff]
+    exact fun h => G.ne_of_adj hadj h.symm
+  rw [Finset.sum_eq_zero hz, zero_div]
+
+/-- **The effective resistance of a single vertex is the reciprocal of its
+degree**, and the escape probability there is one: the walk leaves at the first
+step.  This is the value the normalization of the killed Green function by the
+degree is chosen to give. -/
+theorem effRes_singleton (hG : G.Connected) {o q : V} (hq : q ∉ ({o} : Finset V)) :
+    effRes G {o} o = 1 / (G.degree o : ℝ) := by
+  have hcoe : ((({o} : Finset V) : Set V)) = ({o} : Set V) := by simp
+  rw [effRes, killedGreenReal_eq_tsum hG {o} hq, hcoe]
+  have hsingle : ∑' k : ℕ, killedHeat G ({o} : Set V) k o o = 1 := by
+    rw [tsum_eq_single 0 ?_]
+    · rw [killedHeat_zero, if_pos (Set.mem_singleton o), if_pos rfl]
+    · intro k hk
+      obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
+      exact killedHeat_singleton_succ o j
+  rw [hsingle]
+
 end LatticeProb.Network
