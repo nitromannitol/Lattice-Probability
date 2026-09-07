@@ -667,4 +667,51 @@ theorem measurable_update_pair (i : Fin N) :
     rw [he]
     exact (measurable_pi_apply j).comp measurable_fst
 
+
+/-- The mean squared difference of an independent pair is twice the variance. -/
+
+theorem integral_pair_sq {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    [IsProbabilityMeasure μ] (h : Ω → ℝ) (hh : Integrable h μ)
+    (hh2 : Integrable (fun ω => h ω ^ 2) μ) :
+    ∫ y, (∫ z, (h y - h z) ^ 2 ∂μ) ∂μ = 2 * ∫ y, (h y - ∫ z, h z ∂μ) ^ 2 ∂μ := by
+  set m : ℝ := ∫ z, h z ∂μ with hm
+  set q : ℝ := ∫ z, h z ^ 2 ∂μ with hq
+  have hinner : ∀ y : Ω, ∫ z, (h y - h z) ^ 2 ∂μ = h y ^ 2 - 2 * h y * m + q := by
+    intro y
+    have hpt : ∀ z, (h y - h z) ^ 2 = h y ^ 2 - 2 * h y * h z + h z ^ 2 := fun z => by ring
+    have hint1 : Integrable (fun z => h y ^ 2 - 2 * h y * h z) μ :=
+      (integrable_const _).sub (hh.const_mul _)
+    rw [integral_congr_ae (Filter.Eventually.of_forall hpt),
+      integral_add hint1 hh2, integral_sub (integrable_const _) (hh.const_mul _),
+      integral_const_mul, integral_const]
+    simp only [smul_eq_mul, probReal_univ, one_mul]
+    rw [← hm, ← hq]
+  have hout : ∫ y, (h y ^ 2 - 2 * h y * m + q) ∂μ = q - 2 * m ^ 2 + q := by
+    have hint1 : Integrable (fun y => h y ^ 2 - 2 * h y * m) μ := by
+      refine hh2.sub ?_
+      have : Integrable (fun y => 2 * m * h y) μ := hh.const_mul _
+      exact this.congr (Filter.Eventually.of_forall fun y => by ring)
+    rw [integral_add hint1 (integrable_const _), integral_sub hh2 ?hm2, integral_const]
+    case hm2 =>
+      have : Integrable (fun y => 2 * m * h y) μ := hh.const_mul _
+      exact this.congr (Filter.Eventually.of_forall fun y => by ring)
+    have hlin : ∫ y, 2 * h y * m ∂μ = 2 * m ^ 2 := by
+      have h1 : (fun y => 2 * h y * m) = fun y => (2 * m) * h y := by funext y; ring
+      rw [h1, integral_const_mul, ← hm]
+      ring
+    rw [hlin]
+    simp only [smul_eq_mul, probReal_univ, one_mul]
+    rw [← hq]
+  have hright : ∫ y, (h y - m) ^ 2 ∂μ = q - m ^ 2 := by
+    have hpt : ∀ y, (h y - m) ^ 2 = h y ^ 2 - 2 * m * h y + m ^ 2 := fun y => by ring
+    have hint1 : Integrable (fun y => h y ^ 2 - 2 * m * h y) μ := hh2.sub (hh.const_mul _)
+    rw [integral_congr_ae (Filter.Eventually.of_forall hpt),
+      integral_add hint1 (integrable_const _), integral_sub hh2 (hh.const_mul _),
+      integral_const_mul, integral_const]
+    simp only [smul_eq_mul, probReal_univ, one_mul]
+    rw [← hm, ← hq]
+    ring
+  rw [integral_congr_ae (Filter.Eventually.of_forall hinner), hout, hright]
+  ring
+
 end LatticeProb

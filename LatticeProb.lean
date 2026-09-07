@@ -97,3 +97,5 @@ import LatticeProb.Prob.LpSmooth
 import LatticeProb.Prob.DagExploration
 import LatticeProb.Prob.PiSum
 import LatticeProb.ParticleDriven
+import LatticeProb.Prob.EfronSteinCov
+import LatticeProb.Prob.FiniteMarginal
