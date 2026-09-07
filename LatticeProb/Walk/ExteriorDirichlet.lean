@@ -198,6 +198,85 @@ theorem tendsto_srwGreenInf_zero (hd : 3 ≤ d) {ε : ℝ} (hε : 0 < ε) :
   rw [← hsplit]
   linarith
 
+/-! ### The return probability -/
+
+theorem srwHitProb_le_one (hd : 0 < d) (x : Site d) : srwHitProb d x ≤ 1 := by
+  have hs := (summable_srwFirstHit hd x).hasSum.tendsto_sum_nat
+  refine le_of_tendsto hs (Filter.Eventually.of_forall fun n => ?_)
+  cases n with
+  | zero => simp
+  | succ m => exact srwHitBy_le_one hd m x
+
+theorem srwHitProb_origin : srwHitProb d (0 : Site d) = 1 := by
+  have hzero : ∀ k : ℕ, srwFirstHit d k (0 : Site d) = if k = 0 then 1 else 0 := by
+    intro k
+    cases k with
+    | zero => rw [srwFirstHit_zero, if_pos rfl, if_pos rfl]
+    | succ m => rw [srwFirstHit_succ_origin, if_neg (by omega)]
+  rw [srwHitProb, tsum_congr hzero, tsum_ite_eq]
+
+/-- **The return probability of the origin.**  The average of the hitting
+probability over the neighbours of the origin is `1 - 1/G(0,0)`; that is the
+chance that the walk started at the origin ever comes back. -/
+theorem walkOp_srwHitProb_origin (hd : 3 ≤ d) :
+    walkOp (srwHitProb d) (0 : Site d) = 1 - 1 / srwGreenInf d 0 := by
+  have hG0pos : (0 : ℝ) < srwGreenInf d 0 :=
+    lt_of_lt_of_le zero_lt_one (one_le_srwGreenInf_origin hd)
+  have hfun : srwHitProb d = fun z => srwGreenInf d z / srwGreenInf d 0 :=
+    funext fun z => srwHitProb_eq_green_ratio hd z
+  rw [hfun, walkOp_div_const, walkOp_srwGreenInf hd, if_pos rfl]
+  field_simp
+
+/-- `sup_{z ≠ 0} G(0,z)/G(0,0)`, the supremum of the hitting probability away
+from the origin. -/
+noncomputable def greenRatioSup (d : ℕ) : ℝ := ⨆ z : {z : Site d // z ≠ 0}, srwHitProb d (z : Site d)
+
+theorem bddAbove_srwHitProb (hd : 0 < d) :
+    BddAbove (Set.range fun z : {z : Site d // z ≠ 0} => srwHitProb d (z : Site d)) :=
+  ⟨1, by rintro _ ⟨z, rfl⟩; exact srwHitProb_le_one hd _⟩
+
+theorem nonempty_nonzero_site (hd : 0 < d) : Nonempty {z : Site d // z ≠ 0} :=
+  ⟨⟨unit ⟨0, hd⟩, unit_ne_zero _⟩⟩
+
+theorem greenRatioSup_le_one (hd : 0 < d) : greenRatioSup d ≤ 1 := by
+  haveI := nonempty_nonzero_site hd
+  exact ciSup_le fun z => srwHitProb_le_one hd _
+
+theorem le_greenRatioSup (hd : 0 < d) {z : Site d} (hz : z ≠ 0) :
+    srwHitProb d z ≤ greenRatioSup d :=
+  le_ciSup (f := fun z : {z : Site d // z ≠ 0} => srwHitProb d (z : Site d))
+    (bddAbove_srwHitProb hd) ⟨z, hz⟩
+
+/-- **The return probability is at most the supremum of the hitting probability
+away from the origin**: it is the average of that hitting probability over the
+`2d` neighbours, each of which is a nonzero site.  Equality is the statement
+that the supremum is attained at the neighbours. -/
+theorem one_sub_inv_le_greenRatioSup (hd : 3 ≤ d) :
+    1 - 1 / srwGreenInf d 0 ≤ greenRatioSup (d := d) := by
+  have hd0 : 0 < d := by omega
+  have hdR : (0 : ℝ) < 2 * (d : ℝ) := by
+    have : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd0
+    linarith
+  have hbnd : ∀ i : Fin d,
+      srwHitProb d (unit i) + srwHitProb d (-unit i)
+        ≤ greenRatioSup (d := d) + greenRatioSup (d := d) :=
+    fun i => add_le_add (le_greenRatioSup hd0 (unit_ne_zero i))
+      (le_greenRatioSup hd0 (by simpa using unit_ne_zero i))
+  have hsum : ∑ i : Fin d, (srwHitProb d ((0 : Site d) + unit i)
+        + srwHitProb d ((0 : Site d) - unit i))
+      ≤ ∑ _i : Fin d, (greenRatioSup (d := d) + greenRatioSup (d := d)) := by
+    refine Finset.sum_le_sum fun i _ => ?_
+    have h1 : (0 : Site d) + unit i = unit i := by rw [zero_add]
+    have h2 : (0 : Site d) - unit i = -unit i := by rw [zero_sub]
+    rw [h1, h2]
+    exact hbnd i
+  rw [← walkOp_srwHitProb_origin hd, walkOp, nbrSum]
+  rw [div_le_iff₀ hdR]
+  refine le_trans hsum ?_
+  rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  ring_nf
+  rfl
+
 /-! ### Uniqueness for the exterior Dirichlet problem -/
 
 theorem le_graphNorm_of_notMem_boxFinset {R : ℕ} {x : Site d}
