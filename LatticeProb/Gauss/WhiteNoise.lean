@@ -147,6 +147,65 @@ theorem whiteNoise_smul (b : HilbertBasis w ℝ (Lp ℝ 2 μ)) (a : ℝ) {f : X 
   rw [whiteNoise, toLpOrZero_smul a hf]
   exact isoProc_smul b a _
 
+/-- `L²` of a separable measure has a countable orthonormal basis, so white
+noise exists on every separable measure space. -/
+theorem exists_countable_hilbertBasis_L2 {X : Type*} [MeasurableSpace X] (μ : Measure X)
+    [MeasureTheory.IsSeparable μ] :
+    ∃ v : Set (Lp ℝ 2 μ), v.Countable ∧ Nonempty (HilbertBasis v ℝ (Lp ℝ 2 μ)) := by
+  haveI : Fact ((2 : ℝ≥0∞) ≠ ⊤) := ⟨by norm_num⟩
+  exact exists_countable_hilbertBasis _
+
+
+/-! ### The canonical white noise of a separable measure -/
+
+section Canonical
+
+variable {X : Type*} [MeasurableSpace X] (μ : Measure X) [MeasureTheory.IsSeparable μ]
+
+/-- A countable orthonormal basis of `L²` of a separable measure. -/
+def l2Basis : Set (Lp ℝ 2 μ) := (exists_countable_hilbertBasis_L2 μ).choose
+
+theorem countable_l2Basis : (l2Basis μ).Countable :=
+  (exists_countable_hilbertBasis_L2 μ).choose_spec.1
+
+instance countable_coe_l2Basis : Countable ↥(l2Basis μ) := (countable_l2Basis μ).to_subtype
+
+/-- The Hilbert basis of `L²` of a separable measure indexed by `l2Basis`. -/
+def l2HilbertBasis : HilbertBasis (l2Basis μ) ℝ (Lp ℝ 2 μ) :=
+  (exists_countable_hilbertBasis_L2 μ).choose_spec.2.some
+
+/-- The probability space carrying the canonical white noise: the product of
+standard Gaussians over a countable orthonormal basis of `L²(μ)`. -/
+abbrev whiteNoiseLaw : Measure (↥(l2Basis μ) → ℝ) := gaussLaw ↥(l2Basis μ)
+
+/-- **The canonical white noise of a separable measure.** -/
+def whiteNoiseOf : (X → ℝ) → (↥(l2Basis μ) → ℝ) → ℝ := whiteNoise (l2HilbertBasis μ)
+
+theorem measurable_whiteNoiseOf (f : X → ℝ) : Measurable (whiteNoiseOf μ f) :=
+  measurable_whiteNoise _ f
+
+theorem isGaussianProcess_whiteNoiseOf :
+    IsGaussianProcess (whiteNoiseOf μ) (whiteNoiseLaw μ) :=
+  isGaussianProcess_whiteNoise _
+
+theorem integral_whiteNoiseOf (f : X → ℝ) :
+    ∫ ω, whiteNoiseOf μ f ω ∂(whiteNoiseLaw μ) = 0 := integral_whiteNoise _ f
+
+theorem integral_whiteNoiseOf_mul {f g : X → ℝ} (hf : MemLp f 2 μ) (hg : MemLp g 2 μ) :
+    ∫ ω, whiteNoiseOf μ f ω * whiteNoiseOf μ g ω ∂(whiteNoiseLaw μ) = ∫ y, f y * g y ∂μ :=
+  integral_whiteNoise_mul _ hf hg
+
+theorem whiteNoiseOf_add {f g : X → ℝ} (hf : MemLp f 2 μ) (hg : MemLp g 2 μ) :
+    whiteNoiseOf μ (f + g)
+      =ᵐ[whiteNoiseLaw μ] fun ω => whiteNoiseOf μ f ω + whiteNoiseOf μ g ω :=
+  whiteNoise_add _ hf hg
+
+theorem whiteNoiseOf_smul (a : ℝ) {f : X → ℝ} (hf : MemLp f 2 μ) :
+    whiteNoiseOf μ (a • f) =ᵐ[whiteNoiseLaw μ] fun ω => a * whiteNoiseOf μ f ω :=
+  whiteNoise_smul _ a hf
+
+end Canonical
+
 end WhiteNoise
 
 end LatticeProb

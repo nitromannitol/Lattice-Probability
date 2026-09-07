@@ -74,15 +74,18 @@ theorem isPreBrownianReal_brownian (b : HilbertBasis w ℝ (Lp ℝ 2 (volume : M
     rw [hmul, integral_brownianTest_mul, min_eq_left hst]
     ring
 
-end PreBrownian
+/-! ### The canonical pre-Brownian motion -/
 
-/-- `L²` of a separable measure has a countable orthonormal basis, so white
-noise exists on every separable measure space. -/
-theorem exists_countable_hilbertBasis_L2 {X : Type*} [MeasurableSpace X] (μ : Measure X)
-    [MeasureTheory.IsSeparable μ] :
-    ∃ v : Set (Lp ℝ 2 μ), v.Countable ∧ Nonempty (HilbertBasis v ℝ (Lp ℝ 2 μ)) := by
-  haveI : Fact ((2 : ℝ≥0∞) ≠ ⊤) := ⟨by norm_num⟩
-  exact exists_countable_hilbertBasis _
+/-- **The canonical pre-Brownian motion**, on the Gaussian product space over a
+countable orthonormal basis of `L²(ℝ)`. -/
+def brownianOf (t : ℝ≥0) : (↥(l2Basis (volume : Measure ℝ)) → ℝ) → ℝ :=
+  brownian (l2HilbertBasis (volume : Measure ℝ)) t
+
+theorem isPreBrownianReal_brownianOf :
+    IsPreBrownianReal brownianOf (whiteNoiseLaw (volume : Measure ℝ)) :=
+  isPreBrownianReal_brownian _
+
+end PreBrownian
 
 /-- **Pre-Brownian motion exists**, on the Gaussian product space over a
 countable orthonormal basis of `L²(ℝ)`. -/
