@@ -34,6 +34,7 @@ import LatticeProb.Walk.GaussSeries
 import LatticeProb.Walk.GRGrad
 import LatticeProb.Walk.BinomWindow
 import LatticeProb.Walk.Shells
+import LatticeProb.Walk.Ball
 import LatticeProb.Walk.SRWGreenGrad
 import LatticeProb.Walk.Poisson
 import LatticeProb.Walk.Path
