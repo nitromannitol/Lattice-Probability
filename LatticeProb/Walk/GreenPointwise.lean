@@ -1137,4 +1137,230 @@ theorem exists_tsum_srwTimeTail_sq_le (k : ℕ) :
       _ = 12 * diagConst (k + 5) / Real.sqrt (m : ℝ) ^ (k + 1) := by ring
   exact ⟨summable_of_sum_le hnn hF, Real.tsum_le_of_sum_le hnn hF⟩
 
+/-! ### The crossed-ordering intersection estimate -/
+
+theorem supNorm_add_le (x y : Site d) : supNorm (x + y) ≤ supNorm x + supNorm y := by
+  refine Finset.sup_le fun i _ => ?_
+  have h : ((x + y) i).natAbs ≤ (x i).natAbs + (y i).natAbs := by
+    simpa using Int.natAbs_add_le (x i) (y i)
+  refine le_trans h (Nat.add_le_add ?_ ?_)
+  · exact Finset.le_sup (f := fun j : Fin d => (x j).natAbs) (Finset.mem_univ i)
+  · exact Finset.le_sup (f := fun j : Fin d => (y j).natAbs) (Finset.mem_univ i)
+
+@[simp] theorem supNorm_neg (x : Site d) : supNorm (-x) = supNorm x := by
+  refine Finset.sup_congr rfl fun i _ => ?_
+  simp
+
+theorem supNorm_sub_le (x y : Site d) : supNorm x ≤ supNorm (x - y) + supNorm y := by
+  have := supNorm_add_le (x - y) y
+  simpa using this
+
+/-- `∑'_z G(0,z) G(t,z)` in the shifted form used below. -/
+theorem tsum_srwGreenInf_shift (t : Site d) (f : Site d → ℝ) :
+    ∑' z : Site d, f (z - t) = ∑' a : Site d, f a := by
+  have := tsum_shift (d := d) (-t) f
+  simpa [sub_eq_add_neg] using this
+
+/-- **The crossed-ordering intersection estimate in Green form**:
+`∑_{z,w} G(x,z) G(z,w)^2 G(y,w) ≤ C (1+|x-y|)^{4-d}`, with its summability.
+The identity behind it is that summing over `w = z + u` first factors the double
+sum into `∑_u G(0,u)^2 · H(u + x - y)`, where `H` is the pairing of two Green
+functions of the theorem above.  Splitting at `2|u| = |x-y|` then needs nothing
+new: near the origin the pairing is small and the total mass of `G^2` is finite,
+and away from it the pairing is bounded and the tail of `G^2` is small. -/
+theorem exists_tsum_srwGreenInf_crossed_le (k : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ v : Site (k + 5),
+      (Summable fun p : Site (k + 5) × Site (k + 5) =>
+          srwGreenInf (k + 5) p.1 * srwGreenInf (k + 5) (p.2 - p.1) ^ 2
+            * srwGreenInf (k + 5) (p.2 - v)) ∧
+        (∑' p : Site (k + 5) × Site (k + 5),
+            srwGreenInf (k + 5) p.1 * srwGreenInf (k + 5) (p.2 - p.1) ^ 2
+              * srwGreenInf (k + 5) (p.2 - v))
+          ≤ C / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) := by
+  classical
+  obtain ⟨C₂, hC₂, hH⟩ := exists_tsum_srwGreenInf_mul_le k
+  obtain ⟨C₁, hC₁, htail⟩ := exists_sum_srwGreenInf_sq_tail_le k
+  have hGnn : ∀ z : Site (k + 5), 0 ≤ srwGreenInf (k + 5) z :=
+    fun z => tsum_nonneg fun j => srwHeat_nonneg j z
+  -- the total mass of `G^2`
+  have hK : ∀ F : Finset (Site (k + 5)),
+      ∑ z ∈ F, srwGreenInf (k + 5) z ^ 2 ≤ C₂ := by
+    intro F
+    have h0 := (hH 0).2
+    have hsum := (hH 0).1
+    have hrw : ∀ z : Site (k + 5),
+        srwGreenInf (k + 5) z * srwGreenInf (k + 5) (z + 0)
+          = srwGreenInf (k + 5) z ^ 2 := by
+      intro z; rw [add_zero, sq]
+    rw [tsum_congr hrw] at h0
+    have hsum' : Summable fun z : Site (k + 5) => srwGreenInf (k + 5) z ^ 2 := by
+      simpa only [add_zero, pow_two] using hsum
+    refine le_trans (Summable.sum_le_tsum F (fun z _ => sq_nonneg _) hsum') ?_
+    have hgz : ((graphNorm (0 : Site (k + 5)) : ℕ) : ℝ) = 0 := by simp
+    rw [hgz] at h0
+    norm_num at h0
+    linarith [h0]
+  refine ⟨2 ^ (k + 1) * C₂ * C₂ + 2 ^ (k + 1) * C₂ * C₁, by positivity, fun v => ?_⟩
+  set c : ℝ := (2 ^ (k + 1) * C₂ * C₂ + 2 ^ (k + 1) * C₂ * C₁)
+    / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) with hc
+  set M : ℕ := supNorm v / 2 + 1 with hM
+  have hM1 : 1 ≤ M := by omega
+  have hnn : ∀ p : Site (k + 5) × Site (k + 5),
+      0 ≤ srwGreenInf (k + 5) p.1 * srwGreenInf (k + 5) (p.2 - p.1) ^ 2
+        * srwGreenInf (k + 5) (p.2 - v) :=
+    fun p => mul_nonneg (mul_nonneg (hGnn _) (sq_nonneg _)) (hGnn _)
+  -- the inner pairing bound, after the substitution `w = z + u`
+  have hinner : ∀ (u : Site (k + 5)) (A : Finset (Site (k + 5))),
+      ∑ z ∈ A, srwGreenInf (k + 5) z * srwGreenInf (k + 5) (z + u - v)
+        ≤ C₂ / (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1) := by
+    intro u A
+    have hrw : ∀ z : Site (k + 5),
+        srwGreenInf (k + 5) z * srwGreenInf (k + 5) (z + u - v)
+          = srwGreenInf (k + 5) z * srwGreenInf (k + 5) (z + (u - v)) := by
+      intro z; rw [show z + u - v = z + (u - v) from by abel]
+    rw [Finset.sum_congr rfl fun z _ => hrw z]
+    refine le_trans (Summable.sum_le_tsum A
+      (fun z _ => mul_nonneg (hGnn _) (hGnn _)) (hH (u - v)).1) (hH (u - v)).2
+  -- the two regions
+  have hsplit : ∀ (u : Site (k + 5)),
+      srwGreenInf (k + 5) u ^ 2 * (C₂ / (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1))
+        ≤ (if supNorm u < M then
+              2 ^ (k + 1) * C₂ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1)
+                * srwGreenInf (k + 5) u ^ 2
+            else C₂ * srwGreenInf (k + 5) u ^ 2) := by
+    intro u
+    have hden : (0 : ℝ) < (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1) := by positivity
+    have hone : (1 : ℝ) ≤ (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1) := by
+      refine one_le_pow₀ ?_
+      have : (0 : ℝ) ≤ ((graphNorm (u - v) : ℕ) : ℝ) := by positivity
+      linarith
+    by_cases hu : supNorm u < M
+    · rw [if_pos hu]
+      -- `2|u| ≤ |v|`, so `|u - v| ≥ |v|/2` in the sup norm and a fortiori in the graph norm
+      have h2u : 2 * supNorm u ≤ supNorm v := by omega
+      have htri : supNorm v ≤ supNorm (v - u) + supNorm u := supNorm_sub_le v u
+      have hge : supNorm v ≤ 2 * supNorm (u - v) := by
+        have : supNorm (v - u) = supNorm (u - v) := by
+          rw [show v - u = -(u - v) from by abel, supNorm_neg]
+        omega
+      have hgn : ((supNorm (u - v) : ℕ) : ℝ) ≤ ((graphNorm (u - v) : ℕ) : ℝ) := by
+        exact_mod_cast supNorm_le_graphNorm (u - v)
+      have hhalf : (1 : ℝ) + ((supNorm v : ℕ) : ℝ)
+          ≤ 2 * (1 + ((graphNorm (u - v) : ℕ) : ℝ)) := by
+        have h1 : ((supNorm v : ℕ) : ℝ) ≤ 2 * ((supNorm (u - v) : ℕ) : ℝ) := by
+          exact_mod_cast hge
+        linarith
+      have hpow : (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1)
+          ≤ 2 ^ (k + 1) * (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1) := by
+        have := pow_le_pow_left₀ (by positivity) hhalf (k + 1)
+        rwa [mul_pow] at this
+      have hkey : C₂ / (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1)
+          ≤ 2 ^ (k + 1) * C₂ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) := by
+        rw [div_le_div_iff₀ hden (by positivity)]
+        nlinarith [hC₂.le, hpow, hden]
+      calc srwGreenInf (k + 5) u ^ 2
+              * (C₂ / (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1))
+          ≤ srwGreenInf (k + 5) u ^ 2
+              * (2 ^ (k + 1) * C₂ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1)) :=
+            mul_le_mul_of_nonneg_left hkey (sq_nonneg _)
+        _ = 2 ^ (k + 1) * C₂ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1)
+              * srwGreenInf (k + 5) u ^ 2 := by ring
+    · rw [if_neg hu]
+      have hle : C₂ / (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1) ≤ C₂ := by
+        rw [div_le_iff₀ hden]
+        nlinarith [hC₂.le, hone]
+      calc srwGreenInf (k + 5) u ^ 2
+              * (C₂ / (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1))
+          ≤ srwGreenInf (k + 5) u ^ 2 * C₂ :=
+            mul_le_mul_of_nonneg_left hle (sq_nonneg _)
+        _ = C₂ * srwGreenInf (k + 5) u ^ 2 := by ring
+  -- every finite partial sum is below the bound
+  have hP : ∀ P : Finset (Site (k + 5) × Site (k + 5)),
+      ∑ p ∈ P, srwGreenInf (k + 5) p.1 * srwGreenInf (k + 5) (p.2 - p.1) ^ 2
+          * srwGreenInf (k + 5) (p.2 - v) ≤ c := by
+    intro P
+    -- substitute `w = z + u`
+    have hinj : ∀ a ∈ P, ∀ b ∈ P,
+        ((a.1, a.2 - a.1) : Site (k + 5) × Site (k + 5)) = (b.1, b.2 - b.1) → a = b := by
+      intro a _ b _ h
+      obtain ⟨h1, h2⟩ := Prod.mk.inj h
+      rw [h1] at h2
+      exact Prod.ext h1 (sub_left_inj.mp h2)
+    set g : Site (k + 5) × Site (k + 5) → ℝ := fun q =>
+      srwGreenInf (k + 5) q.1 * srwGreenInf (k + 5) q.2 ^ 2
+        * srwGreenInf (k + 5) (q.1 + q.2 - v) with hg
+    have hgnn : ∀ q, 0 ≤ g q := fun q =>
+      mul_nonneg (mul_nonneg (hGnn _) (sq_nonneg _)) (hGnn _)
+    set Q : Finset (Site (k + 5) × Site (k + 5)) :=
+      P.image (fun p => (p.1, p.2 - p.1)) with hQ
+    have hPQ : ∑ p ∈ P, srwGreenInf (k + 5) p.1 * srwGreenInf (k + 5) (p.2 - p.1) ^ 2
+          * srwGreenInf (k + 5) (p.2 - v)
+        = ∑ q ∈ Q, g q := by
+      rw [hQ, Finset.sum_image hinj]
+      refine Finset.sum_congr rfl fun p _ => ?_
+      rw [hg]
+      simp only
+      rw [show p.1 + (p.2 - p.1) = p.2 from by abel]
+    rw [hPQ]
+    set A : Finset (Site (k + 5)) := Q.image Prod.fst with hA
+    set U : Finset (Site (k + 5)) := Q.image Prod.snd with hU
+    have hQsub : Q ⊆ A ×ˢ U := fun q hq =>
+      Finset.mem_product.mpr ⟨Finset.mem_image_of_mem _ hq, Finset.mem_image_of_mem _ hq⟩
+    have hstep1 : ∑ q ∈ Q, g q ≤ ∑ q ∈ A ×ˢ U, g q :=
+      Finset.sum_le_sum_of_subset_of_nonneg hQsub fun q _ _ => hgnn q
+    refine hstep1.trans ?_
+    rw [Finset.sum_product, Finset.sum_comm]
+    have hrow : ∀ u ∈ U, ∑ z ∈ A, g (z, u)
+        ≤ srwGreenInf (k + 5) u ^ 2
+          * (C₂ / (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1)) := by
+      intro u _
+      have hfac : ∑ z ∈ A, g (z, u)
+          = srwGreenInf (k + 5) u ^ 2
+            * ∑ z ∈ A, srwGreenInf (k + 5) z * srwGreenInf (k + 5) (z + u - v) := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl fun z _ => ?_
+        rw [hg]
+        ring
+      rw [hfac]
+      exact mul_le_mul_of_nonneg_left (hinner u A) (sq_nonneg _)
+    refine (Finset.sum_le_sum hrow).trans ?_
+    refine (Finset.sum_le_sum fun u _ => hsplit u).trans ?_
+    rw [Finset.sum_ite]
+    have hnear : ∑ u ∈ U.filter (fun u => supNorm u < M),
+          2 ^ (k + 1) * C₂ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1)
+            * srwGreenInf (k + 5) u ^ 2
+        ≤ 2 ^ (k + 1) * C₂ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) * C₂ := by
+      rw [← Finset.mul_sum]
+      exact mul_le_mul_of_nonneg_left (hK _) (by positivity)
+    have hfar : ∑ u ∈ U.filter (fun u => ¬ supNorm u < M),
+          C₂ * srwGreenInf (k + 5) u ^ 2
+        ≤ C₂ * (C₁ / (M : ℝ) ^ (k + 1)) := by
+      rw [← Finset.mul_sum]
+      refine mul_le_mul_of_nonneg_left (htail M hM1 _ fun z hz => ?_) hC₂.le
+      have := (Finset.mem_filter.mp hz).2
+      omega
+    -- the two constants combine
+    have hMle : (1 : ℝ) + ((supNorm v : ℕ) : ℝ) ≤ 2 * (M : ℝ) := by
+      have : (1 : ℕ) + supNorm v ≤ 2 * M := by omega
+      exact_mod_cast this
+    have hMpow : (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) ≤ 2 ^ (k + 1) * (M : ℝ) ^ (k + 1) := by
+      have := pow_le_pow_left₀ (by positivity) hMle (k + 1)
+      rwa [mul_pow] at this
+    have hMpos : (0 : ℝ) < (M : ℝ) := by exact_mod_cast hM1
+    have hMkpos : (0 : ℝ) < (M : ℝ) ^ (k + 1) := by positivity
+    have hvpos : (0 : ℝ) < (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) := by positivity
+    have hlast : C₂ * (C₁ / (M : ℝ) ^ (k + 1))
+        ≤ 2 ^ (k + 1) * C₂ * C₁ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) := by
+      rw [mul_div_assoc']
+      rw [div_le_div_iff₀ hMkpos hvpos]
+      nlinarith [mul_le_mul_of_nonneg_left hMpow (mul_nonneg hC₂.le hC₁.le)]
+    rw [hc]
+    have hsum : 2 ^ (k + 1) * C₂ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) * C₂
+        + 2 ^ (k + 1) * C₂ * C₁ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1)
+        = (2 ^ (k + 1) * C₂ * C₂ + 2 ^ (k + 1) * C₂ * C₁)
+          / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1) := by
+      field_simp
+    linarith [hnear, hfar, hlast]
+  exact ⟨summable_of_sum_le hnn hP, Real.tsum_le_of_sum_le hnn hP⟩
+
 end LatticeProb
