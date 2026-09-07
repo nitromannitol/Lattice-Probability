@@ -963,4 +963,178 @@ theorem exists_srwGreenInf_sup_tail_le (k : ℕ) :
   refine div_le_div_of_nonneg_left hC.le (by positivity) ?_
   exact pow_le_pow_left₀ hrpos.le (by linarith) (k + 3)
 
+/-! ### The time tail of the kernel -/
+
+/-- The index equivalence `{j // m ≤ j} ≃ ℕ`. -/
+def geEquiv (m : ℕ) : {j : ℕ // m ≤ j} ≃ ℕ where
+  toFun j := (j : ℕ) - m
+  invFun i := ⟨m + i, Nat.le_add_right _ _⟩
+  left_inv := fun j => Subtype.ext (by simp; omega)
+  right_inv := by intro i; simp
+
+theorem tsum_subtype_ge (m : ℕ) (f : ℕ → ℝ) :
+    ∑' j : {j : ℕ // m ≤ j}, f (j : ℕ) = ∑' i : ℕ, f (m + i) := by
+  rw [← (geEquiv m).symm.tsum_eq (fun j : {j : ℕ // m ≤ j} => f (j : ℕ))]
+  rfl
+
+theorem summable_subtype_ge {m : ℕ} {f : ℕ → ℝ} (hf : Summable f) :
+    Summable fun j : {j : ℕ // m ≤ j} => f (j : ℕ) :=
+  hf.subtype {j : ℕ | m ≤ j}
+
+/-- The tail of the kernel in time, `∑_{j ≥ m} p_j(0,y)`. -/
+noncomputable def srwTimeTail (d : ℕ) (m : ℕ) (y : Site d) : ℝ :=
+  ∑' j : {j : ℕ // m ≤ j}, srwHeat d (j : ℕ) y
+
+theorem srwTimeTail_nonneg (d m : ℕ) (y : Site d) : 0 ≤ srwTimeTail d m y :=
+  tsum_nonneg fun _ => srwHeat_nonneg _ y
+
+/-- The partial sums of the tail converge to it. -/
+theorem tendsto_sum_Ico_srwTimeTail (hd : 3 ≤ d) (m : ℕ) (y : Site d) :
+    Filter.Tendsto (fun N : ℕ => ∑ s ∈ Finset.Ico m (m + N), srwHeat d s y)
+      Filter.atTop (nhds (srwTimeTail d m y)) := by
+  have hsum : Summable fun i : ℕ => srwHeat d (m + i) y :=
+    (summable_srwHeat hd y).comp_injective (add_right_injective m)
+  have h := hsum.hasSum.tendsto_sum_nat
+  rw [srwTimeTail, tsum_subtype_ge m (fun j => srwHeat d j y)]
+  refine h.congr fun N => ?_
+  rw [Finset.sum_Ico_eq_sum_range]
+  simp
+
+/-- **The time tail of the kernel**, uniformly in the site:
+`∑_{j ≥ m} p_j(0,y) ≤ C m^{(2-d)/2}`. -/
+theorem exists_srwTimeTail_le (k : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ m : ℕ, 1 ≤ m → ∀ y : Site (k + 5),
+      srwTimeTail (k + 5) m y ≤ C / Real.sqrt (m : ℝ) ^ (k + 3) := by
+  refine ⟨2 * diagConst (k + 5), by linarith [diagConst_pos (k + 5)], fun m hm y => ?_⟩
+  have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm
+  have hsm : (0 : ℝ) < Real.sqrt (m : ℝ) := Real.sqrt_pos.mpr hmpos
+  refine le_of_tendsto (tendsto_sum_Ico_srwTimeTail (by omega) m y)
+    (Filter.Eventually.of_forall fun N => ?_)
+  have h := sum_Ico_srwHeat_high_le (k := k + 1) hm (m + N) y
+  refine h.trans (le_of_eq ?_)
+  have hpow : Real.sqrt (m : ℝ) ^ (k + 3)
+      = (m : ℝ) * Real.sqrt (m : ℝ) ^ (k + 1) := by
+    rw [show (k + 3) = (k + 1) + 2 from by omega, pow_add, Real.sq_sqrt hmpos.le]
+    ring
+  rw [hpow]
+  field_simp
+
+/-- A double sum over a product of finite sets of times, grouped by the sum of
+the indices: the fibre over `s` has at most `s+1` elements. -/
+theorem sum_pair_add_le (S T U : Finset ℕ) (f : ℕ → ℝ) (hf : ∀ s, 0 ≤ f s)
+    (hU : ∀ a ∈ S, ∀ b ∈ T, a + b ∈ U) :
+    ∑ a ∈ S, ∑ b ∈ T, f (a + b) ≤ ∑ s ∈ U, ((s : ℝ) + 1) * f s := by
+  classical
+  have hmaps : ∀ p ∈ S ×ˢ T, p.1 + p.2 ∈ U := by
+    intro p hp
+    rw [Finset.mem_product] at hp
+    exact hU p.1 hp.1 p.2 hp.2
+  have hfib := Finset.sum_fiberwise_of_maps_to (g := fun p : ℕ × ℕ => p.1 + p.2)
+    (f := fun p : ℕ × ℕ => f (p.1 + p.2)) hmaps
+  rw [← Finset.sum_product', ← hfib]
+  refine Finset.sum_le_sum fun s _ => ?_
+  have hcongr : ∀ p ∈ ((S ×ˢ T).filter fun p : ℕ × ℕ => p.1 + p.2 = s),
+      f (p.1 + p.2) = f s := fun p hp => by rw [(Finset.mem_filter.mp hp).2]
+  rw [Finset.sum_congr rfl hcongr, Finset.sum_const, nsmul_eq_mul]
+  refine mul_le_mul_of_nonneg_right ?_ (hf s)
+  have hcard : (((S ×ˢ T).filter fun p : ℕ × ℕ => p.1 + p.2 = s)).card ≤ s + 1 := by
+    have hinj : Set.InjOn (fun p : ℕ × ℕ => p.1)
+        (((S ×ˢ T).filter fun p : ℕ × ℕ => p.1 + p.2 = s)) := by
+      intro p hp q hq hpq
+      simp only [Finset.coe_filter, Set.mem_setOf_eq] at hp hq
+      have h1 : p.1 = q.1 := hpq
+      exact Prod.ext h1 (by omega)
+    calc (((S ×ˢ T).filter fun p : ℕ × ℕ => p.1 + p.2 = s)).card
+        ≤ (Finset.range (s + 1)).card := by
+          refine Finset.card_le_card_of_injOn (fun p : ℕ × ℕ => p.1) ?_ hinj
+          intro p hp
+          have hs : p.1 + p.2 = s := (Finset.mem_filter.mp hp).2
+          refine Finset.mem_range.mpr ?_
+          show p.1 < s + 1
+          omega
+      _ = s + 1 := Finset.card_range _
+  have := (Nat.cast_le (α := ℝ)).mpr hcard
+  push_cast at this
+  exact this
+
+theorem summable_finsetSum_srwHeat_mul (S : Finset ℕ) (f : Site d → ℝ) :
+    Summable fun y : Site d => (∑ s ∈ S, srwHeat d s y) * f y := by
+  have hrw : (fun y : Site d => (∑ s ∈ S, srwHeat d s y) * f y)
+      = fun y : Site d => ∑ s ∈ S, srwHeat d s y * f y := by
+    funext y; rw [Finset.sum_mul]
+  rw [hrw]
+  exact summable_sum fun s _ => summable_srwHeat_mul s f
+
+/-- **The `ℓ²` norm of the time tail**:
+`∑_y (∑_{j ≥ m} p_j(0,y))^2 ≤ C m^{(4-d)/2}`, with its summability. -/
+theorem exists_tsum_srwTimeTail_sq_le (k : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ m : ℕ, 1 ≤ m →
+      (Summable fun y : Site (k + 5) => srwTimeTail (k + 5) m y ^ 2) ∧
+        (∑' y : Site (k + 5), srwTimeTail (k + 5) m y ^ 2)
+          ≤ C / Real.sqrt (m : ℝ) ^ (k + 1) := by
+  refine ⟨12 * diagConst (k + 5), by linarith [diagConst_pos (k + 5)], fun m hm => ?_⟩
+  have hd3 : 3 ≤ k + 5 := by omega
+  have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm
+  have hsm : (0 : ℝ) < Real.sqrt (m : ℝ) := Real.sqrt_pos.mpr hmpos
+  set c : ℝ := 12 * diagConst (k + 5) / Real.sqrt (m : ℝ) ^ (k + 1) with hc
+  have hnn : ∀ y : Site (k + 5), 0 ≤ srwTimeTail (k + 5) m y ^ 2 := fun y => sq_nonneg _
+  have hF : ∀ F : Finset (Site (k + 5)),
+      ∑ y ∈ F, srwTimeTail (k + 5) m y ^ 2 ≤ c := by
+    intro F
+    have hlim : Filter.Tendsto
+        (fun N : ℕ => ∑ y ∈ F, (∑ s ∈ Finset.Ico m (m + N), srwHeat (k + 5) s y) ^ 2)
+        Filter.atTop (nhds (∑ y ∈ F, srwTimeTail (k + 5) m y ^ 2)) :=
+      tendsto_finsetSum _ fun y _ =>
+        ((tendsto_sum_Ico_srwTimeTail hd3 m y).pow 2)
+    refine le_of_tendsto hlim (Filter.Eventually.of_forall fun N => ?_)
+    have hsq : ∀ y : Site (k + 5),
+        (∑ s ∈ Finset.Ico m (m + N), srwHeat (k + 5) s y) ^ 2
+          = (∑ s ∈ Finset.Ico m (m + N), srwHeat (k + 5) s y)
+            * (∑ s ∈ Finset.Ico m (m + N), srwHeat (k + 5) s y) := fun y => sq _
+    have hsub : ∑ y ∈ F, (∑ s ∈ Finset.Ico m (m + N), srwHeat (k + 5) s y) ^ 2
+        ≤ ∑' y : Site (k + 5), (∑ s ∈ Finset.Ico m (m + N), srwHeat (k + 5) s y) ^ 2 := by
+      refine Summable.sum_le_tsum F (fun y _ => sq_nonneg _) ?_
+      simp only [hsq]
+      exact summable_finsetSum_srwHeat_mul _ _
+    refine hsub.trans ?_
+    simp only [hsq]
+    rw [tsum_sum_srwHeat_mul]
+    -- group by the total time
+    have hU : ∀ a ∈ Finset.Ico m (m + N), ∀ b ∈ Finset.Ico m (m + N),
+        a + b ∈ Finset.Ico (2 * m) (2 * (m + N)) := by
+      intro a ha b hb
+      rw [Finset.mem_Ico] at ha hb ⊢
+      omega
+    refine (sum_pair_add_le _ _ _ (fun s => srwHeat (k + 5) s 0)
+      (fun s => srwHeat_nonneg s 0) hU).trans ?_
+    have hterm : ∀ s ∈ Finset.Ico (2 * m) (2 * (m + N)),
+        ((s : ℝ) + 1) * srwHeat (k + 5) s (0 : Site (k + 5))
+          ≤ 2 * diagConst (k + 5) * (Real.sqrt (s : ℝ) ^ ((k + 1) + 2))⁻¹ := by
+      intro s hs
+      exact weighted_srwHeat_far_le k (by have := (Finset.mem_Ico.mp hs).1; omega) _
+    refine (Finset.sum_le_sum hterm).trans ?_
+    rw [← Finset.mul_sum]
+    have hm2 : 1 ≤ 2 * m := by omega
+    have h := sum_Ico_inv_sqrt_pow_le' (k := k + 1) (by omega) hm2 (2 * (m + N))
+    have hsm2 : Real.sqrt (m : ℝ) ≤ Real.sqrt ((2 * m : ℕ) : ℝ) := by
+      refine Real.sqrt_le_sqrt ?_
+      push_cast
+      linarith
+    have hpow2 : Real.sqrt (m : ℝ) ^ (k + 1) ≤ Real.sqrt ((2 * m : ℕ) : ℝ) ^ (k + 1) :=
+      pow_le_pow_left₀ (Real.sqrt_nonneg _) hsm2 (k + 1)
+    have hp1 : (0 : ℝ) < Real.sqrt (m : ℝ) ^ (k + 1) := by positivity
+    have hdiv : (6 : ℝ) / Real.sqrt ((2 * m : ℕ) : ℝ) ^ (k + 1)
+        ≤ 6 / Real.sqrt (m : ℝ) ^ (k + 1) :=
+      div_le_div_of_nonneg_left (by norm_num) hp1 hpow2
+    rw [hc]
+    calc 2 * diagConst (k + 5)
+          * ∑ s ∈ Finset.Ico (2 * m) (2 * (m + N)),
+              (Real.sqrt (s : ℝ) ^ ((k + 1) + 2))⁻¹
+        ≤ 2 * diagConst (k + 5) * (6 / Real.sqrt ((2 * m : ℕ) : ℝ) ^ (k + 1)) :=
+          mul_le_mul_of_nonneg_left h (by linarith [(diagConst_pos (k + 5)).le])
+      _ ≤ 2 * diagConst (k + 5) * (6 / Real.sqrt (m : ℝ) ^ (k + 1)) :=
+          mul_le_mul_of_nonneg_left hdiv (by linarith [(diagConst_pos (k + 5)).le])
+      _ = 12 * diagConst (k + 5) / Real.sqrt (m : ℝ) ^ (k + 1) := by ring
+  exact ⟨summable_of_sum_le hnn hF, Real.tsum_le_of_sum_le hnn hF⟩
+
 end LatticeProb
