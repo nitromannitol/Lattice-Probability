@@ -109,3 +109,4 @@ import LatticeProb.Gauss.Process
 import LatticeProb.Gauss.WhiteNoise
 import LatticeProb.Gauss.Brownian
 import LatticeProb.Prob.PiDensity
+import LatticeProb.Prob.GaussDensity
