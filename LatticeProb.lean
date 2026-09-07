@@ -87,6 +87,7 @@ import LatticeProb.Network.MaximumPrinciple
 import LatticeProb.Network.Variational
 import LatticeProb.Network.Flow
 import LatticeProb.Network.NashWilliams
+import LatticeProb.Network.Series
 import LatticeProb.Prob.Moments
 import LatticeProb.Prob.PowerIneq
 import LatticeProb.Prob.LpSmooth
