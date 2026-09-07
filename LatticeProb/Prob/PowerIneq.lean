@@ -282,6 +282,97 @@ theorem exists_abs_add_rpow_bound {p : ℝ} (hp : 2 ≤ p) :
             + C * (|a| ^ (p - 2) * b ^ 2 + |b| ^ p) := by
           rw [hmul1, hmul2, hmul3]; ring
 
+/-! ### The algebraic step of the `2`-smoothness of `L^p` -/
+
+/-- The tangent line to `x ↦ x^q` at `u`, for `q ≥ 1`. -/
+theorem rpow_add_tangent {q u w : ℝ} (hq : 1 ≤ q) (hu : 0 ≤ u) (hw : 0 ≤ w) :
+    u ^ q + q * u ^ (q - 1) * w ≤ (u + w) ^ q := by
+  rcases eq_or_lt_of_le hu with hu0 | hupos
+  · rcases eq_or_lt_of_le hq with hq1 | hq1
+    · rw [← hu0, ← hq1]
+      simp
+    · rw [← hu0]
+      have h1 : (0 : ℝ) ^ q = 0 := Real.zero_rpow (by linarith)
+      have h2 : (0 : ℝ) ^ (q - 1) = 0 := Real.zero_rpow (by linarith)
+      rw [h1, h2, zero_add, mul_zero, zero_mul, zero_add]
+      exact Real.rpow_nonneg hw q
+  · have hune : u ≠ 0 := ne_of_gt hupos
+    have hwu : (0 : ℝ) ≤ w / u := div_nonneg hw (le_of_lt hupos)
+    have hber := one_add_mul_self_le_rpow_one_add (s := w / u)
+      (by linarith) hq
+    have hupow : (0 : ℝ) < u ^ q := Real.rpow_pos_of_pos hupos q
+    have hfac : u + w = u * (1 + w / u) := by field_simp
+    have hsplit : (u + w) ^ q = u ^ q * (1 + w / u) ^ q := by
+      rw [hfac, Real.mul_rpow (le_of_lt hupos) (by positivity)]
+    have hshift : u ^ q * (w / u) = u ^ (q - 1) * w := by
+      rw [Real.rpow_sub hupos, Real.rpow_one]
+      field_simp
+    calc u ^ q + q * u ^ (q - 1) * w = u ^ q * (1 + q * (w / u)) := by
+          have : u ^ q * (1 + q * (w / u)) = u ^ q + q * (u ^ q * (w / u)) := by ring
+          rw [this, hshift]
+          ring
+      _ ≤ u ^ q * (1 + w / u) ^ q := mul_le_mul_of_nonneg_left hber (le_of_lt hupow)
+      _ = (u + w) ^ q := hsplit.symm
+
+/-- **The algebraic step of the `2`-smoothness of `L^p`.**  For `p ≥ 2` and any
+`C₁ ≥ 0` there is a `C` with
+`u^{p/2} + C₁ (u^{(p-2)/2} v + v^{p/2}) ≤ (u + C v)^{p/2}` on the nonnegative
+quadrant.  With `u = ‖X‖_p^2` and `v = ‖Y‖_p^2` this is what turns the
+integrated pointwise bound into `‖X + Y‖_p^2 ≤ ‖X‖_p^2 + C ‖Y‖_p^2`. -/
+theorem exists_two_smooth_const {p : ℝ} (hp : 2 ≤ p) {C₁ : ℝ} (hC₁ : 0 ≤ C₁) :
+    ∃ C : ℝ, 0 < C ∧ ∀ u v : ℝ, 0 ≤ u → 0 ≤ v →
+      u ^ (p / 2) + C₁ * (u ^ ((p - 2) / 2) * v + v ^ (p / 2))
+        ≤ (u + C * v) ^ (p / 2) := by
+  set q : ℝ := p / 2 with hq
+  have hq1 : (1 : ℝ) ≤ q := by rw [hq]; linarith
+  have hqpos : (0 : ℝ) < q := by linarith
+  set C' : ℝ := C₁ / q with hC'
+  set C'' : ℝ := C₁ ^ (1 / q) + 1 with hC''
+  have hC'nn : 0 ≤ C' := div_nonneg hC₁ (le_of_lt hqpos)
+  have hC''pos : 0 < C'' := by
+    rw [hC'']
+    have : (0 : ℝ) ≤ C₁ ^ (1 / q) := Real.rpow_nonneg hC₁ _
+    linarith
+  refine ⟨C' + C'', by linarith, ?_⟩
+  intro u v hu hv
+  have hexp : (p - 2) / 2 = q - 1 := by rw [hq]; ring
+  rw [hexp]
+  have hC'v : 0 ≤ C' * v := mul_nonneg hC'nn hv
+  have hC''v : 0 ≤ C'' * v := mul_nonneg (le_of_lt hC''pos) hv
+  have hsuper : (u + C' * v) ^ q + (C'' * v) ^ q ≤ ((u + C' * v) + C'' * v) ^ q :=
+    Real.add_rpow_le_rpow_add (by linarith) hC''v hq1
+  have htan : u ^ q + q * u ^ (q - 1) * (C' * v) ≤ (u + C' * v) ^ q :=
+    rpow_add_tangent hq1 hu hC'v
+  have hqC' : q * C' = C₁ := by
+    rw [hC']
+    field_simp
+  have hlin : u ^ q + C₁ * (u ^ (q - 1) * v) ≤ (u + C' * v) ^ q := by
+    have hrw : q * u ^ (q - 1) * (C' * v) = C₁ * (u ^ (q - 1) * v) := by
+      rw [← hqC']; ring
+    rw [hrw] at htan
+    exact htan
+  have hpow : C₁ * v ^ q ≤ (C'' * v) ^ q := by
+    have h1 : (C'' * v) ^ q = C'' ^ q * v ^ q :=
+      Real.mul_rpow (le_of_lt hC''pos) hv
+    have h2 : C₁ ≤ C'' ^ q := by
+      have hbase : C₁ ^ (1 / q) ≤ C'' := by rw [hC'']; linarith
+      have h3 : (C₁ ^ (1 / q)) ^ q ≤ C'' ^ q :=
+        Real.rpow_le_rpow (Real.rpow_nonneg hC₁ _) hbase (le_of_lt hqpos)
+      have h4 : (C₁ ^ (1 / q)) ^ q = C₁ := by
+        rw [← Real.rpow_mul hC₁, one_div, inv_mul_cancel₀ (ne_of_gt hqpos), Real.rpow_one]
+      rw [h4] at h3
+      exact h3
+    rw [h1]
+    exact mul_le_mul_of_nonneg_right h2 (Real.rpow_nonneg hv q)
+  have hcomb : (u + (C' + C'') * v) ^ q = ((u + C' * v) + C'' * v) ^ q := by
+    congr 1
+    ring
+  rw [hcomb]
+  calc u ^ q + C₁ * (u ^ (q - 1) * v + v ^ q)
+      = (u ^ q + C₁ * (u ^ (q - 1) * v)) + C₁ * v ^ q := by ring
+    _ ≤ (u + C' * v) ^ q + (C'' * v) ^ q := add_le_add hlin hpow
+    _ ≤ ((u + C' * v) + C'' * v) ^ q := hsuper
+
 end LatticeProb
 
 end
