@@ -58,6 +58,7 @@ import LatticeProb.Walk.Markov
 import LatticeProb.Prob.BK
 import LatticeProb.Prob.InfinitePiSplit
 import LatticeProb.Prob.Coordinate
+import LatticeProb.Prob.CoordIntegral
 import LatticeProb.Prob.Exploration
 import LatticeProb.Prob.Exposure
 import LatticeProb.Prob.CountableMeasurable
