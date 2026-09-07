@@ -84,3 +84,4 @@ import LatticeProb.Network.Variational
 import LatticeProb.Network.Flow
 import LatticeProb.Network.NashWilliams
 import LatticeProb.Prob.Moments
+import LatticeProb.Prob.PowerIneq
