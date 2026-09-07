@@ -88,6 +88,7 @@ import LatticeProb.Network.Variational
 import LatticeProb.Network.Flow
 import LatticeProb.Network.NashWilliams
 import LatticeProb.Network.Series
+import LatticeProb.Network.Escape
 import LatticeProb.Prob.Moments
 import LatticeProb.Prob.PowerIneq
 import LatticeProb.Prob.LpSmooth
