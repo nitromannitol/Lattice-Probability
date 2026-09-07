@@ -120,4 +120,5 @@ import LatticeProb.Graph.PathSpace
 import LatticeProb.Graph.ExitTime
 import LatticeProb.Walk.SRWDiag
 import LatticeProb.Walk.GreenSq
+import LatticeProb.Walk.VarianceScale
 import LatticeProb.Prob.ExplorationCond
