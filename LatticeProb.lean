@@ -112,3 +112,5 @@ import LatticeProb.Prob.PiDensity
 import LatticeProb.Prob.GaussDensity
 import LatticeProb.Prob.GaussOrthant
 import LatticeProb.Prob.Blocks
+import LatticeProb.Prob.DyadicChain
+import LatticeProb.Prob.Chentsov
