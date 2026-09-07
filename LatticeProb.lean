@@ -84,6 +84,7 @@ import LatticeProb.Prob.Birkhoff
 import LatticeProb.Network.Basic
 import LatticeProb.Network.Killed
 import LatticeProb.Network.KilledGreen
+import LatticeProb.Network.KilledGreenEscape
 import LatticeProb.Network.FirstPassage
 import LatticeProb.Network.MaximumPrinciple
 import LatticeProb.Network.Variational
@@ -116,5 +117,6 @@ import LatticeProb.Prob.DyadicChain
 import LatticeProb.Prob.Chentsov
 import LatticeProb.Gauss.BrownianCont
 import LatticeProb.Graph.PathSpace
+import LatticeProb.Graph.ExitTime
 import LatticeProb.Walk.SRWDiag
 import LatticeProb.Prob.ExplorationCond
