@@ -53,6 +53,36 @@ theorem srwHeat_diag_le (hd : 0 < d) {s : ℕ} (hs : 1 ≤ s) :
   have hinv : (0 : ℝ) < (Real.sqrt (s : ℝ) ^ d)⁻¹ := inv_pos.mpr hpos
   nlinarith [greenConst_nonneg d, (by positivity : (0:ℝ) ≤ (3:ℝ) ^ d)]
 
+/-- **The Gaussian upper bound off the diagonal too**, in the `√s ^ d` form:
+the exponential factor is at most one. -/
+theorem srwHeat_sup_le (hd : 0 < d) {s : ℕ} (hs : 1 ≤ s) (y : Site d) :
+    srwHeat d s y ≤ diagConst d / Real.sqrt s ^ d := by
+  have h := srwHeat_gaussian (d := d) hd hs y
+  have hspos : (0 : ℝ) < (s : ℝ) := by exact_mod_cast hs
+  have hexp : Real.exp (-((graphNorm y : ℝ)) ^ 2 / (8 * ((s : ℝ) + 2 * d))) ≤ 1 := by
+    refine Real.exp_le_one_iff.mpr ?_
+    have hden : (0 : ℝ) < 8 * ((s : ℝ) + 2 * d) := by positivity
+    exact div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (sq_nonneg _)) hden.le
+  have hrp : ((s : ℝ)) ^ (-(d : ℝ) / 2) = (Real.sqrt (s : ℝ) ^ d)⁻¹ := by
+    rw [neg_div, Real.rpow_neg hspos.le]
+    congr 1
+    rw [Real.sqrt_eq_rpow, ← Real.rpow_natCast ((s : ℝ) ^ ((1 : ℝ) / 2)) d,
+      ← Real.rpow_mul hspos.le]
+    ring_nf
+  have hpos : (0 : ℝ) < Real.sqrt (s : ℝ) ^ d := pow_pos (Real.sqrt_pos.mpr hspos) d
+  have hgc : (0 : ℝ) ≤ 3 ^ d * greenConst d := by
+    have := greenConst_nonneg d
+    positivity
+  have hinv : (0 : ℝ) < (Real.sqrt (s : ℝ) ^ d)⁻¹ := inv_pos.mpr hpos
+  refine h.trans ?_
+  rw [hrp, div_eq_mul_inv, diagConst]
+  have h1 : 3 ^ d * greenConst d * (Real.sqrt (s : ℝ) ^ d)⁻¹
+        * Real.exp (-((graphNorm y : ℝ)) ^ 2 / (8 * ((s : ℝ) + 2 * d)))
+      ≤ 3 ^ d * greenConst d * (Real.sqrt (s : ℝ) ^ d)⁻¹ :=
+    mul_le_of_le_one_right (mul_nonneg hgc hinv.le) hexp
+  refine h1.trans ?_
+  exact mul_le_mul_of_nonneg_right (by linarith) hinv.le
+
 /-- The one-dimensional sum the variance scale reduces to. -/
 def diagSum (d : ℕ) (t : ℕ) : ℝ := ∑ s ∈ Finset.Ico 1 t, (s : ℝ) / Real.sqrt s ^ d
 

@@ -32,25 +32,34 @@ theorem tsum_srwHeat_mul (a b : ℕ) :
   refine tsum_congr fun y => ?_
   rw [show (0 : Site d) - y = -y by ring, srwHeat_neg]
 
+/-- **The pairing of two partial sums of the kernel.**  The `ℓ²` pairing of
+`∑_{a ∈ S} p_a` with `∑_{b ∈ T} p_b` is `∑_{a ∈ S} ∑_{b ∈ T} p_{a+b}(0,0)`, for
+arbitrary finite sets of times. -/
+theorem tsum_sum_srwHeat_mul (S T : Finset ℕ) :
+    ∑' y : Site d, (∑ a ∈ S, srwHeat d a y) * (∑ b ∈ T, srwHeat d b y)
+      = ∑ a ∈ S, ∑ b ∈ T, srwHeat d (a + b) 0 := by
+  have h1 : ∀ y : Site d, (∑ a ∈ S, srwHeat d a y) * (∑ b ∈ T, srwHeat d b y)
+      = ∑ a ∈ S, srwHeat d a y * (∑ b ∈ T, srwHeat d b y) := by
+    intro y
+    rw [Finset.sum_mul]
+  rw [tsum_congr h1,
+    Summable.tsum_finsetSum (fun a _ => summable_srwHeat_mul a
+      (fun y => ∑ b ∈ T, srwHeat d b y))]
+  refine Finset.sum_congr rfl fun a _ => ?_
+  have h2 : ∀ y : Site d, srwHeat d a y * (∑ b ∈ T, srwHeat d b y)
+      = ∑ b ∈ T, srwHeat d a y * srwHeat d b y := by
+    intro y
+    rw [Finset.mul_sum]
+  rw [tsum_congr h2,
+    Summable.tsum_finsetSum (fun b _ => summable_srwHeat_mul a (fun y => srwHeat d b y))]
+  exact Finset.sum_congr rfl fun b _ => tsum_srwHeat_mul a b
+
 /-- **The correlation of two truncated Green functions.**
 `∑_y g_m(y) g_n(y) = ∑_{a<m} ∑_{b<n} p_{a+b}(0,0)`. -/
 theorem tsum_srwGreen_mul (m n : ℕ) :
     ∑' y : Site d, srwGreen d m y * srwGreen d n y
-      = ∑ a ∈ Finset.range m, ∑ b ∈ Finset.range n, srwHeat d (a + b) 0 := by
-  have h1 : ∀ y : Site d, srwGreen d m y * srwGreen d n y
-      = ∑ a ∈ Finset.range m, srwHeat d a y * srwGreen d n y := by
-    intro y
-    rw [srwGreen, Finset.sum_mul]
-  rw [tsum_congr h1,
-    Summable.tsum_finsetSum (fun a _ => summable_srwHeat_mul a (fun y => srwGreen d n y))]
-  refine Finset.sum_congr rfl fun a _ => ?_
-  have h2 : ∀ y : Site d, srwHeat d a y * srwGreen d n y
-      = ∑ b ∈ Finset.range n, srwHeat d a y * srwHeat d b y := by
-    intro y
-    rw [srwGreen, Finset.mul_sum]
-  rw [tsum_congr h2,
-    Summable.tsum_finsetSum (fun b _ => summable_srwHeat_mul a (fun y => srwHeat d b y))]
-  exact Finset.sum_congr rfl fun b _ => tsum_srwHeat_mul a b
+      = ∑ a ∈ Finset.range m, ∑ b ∈ Finset.range n, srwHeat d (a + b) 0 :=
+  tsum_sum_srwHeat_mul (Finset.range m) (Finset.range n)
 
 /-- **The variance scale as a double sum.**
 `∑_y g_t(y)^2 = ∑_{a<t} ∑_{b<t} p_{a+b}(0,0)`. -/
