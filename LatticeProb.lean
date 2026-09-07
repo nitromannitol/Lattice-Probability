@@ -111,3 +111,4 @@ import LatticeProb.Gauss.Brownian
 import LatticeProb.Prob.PiDensity
 import LatticeProb.Prob.GaussDensity
 import LatticeProb.Prob.GaussOrthant
+import LatticeProb.Prob.Blocks
