@@ -1,17 +1,16 @@
 /-
-An independent sequence of standard Gaussians, and the law of a finite linear
-combination of its coordinates.
+An independent family of standard Gaussians indexed by an arbitrary set, and the
+law of a finite linear combination of its coordinates.
 
 The construction of every Gaussian process here starts from one object: the
-product of countably many standard Gaussians on `ℕ → ℝ`.  What is needed of it
-is the law of `∑_{k<N} c_k ω_k`, and that is computed here directly from the
-head-tail decomposition of the product measure rather than through the
-independence API: the characteristic function satisfies the recursion
-`φ_{N+1}(t) = e^{-c_0^2t^2/2} φ_N(t)` because splitting off the first
-coordinate is exactly what the product measure does.
+product of standard Gaussians over an index set.  What is needed of it is the
+law of `∑_{i ∈ s} c_i ω_i` for a finite `s`, and that is Fubini: reading the
+family along the finitely many indices of `s` gives a finite product measure,
+and the characteristic function of the linear combination is the product of the
+characteristic functions, each a Gaussian one.
 -/
 import Mathlib
-import LatticeProb.Prob.InfinitePiSplit
+import LatticeProb.Prob.FiniteMarginal
 import LatticeProb.Gauss.Limit
 
 noncomputable section
@@ -22,10 +21,12 @@ open MeasureTheory ProbabilityTheory Complex
 
 open scoped ENNReal NNReal Topology
 
-/-- The law of an independent sequence of standard Gaussians. -/
-def gaussLaw : Measure (ℕ → ℝ) := Measure.infinitePi fun _ : ℕ => gaussianReal 0 1
+variable {ι : Type*}
 
-instance isProbabilityMeasure_gaussLaw : IsProbabilityMeasure gaussLaw := by
+/-- The law of an independent family of standard Gaussians indexed by `ι`. -/
+def gaussLaw (ι : Type*) : Measure (ι → ℝ) := Measure.infinitePi fun _ : ι => gaussianReal 0 1
+
+instance isProbabilityMeasure_gaussLaw : IsProbabilityMeasure (gaussLaw ι) := by
   unfold gaussLaw
   infer_instance
 
@@ -41,96 +42,75 @@ theorem integrable_cexp_mul_I {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
   rw [show (t : ℂ) * (g ω : ℂ) * Complex.I = ((t * g ω : ℝ) : ℂ) * Complex.I by push_cast; ring]
   exact le_of_eq (Complex.norm_exp_ofReal_mul_I _)
 
-/-- The partial sum `∑_{k<N} c_k ω_k`. -/
-def gaussSum (c : ℕ → ℝ) (N : ℕ) (ω : ℕ → ℝ) : ℝ := ∑ k ∈ Finset.range N, c k * ω k
+/-- The finite linear combination `∑_{i ∈ s} c_i ω_i`. -/
+def gaussSum (c : ι → ℝ) (s : Finset ι) (ω : ι → ℝ) : ℝ := ∑ i ∈ s, c i * ω i
 
-theorem measurable_gaussSum (c : ℕ → ℝ) (N : ℕ) : Measurable (gaussSum c N) := by
+theorem measurable_gaussSum (c : ι → ℝ) (s : Finset ι) : Measurable (gaussSum c s) := by
   unfold gaussSum
-  exact Finset.measurable_sum _ fun k _ => (measurable_pi_apply k).const_mul _
-
-theorem gaussSum_consNat (c : ℕ → ℝ) (N : ℕ) (u : ℝ) (η : ℕ → ℝ) :
-    gaussSum c (N + 1) (consNat u η) = c 0 * u + gaussSum (fun k => c (k + 1)) N η := by
-  unfold gaussSum
-  rw [Finset.sum_range_succ']
-  simp [consNat]
-  ring
-
-/-- **The characteristic function of a finite linear combination of independent
-standard Gaussians.** -/
-theorem charFun_gaussSum (c : ℕ → ℝ) (N : ℕ) (t : ℝ) :
-    ∫ ω, Complex.exp ((t : ℂ) * (gaussSum c N ω : ℂ) * Complex.I) ∂gaussLaw
-      = Complex.exp (-((∑ k ∈ Finset.range N, c k ^ 2 : ℝ) : ℂ) * (t : ℂ) ^ 2 / 2) := by
-  induction N generalizing c with
-  | zero =>
-      simp [gaussSum]
-  | succ N ih =>
-      have hint : Integrable
-          (fun ω => Complex.exp ((t : ℂ) * (gaussSum c (N + 1) ω : ℂ) * Complex.I)) gaussLaw :=
-        integrable_cexp_mul_I _ (measurable_gaussSum c (N + 1)) t
-      rw [gaussLaw] at hint ⊢
-      rw [integral_infinitePi_nat_head_tail (gaussianReal 0 1) _ hint]
-      have hsplit : ∀ (u : ℝ) (η : ℕ → ℝ),
-          Complex.exp ((t : ℂ) * (gaussSum c (N + 1) (consNat u η) : ℂ) * Complex.I)
-            = Complex.exp ((t : ℂ) * ((c 0 * u : ℝ) : ℂ) * Complex.I) *
-                Complex.exp ((t : ℂ) * (gaussSum (fun k => c (k + 1)) N η : ℂ) * Complex.I) := by
-        intro u η
-        rw [← Complex.exp_add, gaussSum_consNat]
-        congr 1
-        push_cast
-        ring
-      have hinner : ∀ u : ℝ,
-          ∫ η, Complex.exp ((t : ℂ) * (gaussSum c (N + 1) (consNat u η) : ℂ) * Complex.I)
-              ∂(Measure.infinitePi fun _ : ℕ => gaussianReal 0 1)
-            = Complex.exp ((t : ℂ) * ((c 0 * u : ℝ) : ℂ) * Complex.I) *
-                Complex.exp (-((∑ k ∈ Finset.range N, c (k + 1) ^ 2 : ℝ) : ℂ) *
-                  (t : ℂ) ^ 2 / 2) := by
-        intro u
-        rw [integral_congr_ae (Filter.Eventually.of_forall fun η => hsplit u η),
-          integral_const_mul]
-        congr 1
-        have := ih (c := fun k => c (k + 1))
-        rw [gaussLaw] at this
-        exact this
-      rw [integral_congr_ae (Filter.Eventually.of_forall hinner), integral_mul_const]
-      have houter : ∫ u, Complex.exp ((t : ℂ) * ((c 0 * u : ℝ) : ℂ) * Complex.I)
-            ∂(gaussianReal 0 1)
-          = Complex.exp (-((c 0 ^ 2 : ℝ) : ℂ) * (t : ℂ) ^ 2 / 2) := by
-        have h2 : (fun u : ℝ => Complex.exp ((t : ℂ) * ((c 0 * u : ℝ) : ℂ) * Complex.I))
-            = fun u : ℝ => Complex.exp (((t * c 0 : ℝ) : ℂ) * (u : ℂ) * Complex.I) := by
-          funext u
-          congr 1
-          push_cast
-          ring
-        rw [h2, ← charFun_apply_real, charFun_gaussianReal]
-        push_cast
-        ring_nf
-      rw [houter, ← Complex.exp_add]
-      congr 1
-      rw [Finset.sum_range_succ']
-      push_cast
-      ring
+  exact Finset.measurable_sum _ fun i _ => (measurable_pi_apply i).const_mul _
 
 /-- **The law of a finite linear combination of independent standard
 Gaussians.** -/
-theorem map_gaussSum (c : ℕ → ℝ) (N : ℕ) :
-    gaussLaw.map (gaussSum c N)
-      = gaussianReal 0 (∑ k ∈ Finset.range N, c k ^ 2).toNNReal := by
-  haveI : IsProbabilityMeasure (gaussLaw.map (gaussSum c N)) :=
-    Measure.isProbabilityMeasure_map (measurable_gaussSum c N).aemeasurable
+theorem map_gaussSum (c : ι → ℝ) (s : Finset ι) :
+    (gaussLaw ι).map (gaussSum c s) = gaussianReal 0 (∑ i ∈ s, c i ^ 2).toNNReal := by
+  classical
+  haveI : IsProbabilityMeasure ((gaussLaw ι).map (gaussSum c s)) :=
+    Measure.isProbabilityMeasure_map (measurable_gaussSum c s).aemeasurable
+  set T : (ι → ℝ) → (↥s → ℝ) := fun ω i => ω (i : ι) with hT
+  have hTmeas : Measurable T := measurable_pi_lambda _ fun i => measurable_pi_apply (i : ι)
+  have hTmap : (gaussLaw ι).map T = Measure.pi fun _ : ↥s => (gaussianReal 0 1 : Measure ℝ) := by
+    rw [gaussLaw]
+    exact infinitePi_map_comp _ (fun i : ↥s => (i : ι)) Subtype.val_injective
+  set G : (↥s → ℝ) → ℝ := fun x => ∑ i : ↥s, c (i : ι) * x i with hG
+  have hGmeas : Measurable G :=
+    Finset.measurable_sum _ fun i _ => (measurable_pi_apply i).const_mul _
+  have hGT : G ∘ T = gaussSum c s := by
+    funext ω
+    rw [hG, gaussSum]
+    exact Finset.sum_coe_sort s fun i => c i * ω i
+  have hmap : (gaussLaw ι).map (gaussSum c s)
+      = (Measure.pi fun _ : ↥s => (gaussianReal 0 1 : Measure ℝ)).map G := by
+    rw [← hTmap, Measure.map_map hGmeas hTmeas, hGT]
+  have hnn : (0 : ℝ) ≤ ∑ i ∈ s, c i ^ 2 := Finset.sum_nonneg fun i _ => sq_nonneg _
   refine Measure.ext_of_charFun ?_
   funext t
-  have hnn : (0 : ℝ) ≤ ∑ k ∈ Finset.range N, c k ^ 2 :=
-    Finset.sum_nonneg fun k _ => sq_nonneg _
-  have hcast : (((∑ k ∈ Finset.range N, c k ^ 2).toNNReal : ℝ≥0) : ℝ)
-      = ∑ k ∈ Finset.range N, c k ^ 2 := Real.coe_toNNReal _ hnn
-  have hfm : AEStronglyMeasurable
-      (fun x : ℝ => Complex.exp ((t : ℂ) * (x : ℂ) * Complex.I))
-      (gaussLaw.map (gaussSum c N)) :=
+  have hfm : AEStronglyMeasurable (fun x : ℝ => Complex.exp ((t : ℂ) * (x : ℂ) * Complex.I))
+      ((gaussLaw ι).map (gaussSum c s)) :=
     (Complex.continuous_exp.comp (by fun_prop)).aestronglyMeasurable
-  rw [charFun_apply_real, integral_map (measurable_gaussSum c N).aemeasurable hfm,
-    charFun_gaussSum c N t, charFun_gaussianReal, hcast]
-  push_cast
-  ring_nf
+  have hfm2 : AEStronglyMeasurable (fun x : ℝ => Complex.exp ((t : ℂ) * (x : ℂ) * Complex.I))
+      ((Measure.pi fun _ : ↥s => (gaussianReal 0 1 : Measure ℝ)).map G) := by
+    rw [← hmap]; exact hfm
+  rw [charFun_apply_real, hmap, integral_map hGmeas.aemeasurable hfm2]
+  have hprod : ∀ x : ↥s → ℝ, Complex.exp ((t : ℂ) * (G x : ℂ) * Complex.I)
+      = ∏ i : ↥s, Complex.exp (((t * c (i : ι) : ℝ) : ℂ) * (x i : ℂ) * Complex.I) := by
+    intro x
+    rw [← Complex.exp_sum]
+    congr 1
+    rw [hG]
+    push_cast
+    rw [Finset.mul_sum, Finset.sum_mul]
+    exact Finset.sum_congr rfl fun i _ => by ring
+  rw [integral_congr_ae (Filter.Eventually.of_forall hprod),
+    integral_fintype_prod_eq_prod
+      (fun (i : ↥s) (y : ℝ) => Complex.exp (((t * c (i : ι) : ℝ) : ℂ) * (y : ℂ) * Complex.I))]
+  have hone : ∀ i : ↥s, ∫ y : ℝ, Complex.exp (((t * c (i : ι) : ℝ) : ℂ) * (y : ℂ) * Complex.I)
+        ∂(gaussianReal 0 1)
+      = Complex.exp (-((c (i : ι) ^ 2 : ℝ) : ℂ) * (t : ℂ) ^ 2 / 2) := by
+    intro i
+    rw [← charFun_apply_real, charFun_gaussianReal]
+    push_cast
+    ring_nf
+  rw [Finset.prod_congr rfl fun i _ => hone i, ← Complex.exp_sum, charFun_gaussianReal,
+    Real.coe_toNNReal _ hnn]
+  congr 1
+  have hA : (((∑ i ∈ s, c i ^ 2 : ℝ)) : ℂ) = ∑ i : ↥s, ((c (i : ι) : ℝ) : ℂ) ^ 2 := by
+    rw [← Finset.sum_coe_sort s fun i => c i ^ 2]
+    push_cast
+    rfl
+  simp only [hA, Finset.sum_mul, Finset.sum_div, Complex.ofReal_zero, mul_zero, zero_mul,
+    zero_sub]
+  rw [← Finset.sum_neg_distrib]
+  exact Finset.sum_congr rfl fun i _ => by push_cast; ring
 
 end LatticeProb
 
