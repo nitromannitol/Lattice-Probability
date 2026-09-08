@@ -129,6 +129,8 @@ import LatticeProb.Graph.MarkovAE
 import LatticeProb.Walk.SRWDiag
 import LatticeProb.Walk.OneDimGrad
 import LatticeProb.Walk.TwoDimGrad
+import LatticeProb.Walk.SchedBinom
+import LatticeProb.Walk.SchedRot
 import LatticeProb.Walk.ShiftGrad
 import LatticeProb.Walk.HitProb
 import LatticeProb.Walk.ExteriorDirichlet
