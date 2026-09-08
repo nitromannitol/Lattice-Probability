@@ -248,4 +248,19 @@ theorem exists_tsum_abs_S1_shift_le :
     rw [le_div_iff₀ hsn] at h0 h1
     nlinarith [h0, h1, hsn]
 
+/-! ### The kernel at an arbitrary shift -/
+
+/-- The difference of the one-dimensional kernel and its translate by any shift
+is summable. -/
+theorem summable_abs_S1_shift_any (n : ℕ) (c : ℤ) :
+    Summable fun k : ℤ => |S1 n k - S1 n (k + c)| :=
+  ((summable_S1 n).sub
+    (((Equiv.addRight c).summable_iff (f := fun k : ℤ => S1 n k)).mpr (summable_S1 n))).abs
+
+/-- The translate of the one-dimensional kernel still has total mass one. -/
+theorem tsum_S1_shift (n : ℕ) (c : ℤ) : ∑' k : ℤ, S1 n (k + c) = 1 := by
+  have h := (Equiv.addRight c).tsum_eq (fun k : ℤ => S1 n k)
+  simpa [Equiv.coe_addRight] using h ▸ tsum_S1 n
+
+
 end LatticeProb

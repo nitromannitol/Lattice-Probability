@@ -182,4 +182,43 @@ theorem tsum_abs_srwHeat_shift_le_of_even {n : ℕ} {K : ℝ}
   rw [hcast]
   exact h
 
+/-- The `ℓ¹` norm of a vector supported at two distinct coordinates is the sum of
+the two absolute values. -/
+theorem graphNorm_single_add_single {i j : Fin d} (hij : i ≠ j) (a b : ℤ) :
+    graphNorm ((Pi.single i a : Site d) + Pi.single j b) = a.natAbs + b.natAbs := by
+  classical
+  simp only [graphNorm, Pi.add_apply, Pi.single_apply]
+  have key : ∑ k ∈ ({i, j} : Finset (Fin d)),
+      ((if k = i then a else 0) + (if k = j then b else 0)).natAbs
+      = ∑ k : Fin d, ((if k = i then a else 0) + (if k = j then b else 0)).natAbs := by
+    refine Finset.sum_subset (fun k _ => Finset.mem_univ k) ?_
+    intro k _ hk
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hk
+    push Not at hk
+    simp [hk.1, hk.2]
+  rw [← key, Finset.sum_insert (show (i : Fin d) ∉ ({j} : Finset (Fin d)) from by simp [hij])]
+  simp [hij, hij.symm]
+
+/-- A vector of `ℓ¹` norm one is a signed unit vector.  With
+`LatticeProb.graphNorm_single_add_single` this identifies the generators
+`g₁ + g₂` of the reduction: `±e_i ± e_j`, `±2e_i`, and `0`. -/
+theorem eq_single_of_graphNorm_eq_one {u : Site d} (hu : graphNorm u = 1) :
+    ∃ (i : Fin d) (s : ℤ), s.natAbs = 1 ∧ u = Pi.single i s := by
+  classical
+  rw [graphNorm] at hu
+  obtain ⟨i, _, hi⟩ := Finset.exists_ne_zero_of_sum_ne_zero
+    (show ∑ k : Fin d, (u k).natAbs ≠ 0 from by rw [hu]; simp)
+  rw [← Finset.sum_erase_add _ _ (Finset.mem_univ i)] at hu
+  have hui : (u i).natAbs = 1 := by omega
+  have hzero : ∑ k ∈ Finset.univ.erase i, (u k).natAbs = 0 := by omega
+  refine ⟨i, u i, hui, ?_⟩
+  funext k
+  by_cases hk : k = i
+  · subst hk; simp
+  · have hk' : (u k).natAbs = 0 := by
+      rw [Finset.sum_eq_zero_iff_of_nonneg (fun k _ => Nat.zero_le _)] at hzero
+      exact hzero k (by simp [hk])
+    simp [hk, Int.natAbs_eq_zero.mp hk']
+
+
 end LatticeProb
