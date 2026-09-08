@@ -518,6 +518,74 @@ theorem particleOdometer_congr_box {D D' : Driver d} (hs : StepsToNeighbour D)
     ∀ x ∈ boxFinset y r, particleOdometer D t x = particleOdometer D' t x :=
   fun x hx => (state_agree_box hs y t r hA).departures x hx
 
+/-! ### No site carries an active particle and an unfilled hole -/
+
+/-- **No site carries an active particle and an unfilled hole.** -/
+theorem holeCount_eq_zero_of_activeCount_pos {D : Driver d}
+    (t : ℕ) (x : Site d) (h : 0 < activeCount D t x) :
+    holeCount D t x = 0 := by
+  classical
+  obtain ⟨p, hp⟩ := Finset.card_pos.mp h
+  rw [activeAt, Finset.mem_filter] at hp
+  obtain ⟨hcand, hact, hpos⟩ := hp
+  cases t with
+  | zero =>
+      have hlt : p.2 < (D.eta p.1).toNat := by
+        have : (decide (p.2 < (D.eta p.1).toNat)) = true := hact
+        simpa using this
+      have hxp : p.1 = x := hpos
+      rw [hxp] at hlt
+      have hpos' : 0 < (D.eta x).toNat := Nat.lt_of_le_of_lt (Nat.zero_le _) hlt
+      have : 0 < D.eta x := by omega
+      show (state D 0).holes x = 0
+      show (-D.eta x).toNat = 0
+      omega
+  | succ s =>
+      set S := state D s with hS
+      have hactS : S.active p = true ∧ (settles D S s p) = false := by
+        have h2 : (state D (s + 1)).active p = true := hact
+        rw [show state D (s + 1) = step D S s from rfl] at h2
+        simp only [step, decide_eq_true_eq, Bool.not_eq_true'] at h2
+        exact h2
+      have hnext : nextPos D S s p = x := hpos
+      have hmem : p ∈ arrivalsAt D S s x := by
+        rw [arrivalsAt, Finset.mem_filter]
+        exact ⟨hcand, hactS.1, hnext⟩
+      -- the arrivals of smaller rank than `p` are at least the holes
+      have hns : ¬ (((arrivalsAt D S s (nextPos D S s p)).filter
+          fun q => D.rank (q, s) < D.rank (p, s) ∨
+            (D.rank (q, s) = D.rank (p, s) ∧ labelLT q p)).card
+          < S.holes (nextPos D S s p)) := by
+        intro hlt
+        have : settles D S s p = true := by
+          rw [settles]
+          simp only [decide_eq_true_eq]
+          exact ⟨hactS.1, hlt⟩
+        rw [hactS.2] at this
+        exact Bool.noConfusion this
+      rw [hnext] at hns
+      rw [not_lt] at hns
+      -- `p` is an arrival but is not of smaller rank than itself
+      have hsub : ((arrivalsAt D S s x).filter
+          fun q => D.rank (q, s) < D.rank (p, s) ∨
+            (D.rank (q, s) = D.rank (p, s) ∧ labelLT q p))
+          ⊆ (arrivalsAt D S s x).erase p := by
+        intro q hq
+        rw [Finset.mem_filter] at hq
+        refine Finset.mem_erase.mpr ⟨?_, hq.1⟩
+        intro hqp
+        subst hqp
+        rcases hq.2 with hlt | ⟨-, hlt⟩
+        · exact lt_irrefl _ hlt
+        · exact labelLT_irrefl q hlt
+      have hcard := Finset.card_le_card hsub
+      rw [Finset.card_erase_of_mem hmem] at hcard
+      have hpos1 : 1 ≤ (arrivalsAt D S s x).card := Finset.card_pos.mpr ⟨p, hmem⟩
+      have hstrict : S.holes x < (arrivalsAt D S s x).card := by omega
+      show (state D (s + 1)).holes x = 0
+      show S.holes x - (arrivalsAt D S s x).card = 0
+      omega
+
 end LatticeProb
 
 end

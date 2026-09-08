@@ -130,6 +130,7 @@ import LatticeProb.Walk.TwoDimGrad
 import LatticeProb.Walk.HitProb
 import LatticeProb.Walk.ExteriorDirichlet
 import LatticeProb.Walk.Range
+import LatticeProb.Walk.RangeSecond
 import LatticeProb.Walk.BinomRatio
 import LatticeProb.Walk.GreenSq
 import LatticeProb.Walk.VarianceScale
