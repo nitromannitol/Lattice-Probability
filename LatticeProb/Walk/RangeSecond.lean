@@ -21,6 +21,7 @@ of the untruncated time would not be.
 -/
 import LatticeProb.Walk.Range
 import LatticeProb.Walk.MarkovAE
+import LatticeProb.Walk.ExteriorDirichlet
 
 noncomputable section
 
@@ -409,5 +410,64 @@ theorem integral_rangeCard_sq_le (hd : 1 ≤ d) [NeZero d] (x : Site d) (t : ℕ
   have hmx : ∫ X, (rangeCard X t : ℝ) ∂(siteWalkLaw d x) = m := hmz x
   rw [hmx, sq]
   exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hsumle hmnn) (by norm_num)
+
+/-! ### The block decomposition -/
+
+theorem walkOp_iterate_const (hd : 1 ≤ d) (c : ℝ) : ∀ (n : ℕ) (x : Site d),
+    walkOp^[n] (fun _ : Site d => c) x = c := by
+  intro n
+  induction n with
+  | zero => intro x; rfl
+  | succ n ih =>
+      intro x
+      rw [Function.iterate_succ_apply]
+      have : walkOp (fun _ : Site d => c) = fun _ : Site d => c := funext fun y => walkOp_const hd c y
+      rw [this]
+      exact ih x
+
+/-- The expected range of the path after a deterministic time is the expected
+range of the walk. -/
+theorem integral_rangeCard_shiftPath (hd : 1 ≤ d) [NeZero d] (x : Site d) (n t : ℕ) :
+    ∫ X, (rangeCard (shiftPath n X) t : ℝ) ∂(siteWalkLaw d x)
+      = ∑' w : Site d, srwHitBy d t w := by
+  have hFm : Measurable fun Y : ℕ → Site d => (rangeCard Y t : ℝ) :=
+    (measurable_from_countable' (fun k : ℕ => (k : ℝ))).comp (measurable_rangeCard t)
+  have hFb : ∀ Y : ℕ → Site d, ‖(rangeCard Y t : ℝ)‖ ≤ (t : ℝ) + 1 := by
+    intro Y
+    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+    have hc : ((rangeCard Y t : ℕ) : ℝ) ≤ ((t + 1 : ℕ) : ℝ) := Nat.cast_le.mpr (rangeCard_le_succ Y t)
+    simpa using hc
+  have hpe : pathExpect d (fun Y : ℕ → Site d => (rangeCard Y t : ℝ))
+      = fun _ : Site d => ∑' w : Site d, srwHitBy d t w := by
+    funext z
+    rw [pathExpect, integral_rangeCard_eq_tsum hd, tsum_srwHitBy_sub]
+  rw [integral_comp_shiftPath d n x _ hFm hFb, hpe, walkOp_iterate_const hd]
+
+/-- **The block decomposition of the range.**  The sites visited in `n` blocks of
+`t + 1` steps are the sites visited by the `n` shifted paths. -/
+theorem card_image_le_sum_blocks (X : ℕ → Site d) (n t : ℕ) :
+    ((Finset.range (n * (t + 1))).image X).card
+      ≤ ∑ i ∈ Finset.range n, rangeCard (shiftPath (i * (t + 1)) X) t := by
+  classical
+  refine le_trans (Finset.card_le_card (?_ :
+      (Finset.range (n * (t + 1))).image X ⊆
+        (Finset.range n).biUnion
+          fun i => (Finset.range (t + 1)).image (shiftPath (i * (t + 1)) X))) ?_
+  · intro y hy
+    rw [Finset.mem_image] at hy
+    obtain ⟨j, hj, hjy⟩ := hy
+    rw [Finset.mem_range] at hj
+    have ht : 0 < t + 1 := Nat.succ_pos t
+    refine Finset.mem_biUnion.mpr ⟨j / (t + 1), Finset.mem_range.mpr ?_, ?_⟩
+    · refine Nat.div_lt_of_lt_mul ?_
+      rw [mul_comm]
+      exact hj
+    · rw [Finset.mem_image]
+      refine ⟨j % (t + 1), Finset.mem_range.mpr (Nat.mod_lt _ ht), ?_⟩
+      rw [shiftPath]
+      have hdm : j / (t + 1) * (t + 1) + j % (t + 1) = j := Nat.div_add_mod' j (t + 1)
+      rw [hdm]
+      exact hjy
+  · exact le_trans Finset.card_biUnion_le (le_of_eq rfl)
 
 end LatticeProb
