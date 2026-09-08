@@ -108,6 +108,7 @@ import LatticeProb.Prob.PiSum
 import LatticeProb.ParticleDriven
 import LatticeProb.Prob.EfronSteinCov
 import LatticeProb.Prob.Bernstein
+import LatticeProb.Prob.VonBahrEsseen
 import LatticeProb.Prob.PaleyZygmund
 import LatticeProb.Prob.FiniteMarginal
 import LatticeProb.Prob.Splice
