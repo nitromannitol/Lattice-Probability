@@ -132,6 +132,7 @@ import LatticeProb.Walk.TwoDimGrad
 import LatticeProb.Walk.SchedBinom
 import LatticeProb.Walk.SchedRot
 import LatticeProb.Walk.ShiftGrad
+import LatticeProb.Walk.GenGrad
 import LatticeProb.Walk.HitProb
 import LatticeProb.Walk.ExteriorDirichlet
 import LatticeProb.Walk.Range
