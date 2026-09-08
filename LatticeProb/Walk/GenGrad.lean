@@ -564,4 +564,54 @@ theorem exists_tsum_abs_srwHeat_even_shift_le (hd : 1 ≤ d) :
       = C / 2 * (graphNorm u : ℝ) / Real.sqrt (n : ℝ) := by ring
   linarith [h, he.le, he.ge]
 
+/-! ### The two-point form and the comparison of norms -/
+
+/-- **The same-parity gradient between two starting points.**  Translating the
+sum, `∑_y |p_n(x,y) - p_n(w,y)|` is the shift form at `u = x - w`. -/
+theorem exists_tsum_abs_srwHeat_two_point_le (hd : 1 ≤ d) :
+    ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 1 ≤ n → ∀ x w : Site d, Even (graphNorm (x - w)) →
+      ∑' y : Site d, |srwHeat d n (y - x) - srwHeat d n (y - w)|
+        ≤ C * (graphNorm (x - w) : ℝ) / Real.sqrt n := by
+  obtain ⟨C, hC, hshift⟩ := exists_tsum_abs_srwHeat_even_shift_le hd
+  refine ⟨C, hC, fun n hn x w hpar => ?_⟩
+  have he := (Equiv.addRight x).tsum_eq
+    (fun y : Site d => |srwHeat d n (y - x) - srwHeat d n (y - w)|)
+  rw [← he]
+  have hcongr : ∀ z : Site d,
+      |srwHeat d n ((Equiv.addRight x) z - x) - srwHeat d n ((Equiv.addRight x) z - w)|
+        = |srwHeat d n z - srwHeat d n (z + (x - w))| := by
+    intro z
+    have e1 : (Equiv.addRight x) z - x = z := by
+      simp only [Equiv.coe_addRight]
+      abel
+    have e2 : (Equiv.addRight x) z - w = z + (x - w) := by
+      simp only [Equiv.coe_addRight]
+      abel
+    rw [e1, e2]
+  rw [tsum_congr hcongr]
+  exact hshift n hn (x - w) hpar
+
+/-- The `ℓ¹` norm of a lattice vector is at most `√d` times its Euclidean norm,
+by Cauchy-Schwarz.  This is what turns the `ℓ¹` factor `|u|_1` of the gradient
+bound into the Euclidean factor `|x - w|` the estimate is usually written with. -/
+theorem graphNorm_le_sqrt_mul (u : Site d) :
+    (graphNorm u : ℝ) ≤ Real.sqrt d * Real.sqrt (∑ i : Fin d, ((u i : ℝ)) ^ 2) := by
+  have habs : ((graphNorm u : ℕ) : ℝ) = ∑ i : Fin d, |(u i : ℝ)| := by
+    rw [graphNorm]
+    push_cast
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [← Int.cast_abs, ← Int.natCast_natAbs (u i)]
+    simp
+  have hcs := Finset.sum_mul_sq_le_sq_mul_sq (Finset.univ : Finset (Fin d))
+    (fun _ => (1 : ℝ)) (fun i => |(u i : ℝ)|)
+  simp only [one_mul, one_pow, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+    nsmul_eq_mul, mul_one, sq_abs] at hcs
+  have hnn : (0 : ℝ) ≤ ∑ i : Fin d, |(u i : ℝ)| :=
+    Finset.sum_nonneg fun i _ => abs_nonneg _
+  have hy : (0 : ℝ) ≤ (d : ℝ) * ∑ i : Fin d, (u i : ℝ) ^ 2 := by positivity
+  have hsqrt : ∑ i : Fin d, |(u i : ℝ)| ≤ Real.sqrt ((d : ℝ) * ∑ i : Fin d, (u i : ℝ) ^ 2) :=
+    (Real.le_sqrt hnn hy).mpr hcs
+  rw [habs, Real.sqrt_mul (by positivity)] at *
+  exact hsqrt
+
 end LatticeProb
