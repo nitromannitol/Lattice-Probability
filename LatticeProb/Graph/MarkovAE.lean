@@ -200,4 +200,74 @@ theorem markov_stopping_ae (hdeg : ∀ v : V, 0 < G.degree v) (x : V)
     (integrable_const _) (fun N => Filter.Eventually.of_forall (hBb N)) hlimB
   exact tendsto_nhds_unique (hAint.congr fun N => hstop N) hBint
 
+/-! ### Leaving a finite set after the stopping time -/
+
+/-- **After an almost surely finite stopping time the walk still leaves every
+finite set almost surely.**  This is `LatticeProb.Graph.ae_exitTime_ne_top`
+transported through `LatticeProb.Graph.markov_stopping_ae`: take for `F` the
+indicator of `{X | exitTime D X ≠ ⊤}`, which is bounded by one and measurable
+because `{exitTime D = ⊤}` is the intersection of the events `stayIn D k`, and
+for `H` the constant one.  The strong Markov identity then reads
+
+    ∫ F(θ_τ X) = ∫ (E_{X_τ}[F]) = 1,
+
+the last equality because `E_y[F] = 1` at every start `y`.  An indicator whose
+integral is one is one almost everywhere. -/
+theorem ae_exitTime_shift_ne_top (hdeg : ∀ v : V, 0 < G.degree v) (x : V)
+    (τ : (ℕ → V) → ℕ∞) (hτ : IsWalkStoppingE τ)
+    (hfin : ∀ᵐ X ∂(walkLaw G x), τ X ≠ ⊤)
+    (D : Finset V) (hescD : ∀ z : V, ∃ (q : V) (_ : G.Walk z q), q ∉ (D : Set V)) :
+    ∀ᵐ X ∂(walkLaw G x),
+      exitTime (D : Set V) (shiftPath (τ X).toNat X) ≠ ⊤ := by
+  classical
+  set F : (ℕ → V) → ℝ := fun Y => if exitTime (D : Set V) Y = ⊤ then 0 else 1 with hFdef
+  have hset : MeasurableSet {Y : ℕ → V | exitTime (D : Set V) Y = ⊤} := by
+    have he : {Y : ℕ → V | exitTime (D : Set V) Y = ⊤} = ⋂ k : ℕ, stayIn (D : Set V) k := by
+      ext Y
+      simp only [Set.mem_setOf_eq, Set.mem_iInter]
+      exact exitTime_eq_top_iff (D : Set V) Y
+    rw [he]
+    exact MeasurableSet.iInter fun k => measurableSet_stayIn _ _
+  have hFm : Measurable F := by
+    rw [hFdef]
+    exact Measurable.ite hset measurable_const measurable_const
+  have hFb : ∀ Y, ‖F Y‖ ≤ 1 := by
+    intro Y
+    rw [hFdef]
+    by_cases h : exitTime (D : Set V) Y = ⊤ <;> simp [h]
+  have hpe : ∀ y : V, pathExp G F y = 1 := by
+    intro y
+    have hae : ∀ᵐ Y ∂(walkLaw G y), F Y = (1 : ℝ) := by
+      filter_upwards [ae_exitTime_ne_top hdeg D hescD y] with Y hY
+      simp [hFdef, hY]
+    rw [pathExp, integral_congr_ae hae]
+    simp
+  have hmk := markov_stopping_ae hdeg x τ hτ hfin F hFm 1 hFb
+    (fun _ => (1 : ℝ)) 1 (by simp) (fun _ _ _ _ _ => rfl)
+  simp only [mul_one, hpe] at hmk
+  have hone : ∫ X, F (shiftPath (τ X).toNat X) ∂(walkLaw G x) = 1 := by
+    rw [hmk]; simp
+  have hgint : Integrable (fun X => F (shiftPath (τ X).toNat X)) (walkLaw G x) := by
+    by_contra hc
+    rw [integral_undef hc] at hone
+    norm_num at hone
+  have hnn : (0 : (ℕ → V) → ℝ) ≤ fun X => 1 - F (shiftPath (τ X).toNat X) := by
+    intro X
+    show (0 : ℝ) ≤ 1 - F (shiftPath (τ X).toNat X)
+    rw [hFdef]
+    dsimp only
+    split <;> norm_num
+  have hzero : ∫ X, (1 - F (shiftPath (τ X).toNat X)) ∂(walkLaw G x) = 0 := by
+    rw [integral_sub (integrable_const 1) hgint, hone]
+    simp
+  have hae0 := (integral_eq_zero_iff_of_nonneg hnn
+    ((integrable_const (1 : ℝ)).sub hgint)).mp hzero
+  filter_upwards [hae0] with X hX
+  intro hc
+  have hX1 : F (shiftPath (τ X).toNat X) = 1 := by
+    have : (1 : ℝ) - F (shiftPath (τ X).toNat X) = 0 := hX
+    linarith
+  rw [hFdef] at hX1
+  simp [hc] at hX1
+
 end LatticeProb.Graph
