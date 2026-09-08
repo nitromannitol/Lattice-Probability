@@ -132,6 +132,7 @@ import LatticeProb.Walk.ExteriorDirichlet
 import LatticeProb.Walk.Range
 import LatticeProb.Walk.RangeSecond
 import LatticeProb.Walk.BinomRatio
+import LatticeProb.Walk.CentralBinom
 import LatticeProb.Walk.GreenSq
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4

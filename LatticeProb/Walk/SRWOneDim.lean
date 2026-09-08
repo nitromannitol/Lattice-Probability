@@ -109,4 +109,59 @@ theorem srwHeat_one_le (n : ℕ) (j : ℤ) :
     rw [hval]
     linarith
 
+
+/-! ### The binomial form of the one-dimensional kernel -/
+
+/-- **The one-dimensional kernel is the binomial law.**  A path of `a + b` steps
+ending at `a - b` takes `a` steps to the right and `b` to the left, and there are
+`C(a+b, a)` such paths out of `2^{a+b}`. -/
+theorem srwHeat_one_binom : ∀ (n a b : ℕ), a + b = n →
+    srwHeat 1 n ![(a : ℤ) - (b : ℤ)] = (Nat.choose n a : ℝ) / 2 ^ n := by
+  intro n
+  induction n with
+  | zero =>
+      intro a b hab
+      have ha : a = 0 := by omega
+      have hb : b = 0 := by omega
+      subst ha; subst hb
+      have hz : (![(0 : ℤ)] : Site 1) = 0 := by funext i; fin_cases i; rfl
+      simp only [Nat.cast_zero, sub_zero]
+      rw [hz, srwHeat_zero, if_pos rfl]
+      norm_num
+  | succ n ih =>
+      intro a b hab
+      rcases a with _ | a
+      · have hb : b = n + 1 := by omega
+        subst hb
+        rw [show ((0 : ℕ) : ℤ) - ((n + 1 : ℕ) : ℤ) = -((n : ℤ) + 1) by push_cast; ring,
+          srwHeat_one_succ]
+        rw [show -((n : ℤ) + 1) - 1 = -((n : ℤ) + 2) by ring,
+          show -((n : ℤ) + 1) + 1 = ((0 : ℕ) : ℤ) - ((n : ℕ) : ℤ) by push_cast; ring]
+        rw [srwHeat_eq_zero_of_lt (d := 1) (j := n) (x := (![-((n : ℤ) + 2)] : Site 1)) (by
+          rw [graphNorm_one]; omega), ih 0 n (by omega)]
+        rw [Nat.choose_zero_right, Nat.choose_zero_right, pow_succ]
+        push_cast
+        ring
+      · rcases b with _ | b
+        · have ha : a = n := by omega
+          subst ha
+          rw [show ((a + 1 : ℕ) : ℤ) - ((0 : ℕ) : ℤ) = (a : ℤ) + 1 by push_cast; ring,
+            srwHeat_one_succ]
+          rw [show (a : ℤ) + 1 - 1 = ((a : ℕ) : ℤ) - ((0 : ℕ) : ℤ) by push_cast; ring,
+            show (a : ℤ) + 1 + 1 = (a : ℤ) + 2 by ring]
+          rw [srwHeat_eq_zero_of_lt (d := 1) (j := a) (x := (![(a : ℤ) + 2] : Site 1)) (by
+            rw [graphNorm_one]; omega), ih a 0 (by omega)]
+          rw [Nat.choose_self, Nat.choose_self, pow_succ]
+          push_cast
+          ring
+        · rw [srwHeat_one_succ]
+          rw [show ((a + 1 : ℕ) : ℤ) - ((b + 1 : ℕ) : ℤ) - 1
+                = ((a : ℕ) : ℤ) - ((b + 1 : ℕ) : ℤ) by push_cast; ring,
+            show ((a + 1 : ℕ) : ℤ) - ((b + 1 : ℕ) : ℤ) + 1
+                = ((a + 1 : ℕ) : ℤ) - ((b : ℕ) : ℤ) by push_cast; ring]
+          rw [ih a (b + 1) (by omega), ih (a + 1) b (by omega), Nat.choose_succ_succ' n a]
+          push_cast
+          rw [pow_succ]
+          ring
+
 end LatticeProb
