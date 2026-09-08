@@ -92,6 +92,7 @@ import LatticeProb.Graph.ExitDecomp
 import LatticeProb.Network.KilledGreen
 import LatticeProb.Network.KilledGreenEscape
 import LatticeProb.Network.FirstPassage
+import LatticeProb.Network.Voltage
 import LatticeProb.Network.MaximumPrinciple
 import LatticeProb.Network.Variational
 import LatticeProb.Network.Flow
