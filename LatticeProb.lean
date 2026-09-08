@@ -88,6 +88,7 @@ import LatticeProb.Graph.ZdKilled
 import LatticeProb.Prob.Birkhoff
 import LatticeProb.Network.Basic
 import LatticeProb.Network.Killed
+import LatticeProb.Graph.ExitDecomp
 import LatticeProb.Network.KilledGreen
 import LatticeProb.Network.KilledGreenEscape
 import LatticeProb.Network.FirstPassage
