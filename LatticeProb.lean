@@ -124,6 +124,7 @@ import LatticeProb.Prob.Chentsov
 import LatticeProb.Gauss.BrownianCont
 import LatticeProb.Graph.PathSpace
 import LatticeProb.Graph.ExitTime
+import LatticeProb.Graph.MarkovAE
 import LatticeProb.Walk.SRWDiag
 import LatticeProb.Walk.OneDimGrad
 import LatticeProb.Walk.TwoDimGrad
