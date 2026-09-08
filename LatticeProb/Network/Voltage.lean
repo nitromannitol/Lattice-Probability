@@ -205,4 +205,21 @@ theorem exists_voltage_of_green_ne_top [Infinite V] (hG : G.Connected) {a b : V}
   · exact summable_of_tsum_ofReal_ne_top (fun k => heat_nonneg k b b)
       ((green_ne_top_iff hG b b).mp hb)
 
+
+/-- **The voltage function on a doubly transient graph.**  Double transience
+gives `g(o,o) < ∞` at every `o`, which is all the construction needs.  This is
+the form the zero-one law of a doubly transient graph uses. -/
+theorem exists_voltage_of_doublyTransient [Infinite V] (hG : G.Connected)
+    (hDT : DoublyTransient G) {a b : V} (hab : a ≠ b) :
+    ∃ f : V → ℝ, ∃ M : ℝ, 0 < M ∧ (∀ x, 0 ≤ f x ∧ f x ≤ M) ∧
+      ∀ x : V, laplacian G f x
+        = (if x = b then (1 : ℝ) else 0) - (if x = a then 1 else 0) := by
+  have hdiag : ∀ o : V, green G o o ≠ ⊤ := by
+    intro o
+    have h := ENNReal.ne_top_of_tsum_ne_top (hDT o) o
+    intro hc
+    rw [hc] at h
+    simp at h
+  exact exists_voltage_of_green_ne_top hG hab (hdiag a) (hdiag b)
+
 end LatticeProb.Network
