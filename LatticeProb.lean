@@ -55,6 +55,7 @@ import LatticeProb.Walk.ExitBox
 import LatticeProb.Prob.HewittSavage
 import LatticeProb.Prob.HarrisCube
 import LatticeProb.Walk.Markov
+import LatticeProb.Walk.MarkovAE
 import LatticeProb.Prob.BK
 import LatticeProb.Prob.InfinitePiSplit
 import LatticeProb.Prob.Coordinate
