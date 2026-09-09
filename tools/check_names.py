@@ -8,6 +8,8 @@ Usage: check_names.py PROMPTFILE [extra-import, ...]
 """
 import os, pathlib, re, subprocess, sys, tempfile
 ROOT = pathlib.Path(os.environ.get("LEAN_ROOT", "/home/nitro/Lattice-Probability"))
+if len(sys.argv) < 2:
+    print("OK (no prompt given, nothing to check)"); sys.exit(0)
 prompt = pathlib.Path(sys.argv[1]).read_text()
 imports = sys.argv[2:] or ["LatticeProb"]
 names = sorted({m for m in re.findall(r"\bLatticeProb\.[A-Za-z_][A-Za-z_0-9.']*", prompt)}

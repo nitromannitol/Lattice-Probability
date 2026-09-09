@@ -67,6 +67,8 @@ LatticeProb/Prob/EfronStein.lean    the exponential Efron-Stein inequality on a 
 LatticeProb/Prob/WeightedConc.lean  weighted exponential concentration and its tail
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
+LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
+                                    for an independent centred sum (1 ≤ p ≤ 2) and its tail bound
 LatticeProb/Network/                electrical networks on a locally finite graph: the Dirichlet
                                     energy and form, harmonic functions, the killed Green function
                                     as a voltage, the maximum and Dirichlet principles, Rayleigh
