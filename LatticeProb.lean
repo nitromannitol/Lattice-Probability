@@ -116,6 +116,7 @@ import LatticeProb.Prob.Splice
 import LatticeProb.Prob.SpliceAvg
 import LatticeProb.Prob.ExpFamily
 import LatticeProb.Prob.Reveal
+import LatticeProb.Prob.DiffIneq
 import LatticeProb.Prob.EfronSteinCountable
 import LatticeProb.Gauss.Limit
 import LatticeProb.Gauss.Coords
