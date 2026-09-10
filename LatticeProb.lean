@@ -145,6 +145,7 @@ import LatticeProb.Walk.BinomRatio
 import LatticeProb.Walk.CentralBinom
 import LatticeProb.Walk.LocalCLTOne
 import LatticeProb.Walk.Character
+import LatticeProb.Walk.Fourier
 import LatticeProb.Walk.GreenSq
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
