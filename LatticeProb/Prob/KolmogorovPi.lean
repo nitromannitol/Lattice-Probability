@@ -56,3 +56,21 @@ theorem LatticeProb.exists_incr_exponent_pi (k : ℕ) {p q : ℝ} (hp : 0 < p) (
     rw [hβdef, ← Real.rpow_mul (by norm_num), div_mul_cancel₀ _ hp.ne']
   rw [div_lt_one (by positivity), ← hβp]
   exact hpow
+
+theorem LatticeProb.measure_abs_ge_le_moment {Ω : Type*} [MeasurableSpace Ω]
+    (P : Measure Ω) [IsFiniteMeasure P] {f : Ω → ℝ} {p r C : ℝ}
+    (hp : 0 < p) (hr : 0 < r) (hint : Integrable (fun ω => |f ω| ^ p) P)
+    (hbound : ∫ ω, |f ω| ^ p ∂P ≤ C) :
+    P {ω | r ≤ |f ω|} ≤ ENNReal.ofReal (C / r ^ p) := by
+  have hmarkov := mul_meas_ge_le_integral_of_nonneg
+    (Filter.Eventually.of_forall (fun ω => Real.rpow_nonneg (abs_nonneg (f ω)) p)) hint (r ^ p)
+  have hsub : {ω | r ≤ |f ω|} ⊆ {ω | r ^ p ≤ |f ω| ^ p} :=
+    fun ω hω => Real.rpow_le_rpow hr.le hω hp.le
+  calc
+    P {ω | r ≤ |f ω|} ≤ P {ω | r ^ p ≤ |f ω| ^ p} := measure_mono hsub
+    _ = ENNReal.ofReal (P.real {ω | r ^ p ≤ |f ω| ^ p}) :=
+      (ENNReal.ofReal_toReal (measure_ne_top P _)).symm
+    _ ≤ ENNReal.ofReal (C / r ^ p) := by
+      apply ENNReal.ofReal_le_ofReal
+      apply (le_div_iff₀ (Real.rpow_pos_of_pos hr p)).mpr
+      simpa [mul_comm] using hmarkov.trans hbound
