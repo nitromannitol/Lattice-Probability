@@ -133,6 +133,7 @@ import LatticeProb.Prob.Blocks
 import LatticeProb.Prob.DyadicChain
 import LatticeProb.Prob.Chentsov
 import LatticeProb.Prob.ChentsovPi
+import LatticeProb.Prob.ChentsovPiProcess
 import LatticeProb.Gauss.BrownianCont
 import LatticeProb.Graph.PathSpace
 import LatticeProb.Graph.ExitTime
@@ -160,3 +161,4 @@ import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation
 import LatticeProb.Walk.GreenPointwise
 import LatticeProb.Prob.ExplorationCond
+import LatticeProb.Prob.ChentsovPiLimit
