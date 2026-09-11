@@ -164,3 +164,4 @@ import LatticeProb.Prob.ExplorationCond
 import LatticeProb.Prob.ChentsovPiLimit
 import LatticeProb.Prob.GaussianLaw
 import LatticeProb.Prob.Pinsker
+import LatticeProb.Prob.KolmogorovPi
