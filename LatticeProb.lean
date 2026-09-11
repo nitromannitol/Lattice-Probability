@@ -162,3 +162,4 @@ import LatticeProb.Walk.Correlation
 import LatticeProb.Walk.GreenPointwise
 import LatticeProb.Prob.ExplorationCond
 import LatticeProb.Prob.ChentsovPiLimit
+import LatticeProb.Prob.GaussianLaw
