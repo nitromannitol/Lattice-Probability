@@ -181,3 +181,12 @@ theorem LatticeProb.exists_level_of_summable (k R : ℕ) {r g : ℕ → ℝ}
     filter_upwards [eventually_ge_atTop R, hdet, hprob] with N hR hD hP
     exact ⟨hR, hD, hP.le⟩
   exact hevent.exists
+
+theorem LatticeProb.geometric_grid_factor (k n : ℕ) (p q : ℝ) {c : ℝ} (hc : 0 < c) :
+    ((2 : ℝ) ^ k) ^ n * (1 / 2 ^ n : ℝ) ^ q / (c ^ n) ^ p =
+      ((2 : ℝ) ^ ((k : ℝ) - q) / c ^ p) ^ n := by
+  have hnum : (2 : ℝ) ^ k * (1 / 2 : ℝ) ^ q = (2 : ℝ) ^ ((k : ℝ) - q) := by
+    rw [Real.rpow_sub (by norm_num), Real.rpow_natCast, one_div, Real.inv_rpow (by norm_num), div_eq_mul_inv]
+  rw [show (1 / 2 ^ n : ℝ) = (1 / 2 : ℝ) ^ n by rw [one_div_pow],
+    rpow_pow_comm (by norm_num : (0 : ℝ) ≤ 1 / 2) q n, rpow_pow_comm hc.le p n,
+    ← mul_pow, ← div_pow, hnum]
