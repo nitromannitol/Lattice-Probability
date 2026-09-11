@@ -196,3 +196,39 @@ theorem LatticeProb.dlimPi_eq_of_continuous {k : ℕ} {f : (Fin k → ℝ) → �
   have ht : Tendsto (fun n => f (dtruncPi n z)) atTop (𝓝 (f z)) :=
     (hf.tendsto z).comp (tendsto_dtruncPi_point z)
   exact ht.limsup_eq
+
+theorem LatticeProb.abs_sub_le_of_modulus_on_convex {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {s : Set E} (hs : Convex ℝ s)
+    {a u : E} (ha : a ∈ s) (hu : u ∈ s) {δ : ℝ} {N : ℕ} (hN : 0 < N)
+    (hstep : dist a u / (N : ℝ) < δ) {f : E → ℝ}
+    (hmod : ∀ x ∈ s, ∀ y ∈ s, dist x y < δ → |f x - f y| ≤ 1) :
+    |f u - f a| ≤ (N : ℝ) := by
+  have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+  let γ : ℕ → E := fun j => AffineMap.lineMap a u ((j : ℝ) / N)
+  have hmem : ∀ j, j ≤ N → γ j ∈ s := by
+    intro j hj
+    apply hs.lineMap_mem ha hu
+    exact ⟨div_nonneg (Nat.cast_nonneg j) hNr.le,
+      (div_le_one hNr).2 (by exact_mod_cast hj)⟩
+  have hclose : ∀ j, dist (γ (j + 1)) (γ j) < δ := by
+    intro j
+    dsimp [γ]
+    rw [dist_lineMap_lineMap, Real.dist_eq]
+    have heq : (((j + 1 : ℕ) : ℝ) / N - (j : ℝ) / N) = 1 / N := by
+      push_cast
+      ring
+    rw [heq, abs_of_pos (by positivity), one_div, mul_comm, ← div_eq_mul_inv]
+    exact hstep
+  have hchain : ∀ j, j ≤ N → |f (γ j) - f a| ≤ (j : ℝ) := by
+    intro j
+    induction j with
+    | zero => intro _; simp [γ]
+    | succ j ih =>
+      intro hj
+      have hj' := Nat.le_of_succ_le hj
+      have hinc := hmod (γ (j + 1)) (hmem _ hj) (γ j) (hmem _ hj') (hclose j)
+      have htri := abs_sub_le (f (γ (j + 1))) (f (γ j)) (f a)
+      have hprev := ih hj'
+      push_cast
+      linarith
+  simpa [γ, hNr.ne'] using hchain N le_rfl
