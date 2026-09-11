@@ -128,3 +128,33 @@ theorem LatticeProb.summable_polynomial_geometric (k : ℕ) {θ C : ℝ}
   apply hh.congr
   intro n
   simp [Nat.cast_add, Nat.cast_one, pow_succ, mul_div_assoc, hθ0.ne', mul_assoc]
+
+theorem LatticeProb.measure_badSetPi_le {k : ℕ} {Ω : Type} [MeasurableSpace Ω]
+    (P : Measure Ω) [IsFiniteMeasure P] {X : (Fin k → ℝ) → Ω → ℝ}
+    {p q M : ℝ} (hp : 0 < p)
+    (hint : ∀ u v, Integrable (fun ω => |X u ω - X v ω| ^ p) P)
+    (hbound : ∀ u v, ∫ ω, |X u ω - X v ω| ^ p ∂P ≤ M * dist u v ^ q)
+    {r : ℕ → ℝ} (hr : ∀ n, 0 < r n) (m n : ℕ) :
+    P (badSetPi X r m n) ≤ (k : ℝ≥0∞) * (boxIdx (k := k) m n).card *
+      ENNReal.ofReal (M * (1 / 2 ^ n : ℝ) ^ q / (r n) ^ p) := by
+  have hedge : ∀ (j : Fin k → ℤ) (i : Fin k),
+      P {ω | r n ≤ |X (gridPt n (j + Pi.single i 1)) ω - X (gridPt n j) ω|} ≤
+        ENNReal.ofReal (M * (1 / 2 ^ n : ℝ) ^ q / (r n) ^ p) := by
+    intro j i
+    have hd := congrArg ENNReal.toReal (edist_gridPt_step n j i)
+    simp only [edist_dist, ENNReal.toReal_ofReal dist_nonneg,
+      ENNReal.toReal_ofReal (by positivity : (0 : ℝ) ≤ 1 / 2 ^ n)] at hd
+    have hb := measure_abs_ge_le_moment P hp (hr n) (hint (gridPt n (j + Pi.single i 1)) (gridPt n j))
+      (hbound (gridPt n (j + Pi.single i 1)) (gridPt n j))
+    rw [hd] at hb
+    exact hb
+  unfold badSetPi
+  refine (measure_iUnion_fintype_le P _).trans ?_
+  calc
+    _ ≤ ∑ i : Fin k, ∑ j ∈ boxIdx m n,
+        ENNReal.ofReal (M * (1 / 2 ^ n : ℝ) ^ q / (r n) ^ p) := by
+      apply Finset.sum_le_sum
+      intro i _
+      exact (measure_biUnion_finset_le _ _).trans
+        (Finset.sum_le_sum (fun j _ => hedge j i))
+    _ = _ := by simp [Finset.sum_const, nsmul_eq_mul, mul_assoc]
