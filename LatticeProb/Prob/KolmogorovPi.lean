@@ -87,3 +87,19 @@ theorem LatticeProb.tendsto_dtruncPi_point {k : ℕ} (z : Fin k → ℝ) :
     (fun n => by simpa only [one_div_pow] using (hlt n).le) hpow
   have h := (tendsto_const_nhds (x := z i)).sub hdiff
   simpa only [sub_sub_cancel, sub_zero] using h
+
+theorem LatticeProb.dyadicIncBoundPi_of_notMem {k : ℕ} {Ω : Type} [MeasurableSpace Ω]
+    {X : (Fin k → ℝ) → Ω → ℝ} {r : ℕ → ℝ} {ω : Ω} {n₀ : ℕ}
+    (h : ∀ n, n₀ ≤ n → ω ∉ badSetPi X r (n + 1) n) :
+    DyadicIncBoundPi (fun t => X t ω) r n₀ := by
+  intro n hn j hj i
+  have hnot := h n hn
+  have hmem : j ∈ boxIdx (n + 1) n := by
+    rw [mem_boxIdx_iff]
+    simpa only [Nat.cast_mul, Nat.cast_add, Nat.cast_one, Nat.cast_pow, Nat.cast_ofNat] using hj
+  apply le_of_lt
+  apply lt_of_not_ge
+  intro hh
+  apply hnot
+  simp only [badSetPi, Set.mem_iUnion, Set.mem_setOf_eq]
+  exact ⟨i, j, hmem, hh⟩
