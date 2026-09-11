@@ -34,3 +34,10 @@ theorem LatticeProb.dist_boxClamp_le {k : ℕ} (a b : Fin k → ℝ) (hab : a �
   intro i
   change |(Set.projIcc (a i) (b i) (hab i) (x i) : ℝ) - Set.projIcc (a i) (b i) (hab i) (y i)| ≤ dist x y
   exact (Set.abs_projIcc_sub_projIcc (hab i)).trans (dist_le_pi_dist x y i)
+
+theorem LatticeProb.continuous_boxClamp {k : ℕ} (a b : Fin k → ℝ) (hab : a ≤ b) :
+    Continuous (boxClamp a b hab) := by
+  apply continuous_pi
+  intro i
+  change Continuous (fun x : Fin k → ℝ => max (a i) (min (b i) (x i)))
+  fun_prop
