@@ -117,3 +117,14 @@ theorem LatticeProb.card_boxIdx_level_le (k n : ℕ) :
       nlinarith [hn]
     _ = (3 : ℝ) ^ k * (n + 1 : ℝ) ^ k * ((2 : ℝ) ^ k) ^ n := by
       rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, Nat.mul_comm n k]
+
+theorem LatticeProb.summable_polynomial_geometric (k : ℕ) {θ C : ℝ}
+    (hθ0 : 0 < θ) (hθ1 : θ < 1) :
+    Summable (fun n : ℕ => C * (n + 1 : ℝ) ^ k * θ ^ n) := by
+  have hbase := summable_pow_mul_geometric_of_norm_lt_one k
+    (show ‖θ‖ < 1 by simpa [Real.norm_eq_abs, abs_of_pos hθ0] using hθ1)
+  have hshift := (summable_nat_add_iff 1).2 hbase
+  have hh := (hshift.div_const θ).mul_left C
+  apply hh.congr
+  intro n
+  simp [Nat.cast_add, Nat.cast_one, pow_succ, mul_div_assoc, hθ0.ne', mul_assoc]
