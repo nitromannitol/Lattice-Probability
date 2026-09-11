@@ -103,3 +103,17 @@ theorem LatticeProb.dyadicIncBoundPi_of_notMem {k : ℕ} {Ω : Type} [Measurable
   apply hnot
   simp only [badSetPi, Set.mem_iUnion, Set.mem_setOf_eq]
   exact ⟨i, j, hmem, hh⟩
+
+theorem LatticeProb.card_boxIdx_level_le (k n : ℕ) :
+    ((boxIdx (k := k) (n + 1) n).card : ℝ) ≤
+      (3 : ℝ) ^ k * (n + 1 : ℝ) ^ k * ((2 : ℝ) ^ k) ^ n := by
+  rw [card_boxIdx]
+  push_cast
+  have htwo : (1 : ℝ) ≤ 2 ^ n := one_le_pow₀ (by norm_num)
+  calc
+    (2 * (((n : ℝ) + 1) * 2 ^ n) + 1) ^ k ≤ (3 * ((n : ℝ) + 1) * 2 ^ n) ^ k := by
+      gcongr
+      have hn : (0 : ℝ) ≤ n := Nat.cast_nonneg n
+      nlinarith [hn]
+    _ = (3 : ℝ) ^ k * (n + 1 : ℝ) ^ k * ((2 : ℝ) ^ k) ^ n := by
+      rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, Nat.mul_comm n k]
