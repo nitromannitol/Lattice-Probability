@@ -22,3 +22,8 @@ theorem LatticeProb.boxClamp_mem {k : ℕ} (a b : Fin k → ℝ) (hab : a ≤ b)
   · simp only [Pi.le_def]
     intro i
     exact (Set.projIcc (a i) (b i) (hab i) (x i)).property.2
+
+theorem LatticeProb.boxClamp_eq {k : ℕ} {a b x : Fin k → ℝ} (hab : a ≤ b)
+    (hx : x ∈ Set.Icc a b) : boxClamp a b hab x = x := by
+  funext i
+  exact congrArg Subtype.val (Set.projIcc_of_mem (hab i) ⟨hx.1 i, hx.2 i⟩)
