@@ -74,3 +74,16 @@ theorem LatticeProb.measure_abs_ge_le_moment {Ω : Type*} [MeasurableSpace Ω]
       apply ENNReal.ofReal_le_ofReal
       apply (le_div_iff₀ (Real.rpow_pos_of_pos hr p)).mpr
       simpa [mul_comm] using hmarkov.trans hbound
+
+theorem LatticeProb.tendsto_dtruncPi_point {k : ℕ} (z : Fin k → ℝ) :
+    Tendsto (fun n => dtruncPi n z) atTop (𝓝 z) := by
+  apply tendsto_pi_nhds.mpr
+  intro i
+  have hle : ∀ n, dtruncPi n z i ≤ z i := fun n => dtruncPi_le n z i
+  have hlt : ∀ n, z i - dtruncPi n z i < 1 / 2 ^ n := fun n => sub_dtruncPi_lt n z i
+  have hpow : Tendsto (fun n : ℕ => (1 / 2 : ℝ) ^ n) atTop (𝓝 0) :=
+    tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+  have hdiff := squeeze_zero (fun n => sub_nonneg.mpr (hle n))
+    (fun n => by simpa only [one_div_pow] using (hlt n).le) hpow
+  have h := (tendsto_const_nhds (x := z i)).sub hdiff
+  simpa only [sub_sub_cancel, sub_zero] using h
