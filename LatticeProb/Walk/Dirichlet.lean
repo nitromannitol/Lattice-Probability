@@ -9,25 +9,27 @@ along each edge and, for a finite `A ⊂ ℤ^d`, introduces the Dirichlet Laplac
 mass `T(A)` of `eq:torsion-def`, and the effective resistance appearing in
 `eq:schur`.  This file encodes those objects; nothing probabilistic is used.
 
-Modelling decisions.
+Modelling decisions.  The labels `L-001` to `L-004` are the entries of the
+correspondence table of the ORRW formalization (`nitromannitol/ORRW-Lower-Bound`,
+`CORRESPONDENCE.md`), where these conventions were fixed.
 
-* Ruling L-001 (`u` is linear algebra, not a probabilistic expectation).  The
+* Convention L-001 (`u` is linear algebra, not a probabilistic expectation).  The
   paper defines `u_A(x) := E_x τ_A` and then records `u_A = -Δ_A^{-1} 1`.  We
   take the linear-algebra formula as the definition, so that Section 2 is
   purely deterministic and no continuous-time process has to be built.
 
-* Ruling L-002 (`Reff` is defined by the Schur identity).  The paper defines
+* Convention L-002 (`Reff` is defined by the Schur identity).  The paper defines
   `Reff(x ↔ (A⁺)^c)` as an effective resistance and proves in `eq:schur` that
   it equals `-Δ_{A⁺}^{-1}(x,x)`.  We take that identity as the definition, and
   so `Reff A x` below is the resistance from `x` to the complement of
   `insert x A`.  The electrical-network content of `eq:schur` is therefore not
   formalized; the two remaining assertions of `lem:schur` are.
 
-* Ruling L-003 (`extendZero`).  Functions on `A` are extended by zero to all of
+* Convention L-003 (`extendZero`).  Functions on `A` are extended by zero to all of
   `ℤ^d`, as the paper does ("with `u_A = 0` off `A`"), through the auxiliary
   definition `extendZero`.
 
-* Ruling L-004 (`Matrix.inv` junk value).  Mathlib's `Matrix.inv` is `0` on a
+* Convention L-004 (`Matrix.inv` junk value).  Mathlib's `Matrix.inv` is `0` on a
   singular matrix, so `u`, `T` and `Reff` would be identically zero if `Δ_A`
   were singular and every bound of this section would hold vacuously.
   `dirichletLaplacian_isUnit` below rules this out for `d ≥ 1`, by the
@@ -170,7 +172,7 @@ def dirichletLaplacian (A : Finset (Site d)) : Matrix A A ℝ :=
   fun x y => (if Adj (x : Site d) (y : Site d) then 1 else 0)
     - (if x = y then (2 * d : ℝ) else 0)
 
-/-- Extension by zero of a function on `A` to all of `ℤ^d` (ruling L-003). -/
+/-- Extension by zero of a function on `A` to all of `ℤ^d` (convention L-003). -/
 noncomputable def extendZero (A : Finset (Site d)) (v : A → ℝ) : Site d → ℝ :=
   fun y => if hy : y ∈ A then v ⟨y, hy⟩ else 0
 
@@ -190,7 +192,7 @@ lemma extendZero_of_notMem (A : Finset (Site d)) (v : A → ℝ) {y : Site d} (h
    since a nonzero `f` supported in a finite set differs across some edge,
    `Δ_A` is symmetric and negative definite, hence invertible."
 
-This is the guard against ruling L-004: without it `u`, `T` and `Reff` could all
+This is the guard against the junk value of convention L-004: without it `u`, `T` and `Reff` could all
 be the junk value `0`.  The proof below replaces the energy identity by the
 equivalent maximum principle against the comparison function
 `w(y) = K - y_i^2`, whose lattice Laplacian is the constant `-2`. -/
@@ -295,7 +297,7 @@ theorem dirichletLaplacian_isUnit (hd : 0 < d) (A : Finset (Site d)) :
    the Dirichlet problem `Δ_A u_A = -1_A` on `A`, with `u_A = 0` off `A`, so
    `u_A = -Δ_A^{-1} 1_A`."
 
-Defined by the linear-algebra formula (ruling L-001), extended by zero. -/
+Defined by the linear-algebra formula (convention L-001), extended by zero. -/
 noncomputable def u (A : Finset (Site d)) : Site d → ℝ :=
   extendZero A ((-(dirichletLaplacian A)⁻¹) *ᵥ (fun _ => 1))
 
@@ -315,7 +317,7 @@ noncomputable def T (A : Finset (Site d)) : ℝ := ∑ x ∈ A, u A x
 
   "`Reff(x ↔ (A⁺)^c) = -Δ_{A⁺}^{-1}(x,x) ≥ 1/(2d)`".
 
-Taken as the definition (ruling L-002). -/
+Taken as the definition (convention L-002). -/
 noncomputable def Reff (A : Finset (Site d)) (x : Site d) : ℝ :=
   -((dirichletLaplacian (insert x A))⁻¹
       ⟨x, Finset.mem_insert_self x A⟩ ⟨x, Finset.mem_insert_self x A⟩)

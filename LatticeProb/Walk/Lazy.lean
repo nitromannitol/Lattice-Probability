@@ -14,13 +14,14 @@ label `eq:gR`:
 Nothing here is frozen and nothing here is probabilistic in Mathlib's sense: the
 lazy walk enters the paper only through the three deterministic bounds of
 `lem:green` (`orrw.tex`), so it is built as a linear operator on
-functions and not as a measure on paths.  `osc` is not defined here; ruling
-F-804 of `ORRW/Frozen/Occupation/LazyGreen.lean` states the oscillation bound
-pairwise instead, which needs no attainment of `max` or `min`.
+functions and not as a measure on paths.  `osc` is not defined here; the frozen statement
+`ORRW/Frozen/Occupation/LazyGreen.lean` of the ORRW formalization
+(`nitromannitol/ORRW-Lower-Bound`) states the oscillation bound pairwise instead, which needs no attainment of `max` or `min`.
 
-Modelling decisions.
+Modelling decisions.  The labels `W-001` to `W-003` are the entries of the
+correspondence table of the ORRW formalization, where these conventions were fixed.
 
-* Ruling W-001 (`Q` is an operator, not a matrix).  The paper writes `Q^r(0,x)`
+* Convention W-001 (`Q` is an operator, not a matrix).  The paper writes `Q^r(0,x)`
   for the `r`-step transition kernel of the lazy walk.  A kernel on the infinite
   lattice would have to be iterated by an infinite sum, so `Q` is instead the
   one-step operator acting on functions, and `Q^[r] delta0` is the paper's
@@ -31,13 +32,13 @@ Modelling decisions.
   time `r` started from the origin.  Every iterate is a finite sum; no
   summability question arises in the definitions.
 
-* Ruling W-002 (the laziness is `1/2`).  `Q` holds with probability `1/2` and
+* Convention W-002 (the laziness is `1/2`).  `Q` holds with probability `1/2` and
   otherwise steps to a uniform neighbour, so each of the `2d` neighbours gets
   `1/(4d)`.  This is the walk whose `r`-step kernel has no parity obstruction,
   which is what makes the sup bound `C R^{-d/2}` of `lem:green` true for every
   `R` rather than for every `R` of the right parity.
 
-* Ruling W-003 (`d = 0` is not special-cased).  At `d = 0` the neighbour sum is
+* Convention W-003 (`d = 0` is not special-cased).  At `d = 0` the neighbour sum is
   empty and `4 * (d : ℝ) = 0`, so the second term of `Q` is `0 / 0 = 0` and `Q`
   is multiplication by `1/2`.  Nothing below asserts anything false in that
   degenerate case; the statements that need stochasticity carry `0 < d`.
@@ -62,7 +63,7 @@ chosen one of the `2d` neighbours, so
 
   `(Q f)(x) = (1/2) f(x) + (1/(4d)) ∑_{a} f(x + e_a)`.
 
-Ruling W-001: this is the paper's `Q` read as an operator. -/
+Convention W-001: this is the paper's `Q` read as an operator. -/
 noncomputable def Q (f : Site d → ℝ) : Site d → ℝ :=
   fun x => f x / 2 + (∑ a : Dir d, f (x + dirVec a)) / (4 * (d : ℝ))
 
@@ -73,13 +74,13 @@ noncomputable def delta0 : Site d → ℝ := fun x => if x = 0 then 1 else 0
 
   `g_R(x) = ∑_{r < R} Q^r(0, x)`.
 
-Ruling W-001 identifies `Q^[r] delta0` with the paper's `Q^r(0, ·)`. -/
+Convention W-001 identifies `Q^[r] delta0` with the paper's `Q^r(0, ·)`. -/
 noncomputable def gR (R : ℕ) : Site d → ℝ :=
   fun x => ∑ r ∈ range R, Q^[r] (delta0 : Site d → ℝ) x
 
 /-! ### The identification of `Q^[r] delta0` with the law at time `r`
 
-`LatticeProb.Q_eq_pushforward` is the content of ruling W-001. -/
+`LatticeProb.Q_eq_pushforward` is the content of convention W-001. -/
 
 /-- Flipping the sign bit of a direction negates its unit vector. -/
 theorem dirVec_flip (a : Dir d) : dirVec ((a.1, !a.2) : Dir d) = -dirVec a := by
@@ -105,7 +106,7 @@ theorem sum_dirVec_symm (f : Site d → ℝ) (x : Site d) :
 /-- `Q` is at the same time the averaging operator over neighbours and the
 one-step pushforward of a measure, because the `2d` unit steps are closed under
 negation.  Consequently `Q^[r] delta0` is the law of the lazy walk at time `r`
-started from the origin, which is the paper's `Q^r(0, ·)` (ruling W-001). -/
+started from the origin, which is the paper's `Q^r(0, ·)` (convention W-001). -/
 theorem Q_eq_pushforward (f : Site d → ℝ) (x : Site d) :
     Q f x = f x / 2 + (∑ a : Dir d, f (x - dirVec a)) / (4 * (d : ℝ)) := by
   rw [Q, sum_dirVec_symm]
@@ -219,7 +220,8 @@ theorem iterate_delta0_eq_zero {r : ℕ} {x : Site d} {i : Fin d} (h : (r : ℤ)
 
 /-! ### Each undirected edge is named exactly once
 
-Ruling F-805 of `ORRW/Frozen/Occupation/LazyGreen.lean` sums the increments of
+The frozen statement `ORRW/Frozen/Occupation/LazyGreen.lean` of the ORRW
+formalization sums the increments of
 `g_R` over `Site d × Fin d`, reading `(x, i)` as the edge `{x, x + e_i}`.  The
 two lemmas here are what makes that a sum over the undirected edges of `ℤ^d`
 with no edge counted twice and none omitted; the frozen constant `4 d^{3/2} √R`
@@ -291,7 +293,7 @@ theorem gR_eq_zero_of_lt {R : ℕ} {x : Site d} {i : Fin d} (h : (R : ℤ) < |x 
   omega
 
 /-- The family whose sum is the total variation of `g_R` over the edges of
-`ℤ^d`, in the parametrization of ruling F-805, is summable: it vanishes off the
+`ℤ^d`, in the parametrization of that frozen statement, is summable: it vanishes off the
 finite set `originBox d (R+1) ×ˢ univ`.  This is what makes the `Summable` conjunct of
 `LatticeProb.Frozen.lazy_green_bounds` a true assertion rather than a hope. -/
 theorem summable_gR_gradient (R : ℕ) :

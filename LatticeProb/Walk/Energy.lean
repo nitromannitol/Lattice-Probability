@@ -2,7 +2,7 @@
 Supporting lemmas for the resistance packing bound of Bou-Rabee--Peres,
 Section 2, the paper (label `lem:packing`).
 
-Nothing here is frozen.  Under ruling L-002 `Reff A x` is the matrix entry
+Nothing here is frozen.  Under convention L-002 of `Dirichlet.lean` `Reff A x` is the matrix entry
 `-Δ_{A⁺}^{-1}(x,x)`, so the paper's appeal to Thomson's principle has to be
 replaced by something provable from that definition.  Mathlib has no electrical
 network theory, so the flow argument is carried out by hand, in the only case
