@@ -106,4 +106,3 @@ theorem LatticeProb.gaussianProcess_map_eq_of_covariance
   haveI := hY.isProbabilityMeasure
   exact MeasureTheory.Measure.ext_of_map_restrict_eq hmX hmY
     (fun I => hX.map_restrict_eq hY hmX hmY hmean hmean' hcov I)
-
