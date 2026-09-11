@@ -190,3 +190,9 @@ theorem LatticeProb.geometric_grid_factor (k n : ℕ) (p q : ℝ) {c : ℝ} (hc 
   rw [show (1 / 2 ^ n : ℝ) = (1 / 2 : ℝ) ^ n by rw [one_div_pow],
     rpow_pow_comm (by norm_num : (0 : ℝ) ≤ 1 / 2) q n, rpow_pow_comm hc.le p n,
     ← mul_pow, ← div_pow, hnum]
+
+theorem LatticeProb.dlimPi_eq_of_continuous {k : ℕ} {f : (Fin k → ℝ) → ℝ}
+    (hf : Continuous f) (z : Fin k → ℝ) : dlimPi f z = f z := by
+  have ht : Tendsto (fun n => f (dtruncPi n z)) atTop (𝓝 (f z)) :=
+    (hf.tendsto z).comp (tendsto_dtruncPi_point z)
+  exact ht.limsup_eq
