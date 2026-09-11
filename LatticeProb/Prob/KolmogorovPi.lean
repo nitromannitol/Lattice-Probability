@@ -41,3 +41,18 @@ theorem LatticeProb.continuous_boxClamp {k : ℕ} (a b : Fin k → ℝ) (hab : a
   intro i
   change Continuous (fun x : Fin k → ℝ => max (a i) (min (b i) (x i)))
   fun_prop
+
+theorem LatticeProb.exists_incr_exponent_pi (k : ℕ) {p q : ℝ} (hp : 0 < p) (hq : (k : ℝ) < q) :
+    ∃ c : ℝ, 0 < c ∧ c < 1 ∧ (2 : ℝ) ^ ((k : ℝ) - q) / c ^ p < 1 := by
+  set β : ℝ := (2 : ℝ) ^ (((k : ℝ) - q) / p) with hβdef
+  have hβpos : 0 < β := Real.rpow_pos_of_pos (by norm_num) _
+  have hβlt : β < 1 := by
+    refine Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) ?_
+    exact div_neg_of_neg_of_pos (sub_neg.mpr hq) hp
+  refine ⟨(β + 1) / 2, by positivity, by linarith, ?_⟩
+  have hβb : β < (β + 1) / 2 := by linarith
+  have hpow : β ^ p < ((β + 1) / 2) ^ p := Real.rpow_lt_rpow hβpos.le hβb hp
+  have hβp : β ^ p = (2 : ℝ) ^ ((k : ℝ) - q) := by
+    rw [hβdef, ← Real.rpow_mul (by norm_num), div_mul_cancel₀ _ hp.ne']
+  rw [div_lt_one (by positivity), ← hβp]
+  exact hpow
