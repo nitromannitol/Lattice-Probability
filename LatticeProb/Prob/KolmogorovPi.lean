@@ -232,3 +232,27 @@ theorem LatticeProb.abs_sub_le_of_modulus_on_convex {E : Type*}
       push_cast
       linarith
   simpa [γ, hNr.ne'] using hchain N le_rfl
+
+theorem LatticeProb.measure_badSetPi_le_geometric {k : ℕ} {Ω : Type} [MeasurableSpace Ω]
+    (P : Measure Ω) [IsFiniteMeasure P] {X : (Fin k → ℝ) → Ω → ℝ}
+    {p q M c : ℝ} (hp : 0 < p) (hM : 0 ≤ M) (hc : 0 < c)
+    (hint : ∀ u v, Integrable (fun ω => |X u ω - X v ω| ^ p) P)
+    (hbound : ∀ u v, ∫ ω, |X u ω - X v ω| ^ p ∂P ≤ M * dist u v ^ q) (n : ℕ) :
+    P (badSetPi X (fun n => c ^ n) (n + 1) n) ≤
+      ENNReal.ofReal (M * (k : ℝ) * 3 ^ k * (n + 1 : ℝ) ^ k *
+        ((2 : ℝ) ^ ((k : ℝ) - q) / c ^ p) ^ n) := by
+  have hb := measure_badSetPi_le P hp hint hbound (fun n => pow_pos hc n) (n + 1) n
+  simp only [← ENNReal.ofReal_natCast] at hb
+  rw [← ENNReal.ofReal_mul (Nat.cast_nonneg k),
+    ← ENNReal.ofReal_mul (by positivity)] at hb
+  refine hb.trans (ENNReal.ofReal_le_ofReal ?_)
+  have hcard := card_boxIdx_level_le k n
+  calc
+    (k : ℝ) * ((boxIdx (k := k) (n + 1) n).card : ℝ) *
+        (M * (1 / 2 ^ n : ℝ) ^ q / (c ^ n) ^ p) ≤
+      (k : ℝ) * ((3 : ℝ) ^ k * (n + 1 : ℝ) ^ k * ((2 : ℝ) ^ k) ^ n) *
+        (M * (1 / 2 ^ n : ℝ) ^ q / (c ^ n) ^ p) := by
+      gcongr
+    _ = _ := by
+      rw [← geometric_grid_factor k n p q hc]
+      ring
