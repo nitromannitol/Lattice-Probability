@@ -158,3 +158,26 @@ theorem LatticeProb.measure_badSetPi_le {k : ℕ} {Ω : Type} [MeasurableSpace �
       exact (measure_biUnion_finset_le _ _).trans
         (Finset.sum_le_sum (fun j _ => hedge j i))
     _ = _ := by simp [Finset.sum_const, nsmul_eq_mul, mul_assoc]
+
+theorem LatticeProb.exists_level_of_summable (k R : ℕ) {r g : ℕ → ℝ}
+    (hr : Summable r) (hg : Summable g) (hg0 : ∀ n, 0 ≤ g n)
+    {ε η : ℝ} (hε : 0 < ε) (hη : 0 < η) :
+    ∃ N : ℕ, R ≤ N ∧ 2 * ((k : ℝ) * dtail r N) + (k : ℝ) * r N < η ∧
+      (∑' j : ℕ, ENNReal.ofReal (g (j + N))) ≤ ENNReal.ofReal ε := by
+  have hfinite : (∑' n, ENNReal.ofReal (g n)) ≠ ∞ := by
+    rw [← ENNReal.ofReal_tsum_of_nonneg hg0 hg]
+    exact ENNReal.ofReal_ne_top
+  have htail := ENNReal.tendsto_sum_nat_add (fun n => ENNReal.ofReal (g n)) hfinite
+  have hrzero := hr.tendsto_atTop_zero
+  have hd := tendsto_dtail r
+  have hc : Tendsto (fun N => 2 * ((k : ℝ) * dtail r N) + (k : ℝ) * r N)
+      atTop (𝓝 0) := by
+    simpa using ((hd.const_mul (k : ℝ)).const_mul 2).add (hrzero.const_mul (k : ℝ))
+  have hdet := hc.eventually (gt_mem_nhds hη)
+  have hprob := htail.eventually (gt_mem_nhds (ENNReal.ofReal_pos.mpr hε))
+  have hevent : ∀ᶠ N : ℕ in atTop, R ≤ N ∧
+      2 * ((k : ℝ) * dtail r N) + (k : ℝ) * r N < η ∧
+      (∑' j : ℕ, ENNReal.ofReal (g (j + N))) ≤ ENNReal.ofReal ε := by
+    filter_upwards [eventually_ge_atTop R, hdet, hprob] with N hR hD hP
+    exact ⟨hR, hD, hP.le⟩
+  exact hevent.exists
