@@ -88,7 +88,7 @@ theorem LatticeProb.tendsto_dtruncPi_point {k : ℕ} (z : Fin k → ℝ) :
   have h := (tendsto_const_nhds (x := z i)).sub hdiff
   simpa only [sub_sub_cancel, sub_zero] using h
 
-theorem LatticeProb.dyadicIncBoundPi_of_notMem {k : ℕ} {Ω : Type} [MeasurableSpace Ω]
+theorem LatticeProb.dyadicIncBoundPi_of_notMem {k : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     {X : (Fin k → ℝ) → Ω → ℝ} {r : ℕ → ℝ} {ω : Ω} {n₀ : ℕ}
     (h : ∀ n, n₀ ≤ n → ω ∉ badSetPi X r (n + 1) n) :
     DyadicIncBoundPi (fun t => X t ω) r n₀ := by
@@ -129,7 +129,7 @@ theorem LatticeProb.summable_polynomial_geometric (k : ℕ) {θ C : ℝ}
   intro n
   simp [Nat.cast_add, Nat.cast_one, pow_succ, mul_div_assoc, hθ0.ne', mul_assoc]
 
-theorem LatticeProb.measure_badSetPi_le {k : ℕ} {Ω : Type} [MeasurableSpace Ω]
+theorem LatticeProb.measure_badSetPi_le {k : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsFiniteMeasure P] {X : (Fin k → ℝ) → Ω → ℝ}
     {p q M : ℝ} (hp : 0 < p)
     (hint : ∀ u v, Integrable (fun ω => |X u ω - X v ω| ^ p) P)
@@ -233,7 +233,7 @@ theorem LatticeProb.abs_sub_le_of_modulus_on_convex {E : Type*}
       linarith
   simpa [γ, hNr.ne'] using hchain N le_rfl
 
-theorem LatticeProb.measure_badSetPi_le_geometric {k : ℕ} {Ω : Type} [MeasurableSpace Ω]
+theorem LatticeProb.measure_badSetPi_le_geometric {k : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsFiniteMeasure P] {X : (Fin k → ℝ) → Ω → ℝ}
     {p q M c : ℝ} (hp : 0 < p) (hM : 0 ≤ M) (hc : 0 < c)
     (hint : ∀ u v, Integrable (fun ω => |X u ω - X v ω| ^ p) P)

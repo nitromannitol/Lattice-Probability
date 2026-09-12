@@ -6,7 +6,7 @@ import LatticeProb.Prob.ChentsovPi
 noncomputable section
 open MeasureTheory LatticeProb
 
-variable {k : ℕ} {Ω : Type} [MeasurableSpace Ω] {P : Measure Ω}
+variable {k : ℕ} {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 
 /-- The level-`n` grid indices inside the box `[-m, m]^k`. -/
 def LatticeProb.boxIdx (m n : ℕ) : Finset (Fin k → ℤ) :=
