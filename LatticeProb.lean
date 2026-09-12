@@ -169,3 +169,6 @@ import LatticeProb.Support.ContSums
 import LatticeProb.Prob.KolmogorovPi
 import LatticeProb.Prob.KolmogorovBound
 import LatticeProb.Prob.ChentsovPiModification
+import LatticeProb.Prob.Ottaviani
+import LatticeProb.Prob.BrownianMax
+import LatticeProb.Prob.BrownianExit
