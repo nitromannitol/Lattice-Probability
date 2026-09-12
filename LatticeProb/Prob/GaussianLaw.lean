@@ -106,3 +106,38 @@ theorem LatticeProb.gaussianProcess_map_eq_of_covariance
   haveI := hY.isProbabilityMeasure
   exact MeasureTheory.Measure.ext_of_map_restrict_eq hmX hmY
     (fun I => hX.map_restrict_eq hY hmX hmY hmean hmean' hcov I)
+
+
+/-- **The law of a centred Gaussian family is determined by its covariance, across two
+probability spaces.**  Two centred Gaussian families indexed by the same set, one on `Ω` and
+one on `Ω'`, whose covariances agree, induce the same measure on the product `ι → ℝ`.  This is
+`LatticeProb.gaussianProcess_map_eq_of_covariance` with the two spaces, their measures and the
+two families made explicit; the index set is arbitrary, so applying it to a product index such
+as `Space × Fin k` gives the joint law of finitely many fields at once. -/
+theorem LatticeProb.gaussian_law_eq_of_covariance
+    {ι : Type*} (Ω Ω' : Type*) [MeasurableSpace Ω] [MeasurableSpace Ω']
+    (P : Measure Ω) (P' : Measure Ω') [IsProbabilityMeasure P] [IsProbabilityMeasure P']
+    (X : ι → Ω → ℝ) (Y : ι → Ω' → ℝ)
+    (hX : ProbabilityTheory.IsGaussianProcess X P)
+    (hY : ProbabilityTheory.IsGaussianProcess Y P')
+    (hXm : ∀ i, Measurable (X i)) (hYm : ∀ i, Measurable (Y i))
+    (hXmean : ∀ i, ∫ ω, X i ω ∂P = 0) (hYmean : ∀ i, ∫ ω, Y i ω ∂P' = 0)
+    (hcov : ∀ i j, ∫ ω, X i ω * X j ω ∂P = ∫ ω, Y i ω * Y j ω ∂P') :
+    Measure.map (fun ω => fun i => X i ω) P = Measure.map (fun ω => fun i => Y i ω) P' :=
+  LatticeProb.gaussianProcess_map_eq_of_covariance hX hY hXm hYm hXmean hYmean hcov
+
+/-- The same equality for the joint law of a finite subfamily, in the form the consumer of a
+finite collection of fields uses: the law of the vector `(X i)_{i ∈ I}` on `Ω` equals the law of
+`(Y i)_{i ∈ I}` on `Ω'`. -/
+theorem LatticeProb.gaussian_finite_law_eq_of_covariance
+    {ι : Type*} (Ω Ω' : Type*) [MeasurableSpace Ω] [MeasurableSpace Ω']
+    (P : Measure Ω) (P' : Measure Ω') [IsProbabilityMeasure P] [IsProbabilityMeasure P']
+    (X : ι → Ω → ℝ) (Y : ι → Ω' → ℝ)
+    (hX : ProbabilityTheory.IsGaussianProcess X P)
+    (hY : ProbabilityTheory.IsGaussianProcess Y P')
+    (hXm : ∀ i, Measurable (X i)) (hYm : ∀ i, Measurable (Y i))
+    (hXmean : ∀ i, ∫ ω, X i ω ∂P = 0) (hYmean : ∀ i, ∫ ω, Y i ω ∂P' = 0)
+    (hcov : ∀ i j, ∫ ω, X i ω * X j ω ∂P = ∫ ω, Y i ω * Y j ω ∂P')
+    (I : Finset ι) :
+    Measure.map (fun ω => I.restrict (X · ω)) P = Measure.map (fun ω => I.restrict (Y · ω)) P' :=
+  hX.map_restrict_eq hY hXm hYm hXmean hYmean hcov I
