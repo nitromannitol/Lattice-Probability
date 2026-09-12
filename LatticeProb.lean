@@ -173,3 +173,6 @@ import LatticeProb.Prob.Ottaviani
 import LatticeProb.Prob.BrownianMax
 import LatticeProb.Prob.BrownianExit
 import LatticeProb.Prob.BrownianMarkov
+import LatticeProb.Prob.IndepPi
+import LatticeProb.Prob.StoppingDyadic
+import LatticeProb.Prob.BrownianPathLaw

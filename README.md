@@ -76,6 +76,14 @@ LatticeProb/Prob/BrownianMarkov.lean  restarting Brownian motion at a determinis
                                     filtration, the event of having left a ball as an event of the
                                     past, and the strong Markov property at a stopping time as a
                                     stated property
+LatticeProb/Prob/IndepPi.lean       independent pairs give independent families: the supremum of one
+                                    half of a family of independent pairs is independent of the
+                                    supremum of the other half
+LatticeProb/Prob/StoppingDyadic.lean  the dyadic approximation of a stopping time from above, its
+                                    countably many values and its convergence
+LatticeProb/Prob/BrownianPathLaw.lean  the law of a pre-Brownian motion on path space, and the
+                                    invariance of the law of the increments under restarting at a
+                                    deterministic time
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
 LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
                                     for an independent centred sum (1 ≤ p ≤ 2) and its tail bound
