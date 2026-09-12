@@ -187,3 +187,4 @@ import LatticeProb.Prob.BrownianContAll
 import LatticeProb.Prob.RegularVariation
 import LatticeProb.Prob.Karamata
 import LatticeProb.Prob.Freedman
+import LatticeProb.Prob.KaramataOrigin
