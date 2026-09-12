@@ -93,6 +93,12 @@ LatticeProb/Prob/BrownianExitTime.lean  the exit time of a ball, its stopping-ti
                                     the exit time stopped at a horizon
 LatticeProb/Prob/BrownianContAll.lean  Kolmogorov-Chentsov on the half line with every path
                                     continuous, and a Brownian motion on R^d that has it
+LatticeProb/Prob/RegularVariation.lean  regular variation at infinity and Potter's bounds for a
+                                    monotone regularly varying function
+LatticeProb/Prob/Karamata.lean      Karamata's theorem for the integrated tail, and the layer cake
+                                    identity that makes it a statement about a law
+LatticeProb/Prob/Freedman.lean      Freedman's inequality for a martingale with bounded increments,
+                                    through the exponential supermartingale
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
 LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
                                     for an independent centred sum (1 ≤ p ≤ 2) and its tail bound

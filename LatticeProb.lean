@@ -182,3 +182,6 @@ import LatticeProb.Prob.BrownianStrongMarkov
 import LatticeProb.Prob.BrownianExitTime
 import LatticeProb.Prob.BrownianRestartIntegral
 import LatticeProb.Prob.BrownianContAll
+import LatticeProb.Prob.RegularVariation
+import LatticeProb.Prob.Karamata
+import LatticeProb.Prob.Freedman
