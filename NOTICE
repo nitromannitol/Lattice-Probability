@@ -25,4 +25,13 @@ their imports were removed, and the module documentation was rewritten to
 describe the general statements alone.  The mathematical statements and their
 proofs are unchanged.
 
+The files under LatticeProb/Lattice/Planar/ are adapted from
+https://github.com/nitromannitol/rotor-23,
+commit 703754d6dd0c4ae190d08b89f4507bd14b847d4e, copyright 2026
+Ahmed Bou-Rabee and Yuval Peres, under the Apache License, Version 2.0
+(see LICENSE). They preserve the lattice geometry and contour proofs,
+with reduced imports, a new namespace and ASCII declaration spellings.
+The retained exploration and cyclic-order definitions support the S/W
+contour argument. No percolation library dependency is included.
+
 Files not named above are original to this repository.

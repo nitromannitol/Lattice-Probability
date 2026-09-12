@@ -196,3 +196,4 @@ import LatticeProb.Graph.OnDiagonal
 import LatticeProb.Graph.HeatVanishing
 import LatticeProb.Prob.ConditionalMeasure
 import LatticeProb.Prob.ErgodicDecomposition
+import LatticeProb.Lattice.Planar

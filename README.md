@@ -129,6 +129,35 @@ LatticeProb/Network/                electrical networks on a locally finite grap
 LatticeProb/Graph/                  the divisible sandpile and the walk on a general graph, and the
                                     random-walk (optimal-stopping) representation of the odometer,
                                     with its specializations to the lattice
+LatticeProb/Lattice/Planar.lean  the square-lattice contour and separation interface
+LatticeProb/Lattice/Planar/Metric.lean  lattice connectivity, graph-distance bounds and finite components
+LatticeProb/Lattice/Planar/FaceGeometry.lean  coordinate formulas for the four sides of a square
+LatticeProb/Lattice/Planar/Basic.lean  integer lattice sites and directions
+LatticeProb/Lattice/Planar/RotorOrder.lean  cyclic neighbor orders for the contour exploration
+LatticeProb/Lattice/Planar/Periodic.lean  periodic vertex embeddings and translation inverses
+LatticeProb/Lattice/Planar/Square.lean  the square graph, its four neighbors and periodic embedding
+LatticeProb/Lattice/Planar/Dual.lean  right and left faces, primal and dual edges
+LatticeProb/Lattice/Planar/Exploration.lean  finite complementary components and depth-first exploration
+LatticeProb/Lattice/Planar/BlockGeom.lean  the integer sup norm
+LatticeProb/Lattice/Planar/KingPaths.lean  king adjacency of lattice sites
+LatticeProb/Lattice/Planar/SquareDual.lean  primal-dual inverses and lists of adjacent faces
+LatticeProb/Lattice/Planar/Boundary.lean  boundary successors and cancellation of outer normals
+LatticeProb/Lattice/Planar/DualGeom.lean  unit steps, rotations and dual-edge geometry
+LatticeProb/Lattice/Planar/Winding.lean  discrete winding and invariance off a closed walk
+LatticeProb/Lattice/Planar/DoubledCurve.lean  doubled curves and the winding jump across an edge
+LatticeProb/Lattice/Planar/Ring.lean  local rings, cyclic arcs and avoidance paths
+LatticeProb/Lattice/Planar/CurveSides.lean  connectivity along each side of a simple curve
+LatticeProb/Lattice/Planar/ExplInv.lean  the deterministic exploration invariant
+LatticeProb/Lattice/Planar/ExplCover.lean  avoidance reachability and finite components
+LatticeProb/Lattice/Planar/ExplTree.lean  the depth-first tree and its branch invariant
+LatticeProb/Lattice/Planar/ExplChain.lean  parent chains and winding on unbounded components
+LatticeProb/Lattice/Planar/Separation.lean  Jordan separation for doubled square-lattice curves
+LatticeProb/Lattice/Planar/FrameSector.lean  cyclic sectors of exploration frames
+LatticeProb/Lattice/Planar/SectorFacts.lean  square corners and sector geometry
+LatticeProb/Lattice/Planar/ContourPath.lean  simple contours formed from tree and branch paths
+LatticeProb/Lattice/Planar/ContourCtx.lean  the common contour context and its separation conclusion
+LatticeProb/Lattice/Planar/ContourCases.lean  the S contour and the W chord through edge midpoints
+LatticeProb/Lattice/Planar/ActiveListLemma.lean  the active-list theorem and exclusion of two closed sides
 LatticeProb/Graph/Reach.lean        the walks of a given length, the two one-step recursions for the
                                     transition kernel, its reversibility and Chapman-Kolmogorov
 LatticeProb/Graph/Nash.lean         the Nash inequality of dimension one on an infinite connected graph
@@ -141,7 +170,10 @@ LatticeProb/Graph/HeatVanishing.lean  the transition probability tends to zero t
 ## Attribution
 
 Three files under `LatticeProb/Prob/` are adapted from an Apache-2.0 licensed
-library; see `NOTICE`.
+library; see `NOTICE`. The modules under `LatticeProb/Lattice/Planar/`
+are adapted from the authors’ Apache-2.0 licensed rotor-23 formalization.
+They prove separation on the square lattice `ℤ × ℤ`. Their periodic
+embedding vocabulary does not assert planarity of a general graph.
 
 ## Build
 
