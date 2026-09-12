@@ -170,4 +170,59 @@ theorem sum_degree_heat_mul (hdeg : ∀ v : V, 0 < G.degree v) (m n : ℕ) (x w 
   rw [Finset.sum_congr rfl hstep, hshrink, heat_add m n x w, Finset.sum_div]
   exact Finset.sum_congr rfl fun y _ => by ring
 
+
+
+/-- A transition probability is at most one. -/
+theorem heat_le_one (hdeg : ∀ v : V, 0 < G.degree v) (n : ℕ) (x y : V) : heat G n x y ≤ 1 := by
+  by_cases hy : y ∈ reach G n x
+  · rw [← sum_heat_eq_one hdeg n x]
+    exact Finset.single_le_sum (f := fun z => heat G n x z) (fun z _ => heat_nonneg n x z) hy
+  · rw [heat_eq_zero_of_notMem_reach n x y hy]
+    norm_num
+
+/-- A walk of length `n` reaches `reach G n x`, and conversely. -/
+theorem exists_walk_of_mem_reach : ∀ (n : ℕ) (x y : V), y ∈ reach G n x →
+    ∃ p : G.Walk x y, p.length = n := by
+  intro n
+  induction n with
+  | zero =>
+      intro x y hy
+      rw [reach_zero, Finset.mem_singleton] at hy
+      subst hy
+      exact ⟨SimpleGraph.Walk.nil, rfl⟩
+  | succ n ih =>
+      intro x y hy
+      rw [reach_succ, Finset.mem_biUnion] at hy
+      obtain ⟨w, hw, hyw⟩ := hy
+      obtain ⟨p, hp⟩ := ih w y hyw
+      refine ⟨SimpleGraph.Walk.cons ((SimpleGraph.mem_neighborFinset _ _ _).1 hw) p, ?_⟩
+      rw [SimpleGraph.Walk.length_cons, hp]
+
+/-- The walk cannot outrun the graph distance: the `n`-step transition
+probability vanishes beyond distance `n`. -/
+theorem heat_eq_zero_of_lt_dist {n : ℕ} {x y : V} (h : n < G.dist x y) : heat G n x y = 0 := by
+  by_contra hne
+  by_cases hmem : y ∈ reach G n x
+  · obtain ⟨p, hp⟩ := exists_walk_of_mem_reach n x y hmem
+    exact absurd (hp ▸ SimpleGraph.dist_le p) (not_le.mpr h)
+  · exact hne (heat_eq_zero_of_notMem_reach n x y hmem)
+
+/-- On a graph of degree bounded by `d` the walk of length `n` reaches at most
+`d ^ n` vertices. -/
+theorem card_reach_le {d : ℕ} (hd : BoundedDegree G d) :
+    ∀ (n : ℕ) (x : V), (reach G n x).card ≤ d ^ n := by
+  intro n
+  induction n with
+  | zero =>
+      intro x
+      rw [reach_zero, Finset.card_singleton, pow_zero]
+  | succ n ih =>
+      intro x
+      rw [reach_succ]
+      refine le_trans (Finset.card_biUnion_le) ?_
+      refine le_trans (Finset.sum_le_sum (fun w _ => ih w)) ?_
+      rw [Finset.sum_const, SimpleGraph.card_neighborFinset_eq_degree, smul_eq_mul,
+        pow_succ, mul_comm (d ^ n) d]
+      exact Nat.mul_le_mul_right _ (hd x)
+
 end LatticeProb.Graph

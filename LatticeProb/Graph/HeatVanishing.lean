@@ -1,6 +1,8 @@
 /-
 The `n`-step transition probability of the walk on an infinite connected graph
-of bounded degree tends to zero, for every pair of vertices.
+tends to zero, for every pair of vertices.  No bound on the degrees is
+needed: the on-diagonal bound is applied at the fixed starting vertex, where the
+degree is a constant.
 
 The proof is Cauchy-Schwarz against the on-diagonal bound: writing
 `u_n(y) = p_n(x,y)/deg(y)`, the degree-weighted inner product of `u_n` with the
@@ -42,50 +44,81 @@ theorem sum_degree_mul_le (T : Finset V) (p q : V → ℝ) :
     intro y; rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg _)]; ring
   simpa only [e1, e2, e3] using hcs
 
+/-- Cauchy-Schwarz for the transition kernel: the kernel at time `a + b` is
+controlled by the return probabilities at times `2a` and `2b`. -/
+theorem heat_div_le_sqrt_two_time [Infinite V] (hG : G.Connected) (a b : ℕ) (x v : V) :
+    heat G (a + b) x v / (G.degree v : ℝ)
+      ≤ Real.sqrt (heat G (a + a) x x / (G.degree x : ℝ))
+        * Real.sqrt (heat G (b + b) v v / (G.degree v : ℝ)) := by
+  have hdeg : ∀ w : V, 0 < G.degree w := fun w => degree_pos hG w
+  set T : Finset V := reach G a x ∪ reach G b v with hTdef
+  have hTa : reach G a x ⊆ T := Finset.subset_union_left
+  have hTb : reach G b v ⊆ T := Finset.subset_union_right
+  have key := sum_degree_mul_le (G := G) T (fun y => heat G a x y / (G.degree y : ℝ))
+    (fun y => heat G b v y / (G.degree y : ℝ))
+  rw [sum_degree_heat_mul hdeg a b x v T hTa, sum_degree_heat_mul hdeg a a x x T hTa,
+    sum_degree_heat_mul hdeg b b v v T hTb] at key
+  exact key
+
 /-- The transition probability is controlled by the return probability at twice
 the time. -/
 theorem heat_div_le_sqrt [Infinite V] (hG : G.Connected) (n : ℕ) (x v : V) :
     heat G n x v / (G.degree v : ℝ)
       ≤ Real.sqrt (heat G (n + n) x x / (G.degree x : ℝ))
         * Real.sqrt (1 / (G.degree v : ℝ)) := by
-  have hdeg : ∀ w : V, 0 < G.degree w := fun w => degree_pos hG w
-  set T : Finset V := insert v (reach G n x) with hTdef
-  have hTn : reach G n x ⊆ T := Finset.subset_insert _ _
-  have hT0 : reach G 0 v ⊆ T := by
-    rw [reach_zero]
-    intro y hy
-    rw [Finset.mem_singleton] at hy
-    rw [hy, hTdef]
-    exact Finset.mem_insert_self _ _
-  have key := sum_degree_mul_le (G := G) T (fun y => heat G n x y / (G.degree y : ℝ))
-    (fun y => heat G 0 v y / (G.degree y : ℝ))
-  rw [sum_degree_heat_mul hdeg n 0 x v T hTn, sum_degree_heat_mul hdeg n n x x T hTn,
-    sum_degree_heat_mul hdeg 0 0 v v T hT0] at key
+  have h := heat_div_le_sqrt_two_time hG n 0 x v
   have h0 : heat G (0 + 0) v v = 1 := by simp [heat]
-  rw [h0] at key
-  simpa using key
+  rw [h0] at h
+  simpa using h
 
-theorem heat_tendsto_zero [Infinite V] (hG : G.Connected) {d : ℕ}
-    (hd : BoundedDegree G d) (x v : V) :
+/-- The off-diagonal bound at even times: `p_{2a}(x,y) ≤ deg(y) √(128/a)`. -/
+theorem heat_even_offdiag_le [Infinite V] (hG : G.Connected) {a : ℕ} (ha : 1 ≤ a) (x y : V) :
+    heat G (a + a) x y ≤ (G.degree y : ℝ) * Real.sqrt (128 / (a : ℝ)) := by
+  have hdeg : ∀ w : V, 0 < G.degree w := fun w => degree_pos hG w
+  have hdy : (0:ℝ) < (G.degree y : ℝ) := Nat.cast_pos.mpr (hdeg y)
+  have hdx : (0:ℝ) < (G.degree x : ℝ) := Nat.cast_pos.mpr (hdeg x)
+  have hx : heat G (a + a) x x / (G.degree x : ℝ) ≤ Real.sqrt (128 / (a : ℝ)) := by
+    rw [div_le_iff₀ hdx]
+    have := heat_even_le hG x ha
+    linarith [this]
+  have hy : heat G (a + a) y y / (G.degree y : ℝ) ≤ Real.sqrt (128 / (a : ℝ)) := by
+    rw [div_le_iff₀ hdy]
+    have := heat_even_le hG y ha
+    linarith [this]
+  have hs : Real.sqrt (heat G (a + a) x x / (G.degree x : ℝ))
+      * Real.sqrt (heat G (a + a) y y / (G.degree y : ℝ)) ≤ Real.sqrt (128 / (a : ℝ)) := by
+    have h1 : Real.sqrt (heat G (a + a) x x / (G.degree x : ℝ))
+        ≤ Real.sqrt (Real.sqrt (128 / (a : ℝ))) := Real.sqrt_le_sqrt hx
+    have h2 : Real.sqrt (heat G (a + a) y y / (G.degree y : ℝ))
+        ≤ Real.sqrt (Real.sqrt (128 / (a : ℝ))) := Real.sqrt_le_sqrt hy
+    have hnn : (0:ℝ) ≤ Real.sqrt (Real.sqrt (128 / (a : ℝ))) := Real.sqrt_nonneg _
+    calc Real.sqrt (heat G (a + a) x x / (G.degree x : ℝ))
+          * Real.sqrt (heat G (a + a) y y / (G.degree y : ℝ))
+        ≤ Real.sqrt (Real.sqrt (128 / (a : ℝ))) * Real.sqrt (Real.sqrt (128 / (a : ℝ))) :=
+          mul_le_mul h1 h2 (Real.sqrt_nonneg _) hnn
+      _ = Real.sqrt (128 / (a : ℝ)) := Real.mul_self_sqrt (Real.sqrt_nonneg _)
+  have h := le_trans (heat_div_le_sqrt_two_time hG a a x y) hs
+  rw [div_le_iff₀ hdy] at h
+  calc heat G (a + a) x y ≤ Real.sqrt (128 / (a : ℝ)) * (G.degree y : ℝ) := h
+    _ = (G.degree y : ℝ) * Real.sqrt (128 / (a : ℝ)) := by ring
+
+theorem heat_tendsto_zero [Infinite V] (hG : G.Connected) (x v : V) :
     Tendsto (fun n : ℕ => heat G n x v) atTop (𝓝 0) := by
   have hdeg : ∀ w : V, 0 < G.degree w := fun w => degree_pos hG w
   have hdv : (0:ℝ) < (G.degree v : ℝ) := Nat.cast_pos.mpr (hdeg v)
-  have hdx : (0:ℝ) < (G.degree x : ℝ) := Nat.cast_pos.mpr (hdeg x)
   -- the return probability at even times tends to zero
-  have hsq : Tendsto (fun n : ℕ => Real.sqrt ((n : ℝ) + (n : ℝ))) atTop atTop := by
-    refine Real.tendsto_sqrt_atTop.comp ?_
-    refine tendsto_atTop_mono (fun n => ?_) (tendsto_natCast_atTop_atTop (R := ℝ))
-    have : (0:ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-    linarith
-  have hmaj2 : Tendsto (fun n : ℕ => 32 * (d : ℝ) / Real.sqrt ((n : ℝ) + (n : ℝ)))
-      atTop (𝓝 0) := hsq.const_div_atTop _
+  have hinv : Tendsto (fun n : ℕ => 128 / (n : ℝ)) atTop (𝓝 0) :=
+    tendsto_const_nhds.div_atTop tendsto_natCast_atTop_atTop
+  have hmaj2 : Tendsto (fun n : ℕ => (G.degree x : ℝ) * Real.sqrt (128 / (n : ℝ)))
+      atTop (𝓝 0) := by
+    have h := (hinv.sqrt).const_mul ((G.degree x : ℝ))
+    rw [Real.sqrt_zero, mul_zero] at h
+    exact h
   have hdiag : Tendsto (fun n : ℕ => heat G (n + n) x x) atTop (𝓝 0) := by
-    refine squeeze_zero' (g := fun n : ℕ => 32 * (d : ℝ) / Real.sqrt ((n : ℝ) + (n : ℝ)))
+    refine squeeze_zero' (g := fun n : ℕ => (G.degree x : ℝ) * Real.sqrt (128 / (n : ℝ)))
       (Eventually.of_forall fun n => heat_nonneg _ x x) ?_ hmaj2
     filter_upwards [eventually_ge_atTop 1] with n hn
-    have h := heat_diag_le hG hd x (by omega : 1 ≤ n + n)
-    have hcast : ((n + n : ℕ) : ℝ) = (n : ℝ) + (n : ℝ) := by push_cast; ring
-    rwa [hcast] at h
+    exact heat_even_le hG x hn
   have hsqrt : Tendsto (fun n : ℕ => Real.sqrt (heat G (n + n) x x / (G.degree x : ℝ)))
       atTop (𝓝 0) := by
     have h := (hdiag.div_const ((G.degree x : ℝ))).sqrt
@@ -103,7 +136,6 @@ theorem heat_tendsto_zero [Infinite V] (hG : G.Connected) {d : ℕ}
   calc heat G n x v ≤ Real.sqrt (heat G (n + n) x x / (G.degree x : ℝ))
         * Real.sqrt (1 / (G.degree v : ℝ)) * (G.degree v : ℝ) := h
     _ = Real.sqrt (heat G (n + n) x x / (G.degree x : ℝ)) * c := by rw [hc]; ring
-
 
 /-! ### The hypotheses are needed
 
