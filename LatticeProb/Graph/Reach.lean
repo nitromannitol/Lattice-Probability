@@ -17,6 +17,7 @@ namespace LatticeProb.Graph
 
 variable {V : Type*} {G : SimpleGraph V} [G.LocallyFinite]
 
+/-- The endpoints of the walks of length `n` starting at `x`. -/
 noncomputable def reach (G : SimpleGraph V) [G.LocallyFinite] : ℕ → V → Finset V
   | 0, x => {x}
   | (n + 1), x => (G.neighborFinset x).biUnion fun w => reach G n w
@@ -224,5 +225,54 @@ theorem card_reach_le {d : ℕ} (hd : BoundedDegree G d) :
       rw [Finset.sum_const, SimpleGraph.card_neighborFinset_eq_degree, smul_eq_mul,
         pow_succ, mul_comm (d ^ n) d]
       exact Nat.mul_le_mul_right _ (hd x)
+
+
+/-- The vertices joined to `x` by a walk of at most `r` steps. -/
+noncomputable def ballFinset (G : SimpleGraph V) [G.LocallyFinite] (x : V) (r : ℕ) : Finset V :=
+  (Finset.range (r + 1)).biUnion (fun n => reach G n x)
+
+/-- On a connected graph the ball of radius `r` sits inside `ballFinset`. -/
+theorem mem_ballFinset_of_dist_le (hG : G.Connected) {x y : V} {r : ℕ} (h : G.dist x y ≤ r) :
+    y ∈ ballFinset G x r := by
+  obtain ⟨p, _, hp⟩ := hG.exists_path_of_dist x y
+  have hwalk : ∀ (n : ℕ) (a b : V) (q : G.Walk a b), q.length = n → b ∈ reach G n a := by
+    intro n
+    induction n with
+    | zero =>
+        intro a b q hq
+        cases q with
+        | nil => rw [reach_zero, Finset.mem_singleton]
+        | cons hadj q' => simp at hq
+    | succ n ih =>
+        intro a b q hq
+        cases q with
+        | nil => simp at hq
+        | cons hadj q' =>
+            simp only [SimpleGraph.Walk.length_cons] at hq
+            rw [reach_succ, Finset.mem_biUnion]
+            exact ⟨_, (SimpleGraph.mem_neighborFinset _ _ _).2 hadj, ih _ _ q' (by omega)⟩
+  rw [ballFinset, Finset.mem_biUnion]
+  exact ⟨G.dist x y, Finset.mem_range.2 (by omega), hwalk _ _ _ p hp⟩
+
+/-- Every vertex of `ballFinset G x r` is within distance `r` of `x`. -/
+theorem dist_le_of_mem_ballFinset {x y : V} {r : ℕ} (h : y ∈ ballFinset G x r) :
+    G.dist x y ≤ r := by
+  rw [ballFinset, Finset.mem_biUnion] at h
+  obtain ⟨n, hn, hy⟩ := h
+  obtain ⟨p, hp⟩ := exists_walk_of_mem_reach n x y hy
+  rw [Finset.mem_range] at hn
+  exact le_trans (hp ▸ SimpleGraph.dist_le p) (by omega)
+
+
+/-- A ball of radius `r` in a graph of degree bounded by `d` has at most
+`(r+1) d^r` vertices. -/
+theorem card_ballFinset_le {d : ℕ} (hd1 : 1 ≤ d) (hd : BoundedDegree G d) (x : V) (r : ℕ) :
+    (ballFinset G x r).card ≤ (r + 1) * d ^ r := by
+  rw [ballFinset]
+  refine le_trans Finset.card_biUnion_le ?_
+  refine le_trans (Finset.sum_le_card_nsmul _ _ (d ^ r) (fun n hn => ?_)) ?_
+  · rw [Finset.mem_range] at hn
+    exact le_trans (card_reach_le hd n x) (Nat.pow_le_pow_right hd1 (by omega))
+  · rw [Finset.card_range, smul_eq_mul]
 
 end LatticeProb.Graph
