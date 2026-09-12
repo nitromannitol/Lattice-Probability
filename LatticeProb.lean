@@ -168,3 +168,4 @@ import LatticeProb.Prob.Pinsker
 import LatticeProb.Support.ContSums
 import LatticeProb.Prob.KolmogorovPi
 import LatticeProb.Prob.KolmogorovBound
+import LatticeProb.Prob.ChentsovPiModification
