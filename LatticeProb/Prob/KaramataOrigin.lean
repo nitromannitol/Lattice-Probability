@@ -47,6 +47,19 @@ theorem integrableOn_Ioc_of_monotone_nonneg {F : ℝ → ℝ} (hmono : Monotone 
   rw [Real.norm_eq_abs, abs_of_nonneg (hnn r)]
   exact hmono hr.2
 
+/-- A monotone increasing function is integrable on `(0, t]` with no sign condition: on that
+interval it lies between `F 0` and `F t`.  This is what makes the local integrability
+hypothesis of Karamata's theorem at the origin redundant for a monotone function. -/
+theorem integrableOn_Ioc_of_monotone {F : ℝ → ℝ} (hmono : Monotone F) (t : ℝ) :
+    IntegrableOn F (Ioc 0 t) := by
+  have hmeas : Measurable F := hmono.measurable
+  have hconst : IntegrableOn (fun _ : ℝ => max |F 0| |F t|) (Ioc 0 t) :=
+    integrableOn_const measure_Ioc_lt_top.ne
+  refine Integrable.mono' hconst hmeas.aestronglyMeasurable ?_
+  refine (ae_restrict_iff' measurableSet_Ioc).mpr (Filter.Eventually.of_forall fun r hr => ?_)
+  rw [Real.norm_eq_abs]
+  exact abs_le_max_abs_abs (hmono hr.1.le) (hmono hr.2)
+
 /-- The substitution `r = t u` on the interval `(0, t]`. -/
 theorem integral_Ioc_zero_scale (F : ℝ → ℝ) {t : ℝ} (ht : 0 < t) :
     ∫ u in Ioc (0:ℝ) 1, F (t * u) = t⁻¹ * ∫ r in Ioc (0:ℝ) t, F r := by
@@ -189,6 +202,13 @@ theorem karamata_origin_integral {F : ℝ → ℝ} {ρ : ℝ} (hρ : -1 < ρ)
   rw [max_eq_left hFt.le, integral_Ioc_max_zero_eq hA hmono hFA hint hAt, ← hcdef, add_div,
     add_sub_cancel_left]
 
+/-- **Karamata's theorem at the origin** with no integrability hypothesis: for a monotone
+function the local integrability is automatic. -/
+theorem karamata_origin_integral_of_monotone {F : ℝ → ℝ} {ρ : ℝ} (hρ : -1 < ρ)
+    (hmono : Monotone F) (hpos : ∀ᶠ t in atTop, 0 < F t) (hF : RegularlyVaryingAtTop F ρ) :
+    Tendsto (fun t : ℝ => (∫ r in Ioc (0:ℝ) t, F r) / (t * F t)) atTop (𝓝 (1 / (ρ + 1))) :=
+  karamata_origin_integral hρ hmono hpos hF fun t => integrableOn_Ioc_of_monotone hmono t
+
 /-- **Karamata at the origin for the reciprocal of an integrated tail**, in the abstract form:
 `I` is positive, antitone and regularly varying of index `1 - α`, and `I t ∼ t F t / (α - 1)`.
 Then `F t ∫_0^t dr / I r → 1 - 1 / α`. -/
@@ -244,5 +264,142 @@ theorem karamata_origin_reciprocal_integratedLowerTail {ν : Measure ℝ}
   have hIpos : ∀ t : ℝ, 0 < ∫ z, max (-z - t) 0 ∂ν :=
     pos_of_antitone_of_eventually_pos hIanti (eventually_pos_of_regularlyVarying hIRV hInn)
   exact karamata_origin_reciprocal hα hIpos hIanti hIRV (karamata_integrated_tail hα htail)
+
+/-- A monotone increasing nonnegative regularly varying function has index at least zero: the
+ratio at `lam = 2` is at least one. -/
+theorem index_nonneg_of_monotone {F : ℝ → ℝ} {ρ : ℝ} (hmono : Monotone F)
+    (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F ρ) : 0 ≤ ρ := by
+  have hpos := eventually_pos_of_regularlyVarying hF hnn
+  have h2 := hF 2 two_pos
+  have hge : ∀ᶠ r : ℝ in atTop, (1:ℝ) ≤ F (2 * r) / F r := by
+    filter_upwards [hpos, eventually_ge_atTop (0:ℝ)] with r hFr hr
+    rw [le_div_iff₀ hFr, one_mul]
+    exact hmono (by linarith)
+  have hbound : (1:ℝ) ≤ (2:ℝ) ^ ρ := ge_of_tendsto h2 hge
+  by_contra hcon
+  rw [not_le] at hcon
+  have hlt : (2:ℝ) ^ ρ < 1 := Real.rpow_lt_one_of_one_lt_of_neg (by norm_num) hcon
+  linarith
+
+/-- An antitone nonnegative regularly varying function has index at most zero.  With
+`index_nonneg_of_monotone` this says that a monotone function of index `ρ > -1` is increasing
+when `ρ > 0` and decreasing when `ρ < 0`, so the two halves of Karamata's theorem at the origin
+below cover every monotone function. -/
+theorem index_nonpos_of_antitone {F : ℝ → ℝ} {ρ : ℝ} (hmono : Antitone F)
+    (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F ρ) : ρ ≤ 0 := by
+  have hpos := eventually_pos_of_regularlyVarying hF hnn
+  have hFpos : ∀ x, 0 < F x := pos_of_antitone_of_eventually_pos hmono hpos
+  have h2 := hF 2 two_pos
+  have hle : ∀ᶠ r : ℝ in atTop, F (2 * r) / F r ≤ 1 := by
+    filter_upwards [eventually_ge_atTop (0:ℝ)] with r hr
+    rw [div_le_one (hFpos r)]
+    exact hmono (by linarith)
+  have hbound : (2:ℝ) ^ ρ ≤ 1 := le_of_tendsto h2 hle
+  by_contra hcon
+  rw [not_le] at hcon
+  have hgt : (1:ℝ) < (2:ℝ) ^ ρ :=
+    (Real.one_lt_rpow_iff_of_pos two_pos).mpr (Or.inl ⟨by norm_num, hcon⟩)
+  linarith
+
+/-- The domination needed at the origin for an ANTITONE function, where the trivial bound of
+the increasing case is not available: Potter's bound covers `t u ≥ r₀`, and below that level
+the function is bounded by `F 0` while `1 / F t` is bounded through Potter's bound at `r₀`,
+which is again a multiple of `u ^ (ρ - δ)` because the exponent is negative. -/
+theorem karamata_origin_antitone_bound {F : ℝ → ℝ} {ρ δ : ℝ} (hmono : Antitone F)
+    (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F ρ) (hδ : 0 < δ) (hρδ : ρ - δ < 0) :
+    ∃ C t₀ : ℝ, 0 < t₀ ∧ 0 ≤ C ∧ ∀ t u : ℝ, t₀ ≤ t → 0 < u → u ≤ 1 →
+      F (t * u) / F t ≤ C * u ^ (ρ - δ) := by
+  have hpos := eventually_pos_of_regularlyVarying hF hnn
+  have hFpos : ∀ x, 0 < F x := pos_of_antitone_of_eventually_pos hmono hpos
+  obtain ⟨r₀, hr₀pos, hpot⟩ := potter_lower hF hmono hpos hδ
+  refine ⟨max (1 + δ) ((1 + δ) * (F 0 / F r₀)), r₀, hr₀pos, le_max_of_le_left (by linarith),
+    fun t u ht hu0 hu1 => ?_⟩
+  have ht0 : 0 < t := lt_of_lt_of_le hr₀pos ht
+  have hupow : (0:ℝ) < u ^ (ρ - δ) := Real.rpow_pos_of_pos hu0 _
+  rcases le_or_gt r₀ (t * u) with hc | hc
+  · have h1 := hpot t (t * u) hc (mul_le_of_le_one_right ht0.le hu1)
+    rw [show t * u / t = u by field_simp] at h1
+    exact le_trans h1 (mul_le_mul_of_nonneg_right (le_max_left _ _) hupow.le)
+  · have hur : u ≤ r₀ / t := by
+      rw [le_div_iff₀ ht0]
+      nlinarith [hc]
+    have h3 : (r₀ / t) ^ (ρ - δ) ≤ u ^ (ρ - δ) := Real.rpow_le_rpow_of_nonpos hu0 hur hρδ.le
+    have h1 := hpot t r₀ le_rfl ht
+    have hFtu : F (t * u) ≤ F 0 := hmono (mul_nonneg ht0.le hu0.le)
+    have h4 : F (t * u) / F t ≤ F 0 / F t := div_le_div_of_nonneg_right hFtu (hFpos t).le
+    have hFt0 : F t ≠ 0 := ne_of_gt (hFpos t)
+    have hFr0 : F r₀ ≠ 0 := ne_of_gt (hFpos r₀)
+    have h5 : F 0 / F t = (F 0 / F r₀) * (F r₀ / F t) := by
+      field_simp
+    have h6 : (0:ℝ) ≤ F 0 / F r₀ := div_nonneg (hnn 0) (hFpos r₀).le
+    have h7 : F 0 / F t ≤ (F 0 / F r₀) * ((1 + δ) * (r₀ / t) ^ (ρ - δ)) := by
+      rw [h5]
+      exact mul_le_mul_of_nonneg_left h1 h6
+    have h8 : (F 0 / F r₀) * ((1 + δ) * (r₀ / t) ^ (ρ - δ))
+        ≤ ((1 + δ) * (F 0 / F r₀)) * u ^ (ρ - δ) := by
+      have hd : (0:ℝ) ≤ 1 + δ := by linarith
+      calc (F 0 / F r₀) * ((1 + δ) * (r₀ / t) ^ (ρ - δ))
+          = ((1 + δ) * (F 0 / F r₀)) * (r₀ / t) ^ (ρ - δ) := by ring
+        _ ≤ ((1 + δ) * (F 0 / F r₀)) * u ^ (ρ - δ) :=
+            mul_le_mul_of_nonneg_left h3 (mul_nonneg hd h6)
+    have h9 : ((1 + δ) * (F 0 / F r₀)) * u ^ (ρ - δ)
+        ≤ max (1 + δ) ((1 + δ) * (F 0 / F r₀)) * u ^ (ρ - δ) :=
+      mul_le_mul_of_nonneg_right (le_max_right _ _) hupow.le
+    linarith [h4, h7, h8, h9]
+
+/-- The heart of Karamata's theorem at the origin for an antitone function: the dominating
+function is `C u ^ (ρ - δ)` with `δ = (ρ + 1) / 2`, integrable on `(0, 1]` because
+`ρ - δ > -1`. -/
+theorem karamata_origin_ratio_antitone {F : ℝ → ℝ} {ρ : ℝ} (hρ : -1 < ρ)
+    (hmono : Antitone F) (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F ρ) :
+    Tendsto (fun t : ℝ => ∫ u in Ioc (0:ℝ) 1, F (t * u) / F t) atTop (𝓝 (1 / (ρ + 1))) := by
+  have hρ0 : ρ ≤ 0 := index_nonpos_of_antitone hmono hnn hF
+  set δ : ℝ := (ρ + 1) / 2 with hδdef
+  have hδ : 0 < δ := by rw [hδdef]; linarith
+  have hρδ : ρ - δ < 0 := by rw [hδdef]; linarith
+  have hexp : -1 < ρ - δ := by rw [hδdef]; linarith
+  obtain ⟨C, t₀, ht₀, hC, hbnd⟩ := karamata_origin_antitone_bound hmono hnn hF hδ hρδ
+  have hbint : IntegrableOn (fun u : ℝ => C * u ^ (ρ - δ)) (Ioc (0:ℝ) 1) :=
+    ((intervalIntegral.intervalIntegrable_rpow' hexp).1).const_mul C
+  have hdct : Tendsto (fun t : ℝ => ∫ u in Ioc (0:ℝ) 1, F (t * u) / F t) atTop
+      (𝓝 (∫ u in Ioc (0:ℝ) 1, u ^ ρ)) := by
+    refine tendsto_integral_filter_of_dominated_convergence
+      (fun u : ℝ => C * u ^ (ρ - δ)) ?_ ?_ hbint ?_
+    · exact Filter.Eventually.of_forall fun t =>
+        ((hmono.measurable.comp (measurable_id.const_mul t)).div_const (F t)).aestronglyMeasurable
+    · filter_upwards [eventually_ge_atTop t₀] with t ht
+      refine (ae_restrict_iff' measurableSet_Ioc).mpr (Filter.Eventually.of_forall fun u hu => ?_)
+      rw [Real.norm_eq_abs, abs_of_nonneg (div_nonneg (hnn _) (hnn t))]
+      exact hbnd t u ht hu.1 hu.2
+    · refine (ae_restrict_iff' measurableSet_Ioc).mpr (Filter.Eventually.of_forall fun u hu => ?_)
+      exact (hF u hu.1).congr fun r => by rw [mul_comm u r]
+  rwa [integral_Ioc_zero_one_rpow hρ] at hdct
+
+/-- **Karamata's theorem at the origin for an antitone function**: `∫_0^t F ∼ t F t / (ρ + 1)`
+for `F` antitone, nonnegative and regularly varying of index `ρ ∈ (-1, 0]`.  Together with
+`karamata_origin_integral_nonneg` this covers every monotone regularly varying function of
+index above `-1`. -/
+theorem karamata_origin_integral_antitone {F : ℝ → ℝ} {ρ : ℝ} (hρ : -1 < ρ)
+    (hmono : Antitone F) (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F ρ) :
+    Tendsto (fun t : ℝ => (∫ r in Ioc (0:ℝ) t, F r) / (t * F t)) atTop (𝓝 (1 / (ρ + 1))) := by
+  have hpos : ∀ᶠ r in atTop, 0 < F r := eventually_pos_of_regularlyVarying hF hnn
+  refine (karamata_origin_ratio_antitone hρ hmono hnn hF).congr' ?_
+  filter_upwards [hpos, eventually_gt_atTop (0:ℝ)] with t hFt ht0
+  rw [integral_div, integral_Ioc_zero_scale F ht0]
+  field_simp
+
+/-- **The truncated mean of a law with a heavy lower tail.**  If the lower tail is regularly
+varying of index `-α` with `α < 1`, then `∫_0^t P(z < -r) dr ∼ t P(z < -t) / (1 - α)`.  This is
+the companion of `karamata_integrated_tail`, which needs `α > 1` for the tail to be integrable
+at infinity; here the tail is not integrable and the integral from the origin is what
+diverges. -/
+theorem karamata_origin_lowerTail {ν : Measure ℝ} [IsFiniteMeasure ν] {α : ℝ} (hα : α < 1)
+    (htail : RegularlyVaryingAtTop (fun r => (ν (Set.Iio (-r))).toReal) (-α)) :
+    Tendsto (fun t : ℝ => (∫ r in Ioc (0:ℝ) t, (ν (Set.Iio (-r))).toReal)
+      / (t * (ν (Set.Iio (-t))).toReal)) atTop (𝓝 (1 / (1 - α))) := by
+  have h := karamata_origin_integral_antitone (show (-1:ℝ) < -α by linarith)
+    (antitone_lowerTail ν) (lowerTail_nonneg ν) htail
+  rw [show -α + 1 = 1 - α by ring] at h
+  exact h
 
 end LatticeProb

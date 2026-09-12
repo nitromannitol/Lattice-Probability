@@ -105,9 +105,10 @@ LatticeProb/Prob/RegularVariation.lean  regular variation at infinity and Potter
 LatticeProb/Prob/Karamata.lean      Karamata's theorem for the integrated tail, and the layer cake
                                     identity that makes it a statement about a law
 LatticeProb/Prob/KaramataOrigin.lean  Karamata's theorem for the integral from the origin of a
-                                    regularly varying function of index above -1, and the limit
-                                    of the tail against the integrated reciprocal of the
-                                    integrated tail
+                                    monotone regularly varying function of index above -1, for
+                                    an increasing and for a decreasing function, and the limit
+                                    of the lower tail of a law against the integral of the
+                                    reciprocal of its integrated tail
 LatticeProb/Prob/Freedman.lean      Freedman's inequality for a martingale with bounded increments,
                                     through the exponential supermartingale
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
