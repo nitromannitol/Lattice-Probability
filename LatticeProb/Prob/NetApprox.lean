@@ -119,6 +119,34 @@ theorem exists_net {K : Set E} (hK : IsCompact K) {η : ℝ} (hη : 0 < η) :
     refine ⟨htf.toFinset.equivFin ⟨z, htf.mem_toFinset.mpr hz⟩, ?_⟩
     simpa [Metric.mem_ball, dist_comm] using hyz
 
+/-- The interpolation written as a single quotient, which is how its continuity is read off. -/
+theorem netApprox_eq_div {m : ℕ} (x : Fin m → E) (η : ℝ) (u : Fin m → ℝ) (y : E) :
+    netApprox x η u y = (∑ k, tentWeight η (x k) y * u k) / tentSum x η y := by
+  simp [netApprox, tentPart, Finset.sum_div, div_mul_eq_mul_div]
+
+/-- **The interpolation is continuous on a set the net covers.**  The numerator and the
+denominator are continuous, and the denominator does not vanish there. -/
+theorem continuousOn_netApprox {m : ℕ} {x : Fin m → E} {η : ℝ} (u : Fin m → ℝ) {K : Set E}
+    (hnet : ∀ y ∈ K, ∃ k, dist (x k) y < η) : ContinuousOn (netApprox x η u) K := by
+  have hw : ∀ k : Fin m, Continuous fun y : E => tentWeight η (x k) y := by
+    intro k
+    unfold tentWeight
+    fun_prop
+  have hnum : Continuous fun y : E => ∑ k, tentWeight η (x k) y * u k :=
+    continuous_finsetSum _ fun k _ => (hw k).mul continuous_const
+  have hden : Continuous fun y : E => tentSum x η y := by
+    unfold tentSum
+    exact continuous_finsetSum _ fun k _ => hw k
+  have hfun : netApprox x η u
+      = fun z : E => (∑ k, tentWeight η (x k) z * u k) / tentSum x η z := by
+    funext z
+    exact netApprox_eq_div x η u z
+  intro y hy
+  have hpos : 0 < tentSum x η y := tentSum_pos (hnet y hy)
+  refine ContinuousAt.continuousWithinAt ?_
+  rw [hfun]
+  exact hnum.continuousAt.div hden.continuousAt (ne_of_gt hpos)
+
 end LatticeProb
 
 end

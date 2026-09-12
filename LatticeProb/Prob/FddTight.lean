@@ -44,11 +44,12 @@ at distance less than `η`, and if `Φ` moves by at most `ε` under a uniform ch
 `K`, then `Φ` of the interpolation of the values of `v` on the net is within `ε` of `Φ v`. -/
 theorem abs_netFunctional_sub_le {K : Set E} {m : ℕ} {x : Fin m → E} {η δ ε : ℝ} {v : E → ℝ}
     (hxK : ∀ k, x k ∈ K) (hnet : ∀ y ∈ K, ∃ k, dist (x k) y < η)
-    (hmod : ∀ z ∈ K, ∀ y ∈ K, dist z y < η → |v z - v y| ≤ δ)
+    (hmod : ∀ z ∈ K, ∀ y ∈ K, dist z y < η → |v z - v y| ≤ δ) (hv : ContinuousOn v K)
     {Φ : (E → ℝ) → ℝ}
-    (hΦδ : ∀ v' w' : E → ℝ, (∀ z ∈ K, |v' z - w' z| ≤ δ) → |Φ v' - Φ w'| ≤ ε) :
+    (hΦδ : ∀ v' w' : E → ℝ, ContinuousOn v' K → ContinuousOn w' K →
+      (∀ z ∈ K, |v' z - w' z| ≤ δ) → |Φ v' - Φ w'| ≤ ε) :
     |Φ (netApprox x η (fun k => v (x k))) - Φ v| ≤ ε := by
-  refine hΦδ _ v ?_
+  refine hΦδ _ v (continuousOn_netApprox _ hnet) hv ?_
   intro y hy
   refine abs_netApprox_sub_le (tentSum_pos (hnet y hy)) ?_
   intro k hk
@@ -58,7 +59,7 @@ theorem abs_netFunctional_sub_le {K : Set E} {m : ℕ} {x : Fin m → E} {η δ 
 theorem continuous_netFunctional {K : Set E} {m : ℕ} {x : Fin m → E} {η : ℝ}
     (hnet : ∀ y ∈ K, ∃ k, dist (x k) y < η) {Φ : (E → ℝ) → ℝ}
     (hΦu : ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ v w : E → ℝ,
-      (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
+      ContinuousOn v K → ContinuousOn w K → (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
     Continuous fun u : Fin m → ℝ => Φ (netApprox x η u) := by
   refine Metric.continuous_iff.2 ?_
   intro b ε hε
@@ -71,7 +72,8 @@ theorem continuous_netFunctional {K : Set E} {m : ℕ} {x : Fin m → E} {η : �
     linarith
   have hz : ∀ z ∈ K, |netApprox x η a z - netApprox x η b z| ≤ δ := fun z hz =>
     abs_netApprox_sub_netApprox_le (tentSum_pos (hnet z hz)) hcoord
-  have hfin := hΦδ (netApprox x η a) (netApprox x η b) hz
+  have hfin := hΦδ (netApprox x η a) (netApprox x η b) (continuousOn_netApprox a hnet)
+    (continuousOn_netApprox b hnet) hz
   rw [Real.dist_eq]
   linarith
 
@@ -81,6 +83,7 @@ the functional of the function itself. -/
 theorem tendsto_netFunctional {K : Set E} (hK : IsCompact K) {v : E → ℝ}
     (hv : ContinuousOn v K) {Φ : (E → ℝ) → ℝ}
     (hΦu : ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ v' w' : E → ℝ,
+      ContinuousOn v' K → ContinuousOn w' K →
       (∀ z ∈ K, |v' z - w' z| ≤ δ) → |Φ v' - Φ w'| ≤ ε)
     {m : ℕ → ℕ} {x : (n : ℕ) → Fin (m n) → E} {r : ℕ → ℝ}
     (hxK : ∀ n k, x n k ∈ K) (hnet : ∀ n, ∀ y ∈ K, ∃ k, dist (x n k) y < r n)
@@ -102,7 +105,7 @@ theorem tendsto_netFunctional {K : Set E} (hK : IsCompact K) {v : E → ℝ}
     have h := huc z hz y hy (lt_trans hzy hrn)
     rw [Real.dist_eq] at h
     exact h.le
-  have hb := abs_netFunctional_sub_le (x := x n) (hxK n) (hnet n) hmod hΦδ
+  have hb := abs_netFunctional_sub_le (x := x n) (hxK n) (hnet n) hmod hv hΦδ
   rw [Real.dist_eq]
   linarith
 
@@ -113,7 +116,7 @@ theorem measurable_netFunctional {Ω : Type*} [MeasurableSpace Ω] {K : Set E} {
     {x : Fin m → E} {η : ℝ} {F : E → Ω → ℝ} {Φ : (E → ℝ) → ℝ}
     (hFm : ∀ z, Measurable (F z)) (hnet : ∀ y ∈ K, ∃ k, dist (x k) y < η)
     (hΦu : ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ v w : E → ℝ,
-      (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
+      ContinuousOn v K → ContinuousOn w K → (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
     Measurable fun ω => Φ (netApprox x η (fun k => F (x k) ω)) :=
   (continuous_netFunctional hnet hΦu).measurable.comp
     (measurable_pi_lambda _ fun k => hFm (x k))
@@ -125,7 +128,7 @@ theorem measurable_pathFunctional {Ω : Type*} [MeasurableSpace Ω] {K : Set E} 
     {F : E → Ω → ℝ} {Φ : (E → ℝ) → ℝ} (hFm : ∀ z, Measurable (F z))
     (hFc : ∀ ω, ContinuousOn (fun z => F z ω) K)
     (hΦu : ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ v w : E → ℝ,
-      (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
+      ContinuousOn v K → ContinuousOn w K → (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
     Measurable fun ω => Φ (fun z => F z ω) := by
   classical
   have hpos : ∀ n : ℕ, (0 : ℝ) < 1 / (n + 1) := fun n => by positivity
@@ -168,7 +171,9 @@ theorem abs_integral_netFunctional_sub_le {Ω : Type*} [MeasurableSpace Ω] {P :
     {F : E → Ω → ℝ} {Φ : (E → ℝ) → ℝ}
     (hxK : ∀ k, x k ∈ K) (hnet : ∀ y ∈ K, ∃ k, dist (x k) y < η)
     (hΦb : ∀ v, |Φ v| ≤ M) (hδ : 0 ≤ δ)
-    (hΦδ : ∀ v w : E → ℝ, (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε)
+    (hFc : ∀ ω, ContinuousOn (fun z => F z ω) K)
+    (hΦδ : ∀ v w : E → ℝ, ContinuousOn v K → ContinuousOn w K →
+      (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε)
     (hm1 : Measurable fun ω => Φ (netApprox x η (fun k => F (x k) ω)))
     (hm2 : Measurable fun ω => Φ (fun z => F z ω)) (hρ : 0 ≤ ρ)
     (hbad : P {ω | ∃ z ∈ K, ∃ y ∈ K, dist z y < η ∧ δ < |F z ω - F y ω|} ≤ ENNReal.ofReal ρ) :
@@ -176,7 +181,8 @@ theorem abs_integral_netFunctional_sub_le {Ω : Type*} [MeasurableSpace Ω] {P :
       ≤ ε + 2 * M * ρ := by
   have hM : 0 ≤ M := le_trans (abs_nonneg _) (hΦb fun _ => 0)
   have hε : 0 ≤ ε := by
-    have h := hΦδ (fun _ => (0 : ℝ)) (fun _ => (0 : ℝ)) (by intro z _; simpa using hδ)
+    have h := hΦδ (fun _ => (0 : ℝ)) (fun _ => (0 : ℝ)) continuousOn_const continuousOn_const
+      (by intro z _; simpa using hδ)
     simpa using h
   set A := toMeasurable P {ω | ∃ z ∈ K, ∃ y ∈ K, dist z y < η ∧ δ < |F z ω - F y ω|} with hA
   have hAm : MeasurableSet A := measurableSet_toMeasurable _ _
@@ -206,7 +212,7 @@ theorem abs_integral_netFunctional_sub_le {Ω : Type*} [MeasurableSpace Ω] {P :
         intro z hz y hy hzy
         by_contra hcon
         exact hω (hAsub ⟨z, hz, y, hy, hzy, lt_of_not_ge hcon⟩)
-      exact abs_netFunctional_sub_le hxK hnet hmod hΦδ
+      exact abs_netFunctional_sub_le hxK hnet hmod (hFc ω) hΦδ
   calc |∫ ω, Φ (netApprox x η (fun k => F (x k) ω)) ∂P - ∫ ω, Φ (fun z => F z ω) ∂P|
       = |∫ ω, (Φ (netApprox x η (fun k => F (x k) ω)) - Φ (fun z => F z ω)) ∂P| := by
         rw [integral_sub hi1 hi2]
@@ -232,7 +238,7 @@ theorem exists_net_integral_close {Ω' : Type*} [MeasurableSpace Ω'] {Q : Measu
     {Φ : (E → ℝ) → ℝ} {M : ℝ} (hgm : ∀ z, Measurable (g z))
     (hgc : ∀ ω, ContinuousOn (fun z => g z ω) K) (hΦb : ∀ v, |Φ v| ≤ M)
     (hΦu : ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ v w : E → ℝ,
-      (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε)
+      ContinuousOn v K → ContinuousOn w K → (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε)
     {ε η₀ : ℝ} (hε : 0 < ε) (hη₀ : 0 < η₀) :
     ∃ (m : ℕ) (x : Fin m → E) (η : ℝ), 0 < η ∧ η ≤ η₀ ∧ (∀ k, x k ∈ K) ∧
       (∀ y ∈ K, ∃ k, dist (x k) y < η) ∧
@@ -291,7 +297,7 @@ theorem tendsto_integral_of_fdd_of_equicontinuous
       P i {ω | ∃ z ∈ K, ∃ y ∈ K, dist z y < δ ∧ η < |f i z ω - f i y ω|} ≤ ENNReal.ofReal ε)
     {Φ : (E → ℝ) → ℝ} {M : ℝ} (hΦb : ∀ v, |Φ v| ≤ M)
     (hΦu : ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ v w : E → ℝ,
-      (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
+      ContinuousOn v K → ContinuousOn w K → (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
     Tendsto (fun i => ∫ ω, Φ (fun z => f i z ω) ∂(P i)) L
       (𝓝 (∫ ω, Φ (fun z => g z ω) ∂Q)) := by
   have hM : 0 ≤ M := le_trans (abs_nonneg _) (hΦb fun _ => 0)
@@ -322,7 +328,7 @@ theorem tendsto_integral_of_fdd_of_equicontinuous
     refine le_trans (measure_mono ?_) htighti
     rintro ω ⟨z, hz, y, hy, hzy, hval⟩
     exact ⟨z, hz, y, hy, lt_of_lt_of_le hzy hηle, hval⟩
-  have h1 := abs_integral_netFunctional_sub_le (P := P i) (F := f i) hxK hnet hΦb hδ.le hΦδ
+  have h1 := abs_integral_netFunctional_sub_le (P := P i) (F := f i) hxK hnet hΦb hδ.le hfci hΦδ
     (measurable_netFunctional hfmi hnet hΦu)
     (measurable_pathFunctional hK hfmi hfci hΦu) hε.le hbadi
   have key : ∀ a b c d : ℝ, |b - a| ≤ ε + 2 * M * ε → |b - c| < ε → |c - d| ≤ ε →
