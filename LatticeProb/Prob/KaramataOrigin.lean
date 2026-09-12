@@ -392,7 +392,8 @@ theorem karamata_origin_integral_antitone {F : ℝ → ℝ} {ρ : ℝ} (hρ : -1
 varying of index `-α` with `α < 1`, then `∫_0^t P(z < -r) dr ∼ t P(z < -t) / (1 - α)`.  This is
 the companion of `karamata_integrated_tail`, which needs `α > 1` for the tail to be integrable
 at infinity; here the tail is not integrable and the integral from the origin is what
-diverges. -/
+diverges.  The hypotheses are vacuous for `α < 0`: a lower tail is antitone, so its index is at
+most zero by `index_nonpos_of_antitone`, and the useful range is `0 ≤ α < 1`. -/
 theorem karamata_origin_lowerTail {ν : Measure ℝ} [IsFiniteMeasure ν] {α : ℝ} (hα : α < 1)
     (htail : RegularlyVaryingAtTop (fun r => (ν (Set.Iio (-r))).toReal) (-α)) :
     Tendsto (fun t : ℝ => (∫ r in Ioc (0:ℝ) t, (ν (Set.Iio (-r))).toReal)
