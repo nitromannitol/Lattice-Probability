@@ -108,6 +108,21 @@ theorem HasStrongMarkovRestart.setIntegral_restart [IsProbabilityMeasure P] {d :
           (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P)) ∂P :=
         integral_map hYm.aemeasurable hG.aestronglyMeasurable
 
+
+/-- The past at a stopping time is independent of the restarted path. -/
+theorem HasStrongMarkovRestart.indep [IsProbabilityMeasure P] {d : ℕ} {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)}
+    {𝔽 : Filtration ℝ≥0 (inferInstance : MeasurableSpace Ω)}
+    (h : HasStrongMarkovRestart B P 𝔽)
+    (τ : Ω → ℝ≥0) (hτ : IsStoppingTime 𝔽 fun ω => (τ ω : ℝ≥0∞)) :
+    Indep hτ.measurableSpace
+      (MeasurableSpace.comap (fun ω (t : ℝ≥0) => B (τ ω + t) ω - B (τ ω) ω) inferInstance)
+      P := by
+  refine (Indep_iff _ _ _).2 ?_
+  rintro t1 t2 ht1 ⟨Γ, hΓ, rfl⟩
+  show P (t1 ∩ {ω | (fun t => B (τ ω + t) ω - B (τ ω) ω) ∈ Γ})
+      = P t1 * P {ω | (fun t => B (τ ω + t) ω - B (τ ω) ω) ∈ Γ}
+  rw [h.restart τ hτ t1 ht1 Γ hΓ, h.law τ hτ Γ hΓ]
+
 end LatticeProb
 
 end

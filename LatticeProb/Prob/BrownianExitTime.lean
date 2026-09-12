@@ -132,6 +132,35 @@ theorem coe_exitTimeTrunc_of_le {d : ℕ} (B : ℝ≥0 → Ω → EuclideanSpace
     ((exitTimeTrunc B u A T ω : ℝ≥0) : ℝ≥0∞) = exitTime B u A ω := by
   rw [coe_exitTimeTrunc, inf_eq_left.2 h]
 
+
+/-- The event of having left a closed ball before a time is measurable for the σ-algebra of
+the space. -/
+theorem measurableSet_exists_le_le_norm [MeasurableSpace Ω] {d : ℕ}
+    (B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)) (hmB : ∀ s, Measurable (B s))
+    (hcont : ∀ ω, Continuous fun s => B s ω)
+    (u : EuclideanSpace ℝ (Fin d)) (A : ℝ) (t : ℝ≥0) :
+    MeasurableSet {ω | ∃ s ≤ t, A ≤ ‖B s ω - u‖} := by
+  refine (Measurable.comap_le
+    (measurable_pi_lambda (fun ω (s : Set.Iic t) => B (s : ℝ≥0) ω)
+      (fun s => hmB (s : ℝ≥0)))) _ ?_
+  exact measurableSet_comap_exists_le_le_norm B hcont u A t
+
+/-- The exit time of a ball is a measurable function. -/
+theorem measurable_exitTime [MeasurableSpace Ω] {d : ℕ}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} (hm : ∀ t, StronglyMeasurable (B t))
+    (hcont : ∀ ω, Continuous fun s => B s ω) (u : EuclideanSpace ℝ (Fin d)) (A : ℝ) :
+    Measurable (exitTime B u A) := by
+  have h := isStoppingTime_exitTime hm hcont u A
+  exact h.measurable.mono h.measurableSpace_le le_rfl
+
+/-- The exit time stopped at a horizon is a measurable function. -/
+theorem measurable_exitTimeTrunc [MeasurableSpace Ω] {d : ℕ}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} (hm : ∀ t, StronglyMeasurable (B t))
+    (hcont : ∀ ω, Continuous fun s => B s ω) (u : EuclideanSpace ℝ (Fin d)) (A : ℝ)
+    (T : ℝ≥0) : Measurable (exitTimeTrunc B u A T) := by
+  have h := isStoppingTime_exitTimeTrunc hm hcont u A T
+  exact measurable_coe_nnreal_ennreal_iff.1 (h.measurable.mono h.measurableSpace_le le_rfl)
+
 end LatticeProb
 
 end

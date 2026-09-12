@@ -397,6 +397,20 @@ theorem IsBrownianSpace.hasStrongMarkovRestart {d : ℕ} {x : EuclideanSpace ℝ
     rw [Set.inter_comm]
     exact hfin
 
+
+/-- The restart identity read off the strong Markov property, for the natural filtration. -/
+theorem IsBrownianSpace.restart {d : ℕ}
+    {x : EuclideanSpace ℝ (Fin d)} {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)}
+    (hB : IsBrownianSpace d x B P) (hm : ∀ t, StronglyMeasurable (B t))
+    (hcont : ∀ ω, Continuous fun t => B t ω)
+    (τ : Ω → ℝ≥0)
+    (hτ : IsStoppingTime (natFiltration B hm) fun ω => (τ ω : ℝ≥0∞))
+    (E : Set Ω) (hE : MeasurableSet[hτ.measurableSpace] E)
+    (Γ : Set (ℝ≥0 → EuclideanSpace ℝ (Fin d))) (hΓ : MeasurableSet Γ) :
+    P (E ∩ {ω | (fun t => B (τ ω + t) ω - B (τ ω) ω) ∈ Γ})
+      = P E * P {ω | (fun t => B t ω - B 0 ω) ∈ Γ} := by
+  exact (hB.hasStrongMarkovRestart hm hcont).restart τ hτ E hE Γ hΓ
+
 end LatticeProb
 
 end
