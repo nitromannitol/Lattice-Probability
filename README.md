@@ -84,6 +84,9 @@ LatticeProb/Prob/StoppingDyadic.lean  the dyadic approximation of a stopping tim
 LatticeProb/Prob/BrownianPathLaw.lean  the law of a pre-Brownian motion on path space, and the
                                     invariance of the law of the increments under restarting at a
                                     deterministic time
+LatticeProb/Prob/BrownianStrongMarkov.lean  the strong Markov property of Brownian motion on
+                                    R^d: the increments after a stopping time have the law of the
+                                    centred motion and are independent of the past
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
 LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
                                     for an independent centred sum (1 ≤ p ≤ 2) and its tail bound

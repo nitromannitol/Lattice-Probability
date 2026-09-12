@@ -176,3 +176,4 @@ import LatticeProb.Prob.BrownianMarkov
 import LatticeProb.Prob.IndepPi
 import LatticeProb.Prob.StoppingDyadic
 import LatticeProb.Prob.BrownianPathLaw
+import LatticeProb.Prob.BrownianStrongMarkov
