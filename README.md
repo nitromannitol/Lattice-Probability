@@ -61,6 +61,10 @@ LatticeProb/Prob/InfinitePiSplit.lean  the head-tail decomposition of a product 
 LatticeProb/Prob/Coordinate.lean    one coordinate of an infinite product, against the rest
 LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
 LatticeProb/Prob/Birkhoff.lean      the pointwise ergodic theorem
+LatticeProb/Prob/ConditionalMeasure.lean  regular conditional probability measures, disintegration,
+                                    and invariant fibres for a countable family of transformations
+LatticeProb/Prob/ErgodicDecomposition.lean  ergodic decomposition of a probability-preserving
+                                    transformation on a standard Borel space
 LatticeProb/Prob/Kingman.lean       the subadditive ergodic theorem
 LatticeProb/Prob/SubGaussian.lean   sub-Gaussian behaviour on a range, and its Bernstein tail
 LatticeProb/Prob/EfronStein.lean    the exponential Efron-Stein inequality on a product measure
