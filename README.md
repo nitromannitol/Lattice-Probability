@@ -73,7 +73,8 @@ LatticeProb/Prob/BrownianMax.lean   the Gaussian maximal estimate for Brownian m
 LatticeProb/Prob/BrownianExit.lean  Brownian motion on R^d with generator Delta/(2d), and the Gaussian
                                     tail of the time at which it leaves a ball
 LatticeProb/Prob/BrownianMarkov.lean  restarting Brownian motion at a deterministic time, its natural
-                                    filtration, and the strong Markov property at a stopping time as a
+                                    filtration, the event of having left a ball as an event of the
+                                    past, and the strong Markov property at a stopping time as a
                                     stated property
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
 LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
