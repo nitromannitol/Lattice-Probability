@@ -66,6 +66,15 @@ LatticeProb/Prob/SubGaussian.lean   sub-Gaussian behaviour on a range, and its B
 LatticeProb/Prob/EfronStein.lean    the exponential Efron-Stein inequality on a product measure
 LatticeProb/Prob/WeightedConc.lean  weighted exponential concentration and its tail
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
+LatticeProb/Prob/Ottaviani.lean     Ottaviani's maximal inequality, as a first passage decomposition
+LatticeProb/Prob/BrownianMax.lean   the Gaussian maximal estimate for Brownian motion: the tail of the
+                                    largest displacement before a time, by Ottaviani's inequality on a
+                                    dyadic grid
+LatticeProb/Prob/BrownianExit.lean  Brownian motion on R^d with generator Delta/(2d), and the Gaussian
+                                    tail of the time at which it leaves a ball
+LatticeProb/Prob/BrownianMarkov.lean  restarting Brownian motion at a deterministic time, its natural
+                                    filtration, and the strong Markov property at a stopping time as a
+                                    stated property
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
 LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
                                     for an independent centred sum (1 ≤ p ≤ 2) and its tail bound

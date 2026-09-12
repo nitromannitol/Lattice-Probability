@@ -124,6 +124,21 @@ structure IsBrownianSpace {Ω : Type*} [MeasurableSpace Ω] (d : ℕ)
   /-- The coordinate processes are independent. -/
   indep : iIndepFun (fun (i : Fin d) (ω : Ω) => fun t : ℝ≥0 => B t ω i) P
 
+/-- A Brownian motion is defined on a probability space: the independence of the coordinate
+processes already forces the total mass to be one. -/
+theorem IsBrownianSpace.isProbabilityMeasure {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} (hB : IsBrownianSpace d x B P) :
+    IsProbabilityMeasure P :=
+  hB.indep.isProbabilityMeasure
+
+/-- **A Brownian motion on `ℝ ^ d` started at `x` exists**, so the hypothesis of the exit
+estimate is not vacuous.  This is `LatticeProb.exists_isBrownian` read as the predicate. -/
+theorem exists_isBrownianSpace (d : ℕ) (x : EuclideanSpace ℝ (Fin d)) :
+    ∃ (Ω : Type) (mΩ : MeasurableSpace Ω) (P : @MeasureTheory.Measure Ω mΩ)
+      (B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)), @IsBrownianSpace Ω mΩ d x B P := by
+  obtain ⟨Ω, mΩ, P, B, h1, h2, h3⟩ := exists_isBrownian d x
+  exact ⟨Ω, mΩ, P, B, ⟨h1, h2, h3⟩⟩
+
 /-- **The Brownian exit-time tail.**  For Brownian motion on `ℝ ^ d` with generator
 `Δ / (2 d)` started at `u`, the probability that it leaves the Euclidean ball of radius `A`
 about `u` before time `T` is at most `C exp (- c A ^ 2 / T)`, with `C` and `c` depending only
