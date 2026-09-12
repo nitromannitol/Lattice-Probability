@@ -12,6 +12,7 @@ integral to the one-dimensional one coordinate at a time, which is how the
 Fourier representation of `srwHeat` is built by recursion on `d`.
 -/
 import LatticeProb.Walk.Character
+import LatticeProb.Site
 
 namespace LatticeProb
 
@@ -179,5 +180,150 @@ theorem integral_box_exp_eq (d : ℕ) (z : Fin d → ℤ) :
       · simp
       · simp
 end
+
+/-- The volume of the torus box is `(2π)^d`. -/
+theorem volume_torusBox (d : ℕ) :
+    (MeasureTheory.volume : Measure (Fin d → ℝ)) (torusBox d)
+      = ENNReal.ofReal ((2 * Real.pi) ^ d) := by
+  have h1 : torusBox d = Set.univ.pi (fun _ : Fin d => Set.Icc (-Real.pi) Real.pi) := by
+    rw [show torusBox d = Set.Icc (fun _ : Fin d => (-Real.pi)) (fun _ : Fin d => Real.pi) from rfl,
+        ← Set.pi_univ_Icc]
+  rw [h1]
+  have h2 : Set.univ.pi (fun _ : Fin d => Set.Ioc (-Real.pi) Real.pi)
+      =ᵐ[(MeasureTheory.volume : Measure (Fin d → ℝ))]
+        Set.univ.pi (fun _ : Fin d => Set.Icc (-Real.pi) Real.pi) :=
+    MeasureTheory.Measure.pi_Ioc_ae_eq_pi_Icc (μ := fun _ : Fin d => volume)
+  rw [← MeasureTheory.measure_congr h2, Real.volume_pi_Ioc]
+  simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  rw [show Real.pi - -Real.pi = 2 * Real.pi by ring]
+  rw [ENNReal.ofReal_pow (by positivity : (0:ℝ) ≤ 2 * Real.pi)]
+
+/-- The integral of the trivial character over the torus box is `(2π)^d`. -/
+theorem integral_char_trivial (d : ℕ) :
+    (∫ θ in torusBox d, ∏ j, Complex.exp (Complex.ofReal (θ j * ((0 : Fin d → ℤ) j : ℝ)) * Complex.I))
+      = (2 * Real.pi) ^ d := by
+  have h1 : ∀ θ : Fin d → ℝ, ∏ j, Complex.exp (Complex.ofReal (θ j * ((0 : Fin d → ℤ) j : ℝ)) * Complex.I) = 1 := by
+    intro θ
+    refine Finset.prod_eq_one (fun j _ => ?_)
+    simp
+  have h2 : (∫ θ in torusBox d, ∏ j, Complex.exp (Complex.ofReal (θ j * ((0 : Fin d → ℤ) j : ℝ)) * Complex.I))
+      = ∫ θ in torusBox d, (1 : ℂ) := MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall h1)
+  rw [h2, integral_const]
+  have h3 : (MeasureTheory.volume (torusBox d)).toReal = (2 * Real.pi) ^ d := by
+    rw [volume_torusBox d, ENNReal.toReal_ofReal (by positivity : (0:ℝ) ≤ (2 * Real.pi) ^ d)]
+  have h4 : (MeasureTheory.volume.restrict (torusBox d)).real Set.univ = (2 * Real.pi) ^ d := by
+    show ((MeasureTheory.volume.restrict (torusBox d)) Set.univ).toReal = (2 * Real.pi) ^ d
+    rw [Measure.restrict_apply_univ]
+    exact h3
+  rw [h4]
+  simp
+
+/-- The normalized character integral is the Kronecker delta at the origin. -/
+theorem integral_char_delta (d : ℕ) (x : Site d) :
+    (∫ θ in torusBox d, ∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+      / (2 * Real.pi) ^ d
+      = if x = 0 then 1 else 0 := by
+  rw [integral_box_exp_eq d x]
+  by_cases hx : x = 0
+  · subst hx
+    have h1 : ∏ j, (if (0 : Fin d → ℤ) j = 0 then 2 * Real.pi else 0) = (2 * Real.pi) ^ d := by
+      simp [Finset.prod_const]
+    rw [h1, if_pos rfl]
+    norm_num [Complex.ofReal_pow, Complex.ofReal_mul, Complex.ofReal_one]
+  · have h0 : ∏ j, (if x j = 0 then 2 * Real.pi else 0) = 0 := by
+      by_contra hne
+      have hall : ∀ j, x j = 0 := by
+        intro j
+        by_contra hxj
+        have hz : (if x j = 0 then 2 * Real.pi else 0) = 0 := if_neg hxj
+        exact hne (Finset.prod_eq_zero (Finset.mem_univ j) hz)
+      exact hx (funext hall)
+    rw [h0, if_neg hx]
+    simp
+
+/-- The character of `x + v` factors as the character of `x` times the
+character of `v`. -/
+theorem char_add (d : ℕ) (x : Site d) (v : Site d) (θ : Fin d → ℝ) :
+    ∏ j, Complex.exp (Complex.ofReal (θ j * ((x j + v j : ℤ) : ℝ)) * Complex.I)
+      = (∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+        * (∏ j, Complex.exp (Complex.ofReal (θ j * ((v j : ℤ) : ℝ)) * Complex.I)) := by
+  rw [← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl (fun j _ => ?_)
+  rw [← Complex.exp_add]
+  congr 1
+  push_cast
+  ring
+
+theorem char_sub (d : ℕ) (θ : Fin d → ℝ) (x y : Site d) :
+    (∏ j, Complex.exp (Complex.ofReal (θ j * ((y j : ℤ) : ℝ)) * Complex.I))
+      = (∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+        * ∏ j, Complex.exp (Complex.ofReal (θ j * (((y - x) j : ℤ) : ℝ)) * Complex.I) := by
+  rw [← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl (fun j _ => ?_)
+  rw [← Complex.exp_add]
+  congr 1
+  simp only [Pi.sub_apply]
+  push_cast
+  ring
+
+theorem char_unit (d : ℕ) (θ : Fin d → ℝ) (i : Fin d) :
+    ∏ j, Complex.exp (Complex.ofReal (θ j * (((unit i) j : ℤ) : ℝ)) * Complex.I)
+      = Complex.exp (Complex.ofReal (θ i) * Complex.I) := by
+  have h1 : ((unit i) i : ℤ) = 1 := by simp [unit]
+  have h0 : ∀ j ∈ (Finset.univ : Finset (Fin d)), j ≠ i →
+      Complex.exp (Complex.ofReal (θ j * (((unit i) j : ℤ) : ℝ)) * Complex.I) = 1 := by
+    intro j _ hj
+    have huj : (unit i) j = 0 := by simp [unit, hj]
+    simp [huj, Complex.exp_zero, mul_zero]
+  rw [Finset.prod_eq_single i h0 (fun h => absurd (Finset.mem_univ i) h), h1]; norm_num
+
+/-- The character of the negated unit vector. -/
+theorem char_neg_unit (d : ℕ) (θ : Fin d → ℝ) (i : Fin d) :
+    ∏ j, Complex.exp (Complex.ofReal (θ j * (((-unit i) j : ℤ) : ℝ)) * Complex.I)
+      = Complex.exp (-(Complex.ofReal (θ i) * Complex.I)) := by
+  have h1 : ((-unit i) i : ℤ) = -1 := by simp [unit]
+  have h0 : ∀ j ∈ (Finset.univ : Finset (Fin d)), j ≠ i →
+      Complex.exp (Complex.ofReal (θ j * (((-unit i) j : ℤ) : ℝ)) * Complex.I) = 1 := by
+    intro j _ hj
+    have huj : (-unit i) j = 0 := by
+      have hu : (unit i) j = 0 := by simp [unit, hj]
+      simp [Pi.neg_apply, hu]
+    simp [huj, Complex.exp_zero, mul_zero]
+  rw [Finset.prod_eq_single i h0 (fun h => absurd (Finset.mem_univ i) h), h1]
+  congr 1
+  push_cast
+  ring
+/-- The two-point average of the exponential is the cosine. -/
+theorem exp_pair_eq_cos (z : ℂ) :
+    Complex.exp (z * Complex.I) + Complex.exp (-(z * Complex.I)) = 2 * Complex.cos z := by
+  rw [Complex.cos]
+  ring
+/-- The Fourier multiplier of the simple random walk: the average of the
+character over the `2d` neighbours of `x` equals the character at `x` times
+the average of the cosines. -/
+theorem char_neighbour_avg_eq_avg_cos (d : ℕ) (θ : Fin d → ℝ) (x : Site d) :
+    (∑ i : Fin d, ((∏ j, Complex.exp (Complex.ofReal (θ j * (((x + unit i) j : ℤ) : ℝ)) * Complex.I))
+      + ∏ j, Complex.exp (Complex.ofReal (θ j * (((x - unit i) j : ℤ) : ℝ)) * Complex.I))) / (2 * d)
+      = (∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+        * (∑ i : Fin d, Real.cos (θ i)) / d := by
+  have hsum : ∀ i : Fin d,
+      (∏ j, Complex.exp (Complex.ofReal (θ j * (((x + unit i) j : ℤ) : ℝ)) * Complex.I))
+      + ∏ j, Complex.exp (Complex.ofReal (θ j * (((x - unit i) j : ℤ) : ℝ)) * Complex.I)
+      = (∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+        * (2 * Complex.ofReal (Real.cos (θ i))) := by
+    intro i
+    have hp := char_sub d θ x (x + unit i)
+    have hm := char_sub d θ x (x - unit i)
+    have hpx : (x + unit i) - x = unit i := by abel
+    have hmx : (x - unit i) - x = -unit i := by abel
+    rw [hp, hm, hpx, hmx, char_unit d θ i, char_neg_unit d θ i, ← mul_add,
+      exp_pair_eq_cos, ← Complex.ofReal_cos]
+  rw [Finset.sum_congr rfl (fun i _ => hsum i), ← Finset.mul_sum, ← Finset.mul_sum,
+    ← Complex.ofReal_sum]
+  field_simp
+  have hcomm : ∀ j, Complex.exp (Complex.I * ↑(θ j * ↑(x j)))
+      = Complex.exp (↑(θ j * ↑(x j)) * Complex.I) := fun j => by congr 1; ring
+  rw [Finset.prod_congr rfl (fun j _ => hcomm j)]
+  ring
 
 end LatticeProb
