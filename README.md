@@ -114,6 +114,10 @@ LatticeProb/Prob/Freedman.lean      Freedman's inequality for a martingale with 
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
 LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
                                     for an independent centred sum (1 ≤ p ≤ 2) and its tail bound
+LatticeProb/Prob/PoissonTail.lean   the Poisson (Bennett) tail of a sum of independent
+                                    nonnegative summands bounded by a level
+LatticeProb/Prob/FukNagaev.lean     the Fuk-Nagaev tail inequality for an independent centred sum
+                                    with p-th moments, by a truncation at two levels
 LatticeProb/Network/                electrical networks on a locally finite graph: the Dirichlet
                                     energy and form, harmonic functions, the killed Green function
                                     as a voltage, the maximum and Dirichlet principles, Rayleigh
