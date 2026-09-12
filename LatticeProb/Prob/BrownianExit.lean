@@ -124,6 +124,32 @@ structure IsBrownianSpace {Ω : Type*} [MeasurableSpace Ω] (d : ℕ)
   /-- The coordinate processes are independent. -/
   indep : iIndepFun (fun (i : Fin d) (ω : Ω) => fun t : ℝ≥0 => B t ω i) P
 
+/-- **The paths of a Brownian motion on `ℝ ^ d` are almost surely continuous.**  Each
+coordinate is, and continuity into `EuclideanSpace` is continuity of the coordinates. -/
+theorem IsBrownianSpace.cont {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} (hB : IsBrownianSpace d x B P) :
+    ∀ᵐ ω ∂P, Continuous fun t => B t ω := by
+  rcases Nat.eq_zero_or_pos d with rfl | hd
+  · filter_upwards with ω
+    rw [continuous_induced_rng]
+    exact continuous_pi (fun i => i.elim0)
+  · have hsq : (0 : ℝ) < Real.sqrt d := Real.sqrt_pos.mpr (by exact_mod_cast hd)
+    have hall : ∀ᵐ ω ∂P, ∀ i : Fin d, Continuous fun t => Real.sqrt d * (B t ω i - x i) := by
+      rw [ae_all_iff]
+      exact fun i => (hB.coord i).cont
+    filter_upwards [hall] with ω hω
+    rw [continuous_induced_rng]
+    refine continuous_pi (fun i => ?_)
+    have h1 : Continuous fun t => Real.sqrt d * (B t ω i - x i) := hω i
+    have h2 : (fun t => (B t ω) i)
+        = fun t => (Real.sqrt d)⁻¹ * (Real.sqrt d * (B t ω i - x i)) + x i := by
+      funext t
+      field_simp
+      ring
+    show Continuous fun t => (B t ω) i
+    rw [h2]
+    exact (h1.const_mul _).add continuous_const
+
 /-- A Brownian motion is defined on a probability space: the independence of the coordinate
 processes already forces the total mass to be one. -/
 theorem IsBrownianSpace.isProbabilityMeasure {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}

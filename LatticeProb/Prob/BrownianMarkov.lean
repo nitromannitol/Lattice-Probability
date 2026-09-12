@@ -115,10 +115,23 @@ It is a hypothesis: Mathlib 4.32 has the Markov property at a deterministic time
 (`IsPreBrownianReal.indepFun_shift`, used above) and no strong Markov property.  A proof
 runs through stopping times with countably many values, where the identity follows from the
 deterministic case applied on each of the countably many events `{τ = t}`, and then through
-the almost sure continuity of the paths. -/
-def HasStrongMarkovRestart {d : ℕ} (B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)) (P : Measure Ω)
-    (𝔽 : Filtration ℝ≥0 (inferInstance : MeasurableSpace Ω)) : Prop :=
-  ∀ (τ : Ω → ℝ≥0) (hτ : IsStoppingTime 𝔽 fun ω => (τ ω : ℝ≥0∞)),
+the almost sure continuity of the paths.
+
+Two things this does NOT say, and which an optimal stopping argument needs in addition: that
+the restarted motion is the motion started at the random point `B τ`, which asks for a family
+of motions indexed by the starting point rather than one motion; and that the value of a
+stopping problem depends on the motion only through its law, which is what lets the value at
+the restart point be read off.  The discrete model of all three is
+`LatticeProb.markov_stopping_family` in `LatticeProb/Walk/Markov.lean`. -/
+structure HasStrongMarkovRestart {d : ℕ} (B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d))
+    (P : Measure Ω) (𝔽 : Filtration ℝ≥0 (inferInstance : MeasurableSpace Ω)) : Prop where
+  /-- The motion is adapted to the filtration.  Without this clause the property is empty:
+  for the filtration whose every σ-algebra is trivial, the only stopping times are the
+  constants and the only events of the past are `∅` and the whole space. -/
+  adapted : StronglyAdapted 𝔽 B
+  /-- The restarted increments have the law of the centred motion, independently of the past
+  at the stopping time. -/
+  restart : ∀ (τ : Ω → ℝ≥0) (hτ : IsStoppingTime 𝔽 fun ω => (τ ω : ℝ≥0∞)),
     ∀ E : Set Ω, MeasurableSet[hτ.measurableSpace] E →
       ∀ Γ : Set (ℝ≥0 → EuclideanSpace ℝ (Fin d)), MeasurableSet Γ →
         P (E ∩ {ω | (fun t => B (τ ω + t) ω - B (τ ω) ω) ∈ Γ})
@@ -134,7 +147,7 @@ theorem HasStrongMarkovRestart.law [IsProbabilityMeasure P] {d : ℕ}
     (Γ : Set (ℝ≥0 → EuclideanSpace ℝ (Fin d))) (hΓ : MeasurableSet Γ) :
     P {ω | (fun t => B (τ ω + t) ω - B (τ ω) ω) ∈ Γ}
       = P {ω | (fun t => B t ω - B 0 ω) ∈ Γ} := by
-  have hE := h τ hτ Set.univ MeasurableSet.univ Γ hΓ
+  have hE := h.restart τ hτ Set.univ MeasurableSet.univ Γ hΓ
   rwa [Set.univ_inter, measure_univ, one_mul] at hE
 
 end LatticeProb
