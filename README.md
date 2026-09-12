@@ -66,6 +66,33 @@ LatticeProb/Prob/SubGaussian.lean   sub-Gaussian behaviour on a range, and its B
 LatticeProb/Prob/EfronStein.lean    the exponential Efron-Stein inequality on a product measure
 LatticeProb/Prob/WeightedConc.lean  weighted exponential concentration and its tail
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
+LatticeProb/Prob/Ottaviani.lean     Ottaviani's maximal inequality, as a first passage decomposition
+LatticeProb/Prob/BrownianMax.lean   the Gaussian maximal estimate for Brownian motion: the tail of the
+                                    largest displacement before a time, by Ottaviani's inequality on a
+                                    dyadic grid
+LatticeProb/Prob/BrownianExit.lean  Brownian motion on R^d with generator Delta/(2d), and the Gaussian
+                                    tail of the time at which it leaves a ball
+LatticeProb/Prob/BrownianMarkov.lean  restarting Brownian motion at a deterministic time, its natural
+                                    filtration, the event of having left a ball as an event of the
+                                    past, and the strong Markov property at a stopping time as a
+                                    stated property
+LatticeProb/Prob/IndepPi.lean       independent pairs give independent families: the supremum of one
+                                    half of a family of independent pairs is independent of the
+                                    supremum of the other half
+LatticeProb/Prob/StoppingDyadic.lean  the dyadic approximation of a stopping time from above, its
+                                    countably many values and its convergence
+LatticeProb/Prob/BrownianPathLaw.lean  the law of a pre-Brownian motion on path space, and the
+                                    invariance of the law of the increments under restarting at a
+                                    deterministic time
+LatticeProb/Prob/BrownianStrongMarkov.lean  the strong Markov property of Brownian motion on
+                                    R^d: the increments after a stopping time have the law of the
+                                    centred motion and are independent of the past
+LatticeProb/Prob/BrownianRestartIntegral.lean  the strong Markov property as a change of the
+                                    restarted path for a fresh motion inside an expectation
+LatticeProb/Prob/BrownianExitTime.lean  the exit time of a ball, its stopping-time property, and
+                                    the exit time stopped at a horizon
+LatticeProb/Prob/BrownianContAll.lean  Kolmogorov-Chentsov on the half line with every path
+                                    continuous, and a Brownian motion on R^d that has it
 LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
 LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
                                     for an independent centred sum (1 ≤ p ≤ 2) and its tail bound

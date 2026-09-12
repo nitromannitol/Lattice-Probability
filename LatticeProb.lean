@@ -171,3 +171,14 @@ import LatticeProb.Support.ContSums
 import LatticeProb.Prob.KolmogorovPi
 import LatticeProb.Prob.KolmogorovBound
 import LatticeProb.Prob.ChentsovPiModification
+import LatticeProb.Prob.Ottaviani
+import LatticeProb.Prob.BrownianMax
+import LatticeProb.Prob.BrownianExit
+import LatticeProb.Prob.BrownianMarkov
+import LatticeProb.Prob.IndepPi
+import LatticeProb.Prob.StoppingDyadic
+import LatticeProb.Prob.BrownianPathLaw
+import LatticeProb.Prob.BrownianStrongMarkov
+import LatticeProb.Prob.BrownianExitTime
+import LatticeProb.Prob.BrownianRestartIntegral
+import LatticeProb.Prob.BrownianContAll
