@@ -121,6 +121,13 @@ LatticeProb/Network/                electrical networks on a locally finite grap
 LatticeProb/Graph/                  the divisible sandpile and the walk on a general graph, and the
                                     random-walk (optimal-stopping) representation of the odometer,
                                     with its specializations to the lattice
+LatticeProb/Graph/Reach.lean        the walks of a given length, the two one-step recursions for the
+                                    transition kernel, its reversibility and Chapman-Kolmogorov
+LatticeProb/Graph/Nash.lean         the Nash inequality of dimension one on an infinite connected graph
+LatticeProb/Graph/OnDiagonal.lean   the on-diagonal heat kernel bound p_n(x,x) <= 32 d n^{-1/2} on an
+                                    infinite connected graph of degree bounded by d
+LatticeProb/Graph/HeatVanishing.lean  the transition probability tends to zero there, and a graph with
+                                    a finite component where it does not
 ```
 
 ## Attribution

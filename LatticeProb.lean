@@ -188,3 +188,7 @@ import LatticeProb.Prob.RegularVariation
 import LatticeProb.Prob.Karamata
 import LatticeProb.Prob.Freedman
 import LatticeProb.Prob.KaramataOrigin
+import LatticeProb.Graph.Reach
+import LatticeProb.Graph.Nash
+import LatticeProb.Graph.OnDiagonal
+import LatticeProb.Graph.HeatVanishing
