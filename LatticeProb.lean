@@ -172,3 +172,4 @@ import LatticeProb.Prob.ChentsovPiModification
 import LatticeProb.Prob.Ottaviani
 import LatticeProb.Prob.BrownianMax
 import LatticeProb.Prob.BrownianExit
+import LatticeProb.Prob.BrownianMarkov
