@@ -28,6 +28,26 @@ namespace LatticeProb
 def RegularlyVaryingAtTop (f : ℝ → ℝ) (ρ : ℝ) : Prop :=
   ∀ lam : ℝ, 0 < lam → Tendsto (fun r : ℝ => f (lam * r) / f r) atTop (𝓝 (lam ^ ρ))
 
+/-- Regular variation is preserved by scaling the argument: this is what turns a statement
+about `P(X > t)` into one about `P(c X > t)`. -/
+theorem RegularlyVaryingAtTop.comp_const_mul {f : ℝ → ℝ} {ρ : ℝ}
+    (hf : RegularlyVaryingAtTop f ρ) {a : ℝ} (ha : 0 < a) :
+    RegularlyVaryingAtTop (fun t => f (a * t)) ρ := by
+  intro lam hlam
+  have hcomp : Tendsto (fun r : ℝ => a * r) atTop atTop :=
+    Filter.Tendsto.const_mul_atTop ha tendsto_id
+  have h := (hf lam hlam).comp hcomp
+  refine h.congr fun r => ?_
+  simp only [Function.comp_apply]
+  rw [show a * (lam * r) = lam * (a * r) by ring]
+
+/-- Regular variation is preserved by scaling the value. -/
+theorem RegularlyVaryingAtTop.const_mul {f : ℝ → ℝ} {ρ : ℝ} (hf : RegularlyVaryingAtTop f ρ)
+    {c : ℝ} (hc : c ≠ 0) : RegularlyVaryingAtTop (fun t => c * f t) ρ := by
+  intro lam hlam
+  refine (hf lam hlam).congr fun r => ?_
+  rw [mul_div_mul_left _ _ hc]
+
 /-- An antitone function that is eventually positive is positive everywhere. -/
 theorem pos_of_antitone_of_eventually_pos {f : ℝ → ℝ} (hmono : Antitone f)
     (hpos : ∀ᶠ r in atTop, 0 < f r) (r : ℝ) : 0 < f r := by
