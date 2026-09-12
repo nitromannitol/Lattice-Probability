@@ -194,3 +194,5 @@ import LatticeProb.Graph.Reach
 import LatticeProb.Graph.Nash
 import LatticeProb.Graph.OnDiagonal
 import LatticeProb.Graph.HeatVanishing
+import LatticeProb.Prob.ConditionalMeasure
+import LatticeProb.Prob.ErgodicDecomposition
