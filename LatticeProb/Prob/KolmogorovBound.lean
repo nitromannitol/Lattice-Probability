@@ -85,7 +85,6 @@ theorem LatticeProb.modulus_good_event {k : ℕ} {a b : Fin k → ℝ} (hab : a 
     exact le_of_lt hlt
   rw [← hu', ← hv', ← dlimPi_eq_of_continuous hfc u, ← dlimPi_eq_of_continuous hfc v]
   rw [abs_sub_comm]
-  trace_state
   apply dlimPi_dist_le hb (fun n => (hr n).le) hsum le_rfl
   · exact huN
   · exact hvN
