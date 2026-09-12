@@ -12,6 +12,8 @@ integral to the one-dimensional one coordinate at a time, which is how the
 Fourier representation of `srwHeat` is built by recursion on `d`.
 -/
 import LatticeProb.Walk.Character
+import LatticeProb.Walk.Basic
+import LatticeProb.Walk.SRW
 import LatticeProb.Site
 
 namespace LatticeProb
@@ -324,6 +326,198 @@ theorem char_neighbour_avg_eq_avg_cos (d : ℕ) (θ : Fin d → ℝ) (x : Site d
   have hcomm : ∀ j, Complex.exp (Complex.I * ↑(θ j * ↑(x j)))
       = Complex.exp (↑(θ j * ↑(x j)) * Complex.I) := fun j => by congr 1; ring
   rw [Finset.prod_congr rfl (fun j _ => hcomm j)]
+  ring
+
+/-- The sum over all `2d` directions of the character at `x + dirVec a`
+equals the character at `x` times twice the sum of the cosines. -/
+theorem char_dir_sum (d : ℕ) (θ : Fin d → ℝ) (x : Site d) :
+    ∑ a : Dir d, ∏ j, Complex.exp (Complex.ofReal (θ j * (((x + dirVec a) j : ℤ) : ℝ)) * Complex.I)
+      = (∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+        * (2 * ∑ i : Fin d, Real.cos (θ i)) := by
+  rw [show (Finset.univ : Finset (Dir d)) = Finset.univ ×ˢ Finset.univ from rfl, Finset.sum_product]
+  have hpair : ∀ i : Fin d,
+      (∏ j, Complex.exp (Complex.ofReal (θ j * (((x + dirVec (i, true)) j : ℤ) : ℝ)) * Complex.I))
+      + (∏ j, Complex.exp (Complex.ofReal (θ j * (((x + dirVec (i, false)) j : ℤ) : ℝ)) * Complex.I))
+      = (∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+        * (2 * Complex.ofReal (Real.cos (θ i))) := by
+    intro i
+    have hp := char_sub d θ x (x + dirVec (i, true))
+    have hm := char_sub d θ x (x + dirVec (i, false))
+    have hpt : (x + dirVec (i, true)) - x = unit i := by
+      funext j; by_cases hji : j = i <;> simp [dirVec, unit, hji]
+    have hmt : (x + dirVec (i, false)) - x = -unit i := by
+      funext j; by_cases hji : j = i <;> simp [dirVec, unit, hji]
+    rw [hp, hm, hpt, hmt, char_unit d θ i, char_neg_unit d θ i, ← mul_add, exp_pair_eq_cos, ← Complex.ofReal_cos]
+  have hbool : ∀ i : Fin d, ∑ y : Bool, ∏ j, Complex.exp (Complex.ofReal (θ j * (((x + dirVec (i, y)) j : ℤ) : ℝ)) * Complex.I)
+      = (∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+        * (2 * Complex.ofReal (Real.cos (θ i))) := by
+    intro i; simp_rw [← hpair i]; simp
+  simp_rw [hbool, Complex.ofReal_sum]
+  simp only [Finset.mul_sum]
+
+/-- Pointwise: the character at x times the (j+1)-st power of the multiplier
+equals the Dir-average of the characters at x + dirVec a times the j-th
+power. -/
+theorem fourier_integrand_succ (d : ℕ) (j : ℕ) (x : Site d) (θ : Fin d → ℝ) :
+    (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+        * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ (j + 1)
+    = (∑ a : Dir d, (∏ k, Complex.exp (Complex.ofReal (θ k * (((x + dirVec a) k : ℤ) : ℝ)) * Complex.I))
+        * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j) / (2 * d) := by
+  have h := char_dir_sum d θ x
+  rw [← Finset.sum_mul, h, pow_succ]
+  rcases Nat.eq_zero_or_pos d with hd | hd
+  · simp [show d = 0 by omega]
+  · have hd' : ((d : ℕ) : ℂ) ≠ 0 := by
+      exact Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp hd)
+    have h2d : (2 * (d : ℂ)) ≠ 0 := by
+      exact mul_ne_zero two_ne_zero hd'
+    field_simp
+    have hcomm : ∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I)
+        = ∏ k, Complex.exp (Complex.I * Complex.ofReal (θ k * ((x k : ℤ) : ℝ))) := by
+      refine Finset.prod_congr rfl (fun k _ => ?_)
+      congr 1; ring
+    rw [hcomm]
+    ring
+
+/-- The finite Dir-sum of integrals equals the integral of the Dir-sum,
+given integrability of each summand. -/
+theorem fourier_swap (d : ℕ)
+    (g : Dir d → (Fin d → ℝ) → ℂ)
+    (hint : ∀ a : Dir d, Integrable (g a) (volume.restrict (torusBox d))) :
+    (∑ a : Dir d, ∫ θ in torusBox d, g a θ) = ∫ θ in torusBox d, ∑ a : Dir d, g a θ :=
+  by rw [MeasureTheory.integral_finsetSum Finset.univ (fun a _ => hint a)]
+
+/-- The Brownian constant is nonzero as a complex number. -/
+theorem two_pi_pow_ne_zero (d : ℕ) : ((2 * Real.pi) ^ d : ℂ) ≠ 0 :=
+  pow_ne_zero d (mul_ne_zero two_ne_zero (by exact_mod_cast (ne_of_gt Real.pi_pos)))
+
+/-- The final divisor algebra of the Fourier representation step. -/
+theorem fourier_final_algebra (d : ℕ) (hd : 1 ≤ d) (A : ℂ) :
+    (A * (2 * (d : ℂ))) / ((2 * Real.pi) ^ d * (2 * (d : ℂ))) = A / (2 * Real.pi) ^ d := by
+  have hp : ((2 * Real.pi) ^ d : ℂ) ≠ 0 := two_pi_pow_ne_zero d
+  have hd' : ((d : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp (by omega))
+  have h2d : (2 * (d : ℂ)) ≠ 0 := mul_ne_zero two_ne_zero hd'
+  field_simp
+
+/-- The Fourier integrand is strongly measurable on the torus box. -/
+theorem fourier_integrand_aemeasurable (d : ℕ) (j : ℕ) (x : Site d) :
+    AEStronglyMeasurable (fun θ : Fin d → ℝ ↦
+      (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+      * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j)
+      (volume.restrict (torusBox d)) := by
+  fun_prop
+
+/-- The Fourier integrand is bounded by one in norm. -/
+theorem fourier_integrand_norm_le_one (d : ℕ) (j : ℕ) (x : Site d)
+    (θ : Fin d → ℝ) :
+    ‖(∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+      * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j‖ ≤ 1 := by
+  have hle : |(∑ i : Fin d, Real.cos (θ i))| ≤ (d : ℝ) := by
+    refine le_trans (Finset.abs_sum_le_sum_abs (fun i => Real.cos (θ i)) Finset.univ) ?_
+    refine le_trans (Finset.sum_le_sum (fun i _ => abs_le.2 ⟨Real.neg_one_le_cos _, Real.cos_le_one _⟩)) ?_
+    rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
+  have havg : |(∑ i : Fin d, Real.cos (θ i))| / (d : ℝ) ≤ 1 :=
+    div_le_one_of_le₀ hle (Nat.cast_nonneg d)
+  have hd : |(d : ℝ)| = (d : ℝ) := abs_of_nonneg (Nat.cast_nonneg d)
+  have h1 : ‖Complex.ofReal (∑ i : Fin d, Real.cos (θ i))‖ = |(∑ i : Fin d, Real.cos (θ i))| := by
+    rw [Complex.norm_real, Real.norm_eq_abs]
+  have h2 : ‖((d : ℕ) : ℂ)‖ = |(d : ℝ)| := by simp
+  apply le_trans (norm_mul_le _ _)
+  have ha : ‖(∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))‖ ≤ 1 := by
+    rw [norm_prod]
+    simp [Complex.norm_exp]
+  apply mul_le_one₀
+  · exact ha
+  · exact norm_nonneg _
+  · rw [norm_pow, norm_div, h1, h2, hd]
+    exact pow_le_one₀ (div_nonneg (abs_nonneg _) (Nat.cast_nonneg d)) havg
+
+/-- The Fourier integrand is integrable: it is bounded by one on a finite box. -/
+theorem fourier_integrand_integrable (d : ℕ) (j : ℕ) (x : Site d) :
+    Integrable (fun θ : Fin d → ℝ ↦
+      (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+      * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j)
+      (volume.restrict (torusBox d)) := by
+  have hfin : (MeasureTheory.volume : Measure (Fin d → ℝ)) (torusBox d) < ⊤ := by
+    have h2 : Set.pi Set.univ (fun i => Set.Ioc (-Real.pi) Real.pi) =ᵐ[(MeasureTheory.volume : Measure (Fin d → ℝ))] Set.Icc (fun _ => (-Real.pi)) (fun _ => Real.pi) := by
+      rw [← Set.pi_univ_Icc]
+      exact MeasureTheory.Measure.pi_Ioc_ae_eq_pi_Icc (μ := fun _ => volume)
+    rw [show torusBox d = Set.Icc (fun _ => (-Real.pi)) (fun _ => Real.pi) from rfl, ← measure_congr h2, Real.volume_pi_Ioc]
+    simp
+  haveI : IsFiniteMeasure (volume.restrict (torusBox d)) := ⟨by rwa [Measure.restrict_apply_univ]⟩
+  refine MeasureTheory.Integrable.of_bound ?_ 1 ?_
+  · exact fourier_integrand_aemeasurable d j x
+  · filter_upwards with θ
+    exact fourier_integrand_norm_le_one d j x θ
+
+/-- The Fourier representation of the simple random-walk heat kernel:
+the kernel is the torus integral of the character times the j-th power
+of the cosine-average multiplier, divided by the Brownian constant. -/
+theorem srwHeat_eq_fourier {d : ℕ} (hd : 1 ≤ d)
+    (j : ℕ) (x : Site d) :
+    (srwHeat d j x : ℂ) =
+      (∫ θ in torusBox d, (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+        * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j) / (2 * Real.pi) ^ d := by
+  have hint : ∀ (j : ℕ) (x : Site d),
+    Integrable (fun θ => (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+      * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j) (volume.restrict (torusBox d)) :=
+    fun j x => fourier_integrand_integrable d j x
+  induction j generalizing x with
+  | zero =>
+      rw [srwHeat_zero]
+      simp only [pow_zero, mul_one]
+      rw [integral_char_delta d x]
+      by_cases hx : x = 0 <;> simp [hx]
+  | succ j ih =>
+      rw [srwHeat_succ_eq_sum_dir]
+      have hsum : (((∑ a : Dir d, srwHeat d j (x + dirVec a)) / (2 * (d : ℝ)) : ℝ) : ℂ)
+          = ((∑ a : Dir d, ∫ θ in torusBox d,
+              (∏ k, Complex.exp (Complex.ofReal (θ k * (((x + dirVec a) k : ℤ) : ℝ)) * Complex.I))
+                * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j)) / ((2 * Real.pi) ^ d * (2 * (d : ℝ))) := by
+        rw [Complex.ofReal_div, Complex.ofReal_sum]
+        show (∑ a : Dir d, ((srwHeat d j (x + dirVec a) : ℝ) : ℂ)) / Complex.ofReal (2 * (d : ℝ)) = _
+        simp only [Finset.sum_div]
+        refine Finset.sum_congr rfl (fun a _ => ?_)
+        rw [ih (x + dirVec a), div_div]
+        push_cast
+        ring
+      rw [hsum]
+      rw [fourier_swap d (fun a θ => (∏ k, Complex.exp (Complex.ofReal (θ k * (((x + dirVec a) k : ℤ) : ℝ)) * Complex.I)) * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j) (fun a => hint j (x + dirVec a))]
+      have hI : (∫ θ in torusBox d, ∑ a : Dir d,
+            (∏ k, Complex.exp (Complex.ofReal (θ k * (((x + dirVec a) k : ℤ) : ℝ)) * Complex.I))
+              * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j)
+          = ∫ θ in torusBox d,
+            (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+              * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ (j + 1) * (2 * (d : ℂ)) := by
+        refine integral_congr_ae (Filter.Eventually.of_forall (fun θ => ?_))
+        show (∑ a : Dir d, (∏ k, Complex.exp (Complex.ofReal (θ k * (((x + dirVec a) k : ℤ) : ℝ)) * Complex.I))
+            * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j)
+          = (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+            * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ (j + 1) * (2 * (d : ℂ))
+        rw [fourier_integrand_succ d j x θ]
+        have h2d : (2 * (d : ℂ)) ≠ 0 :=
+          mul_ne_zero two_ne_zero (Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp (Nat.lt_of_lt_of_le (by norm_num : (0:ℕ) < 1) hd)))
+        field_simp
+        have hcomm : ∀ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I)
+            = Complex.exp (Complex.I * Complex.ofReal (θ k * ((x k : ℤ) : ℝ))) := by
+          intro k; congr 1; ring
+        simp only [mul_comm]
+        have hd' : ((d : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp (Nat.lt_of_lt_of_le (by norm_num : (0:ℕ) < 1) hd))
+        rw [mul_div_cancel_left₀ _ hd']
+      rw [hI, integral_mul_const]
+      exact fourier_final_algebra d hd _
+
+/-- The character at the antipodal point `θ + π` equals the character at `θ`
+times the parity sign of `x`. -/
+theorem char_antipode (d : ℕ) (x : Site d) (θ : Fin d → ℝ) :
+    ∏ j, Complex.exp (Complex.ofReal ((θ j + Real.pi) * ((x j : ℤ) : ℝ)) * Complex.I)
+      = (∏ j, Complex.exp (Complex.ofReal (θ j * ((x j : ℤ) : ℝ)) * Complex.I))
+        * (∏ j, Complex.exp (Complex.ofReal (Real.pi * ((x j : ℤ) : ℝ)) * Complex.I)) := by
+  rw [← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl (fun j _ => ?_)
+  rw [← Complex.exp_add]
+  congr 1
+  push_cast
   ring
 
 end LatticeProb
