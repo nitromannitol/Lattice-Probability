@@ -170,17 +170,18 @@ theorem exists_isBrownianSpace (d : ℕ) (x : EuclideanSpace ℝ (Fin d)) :
 about `u` before time `T` is at most `C exp (- c A ^ 2 / T)`, with `C` and `c` depending only
 on the dimension.  The proof takes `C = 4 d + 4` and `c = 1 / 32`: a vector of norm larger
 than `A` has a coordinate with `A < √d |v i|`, and each of the `d` rescaled coordinates is a
-real Brownian motion, to which the one-dimensional maximal estimate applies. -/
-theorem brownian_exit_tail (d : ℕ) :
+real Brownian motion, to which the one-dimensional maximal estimate applies.  The radius `A`
+is an arbitrary positive number: nothing in the proof uses `A ≥ 1`. -/
+theorem brownian_exit_tail_pos (d : ℕ) :
     ∃ C c : ℝ, 0 < C ∧ 0 < c ∧
       ∀ (u : EuclideanSpace ℝ (Fin d)) (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω),
         IsProbabilityMeasure P → ∀ B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d),
-          IsBrownianSpace d u B P → ∀ A : ℝ, 1 ≤ A → ∀ T : ℝ, 0 < T →
+          IsBrownianSpace d u B P → ∀ A : ℝ, 0 < A → ∀ T : ℝ, 0 < T →
             P {ω | ∃ s : ℝ≥0, (s : ℝ) < T ∧ A < ‖B s ω - u‖}
               ≤ ENNReal.ofReal (C * Real.exp (-(c * A ^ 2 / T))) := by
   refine ⟨4 * d + 4, 1 / 32, by positivity, by norm_num, ?_⟩
   intro u Ω _ P hP B hB A hA T hT
-  have hA0 : (0 : ℝ) < A := lt_of_lt_of_le one_pos hA
+  have hA0 : (0 : ℝ) < A := hA
   have hTTc : ((T.toNNReal : ℝ≥0) : ℝ) = T := Real.coe_toNNReal T hT.le
   have hexp : -(1 / 32 * A ^ 2 / T) = -(A ^ 2 / (32 * T)) := by ring
   rw [hexp]
@@ -225,6 +226,59 @@ theorem brownian_exit_tail (d : ℕ) :
           simp [ENNReal.ofReal_natCast, mul_comm]
         rw [h1]
         exact ENNReal.ofReal_le_ofReal (by linarith)
+
+/-- **The Brownian exit-time tail**, in the form with `1 ≤ A`.  This is
+`LatticeProb.brownian_exit_tail_pos` restricted to radii at least one. -/
+theorem brownian_exit_tail (d : ℕ) :
+    ∃ C c : ℝ, 0 < C ∧ 0 < c ∧
+      ∀ (u : EuclideanSpace ℝ (Fin d)) (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω),
+        IsProbabilityMeasure P → ∀ B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d),
+          IsBrownianSpace d u B P → ∀ A : ℝ, 1 ≤ A → ∀ T : ℝ, 0 < T →
+            P {ω | ∃ s : ℝ≥0, (s : ℝ) < T ∧ A < ‖B s ω - u‖}
+              ≤ ENNReal.ofReal (C * Real.exp (-(c * A ^ 2 / T))) := by
+  obtain ⟨C, c, hC, hc, h⟩ := brownian_exit_tail_pos d
+  refine ⟨C, c, hC, hc, ?_⟩
+  intro u Ω _ P hP B hB A hA T hT
+  exact h u Ω P hP B hB A (lt_of_lt_of_le one_pos hA) T hT
+
+/-! ### The closed ball -/
+
+/-- A bound which holds at every smaller positive radius holds at the radius itself, because
+the Gaussian bound is continuous in the radius. -/
+theorem le_ofReal_exp_of_forall_lt {C c T A : ℝ} (hA : 0 < A) {x : ℝ≥0∞}
+    (h : ∀ A' : ℝ, 0 < A' → A' < A →
+      x ≤ ENNReal.ofReal (C * Real.exp (-(c * A' ^ 2 / T)))) :
+    x ≤ ENNReal.ofReal (C * Real.exp (-(c * A ^ 2 / T))) := by
+  have hc : Continuous fun A' : ℝ => ENNReal.ofReal (C * Real.exp (-(c * A' ^ 2 / T))) :=
+    ENNReal.continuous_ofReal.comp (by continuity)
+  have hlim : Filter.Tendsto (fun A' : ℝ => ENNReal.ofReal (C * Real.exp (-(c * A' ^ 2 / T))))
+      (nhdsWithin A (Set.Iio A)) (nhds (ENNReal.ofReal (C * Real.exp (-(c * A ^ 2 / T))))) :=
+    (hc.tendsto A).mono_left nhdsWithin_le_nhds
+  refine ge_of_tendsto hlim ?_
+  have hpos : ∀ᶠ A' in nhdsWithin A (Set.Iio A), 0 < A' :=
+    (eventually_gt_nhds hA).filter_mono nhdsWithin_le_nhds
+  filter_upwards [hpos, self_mem_nhdsWithin] with A' h1 h2
+  exact h A' h1 h2
+
+/-- **The Brownian exit-time tail for the CLOSED ball.**  The probability that the motion
+reaches distance `A` from its starting point before time `T` obeys the same bound, with the same
+constants, because the open-ball bound holds at every smaller radius and the bound is continuous
+in the radius. -/
+theorem brownian_exit_tail_closed (d : ℕ) :
+    ∃ C c : ℝ, 0 < C ∧ 0 < c ∧
+      ∀ (u : EuclideanSpace ℝ (Fin d)) (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω),
+        IsProbabilityMeasure P → ∀ B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d),
+          IsBrownianSpace d u B P → ∀ A : ℝ, 0 < A → ∀ T : ℝ, 0 < T →
+            P {ω | ∃ s : ℝ≥0, (s : ℝ) < T ∧ A ≤ ‖B s ω - u‖}
+              ≤ ENNReal.ofReal (C * Real.exp (-(c * A ^ 2 / T))) := by
+  obtain ⟨C, c, hC, hc, h⟩ := brownian_exit_tail_pos d
+  refine ⟨C, c, hC, hc, ?_⟩
+  intro u Ω _ P hP B hB A hA T hT
+  refine le_ofReal_exp_of_forall_lt hA ?_
+  intro A' hA' hA'A
+  refine le_trans (measure_mono ?_) (h u Ω P hP B hB A' hA' T hT)
+  rintro ω ⟨s, hs, hsA⟩
+  exact ⟨s, hs, lt_of_lt_of_le hA'A hsA⟩
 
 end LatticeProb
 

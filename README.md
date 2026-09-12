@@ -71,7 +71,14 @@ LatticeProb/Prob/BrownianMax.lean   the Gaussian maximal estimate for Brownian m
                                     largest displacement before a time, by Ottaviani's inequality on a
                                     dyadic grid
 LatticeProb/Prob/BrownianExit.lean  Brownian motion on R^d with generator Delta/(2d), and the Gaussian
-                                    tail of the time at which it leaves a ball
+                                    tail of the time at which it leaves a ball, for every positive
+                                    radius and for the closed ball as well as the open one
+LatticeProb/Prob/NetApprox.lean     the partition of unity attached to a finite set of points of a
+                                    metric space, and the interpolation of a function by its values
+                                    on that set
+LatticeProb/Prob/FddTight.lean      from the finite-dimensional laws and equicontinuity in probability
+                                    to the expectation of a bounded uniformly continuous functional
+                                    of the whole path
 LatticeProb/Prob/BrownianMarkov.lean  restarting Brownian motion at a deterministic time, its natural
                                     filtration, the event of having left a ball as an event of the
                                     past, and the strong Markov property at a stopping time as a
