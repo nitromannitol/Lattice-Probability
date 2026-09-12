@@ -59,7 +59,7 @@ theorem integral_Ioi_one_rpow {a : ℝ} (ha : a < -1) :
 
 /-- A monotone regularly varying function of index `-α` with `α > 1` is integrable on every
 half line far enough out. -/
-theorem integrableOn_Ioi_of_regularlyVarying {F : ℝ → ℝ} {α : ℝ} (hα : 1 < α)
+theorem exists_integrableOn_Ioi_of_regularlyVarying {F : ℝ → ℝ} {α : ℝ} (hα : 1 < α)
     (hmono : Antitone F) (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F (-α)) :
     ∃ t₀ : ℝ, 0 < t₀ ∧ ∀ t, t₀ ≤ t → IntegrableOn F (Ioi t) := by
   set δ : ℝ := (α - 1) / 2 with hδdef
@@ -93,6 +93,34 @@ theorem integrableOn_Ioi_of_regularlyVarying {F : ℝ → ℝ} {α : ℝ} (hα :
     (integrableOn_Ioi_rpow_of_lt (by linarith) ht0).const_mul _
   refine Integrable.mono' hbint hmeas.aestronglyMeasurable ?_
   exact (ae_restrict_iff' measurableSet_Ioi).mpr (Filter.Eventually.of_forall hbound)
+
+/-- It is in fact integrable on EVERY half line: below the threshold the function is bounded
+by its value at the left end point. -/
+theorem integrableOn_Ioi_of_regularlyVarying {F : ℝ → ℝ} {α : ℝ} (hα : 1 < α)
+    (hmono : Antitone F) (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F (-α)) (t : ℝ) :
+    IntegrableOn F (Ioi t) := by
+  obtain ⟨t₀, _, hint⟩ := exists_integrableOn_Ioi_of_regularlyVarying hα hmono hnn hF
+  rcases le_or_gt t₀ t with h | h
+  · exact hint t h
+  · have hEq : Ioc t t₀ ∪ Ioi t₀ = Ioi t := Ioc_union_Ioi_eq_Ioi (le_of_lt h)
+    have hconst : IntegrableOn (fun _ : ℝ => F t) (Ioc t t₀) :=
+      integrableOn_const measure_Ioc_lt_top.ne
+    have h1 : IntegrableOn F (Ioc t t₀) := by
+      refine Integrable.mono' hconst hmono.measurable.aestronglyMeasurable ?_
+      refine (ae_restrict_iff' measurableSet_Ioc).mpr (Filter.Eventually.of_forall fun r hr => ?_)
+      rw [Real.norm_eq_abs, abs_of_nonneg (hnn r)]
+      exact hmono (le_of_lt hr.1)
+    rw [← hEq]
+    exact h1.union (hint t₀ le_rfl)
+
+/-- The tail integral is itself antitone. -/
+theorem antitone_tail_integral {F : ℝ → ℝ} {α : ℝ} (hα : 1 < α) (hmono : Antitone F)
+    (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F (-α)) :
+    Antitone (fun t : ℝ => ∫ r in Ioi t, F r) := by
+  intro t s hts
+  refine setIntegral_mono_set (integrableOn_Ioi_of_regularlyVarying hα hmono hnn hF t) ?_ ?_
+  · exact (ae_restrict_iff' measurableSet_Ioi).mpr (Filter.Eventually.of_forall fun r _ => hnn r)
+  · exact Filter.Eventually.of_forall fun x hx => lt_of_le_of_lt hts hx
 
 /-- **Karamata's theorem** for the tail integral of a monotone regularly varying function of
 index `-α` with `α > 1`: `∫_t^∞ F ∼ t F t / (α - 1)`. -/
@@ -216,10 +244,83 @@ theorem karamata_integrated_tail {ν : Measure ℝ} {α : ℝ} [IsProbabilityMea
   have hmono : Antitone (lowerTail ν) := antitone_lowerTail ν
   have hnn : ∀ r, 0 ≤ lowerTail ν r := lowerTail_nonneg ν
   have hF : RegularlyVaryingAtTop (lowerTail ν) (-α) := htail
-  obtain ⟨t₀, ht₀pos, hint⟩ := integrableOn_Ioi_of_regularlyVarying hα hmono hnn hF
   refine (karamata_tail_integral hα hmono hnn hF).congr'
-    (eventually_atTop.mpr ⟨t₀, fun t ht => ?_⟩)
-  rw [← integral_posPart_eq (hint t ht)]
+    (Filter.Eventually.of_forall fun t => ?_)
+  rw [← integral_posPart_eq (integrableOn_Ioi_of_regularlyVarying hα hmono hnn hF t)]
   rfl
+
+
+/-- **The tail integral is regularly varying of index `1 - α`.**  This is what lets Potter's
+bounds be applied to the integrated tail as well as to the tail. -/
+theorem regularlyVaryingAtTop_tail_integral {F : ℝ → ℝ} {α : ℝ} (hα : 1 < α)
+    (hmono : Antitone F) (hnn : ∀ r, 0 ≤ F r) (hF : RegularlyVaryingAtTop F (-α)) :
+    RegularlyVaryingAtTop (fun t => ∫ r in Ioi t, F r) (1 - α) := by
+  have hFpos : ∀ x, 0 < F x :=
+    pos_of_antitone_of_eventually_pos hmono (eventually_pos_of_regularlyVarying hF hnn)
+  have hG := karamata_tail_integral hα hmono hnn hF
+  have hval : (0 : ℝ) < 1 / (α - 1) := by
+    apply one_div_pos.mpr; linarith
+  intro lam hlam
+  have hcomp : Tendsto (fun t : ℝ => lam * t) atTop atTop :=
+    Filter.Tendsto.const_mul_atTop hlam tendsto_id
+  have hGlam : Tendsto (fun t : ℝ => (∫ r in Ioi (lam * t), F r) / (lam * t * F (lam * t)))
+      atTop (𝓝 (1 / (α - 1))) := hG.comp hcomp
+  have hFratio := hF lam hlam
+  have hGpos : ∀ᶠ t in atTop, 0 < (∫ r in Ioi t, F r) / (t * F t) :=
+    hG.eventually_const_lt hval
+  have h1 : Tendsto (fun t : ℝ => ((∫ r in Ioi (lam * t), F r) / (lam * t * F (lam * t)))
+      / ((∫ r in Ioi t, F r) / (t * F t))) atTop (𝓝 1) := by
+    have h := hGlam.div hG (ne_of_gt hval)
+    have hv : (1 / (α - 1)) / (1 / (α - 1)) = 1 := div_self (ne_of_gt hval)
+    rw [hv] at h
+    exact h
+  have h2 : Tendsto (fun t : ℝ => lam * (F (lam * t) / F t)) atTop (𝓝 (lam * lam ^ (-α))) :=
+    hFratio.const_mul lam
+  have h3 : lam * lam ^ (-α) = lam ^ (1 - α) := by
+    rw [show (1 : ℝ) - α = 1 + -α by ring, Real.rpow_add hlam, Real.rpow_one]
+  have hlimit : Tendsto (fun t : ℝ =>
+      (((∫ r in Ioi (lam * t), F r) / (lam * t * F (lam * t)))
+        / ((∫ r in Ioi t, F r) / (t * F t))) * (lam * (F (lam * t) / F t)))
+      atTop (𝓝 (lam ^ (1 - α))) := by
+    rw [← h3]
+    simpa using h1.mul h2
+  refine hlimit.congr' ?_
+  filter_upwards [hGpos, eventually_gt_atTop (0 : ℝ)] with t hGt ht0
+  have hy : (0 : ℝ) < t * F t := mul_pos ht0 (hFpos t)
+  have hB : (0 : ℝ) < ∫ r in Ioi t, F r := by
+    have heq : (∫ r in Ioi t, F r) = ((∫ r in Ioi t, F r) / (t * F t)) * (t * F t) :=
+      (div_mul_cancel₀ _ (ne_of_gt hy)).symm
+    rw [heq]
+    exact mul_pos hGt hy
+  have hx : (0 : ℝ) < lam * t * F (lam * t) := by
+    have := hFpos (lam * t)
+    positivity
+  field_simp
+  rw [mul_assoc, mul_div_assoc,
+    div_self (ne_of_gt (mul_pos (hFpos (lam * t)) (hFpos t))), mul_one]
+
+/-- The integrated lower tail of a law, `t ↦ E (-z - t)_+`, is the tail integral of the
+lower tail. -/
+theorem integratedLowerTail_eq {ν : Measure ℝ} [IsProbabilityMeasure ν] {α : ℝ} (hα : 1 < α)
+    (htail : RegularlyVaryingAtTop (fun r => (ν (Set.Iio (-r))).toReal) (-α)) :
+    (fun t => ∫ z, max (-z - t) 0 ∂ν) = fun t => ∫ r in Ioi t, lowerTail ν r := by
+  funext t
+  exact integral_posPart_eq (integrableOn_Ioi_of_regularlyVarying hα (antitone_lowerTail ν)
+    (lowerTail_nonneg ν) htail t)
+
+/-- The integrated lower tail is antitone. -/
+theorem antitone_integratedLowerTail {ν : Measure ℝ} [IsProbabilityMeasure ν] {α : ℝ}
+    (hα : 1 < α) (htail : RegularlyVaryingAtTop (fun r => (ν (Set.Iio (-r))).toReal) (-α)) :
+    Antitone fun t => ∫ z, max (-z - t) 0 ∂ν := by
+  rw [integratedLowerTail_eq hα htail]
+  exact antitone_tail_integral hα (antitone_lowerTail ν) (lowerTail_nonneg ν) htail
+
+/-- **The integrated lower tail is regularly varying of index `1 - α`.** -/
+theorem regularlyVaryingAtTop_integratedLowerTail {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {α : ℝ} (hα : 1 < α)
+    (htail : RegularlyVaryingAtTop (fun r => (ν (Set.Iio (-r))).toReal) (-α)) :
+    RegularlyVaryingAtTop (fun t => ∫ z, max (-z - t) 0 ∂ν) (1 - α) := by
+  rw [integratedLowerTail_eq hα htail]
+  exact regularlyVaryingAtTop_tail_integral hα (antitone_lowerTail ν) (lowerTail_nonneg ν) htail
 
 end LatticeProb

@@ -320,19 +320,61 @@ theorem potter_lower {f : ℝ → ℝ} {ρ : ℝ} (hf : RegularlyVaryingAtTop f 
 regularly varying function: for every `δ > 0` there is a level beyond which the ratio of
 the function at two arguments is at most `(1+δ)` times the larger of the two powers of the
 ratio of the arguments. -/
-theorem potter_bounds {f : ℝ → ℝ} {ρ : ℝ} (hf : RegularlyVaryingAtTop f ρ) (hmono : Antitone f)
-    (hpos : ∀ᶠ r in atTop, 0 < f r) (δ : ℝ) (hδ : 0 < δ) :
-    ∃ r₀ : ℝ, ∀ r s : ℝ, r₀ ≤ r → r₀ ≤ s →
+theorem potter_bounds_pos {f : ℝ → ℝ} {ρ : ℝ} (hf : RegularlyVaryingAtTop f ρ)
+    (hmono : Antitone f) (hpos : ∀ᶠ r in atTop, 0 < f r) (δ : ℝ) (hδ : 0 < δ) :
+    ∃ r₀ : ℝ, 0 < r₀ ∧ ∀ r s : ℝ, r₀ ≤ r → r₀ ≤ s →
       f s / f r ≤ (1 + δ) * max ((s / r) ^ (ρ + δ)) ((s / r) ^ (ρ - δ)) := by
-  obtain ⟨r1, _, h1⟩ := potter_upper hf hmono hpos hδ
+  obtain ⟨r1, hr1, h1⟩ := potter_upper hf hmono hpos hδ
   obtain ⟨r2, _, h2⟩ := potter_lower hf hmono hpos hδ
-  refine ⟨max r1 r2, fun r s hr hs => ?_⟩
+  refine ⟨max r1 r2, lt_of_lt_of_le hr1 (le_max_left _ _), fun r s hr hs => ?_⟩
   have hδ0 : (0 : ℝ) ≤ 1 + δ := by linarith
   rcases le_or_gt r s with hrs | hrs
   · refine le_trans (h1 r s (le_trans (le_max_left _ _) hr) hrs) ?_
     exact mul_le_mul_of_nonneg_left (le_max_left _ _) hδ0
   · refine le_trans (h2 r s (le_trans (le_max_right _ _) hs) hrs.le) ?_
     exact mul_le_mul_of_nonneg_left (le_max_right _ _) hδ0
+
+/-- **Potter's bounds**, in the shape the consumer asked for. -/
+theorem potter_bounds {f : ℝ → ℝ} {ρ : ℝ} (hf : RegularlyVaryingAtTop f ρ) (hmono : Antitone f)
+    (hpos : ∀ᶠ r in atTop, 0 < f r) (δ : ℝ) (hδ : 0 < δ) :
+    ∃ r₀ : ℝ, ∀ r s : ℝ, r₀ ≤ r → r₀ ≤ s →
+      f s / f r ≤ (1 + δ) * max ((s / r) ^ (ρ + δ)) ((s / r) ^ (ρ - δ)) := by
+  obtain ⟨r₀, _, h⟩ := potter_bounds_pos hf hmono hpos δ hδ
+  exact ⟨r₀, h⟩
+
+/-- **The lower half of Potter's bounds** (de Haan and Ferreira, Proposition B.1.9(5) is
+two-sided): the same comparison from below, with the minimum of the two powers. -/
+theorem potter_bounds_lower {f : ℝ → ℝ} {ρ : ℝ} (hf : RegularlyVaryingAtTop f ρ)
+    (hmono : Antitone f) (hpos : ∀ᶠ r in atTop, 0 < f r) (δ : ℝ) (hδ : 0 < δ) :
+    ∃ r₀ : ℝ, ∀ r s : ℝ, r₀ ≤ r → r₀ ≤ s →
+      (1 + δ)⁻¹ * min ((s / r) ^ (ρ + δ)) ((s / r) ^ (ρ - δ)) ≤ f s / f r := by
+  have hfpos : ∀ x, 0 < f x := pos_of_antitone_of_eventually_pos hmono hpos
+  obtain ⟨r₀, hr₀, hup⟩ := potter_bounds_pos hf hmono hpos δ hδ
+  refine ⟨r₀, fun r s hr hs => ?_⟩
+  have hr0 : 0 < r := lt_of_lt_of_le hr₀ hr
+  have hs0 : 0 < s := lt_of_lt_of_le hr₀ hs
+  have hA : 0 < f s / f r := div_pos (hfpos s) (hfpos r)
+  have hsr : (0 : ℝ) < s / r := div_pos hs0 hr0
+  have hswap := hup s r hs hr
+  have hinv : ∀ c : ℝ, (r / s) ^ c = ((s / r) ^ c)⁻¹ := by
+    intro c
+    rw [← Real.inv_rpow (le_of_lt hsr), inv_div]
+  rw [hinv (ρ + δ), hinv (ρ - δ)] at hswap
+  have hp1 : (0 : ℝ) < (s / r) ^ (ρ + δ) := Real.rpow_pos_of_pos hsr _
+  have hp2 : (0 : ℝ) < (s / r) ^ (ρ - δ) := Real.rpow_pos_of_pos hsr _
+  have hmax : max (((s / r) ^ (ρ + δ))⁻¹) (((s / r) ^ (ρ - δ))⁻¹)
+      = (min ((s / r) ^ (ρ + δ)) ((s / r) ^ (ρ - δ)))⁻¹ := by
+    rcases le_total ((s / r) ^ (ρ + δ)) ((s / r) ^ (ρ - δ)) with h | h
+    · rw [min_eq_left h, max_eq_left (inv_anti₀ hp1 h)]
+    · rw [min_eq_right h, max_eq_right (inv_anti₀ hp2 h)]
+  rw [hmax] at hswap
+  rw [show f r / f s = (f s / f r)⁻¹ from (inv_div (f s) (f r)).symm] at hswap
+  have hfin := inv_anti₀ (inv_pos.mpr hA) hswap
+  rw [inv_inv] at hfin
+  calc (1 + δ)⁻¹ * min ((s / r) ^ (ρ + δ)) ((s / r) ^ (ρ - δ))
+      = ((1 + δ) * (min ((s / r) ^ (ρ + δ)) ((s / r) ^ (ρ - δ)))⁻¹)⁻¹ := by
+        rw [mul_inv, inv_inv]
+    _ ≤ f s / f r := hfin
 
 /-- The form of Potter's bounds used at comparable arguments: the ratio `f s / f r` is
 bounded on `s / r ∈ [c, 1/c]`.  Monotonicity alone gives it, from the ratio limit at the
