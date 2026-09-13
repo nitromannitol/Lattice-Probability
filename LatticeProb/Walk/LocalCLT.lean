@@ -14,6 +14,7 @@ Fourier representation of `srwHeat` is built by recursion on `d`.
 import LatticeProb.Walk.Character
 import LatticeProb.Walk.Basic
 import LatticeProb.Walk.SRW
+import LatticeProb.Walk.Fourier
 import LatticeProb.Site
 
 namespace LatticeProb
@@ -519,5 +520,62 @@ theorem char_antipode (d : ℕ) (x : Site d) (θ : Fin d → ℝ) :
   congr 1
   push_cast
   ring
+
+/-- Strict contraction of the cosine away from the multiples of 2π:
+for 0 < |t| < π, |cos t| < 1. -/
+theorem abs_cos_lt_one (t : ℝ) (ht0 : 0 < |t|) (ht : |t| < Real.pi) :
+    |Real.cos t| < 1 := by
+  obtain ⟨h1, h2⟩ := abs_lt.mp ht
+  rw [abs_lt]
+  constructor
+  · refine lt_of_le_of_ne (Real.neg_one_le_cos t) ?_
+    intro hc
+    have hc' : Real.cos t = -1 := hc.symm
+    rw [Real.cos_eq_neg_one_iff] at hc'
+    obtain ⟨k, hk⟩ := hc'
+    have hpi : (0:ℝ) < Real.pi := Real.pi_pos
+    have hk' : ((k:ℤ) : ℝ) = (t - Real.pi) / (2 * Real.pi) := by
+      field_simp
+      linarith
+    rcases em ((k:ℤ) < 0) with hk0 | hk0
+    · have hk1 : k ≤ -1 := by omega
+      have h0 : ((k:ℤ) : ℝ) ≤ -1 := by exact_mod_cast hk1
+      rw [hk'] at h0
+      nlinarith
+    · have hk2 : 0 ≤ k := by omega
+      have h0 : (0:ℝ) ≤ ((k:ℤ) : ℝ) := by exact_mod_cast hk2
+      rw [hk'] at h0
+      nlinarith
+  · refine lt_of_le_of_ne (Real.cos_le_one t) ?_
+    intro hc
+    rw [Real.cos_eq_one_iff_of_lt_of_lt (by linarith) (by linarith)] at hc
+    rw [hc] at ht0
+    exact absurd ht0 (by simp)
+
+/-- Near-zero cosine bound: for |t| ≤ π, cos t ≤ 1 - 2/π² · t². -/
+theorem cos_le_one_sub_mul_sq (t : ℝ) (ht : |t| ≤ Real.pi) :
+    Real.cos t ≤ 1 - 2 / Real.pi ^ 2 * t ^ 2 := by exact Real.cos_le_one_sub_mul_cos_sq ht
+
+/-- The one-step characteristic function is bounded away from one when every
+coordinate is at distance at least η from zero (and at most π). -/
+theorem charFn_le_of_far (d : ℕ) (θ : Fin d → ℝ) (η : ℝ)
+    (hd : 0 < d) (hη : 0 < η) (hθ : ∀ i, η ≤ |θ i|) (hpi : ∀ i, |θ i| ≤ Real.pi) :
+    charFn d θ ≤ 1 - 2 * η ^ 2 / Real.pi ^ 2 := by
+  have h1 : ∑ i : Fin d, Real.cos (θ i) ≤ (d : ℝ) * (1 - 2 * η ^ 2 / Real.pi ^ 2) := by
+    refine le_trans (Finset.sum_le_sum (g := fun _ => (1 - 2 * η ^ 2 / Real.pi ^ 2 : ℝ)) (fun i _ => ?_)) ?_
+    · have hle : Real.cos (θ i) ≤ 1 - 2 / Real.pi ^ 2 * (θ i) ^ 2 :=
+        Real.cos_le_one_sub_mul_cos_sq (hpi i)
+      have heta : η ^ 2 ≤ (θ i) ^ 2 := by
+        have h2 : η ^ 2 ≤ |θ i| ^ 2 := pow_le_pow_left₀ (by linarith) (hθ i) 2
+        rw [sq_abs] at h2
+        exact h2
+      have hkey : 2 * η ^ 2 / Real.pi ^ 2 ≤ 2 / Real.pi ^ 2 * (θ i) ^ 2 := by
+        rw [div_mul_eq_mul_div]
+        gcongr
+      linarith
+    · rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  show (∑ i : Fin d, Real.cos (θ i)) / (d : ℝ) ≤ 1 - 2 * η ^ 2 / Real.pi ^ 2
+  rw [div_le_iff₀ (by exact_mod_cast hd)]
+  linarith
 
 end LatticeProb
