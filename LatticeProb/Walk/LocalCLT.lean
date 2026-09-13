@@ -578,4 +578,16 @@ theorem charFn_le_of_far (d : ℕ) (θ : Fin d → ℝ) (η : ℝ)
   rw [div_le_iff₀ (by exact_mod_cast hd)]
   linarith
 
+/-- The characteristic function at the antipodal point is its negative. -/
+theorem charFn_antipode (d : ℕ) (θ : Fin d → ℝ) :
+    charFn d (fun i => θ i + Real.pi) = - charFn d θ := by
+  simp only [charFn]
+  rw [← neg_div]
+  congr 1
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [Real.cos_add]
+  simp
+
 end LatticeProb
