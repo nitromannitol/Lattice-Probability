@@ -899,4 +899,108 @@ theorem box_int_le_gauss (c : ℝ) (hc : 0 < c) :
   rw [integral_gaussian c] at h
   exact h
 
+/-- The Gaussian integrand is integrable on the torus box, for any c. -/
+theorem integrable_exp_neg_sum_sq_torusBox (d : ℕ) (c : ℝ) :
+    MeasureTheory.Integrable (fun θ : Fin d → ℝ => Real.exp (- c * ∑ i, θ i ^ 2))
+      (MeasureTheory.volume.restrict (torusBox d)) := by
+  have hfin : MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict (torusBox d)) :=
+    MeasureTheory.isFiniteMeasure_restrict.mpr (by
+      rw [LatticeProb.volume_torusBox d]
+      simp)
+  have hmeas : MeasureTheory.AEStronglyMeasurable (fun θ : Fin d → ℝ => Real.exp (- c * ∑ i, θ i ^ 2))
+      (MeasureTheory.volume.restrict (torusBox d)) :=
+    (by fun_prop : Continuous (fun θ : Fin d → ℝ => Real.exp (- c * ∑ i, θ i ^ 2))).aestronglyMeasurable
+  refine MeasureTheory.Integrable.of_bound hmeas (Real.exp (|c| * (d : ℝ) * Real.pi ^ 2)) ?_
+  rw [MeasureTheory.ae_restrict_iff' (LatticeProb.torusBox_measurable d)]
+  filter_upwards with θ hθ
+  have h1 : ∑ i, θ i ^ 2 ≤ ∑ i : Fin d, (Real.pi ^ 2 : ℝ) := by
+    apply Finset.sum_le_sum
+    intro i _
+    have h2 : -Real.pi ≤ θ i ∧ θ i ≤ Real.pi := by
+      have hmem := Set.mem_Icc.mp hθ
+      exact ⟨hmem.1 i, hmem.2 i⟩
+    nlinarith [Real.pi_pos]
+  have h1' : ∑ i : Fin d, (Real.pi ^ 2 : ℝ) = (d : ℝ) * Real.pi ^ 2 := by
+    simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
+  rw [h1'] at h1
+  have hSnn : 0 ≤ ∑ i, θ i ^ 2 := by positivity
+  have h4 : - c * ∑ i, θ i ^ 2 ≤ |c| * (d : ℝ) * Real.pi ^ 2 := by
+    have h5 : -c ≤ |c| := neg_le_abs c
+    nlinarith [h1, hSnn, h5, abs_nonneg c]
+  simpa only [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)] using Real.exp_le_exp.mpr h4
+
+/-- The Gaussian integral over the torus box: the heat-kernel normalisation
+constant, proved by induction on the dimension using the one-dimensional
+Gaussian integral and the peeling decomposition of the box. -/
+theorem integral_exp_neg_sum_sq_le (d : ℕ) (c : ℝ) (hc : 0 < c)
+    (hInt : ∀ e : ℕ, Integrable (fun θ : Fin e → ℝ => Real.exp (- c * ∑ i, θ i ^ 2)) (volume.restrict (torusBox e))) :
+    ∫ θ in torusBox d, Real.exp (- c * ∑ i, θ i ^ 2) ≤ (Real.sqrt (Real.pi / c)) ^ d := by
+  induction d with
+  | zero =>
+    have h1 : (fun θ : Fin 0 → ℝ => Real.exp (- c * ∑ i, θ i ^ 2)) = fun _ : Fin 0 → ℝ => 1 := by
+      funext θ
+      simp
+    rw [h1, pow_zero]
+    simp [MeasureTheory.integral_const, Measure.real, LatticeProb.volume_torusBox]
+  | succ d ih =>
+    have hint := hInt (d + 1)
+    rw [LatticeProb.integral_torusBox_peel _ hint]
+    have hsplit : ∀ t, (fun θ => Real.exp (- c * ∑ i : Fin (d + 1), (Fin.cons t θ) i ^ 2))
+        = fun θ => Real.exp (- c * t ^ 2) * Real.exp (- c * ∑ i, θ i ^ 2) := by
+      intro t
+      funext θ
+      rw [Fin.sum_univ_succ, Fin.cons_zero]
+      simp only [Fin.cons_succ, Finset.mul_sum, Real.exp_sum]
+      rw [mul_add, Real.exp_add, ← Real.exp_sum]
+      congr 1
+      simp [Finset.mul_sum]
+    have hinner : ∀ t, ∫ θ in torusBox d, Real.exp (- c * ∑ i : Fin (d + 1), (Fin.cons t θ) i ^ 2)
+        ≤ Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d := by
+      intro t
+      rw [hsplit t, integral_const_mul]
+      exact mul_le_mul_of_nonneg_left ih (Real.exp_pos _).le
+    have hK : (0:ℝ) ≤ (Real.sqrt (Real.pi / c)) ^ d := pow_nonneg (by positivity) d
+    have hgInt : IntegrableOn (fun t => Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d)
+        (Set.Icc (-Real.pi) Real.pi) volume := by
+      have hfin : IsFiniteMeasure (volume.restrict (Set.Icc (-Real.pi) Real.pi)) :=
+        isFiniteMeasure_restrict.mpr (by simp [Real.volume_Icc])
+      have hmeas : AEStronglyMeasurable (fun t => Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d)
+          (volume.restrict (Set.Icc (-Real.pi) Real.pi)) :=
+        (by fun_prop : Continuous (fun t => Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d)).aestronglyMeasurable
+      have hbd : ∀ t, t ∈ Set.Icc (-Real.pi) Real.pi →
+          ‖Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d‖
+          ≤ (Real.sqrt (Real.pi / c)) ^ d := by
+        intro t ht
+        have hK' : (0:ℝ) ≤ (Real.sqrt (Real.pi / c)) ^ d := pow_nonneg (by positivity) d
+        rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg (Real.exp_pos _).le hK')]
+        have h3 : (0:ℝ) ≤ t ^ 2 := by positivity
+        have h1 : - c * t ^ 2 ≤ 0 := by nlinarith
+        have h4 : Real.exp (- c * t ^ 2) ≤ 1 := by
+          have := Real.exp_le_exp.mpr h1
+          simpa using this
+        calc Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d
+            ≤ 1 * (Real.sqrt (Real.pi / c)) ^ d := mul_le_mul_of_nonneg_right h4 hK
+          _ = (Real.sqrt (Real.pi / c)) ^ d := by ring
+      exact Integrable.of_bound hmeas ((Real.sqrt (Real.pi / c)) ^ d)
+        (by rw [ae_restrict_iff' measurableSet_Icc]; filter_upwards with t ht using hbd t ht)
+    have houter : ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d
+        ≤ (Real.sqrt (Real.pi / c)) ^ (d + 1) := by
+      have hcomm : ∀ t, Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d
+          = (Real.sqrt (Real.pi / c)) ^ d * Real.exp (- c * t ^ 2) := fun t => mul_comm _ _
+      rw [setIntegral_congr_ae measurableSet_Icc (by filter_upwards with t ht using hcomm t), integral_const_mul]
+      calc (Real.sqrt (Real.pi / c)) ^ d * ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2)
+          ≤ (Real.sqrt (Real.pi / c)) ^ d * Real.sqrt (Real.pi / c) :=
+        mul_le_mul_of_nonneg_left (LatticeProb.box_int_le_gauss c hc) hK
+        _ = (Real.sqrt (Real.pi / c)) ^ (d + 1) := by ring
+    have hstep1 : ∫ t in Set.Icc (-Real.pi) Real.pi, ∫ θ in torusBox d, Real.exp (- c * ∑ i : Fin (d + 1), (Fin.cons t θ) i ^ 2)
+        ≤ ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d :=
+      setIntegral_mono_of_nonneg
+        (fun t _ => setIntegral_nonneg (LatticeProb.torusBox_measurable d) (fun θ _ => by positivity))
+        (fun t _ => hinner t) hgInt
+    have hstep2 : ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d
+        ≤ (Real.sqrt (Real.pi / c)) ^ (d + 1) := houter
+    calc ∫ t in Set.Icc (-Real.pi) Real.pi, ∫ θ in torusBox d, Real.exp (- c * ∑ i : Fin (d + 1), (Fin.cons t θ) i ^ 2)
+        ≤ ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d := hstep1
+      _ ≤ (Real.sqrt (Real.pi / c)) ^ (d + 1) := hstep2
+
 end LatticeProb
