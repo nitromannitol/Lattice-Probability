@@ -59,6 +59,14 @@ LatticeProb/Prob/HarrisCube.lean    the Harris inequality on the discrete and co
 LatticeProb/Prob/BK.lean            the van den Berg-Kesten inequality on the finite cube
 LatticeProb/Prob/InfinitePiSplit.lean  the head-tail decomposition of a product over the naturals
 LatticeProb/Prob/Coordinate.lean    one coordinate of an infinite product, against the rest
+LatticeProb/Prob/CondExpParam.lean  a jointly measurable version of a conditional expectation in a parameter
+LatticeProb/Prob/CondExpParamMeas.lean  measurability of the kernel integral against the conditional-expectation kernel
+LatticeProb/Prob/UpdateSite.lean   resampling one coordinate of an infinite product, and the Fubini identity it gives
+LatticeProb/Prob/KlDivGaussianAux.lean  the Gaussian log-likelihood ratio and its integral
+LatticeProb/Prob/KlDivGaussian.lean  the relative entropy between two Gaussians of a common variance
+LatticeProb/Prob/ParticleOdometerHole.lean  a positive particle odometer excludes an unfilled hole
+LatticeProb/Prob/IidSplit.lean  the Fubini identity for an i.i.d. field split at one site
+LatticeProb/Prob/KlDivGaussianPi.lean  the relative entropy of a finite product of Gaussian shifts
 LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
 LatticeProb/Prob/Birkhoff.lean      the pointwise ergodic theorem
 LatticeProb/Prob/ConditionalMeasure.lean  regular conditional probability measures, disintegration,

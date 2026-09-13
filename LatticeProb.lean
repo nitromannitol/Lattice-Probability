@@ -184,6 +184,14 @@ import LatticeProb.Prob.StoppingDyadic
 import LatticeProb.Prob.BrownianPathLaw
 import LatticeProb.Prob.BrownianStrongMarkov
 import LatticeProb.Prob.BrownianExitTime
+import LatticeProb.Prob.CondExpParam
+import LatticeProb.Prob.CondExpParamMeas
+import LatticeProb.Prob.UpdateSite
+import LatticeProb.Prob.KlDivGaussianAux
+import LatticeProb.Prob.KlDivGaussian
+import LatticeProb.Prob.KlDivGaussianPi
+import LatticeProb.Prob.IidSplit
+import LatticeProb.Prob.ParticleOdometerHole
 import LatticeProb.Prob.BrownianRestartIntegral
 import LatticeProb.Prob.BrownianContAll
 import LatticeProb.Prob.RegularVariation
