@@ -17,6 +17,15 @@ namespace LatticeProb
 
 open MeasureTheory ProbabilityTheory
 
+/-- **Resampling one site of an i.i.d. field preserves its law.**  Overwriting the
+coordinate `i` of the field by an independent draw from `ν` leaves the i.i.d. law
+unchanged. -/
+theorem measurePreserving_updateSite (d : ℕ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (i : Site d) :
+    MeasurePreserving (fun q : ℝ × (Site d → ℝ) => Function.update q.2 i q.1)
+      (ν.prod (iidLaw d ν)) (iidLaw d ν) :=
+  measurePreserving_update_infinitePi_swap (fun _ : Site d => ν) i
+
 /-- **One coordinate against the rest of an i.i.d. field.**  For a measurable
 `f : ℝ → ℝ → ℝ`, a measurable `W` of the field that does not read the coordinate
 `i`, and an integrable `ζ ↦ f (ζ i) (W ζ)`, the integral against the i.i.d. law

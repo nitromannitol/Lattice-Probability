@@ -78,6 +78,41 @@ theorem iidLaw_map_restrict (d : ℕ) {α : Type*} [MeasurableSpace α] (ν : Me
     (iidLaw d ν).map s.restrict = Measure.pi fun _ : s => ν :=
   Measure.infinitePi_map_restrict _
 
+/-- Reading a finite injective family of sites of an i.i.d. field is measure preserving onto
+the finite product of copies of the one-site law. -/
+theorem measurePreserving_pick (d : ℕ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {κ : Type*} [Fintype κ] (v : κ → Site d) (hv : Function.Injective v) :
+    MeasurePreserving (fun ω : Site d → ℝ => fun k => ω (v k))
+      (iidLaw d ν) (Measure.pi fun _ : κ => ν) :=
+  ⟨measurable_pi_lambda _ fun k => measurable_pi_apply (v k), iidLaw_map_comp d ν v hv⟩
+
+/-- **The integral of a function of finitely many distinct sites.**  For an i.i.d. field
+and a finite injective family of sites, the integral of a function of those sites is the
+integral against the finite product of copies of the one-site law. -/
+theorem integral_pick (d : ℕ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {κ : Type*} [Fintype κ] (v : κ → Site d) (hv : Function.Injective v)
+    (F : (κ → ℝ) → ℝ) (hF : Integrable F (Measure.pi fun _ : κ => ν)) :
+    (∫ ω : Site d → ℝ, F (fun k => ω (v k)) ∂(iidLaw d ν))
+      = ∫ x : κ → ℝ, F x ∂(Measure.pi fun _ : κ => ν) := by
+  have hmp := measurePreserving_pick d ν v hv
+  rw [← hmp.map_eq]
+  rw [← hmp.map_eq] at hF
+  exact (integral_map hmp.measurable.aemeasurable hF.aestronglyMeasurable).symm
+
+/-- **The integral of a function of a finite set of sites.**  For an i.i.d. field and a
+finite set of sites, the integral of a function of the restriction to that set is the
+integral against the finite product of copies of the one-site law. -/
+theorem integral_restrict (d : ℕ) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (s : Finset (Site d)) (F : (s → ℝ) → ℝ)
+    (hF : Integrable F (Measure.pi fun _ : s => ν)) :
+    (∫ ω : Site d → ℝ, F (s.restrict ω) ∂(iidLaw d ν))
+      = ∫ x : s → ℝ, F x ∂(Measure.pi fun _ : s => ν) := by
+  have hmp := measurePreserving_pick d ν (fun k : s => (k : Site d))
+    (fun a b h => Subtype.ext h)
+  rw [← hmp.map_eq]
+  rw [← hmp.map_eq] at hF
+  exact (integral_map hmp.measurable.aemeasurable hF.aestronglyMeasurable).symm
+
 end LatticeProb
 
 end

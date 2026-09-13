@@ -12,6 +12,8 @@ import LatticeProb.Prob.Splice
 
 noncomputable section
 
+set_option linter.unusedVariables false
+
 namespace LatticeProb
 
 open MeasureTheory ProbabilityTheory
@@ -61,5 +63,40 @@ theorem integral_infinitePi_update_eq_integral_integral [DecidableEq ι]
     exact integral_map_equiv (MeasurableEquiv.prodComm) _
   rw [hswap]
   exact integral_prod _ ((measurePreserving_update_infinitePi μ i).integrable_comp_of_integrable hg)
+
+/-- **Resampling one coordinate preserves the product law, coordinate first.**  The
+same statement as `measurePreserving_update_infinitePi` with the fresh coordinate
+carried on the left, which is the order in which the Fubini identity is applied. -/
+theorem measurePreserving_update_infinitePi_swap [DecidableEq ι] (μ : ∀ i, Measure (X i))
+    [∀ i, IsProbabilityMeasure (μ i)] (i : ι) :
+    MeasurePreserving (fun q : X i × (Π j, X j) => Function.update q.2 i q.1)
+      ((μ i).prod (Measure.infinitePi μ)) (Measure.infinitePi μ) := by
+  have hswap : MeasurePreserving (Prod.swap : X i × (Π j, X j) → (Π j, X j) × X i)
+      ((μ i).prod (Measure.infinitePi μ)) ((Measure.infinitePi μ).prod (μ i)) :=
+    ⟨measurable_swap, Measure.prod_swap⟩
+  exact (measurePreserving_update_infinitePi μ i).comp hswap
+
+/-- **One coordinate against the rest of an infinite product.**  For a measurable
+`f : X i → ℝ → ℝ`, a measurable `W` of the field that does not read the coordinate
+`i`, and an integrable `ζ ↦ f (ζ i) (W ζ)`, the integral against the product law
+equals the iterated integral that averages the fresh coordinate first. -/
+theorem integral_infinitePi_split [DecidableEq ι] (μ : ∀ i, Measure (X i))
+    [∀ i, IsProbabilityMeasure (μ i)] (i : ι)
+    {f : X i → ℝ → ℝ} (hf : Measurable fun q : X i × ℝ => f q.1 q.2)
+    {W : (Π j, X j) → ℝ} (hW : Measurable W)
+    (hWloc : ∀ ζ η : Π j, X j, (∀ z, z ≠ i → ζ z = η z) → W ζ = W η)
+    (hint : Integrable (fun ζ => f (ζ i) (W ζ)) (Measure.infinitePi μ)) :
+    (∫ ζ, f (ζ i) (W ζ) ∂(Measure.infinitePi μ))
+      = ∫ ζ, (∫ z, f z (W ζ) ∂(μ i)) ∂(Measure.infinitePi μ) := by
+  have hloc : ∀ (ζ : Π j, X j) (y : X i), f y (W (Function.update ζ i y)) = f y (W ζ) := by
+    intro ζ y
+    congr 1
+    exact hWloc _ _ (fun z hz => by simp [Function.update, hz])
+  rw [integral_infinitePi_update_eq_integral_integral μ i hint]
+  refine integral_congr_ae ?_
+  filter_upwards with ζ
+  exact integral_congr_ae (Filter.Eventually.of_forall fun y => by
+    simp only [Function.update_self]
+    exact hloc ζ y)
 
 end LatticeProb
