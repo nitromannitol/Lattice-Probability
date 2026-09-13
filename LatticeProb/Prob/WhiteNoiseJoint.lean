@@ -45,4 +45,30 @@ theorem exists_joint_version_whiteNoiseOf_meas {X U : Type*} [MeasurableSpace X]
   obtain ⟨g, hg, hg'⟩ := exists_joint_version_whiteNoiseOf μ f hf hF
   refine ⟨g, fun u => (hg.comp_measurable (measurable_const.prodMk measurable_id)).measurable, hg'⟩
 
+/-- **The jointly measurable version of the canonical white noise, uncurried.**  The same
+witness as `exists_joint_version_whiteNoiseOf`, with the joint measurability stated for the
+uncurried function. -/
+theorem exists_joint_version_whiteNoiseOf_meas_uncurry {X U : Type*} [MeasurableSpace X]
+    [MeasurableSpace U] (μ : Measure X) [IsSeparable μ]
+    (f : U → X → ℝ) (hf : ∀ u, MemLp (f u) 2 μ)
+    (hF : StronglyMeasurable (fun u => (hf u).toLp (f u))) :
+    ∃ g : U → (↥(l2Basis μ) → ℝ) → ℝ,
+      Measurable (Function.uncurry g) ∧
+      ∀ u, g u =ᵐ[whiteNoiseLaw μ] whiteNoiseOf μ (f u) := by
+  obtain ⟨g, hg, hg'⟩ := exists_joint_version_whiteNoiseOf μ f hf hF
+  exact ⟨g, hg.measurable, hg'⟩
+
+/-- **The jointly measurable version of the canonical white noise, uncurried, with the
+slice measurability.**  The same witness, with both the joint measurability and the
+measurability of each slice `g u`. -/
+theorem exists_joint_version_whiteNoiseOf_meas_uncurry' {X U : Type*} [MeasurableSpace X]
+    [MeasurableSpace U] (μ : Measure X) [IsSeparable μ]
+    (f : U → X → ℝ) (hf : ∀ u, MemLp (f u) 2 μ)
+    (hF : StronglyMeasurable (fun u => (hf u).toLp (f u))) :
+    ∃ g : U → (↥(l2Basis μ) → ℝ) → ℝ,
+      Measurable (Function.uncurry g) ∧ (∀ u, Measurable (g u)) ∧
+      ∀ u, g u =ᵐ[whiteNoiseLaw μ] whiteNoiseOf μ (f u) := by
+  obtain ⟨g, hg, hg'⟩ := exists_joint_version_whiteNoiseOf μ f hf hF
+  exact ⟨g, hg.measurable, fun u => hg.measurable.comp (measurable_const.prodMk measurable_id), hg'⟩
+
 end LatticeProb
