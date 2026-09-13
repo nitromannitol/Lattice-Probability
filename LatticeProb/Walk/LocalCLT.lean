@@ -1110,4 +1110,58 @@ theorem integral_box_le_gauss_plus_far (d : ℕ) (f : (Fin d → ℝ) → ℝ)
   rw [setIntegral_union hdis hMF hintG hintF] at hmono
   exact hmono
 
+/-- The Gaussian-region integral of the heat-kernel normalisation is
+bounded by the full Gaussian normalisation. -/
+theorem integral_gaussRegion_le (d : ℕ) (c : ℝ) (hc : 0 < c) :
+    ∫ x in {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2},
+        Real.exp (- c * ∑ i, x i ^ 2) ∂volume ≤ (Real.sqrt (Real.pi / c)) ^ d := by
+  have hsub : {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2} ⊆ torusBox d := by
+    intro x hx
+    unfold torusBox
+    simp only [Set.mem_Icc]
+    refine ⟨?_, ?_⟩
+    · rw [Pi.le_def]; exact fun i => by have h := abs_le.mp (hx i); nlinarith [Real.pi_pos]
+    · rw [Pi.le_def]; exact fun i => by have h := abs_le.mp (hx i); nlinarith [Real.pi_pos]
+  have hint := LatticeProb.integrable_exp_neg_sum_sq_torusBox d c
+  have hnn : 0 ≤ᵐ[volume.restrict (torusBox d)] (fun x : Fin d → ℝ => Real.exp (- c * ∑ i, x i ^ 2)) := by
+    filter_upwards with x using (Real.exp_pos _).le
+  have hae : {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2} ≤ᵐ[volume] torusBox d := hsub.eventuallyLE
+  exact (setIntegral_mono_set hint hnn hae).trans (LatticeProb.integral_exp_neg_sum_sq_le d c hc (fun e => LatticeProb.integrable_exp_neg_sum_sq_torusBox e c))
+
+/-- The far region inside the torus box has volume at most the box volume. -/
+theorem volume_farRegion_le (d : ℕ) :
+    volume.real {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, Real.pi / 2 < |x i|}
+      ≤ (2 * Real.pi) ^ d := by
+  have hsub : {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, Real.pi / 2 < |x i|} ⊆ torusBox d :=
+    fun x hx => hx.1
+  have h1 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, Real.pi / 2 < |x i|}
+      ≤ volume (torusBox d) := measure_mono hsub
+  have hv := LatticeProb.volume_torusBox d
+  have hfin : volume (torusBox d) ≠ ⊤ := by rw [hv]; exact ENNReal.ofReal_ne_top
+  have hfin2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, Real.pi / 2 < |x i|} ≠ ⊤ :=
+    fun h => by rw [h] at h1; exact hfin (top_le_iff.mp h1)
+  have h2 : (volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, Real.pi / 2 < |x i|}).toReal
+      ≤ (volume (torusBox d)).toReal := (ENNReal.toReal_le_toReal hfin2 hfin).mpr h1
+  have h3 : (volume (torusBox d)).toReal = (2 * Real.pi) ^ d := by
+    rw [hv]; exact ENNReal.toReal_ofReal (by positivity)
+  show (volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, Real.pi / 2 < |x i|}).toReal ≤ (2 * Real.pi) ^ d
+  exact h2.trans h3.le
+
+/-- Pointwise far-region bound: with one coordinate at distance at least
+η from 0 and at most π - η, the characteristic function power
+decays like exp(-2nη²/(dπ²)). -/
+theorem charFn_pow_le_exp_of_far (d : ℕ) (n : ℕ) (η : ℝ) (hη0 : 0 < η) (hηp : η ≤ Real.pi / 2)
+    (x : Fin d → ℝ) (i₀ : Fin d)
+    (hlo : η ≤ |x i₀|) (hhi : |x i₀| ≤ Real.pi - η) (hd : 0 < d) :
+    |charFn d x| ^ n ≤ Real.exp (- (n : ℝ) * (2 / (d : ℝ)) * η ^ 2 / Real.pi ^ 2) := by
+  have hF : ∀ i ∈ ({i₀} : Finset (Fin d)), η ≤ |x i| ∧ |x i| ≤ Real.pi - η := by
+    intro i hi
+    simp only [Finset.mem_singleton] at hi
+    rw [hi]
+    exact ⟨hlo, hhi⟩
+  have h1 := LatticeProb.region2_exp d hd n η hη0 hηp x {i₀} hF
+  have hcard : ({i₀} : Finset (Fin d)).card = 1 := Finset.card_singleton i₀
+  rw [hcard, Nat.cast_one] at h1
+  simpa using h1
+
 end LatticeProb
