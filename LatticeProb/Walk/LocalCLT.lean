@@ -670,4 +670,27 @@ theorem charFn_le_gauss_quartic (d : ℕ) (hd : 0 < d) (θ : Fin d → ℝ)
   rw [hG] at hF
   exact hF
 
+/-- For 0 ≤ u ≤ 1 and n : ℕ, (1 - u) ^ n ≤ exp (- n * u): the exponential
+form of the Gaussian-region bound on the Fourier multiplier. -/
+theorem one_sub_pow_le_exp (n : ℕ) (u : ℝ) (_hu : 0 ≤ u) (hu1 : u ≤ 1) :
+    (1 - u) ^ n ≤ Real.exp (- n * u) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    have h1 : (1 - u) ^ (n + 1) ≤ Real.exp (-↑n * u) * (1 - u) := by
+      rw [pow_succ]
+      exact mul_le_mul_of_nonneg_right ih (by linarith)
+    have h2 : Real.exp (-↑n * u) * (1 - u) ≤ Real.exp (-↑(n + 1) * u) := by
+      have h3 : Real.exp (-↑(n + 1) * u) = Real.exp (-↑n * u) * Real.exp (-u) := by
+        rw [← Real.exp_add]
+        congr 1
+        push_cast
+        ring
+      rw [h3]
+      have h4 : 1 - u ≤ Real.exp (-u) := by
+        have := Real.add_one_le_exp (-u)
+        linarith
+      exact mul_le_mul_of_nonneg_left h4 (by positivity)
+    exact le_trans h1 h2
+
 end LatticeProb
