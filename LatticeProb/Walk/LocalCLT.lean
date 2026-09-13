@@ -827,4 +827,59 @@ theorem charFn_abs_le_of_region2 (d : ℕ) (hd : 0 < d) (θ : Fin d → ℝ) (η
     _ ≤ F.card * Real.cos η + ((d : ℝ) - F.card) := add_le_add h1 h2
     _ = (d : ℝ) - F.card + F.card * Real.cos η := by ring
 
+/-- The antipodal shift of the characteristic function raised to the n-th
+power: the parity factor (-1) ^ n multiplies the original power.  This is
+the algebraic core of the parity form of the local central limit theorem. -/
+theorem charFn_antipode_pow (d : ℕ) (θ : Fin d → ℝ) (n : ℕ) :
+    charFn d (fun i => θ i + Real.pi) ^ n = (-1) ^ n * charFn d θ ^ n := by
+  rw [LatticeProb.charFn_antipode d θ, neg_pow]
+
+/-- The region-2 cost in Gaussian form: for 0 ≤ η ≤ π / 2,
+2 * η ^ 2 / π ^ 2 ≤ 1 - cos η. -/
+theorem two_div_pi_sq_le_one_sub_cos (η : ℝ) (hη : 0 ≤ η) (hηp : η ≤ Real.pi / 2) :
+    2 * η ^ 2 / Real.pi ^ 2 ≤ 1 - Real.cos η := by
+  have h := LatticeProb.cos_le_one_sub_mul_sq η (abs_le.mpr ⟨by linarith, by linarith⟩)
+  have h' : Real.cos η ≤ 1 - 2 * η ^ 2 / Real.pi ^ 2 := by
+    rw [show 2 / Real.pi ^ 2 * η ^ 2 = 2 * η ^ 2 / Real.pi ^ 2 from by ring] at h
+    linarith
+  linarith
+
+/-- Region-2 exponential decay: with k far coordinates and 0 ≤ cos η,
+(((d : ℝ) - k + k * Real.cos η) / d) ^ n ≤
+Real.exp (- (n : ℝ) * (k / d) * (1 - Real.cos η)). -/
+theorem region2_pow_le_exp (d : ℕ) (hd : 0 < d) (n k : ℕ) (η : ℝ)
+    (hcos : 0 ≤ Real.cos η) (hk : k ≤ d) :
+    (((d : ℝ) - k + k * Real.cos η) / d) ^ n ≤
+    Real.exp (- (n : ℝ) * (k / d) * (1 - Real.cos η)) := by
+  have hd' : (0:ℝ) < (d:ℝ) := by exact_mod_cast hd
+  have hk' : (k:ℝ) ≤ (d:ℝ) := by exact_mod_cast hk
+  have hbase : ((d:ℝ) - k + k * Real.cos η) / d = 1 - ((k:ℝ) / d) * (1 - Real.cos η) := by
+    field_simp
+    ring
+  rw [hbase]
+  have hx0 : 0 ≤ ((k:ℝ) / d) * (1 - Real.cos η) := by
+    apply mul_nonneg
+    · positivity
+    · linarith [Real.cos_le_one η]
+  have hx1 : ((k:ℝ) / d) * (1 - Real.cos η) ≤ 1 := by
+    have h1 : ((k:ℝ) / d) ≤ 1 := by
+      rw [div_le_iff₀ hd']
+      linarith
+    have hk0 : 0 ≤ (k:ℝ) / d := by positivity
+    have h2 : 1 - Real.cos η ≤ 1 := by linarith [Real.cos_le_one η]
+    have h3 : 0 ≤ 1 - Real.cos η := by linarith [Real.cos_le_one η]
+    nlinarith [h1, hk0, h2, h3]
+  have hle : 1 - ((k:ℝ) / d) * (1 - Real.cos η) ≤ Real.exp (-(((k:ℝ) / d) * (1 - Real.cos η))) := by
+    have := Real.add_one_le_exp (-(((k:ℝ) / d) * (1 - Real.cos η)))
+    linarith
+  have h1mx : 0 ≤ 1 - ((k:ℝ) / d) * (1 - Real.cos η) := by linarith
+  have hpow : (1 - ((k:ℝ) / d) * (1 - Real.cos η)) ^ n ≤ Real.exp (-(((k:ℝ) / d) * (1 - Real.cos η))) ^ n := by
+    gcongr
+  have hexp : Real.exp (-(((k:ℝ) / d) * (1 - Real.cos η))) ^ n = Real.exp (-(n:ℝ) * ((k:ℝ) / d) * (1 - Real.cos η)) := by
+    rw [← Real.exp_nat_mul]
+    congr 1
+    ring
+  rw [hexp] at hpow
+  exact hpow
+
 end LatticeProb
