@@ -192,6 +192,7 @@ import LatticeProb.Prob.KlDivGaussian
 import LatticeProb.Prob.KlDivGaussianPi
 import LatticeProb.Prob.IidSplit
 import LatticeProb.Prob.ParticleOdometerHole
+import LatticeProb.Prob.GaussianDensitySq
 import LatticeProb.Prob.BrownianRestartIntegral
 import LatticeProb.Prob.BrownianContAll
 import LatticeProb.Prob.RegularVariation

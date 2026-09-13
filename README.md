@@ -65,6 +65,7 @@ LatticeProb/Prob/UpdateSite.lean   resampling one coordinate of an infinite prod
 LatticeProb/Prob/KlDivGaussianAux.lean  the Gaussian log-likelihood ratio and its integral
 LatticeProb/Prob/KlDivGaussian.lean  the relative entropy between two Gaussians of a common variance
 LatticeProb/Prob/ParticleOdometerHole.lean  a positive particle odometer excludes an unfilled hole
+LatticeProb/Prob/GaussianDensitySq.lean  the square of the Gaussian density and its integral
 LatticeProb/Prob/IidSplit.lean  the Fubini identity for an i.i.d. field split at one site
 LatticeProb/Prob/KlDivGaussianPi.lean  the relative entropy of a finite product of Gaussian shifts
 LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
