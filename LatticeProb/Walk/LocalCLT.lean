@@ -765,4 +765,66 @@ theorem charFn_pow_le_exp_gauss (d : ℕ) (hd : 0 < d) (n : ℕ) (θ : Fin d →
     linarith
   exact le_trans (le_trans hkey hexp) hmono
 
+/-- Far-region exponential decay: for 0 < η ≤ π / √2 and n : ℕ,
+(1 - 2 η ² / π ²) ^ n ≤ exp (- n η ² / π ²).  This converts the
+far-region polynomial bound on the Fourier multiplier into its
+exponential form. -/
+theorem far_pow_le_exp (n : ℕ) (η : ℝ) (hη : 0 < η) (hηp : η ≤ Real.pi / Real.sqrt 2) :
+    (1 - 2 * η ^ 2 / Real.pi ^ 2) ^ n ≤ Real.exp (- n * η ^ 2 / Real.pi ^ 2) := by
+  have hpi2_pos : (0:ℝ) < Real.pi ^ 2 := by positivity
+  have hu1 : 2 * η ^ 2 / Real.pi ^ 2 ≤ 1 := by
+    rw [div_le_iff₀ hpi2_pos]
+    have h1 : η ^ 2 ≤ (Real.pi / Real.sqrt 2) ^ 2 := pow_le_pow_left₀ (le_of_lt hη) hηp 2
+    have hs : Real.sqrt 2 ^ 2 = (2:ℝ) := Real.sq_sqrt (by norm_num)
+    have h2 : 2 * (Real.pi / Real.sqrt 2) ^ 2 = Real.pi ^ 2 := by
+      rw [div_pow, hs]; ring
+    nlinarith [h1, h2]
+  have hnn : 0 ≤ 1 - 2 * η ^ 2 / Real.pi ^ 2 := by linarith
+  have hbase : 1 - 2 * η ^ 2 / Real.pi ^ 2 ≤ Real.exp (-(2 * η ^ 2 / Real.pi ^ 2)) := by
+    have := Real.add_one_le_exp (-(2 * η ^ 2 / Real.pi ^ 2))
+    linarith
+  have hpow : (1 - 2 * η ^ 2 / Real.pi ^ 2) ^ n ≤ (Real.exp (-(2 * η ^ 2 / Real.pi ^ 2))) ^ n :=
+    pow_le_pow_left₀ hnn hbase n
+  have hexp : (Real.exp (-(2 * η ^ 2 / Real.pi ^ 2))) ^ n = Real.exp (-↑n * (2 * η ^ 2 / Real.pi ^ 2)) := by
+    rw [← Real.exp_nat_mul]
+    congr 1
+    ring
+  have hmono : Real.exp (-↑n * (2 * η ^ 2 / Real.pi ^ 2)) ≤ Real.exp (-↑n * η ^ 2 / Real.pi ^ 2) := by
+    apply Real.exp_le_exp.mpr
+    have h1 : (0:ℝ) ≤ ↑n * (η ^ 2 / Real.pi ^ 2) := by positivity
+    have h2 : -↑n * (2 * η ^ 2 / Real.pi ^ 2) = -2 * (↑n * (η ^ 2 / Real.pi ^ 2)) := by ring
+    have h3 : -↑n * η ^ 2 / Real.pi ^ 2 = -(↑n * (η ^ 2 / Real.pi ^ 2)) := by ring
+    rw [h2, h3]
+    linarith
+  exact le_trans hpow (le_trans hexp.le hmono)
+
+/-- Region-2 multiplier bound: if every coordinate in F satisfies
+η ≤ |θ i| ≤ π - η, then |charFn d θ| is at most
+(d - |F| + |F| cos η) / d: each far coordinate costs the factor cos η. -/
+theorem charFn_abs_le_of_region2 (d : ℕ) (hd : 0 < d) (θ : Fin d → ℝ) (η : ℝ)
+    (hη0 : 0 ≤ η) (_hηp : η ≤ Real.pi / 2)
+    (F : Finset (Fin d)) (hF : ∀ i ∈ F, η ≤ |θ i| ∧ |θ i| ≤ Real.pi - η) :
+    |charFn d θ| ≤ ((d : ℝ) - F.card + F.card * Real.cos η) / d := by
+  have hd0 : (0 : ℝ) < d := by exact_mod_cast hd
+  have h1 : ∑ i ∈ F, |Real.cos (θ i)| ≤ F.card * Real.cos η := by
+    have h : ∑ i ∈ F, |Real.cos (θ i)| ≤ ∑ i ∈ F, Real.cos η :=
+      Finset.sum_le_sum (fun i hi => LatticeProb.abs_cos_le_cos_eta η (θ i) hη0 (hF i hi).1 (hF i hi).2)
+    simpa [Finset.sum_const, nsmul_eq_mul] using h
+  have h2 : ∑ i ∈ Fᶜ, |Real.cos (θ i)| ≤ (d : ℝ) - F.card := by
+    have h2a : ∑ i ∈ Fᶜ, |Real.cos (θ i)| ≤ ∑ i ∈ Fᶜ, (1 : ℝ) :=
+      Finset.sum_le_sum (fun i _ => Real.abs_cos_le_one _)
+    have h2b : ∑ i ∈ Fᶜ, (1 : ℝ) = (d : ℝ) - F.card := by
+      rw [Finset.sum_const, nsmul_eq_mul, mul_one, Finset.card_compl, Fintype.card_fin]
+      exact Nat.cast_sub (by simpa using Finset.card_le_univ F)
+    exact le_trans h2a (le_of_eq h2b)
+  show |(∑ i, Real.cos (θ i)) / (d : ℝ)| ≤ _
+  rw [abs_div, abs_of_pos hd0]
+  apply div_le_div_of_nonneg_right _ (le_of_lt hd0)
+  calc |∑ i, Real.cos (θ i)|
+      ≤ ∑ i, |Real.cos (θ i)| := Finset.abs_sum_le_sum_abs _ _
+    _ = ∑ i ∈ F, |Real.cos (θ i)| + ∑ i ∈ Fᶜ, |Real.cos (θ i)| := by
+        rw [Finset.sum_add_sum_compl]
+    _ ≤ F.card * Real.cos η + ((d : ℝ) - F.card) := add_le_add h1 h2
+    _ = (d : ℝ) - F.card + F.card * Real.cos η := by ring
+
 end LatticeProb
