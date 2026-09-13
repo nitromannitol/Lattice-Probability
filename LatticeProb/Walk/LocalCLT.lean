@@ -693,4 +693,76 @@ theorem one_sub_pow_le_exp (n : ℕ) (u : ℝ) (_hu : 0 ≤ u) (hu1 : u ≤ 1) :
       exact mul_le_mul_of_nonneg_left h4 (by positivity)
     exact le_trans h1 h2
 
+/-- Region-2 cosine bound: if η ≤ |t| ≤ π - η with 0 ≤ η, then
+|cos t| ≤ cos η.  This is the intermediate-region input to the local
+central limit theorem: away from both 0 and the antipode, the cosine is
+bounded away from one in absolute value. -/
+theorem abs_cos_le_cos_eta (η t : ℝ) (hη0 : 0 ≤ η) (hη : η ≤ |t|) (ht : |t| ≤ Real.pi - η) :
+    |Real.cos t| ≤ Real.cos η := by
+  have heven : Real.cos t = Real.cos |t| := by
+    rcases abs_cases t with h | h
+    · rw [h.1]
+    · rw [h.1, Real.cos_neg]
+  have hu : |t| ≤ Real.pi := by linarith [Real.pi_pos]
+  rcases lt_or_ge |t| (Real.pi / 2) with hmid | hmid
+  · have hcospos : 0 ≤ Real.cos |t| :=
+      Real.cos_nonneg_of_neg_pi_div_two_le_of_le (by linarith) (by linarith)
+    rw [heven, abs_of_nonneg hcospos]
+    exact Real.cos_le_cos_of_nonneg_of_le_pi hη0 (by linarith) hη
+  · have hcosn : Real.cos |t| ≤ 0 := by
+      have := Real.cos_nonpos_of_pi_div_two_le_of_le hmid (by linarith)
+      simpa using this
+    have hpi : Real.cos (Real.pi - |t|) = -Real.cos |t| := Real.cos_pi_sub |t|
+    have hle : Real.cos (Real.pi - |t|) ≤ Real.cos η :=
+      Real.cos_le_cos_of_nonneg_of_le_pi (by linarith [Real.pi_pos]) (by linarith) (by linarith)
+    rw [heven, abs_of_nonpos hcosn, ← hpi]
+    exact hle
+
+/-- Gaussian-region exponential bound on the Fourier multiplier: in the
+region where every |θ i| ≤ π/2, S = ∑ θ i ² ≤ 4 and S ≤ 2d, the n-th power
+of the characteristic function satisfies charFn d θ ^ n ≤ exp (- n S / (3d)). -/
+theorem charFn_pow_le_exp_gauss (d : ℕ) (hd : 0 < d) (n : ℕ) (θ : Fin d → ℝ)
+    (hpi : ∀ i, |θ i| ≤ Real.pi / 2) (hS : (∑ i, θ i ^ 2) ≤ 4)
+    (hS2 : (∑ i, θ i ^ 2) ≤ 2 * d) :
+    charFn d θ ^ n ≤ Real.exp (- n * (∑ i, θ i ^ 2) / (3 * d)) := by
+  have hd' : (0:ℝ) < (d:ℝ) := by exact_mod_cast hd
+  have hq : charFn d θ ≤ 1 - (∑ i, θ i ^ 2) / (2 * d) + (∑ i, θ i ^ 2) ^ 2 / (24 * d) :=
+    LatticeProb.charFn_le_gauss_quartic d hd θ (fun i => (hpi i).trans (by linarith [Real.pi_pos]))
+  have hunn : 0 ≤ ∑ i, θ i ^ 2 := Finset.sum_nonneg (fun i _ => by positivity)
+  have hS4 : (∑ i, θ i ^ 2) ^ 2 ≤ 4 * ∑ i, θ i ^ 2 := by nlinarith [hunn, hS]
+  have h1 : (∑ i, θ i ^ 2) ^ 2 / (24 * d) ≤ (∑ i, θ i ^ 2) / (6 * d) := by
+    rw [div_le_div_iff₀ (by positivity : (0:ℝ) < 24 * d) (by positivity : (0:ℝ) < 6 * d)]
+    nlinarith [hS4, hd']
+  have h2 : (∑ i, θ i ^ 2) / (6 * d) ≤ (∑ i, θ i ^ 2) / (2 * d) := by gcongr; nlinarith [hd']
+  have hu0 : 0 ≤ (∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d) := by linarith
+  have hBnn : (0:ℝ) ≤ (∑ i, θ i ^ 2) ^ 2 / (24 * d) := by positivity
+  have hu1 : (∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d) ≤ 1 := by
+    have hD : (∑ i, θ i ^ 2) / (2 * d) ≤ 1 := by
+      rw [div_le_iff₀ (by positivity : (0:ℝ) < 2 * d)]
+      linarith
+    linarith
+  have hcnn : 0 ≤ charFn d θ := by
+    have hcos : ∀ i, 0 ≤ Real.cos (θ i) := fun i => by
+      exact Real.cos_nonneg_of_neg_pi_div_two_le_of_le (abs_le.mp (hpi i)).1 (abs_le.mp (hpi i)).2
+    have hsum : 0 ≤ ∑ i, Real.cos (θ i) := Finset.sum_nonneg (fun i _ => hcos i)
+    have : charFn d θ = (∑ i, Real.cos (θ i)) / (d:ℝ) := rfl
+    rw [this]
+    positivity
+  have hkey : charFn d θ ^ n ≤ (1 - ((∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d))) ^ n := by
+    refine pow_le_pow_left₀ hcnn ?_ n
+    linarith
+  have hexp := LatticeProb.one_sub_pow_le_exp n ((∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d)) hu0 hu1
+  have hmono : Real.exp (- n * ((∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d))) ≤ Real.exp (- n * (∑ i, θ i ^ 2) / (3 * d)) := by
+    apply Real.exp_le_exp.mpr
+    have hE : (∑ i, θ i ^ 2) / (3 * d) ≤ (∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d) := by
+      have hF : (∑ i, θ i ^ 2) / (3 * d) + (∑ i, θ i ^ 2) / (6 * d) = (∑ i, θ i ^ 2) / (2 * d) := by
+        field_simp
+        ring
+      linarith
+    have hG : (n:ℝ) * ((∑ i, θ i ^ 2) / (3 * d)) ≤ (n:ℝ) * ((∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d)) :=
+      mul_le_mul_of_nonneg_left hE (by positivity)
+    rw [show (-n * (∑ i, θ i ^ 2)) / (3 * d) = -n * ((∑ i, θ i ^ 2) / (3 * d)) from by field_simp]
+    linarith
+  exact le_trans (le_trans hkey hexp) hmono
+
 end LatticeProb
