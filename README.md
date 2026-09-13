@@ -64,6 +64,7 @@ LatticeProb/Prob/CondExpParamMeas.lean  measurability of the kernel integral aga
 LatticeProb/Prob/UpdateSite.lean   resampling one coordinate of an infinite product, and the Fubini identity it gives
 LatticeProb/Prob/L2JointVersion.lean  jointly measurable representatives of strongly measurable L2-valued families
 LatticeProb/Prob/WhiteNoiseJoint.lean  jointly measurable versions of the canonical white noise along an L2 family
+LatticeProb/Prob/WhiteNoiseCLM.lean  the canonical white noise as a continuous linear map on L2
 LatticeProb/Prob/KlDivGaussianAux.lean  the Gaussian log-likelihood ratio and its integral
 LatticeProb/Prob/KlDivGaussian.lean  the relative entropy between two Gaussians of a common variance
 LatticeProb/Prob/ParticleOdometerHole.lean  a positive particle odometer excludes an unfilled hole

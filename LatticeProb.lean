@@ -121,6 +121,7 @@ import LatticeProb.Prob.PaleyZygmund
 import LatticeProb.Prob.FiniteMarginal
 import LatticeProb.Prob.L2JointVersion
 import LatticeProb.Prob.WhiteNoiseJoint
+import LatticeProb.Prob.WhiteNoiseCLM
 import LatticeProb.Prob.Splice
 import LatticeProb.Prob.SpliceAvg
 import LatticeProb.Prob.ExpFamily
