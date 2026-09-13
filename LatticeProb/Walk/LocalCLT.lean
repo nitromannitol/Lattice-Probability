@@ -578,6 +578,48 @@ theorem charFn_le_of_far (d : ℕ) (θ : Fin d → ℝ) (η : ℝ)
   rw [div_le_iff₀ (by exact_mod_cast hd)]
   linarith
 
+/-- Near-zero cosine upper bound with the quartic remainder:
+for |t| ≤ π, cos t ≤ 1 - t²/2 + t⁴/24.  This is the Gaussian-region
+input to the local central limit theorem (the Fourier multiplier is bounded
+by the heat multiplier up to the quartic term). -/
+theorem cos_le_one_sub_half_sq_add_quartic (t : ℝ) (ht : |t| ≤ Real.pi) :
+    Real.cos t ≤ 1 - t ^ 2 / 2 + t ^ 4 / 24 := by
+  obtain ⟨h1, h2⟩ := abs_le.mp ht
+  have heven : Real.cos t = Real.cos |t| := by
+    rcases abs_cases t with h | h
+    · rw [h.1]
+    · rw [h.1, Real.cos_neg]
+  rw [heven]
+  have h0 : 0 ≤ |t| := abs_nonneg t
+  have hpi : |t| ≤ Real.pi := ht
+  have key : Real.cos |t| = 1 - 2 * Real.sin (|t| / 2) ^ 2 := by
+    rw [show |t| = 2 * (|t| / 2) from by ring, Real.cos_two_mul, Real.sin_sq]
+    ring
+  rw [key]
+  have hnn : 0 ≤ Real.sin (|t| / 2) :=
+    Real.sin_nonneg_of_nonneg_of_le_pi (by linarith) (by linarith [Real.pi_pos])
+  have hsin : |t| / 2 - (|t| / 2) ^ 3 / 6 ≤ Real.sin (|t| / 2) :=
+    Real.sin_ge_sub_cube (by linarith)
+  have hbase : 0 ≤ |t| / 2 - (|t| / 2) ^ 3 / 6 := by
+    have hp2 : Real.pi / 2 ≤ 2 := by linarith [Real.pi_le_four]
+    have hs2 : (|t| / 2) ^ 2 ≤ 6 := by nlinarith [hp2, hpi, h0]
+    nlinarith [hs2]
+  have hsq : (|t| / 2 - (|t| / 2) ^ 3 / 6) ^ 2 ≤ Real.sin (|t| / 2) ^ 2 :=
+    pow_le_pow_left₀ hbase hsin 2
+  have h2 : 2 * (|t| / 2 - (|t| / 2) ^ 3 / 6) ^ 2 ≤ 2 * Real.sin (|t| / 2) ^ 2 := by nlinarith [hsq]
+  have h4 : 1 - 2 * (|t| / 2 - (|t| / 2) ^ 3 / 6) ^ 2 ≤ 1 - |t| ^ 2 / 2 + |t| ^ 4 / 24 := by
+    have hu4 : (0 : ℝ) ≤ (|t| / 2) ^ 4 := by positivity
+    have hu6 : (0 : ℝ) ≤ (|t| / 2) ^ 6 := by positivity
+    nlinarith [hu4, hu6]
+  have ht2 : t ^ 2 = |t| ^ 2 := (sq_abs t).symm
+  have ht4 : t ^ 4 = |t| ^ 4 := by rw [← abs_pow, abs_of_nonneg (by positivity : (0 : ℝ) ≤ t ^ 4)]
+  rw [ht2, ht4]
+  have hexp : (|t| / 2 - (|t| / 2) ^ 3 / 6) ^ 2 = |t| ^ 2 / 4 - |t| ^ 4 / 48 + |t| ^ 6 / 2304 := by ring
+  nlinarith [hsq, hexp, sq_nonneg (|t| ^ 3)]
+
+
+
+
 /-- The characteristic function at the antipodal point is its negative. -/
 theorem charFn_antipode (d : ℕ) (θ : Fin d → ℝ) :
     charFn d (fun i => θ i + Real.pi) = - charFn d θ := by
