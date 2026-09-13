@@ -62,4 +62,16 @@ theorem integral_infinitePi_update_eq_integral_integral [DecidableEq ι]
   rw [hswap]
   exact integral_prod _ ((measurePreserving_update_infinitePi μ i).integrable_comp_of_integrable hg)
 
+/-- **Resampling one coordinate preserves the product law, coordinate first.**  The
+same statement as `measurePreserving_update_infinitePi` with the fresh coordinate
+carried on the left, which is the order in which the Fubini identity is applied. -/
+theorem measurePreserving_update_infinitePi_swap [DecidableEq ι] (μ : ∀ i, Measure (X i))
+    [∀ i, IsProbabilityMeasure (μ i)] (i : ι) :
+    MeasurePreserving (fun q : X i × (Π j, X j) => Function.update q.2 i q.1)
+      ((μ i).prod (Measure.infinitePi μ)) (Measure.infinitePi μ) := by
+  have hswap : MeasurePreserving (Prod.swap : X i × (Π j, X j) → (Π j, X j) × X i)
+      ((μ i).prod (Measure.infinitePi μ)) ((Measure.infinitePi μ).prod (μ i)) :=
+    ⟨measurable_swap, Measure.prod_swap⟩
+  exact (measurePreserving_update_infinitePi μ i).comp hswap
+
 end LatticeProb
