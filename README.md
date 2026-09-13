@@ -60,6 +60,8 @@ LatticeProb/Prob/BK.lean            the van den Berg-Kesten inequality on the fi
 LatticeProb/Prob/InfinitePiSplit.lean  the head-tail decomposition of a product over the naturals
 LatticeProb/Prob/Coordinate.lean    one coordinate of an infinite product, against the rest
 LatticeProb/Prob/CondExpParam.lean  a jointly measurable version of a conditional expectation in a parameter
+LatticeProb/Prob/CondExpParamMeas.lean  measurability of the kernel integral against the conditional-expectation kernel
+LatticeProb/Prob/UpdateSite.lean   resampling one coordinate of an infinite product, and the Fubini identity it gives
 LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
 LatticeProb/Prob/Birkhoff.lean      the pointwise ergodic theorem
 LatticeProb/Prob/ConditionalMeasure.lean  regular conditional probability measures, disintegration,
