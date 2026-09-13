@@ -1079,4 +1079,35 @@ theorem region2_exp (d : ℕ) (hd : 0 < d) (n : ℕ) (η : ℝ) (hη0 : 0 < η) 
   rw [harg]
   exact hfin
 
+/-- The torus-box integral of a nonnegative function is bounded by the
+integral over the Gaussian region plus the integral over the far region. -/
+theorem integral_box_le_gauss_plus_far (d : ℕ) (f : (Fin d → ℝ) → ℝ)
+    (hf : 0 ≤ f)
+    (hint2 : IntegrableOn f ({x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2}
+      ∪ {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|} : Set (Fin d → ℝ)) volume) :
+    ∫ x in torusBox d, f x ∂volume ≤
+      ∫ x in {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2}, f x ∂volume
+        + ∫ x in {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|}, f x ∂volume := by
+  have hsub := LatticeProb.torusBox_subset_gauss_or_far d
+  have hnn : 0 ≤ᵐ[volume.restrict ({x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2}
+      ∪ {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|} : Set (Fin d → ℝ))] f := by
+    filter_upwards with x using hf x
+  have hae : torusBox d ≤ᵐ[volume] ({x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2}
+      ∪ {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|} : Set (Fin d → ℝ)) := hsub.eventuallyLE
+  have hmono := setIntegral_mono_set hint2 hnn hae
+  have hdis : Disjoint {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2}
+      {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|} := by
+    refine Set.disjoint_right.mpr ?_
+    intro x hFar hG
+    obtain ⟨i, hi⟩ := hFar
+    exact absurd (hG i) (by nlinarith [hi])
+  have hMG : MeasurableSet {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2} := by measurability
+  have hMF : MeasurableSet {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|} := by measurability
+  have hintG : IntegrableOn f {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2} volume :=
+    IntegrableOn.mono_set hint2 Set.subset_union_left
+  have hintF : IntegrableOn f {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|} volume :=
+    IntegrableOn.mono_set hint2 Set.subset_union_right
+  rw [setIntegral_union hdis hMF hintG hintF] at hmono
+  exact hmono
+
 end LatticeProb
