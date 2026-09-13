@@ -184,6 +184,7 @@ import LatticeProb.Prob.StoppingDyadic
 import LatticeProb.Prob.BrownianPathLaw
 import LatticeProb.Prob.BrownianStrongMarkov
 import LatticeProb.Prob.BrownianExitTime
+import LatticeProb.Prob.CondExpParam
 import LatticeProb.Prob.BrownianRestartIntegral
 import LatticeProb.Prob.BrownianContAll
 import LatticeProb.Prob.RegularVariation
