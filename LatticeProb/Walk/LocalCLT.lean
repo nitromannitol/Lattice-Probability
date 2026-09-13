@@ -11,6 +11,7 @@ otherwise).  The peeling lemma `integral_box_peel` reduces the `d`-dimensional
 integral to the one-dimensional one coordinate at a time, which is how the
 Fourier representation of `srwHeat` is built by recursion on `d`.
 -/
+import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 import LatticeProb.Walk.Character
 import LatticeProb.Walk.Basic
 import LatticeProb.Walk.SRW
@@ -881,5 +882,21 @@ theorem region2_pow_le_exp (d : ℕ) (hd : 0 < d) (n k : ℕ) (η : ℝ)
     ring
   rw [hexp] at hpow
   exact hpow
+
+/-- The exponential of a sum is the product of exponentials, in the form the
+Gaussian-region integral needs. -/
+theorem exp_neg_sum_eq_prod (d : ℕ) (c : ℝ) (θ : Fin d → ℝ) :
+    Real.exp (- c * ∑ i, θ i ^ 2) = ∏ i, Real.exp (- c * θ i ^ 2) := by
+  rw [Finset.mul_sum, Real.exp_sum]
+
+/-- One-dimensional Gaussian integral over the torus interval: the integral of
+exp (- c t ^ 2) over [-π, π] is at most the full Gaussian integral √(π / c). -/
+theorem box_int_le_gauss (c : ℝ) (hc : 0 < c) :
+    ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) ≤ Real.sqrt (Real.pi / c) := by
+  have h : ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) ≤ ∫ t, Real.exp (- c * t ^ 2) :=
+    MeasureTheory.setIntegral_le_integral (integrable_exp_neg_mul_sq hc)
+      (Filter.Eventually.of_forall fun x => Real.exp_nonneg _)
+  rw [integral_gaussian c] at h
+  exact h
 
 end LatticeProb
