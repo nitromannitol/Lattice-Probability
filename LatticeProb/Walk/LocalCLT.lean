@@ -632,4 +632,42 @@ theorem charFn_antipode (d : ℕ) (θ : Fin d → ℝ) :
   rw [Real.cos_add]
   simp
 
+/-- For any real x, 1 - x ≤ exp (-x). -/
+theorem one_sub_le_exp_neg (x : ℝ) : 1 - x ≤ Real.exp (-x) := by
+  have h := Real.add_one_le_exp (-x)
+  linarith
+
+/-- The Gaussian-region bound on the characteristic function: if every
+coordinate of θ is at most π in absolute value, then with S = ∑ θ i ²,
+charFn d θ ≤ 1 - S / (2d) + S ² / (24 d).  This is the quartic-remainder
+form of the heat-kernel comparison, the pointwise input to the
+Gaussian region of the local central limit theorem. -/
+theorem charFn_le_gauss_quartic (d : ℕ) (hd : 0 < d) (θ : Fin d → ℝ)
+    (hpi : ∀ i, |θ i| ≤ Real.pi) :
+    charFn d θ ≤ 1 - (∑ i, θ i ^ 2) / (2 * d) + (∑ i, θ i ^ 2) ^ 2 / (24 * d) := by
+  have hcos : ∑ i, Real.cos (θ i) ≤ ∑ i, (1 - θ i ^ 2 / 2 + θ i ^ 4 / 24) :=
+    Finset.sum_le_sum (fun i _ => LatticeProb.cos_le_one_sub_half_sq_add_quartic _ (hpi i))
+  have hA : ∑ i, θ i ^ 4 ≤ (∑ i, θ i ^ 2) ^ 2 := by
+    have hnn : ∀ i ∈ Finset.univ, 0 ≤ θ i ^ 2 := by intro i _; positivity
+    have hconv : ∑ i, θ i ^ 4 = ∑ i, (θ i ^ 2) ^ 2 := Finset.sum_congr rfl (fun i _ => by ring)
+    rw [hconv]
+    exact Finset.sum_sq_le_sq_sum_of_nonneg hnn
+  have hB : ∑ i, (1 - θ i ^ 2 / 2 + θ i ^ 4 / 24)
+      ≤ (d : ℝ) - (∑ i, θ i ^ 2) / 2 + (∑ i, θ i ^ 2) ^ 2 / 24 := by
+    have hC : ∑ i, (1 - θ i ^ 2 / 2 + θ i ^ 4 / 24)
+        = (d : ℝ) - (∑ i, θ i ^ 2) / 2 + (∑ i, θ i ^ 4) / 24 := by
+      simp [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_div,
+        Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    rw [hC]
+    gcongr
+  have hF : (∑ i, Real.cos (θ i)) / (d : ℝ)
+      ≤ ((d : ℝ) - (∑ i, θ i ^ 2) / 2 + (∑ i, θ i ^ 2) ^ 2 / 24) / (d : ℝ) := by
+    gcongr
+    · exact le_trans hcos hB
+  have hG : ((d : ℝ) - (∑ i, θ i ^ 2) / 2 + (∑ i, θ i ^ 2) ^ 2 / 24) / (d : ℝ)
+      = 1 - (∑ i, θ i ^ 2) / (2 * d) + (∑ i, θ i ^ 2) ^ 2 / (24 * d) := by
+    field_simp
+  rw [hG] at hF
+  exact hF
+
 end LatticeProb
