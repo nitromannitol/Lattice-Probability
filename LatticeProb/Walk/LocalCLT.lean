@@ -1003,4 +1003,80 @@ theorem integral_exp_neg_sum_sq_le (d : ℕ) (c : ℝ) (hc : 0 < c)
         ≤ ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d := hstep1
       _ ≤ (Real.sqrt (Real.pi / c)) ^ (d + 1) := hstep2
 
+/-- Cosine bound on [0, π/2]: cos η ≤ 1 - 2η²/π², the quadratic
+bound used in the second region of the local central limit theorem. -/
+theorem cos_le_one_sub_two_sq_div_pi_sq (η : ℝ) (hη : 0 ≤ η) (hηp : η ≤ Real.pi / 2) :
+    Real.cos η ≤ 1 - 2 * η ^ 2 / Real.pi ^ 2 := by
+  have habs : |η| ≤ Real.pi := by
+    rw [abs_of_nonneg hη]
+    nlinarith [hηp, Real.pi_pos]
+  have hq : Real.cos η ≤ 1 - η ^ 2 / 2 + η ^ 4 / 24 :=
+    LatticeProb.cos_le_one_sub_half_sq_add_quartic η habs
+  have hx : η ^ 2 ≤ Real.pi ^ 2 / 4 := by nlinarith [hη, hηp]
+  have hp : (9:ℝ) ≤ Real.pi ^ 2 := by nlinarith [Real.pi_gt_three]
+  have h4 : Real.pi ^ 2 ≤ 16 := by nlinarith [Real.pi_lt_four, Real.pi_pos]
+  have hp2 : Real.pi ^ 4 ≤ 48 * Real.pi ^ 2 - 192 := by
+    nlinarith [h4, hp, sq_nonneg Real.pi]
+  have hpx : 0 ≤ Real.pi ^ 2 * η ^ 2 :=
+    mul_nonneg (sq_nonneg Real.pi) (sq_nonneg η)
+  have hne : Real.pi ^ 2 ≠ 0 := ne_of_gt (by nlinarith [Real.pi_pos])
+  refine hq.trans ?_
+  field_simp
+  nlinarith [hx, hp2, hpx, sq_nonneg η, sq_nonneg Real.pi]
+
+/-- Every point of the torus box is either in the Gaussian region
+(all coordinates at most π/2 in absolute value) or has a far coordinate. -/
+theorem torusBox_subset_gauss_or_far (d : ℕ) :
+    torusBox d ⊆ {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2}
+      ∪ {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|} := by
+  intro x _hx
+  by_cases h : ∀ i, |x i| ≤ Real.pi / 2
+  · exact Or.inl h
+  · rcases not_forall.1 h with ⟨i, hi⟩
+    exact Or.inr ⟨i, not_le.1 hi⟩
+
+/-- The region-2 exponent is at most one. -/
+theorem two_mul_card_mul_sq_le (d : ℕ) (hd : 0 < d) (k : ℕ) (hk : k ≤ d)
+    (η : ℝ) (hη : 0 ≤ η) (hηp : η ≤ Real.pi / 2) :
+    2 * (k : ℝ) * η ^ 2 / ((d : ℝ) * Real.pi ^ 2) ≤ 1 := by
+  have hd0 : (0:ℝ) < d := by exact_mod_cast hd
+  have hk' : (k : ℝ) ≤ (d : ℝ) := by exact_mod_cast hk
+  have hpi : (0:ℝ) < Real.pi ^ 2 := by positivity
+  rw [div_le_iff₀ (mul_pos hd0 hpi)]
+  have hη2 : η ^ 2 ≤ Real.pi ^ 2 / 4 := by nlinarith [hη, hηp, Real.pi_pos]
+  nlinarith [hk', hd0, hη2, hpi, Real.pi_pos]
+
+/-- Region 2 in exponential form: with k far coordinates at angle η,
+the characteristic function to the n-th power decays like
+exp(-n (2k/d) η²/π²). -/
+theorem region2_exp (d : ℕ) (hd : 0 < d) (n : ℕ) (η : ℝ) (hη0 : 0 < η) (hηp : η ≤ Real.pi / 2)
+    (θ : Fin d → ℝ) (F : Finset (Fin d))
+    (hF : ∀ i ∈ F, η ≤ |θ i| ∧ |θ i| ≤ Real.pi - η) :
+    |charFn d θ| ^ n ≤ Real.exp (- (n : ℝ) * (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2) := by
+  have habs := charFn_abs_le_of_region2 d hd θ η hη0.le hηp F hF
+  have hcos := LatticeProb.cos_le_one_sub_two_sq_div_pi_sq η hη0.le hηp
+  have hd0 : (0:ℝ) < d := by exact_mod_cast hd
+  have hk : (0:ℝ) ≤ F.card := by positivity
+  have hkc : (F.card : ℝ) ≤ (d : ℝ) := by exact_mod_cast card_finset_fin_le F
+  have h2 : ((d:ℝ) - F.card + F.card * (1 - 2 * η ^ 2 / Real.pi ^ 2)) / d
+      = 1 - (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2 := by field_simp; ring
+  have h1 : ((d:ℝ) - F.card + F.card * Real.cos η) / d
+      ≤ ((d:ℝ) - F.card + F.card * (1 - 2 * η ^ 2 / Real.pi ^ 2)) / d :=
+    (div_le_div_iff_of_pos_right hd0).mpr (by nlinarith [hcos, hk])
+  have hbase : |charFn d θ| ≤ 1 - (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2 :=
+    habs.trans (h1.trans (le_of_eq h2))
+  have hterm : (0:ℝ) ≤ (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2 := by positivity
+  have hu1 : (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2 ≤ 1 := by
+    have := LatticeProb.two_mul_card_mul_sq_le d hd F.card (card_finset_fin_le F) η hη0.le hηp
+    field_simp at this ⊢
+    linarith
+  have hfin := LatticeProb.one_sub_pow_le_exp n ((2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2) hterm hu1
+  have hmono : |charFn d θ| ^ n ≤ (1 - (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2) ^ n :=
+    pow_le_pow_left₀ (abs_nonneg _) hbase n
+  refine hmono.trans ?_
+  have harg : (- (n:ℝ) * (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2)
+      = - (n:ℝ) * (2 * (F.card : ℝ) / d * η ^ 2 / Real.pi ^ 2) := by ring
+  rw [harg]
+  exact hfin
+
 end LatticeProb
