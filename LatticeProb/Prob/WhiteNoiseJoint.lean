@@ -32,4 +32,17 @@ theorem exists_joint_version_whiteNoiseOf {X U : Type*} [MeasurableSpace X]
     (fun f => (isGaussianProcess_whiteNoiseOf μ).hasGaussianLaw_eval f |>.memLp_two)
     (fun f g hf hg => integral_whiteNoiseOf_mul μ hf hg) f hf hF
 
+/-- **The jointly measurable version of the canonical white noise, with the parameter
+measurability extracted.**  Same witness as `exists_joint_version_whiteNoiseOf`, with the
+conclusion that each slice `g u` is measurable. -/
+theorem exists_joint_version_whiteNoiseOf_meas {X U : Type*} [MeasurableSpace X]
+    [MeasurableSpace U] (μ : Measure X) [IsSeparable μ]
+    (f : U → X → ℝ) (hf : ∀ u, MemLp (f u) 2 μ)
+    (hF : StronglyMeasurable (fun u => (hf u).toLp (f u))) :
+    ∃ g : U → (↥(l2Basis μ) → ℝ) → ℝ,
+      (∀ u, Measurable (g u)) ∧
+      ∀ u, g u =ᵐ[whiteNoiseLaw μ] whiteNoiseOf μ (f u) := by
+  obtain ⟨g, hg, hg'⟩ := exists_joint_version_whiteNoiseOf μ f hf hF
+  refine ⟨g, fun u => (hg.comp_measurable (measurable_const.prodMk measurable_id)).measurable, hg'⟩
+
 end LatticeProb
