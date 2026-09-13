@@ -8,6 +8,7 @@ import LatticeProb.Equivariance
 import LatticeProb.Invariance
 import LatticeProb.Walk.Basic
 import LatticeProb.Walk.SRW
+import LatticeProb.Walk.SRWPos
 import LatticeProb.Walk.OneDimGauss
 import LatticeProb.Walk.SRWOneDim
 import LatticeProb.Walk.SRWTail
