@@ -64,6 +64,7 @@ LatticeProb/Prob/CondExpParamMeas.lean  measurability of the kernel integral aga
 LatticeProb/Prob/UpdateSite.lean   resampling one coordinate of an infinite product, and the Fubini identity it gives
 LatticeProb/Prob/KlDivGaussianAux.lean  the Gaussian log-likelihood ratio and its integral
 LatticeProb/Prob/KlDivGaussian.lean  the relative entropy between two Gaussians of a common variance
+LatticeProb/Prob/IidSplit.lean  the Fubini identity for an i.i.d. field split at one site
 LatticeProb/Prob/KlDivGaussianPi.lean  the relative entropy of a finite product of Gaussian shifts
 LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
 LatticeProb/Prob/Birkhoff.lean      the pointwise ergodic theorem
