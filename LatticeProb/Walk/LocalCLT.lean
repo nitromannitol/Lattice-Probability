@@ -1164,4 +1164,74 @@ theorem charFn_pow_le_exp_of_far (d : ℕ) (n : ℕ) (η : ℝ) (hη0 : 0 < η) 
   rw [hcard, Nat.cast_one] at h1
   simpa using h1
 
+/-- The far-region integral inside the box decays exponentially in n. -/
+theorem integral_farRegion_box_le (d : ℕ) (n : ℕ) (η : ℝ) (hη0 : 0 < η) (hηp : η ≤ Real.pi / 2)
+    (hd : 0 < d) :
+    ∫ x in {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η},
+        |charFn d x| ^ n ∂volume
+      ≤ (2 * Real.pi) ^ d * Real.exp (- (n : ℝ) * (2 / (d : ℝ)) * η ^ 2 / Real.pi ^ 2) := by
+  have hvol : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} < ⊤ := by
+    have h1 : {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} ⊆ torusBox d :=
+      fun x hx => hx.1
+    have h2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}
+        ≤ volume (torusBox d) := measure_mono h1
+    rw [LatticeProb.volume_torusBox d] at h2
+    exact lt_of_le_of_lt h2 ENNReal.ofReal_lt_top
+  have hpt : ∀ x ∈ {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η},
+      ‖|charFn d x| ^ n‖ ≤ Real.exp (- (n : ℝ) * (2 / (d : ℝ)) * η ^ 2 / Real.pi ^ 2) := by
+    intro x hx
+    obtain ⟨_, i₀, hlo, hhi⟩ := hx
+    rw [Real.norm_eq_abs, abs_of_nonneg (pow_nonneg (abs_nonneg _) _)]
+    exact LatticeProb.charFn_pow_le_exp_of_far d n η hη0 hηp x i₀ hlo hhi hd
+  have h3 := norm_setIntegral_le_of_norm_le_const (μ := volume) (f := fun x => |charFn d x| ^ n) hvol hpt
+  have hSmeas : MeasurableSet {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} := by
+    rw [show {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}
+        = torusBox d ∩ ⋃ i, {x | η ≤ |x i| ∧ |x i| ≤ Real.pi - η} from by
+        ext x; simp [Set.mem_iUnion]]
+    exact (LatticeProb.torusBox_measurable d).inter
+      (MeasurableSet.iUnion fun i =>
+        (isClosed_Icc.preimage (continuous_abs.comp (continuous_apply i))).measurableSet)
+  have hnn : 0 ≤ ∫ x in {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η},
+      |charFn d x| ^ n ∂volume :=
+    setIntegral_nonneg hSmeas (fun x _ => pow_nonneg (abs_nonneg _) _)
+  rw [Real.norm_eq_abs, abs_of_nonneg hnn] at h3
+  have hv : (volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}).toReal
+      ≤ (2 * Real.pi) ^ d := by
+    have h1 : {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} ⊆ torusBox d :=
+      fun x hx => hx.1
+    have h2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}
+        ≤ volume (torusBox d) := measure_mono h1
+    have hne : volume (torusBox d) ≠ ⊤ := by
+      rw [LatticeProb.volume_torusBox d]; exact ENNReal.ofReal_ne_top
+    have hne2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} ≠ ⊤ := by
+      intro h
+      rw [h] at h2
+      exact hne (top_le_iff.mp h2)
+    have h4 := (ENNReal.toReal_le_toReal hne2 hne).mpr h2
+    rw [LatticeProb.volume_torusBox d, ENNReal.toReal_ofReal (by positivity : (0:ℝ) ≤ (2 * Real.pi) ^ d)] at h4
+    exact h4
+  calc ∫ x in {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η},
+        |charFn d x| ^ n ∂volume
+      ≤ Real.exp (- (n : ℝ) * (2 / (d : ℝ)) * η ^ 2 / Real.pi ^ 2)
+          * (volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}).toReal := h3
+    _ ≤ Real.exp (- (n : ℝ) * (2 / (d : ℝ)) * η ^ 2 / Real.pi ^ 2) * (2 * Real.pi) ^ d :=
+        mul_le_mul_of_nonneg_left hv (Real.exp_nonneg _)
+    _ = (2 * Real.pi) ^ d * Real.exp (- (n : ℝ) * (2 / (d : ℝ)) * η ^ 2 / Real.pi ^ 2) := by ring
+
+/-- The margin far region has volume at most the torus box. -/
+theorem volume_farRegion_le' (d : ℕ) (η : ℝ) :
+    (volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}).toReal
+      ≤ (2 * Real.pi) ^ d := by
+  have hsub : {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} ⊆ torusBox d :=
+    fun x hx => hx.1
+  have h2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} ≤ volume (torusBox d) :=
+    measure_mono hsub
+  have hne : volume (torusBox d) ≠ ⊤ := by
+    rw [LatticeProb.volume_torusBox d]
+    exact ENNReal.ofReal_ne_top
+  have h3 := ENNReal.toReal_mono hne h2
+  rw [LatticeProb.volume_torusBox d,
+    ENNReal.toReal_ofReal (by positivity : (0 : ℝ) ≤ (2 * Real.pi) ^ d)] at h3
+  exact h3
+
 end LatticeProb
