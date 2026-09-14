@@ -220,3 +220,15 @@ import LatticeProb.Graph.HeatVanishing
 import LatticeProb.Prob.ConditionalMeasure
 import LatticeProb.Prob.ErgodicDecomposition
 import LatticeProb.Lattice.Planar
+import LatticeProb.Analysis.Sobolev.Defs
+import LatticeProb.Analysis.Sobolev.Basic
+import LatticeProb.Analysis.Sobolev.Weight
+import LatticeProb.Analysis.Sobolev.Scaling
+import LatticeProb.Analysis.Sobolev.TestFn
+import LatticeProb.Analysis.Sobolev.TestFnSub
+import LatticeProb.Analysis.Sobolev.AbsApply
+import LatticeProb.Analysis.Sobolev.DualNet
+import LatticeProb.Analysis.Sobolev.Tight
+import LatticeProb.Analysis.Sobolev.Compact
+import LatticeProb.Analysis.Sobolev.TightTransfer
+import LatticeProb.External.RellichKondrachovNegSobolev
