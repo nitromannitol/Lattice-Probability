@@ -1234,4 +1234,70 @@ theorem volume_farRegion_le' (d : ℕ) (η : ℝ) :
     ENNReal.toReal_ofReal (by positivity : (0 : ℝ) ≤ (2 * Real.pi) ^ d)] at h3
   exact h3
 
+/-- Gaussian-region exponential bound, coarse form: if every |θ i| ≤ π/2 and
+S = ∑ θ i ² ≤ d, then charFn d θ ^ n ≤ exp (- n S / (8 d)).  The constant 8
+comes from 2/π² ≥ 1/8 (as π ≤ 4). -/
+
+theorem charFn_pow_le_exp_gaussRegion (d : ℕ) (hd : 0 < d) (n : ℕ) (θ : Fin d → ℝ)
+    (hpi : ∀ i, |θ i| ≤ Real.pi / 2) (hS : ∑ i, θ i ^ 2 ≤ (d : ℝ)) :
+    |charFn d θ| ^ n ≤ Real.exp (- (n : ℝ) * (∑ i, θ i ^ 2) / (8 * (d : ℝ))) := by
+  have hd0 : (0:ℝ) < d := by exact_mod_cast hd
+  have hS0 : 0 ≤ ∑ i, θ i ^ 2 := Finset.sum_nonneg (fun i _ => by positivity)
+  have habs : |charFn d θ| = charFn d θ := by
+    have hcos : ∀ i, 0 ≤ Real.cos (θ i) := fun i =>
+      Real.cos_nonneg_of_neg_pi_div_two_le_of_le (abs_le.mp (hpi i)).1 (abs_le.mp (hpi i)).2
+    have hsum : 0 ≤ ∑ i, Real.cos (θ i) := Finset.sum_nonneg (fun i _ => hcos i)
+    have hdef : charFn d θ = (∑ i, Real.cos (θ i)) / (d:ℝ) := rfl
+    rw [hdef]
+    exact abs_of_nonneg (by positivity)
+  have h1 : charFn d θ ≤ 1 - (∑ i, θ i ^ 2) / (8 * (d : ℝ)) := by
+    have hsum : ∑ i, Real.cos (θ i) ≤ ∑ i, (1 - 2 / Real.pi ^ 2 * (θ i) ^ 2) :=
+      Finset.sum_le_sum (fun i _ => LatticeProb.cos_le_one_sub_mul_sq _ (by
+        have h := hpi i
+        rw [abs_le] at h
+        exact abs_le.mpr ⟨by have := Real.pi_pos; linarith, h.2.trans (by have := Real.pi_pos; linarith)⟩))
+    have h2 : ∑ i, (1 - 2 / Real.pi ^ 2 * (θ i) ^ 2)
+        = (d:ℝ) - 2 / Real.pi ^ 2 * (∑ i, θ i ^ 2) := by
+      simp [Finset.mul_sum, Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    rw [h2] at hsum
+    have h3 : charFn d θ = (∑ i, Real.cos (θ i)) / (d:ℝ) := rfl
+    have h4 : 1 / 8 ≤ 2 / Real.pi ^ 2 := by
+      rw [le_div_iff₀ (by positivity : (0:ℝ) < Real.pi ^ 2)]
+      nlinarith [Real.pi_pos, Real.pi_le_four]
+    have h5 : (d:ℝ) - 2 / Real.pi ^ 2 * (∑ i, θ i ^ 2)
+        ≤ (d:ℝ) - (∑ i, θ i ^ 2) / 8 := by
+      have h6 : 2 / Real.pi ^ 2 * (∑ i, θ i ^ 2) ≥ (∑ i, θ i ^ 2) / 8 := by
+        have h4' : 1 / 8 ≤ 2 / Real.pi ^ 2 := h4
+        nlinarith [h4', hS0]
+      linarith
+    have h7 : (d:ℝ) - (∑ i, θ i ^ 2) / 8 ≤ (d:ℝ) - (∑ i, θ i ^ 2) / (8 * (d:ℝ)) := by
+      have hd1 : (1:ℝ) ≤ (d:ℝ) := by exact_mod_cast hd
+      have key : (∑ i, θ i ^ 2) / (8 * (d:ℝ)) ≤ (∑ i, θ i ^ 2) / 8 := by
+        rw [div_le_iff₀ (by positivity : (0:ℝ) < 8 * (d:ℝ))]
+        field_simp
+        nlinarith [hS0, hd1]
+      linarith
+    have hgoal : (1 - (∑ i, θ i ^ 2) / (8 * (d:ℝ))) * (d:ℝ)
+        = (d:ℝ) - (∑ i, θ i ^ 2) / 8 := by
+      field_simp
+    rw [h3, div_le_iff₀ hd0, hgoal]
+    linarith
+  have h8 : (1 - (∑ i, θ i ^ 2) / (8 * (d : ℝ))) ^ n
+      ≤ Real.exp (- (n : ℝ) * ((∑ i, θ i ^ 2) / (8 * (d : ℝ)))) :=
+    one_sub_pow_le_exp n _ (by positivity) (by rw [div_le_iff₀ (by positivity : (0:ℝ) < 8 * (d:ℝ))]; nlinarith [hS0, hd0])
+  have h9 : |charFn d θ| ^ n ≤ (1 - (∑ i, θ i ^ 2) / (8 * (d : ℝ))) ^ n := by
+    rw [habs]
+    exact pow_le_pow_left₀ (by
+      have hcos : ∀ i, 0 ≤ Real.cos (θ i) := fun i =>
+        Real.cos_nonneg_of_neg_pi_div_two_le_of_le (abs_le.mp (hpi i)).1 (abs_le.mp (hpi i)).2
+      have hsum : 0 ≤ ∑ i, Real.cos (θ i) := Finset.sum_nonneg (fun i _ => hcos i)
+      have hdef : charFn d θ = (∑ i, Real.cos (θ i)) / (d:ℝ) := rfl
+      rw [hdef]; positivity) h1 n
+  have h10 : Real.exp (- (n : ℝ) * ((∑ i, θ i ^ 2) / (8 * (d : ℝ))))
+      = Real.exp ((- (n : ℝ) * (∑ i, θ i ^ 2)) / (8 * (d : ℝ))) := by
+    congr 1
+    field_simp
+  calc |charFn d θ| ^ n ≤ (1 - (∑ i, θ i ^ 2) / (8 * (d : ℝ))) ^ n := h9
+    _ ≤ Real.exp (- (n : ℝ) * ((∑ i, θ i ^ 2) / (8 * (d : ℝ)))) := h8
+    _ = Real.exp ((- (n : ℝ) * (∑ i, θ i ^ 2)) / (8 * (d : ℝ))) := h10
 end LatticeProb
