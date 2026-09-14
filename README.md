@@ -21,6 +21,7 @@ LatticeProb/Walk/OneDim.lean        the one-dimensional lazy kernel
 LatticeProb/Walk/SRW.lean           the simple random walk kernel, its support and parity
 LatticeProb/Walk/OneDimGauss.lean   the Gaussian bound on the one-dimensional lazy kernel
 LatticeProb/Walk/SRWOneDim.lean     the one-dimensional simple kernel against the lazy one
+LatticeProb/Walk/BinomialLocalCLT.lean  the binomial local central limit theorem with an explicit 1/m error
 LatticeProb/Walk/SRWDecomp.lean     the coordinate decomposition of the simple kernel
 LatticeProb/Walk/SRWGauss.lean      the ingredients of the Gaussian bound on the lattice
 LatticeProb/Walk/S1Gauss.lean       the Gaussian bound on the one-dimensional simple kernel
