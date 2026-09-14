@@ -72,6 +72,9 @@ import LatticeProb.Prob.Kingman
 import LatticeProb.Prob.SubGaussian
 import LatticeProb.Prob.EfronStein
 import LatticeProb.Prob.WeightedConc
+import LatticeProb.Prob.GaussianConcentration
+import LatticeProb.External.GaussianLogSobolev
+import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Graph.Basic
 import LatticeProb.Graph.Scenery
 import LatticeProb.Graph.Walk
