@@ -19,7 +19,7 @@ open scoped ENNReal FourierTransform
 
 noncomputable section
 
-namespace LatticeProb
+namespace LatticeProb.NegSobolev
 
 /-- The plane `ℝ^d` of the paper's test functions. -/
 abbrev Space (d : ℕ) := EuclideanSpace ℝ (Fin d)
@@ -93,4 +93,4 @@ theorem negSobolevNorm_sublevel_subset {d : ℕ} {s₀ s : ℝ} (h : s₀ ≤ s)
       {F : (Space d → ℝ) → ℝ | negSobolevNorm d s D F ≤ M} :=
   fun _ hF => le_trans (negSobolevNorm_le h D _) hF
 
-end LatticeProb
+end LatticeProb.NegSobolev
