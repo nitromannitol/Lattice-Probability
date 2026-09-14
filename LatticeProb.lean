@@ -75,6 +75,8 @@ import LatticeProb.Prob.WeightedConc
 import LatticeProb.Prob.GaussianConcentration
 import LatticeProb.External.GaussianLogSobolev
 import LatticeProb.Prob.GaussianHerbst
+import LatticeProb.Topology.Polygonal
+import LatticeProb.External.PolygonalTopology
 import LatticeProb.Graph.Basic
 import LatticeProb.Graph.Scenery
 import LatticeProb.Graph.Walk
