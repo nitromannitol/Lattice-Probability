@@ -92,6 +92,8 @@ LatticeProb/Prob/GaussianHerbst.lean  Gaussian concentration for a Lipschitz fun
 LatticeProb/External/GaussianLogSobolev.lean  the cited Gaussian logarithmic Sobolev inequality
 LatticeProb/Topology/Polygonal.lean  polygonal subsets of the plane and their basic topology
 LatticeProb/External/PolygonalTopology.lean  the cited polygonal unicoherence and Janiszewski theorems
+LatticeProb/Analysis/NegSobolev.lean  negative-order Sobolev norms on a bounded domain, and the
+                                    continuous inclusion H^{-s0}(D) into H^{-s}(D) for s0 <= s
                                     and the Herbst exponential moment bound it implies
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
 LatticeProb/Prob/Ottaviani.lean     Ottaviani's maximal inequality, as a first passage decomposition
