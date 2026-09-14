@@ -54,6 +54,15 @@ noncomputable def laplacian (G : SimpleGraph V) [G.LocallyFinite] (f : V → ℝ
 /-- The closed ball `B(x,r) = {v : dist(v,x) ≤ r}`. -/
 def closedBall (G : SimpleGraph V) (x : V) (r : ℕ) : Set V := {v | G.edist v x ≤ r}
 
+/-- Harmonicity at a vertex of positive degree is the mean value property. -/
+theorem laplacian_eq_zero_iff_walkOp {G : SimpleGraph V} [G.LocallyFinite] (f : V → ℝ) {x : V}
+    (hx : G.degree x ≠ 0) : laplacian G f x = 0 ↔ walkOp G f x = f x := by
+  have h : laplacian G f x = (∑ y ∈ G.neighborFinset x, f y) - G.degree x * f x := by
+    rw [laplacian, Finset.sum_sub_distrib, Finset.sum_const,
+      SimpleGraph.card_neighborFinset_eq_degree, nsmul_eq_mul]
+  rw [h, walkOp, sub_eq_zero, div_eq_iff (show (G.degree x : ℝ) ≠ 0 by exact_mod_cast hx)]
+  constructor <;> intro h' <;> linarith
+
 /-! ### The divisible sandpile -/
 
 /-- The excess mass `ξ(v) = σ(v) - 1`. -/
