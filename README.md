@@ -179,6 +179,18 @@ LatticeProb/Graph/OnDiagonal.lean   the on-diagonal heat kernel bound p_n(x,x) <
                                     infinite connected graph of degree bounded by d
 LatticeProb/Graph/HeatVanishing.lean  the transition probability tends to zero there, and a graph with
                                     a finite component where it does not
+LatticeProb/Analysis/Sobolev/Defs.lean  test functions, the Fourier-side Sobolev norms of negative order, and bounded domains
+LatticeProb/Analysis/Sobolev/Basic.lean  monotonicity of the norm and antitonicity of the dual norm
+LatticeProb/Analysis/Sobolev/Weight.lean  the high-frequency weight comparison
+LatticeProb/Analysis/Sobolev/Scaling.lean  homogeneity of the squared Sobolev norm
+LatticeProb/Analysis/Sobolev/TestFn.lean  closure of the test-function class under scaling
+LatticeProb/Analysis/Sobolev/TestFnSub.lean  closure of the test-function class under subtraction
+LatticeProb/Analysis/Sobolev/AbsApply.lean  a small test function pairs to at most its norm times the dual norm
+LatticeProb/Analysis/Sobolev/DualNet.lean  the dual norm is controlled by a finite net plus the lower-order dual norm
+LatticeProb/Analysis/Sobolev/Tight.lean  tightness transfer between negative Sobolev orders
+LatticeProb/Analysis/Sobolev/Compact.lean  the compact embedding of negative Sobolev order on a bounded domain
+LatticeProb/Analysis/Sobolev/TightTransfer.lean  tightness in H^{-s0} gives subsequential limits in H^{-s}
+LatticeProb/External/RellichKondrachovNegSobolev.lean  the cited Rellich-Kondrachov compact embedding of negative order
 ```
 
 ## Attribution
