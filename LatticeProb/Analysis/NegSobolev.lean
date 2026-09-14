@@ -43,6 +43,11 @@ noncomputable def negSobolevNorm (d : ℕ) (s : ℝ) (D : Set (Space d))
 def IsDomain {d : ℕ} (D : Set (Space d)) : Prop :=
   IsOpen D ∧ Bornology.IsBounded D ∧ D.Nonempty
 
+/-- `IsTestFn` is monotone in the domain. -/
+theorem IsTestFn.mono {d : ℕ} {D₁ D₂ : Set (Space d)} (hsub : D₁ ⊆ D₂)
+    {φ : Space d → ℝ} (hφ : IsTestFn D₁ φ) : IsTestFn D₂ φ :=
+  ⟨hφ.1, hφ.2.1, Set.Subset.trans hφ.2.2 hsub⟩
+
 /-- The multiplier of `H^s` is monotone in `s`. -/
 theorem rpow_multiplier_mono {d : ℕ} {s₀ s : ℝ} (h : s₀ ≤ s) (ξ : Space d) :
     (1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s₀ ≤ (1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s := by
@@ -64,6 +69,14 @@ theorem negSobolevNorm_le {d : ℕ} {s₀ s : ℝ} (h : s₀ ≤ s) (D : Set (Sp
   refine sSup_le fun v hv => ?_
   obtain ⟨φ, hφ, hnorm, rfl⟩ := hv
   exact le_sSup ⟨φ, hφ, le_trans (sobolevNormSq_mono h φ) hnorm, rfl⟩
+
+/-- The negative-order norm is monotone in the domain. -/
+theorem negSobolevNorm_mono_domain {d : ℕ} (s : ℝ) {D₁ D₂ : Set (Space d)}
+    (hsub : D₁ ⊆ D₂) (F : (Space d → ℝ) → ℝ) :
+    negSobolevNorm d s D₁ F ≤ negSobolevNorm d s D₂ F := by
+  refine sSup_le fun v hv => ?_
+  obtain ⟨φ, hφ, hnorm, rfl⟩ := hv
+  exact le_sSup ⟨φ, hφ.mono hsub, hnorm, rfl⟩
 
 /-- **The consumer shape.**  A functional of `H^{-s₀}(D)` norm at most `M` has
 `H^{-s}(D)` norm at most `M` for `s₀ ≤ s`; equivalently the sublevel set of the

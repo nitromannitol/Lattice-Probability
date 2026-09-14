@@ -87,6 +87,7 @@ import LatticeProb.Graph.WalkLemmas
 import LatticeProb.Graph.Recursion
 import LatticeProb.Graph.Representation
 import LatticeProb.Graph.Green
+import LatticeProb.Graph.MeanValue
 import LatticeProb.Graph.HeatBasic
 import LatticeProb.Graph.RWRepresentation
 import LatticeProb.Graph.Zd
@@ -96,6 +97,7 @@ import LatticeProb.Graph.Killed
 import LatticeProb.Graph.ZdKilled
 import LatticeProb.Prob.Birkhoff
 import LatticeProb.Network.Basic
+import LatticeProb.Network.Liouville
 import LatticeProb.Network.Killed
 import LatticeProb.Graph.ExitDecomp
 import LatticeProb.Network.KilledGreen
