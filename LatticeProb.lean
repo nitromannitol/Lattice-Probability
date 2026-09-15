@@ -189,6 +189,8 @@ import LatticeProb.Support.ContSums
 import LatticeProb.Prob.KolmogorovPi
 import LatticeProb.Prob.KolmogorovBound
 import LatticeProb.Prob.CramerWold
+import LatticeProb.Support.PowerSum
+import LatticeProb.Support.TimeCut
 import LatticeProb.Prob.RpowAdd
 import LatticeProb.Prob.SupTail
 import LatticeProb.Prob.ChentsovPiModification

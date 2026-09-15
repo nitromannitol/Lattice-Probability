@@ -154,6 +154,8 @@ LatticeProb/Prob/SupTail.lean       the p-th moment of the supremum of a process
                                     from an almost-sure modulus of continuity, and the
 LatticeProb/Prob/CramerWold.lean    the Cramér-Wold device: convergence in distribution of a
                                     finite-dimensional vector from its one-dimensional
+LatticeProb/Support/PowerSum.lean    sums of a real power over an initial segment, by telescoping
+LatticeProb/Support/TimeCut.lean      continuous trapezoidal weights of a time interval, increasing in the resolution
                                     projections
                                     almost-sure modulus the Kolmogorov condition gives
 LatticeProb/Network/                electrical networks on a locally finite graph: the Dirichlet
