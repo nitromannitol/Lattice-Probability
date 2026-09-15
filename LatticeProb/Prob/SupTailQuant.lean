@@ -120,4 +120,55 @@ theorem measure_sup_abs_gt_le_of_ae_modulus {k : ℕ} {a b : Fin k → ℝ}
   rw [hset] at hmain
   exact (measure_mono_ae hsub).trans (by simpa [hN] using hmain)
 
+/-- The `p`-th moment of the box supremum of `|X ·|` itself, from an almost-sure
+modulus of continuity at a fixed scale. -/
+theorem integral_sup_abs_rpow_le_of_ae_modulus {k : ℕ} {a b : Fin k → ℝ}
+    {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+    {X : (Fin k → ℝ) → Ω → ℝ} {p δ : ℝ} (hp : 0 < p) (hδ0 : 0 < δ)
+    (hint : Integrable (fun ω => |X a ω| ^ p) P) (hmeas : Measurable (X a))
+    (hae : ∀ᵐ ω ∂P, ∀ s ∈ Set.Icc a b, ∀ r ∈ Set.Icc a b,
+      dist s r < δ → |X s ω - X r ω| ≤ 1) :
+    ∫ ω, (sSup ((fun u => |X u ω|) '' Set.Icc a b)) ^ p ∂P
+      ≤ (2 : ℝ) ^ p * (∫ ω, |X a ω| ^ p ∂P +
+          ((Nat.ceil (dist a b / δ) + 1 : ℕ) : ℝ) ^ p) :=
+  integral_sup_rpow_le_of_ae_pointwise (X := fun u ω => X u ω) P hp
+    (by positivity) hint hmeas (ae_sSup_abs_le_of_ae_modulus P hδ0 hae)
+
+/-- The tail of the box supremum in the form "some point of the box exceeds
+`lam`", which is the shape the Borel–Cantelli argument over the unit boxes
+consumes. -/
+theorem measure_exists_abs_gt_le_of_ae_modulus {k : ℕ} {a b : Fin k → ℝ}
+    {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+    {X : (Fin k → ℝ) → Ω → ℝ} {p δ : ℝ} (hp : 0 < p) (hδ0 : 0 < δ)
+    (hint : Integrable (fun ω => |X a ω| ^ p) P) (hmeas : Measurable (X a))
+    (hae : ∀ᵐ ω ∂P, ∀ s ∈ Set.Icc a b, ∀ r ∈ Set.Icc a b,
+      dist s r < δ → |X s ω - X r ω| ≤ 1) :
+    ∀ lam : ℝ, 0 < lam →
+      P {ω | ∃ u ∈ Set.Icc a b, lam < |X u ω|}
+        ≤ ENNReal.ofReal ((2 : ℝ) ^ p *
+            (∫ ω, |X a ω| ^ p ∂P + ((Nat.ceil (dist a b / δ) + 1 : ℕ) : ℝ) ^ p) / lam ^ p) := by
+  intro lam hlam
+  have hsub : {ω | ∃ u ∈ Set.Icc a b, lam < |X u ω|}
+      ≤ᵐ[P] {ω | lam < sSup ((fun u => |X u ω|) '' Set.Icc a b)} := by
+    filter_upwards [hae] with ω hω
+    rintro ⟨u, hu, hlt⟩
+    by_cases hab : a ≤ b
+    · have hN : 0 < Nat.ceil (dist a b / δ) + 1 := Nat.succ_pos _
+      have hstep : dist a b / ((Nat.ceil (dist a b / δ) + 1 : ℕ) : ℝ) < δ := by
+        rw [div_lt_iff₀ (by positivity)]
+        have h1 : dist a b / δ ≤ (Nat.ceil (dist a b / δ) : ℝ) := Nat.le_ceil _
+        have h2 : (Nat.ceil (dist a b / δ) : ℝ)
+            < ((Nat.ceil (dist a b / δ) + 1 : ℕ) : ℝ) := by push_cast; linarith
+        calc dist a b = dist a b / δ * δ := (div_mul_cancel₀ _ hδ0.ne').symm
+          _ ≤ (Nat.ceil (dist a b / δ) : ℝ) * δ := mul_le_mul_of_nonneg_right h1 hδ0.le
+          _ < ((Nat.ceil (dist a b / δ) + 1 : ℕ) : ℝ) * δ := mul_lt_mul_of_pos_right h2 hδ0
+          _ = δ * ((Nat.ceil (dist a b / δ) + 1 : ℕ) : ℝ) := mul_comm _ _
+      exact lt_of_lt_of_le hlt (le_csSup ⟨|X a ω| + _, fun y hy => by
+        obtain ⟨v, hv, rfl⟩ := hy
+        exact LatticeProb.abs_le_of_modulus_and_bound a b hN hδ0 hstep
+          (fun s hs r hr hsr => hω s hs r hr hsr) (le_refl _) v hv⟩ ⟨u, hu, rfl⟩)
+    · exact absurd (le_trans hu.1 hu.2) hab
+  exact (measure_mono_ae hsub).trans
+    (measure_sup_abs_gt_le_of_ae_modulus P hp hδ0 hint hmeas hae lam hlam)
+
 end LatticeProb.KolmogorovSup
