@@ -188,6 +188,8 @@ import LatticeProb.Prob.Pinsker
 import LatticeProb.Support.ContSums
 import LatticeProb.Prob.KolmogorovPi
 import LatticeProb.Prob.KolmogorovBound
+import LatticeProb.Prob.RpowAdd
+import LatticeProb.Prob.SupTail
 import LatticeProb.Prob.ChentsovPiModification
 import LatticeProb.Prob.Ottaviani
 import LatticeProb.Prob.BrownianMax

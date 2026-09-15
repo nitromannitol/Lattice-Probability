@@ -148,6 +148,11 @@ LatticeProb/Prob/PoissonTail.lean   the Poisson (Bennett) tail of a sum of indep
                                     nonnegative summands bounded by a level
 LatticeProb/Prob/FukNagaev.lean     the Fuk-Nagaev tail inequality for an independent centred sum
                                     with p-th moments, by a truncation at two levels
+LatticeProb/Prob/RpowAdd.lean       the p-th power of a sum of two nonnegative reals against
+                                    two to the p times the sum of the p-th powers
+LatticeProb/Prob/SupTail.lean       the p-th moment of the supremum of a process over a box,
+                                    from an almost-sure modulus of continuity, and the
+                                    almost-sure modulus the Kolmogorov condition gives
 LatticeProb/Network/                electrical networks on a locally finite graph: the Dirichlet
                                     energy and form, harmonic functions, the killed Green function
                                     as a voltage, the maximum and Dirichlet principles, Rayleigh
