@@ -196,6 +196,7 @@ import LatticeProb.Gauss.IsonormalSum
 import LatticeProb.Gauss.TailMills
 import LatticeProb.Prob.RpowAdd
 import LatticeProb.Prob.SupTail
+import LatticeProb.Prob.SupTailQuant
 import LatticeProb.Prob.ChentsovPiModification
 import LatticeProb.Prob.Ottaviani
 import LatticeProb.Prob.BrownianMax

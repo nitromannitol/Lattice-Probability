@@ -150,6 +150,7 @@ LatticeProb/Prob/FukNagaev.lean     the Fuk-Nagaev tail inequality for an indepe
                                     with p-th moments, by a truncation at two levels
 LatticeProb/Prob/RpowAdd.lean       the p-th power of a sum of two nonnegative reals against
                                     two to the p times the sum of the p-th powers
+LatticeProb/Prob/SupTailQuant.lean  the quantitative tail of the box supremum from an almost-sure modulus at a fixed scale
 LatticeProb/Prob/SupTail.lean       the p-th moment of the supremum of a process over a box,
                                     from an almost-sure modulus of continuity, and the
 LatticeProb/Prob/CramerWold.lean    the Cramér-Wold device: convergence in distribution of a
