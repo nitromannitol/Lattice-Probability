@@ -191,6 +191,8 @@ import LatticeProb.Prob.KolmogorovBound
 import LatticeProb.Prob.CramerWold
 import LatticeProb.Support.PowerSum
 import LatticeProb.Support.TimeCut
+import LatticeProb.Gauss.IsonormalSum
+import LatticeProb.Gauss.TailMills
 import LatticeProb.Prob.RpowAdd
 import LatticeProb.Prob.SupTail
 import LatticeProb.Prob.ChentsovPiModification

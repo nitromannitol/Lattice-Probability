@@ -156,6 +156,8 @@ LatticeProb/Prob/CramerWold.lean    the Cramér-Wold device: convergence in dist
                                     finite-dimensional vector from its one-dimensional
 LatticeProb/Support/PowerSum.lean    sums of a real power over an initial segment, by telescoping
 LatticeProb/Support/TimeCut.lean      continuous trapezoidal weights of a time interval, increasing in the resolution
+LatticeProb/Gauss/IsonormalSum.lean  almost sure convergence of the partial sums of the isonormal process
+LatticeProb/Gauss/TailMills.lean     the Gaussian tail bound from the density, and the Mills ratio comparison
                                     projections
                                     almost-sure modulus the Kolmogorov condition gives
 LatticeProb/Network/                electrical networks on a locally finite graph: the Dirichlet
