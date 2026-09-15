@@ -1300,4 +1300,446 @@ theorem charFn_pow_le_exp_gaussRegion (d : ℕ) (hd : 0 < d) (n : ℕ) (θ : Fin
   calc |charFn d θ| ^ n ≤ (1 - (∑ i, θ i ^ 2) / (8 * (d : ℝ))) ^ n := h9
     _ ≤ Real.exp (- (n : ℝ) * ((∑ i, θ i ^ 2) / (8 * (d : ℝ)))) := h8
     _ = Real.exp ((- (n : ℝ) * (∑ i, θ i ^ 2)) / (8 * (d : ℝ))) := h10
+
+/-- Cosine bound with the honest constant: for |t| ≤ π/2,
+cos t ≤ 1 - t²/3. -/
+theorem cos_le_one_sub_third_sq (t : ℝ) (ht : |t| ≤ Real.pi / 2) :
+    Real.cos t ≤ 1 - t ^ 2 / 3 := by
+  have hpi : Real.pi ^ 2 ≤ 16 := by
+    have h4 : Real.pi < 4 := Real.pi_lt_four
+    nlinarith [Real.pi_pos]
+  have hq := LatticeProb.cos_le_one_sub_half_sq_add_quartic t
+    (by have := Real.pi_pos; nlinarith)
+  have ht2 : t ^ 2 ≤ Real.pi ^ 2 / 4 := by
+    have habs : |t| ≤ Real.pi / 2 := ht
+    nlinarith [abs_le.mp habs |>.1, abs_le.mp habs |>.2, Real.pi_pos]
+  have hq4 : t ^ 4 ≤ t ^ 2 * Real.pi ^ 2 / 4 := by
+    nlinarith [ht2]
+  nlinarith [hq, hq4, hpi, Real.pi_pos]
+
+/-! ### The two-point heat kernel and the continuum objects of the local CLT -/
+
+/-- The `k`-step transition probability `p_k(x, y)` of simple random walk,
+recursing in the starting point `x` (the form used by the sandpile paper). -/
+noncomputable def heatKernel (d : ℕ) : ℕ → Site d → Site d → ℝ
+  | 0 => fun x y => if x = y then 1 else 0
+  | k + 1 => fun x y =>
+      (∑ i : Fin d, (heatKernel d k (x + unit i) y + heatKernel d k (x - unit i) y)) / (2 * d)
+
+/-- The Euclidean distance `|x - y|` between lattice sites. -/
+noncomputable def latticeDist {d : ℕ} (x y : Site d) : ℝ :=
+  Real.sqrt (∑ i : Fin d, ((x i - y i : ℤ) : ℝ) ^ 2)
+
+/-- The lattice site `x` scaled by `R ^ (-1)`, as a point of `EuclideanSpace ℝ (Fin d)`. -/
+noncomputable def scaledSite {d : ℕ} (R : ℝ) (x : Site d) : EuclideanSpace ℝ (Fin d) :=
+  WithLp.toLp 2 (fun i : Fin d => ((x i : ℤ) : ℝ) / R)
+
+/-- The Brownian heat kernel `p_t^{BM}(x, y)` for generator `Δ / (2d)`. -/
+noncomputable def heatKernelBM (d : ℕ) (t : ℝ) (x y : EuclideanSpace ℝ (Fin d)) : ℝ :=
+  (4 * Real.pi * t / (2 * (d : ℝ))) ^ (-(d : ℝ) / 2)
+    * Real.exp (-(d : ℝ) * ‖x - y‖ ^ 2 / (2 * t))
+
+/-- A sum over the `2d` directions is the sum over the `d` coordinates of the
+two signed neighbours. -/
+theorem sum_dir_eq_sum_unit {d : ℕ} (u : Site d → ℝ) (x : Site d) :
+    ∑ a : Dir d, u (x + dirVec a)
+      = ∑ i : Fin d, (u (x + unit i) + u (x - unit i)) := by
+  rw [Fintype.sum_prod_type]
+  exact Finset.sum_congr rfl fun i _ => by
+    rw [Fintype.sum_bool, dirVec_eq_unit, dirVec_eq_neg_unit, ← sub_eq_add_neg]
+
+/-- The torus measure is the restriction of volume to the torus box. -/
+theorem torusMeasure_eq_restrict (d : ℕ) :
+    torusMeasure d = volume.restrict (torusBox d) := by
+  show Measure.pi (fun _ : Fin d => volume.restrict (Set.Icc (-Real.pi) Real.pi)) =
+    volume.restrict (Set.Icc (fun _ : Fin d => -Real.pi) (fun _ : Fin d => Real.pi))
+  have h : Set.Icc (fun _ : Fin d => -Real.pi) (fun _ : Fin d => Real.pi) =
+      Set.univ.pi (fun _ : Fin d => Set.Icc (-Real.pi) Real.pi) := by
+    ext x
+    simp [Set.mem_Icc, Pi.le_def]
+  rw [h]
+  exact (Measure.restrict_pi_pi (fun _ : Fin d => (volume : Measure ℝ))
+    (fun _ : Fin d => Set.Icc (-Real.pi) Real.pi)).symm
+
+/-- The antipode region is the translate of the Gaussian region by the
+all-π vector: its exponential integral is the same as the Gaussian one. -/
+theorem integral_antipodeRegion_le (d : ℕ) (c : ℝ) (hc : 0 < c) :
+    ∫ x in {x : Fin d → ℝ | ∀ i, |x i - Real.pi| ≤ Real.pi / 2},
+        Real.exp (- c * ∑ i, (x i - Real.pi) ^ 2) ∂volume
+      ≤ (Real.sqrt (Real.pi / c)) ^ d := by
+  set t : Fin d → ℝ := fun _ => Real.pi with ht
+  set f : (Fin d → ℝ) → (Fin d → ℝ) := fun x => x - t with hf
+  have hset : {x : Fin d → ℝ | ∀ i, |x i - Real.pi| ≤ Real.pi / 2} = f ⁻¹' {u : Fin d → ℝ | ∀ i, |u i| ≤ Real.pi / 2} := by
+    ext x
+    simp [hf, ht]
+  have he : (fun x : Fin d → ℝ => -t + x) = (fun x : Fin d → ℝ => x - t) := by
+    funext x i
+    simp only [Pi.add_apply, Pi.sub_apply, Pi.neg_apply]
+    ring
+  have hmp : MeasurePreserving (fun x : Fin d → ℝ => x - t) volume volume := by
+    simpa [he] using measurePreserving_add_left volume (-t)
+  have hemb : MeasurableEmbedding (fun x : Fin d → ℝ => x - t) := by
+    have h := (Homeomorph.addLeft (-t)).measurableEmbedding
+    simpa [he] using h
+  have h := hmp.setIntegral_preimage_emb hemb (fun u => Real.exp (- c * ∑ i, u i ^ 2)) {u : Fin d → ℝ | ∀ i, |u i| ≤ Real.pi / 2}
+  simp only [ht, Pi.sub_apply] at h
+  rw [hset, h]
+  exact integral_gaussRegion_le d c hc
+
+/-- The Gaussian-region integral with the explicit constant is at most the
+Brownian constant. -/
+theorem integral_gaussRegion_heat' (d : ℕ) (n : ℕ) (hn : 0 < n) (hd : 0 < d) :
+    ∫ x in {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2},
+        Real.exp (- ((n : ℝ) / (4 * (d : ℝ))) * ∑ i, x i ^ 2) ∂volume
+      ≤ (2 * Real.sqrt (Real.pi * (d : ℝ) / (n : ℝ))) ^ d := by
+  have hc : 0 < (n : ℝ) / (4 * (d : ℝ)) := by positivity
+  have hle := integral_gaussRegion_le d ((n : ℝ) / (4 * (d : ℝ))) hc
+  have hpi : Real.pi / ((n : ℝ) / (4 * (d : ℝ))) = 4 * (Real.pi * (d : ℝ) / (n : ℝ)) := by
+    field_simp
+  have hnn : 0 ≤ Real.pi * (d : ℝ) / (n : ℝ) := by positivity
+  have hsq : 4 * (Real.pi * (d : ℝ) / (n : ℝ)) = (2 * Real.sqrt (Real.pi * (d : ℝ) / (n : ℝ))) * (2 * Real.sqrt (Real.pi * (d : ℝ) / (n : ℝ))) := by
+    have h1 : (2 * Real.sqrt (Real.pi * (d : ℝ) / (n : ℝ))) ^ 2 = 4 * (Real.pi * (d : ℝ) / (n : ℝ)) := by
+      rw [mul_pow, Real.sq_sqrt hnn]
+      ring
+    rw [← h1, pow_two]
+  have hs : Real.sqrt (Real.pi / ((n : ℝ) / (4 * (d : ℝ)))) = 2 * Real.sqrt (Real.pi * (d : ℝ) / (n : ℝ)) := by
+    rw [hpi]
+    exact (Real.sqrt_eq_iff_mul_self_eq (by positivity) (by positivity)).2 hsq
+  rw [hs] at hle
+  exact hle
+
+/-- Integrand congruence: on the Gaussian region the heat-kernel integrand
+with constant `n/(4d)` is the one with the explicit fraction. -/
+theorem integral_gaussRegion_heat_congr (d : ℕ) (n : ℕ) :
+    ∫ x in {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2},
+        Real.exp (- (n : ℝ) * (∑ i, x i ^ 2) / (4 * (d : ℝ))) ∂volume
+      = ∫ x in {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2},
+        Real.exp (- (n : ℝ) / (4 * (d : ℝ)) * ∑ i, x i ^ 2) ∂volume := by
+  have hms : MeasurableSet {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2} := by measurability
+  refine setIntegral_congr_fun hms ?_
+  intro x _
+  have h : (- (n : ℝ) * ∑ i, x i ^ 2) / (4 * (d : ℝ)) = - (n : ℝ) / (4 * (d : ℝ)) * ∑ i, x i ^ 2 := by
+    field_simp
+  simp only [h]
+
+/-- The torus box is the union of the Gaussian region, the antipode region
+(intersected with the box) and the far region. -/
+theorem torusBox_eq_union (d : ℕ) :
+    torusBox d = {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2}
+      ∪ ({θ : Fin d → ℝ | ∀ i, |θ i - Real.pi| ≤ Real.pi / 2} ∩ torusBox d)
+      ∪ (torusBox d ∩ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2}ᶜ
+            ∩ ({θ : Fin d → ℝ | ∀ i, |θ i - Real.pi| ≤ Real.pi / 2} ∩ torusBox d)ᶜ) := by
+  ext θ
+  constructor
+  · intro hθ
+    by_cases hG : θ ∈ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2}
+    · exact Or.inl (Or.inl hG)
+    · by_cases hA : θ ∈ {θ : Fin d → ℝ | ∀ i, |θ i - Real.pi| ≤ Real.pi / 2}
+      · exact Or.inl (Or.inr ⟨hA, hθ⟩)
+      · exact Or.inr ⟨⟨hθ, hG⟩, fun h => hA h.1⟩
+  · intro h
+    simp only [Set.mem_union] at h
+    rcases h with (hG | ⟨hA, hθ⟩) | ⟨⟨hθ, -⟩, -⟩
+    · have hpi : (0:ℝ) < Real.pi := Real.pi_pos
+      have h2 : (0:ℝ) < 2 := by norm_num
+      refine ⟨fun i => ?_, fun i => ?_⟩ <;>
+      · have h := abs_le.mp (hG i)
+        nlinarith
+    · exact hθ
+    · exact hθ
+
+/-- The Fourier integrand is integrable on the Gaussian region. -/
+theorem fourier_integrand_integrable_gaussRegion (d : ℕ) (j : ℕ) (x : Site d) :
+    Integrable (fun θ => (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+        * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j)
+      (volume.restrict {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2}) := by
+  have hsub : {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2} ⊆ torusBox d := by
+    intro θ hθ
+    simp only [torusBox, Set.mem_Icc, Pi.le_def]
+    exact ⟨fun i => by linarith [Real.pi_pos, (abs_le.mp (hθ i)).1],
+        fun i => by linarith [Real.pi_pos, (abs_le.mp (hθ i)).2]⟩
+  have h0 : IntegrableOn (fun θ => (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I)) * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j) (torusBox d) volume :=
+    fourier_integrand_integrable d j x
+  exact h0.mono_set hsub
+
+/-- The character at `θ - π` factors as the character at `θ` times the
+antipodal sign `∏ e^{-iπ x}`. -/
+theorem char_shift_neg_pi (d : ℕ) (x : Site d) (θ : Fin d → ℝ) :
+    (∏ k, Complex.exp (Complex.ofReal ((θ k - Real.pi) * ((x k : ℤ) : ℝ)) * Complex.I))
+      = (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+        * (∏ k, Complex.exp (Complex.ofReal ((-Real.pi) * ((x k : ℤ) : ℝ)) * Complex.I)) := by
+  rw [← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl (fun k _ => ?_)
+  rw [← Complex.exp_add]
+  congr 1
+  push_cast
+  ring
+
+/-- The characteristic function at `θ - π` is the negative of the one at `θ`. -/
+theorem charFn_shift_neg_pi (d : ℕ) (θ : Fin d → ℝ) :
+    charFn d (fun i => θ i - Real.pi) = - charFn d θ := by
+  simp only [charFn]
+  rw [← neg_div]
+  congr 1
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [sub_eq_add_neg, Real.cos_add]
+  simp
+
+/-- Pointwise: the shifted Fourier integrand at `θ - π` is the integrand at `θ`
+times the parity sign. -/
+theorem fourier_integrand_shift (d : ℕ) (j : ℕ) (x : Site d) (θ : Fin d → ℝ) :
+    ((-1 : ℂ) ^ j * (∏ k, Complex.exp (Complex.ofReal (Real.pi * ((x k : ℤ) : ℝ)) * Complex.I)))
+      * ((∏ k, Complex.exp (Complex.ofReal ((θ k - Real.pi) * ((x k : ℤ) : ℝ)) * Complex.I))
+      * ((∑ i : Fin d, Real.cos (θ i - Real.pi)) / d) ^ j)
+      = (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+          * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j := by
+  have hB : (∏ k, Complex.exp (Complex.ofReal ((θ k - Real.pi) * ((x k : ℤ) : ℝ)) * Complex.I)) =
+      (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I)) *
+      (∏ k, Complex.exp (Complex.ofReal ((-Real.pi) * ((x k : ℤ) : ℝ)) * Complex.I)) := by
+    rw [← Finset.prod_mul_distrib]
+    refine Finset.prod_congr rfl (fun k _ => ?_)
+    rw [← Complex.exp_add]
+    congr 1
+    push_cast
+    ring
+  have hAD : (∏ k, Complex.exp (Complex.ofReal (Real.pi * ((x k : ℤ) : ℝ)) * Complex.I)) *
+      (∏ k, Complex.exp (Complex.ofReal ((-Real.pi) * ((x k : ℤ) : ℝ)) * Complex.I)) = 1 := by
+    rw [← Finset.prod_mul_distrib]
+    rw [show (∏ k, Complex.exp (Complex.ofReal (Real.pi * ((x k : ℤ) : ℝ)) * Complex.I) *
+        Complex.exp (Complex.ofReal ((-Real.pi) * ((x k : ℤ) : ℝ)) * Complex.I)) = ∏ k, (1 : ℂ) from
+      Finset.prod_congr rfl (fun k _ => by
+        rw [← Complex.exp_add, ← Complex.exp_zero]
+        congr 1
+        push_cast
+        ring)]
+    simp
+  have hF : (↑(∑ i, Real.cos (θ i - Real.pi)) / ↑d : ℂ) ^ j =
+      (-1 : ℂ) ^ j * (↑(∑ i, Real.cos (θ i)) / ↑d : ℂ) ^ j := by
+    have hcos : (∑ i, Real.cos (θ i - Real.pi)) = -(∑ i, Real.cos (θ i)) := by
+      rw [← Finset.sum_neg_distrib]
+      refine Finset.sum_congr rfl (fun i _ => ?_)
+      rw [Real.cos_sub]
+      simp [Real.cos_pi, Real.sin_pi]
+    rw [hcos]
+    have hcast : (↑(-(∑ i, Real.cos (θ i))) : ℂ) / ↑d = -((↑(∑ i, Real.cos (θ i)) : ℂ) / ↑d) := by
+      push_cast
+      ring
+    rw [hcast, neg_pow]
+  have h4 : ((-1 : ℂ) ^ j) * ((-1 : ℂ) ^ j) = 1 := by
+    rw [← pow_add, ← Nat.two_mul]
+    exact Even.neg_one_pow ⟨j, by ring⟩
+  rw [hB, hF]
+  linear_combination ((∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I)) * (↑(∑ i, Real.cos (θ i)) / ↑d : ℂ) ^ j) * hAD +
+    ((∏ k, Complex.exp (Complex.ofReal (Real.pi * ((x k : ℤ) : ℝ)) * Complex.I)) *
+     (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I)) *
+     (∏ k, Complex.exp (Complex.ofReal ((-Real.pi) * ((x k : ℤ) : ℝ)) * Complex.I)) *
+     (↑(∑ i, Real.cos (θ i)) / ↑d : ℂ) ^ j) * h4
+
+/-- The antipode-region integral of the Fourier integrand equals, up to the
+parity sign, the Gaussian-region integral: the translation θ ↦ θ - π maps the
+antipode region onto the Gaussian region and the integrand picks up the sign. -/
+theorem integral_antipode_eq_gauss (d : ℕ) (j : ℕ) (x : Site d) :
+    ∫ θ in {θ : Fin d → ℝ | ∀ i, |θ i - Real.pi| ≤ Real.pi / 2},
+        (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+          * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j ∂volume
+      = ((-1 : ℂ) ^ j * (∏ k, Complex.exp (Complex.ofReal (Real.pi * ((x k : ℤ) : ℝ)) * Complex.I)))
+        * ∫ θ in {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2},
+            (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))
+              * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j ∂volume := by
+  set t : Fin d → ℝ := fun _ => Real.pi with ht
+  set f : (Fin d → ℝ) → (Fin d → ℝ) := fun x => x - t with hf
+  have hset : {θ : Fin d → ℝ | ∀ i, |θ i - Real.pi| ≤ Real.pi / 2} = f ⁻¹' {u : Fin d → ℝ | ∀ i, |u i| ≤ Real.pi / 2} := by
+    ext θ
+    simp [hf, ht]
+  have he : (fun x : Fin d → ℝ => -t + x) = (fun x : Fin d → ℝ => x - t) := by
+    funext x i
+    simp only [Pi.add_apply, Pi.sub_apply, Pi.neg_apply]
+    ring
+  have hmp : MeasurePreserving (fun x : Fin d → ℝ => x - t) volume volume := by
+    simpa [he] using measurePreserving_add_left volume (-t)
+  have hemb : MeasurableEmbedding (fun x : Fin d → ℝ => x - t) := by
+    have h := (Homeomorph.addLeft (-t)).measurableEmbedding
+    simpa [he] using h
+  have hint := fourier_integrand_integrable_gaussRegion d j x
+  set g : (Fin d → ℝ) → ℂ := fun u => ((-1 : ℂ) ^ j * (∏ k, Complex.exp (Complex.ofReal (Real.pi * ((x k : ℤ) : ℝ)) * Complex.I))) * ((∏ k, Complex.exp (Complex.ofReal (u k * ((x k : ℤ) : ℝ)) * Complex.I)) * ((∑ i : Fin d, Real.cos (u i)) / d) ^ j) with hg
+  have hintg : Integrable g (volume.restrict {u : Fin d → ℝ | ∀ i, |u i| ≤ Real.pi / 2}) := hint.const_mul _
+  have h := hmp.setIntegral_preimage_emb hemb g {u : Fin d → ℝ | ∀ i, |u i| ≤ Real.pi / 2}
+  have hmeasG : MeasurableSet (f ⁻¹' {u : Fin d → ℝ | ∀ i, |u i| ≤ Real.pi / 2}) := by
+    rw [hf]
+    measurability
+  have hmeasG' : MeasurableSet {u : Fin d → ℝ | ∀ i, |u i| ≤ Real.pi / 2} := by measurability
+  rw [hset]
+  have hpt : ∀ θ, (∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I)) * ((∑ i : Fin d, Real.cos (θ i)) / d) ^ j = g (f θ) := by
+    intro θ
+    have := fourier_integrand_shift d j x θ
+    simp only [hg, hf, ht, Pi.sub_apply]
+    exact this.symm
+  rw [setIntegral_congr_fun hmeasG (fun θ _ => hpt θ)]
+  rw [h]
+  have hgc : ∀ u, g u = ((-1 : ℂ) ^ j * (∏ k, Complex.exp (Complex.ofReal (Real.pi * ((x k : ℤ) : ℝ)) * Complex.I))) * ((∏ k, Complex.exp (Complex.ofReal (u k * ((x k : ℤ) : ℝ)) * Complex.I)) * ((∑ i : Fin d, Real.cos (u i)) / d) ^ j) := fun u => rfl
+  rw [setIntegral_congr_fun hmeasG' (fun u _ => hgc u)]
+  rw [integral_const_mul]
+
+
+/-- A coordinate hyperplane in `Fin d → ℝ` has volume zero. -/
+theorem volume_hyperplane_eq_zero (d : ℕ) (i : Fin d) (c : ℝ) :
+    volume {θ : Fin d → ℝ | θ i = c} = 0 := by
+  have hset : {θ : Fin d → ℝ | θ i = c} = Set.univ.pi (fun j => if j = i then ({c} : Set ℝ) else Set.univ) := by
+    ext θ
+    simp [Set.mem_pi]
+  rw [hset, volume_pi_pi]
+  refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
+  rw [if_pos rfl]
+  have hsub : ({c} : Set ℝ) ⊆ Set.Icc c c := by
+    intro x hx
+    simp only [Set.mem_singleton_iff] at hx
+    rw [← hx]
+    exact ⟨le_refl _, le_refl _⟩
+  have h2 : volume (Set.Icc c c) = 0 := by rw [Real.volume_Icc]; simp
+  have h3 : volume ({c} : Set ℝ) ≤ volume (Set.Icc c c) := measure_mono hsub
+  refine le_antisymm (h3.trans_eq h2) ?_
+  simp
+/-- On the far region (the part of the torus box outside the Gaussian and
+antipode regions) some coordinate satisfies `|θ i| > π/2`, so the Fourier
+multiplier is at most `1 - 1/(2d)`. -/
+theorem charFn_le_of_farRegion (d : ℕ) (hd : 0 < d)
+    (θ : Fin d → ℝ) (hθ : θ ∈ torusBox d)
+    (hfar : ¬ (∀ i, |θ i| ≤ Real.pi / 2) ∧ ¬ (∀ i, |θ i - Real.pi| ≤ Real.pi / 2)) :
+    charFn d θ ≤ 1 - 1 / (2 * (d : ℝ)) := by
+  push Not at hfar
+  obtain ⟨i₀, hi₀⟩ := hfar.1
+  have hbox : ∀ i, |θ i| ≤ Real.pi := by
+    have := hθ
+    simp only [torusBox, Set.mem_Icc, Pi.le_def] at this
+    intro i
+    rw [abs_le]
+    exact ⟨by linarith [Real.pi_pos, this.1 i], this.2 i⟩
+  have hcos₀ : Real.cos (θ i₀) ≤ 1 / 2 := by
+    have hle : Real.cos (θ i₀) ≤ 1 - 2 / Real.pi ^ 2 * (θ i₀) ^ 2 :=
+      Real.cos_le_one_sub_mul_cos_sq (hbox i₀)
+    have hsq : (Real.pi / 2) ^ 2 ≤ (θ i₀) ^ 2 := by
+      have h2 : (Real.pi / 2) ^ 2 ≤ |θ i₀| ^ 2 := by
+        have h3 : Real.pi / 2 ≤ |θ i₀| := le_of_lt hi₀
+        exact pow_le_pow_left₀ (by linarith [Real.pi_pos]) h3 2
+      rw [sq_abs] at h2
+      exact h2
+    have hpi : Real.pi ^ 2 = 4 * (Real.pi / 2) ^ 2 := by rw [div_pow]; ring
+    have hkey : 2 / Real.pi ^ 2 * (θ i₀) ^ 2 ≥ 2 / Real.pi ^ 2 * (Real.pi / 2) ^ 2 := by
+      gcongr
+    have hval : 2 / Real.pi ^ 2 * (Real.pi / 2) ^ 2 = 1 / 2 := by
+      rw [div_mul_eq_mul_div]
+      field_simp
+    nlinarith [hle, hkey, hval]
+  have hsum : ∑ i : Fin d, Real.cos (θ i) ≤ (d : ℝ) - 1 / 2 := by
+    have hsplit : ∑ i : Fin d, Real.cos (θ i)
+        = ∑ i ∈ Finset.univ.erase i₀, Real.cos (θ i) + Real.cos (θ i₀) :=
+      (Finset.sum_erase_add Finset.univ (fun i => Real.cos (θ i)) (Finset.mem_univ i₀)).symm
+    have hrest : ∑ i ∈ Finset.univ.erase i₀, Real.cos (θ i)
+        ≤ ((Finset.univ.erase i₀).card : ℝ) := by
+      refine le_trans (Finset.sum_le_sum fun i _ => Real.cos_le_one (θ i)) ?_
+      rw [Finset.sum_const]
+      simp
+    rw [hsplit]
+    have hcard : ((Finset.univ.erase i₀).card : ℝ) = (d : ℝ) - 1 := by
+      rw [Finset.card_erase_of_mem (Finset.mem_univ i₀), Finset.card_univ, Fintype.card_fin,
+        Nat.cast_sub (by omega)]
+      norm_num
+    have hcosle : Real.cos (θ i₀) ≤ 1 := Real.cos_le_one (θ i₀)
+    linarith
+  show (∑ i : Fin d, Real.cos (θ i)) / (d : ℝ) ≤ 1 - 1 / (2 * (d : ℝ))
+  rw [div_le_iff₀ (by exact_mod_cast hd)]
+  have : (1 - 1 / (2 * (d : ℝ))) * (d : ℝ) = (d : ℝ) - 1 / 2 := by
+    field_simp
+  linarith
+
+
+/-- Pointwise bound on the tail region: if some coordinate has
+`|θ i| > π/2` then the Gaussian integrand is at most `exp (- c (π/2)²)`. -/
+theorem exp_tail_pointwise (c : ℝ) (hc : 0 < c) (d : ℕ) (θ : Fin d → ℝ)
+    (i₀ : Fin d) (hi₀ : Real.pi / 2 < |θ i₀|) :
+    Real.exp (- c * ∑ i, θ i ^ 2) ≤ Real.exp (- c * (Real.pi / 2) ^ 2) := by
+  have h1 : (Real.pi / 2) ^ 2 ≤ θ i₀ ^ 2 := by
+    have habs : |Real.pi / 2| ≤ |θ i₀| := by
+      rw [abs_of_pos (by positivity)]
+      exact le_of_lt hi₀
+    exact sq_le_sq.mpr habs
+  have h2 : θ i₀ ^ 2 ≤ ∑ i, θ i ^ 2 := Finset.single_le_sum (fun i _ => sq_nonneg (θ i)) (Finset.mem_univ i₀)
+  exact Real.exp_le_exp.mpr (by nlinarith [hc, le_trans h1 h2])
+
+/-- The OPEN Gaussian region and the OPEN antipode region are disjoint. -/
+theorem disjoint_gauss_antipode (d : ℕ) (hd : 1 ≤ d) :
+    Disjoint {θ : Fin d → ℝ | ∀ i, |θ i| < Real.pi / 2}
+      {θ : Fin d → ℝ | ∀ i, |θ i - Real.pi| < Real.pi / 2} := by
+  rw [Set.disjoint_left]
+  intro θ hG hA
+  have i : Fin d := ⟨0, hd⟩
+  have h := hA i
+  rw [abs_lt] at h
+  have hG0 := hG i
+  rw [abs_lt] at hG0
+  nlinarith [h.1, h.2, hG0.1, hG0.2, Real.pi_pos]
+
+/-- The Gaussian tail integral over the part of the box outside the
+Gaussian region is exponentially small. -/
+theorem integral_gauss_tail_le (d : ℕ) (c : ℝ) (hc : 0 < c) :
+    ∫ θ in torusBox d \ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2},
+        Real.exp (- c * ∑ i, θ i ^ 2) ∂volume
+      ≤ (2 * Real.pi) ^ d * Real.exp (- c * (Real.pi / 2) ^ 2) := by
+  have hbound : ∀ θ ∈ torusBox d \ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2},
+      Real.exp (- c * ∑ i, θ i ^ 2) ≤ Real.exp (- c * (Real.pi / 2) ^ 2) := by
+    intro θ hθ
+    obtain ⟨hθ1, hθ2⟩ := hθ
+    simp only [Set.mem_setOf_eq] at hθ2
+    push Not at hθ2
+    obtain ⟨i₀, hi₀⟩ := hθ2
+    have h1 : (Real.pi / 2) ^ 2 ≤ θ i₀ ^ 2 := by
+      have habs : |Real.pi / 2| ≤ |θ i₀| := by
+        rw [abs_of_pos (by positivity)]
+        exact le_of_lt hi₀
+      exact sq_le_sq.mpr habs
+    have h2 : θ i₀ ^ 2 ≤ ∑ i, θ i ^ 2 :=
+      Finset.single_le_sum (fun i _ => sq_nonneg (θ i)) (Finset.mem_univ i₀)
+    exact Real.exp_le_exp.mpr (by nlinarith [hc, le_trans h1 h2])
+  have hint : IntegrableOn (fun θ => Real.exp (- c * ∑ i, θ i ^ 2)) (torusBox d) volume := by
+    apply ContinuousOn.integrableOn_compact isCompact_Icc
+    have h1 : Continuous (fun θ : Fin d → ℝ => ∑ i, θ i ^ 2) :=
+      continuous_finsetSum _ (fun i _ => (continuous_apply i).pow 2)
+    have hc : Continuous (fun _ : Fin d → ℝ => -c) := continuous_const
+    show ContinuousOn (fun θ : Fin d → ℝ => Real.exp (-c * ∑ i, θ i ^ 2)) (torusBox d)
+    exact (Real.continuous_exp.comp (hc.mul h1)).continuousOn
+  have hiconst : IntegrableOn (fun _ => Real.exp (- c * (Real.pi / 2) ^ 2))
+      (torusBox d \ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2}) volume := by
+    have hfin : volume (torusBox d \ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2}) < ⊤ :=
+      lt_of_le_of_lt (measure_mono Set.sdiff_subset)
+        (by rw [volume_torusBox]
+            exact ENNReal.ofReal_lt_top)
+    refine ⟨measurable_const.aestronglyMeasurable, ?_⟩
+    dsimp [HasFiniteIntegral]
+    rw [setLIntegral_const]
+    exact ENNReal.mul_lt_top (by simp) hfin
+  have hMG : MeasurableSet {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2} := by measurability
+  have hmono := setIntegral_mono_on (IntegrableOn.mono_set hint Set.sdiff_subset) hiconst
+    ((torusBox_measurable d).diff hMG) hbound
+  rw [setIntegral_const] at hmono
+  have hvol : volume (torusBox d \ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2})
+      ≤ ENNReal.ofReal ((2 * Real.pi) ^ d) :=
+    le_trans (measure_mono Set.sdiff_subset) (volume_torusBox d).le
+  have h2 : (2 * Real.pi) ^ d * Real.exp (- c * (Real.pi / 2) ^ 2)
+      = ENNReal.toReal (ENNReal.ofReal ((2 * Real.pi) ^ d)
+          * ENNReal.ofReal (Real.exp (- c * (Real.pi / 2) ^ 2))) := by
+    rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (by positivity), ENNReal.toReal_ofReal (by positivity)]
+  rw [h2]
+  have hvr : ENNReal.toReal (volume (torusBox d \ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2}))
+      ≤ (2 * Real.pi) ^ d :=
+    (ENNReal.toReal_mono ENNReal.ofReal_ne_top hvol).trans (le_of_eq (ENNReal.toReal_ofReal (by positivity)))
+  have hs : volume.real (torusBox d \ {θ : Fin d → ℝ | ∀ i, |θ i| ≤ Real.pi / 2})
+        • Real.exp (- c * (Real.pi / 2) ^ 2)
+      ≤ ENNReal.toReal (ENNReal.ofReal ((2 * Real.pi) ^ d)
+          * ENNReal.ofReal (Real.exp (- c * (Real.pi / 2) ^ 2))) := by
+    rw [smul_eq_mul, ENNReal.toReal_mul, ENNReal.toReal_ofReal (by positivity),
+      ENNReal.toReal_ofReal (by positivity)]
+    exact mul_le_mul hvr le_rfl (by positivity) (by positivity)
+  exact hmono.trans hs
 end LatticeProb
