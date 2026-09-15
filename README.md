@@ -152,6 +152,9 @@ LatticeProb/Prob/RpowAdd.lean       the p-th power of a sum of two nonnegative r
                                     two to the p times the sum of the p-th powers
 LatticeProb/Prob/SupTail.lean       the p-th moment of the supremum of a process over a box,
                                     from an almost-sure modulus of continuity, and the
+LatticeProb/Prob/CramerWold.lean    the Cramér-Wold device: convergence in distribution of a
+                                    finite-dimensional vector from its one-dimensional
+                                    projections
                                     almost-sure modulus the Kolmogorov condition gives
 LatticeProb/Network/                electrical networks on a locally finite graph: the Dirichlet
                                     energy and form, harmonic functions, the killed Green function
