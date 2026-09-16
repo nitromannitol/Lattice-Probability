@@ -171,4 +171,44 @@ theorem measure_exists_abs_gt_le_of_ae_modulus {k : ℕ} {a b : Fin k → ℝ}
   exact (measure_mono_ae hsub).trans
     (measure_sup_abs_gt_le_of_ae_modulus P hp hδ0 hint hmeas hae lam hlam)
 
+/-- The tail of the box supremum with the threshold made EXPLICIT in the accuracy
+`ε`: the level `(2 ^ p * (M + (⌈dist a b / δ⌉ + 1) ^ p) / ε) ^ (1 / p) + 1` is
+exceeded with probability at most `ε`.  This is the form the Borel–Cantelli
+argument over the unit boxes consumes, since the threshold is a polynomial in
+`1 / ε`. -/
+theorem measure_exists_abs_gt_le_of_kolmogorov_explicit {k : ℕ} {a b : Fin k → ℝ}
+    {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+    {X : (Fin k → ℝ) → Ω → ℝ} {p M δ : ℝ} (hp : 0 < p) (hδ0 : 0 < δ)
+    (hint : Integrable (fun ω => |X a ω| ^ p) P) (hmeas : Measurable (X a))
+    (hae : ∀ᵐ ω ∂P, ∀ s ∈ Set.Icc a b, ∀ r ∈ Set.Icc a b,
+      dist s r < δ → |X s ω - X r ω| ≤ 1)
+    (hintM : ∫ ω, |X a ω| ^ p ∂P ≤ M) (hM0 : 0 ≤ M)
+    (ε : ℝ) (hε : 0 < ε) :
+    P {ω | ∃ u ∈ Set.Icc a b,
+        (2 ^ p * (M + ((Nat.ceil (dist a b / δ) + 1 : ℕ) : ℝ) ^ p) / ε) ^ (1 / p) + 1
+          < |X u ω|} ≤ ENNReal.ofReal ε := by
+  set N : ℝ := ((Nat.ceil (dist a b / δ) + 1 : ℕ) : ℝ) with hN
+  have hN0 : 0 ≤ N := by positivity
+  set A : ℝ := 2 ^ p * (M + N ^ p) with hA
+  have hA0 : 0 ≤ A := by rw [hA]; positivity
+  set c : ℝ := (A / ε) ^ (1 / p) with hc
+  have hc0 : 0 ≤ c := Real.rpow_nonneg (by positivity) _
+  have hcp : c ^ p = A / ε := by
+    rw [hc, ← Real.rpow_mul (by positivity), one_div, inv_mul_cancel₀ hp.ne', Real.rpow_one]
+  have hlam : 0 < c + 1 := by linarith
+  have hkey : A / (c + 1) ^ p ≤ ε := by
+    rw [div_le_iff₀ (by positivity)]
+    calc A = A / ε * ε := (div_mul_cancel₀ _ hε.ne').symm
+      _ = c ^ p * ε := by rw [hcp]
+      _ ≤ (c + 1) ^ p * ε :=
+          mul_le_mul_of_nonneg_right (Real.rpow_le_rpow hc0 (by linarith) hp.le) hε.le
+      _ = ε * (c + 1) ^ p := mul_comm _ _
+  refine (measure_exists_abs_gt_le_of_ae_modulus P hp hδ0 hint hmeas hae (c + 1) hlam).trans ?_
+  rw [ENNReal.ofReal_le_ofReal_iff hε.le]
+  calc 2 ^ p * (∫ ω, |X a ω| ^ p ∂P + N ^ p) / (c + 1) ^ p
+      ≤ 2 ^ p * (M + N ^ p) / (c + 1) ^ p := by
+        gcongr
+    _ = A / (c + 1) ^ p := by rw [hA]
+    _ ≤ ε := hkey
+
 end LatticeProb.KolmogorovSup
