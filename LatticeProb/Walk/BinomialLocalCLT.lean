@@ -1466,6 +1466,54 @@ theorem extreme_bound (m : ℕ) (hm : 1 ≤ m) (j : ℤ) (hjeq : |(j:ℝ)| = (m:
   · linarith [hgd_le, hP_nn, hXnn, hsplit]
   · linarith [hbound1, hgd_nn, hYnn, hsplit]
 
+
+/-! ### The main theorem -/
+
+/-- **The one-dimensional binomial local central limit theorem, with an explicit `1/m` error.**
+`binomPMF m j` is the probability `P_m(j)` that a sum of `m` independent `±1` signs equals `j`;
+the theorem bounds `|√m · P_m(j) − 2 · gaussianDensity(j/√m)|` by `C/m`, uniformly over `m ≥ 1`
+and over every `j` of the parity of `m` with `|j| ≤ m` (the range in which `P_m(j)` is an
+honest probability: outside it, `binomPMF`'s division by `2` inside a `toNat` reads as the
+junk value `0` for `j` a nonnegative integer greater than `m`, but for `j < -m` it reads as
+`1/2^m`, so the hypothesis `|j| ≤ m` is the guard against that junk value.  The parity
+hypothesis is essential too: without it the left-hand side is `2 · gaussianDensity(j/√m)` at
+every second `j` (`P_m(j) = 0`, wrong parity) and the bound fails already at `m` large. -/
+theorem exists_binomPMF_localCLT :
+    ∃ C : ℝ, 0 < C ∧ ∀ m : ℕ, 1 ≤ m → ∀ j : ℤ, j ≡ (m : ℤ) [ZMOD 2] → |j| ≤ (m : ℤ) →
+      |Real.sqrt m * binomPMF m j - 2 * gaussianDensity ((j : ℝ) / Real.sqrt m)| ≤ C / m := by
+  set C1 := (Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1) + Real.sqrt 2/6 + 2*Real.exp (-1)/3)
+      + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/3 + 128*Real.exp (-2)/3) with hC1
+  set C2 := ((Real.sqrt Real.pi)⁻¹ * (7/6)) * (256*Real.exp (-2))
+      + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (8*Real.exp (-1)) with hC2
+  set C3 := 4*Real.exp (-2)/(Real.log 2)^2
+      + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2*Real.exp (-1)) with hC3
+  have hC1pos : (0:ℝ) < C1 := by rw [hC1]; positivity
+  have hC2pos : (0:ℝ) < C2 := by rw [hC2]; positivity
+  have hC3pos : (0:ℝ) < C3 := by
+    rw [hC3]
+    have : (0:ℝ) < Real.log 2 := Real.log_pos (by norm_num)
+    positivity
+  refine ⟨C1 + C2 + C3, by linarith, ?_⟩
+  intro m hm j hj hjm
+  have hjR : |(j:ℝ)| ≤ (m:ℝ) := by exact_mod_cast hjm
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  have hC1le : C1 / (m:ℝ) ≤ (C1+C2+C3)/(m:ℝ) := by gcongr; linarith
+  have hC2le : C2 / (m:ℝ) ≤ (C1+C2+C3)/(m:ℝ) := by gcongr; linarith
+  have hC3le : C3 / (m:ℝ) ≤ (C1+C2+C3)/(m:ℝ) := by gcongr; linarith
+  by_cases h1 : |(j:ℝ)| ≤ (m:ℝ)/2
+  · exact le_trans (region1_bound m hm j hj h1) hC1le
+  · replace h1 : (m:ℝ)/2 < |(j:ℝ)| := not_le.mp h1
+    by_cases h2 : |(j:ℝ)| ≤ (m:ℝ) - 2
+    · exact le_trans (region2_bound m hm j hj h1 h2) hC2le
+    · replace h2 : (m:ℝ) - 2 < |(j:ℝ)| := not_le.mp h2
+      have hjeq : |(j:ℝ)| = (m:ℝ) := by
+        have hjZ2 : |j| = (m:ℤ) := by
+          have h2Z : (m:ℤ) - 2 < |j| := by exact_mod_cast h2
+          have hdvd2 : (2 : ℤ) ∣ ((m : ℤ) - j) := Int.ModEq.dvd hj
+          rcases abs_cases j with ⟨heqj, _⟩ | ⟨heqj, _⟩ <;> omega
+        exact_mod_cast hjZ2
+      exact le_trans (extreme_bound m hm j hjeq) hC3le
+
 end LatticeProb.BinomialLCLT
 
 end
