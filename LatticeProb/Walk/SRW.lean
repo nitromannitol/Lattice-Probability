@@ -281,7 +281,7 @@ theorem srwGreen_one_sub (m : ℕ) {y : ℤ} (hy : 0 ≤ y) :
         rw [hz1, hz2]
         simp only [hg]
         push_cast
-        ring
+        ring_nf
       have : srwTail (m + 1) y = srwTail m y + (srwHeat 1 m ![y] - srwHeat 1 m ![y + 1]) / 2 := by
         linarith [hstep]
       rw [this]
