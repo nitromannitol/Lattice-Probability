@@ -90,4 +90,34 @@ theorem green_ne_top_iff [Infinite V] (hG : G.Connected) (x y : V) :
     · exact hd hz
     · exact h hc
 
+/-- On a recurrent graph the Green function is infinite at every pair of
+vertices. -/
+theorem green_eq_top_of_recurrent [Infinite V] (hG : G.Connected) {o : V}
+    (hrec : Recurrent G o) (v : V) : green G v o = ⊤ := by
+  have hoo : (∑' k : ℕ, ENNReal.ofReal (heat G k o o)) = ⊤ := by
+    by_contra h
+    exact ((green_ne_top_iff hG o o).mpr h) hrec
+  have hvo : (∑' k : ℕ, ENNReal.ofReal (heat G k v o)) = ⊤ := by
+    obtain ⟨p⟩ := hG.preconnected v o
+    set r := p.length with hr
+    have hc : 0 < heat G r v o := heat_pos_of_walk hG p
+    have hstep : ∀ k : ℕ,
+        ENNReal.ofReal (heat G r v o) * ENNReal.ofReal (heat G k o o)
+          ≤ ENNReal.ofReal (heat G (r + k) v o) := by
+      intro k
+      rw [← ENNReal.ofReal_mul (heat_nonneg _ v o)]
+      exact ENNReal.ofReal_le_ofReal (heat_ge_mul hG r k v o o)
+    have hsum : ENNReal.ofReal (heat G r v o) * (∑' k : ℕ, ENNReal.ofReal (heat G k o o))
+        ≤ ∑' k : ℕ, ENNReal.ofReal (heat G (r + k) v o) := by
+      rw [← ENNReal.tsum_mul_left]
+      exact ENNReal.tsum_le_tsum hstep
+    have hle : (∑' k : ℕ, ENNReal.ofReal (heat G (r + k) v o))
+        ≤ ∑' k : ℕ, ENNReal.ofReal (heat G k v o) :=
+      ENNReal.tsum_comp_le_tsum_of_injective (add_right_injective r)
+        (fun k => ENNReal.ofReal (heat G k v o))
+    rw [hoo, ENNReal.mul_top (by simpa using (ENNReal.ofReal_pos.mpr hc).ne')] at hsum
+    exact top_le_iff.mp (le_trans hsum hle)
+  rw [green_eq_div, hvo, ENNReal.top_div]
+  simp [ENNReal.natCast_ne_top]
+
 end LatticeProb.Graph

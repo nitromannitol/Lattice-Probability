@@ -120,6 +120,31 @@ theorem harmonic_iff_mean [G.LocallyFinite] {c : V → V → ℝ} (f : V → ℝ
   rw [h, sub_eq_zero, eq_div_iff hx]
   constructor <;> intro h' <;> linarith
 
+/-- At a vertex of positive degree where a harmonic function dominates all its
+neighbours, it is equal to all of them. -/
+theorem eq_of_harmonicOn_of_max {G : SimpleGraph V} [G.LocallyFinite] (f : V → ℝ)
+    (hharm : HarmonicOn G (unitCond G) f Set.univ) {x : V} (hx : G.degree x ≠ 0)
+    (hmax : ∀ y ∈ G.neighborFinset x, f y ≤ f x) :
+    ∀ y ∈ G.neighborFinset x, f y = f x := by
+  have hd : (G.degree x : ℝ) ≠ 0 := by exact_mod_cast hx
+  have hw : LatticeProb.Graph.walkOp G f x = f x := by
+    rw [← LatticeProb.Graph.laplacian_eq_zero_iff_walkOp f hx]
+    exact (netLaplacian_unitCond f x).symm.trans (hharm x (Set.mem_univ x))
+  have hsum : ∑ z ∈ G.neighborFinset x, f z = (G.degree x : ℝ) * f x := by
+    rw [LatticeProb.Graph.walkOp] at hw
+    field_simp [hd] at hw
+    linarith
+  have h2 : ∑ z ∈ G.neighborFinset x, f x = (G.degree x : ℝ) * f x := by
+    rw [Finset.sum_const, SimpleGraph.card_neighborFinset_eq_degree, nsmul_eq_mul]
+  have hdiff : ∑ z ∈ G.neighborFinset x, (f x - f z) = 0 := by
+    rw [Finset.sum_sub_distrib, h2, ← hsum]
+    ring
+  have hnonneg : ∀ z ∈ G.neighborFinset x, 0 ≤ f x - f z := fun z hz =>
+    sub_nonneg.mpr (hmax z hz)
+  intro y hy
+  have h0 := (Finset.sum_eq_zero_iff_of_nonneg hnonneg).mp hdiff y hy
+  linarith
+
 /-! ### The Dirichlet form -/
 
 /-- Twice the Dirichlet form of `f` and `g` over the index set `S`,

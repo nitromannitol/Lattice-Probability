@@ -8,6 +8,7 @@ import LatticeProb.Equivariance
 import LatticeProb.Invariance
 import LatticeProb.Walk.Basic
 import LatticeProb.Walk.SRW
+import LatticeProb.Walk.SRWPos
 import LatticeProb.Walk.OneDimGauss
 import LatticeProb.Walk.SRWOneDim
 import LatticeProb.Walk.SRWTail
@@ -71,6 +72,12 @@ import LatticeProb.Prob.Kingman
 import LatticeProb.Prob.SubGaussian
 import LatticeProb.Prob.EfronStein
 import LatticeProb.Prob.WeightedConc
+import LatticeProb.Prob.GaussianConcentration
+import LatticeProb.External.GaussianLogSobolev
+import LatticeProb.Prob.GaussianHerbst
+import LatticeProb.Topology.Polygonal
+import LatticeProb.External.PolygonalTopology
+import LatticeProb.Analysis.NegSobolev
 import LatticeProb.Graph.Basic
 import LatticeProb.Graph.Scenery
 import LatticeProb.Graph.Walk
@@ -80,6 +87,7 @@ import LatticeProb.Graph.WalkLemmas
 import LatticeProb.Graph.Recursion
 import LatticeProb.Graph.Representation
 import LatticeProb.Graph.Green
+import LatticeProb.Graph.MeanValue
 import LatticeProb.Graph.HeatBasic
 import LatticeProb.Graph.RWRepresentation
 import LatticeProb.Graph.Zd
@@ -89,6 +97,7 @@ import LatticeProb.Graph.Killed
 import LatticeProb.Graph.ZdKilled
 import LatticeProb.Prob.Birkhoff
 import LatticeProb.Network.Basic
+import LatticeProb.Network.Liouville
 import LatticeProb.Network.Killed
 import LatticeProb.Graph.ExitDecomp
 import LatticeProb.Network.KilledGreen
@@ -212,3 +221,15 @@ import LatticeProb.Graph.HeatVanishing
 import LatticeProb.Prob.ConditionalMeasure
 import LatticeProb.Prob.ErgodicDecomposition
 import LatticeProb.Lattice.Planar
+import LatticeProb.Analysis.Sobolev.Defs
+import LatticeProb.Analysis.Sobolev.Basic
+import LatticeProb.Analysis.Sobolev.Weight
+import LatticeProb.Analysis.Sobolev.Scaling
+import LatticeProb.Analysis.Sobolev.TestFn
+import LatticeProb.Analysis.Sobolev.TestFnSub
+import LatticeProb.Analysis.Sobolev.AbsApply
+import LatticeProb.Analysis.Sobolev.DualNet
+import LatticeProb.Analysis.Sobolev.Tight
+import LatticeProb.Analysis.Sobolev.Compact
+import LatticeProb.Analysis.Sobolev.TightTransfer
+import LatticeProb.External.RellichKondrachovNegSobolev

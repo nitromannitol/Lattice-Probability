@@ -19,6 +19,7 @@ LatticeProb/Walk/Path.lean          path facts and the law of the first n steps 
 LatticeProb/Walk/Lazy.lean          the lazy walk operator Q and the truncated Green function
 LatticeProb/Walk/OneDim.lean        the one-dimensional lazy kernel
 LatticeProb/Walk/SRW.lean           the simple random walk kernel, its support and parity
+LatticeProb/Walk/SRWPos.lean        positivity of the simple kernel at reachable sites
 LatticeProb/Walk/OneDimGauss.lean   the Gaussian bound on the one-dimensional lazy kernel
 LatticeProb/Walk/SRWOneDim.lean     the one-dimensional simple kernel against the lazy one
 LatticeProb/Walk/BinomialLocalCLT.lean  the binomial local central limit theorem with an explicit 1/m error
@@ -84,6 +85,17 @@ LatticeProb/Prob/Kingman.lean       the subadditive ergodic theorem
 LatticeProb/Prob/SubGaussian.lean   sub-Gaussian behaviour on a range, and its Bernstein tail
 LatticeProb/Prob/EfronStein.lean    the exponential Efron-Stein inequality on a product measure
 LatticeProb/Prob/WeightedConc.lean  weighted exponential concentration and its tail
+LatticeProb/Prob/GaussianConcentration.lean  the Chernoff step of Gaussian concentration, the
+                                    exponential moment of a Lipschitz functional, and the
+                                    permutation invariance of the standard Gaussian product law
+LatticeProb/Prob/GaussianHerbst.lean  Gaussian concentration for a Lipschitz functional of
+                                    independent standard Gaussians, from the cited Herbst bound
+LatticeProb/External/GaussianLogSobolev.lean  the cited Gaussian logarithmic Sobolev inequality
+LatticeProb/Topology/Polygonal.lean  polygonal subsets of the plane and their basic topology
+LatticeProb/External/PolygonalTopology.lean  the cited polygonal unicoherence and Janiszewski theorems
+LatticeProb/Analysis/NegSobolev.lean  negative-order Sobolev norms on a bounded domain, and the
+                                    continuous inclusion H^{-s0}(D) into H^{-s}(D) for s0 <= s
+                                    and the Herbst exponential moment bound it implies
 LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
 LatticeProb/Prob/Ottaviani.lean     Ottaviani's maximal inequality, as a first passage decomposition
 LatticeProb/Prob/BrownianMax.lean   the Gaussian maximal estimate for Brownian motion: the tail of the
@@ -180,6 +192,18 @@ LatticeProb/Graph/OnDiagonal.lean   the on-diagonal heat kernel bound p_n(x,x) <
                                     infinite connected graph of degree bounded by d
 LatticeProb/Graph/HeatVanishing.lean  the transition probability tends to zero there, and a graph with
                                     a finite component where it does not
+LatticeProb/Analysis/Sobolev/Defs.lean  test functions, the Fourier-side Sobolev norms of negative order, and bounded domains
+LatticeProb/Analysis/Sobolev/Basic.lean  monotonicity of the norm and antitonicity of the dual norm
+LatticeProb/Analysis/Sobolev/Weight.lean  the high-frequency weight comparison
+LatticeProb/Analysis/Sobolev/Scaling.lean  homogeneity of the squared Sobolev norm
+LatticeProb/Analysis/Sobolev/TestFn.lean  closure of the test-function class under scaling
+LatticeProb/Analysis/Sobolev/TestFnSub.lean  closure of the test-function class under subtraction
+LatticeProb/Analysis/Sobolev/AbsApply.lean  a small test function pairs to at most its norm times the dual norm
+LatticeProb/Analysis/Sobolev/DualNet.lean  the dual norm is controlled by a finite net plus the lower-order dual norm
+LatticeProb/Analysis/Sobolev/Tight.lean  tightness transfer between negative Sobolev orders
+LatticeProb/Analysis/Sobolev/Compact.lean  the compact embedding of negative Sobolev order on a bounded domain
+LatticeProb/Analysis/Sobolev/TightTransfer.lean  tightness in H^{-s0} gives subsequential limits in H^{-s}
+LatticeProb/External/RellichKondrachovNegSobolev.lean  the cited Rellich-Kondrachov compact embedding of negative order
 ```
 
 ## Attribution
