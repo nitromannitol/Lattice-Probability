@@ -11,7 +11,7 @@ noncomputable section
 
 open MeasureTheory
 
-namespace LatticeProb
+namespace LatticeProb.Fubini
 
 /-- **Fubini for a bounded jointly measurable function of two probability
 spaces.**  If `f` is jointly measurable and bounded by `C`, the two iterated
@@ -28,4 +28,4 @@ theorem integral_integral_swap_of_bounded {α β : Type*} [MeasurableSpace α] [
     exact hbd p.1 p.2
   exact integral_integral_swap hint
 
-end LatticeProb
+end LatticeProb.Fubini

@@ -20,7 +20,7 @@ open MeasureTheory ProbabilityTheory Filter Topology Complex
 
 noncomputable section
 
-namespace LatticeProb
+namespace LatticeProb.CramerWold
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
@@ -126,4 +126,4 @@ theorem tendstoInDistribution_of_map_eq {ι F : Type*} {l : Filter ι} {Ω Ω' :
   convert h.tendsto using 2
   exact Subtype.ext h2
 
-end LatticeProb
+end LatticeProb.CramerWold
