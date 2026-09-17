@@ -759,6 +759,414 @@ theorem gfun_quartic_bound (t : ℝ) (ht : |t| ≤ 1 / 2) :
     linarith [hstep2]
   linarith [hsub1, hsub2]
 
+
+/-! ### Region 1: the central range `|j| ≤ m/2` -/
+/-! ### Region 1: the central range `|j| \u2264 m/2` -/
+
+theorem m_ge_two_of_region1 (m : ℕ) (hm : 1 ≤ m) (j : ℤ) (hj : j ≡ (m : ℤ) [ZMOD 2])
+    (hjR : |(j:ℝ)| ≤ (m:ℝ) / 2) : 2 ≤ m := by
+  rcases Nat.lt_or_ge m 2 with hlt | hge
+  · exfalso
+    have hm1 : m = 1 := by omega
+    have h1 : |(j:ℝ)| ≤ (1:ℝ)/2 := by rw [hm1] at hjR; exact_mod_cast hjR
+    have hjz : |(j:ℝ)| < 1 := by linarith
+    have h2 : |j| < 1 := by exact_mod_cast hjz
+    have hb := abs_lt.mp h2
+    have hj0 : j = 0 := by omega
+    rw [hj0, hm1] at hj
+    simp [Int.ModEq] at hj
+  · exact hge
+
+
+theorem ab_facts_region1 (m : ℕ) (hm2 : 2 ≤ m) (j : ℤ) (hj : j ≡ (m : ℤ) [ZMOD 2])
+    (hjR : |(j:ℝ)| ≤ (m:ℝ) / 2) :
+    1 ≤ (((m:ℤ)+j)/2).toNat ∧ 1 ≤ (((m:ℤ)-j)/2).toNat ∧
+    (((m:ℤ)+j)/2).toNat + (((m:ℤ)-j)/2).toNat = m ∧
+    (m:ℝ)/4 ≤ ((((m:ℤ)+j)/2).toNat : ℝ) ∧ (m:ℝ)/4 ≤ ((((m:ℤ)-j)/2).toNat : ℝ) ∧
+    |(j:ℝ)| ≤ (m:ℝ) - 2 := by
+  have hjZ : 2 * |j| ≤ (m:ℤ) := by
+    have h1 : (2:ℝ) * |(j:ℝ)| ≤ (m:ℝ) := by linarith [hjR]
+    have h2 : ((2 * |j| : ℤ) : ℝ) ≤ ((m:ℤ):ℝ) := by push_cast; linarith [h1]
+    exact_mod_cast h2
+  have hl : -|j| ≤ j := neg_abs_le j
+  have hr : j ≤ |j| := le_abs_self j
+  have hdvd2 : (2 : ℤ) ∣ ((m : ℤ) - j) := Int.ModEq.dvd hj
+  have hdvd : (2 : ℤ) ∣ ((m : ℤ) + j) := by omega
+  set a : ℕ := (((m:ℤ)+j)/2).toNat with ha
+  set b : ℕ := (((m:ℤ)-j)/2).toNat with hb
+  have hja : ((a:ℤ)) = ((m:ℤ)+j)/2 := by rw [ha]; exact Int.toNat_of_nonneg (by omega)
+  have hjb : ((b:ℤ)) = ((m:ℤ)-j)/2 := by rw [hb]; exact Int.toNat_of_nonneg (by omega)
+  have ha1 : 1 ≤ a := by
+    have h : (1:ℤ) ≤ (a:ℤ) := by rw [hja]; omega
+    exact_mod_cast h
+  have hb1 : 1 ≤ b := by
+    have h : (1:ℤ) ≤ (b:ℤ) := by rw [hjb]; omega
+    exact_mod_cast h
+  have hsum : a + b = m := by
+    have h : (a:ℤ) + (b:ℤ) = (m:ℤ) := by rw [hja, hjb]; omega
+    exact_mod_cast h
+  have ha4 : (m:ℤ) ≤ 4 * (a:ℤ) := by rw [hja]; omega
+  have hb4 : (m:ℤ) ≤ 4 * (b:ℤ) := by rw [hjb]; omega
+  have hj1Z : |j| ≤ (m:ℤ) - 2 := by
+    rcases abs_cases j with ⟨heq, _⟩ | ⟨heq, _⟩ <;> omega
+  refine ⟨ha1, hb1, hsum, ?_, ?_, ?_⟩
+  · have h : (m:ℝ) ≤ 4 * (a:ℝ) := by exact_mod_cast ha4
+    linarith
+  · have h : (m:ℝ) ≤ 4 * (b:ℝ) := by exact_mod_cast hb4
+    linarith
+  · exact_mod_cast hj1Z
+
+theorem stirling_ratio_upper_m (m a b : ℕ) (hab : a + b = m) (ha : 1 ≤ a) (hb : 1 ≤ b)
+    (hm : 1 ≤ m) :
+    Stirling.stirlingSeq m / (Stirling.stirlingSeq a * Stirling.stirlingSeq b)
+      ≤ (Real.sqrt Real.pi)⁻¹ * (1 + 1 / (6 * (m:ℝ))) := by
+  have h1 := stirlingSeq_ratio_le a b ha hb
+  have habR : (a:ℝ) + b = m := by exact_mod_cast hab
+  rw [hab, habR] at h1
+  have hm1 : (1:ℝ) ≤ (m:ℝ) := by exact_mod_cast hm
+  have hm0 : (0:ℝ) < (m:ℝ) := by linarith
+  have hxle1 : |(1:ℝ)/(12*(m:ℝ))| ≤ 1 := by
+    rw [abs_of_nonneg (by positivity)]
+    rw [div_le_one (by positivity)]
+    linarith
+  have h2 := abs_exp_sub_one_le_two_mul (1/(12*(m:ℝ))) hxle1
+  have hexp_nonneg : (0:ℝ) ≤ 1/(12*(m:ℝ)) := by positivity
+  rw [abs_of_nonneg hexp_nonneg] at h2
+  have h3 : Real.exp (1/(12*(m:ℝ))) - 1 ≤ 2 * (1/(12*(m:ℝ))) := by
+    have := abs_le.mp h2
+    linarith [this.2]
+  have h4 : Real.exp (1/(12*(m:ℝ))) ≤ 1 + 1/(6*(m:ℝ)) := by
+    have heq : 2 * (1/(12*(m:ℝ))) = 1/(6*(m:ℝ)) := by ring
+    linarith [h3, heq.le, heq.ge]
+  have hsqrtpi_pos : (0:ℝ) < (Real.sqrt Real.pi)⁻¹ := by positivity
+  calc Stirling.stirlingSeq m / (Stirling.stirlingSeq a * Stirling.stirlingSeq b)
+      ≤ (Real.sqrt Real.pi)⁻¹ * Real.exp (1/(12*(m:ℝ))) := h1
+    _ ≤ (Real.sqrt Real.pi)⁻¹ * (1 + 1/(6*(m:ℝ))) := by
+        apply mul_le_mul_of_nonneg_left h4 hsqrtpi_pos.le
+
+theorem stirling_ratio_lower_m (m a b : ℕ) (hab : a + b = m) (ha : 1 ≤ a) (hb : 1 ≤ b)
+    (hm : 1 ≤ m) (ha4 : (m:ℝ) ≤ 4 * (a:ℝ)) (hb4 : (m:ℝ) ≤ 4 * (b:ℝ)) :
+    (Real.sqrt Real.pi)⁻¹ * (1 - 2 / (3 * (m:ℝ)))
+      ≤ Stirling.stirlingSeq m / (Stirling.stirlingSeq a * Stirling.stirlingSeq b) := by
+  have h1 := stirlingSeq_ratio_ge a b ha hb
+  rw [hab] at h1
+  have hm1 : (1:ℝ) ≤ (m:ℝ) := by exact_mod_cast hm
+  have ha0 : (0:ℝ) < (a:ℝ) := by exact_mod_cast ha
+  have hb0 : (0:ℝ) < (b:ℝ) := by exact_mod_cast hb
+  have hae : 1/(12*(a:ℝ)) ≤ 1/(3*(m:ℝ)) := by
+    rw [div_le_div_iff₀ (by positivity) (by positivity)]
+    nlinarith [ha4]
+  have hbe : 1/(12*(b:ℝ)) ≤ 1/(3*(m:ℝ)) := by
+    rw [div_le_div_iff₀ (by positivity) (by positivity)]
+    nlinarith [hb4]
+  have hcomb : 1/(12*(a:ℝ)) + 1/(12*(b:ℝ)) ≤ 2/(3*(m:ℝ)) := by
+    have heq : 2/(3*(m:ℝ)) = 1/(3*(m:ℝ)) + 1/(3*(m:ℝ)) := by ring
+    linarith [hae, hbe, heq.ge, heq.le]
+  have hexpmono : Real.exp (-(2/(3*(m:ℝ)))) ≤ Real.exp (-(1/(12*(a:ℝ))) - 1/(12*(b:ℝ))) := by
+    apply Real.exp_le_exp.mpr
+    linarith [hcomb]
+  have h4 : (1:ℝ) - 2/(3*(m:ℝ)) ≤ Real.exp (-(2/(3*(m:ℝ)))) := by
+    have := Real.add_one_le_exp (-(2/(3*(m:ℝ))))
+    linarith [this]
+  have hsqrtpi_pos : (0:ℝ) < (Real.sqrt Real.pi)⁻¹ := by positivity
+  calc (Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ)))
+      ≤ (Real.sqrt Real.pi)⁻¹ * Real.exp (-(2/(3*(m:ℝ)))) :=
+        mul_le_mul_of_nonneg_left h4 hsqrtpi_pos.le
+    _ ≤ (Real.sqrt Real.pi)⁻¹ * Real.exp (-(1/(12*(a:ℝ))) - 1/(12*(b:ℝ))) :=
+        mul_le_mul_of_nonneg_left hexpmono hsqrtpi_pos.le
+    _ ≤ Stirling.stirlingSeq m / (Stirling.stirlingSeq a * Stirling.stirlingSeq b) := h1
+
+theorem prefactor_bound (t : ℝ) (ht : |t| ≤ 1/2) :
+    |Real.sqrt 2 / Real.sqrt (1 - t^2) - Real.sqrt 2| ≤ 2 * t^2 := by
+  have ht2 : t^2 ≤ 1/4 := by nlinarith [sq_abs t, abs_nonneg t, ht]
+  have hxge : (0:ℝ) ≤ 1 - t^2 := by linarith
+  have hxle1 : (1:ℝ) - t^2 ≤ 1 := by nlinarith [sq_nonneg t]
+  have hpos : (0:ℝ) < 1 - t^2 := by linarith
+  have h34 : (1:ℝ) - t^2 ≥ 3/4 := by linarith
+  have hsqrt_ge : (1 - t^2) ≤ Real.sqrt (1 - t^2) :=
+    by nlinarith [Real.sq_sqrt hxge, Real.sqrt_nonneg (1-t^2), sq_nonneg (Real.sqrt (1-t^2) - 1)]
+  have hsqrt_le1 : Real.sqrt (1-t^2) ≤ 1 := by
+    nlinarith [Real.sq_sqrt hxge, Real.sqrt_nonneg (1-t^2), sq_nonneg (Real.sqrt (1-t^2) - 1)]
+  have hsqrt_ge34 : Real.sqrt (1-t^2) ≥ 3/4 := le_trans h34 hsqrt_ge
+  have hsqrt_pos : (0:ℝ) < Real.sqrt (1-t^2) := by linarith
+  have hnum : (0:ℝ) ≤ 1 - Real.sqrt (1-t^2) := by linarith [hsqrt_le1]
+  have hnumle : 1 - Real.sqrt (1-t^2) ≤ t^2 := by linarith [hsqrt_ge]
+  have hdiffeq : Real.sqrt 2 / Real.sqrt (1-t^2) - Real.sqrt 2
+      = Real.sqrt 2 * (1 - Real.sqrt (1-t^2)) / Real.sqrt (1-t^2) := by
+    field_simp
+  have hdiffnn : (0:ℝ) ≤ Real.sqrt 2 * (1 - Real.sqrt (1-t^2)) / Real.sqrt (1-t^2) := by
+    positivity
+  rw [hdiffeq, abs_of_nonneg hdiffnn]
+  rw [div_le_iff₀ hsqrt_pos]
+  have hsqrt2 : Real.sqrt 2 ≤ 3/2 := by
+    nlinarith [Real.sq_sqrt (by norm_num : (0:ℝ) ≤ 2), Real.sqrt_nonneg (2:ℝ)]
+  calc Real.sqrt 2 * (1 - Real.sqrt (1-t^2)) ≤ (3/2) * t^2 := by
+        apply mul_le_mul hsqrt2 hnumle hnum (by norm_num)
+    _ ≤ 2 * t^2 * Real.sqrt (1-t^2) := by nlinarith [hsqrt_ge34, sq_nonneg t]
+
+theorem prefactor_ge (t : ℝ) (ht : |t| < 1) :
+    Real.sqrt 2 ≤ Real.sqrt 2 / Real.sqrt (1 - t^2) := by
+  have hxge : (0:ℝ) ≤ 1 - t^2 := by nlinarith [sq_abs t, abs_lt.mp ht]
+  have hsqrt_le1 : Real.sqrt (1-t^2) ≤ 1 := by
+    nlinarith [Real.sq_sqrt hxge, Real.sqrt_nonneg (1-t^2), sq_nonneg (Real.sqrt (1-t^2) - 1)]
+  have hpos : (0:ℝ) < 1 - t^2 := by nlinarith [sq_abs t, abs_lt.mp ht]
+  have hsqrt_pos : (0:ℝ) < Real.sqrt (1-t^2) := Real.sqrt_pos.mpr hpos
+  rw [le_div_iff₀ hsqrt_pos]
+  nlinarith [Real.sqrt_nonneg (2:ℝ), hsqrt_le1]
+
+
+theorem gaussianDensity_two_eq (m : ℕ) (hm : 1 ≤ m) (t : ℝ) (j : ℤ) (ht : t = (j:ℝ)/(m:ℝ)) :
+    2 * gaussianDensity ((j:ℝ) / Real.sqrt m)
+      = Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ) * t^2 / 2) := by
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  have hs2 : ((j:ℝ) / Real.sqrt (m:ℝ))^2 = (m:ℝ) * t^2 := by
+    rw [div_pow, Real.sq_sqrt hm0.le, ht]
+    field_simp
+  unfold gaussianDensity
+  rw [hs2]
+  have hconst : 2 * (Real.sqrt (2*Real.pi))⁻¹ = Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ := by
+    rw [Real.sqrt_mul (by norm_num : (0:ℝ) ≤ 2)]
+    have h2 : Real.sqrt 2 ≠ 0 := by positivity
+    field_simp
+    nlinarith [Real.sq_sqrt (by norm_num : (0:ℝ) ≤ 2)]
+  rw [show -((m:ℝ) * t^2) / 2 = -((m:ℝ)*t^2/2) from by ring]
+  rw [← hconst]
+  ring
+
+
+theorem region1_A3_bounds (m : ℕ) (hm : 1 ≤ m) (t : ℝ) (htabs : |t| ≤ 1/2) :
+    Real.exp (-(m:ℝ) * gfun t) ≤ Real.exp (-(m:ℝ)*t^2/2) ∧
+    Real.exp (-(m:ℝ)*t^2/2) * (1 - (8/3)*(m:ℝ)*t^4) ≤ Real.exp (-(m:ℝ) * gfun t) := by
+  have htabs1 : |t| < 1 := by linarith
+  have hgfun_lb := gfun_ge_half_sq t htabs1
+  have hgfun_ub := gfun_quartic_bound t htabs
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  constructor
+  · apply Real.exp_le_exp.mpr
+    nlinarith [hgfun_lb, hm0.le]
+  · have hub : gfun t - t^2/2 ≤ (8/3)*t^4 := (abs_le.mp hgfun_ub).2
+    have hstep : Real.exp (-(m:ℝ)*t^2/2 - (8/3)*(m:ℝ)*t^4) ≤ Real.exp (-(m:ℝ)*gfun t) := by
+      apply Real.exp_le_exp.mpr
+      nlinarith [hub, hm0.le]
+    have hstep2 : Real.exp (-(m:ℝ)*t^2/2) * (1-(8/3)*(m:ℝ)*t^4)
+        ≤ Real.exp (-(m:ℝ)*t^2/2 - (8/3)*(m:ℝ)*t^4) := by
+      rw [show -(m:ℝ)*t^2/2 - (8/3)*(m:ℝ)*t^4 = -(m:ℝ)*t^2/2 + (-((8/3)*(m:ℝ)*t^4)) from by ring,
+        Real.exp_add]
+      apply mul_le_mul_of_nonneg_left _ (Real.exp_pos _).le
+      have hae := Real.add_one_le_exp (-((8/3)*(m:ℝ)*t^4))
+      linarith [hae]
+    linarith [hstep, hstep2]
+
+
+theorem key_bound1 (m : ℕ) (hm : 1 ≤ m) (t : ℝ) :
+    t^2 * Real.exp (-(m:ℝ)*t^2/2) ≤ 2 * Real.exp (-1) / m := by
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  set s := t * Real.sqrt (m:ℝ) with hsdef
+  have hs2 : s^2 = (m:ℝ) * t^2 := by
+    rw [hsdef, mul_pow, Real.sq_sqrt hm0.le]; ring
+  have hkey := sq_mul_exp_neg_half_sq_le s
+  rw [hs2] at hkey
+  have heq : -((m:ℝ)*t^2)/2 = -(m:ℝ)*t^2/2 := by ring
+  rw [heq] at hkey
+  rw [le_div_iff₀ hm0]
+  nlinarith [hkey, Real.exp_pos (-(m:ℝ)*t^2/2)]
+
+theorem key_bound2 (m : ℕ) (hm : 1 ≤ m) (t : ℝ) :
+    (m:ℝ) * t^4 * Real.exp (-(m:ℝ)*t^2/2) ≤ 16 * Real.exp (-2) / m := by
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  set s := t * Real.sqrt (m:ℝ) with hsdef
+  have hs2 : s^2 = (m:ℝ) * t^2 := by
+    rw [hsdef, mul_pow, Real.sq_sqrt hm0.le]; ring
+  have hs4 : s^4 = (m:ℝ)^2 * t^4 := by
+    have : s^4 = (s^2)^2 := by ring
+    rw [this, hs2]; ring
+  have hkey := quartic_mul_exp_neg_half_sq_le s
+  rw [hs4] at hkey
+  have heq : -(s^2)/2 = -(m:ℝ)*t^2/2 := by rw [hs2]; ring
+  rw [heq] at hkey
+  rw [le_div_iff₀ hm0]
+  have hexp_pos := Real.exp_pos (-(m:ℝ)*t^2/2)
+  have hm2 : (m:ℝ)^2 = (m:ℝ) * (m:ℝ) := by ring
+  rw [hm2] at hkey
+  nlinarith [hkey, hexp_pos, hm0]
+
+
+theorem region1_upper_diff (m : ℕ) (hm : 1 ≤ m) (t : ℝ) :
+    ((Real.sqrt Real.pi)⁻¹ * (1 + 1/(6*(m:ℝ)))) * (Real.sqrt 2 + 2*t^2)
+        * Real.exp (-(m:ℝ)*t^2/2)
+      - Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)*t^2/2)
+    ≤ ((Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1) + Real.sqrt 2/6 + 2*Real.exp (-1)/3)) / (m:ℝ) := by
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  have hm1 : (1:ℝ) ≤ (m:ℝ) := by exact_mod_cast hm
+  have hkey1 := key_bound1 m hm t
+  have hpi_inv_nn : (0:ℝ) ≤ (Real.sqrt Real.pi)⁻¹ := by positivity
+  have hE_le_one : Real.exp (-(m:ℝ)*t^2/2) ≤ 1 := by
+    have hle0 : -(m:ℝ)*t^2/2 ≤ 0 := by nlinarith [sq_nonneg t, hm0.le]
+    calc Real.exp (-(m:ℝ)*t^2/2) ≤ Real.exp 0 := Real.exp_le_exp.mpr hle0
+      _ = 1 := Real.exp_zero
+  have hexpand :
+      ((Real.sqrt Real.pi)⁻¹ * (1 + 1/(6*(m:ℝ)))) * (Real.sqrt 2 + 2*t^2)
+          * Real.exp (-(m:ℝ)*t^2/2)
+        - Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)*t^2/2)
+      = (Real.sqrt Real.pi)⁻¹ * (2*(t^2*Real.exp (-(m:ℝ)*t^2/2))
+          + (Real.sqrt 2/(6*(m:ℝ)))*Real.exp (-(m:ℝ)*t^2/2)
+          + (1/(3*(m:ℝ)))*(t^2*Real.exp (-(m:ℝ)*t^2/2))) := by ring
+  rw [hexpand]
+  have hb1 : 2*(t^2*Real.exp (-(m:ℝ)*t^2/2)) ≤ 4*Real.exp (-1)/(m:ℝ) := by
+    have h := mul_le_mul_of_nonneg_left hkey1 (by norm_num : (0:ℝ) ≤ 2)
+    calc 2*(t^2*Real.exp (-(m:ℝ)*t^2/2)) ≤ 2*(2*Real.exp (-1)/(m:ℝ)) := h
+      _ = 4*Real.exp (-1)/(m:ℝ) := by ring
+  have hb2 : (Real.sqrt 2/(6*(m:ℝ)))*Real.exp (-(m:ℝ)*t^2/2) ≤ Real.sqrt 2/(6*(m:ℝ)) := by
+    nlinarith [hE_le_one, (by positivity : (0:ℝ) ≤ Real.sqrt 2/(6*(m:ℝ)))]
+  have hb3 : (1/(3*(m:ℝ)))*(t^2*Real.exp (-(m:ℝ)*t^2/2)) ≤ 2*Real.exp (-1)/(3*(m:ℝ)) := by
+    have h1 : (1/(3*(m:ℝ)))*(t^2*Real.exp (-(m:ℝ)*t^2/2))
+        ≤ (1/(3*(m:ℝ)))*(2*Real.exp (-1)/(m:ℝ)) :=
+      mul_le_mul_of_nonneg_left hkey1 (by positivity)
+    have h2 : (1/(3*(m:ℝ)))*(2*Real.exp (-1)/(m:ℝ)) ≤ 2*Real.exp (-1)/(3*(m:ℝ)) := by
+      rw [show (1/(3*(m:ℝ)))*(2*Real.exp (-1)/(m:ℝ)) = 2*Real.exp (-1)/(3*(m:ℝ)^2) from by ring]
+      rw [div_le_div_iff₀ (by positivity) (by positivity)]
+      nlinarith [mul_nonneg (Real.exp_pos (-1:ℝ)).le
+        (by nlinarith [hm1] : (0:ℝ) ≤ (m:ℝ)^2 - (m:ℝ))]
+    linarith [h1, h2]
+  have hsum1 : 2*(t^2*Real.exp (-(m:ℝ)*t^2/2)) + (Real.sqrt 2/(6*(m:ℝ)))*Real.exp (-(m:ℝ)*t^2/2)
+        + (1/(3*(m:ℝ)))*(t^2*Real.exp (-(m:ℝ)*t^2/2))
+      ≤ 4*Real.exp (-1)/(m:ℝ) + Real.sqrt 2/(6*(m:ℝ)) + 2*Real.exp (-1)/(3*(m:ℝ)) := by
+    linarith [hb1, hb2, hb3]
+  have hfin := mul_le_mul_of_nonneg_left hsum1 hpi_inv_nn
+  rw [show (Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1)/(m:ℝ) + Real.sqrt 2/(6*(m:ℝ))
+        + 2*Real.exp (-1)/(3*(m:ℝ)))
+      = ((Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1) + Real.sqrt 2/6 + 2*Real.exp (-1)/3)) / (m:ℝ)
+      from by ring] at hfin
+  exact hfin
+
+theorem region1_lower_diff (m : ℕ) (hm : 1 ≤ m) (t : ℝ) :
+    Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)*t^2/2)
+      - ((Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ)))) * Real.sqrt 2
+          * (Real.exp (-(m:ℝ)*t^2/2) * (1 - (8/3)*(m:ℝ)*t^4))
+    ≤ (Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/3 + 128*Real.exp (-2)/3)) / (m:ℝ) := by
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  have hm1 : (1:ℝ) ≤ (m:ℝ) := by exact_mod_cast hm
+  have hkey2 := key_bound2 m hm t
+  have hconst_nn : (0:ℝ) ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ := by positivity
+  have hE_le_one : Real.exp (-(m:ℝ)*t^2/2) ≤ 1 := by
+    have hle0 : -(m:ℝ)*t^2/2 ≤ 0 := by nlinarith [sq_nonneg t, hm0.le]
+    calc Real.exp (-(m:ℝ)*t^2/2) ≤ Real.exp 0 := Real.exp_le_exp.mpr hle0
+      _ = 1 := Real.exp_zero
+  have hE_nn : (0:ℝ) ≤ Real.exp (-(m:ℝ)*t^2/2) := (Real.exp_pos _).le
+  have hmt4_nn : (0:ℝ) ≤ (m:ℝ)*t^4 := by positivity
+  have hdrop :
+      Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)*t^2/2)
+        - ((Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ)))) * Real.sqrt 2
+            * (Real.exp (-(m:ℝ)*t^2/2) * (1 - (8/3)*(m:ℝ)*t^4))
+      ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹
+          * ((2/(3*(m:ℝ)))*Real.exp (-(m:ℝ)*t^2/2)
+              + (8/3)*((m:ℝ)*t^4*Real.exp (-(m:ℝ)*t^2/2))) := by
+    have hcross_nn : (0:ℝ) ≤ (2/(3*(m:ℝ))) * ((8/3)*((m:ℝ)*t^4)) := by positivity
+    nlinarith [hcross_nn, mul_nonneg hconst_nn hE_nn,
+      mul_le_mul_of_nonneg_left hcross_nn hE_nn]
+  refine le_trans hdrop ?_
+  have hb1 : (2/(3*(m:ℝ)))*Real.exp (-(m:ℝ)*t^2/2) ≤ 2/(3*(m:ℝ)) := by
+    nlinarith [hE_le_one, (by positivity : (0:ℝ) ≤ 2/(3*(m:ℝ)))]
+  have hb2 : (8/3)*((m:ℝ)*t^4*Real.exp (-(m:ℝ)*t^2/2)) ≤ (8/3)*(16*Real.exp (-2)/(m:ℝ)) :=
+    mul_le_mul_of_nonneg_left hkey2 (by norm_num)
+  have hb2' : (8/3)*(16*Real.exp (-2)/(m:ℝ)) = 128*Real.exp (-2)/(3*(m:ℝ)) := by ring
+  rw [hb2'] at hb2
+  have hsum : (2/(3*(m:ℝ)))*Real.exp (-(m:ℝ)*t^2/2)
+        + (8/3)*((m:ℝ)*t^4*Real.exp (-(m:ℝ)*t^2/2))
+      ≤ 2/(3*(m:ℝ)) + 128*Real.exp (-2)/(3*(m:ℝ)) := by linarith [hb1, hb2]
+  have hfin := mul_le_mul_of_nonneg_left hsum hconst_nn
+  rw [show Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/(3*(m:ℝ)) + 128*Real.exp (-2)/(3*(m:ℝ)))
+        = (Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/3 + 128*Real.exp (-2)/3)) / (m:ℝ)
+      from by ring] at hfin
+  exact hfin
+
+/-- **The region-1 (central range) bound.** -/
+theorem region1_bound (m : ℕ) (hm : 1 ≤ m) (j : ℤ) (hj : j ≡ (m:ℤ) [ZMOD 2])
+    (hjR : |(j:ℝ)| ≤ (m:ℝ)/2) :
+    |Real.sqrt m * binomPMF m j - 2 * gaussianDensity ((j:ℝ)/Real.sqrt m)|
+      ≤ ((Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1) + Real.sqrt 2/6 + 2*Real.exp (-1)/3)
+          + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/3 + 128*Real.exp (-2)/3)) / (m:ℝ) := by
+  have hm2 := m_ge_two_of_region1 m hm j hj hjR
+  obtain ⟨ha1, hb1, hab, ha4, hb4, hj1⟩ := ab_facts_region1 m hm2 j hj hjR
+  have heq := sqrt_mul_binomPMF_eq m hm j hj (by exact_mod_cast hj1)
+  set t := (j:ℝ)/(m:ℝ) with htdef
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  have hm1 : (1:ℝ) ≤ (m:ℝ) := by exact_mod_cast hm
+  have htabs : |t| ≤ 1/2 := by
+    rw [htdef, abs_div, abs_of_pos hm0, div_le_iff₀ hm0]
+    linarith [hjR]
+  have htabs1 : |t| < 1 := by linarith
+  -- name the three factors
+  set A1 := Stirling.stirlingSeq m
+      / (Stirling.stirlingSeq (((m:ℤ)+j)/2).toNat * Stirling.stirlingSeq (((m:ℤ)-j)/2).toNat)
+    with hA1def
+  set A2 := Real.sqrt 2 / Real.sqrt (1 - t^2) with hA2def
+  set A3 := Real.exp (-(m:ℝ) * gfun t) with hA3def
+  have hSRle : A1 ≤ (Real.sqrt Real.pi)⁻¹ * (1 + 1/(6*(m:ℝ))) :=
+    stirling_ratio_upper_m m _ _ hab ha1 hb1 hm
+  have hSRge : (Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ))) ≤ A1 :=
+    stirling_ratio_lower_m m _ _ hab ha1 hb1 hm (by linarith [ha4]) (by linarith [hb4])
+  have hA2le : A2 ≤ Real.sqrt 2 + 2*t^2 := by
+    have h := prefactor_bound t htabs
+    have hge := prefactor_ge t htabs1
+    rw [abs_of_nonneg (by linarith [hge] : (0:ℝ) ≤ A2 - Real.sqrt 2)] at h
+    linarith [h]
+  have hA2ge : Real.sqrt 2 ≤ A2 := prefactor_ge t htabs1
+  obtain ⟨hA3le, hA3ge⟩ := region1_A3_bounds m hm t htabs
+  have hL1nn : (0:ℝ) ≤ (Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ))) := by
+    have : (2:ℝ)/(3*(m:ℝ)) ≤ 2/3 := by
+      rw [div_le_div_iff₀ (by positivity) (by norm_num)]; linarith
+    have hpi : (0:ℝ) ≤ (Real.sqrt Real.pi)⁻¹ := by positivity
+    nlinarith [hpi, this]
+  have hA1nn : (0:ℝ) ≤ A1 := le_trans hL1nn hSRge
+  have hA2nn : (0:ℝ) ≤ A2 := le_trans (Real.sqrt_nonneg 2) hA2ge
+  have hA3nn : (0:ℝ) ≤ A3 := (Real.exp_pos _).le
+  -- UPPER bound on A1*A2*A3
+  have hUpper : A1*A2*A3 ≤
+      ((Real.sqrt Real.pi)⁻¹ * (1 + 1/(6*(m:ℝ)))) * (Real.sqrt 2 + 2*t^2)
+        * Real.exp (-(m:ℝ)*t^2/2) := by
+    have hstep1 : A1*A2 ≤ ((Real.sqrt Real.pi)⁻¹ * (1 + 1/(6*(m:ℝ)))) * (Real.sqrt 2 + 2*t^2) :=
+      mul_le_mul hSRle hA2le hA2nn (by positivity)
+    have hstep1nn : (0:ℝ) ≤ ((Real.sqrt Real.pi)⁻¹ * (1 + 1/(6*(m:ℝ)))) * (Real.sqrt 2 + 2*t^2) := by
+      positivity
+    exact mul_le_mul hstep1 hA3le hA3nn hstep1nn
+  -- LOWER bound on A1*A2*A3
+  have hLower : ((Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ)))) * Real.sqrt 2
+        * (Real.exp (-(m:ℝ)*t^2/2) * (1 - (8/3)*(m:ℝ)*t^4)) ≤ A1*A2*A3 := by
+    have hstep1 : ((Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ)))) * Real.sqrt 2 ≤ A1*A2 :=
+      mul_le_mul hSRge hA2ge (Real.sqrt_nonneg 2) hA1nn
+    have hstep1nn : (0:ℝ) ≤ ((Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ)))) * Real.sqrt 2 :=
+      mul_nonneg hL1nn (Real.sqrt_nonneg 2)
+    calc ((Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ)))) * Real.sqrt 2
+          * (Real.exp (-(m:ℝ)*t^2/2) * (1 - (8/3)*(m:ℝ)*t^4))
+        ≤ ((Real.sqrt Real.pi)⁻¹ * (1 - 2/(3*(m:ℝ)))) * Real.sqrt 2 * A3 :=
+          mul_le_mul_of_nonneg_left hA3ge hstep1nn
+      _ ≤ A1*A2*A3 := mul_le_mul_of_nonneg_right hstep1 hA3nn
+  clear_value A1 A2 A3 t
+  have hUdiff := region1_upper_diff m hm t
+  have hLdiff := region1_lower_diff m hm t
+  have hB := gaussianDensity_two_eq m hm t j htdef
+  have hupper_final : A1*A2*A3 - Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)*t^2/2)
+      ≤ ((Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1) + Real.sqrt 2/6 + 2*Real.exp (-1)/3)) / (m:ℝ) := by
+    linarith [hUpper, hUdiff]
+  have hlower_final : Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)*t^2/2) - A1*A2*A3
+      ≤ (Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/3 + 128*Real.exp (-2)/3)) / (m:ℝ) := by
+    linarith [hLower, hLdiff]
+  have hsplit : ((Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1) + Real.sqrt 2/6 + 2*Real.exp (-1)/3)) / (m:ℝ)
+        + (Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/3 + 128*Real.exp (-2)/3)) / (m:ℝ)
+      = ((Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1) + Real.sqrt 2/6 + 2*Real.exp (-1)/3)
+          + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/3 + 128*Real.exp (-2)/3)) / (m:ℝ) := by ring
+  have hXnn : (0:ℝ) ≤ ((Real.sqrt Real.pi)⁻¹ * (4*Real.exp (-1) + Real.sqrt 2/6 + 2*Real.exp (-1)/3)) / (m:ℝ) := by
+    positivity
+  have hYnn : (0:ℝ) ≤ (Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2/3 + 128*Real.exp (-2)/3)) / (m:ℝ) := by
+    positivity
+  rw [heq, hB, abs_le]
+  constructor
+  · linarith [hlower_final, hsplit, hXnn]
+  · linarith [hupper_final, hsplit, hYnn]
+
+
 end LatticeProb.BinomialLCLT
 
 end
+
