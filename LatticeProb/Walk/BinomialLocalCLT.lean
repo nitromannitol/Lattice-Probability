@@ -1166,6 +1166,306 @@ theorem region1_bound (m : ℕ) (hm : 1 ≤ m) (j : ℤ) (hj : j ≡ (m:ℤ) [ZM
   · linarith [hupper_final, hsplit, hYnn]
 
 
+
+/-! ### Region 2: the far range `m/2 < |j| \le m-2`, and the extreme case `|j| = m` -/
+
+theorem sqrt_le_self_of_one_le (m : ℝ) (hm : 1 ≤ m) : Real.sqrt m ≤ m := by
+  nlinarith [Real.sq_sqrt (by linarith : (0:ℝ) ≤ m), Real.sqrt_nonneg m, sq_nonneg (Real.sqrt m - 1)]
+
+theorem ab_facts_region2 (m : ℕ) (j : ℤ) (hj : j ≡ (m : ℤ) [ZMOD 2])
+    (hjR2 : |(j:ℝ)| ≤ (m:ℝ) - 2) :
+    1 ≤ (((m:ℤ)+j)/2).toNat ∧ 1 ≤ (((m:ℤ)-j)/2).toNat ∧
+    (((m:ℤ)+j)/2).toNat + (((m:ℤ)-j)/2).toNat = m ∧
+    (((((m:ℤ)+j)/2).toNat : ℤ)) - ((((m:ℤ)-j)/2).toNat : ℤ) = j := by
+  have hjZ : |j| ≤ (m:ℤ) - 2 := by exact_mod_cast hjR2
+  have hl : -|j| ≤ j := neg_abs_le j
+  have hr : j ≤ |j| := le_abs_self j
+  have hdvd2 : (2 : ℤ) ∣ ((m : ℤ) - j) := Int.ModEq.dvd hj
+  have hdvd : (2 : ℤ) ∣ ((m : ℤ) + j) := by omega
+  set a : ℕ := (((m:ℤ)+j)/2).toNat with ha
+  set b : ℕ := (((m:ℤ)-j)/2).toNat with hb
+  have hja : ((a:ℤ)) = ((m:ℤ)+j)/2 := by rw [ha]; exact Int.toNat_of_nonneg (by omega)
+  have hjb : ((b:ℤ)) = ((m:ℤ)-j)/2 := by rw [hb]; exact Int.toNat_of_nonneg (by omega)
+  have ha1 : 1 ≤ a := by
+    have h : (1:ℤ) ≤ (a:ℤ) := by rw [hja]; omega
+    exact_mod_cast h
+  have hb1 : 1 ≤ b := by
+    have h : (1:ℤ) ≤ (b:ℤ) := by rw [hjb]; omega
+    exact_mod_cast h
+  have hsum : a + b = m := by
+    have h : (a:ℤ) + (b:ℤ) = (m:ℤ) := by rw [hja, hjb]; omega
+    exact_mod_cast h
+  have hdiff : ((a:ℤ)) - ((b:ℤ)) = j := by rw [hja, hjb]; omega
+  exact ⟨ha1, hb1, hsum, hdiff⟩
+
+theorem ab_ge_half_m (m a b : ℕ) (hab : a + b = m) (ha : 1 ≤ a) (hb : 1 ≤ b) :
+    (m:ℝ)/2 ≤ (a:ℝ) * (b:ℝ) := by
+  rcases le_total a b with h | h
+  · have hbm : (m:ℝ)/2 ≤ (b:ℝ) := by
+      have hle : m ≤ 2*b := by omega
+      have h2 : (m:ℝ) ≤ 2*(b:ℝ) := by exact_mod_cast hle
+      linarith
+    have ha1 : (1:ℝ) ≤ (a:ℝ) := by exact_mod_cast ha
+    have hbnn : (0:ℝ) ≤ (b:ℝ) := by positivity
+    nlinarith [hbm, ha1, hbnn]
+  · have ham : (m:ℝ)/2 ≤ (a:ℝ) := by
+      have hle : m ≤ 2*a := by omega
+      have h2 : (m:ℝ) ≤ 2*(a:ℝ) := by exact_mod_cast hle
+      linarith
+    have hb1 : (1:ℝ) ≤ (b:ℝ) := by exact_mod_cast hb
+    have hann : (0:ℝ) ≤ (a:ℝ) := by positivity
+    nlinarith [ham, hb1, hann]
+
+theorem prefactor_le_sqrt_m (m a b : ℕ) (hm : 1 ≤ m) (hab : a + b = m) (ha : 1 ≤ a) (hb : 1 ≤ b)
+    (t : ℝ) (ht : (m:ℝ) * t = (a:ℝ) - (b:ℝ)) :
+    Real.sqrt 2 / Real.sqrt (1 - t^2) ≤ Real.sqrt (m:ℝ) := by
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  have habR : (a:ℝ) + b = m := by exact_mod_cast hab
+  have hquartic : (m:ℝ)^2 * (1 - t^2) = 4*(a:ℝ)*(b:ℝ) := by nlinarith [ht, habR]
+  have hab2 : (m:ℝ)/2 ≤ (a:ℝ)*(b:ℝ) := ab_ge_half_m m a b hab ha hb
+  have h1mt2 : (0:ℝ) < 1 - t^2 := by nlinarith [hquartic, hab2, hm0, sq_nonneg t]
+  have hsqrt_eq : Real.sqrt (1 - t^2) = 2 * Real.sqrt ((a:ℝ)*(b:ℝ)) / (m:ℝ) := by
+    have h1 : (1 - t^2) = 4*((a:ℝ)*(b:ℝ)) / (m:ℝ)^2 := by
+      field_simp
+      linarith [hquartic]
+    rw [h1, Real.sqrt_div (by positivity) ((m:ℝ)^2), Real.sqrt_sq hm0.le,
+      Real.sqrt_mul (by norm_num : (0:ℝ) ≤ 4),
+      show (4:ℝ) = 2^2 from by norm_num, Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 2)]
+  rw [hsqrt_eq]
+  have hsqrtab_pos : (0:ℝ) < Real.sqrt ((a:ℝ)*(b:ℝ)) := by
+    apply Real.sqrt_pos.mpr
+    nlinarith [hab2, hm0]
+  rw [div_le_iff₀ (by positivity : (0:ℝ) < 2 * Real.sqrt ((a:ℝ)*(b:ℝ)) / (m:ℝ))]
+  have hnn1 : (0:ℝ) ≤ Real.sqrt (m:ℝ) * (2 * Real.sqrt ((a:ℝ)*(b:ℝ)) / (m:ℝ)) := by positivity
+  have hkey : (Real.sqrt 2)^2 ≤ (Real.sqrt (m:ℝ) * (2 * Real.sqrt ((a:ℝ)*(b:ℝ)) / (m:ℝ)))^2 := by
+    have e1 : (Real.sqrt 2)^2 = 2 := Real.sq_sqrt (by norm_num)
+    have e2 : (Real.sqrt (m:ℝ) * (2 * Real.sqrt ((a:ℝ)*(b:ℝ)) / (m:ℝ)))^2
+        = (m:ℝ) * (4 * ((a:ℝ)*(b:ℝ)) / (m:ℝ)^2) := by
+      rw [mul_pow, Real.sq_sqrt hm0.le, div_pow, mul_pow, Real.sq_sqrt (by positivity : (0:ℝ) ≤ (a:ℝ)*(b:ℝ))]
+      ring
+    rw [e1, e2]
+    rw [show (m:ℝ) * (4 * ((a:ℝ)*(b:ℝ)) / (m:ℝ)^2) = 4*((a:ℝ)*(b:ℝ))/(m:ℝ) from by
+      field_simp]
+    rw [le_div_iff₀ hm0]
+    linarith [hab2]
+  nlinarith [hkey, hnn1, Real.sqrt_nonneg (2:ℝ)]
+
+/-- **The region-2 (far range) bound.** -/
+theorem region2_bound (m : ℕ) (hm : 1 ≤ m) (j : ℤ) (hj : j ≡ (m:ℤ) [ZMOD 2])
+    (hjR1 : (m:ℝ)/2 < |(j:ℝ)|) (hjR2 : |(j:ℝ)| ≤ (m:ℝ) - 2) :
+    |Real.sqrt m * binomPMF m j - 2 * gaussianDensity ((j:ℝ)/Real.sqrt m)|
+      ≤ (((Real.sqrt Real.pi)⁻¹ * (7/6)) * (256*Real.exp (-2))
+          + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (8*Real.exp (-1))) / (m:ℝ) := by
+  obtain ⟨ha1, hb1, hab, hdiff⟩ := ab_facts_region2 m j hj hjR2
+  set a := (((m:ℤ)+j)/2).toNat with ha_def
+  set b := (((m:ℤ)-j)/2).toNat with hb_def
+  have heq := sqrt_mul_binomPMF_eq m hm j hj (by exact_mod_cast hjR2)
+  set t := (j:ℝ)/(m:ℝ) with htdef
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  have hm1 : (1:ℝ) ≤ (m:ℝ) := by exact_mod_cast hm
+  have htabs : 1/2 < |t| := by
+    rw [htdef, abs_div, abs_of_pos hm0, lt_div_iff₀ hm0]
+    linarith [hjR1]
+  have htabs1 : |t| < 1 := by
+    rw [htdef, abs_div, abs_of_pos hm0, div_lt_one hm0]
+    linarith [hjR2]
+  have ht2gt : (1:ℝ)/4 < t^2 := by nlinarith [htabs, abs_nonneg t, sq_abs t]
+  set A1 := Stirling.stirlingSeq m
+      / (Stirling.stirlingSeq (((m:ℤ)+j)/2).toNat * Stirling.stirlingSeq (((m:ℤ)-j)/2).toNat)
+    with hA1def
+  set A2 := Real.sqrt 2 / Real.sqrt (1 - t^2) with hA2def
+  set A3 := Real.exp (-(m:ℝ) * gfun t) with hA3def
+  have hSRle : A1 ≤ (Real.sqrt Real.pi)⁻¹ * (1 + 1/(6*(m:ℝ))) :=
+    stirling_ratio_upper_m m _ _ hab ha1 hb1 hm
+  have hSRle2 : A1 ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) := by
+    have hstep : (1:ℝ)/(6*(m:ℝ)) ≤ 1/6 := by
+      rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+      nlinarith [hm1]
+    have hone : (1:ℝ) + 1/(6*(m:ℝ)) ≤ 7/6 := by linarith [hstep]
+    calc A1 ≤ (Real.sqrt Real.pi)⁻¹ * (1+1/(6*(m:ℝ))) := hSRle
+      _ ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) := by
+        apply mul_le_mul_of_nonneg_left hone (by positivity)
+  have htaeq : (m:ℝ) * t = (a:ℝ) - (b:ℝ) := by
+    have h1 : (m:ℝ) * t = (j:ℝ) := by rw [htdef]; field_simp
+    rw [h1]
+    have h2 : ((a:ℤ):ℝ) - ((b:ℤ):ℝ) = (j:ℝ) := by exact_mod_cast hdiff
+    push_cast at h2
+    linarith [h2]
+  have hA2 := ab_ge_half_m m a b hab ha1 hb1
+  have hA2le : A2 ≤ Real.sqrt (m:ℝ) := prefactor_le_sqrt_m m a b hm hab ha1 hb1 t htaeq
+  have hA2nn : (0:ℝ) ≤ A2 := by rw [hA2def]; positivity
+  have hA3le : A3 ≤ Real.exp (-(m:ℝ)/8) := by
+    have hgfun := gfun_ge_half_sq t htabs1
+    rw [hA3def]
+    apply Real.exp_le_exp.mpr
+    nlinarith [hgfun, ht2gt, hm0.le]
+  have hA3nn : (0:ℝ) ≤ A3 := by rw [hA3def]; positivity
+  have hA1nn : (0:ℝ) ≤ A1 := by
+    rw [hA1def]
+    have hSmpos : (0:ℝ) < Stirling.stirlingSeq m := by
+      have hspm := Stirling.sqrt_pi_le_stirlingSeq (n := m) (by omega)
+      have hp : 0 < Real.sqrt Real.pi := Real.sqrt_pos.mpr Real.pi_pos
+      linarith
+    have hSapos : (0:ℝ) < Stirling.stirlingSeq a := by
+      have hspa := Stirling.sqrt_pi_le_stirlingSeq (n := a) (by omega)
+      have hp : 0 < Real.sqrt Real.pi := Real.sqrt_pos.mpr Real.pi_pos
+      linarith
+    have hSbpos : (0:ℝ) < Stirling.stirlingSeq b := by
+      have hspb := Stirling.sqrt_pi_le_stirlingSeq (n := b) (by omega)
+      have hp : 0 < Real.sqrt Real.pi := Real.sqrt_pos.mpr Real.pi_pos
+      linarith
+    positivity
+  have hP_le : Real.sqrt m * binomPMF m j ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) * Real.sqrt (m:ℝ)
+      * Real.exp (-(m:ℝ)/8) := by
+    rw [heq]
+    have step1 : A1 * A2 ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) * Real.sqrt (m:ℝ) :=
+      mul_le_mul hSRle2 hA2le hA2nn (by positivity)
+    have step1nn : (0:ℝ) ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) * Real.sqrt (m:ℝ) := by positivity
+    exact mul_le_mul step1 hA3le hA3nn step1nn
+  have hsqrtm_le_m : Real.sqrt (m:ℝ) ≤ (m:ℝ) := sqrt_le_self_of_one_le (m:ℝ) hm1
+  have hexp_pos : (0:ℝ) < Real.exp (-(m:ℝ)/8) := Real.exp_pos _
+  have hm2exp : (m:ℝ)^2 * Real.exp (-((1/8:ℝ)*(m:ℝ))) ≤ 4*Real.exp (-2)/(1/8:ℝ)^2 :=
+    sq_linear_exp_bound (1/8) (m:ℝ) (by norm_num) hm0.le
+  have hm2exp' : (m:ℝ)^2 * Real.exp (-(m:ℝ)/8) ≤ 256*Real.exp (-2) := by
+    have heqexp : -((1/8:ℝ)*(m:ℝ)) = -(m:ℝ)/8 := by ring
+    rw [heqexp] at hm2exp
+    have heqconst : (4:ℝ)*Real.exp (-2)/(1/8:ℝ)^2 = 256*Real.exp (-2) := by ring
+    linarith [hm2exp, heqconst.le, heqconst.ge]
+  have hsqrtm_exp : Real.sqrt (m:ℝ) * Real.exp (-(m:ℝ)/8) ≤ 256*Real.exp (-2)/(m:ℝ) := by
+    have h1 : Real.sqrt (m:ℝ) * Real.exp (-(m:ℝ)/8) ≤ (m:ℝ) * Real.exp (-(m:ℝ)/8) :=
+      mul_le_mul_of_nonneg_right hsqrtm_le_m hexp_pos.le
+    have h2 : (m:ℝ) * Real.exp (-(m:ℝ)/8) ≤ 256*Real.exp (-2)/(m:ℝ) := by
+      rw [le_div_iff₀ hm0]
+      calc (m:ℝ) * Real.exp (-(m:ℝ)/8) * (m:ℝ) = (m:ℝ)^2 * Real.exp (-(m:ℝ)/8) := by ring
+        _ ≤ 256*Real.exp (-2) := hm2exp'
+    linarith [h1, h2]
+  have hP_final : Real.sqrt m * binomPMF m j
+      ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) * (256*Real.exp (-2)) / (m:ℝ) := by
+    calc Real.sqrt m * binomPMF m j
+        ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) * Real.sqrt (m:ℝ) * Real.exp (-(m:ℝ)/8) := hP_le
+      _ = (Real.sqrt Real.pi)⁻¹ * (7/6) * (Real.sqrt (m:ℝ) * Real.exp (-(m:ℝ)/8)) := by ring
+      _ ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) * (256*Real.exp (-2)/(m:ℝ)) := by
+          apply mul_le_mul_of_nonneg_left hsqrtm_exp (by positivity)
+      _ = (Real.sqrt Real.pi)⁻¹ * (7/6) * (256*Real.exp (-2)) / (m:ℝ) := by ring
+  have hB := gaussianDensity_two_eq m hm t j htdef
+  have hgd_le : 2*gaussianDensity ((j:ℝ)/Real.sqrt m)
+      ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (8*Real.exp (-1)) / (m:ℝ) := by
+    rw [hB]
+    have hexple : Real.exp (-(m:ℝ)*t^2/2) ≤ Real.exp (-(m:ℝ)/8) := by
+      apply Real.exp_le_exp.mpr
+      nlinarith [ht2gt, hm0.le]
+    have hme : (m:ℝ) * Real.exp (-((1/8:ℝ)*(m:ℝ))) ≤ Real.exp (-1)/(1/8:ℝ) :=
+      linear_exp_bound (1/8) (m:ℝ) (by norm_num)
+    have hme' : (m:ℝ) * Real.exp (-(m:ℝ)/8) ≤ 8*Real.exp (-1) := by
+      have heqexp : -((1/8:ℝ)*(m:ℝ)) = -(m:ℝ)/8 := by ring
+      rw [heqexp] at hme
+      have heqconst : Real.exp (-1:ℝ)/(1/8:ℝ) = 8*Real.exp (-1) := by ring
+      linarith [hme, heqconst.le, heqconst.ge]
+    have hexp_le_div : Real.exp (-(m:ℝ)/8) ≤ 8*Real.exp (-1)/(m:ℝ) := by
+      rw [le_div_iff₀ hm0]
+      linarith [hme']
+    calc Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)*t^2/2)
+        ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)/8) := by
+          apply mul_le_mul_of_nonneg_left hexple (by positivity)
+      _ ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (8*Real.exp (-1)/(m:ℝ)) := by
+          apply mul_le_mul_of_nonneg_left hexp_le_div (by positivity)
+      _ = Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (8*Real.exp (-1)) / (m:ℝ) := by ring
+  have hgd_nn : (0:ℝ) ≤ 2*gaussianDensity ((j:ℝ)/Real.sqrt m) := by
+    rw [hB]; positivity
+  have hP_nn : (0:ℝ) ≤ Real.sqrt m * binomPMF m j := by
+    rw [heq]; positivity
+  have hXnn : (0:ℝ) ≤ (Real.sqrt Real.pi)⁻¹ * (7/6) * (256*Real.exp (-2)) / (m:ℝ) := by positivity
+  have hYnn : (0:ℝ) ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (8*Real.exp (-1)) / (m:ℝ) := by positivity
+  have hsplit : (Real.sqrt Real.pi)⁻¹ * (7/6) * (256*Real.exp (-2)) / (m:ℝ)
+        + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (8*Real.exp (-1)) / (m:ℝ)
+      = (((Real.sqrt Real.pi)⁻¹ * (7/6)) * (256*Real.exp (-2))
+          + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (8*Real.exp (-1))) / (m:ℝ) := by ring
+  rw [abs_le]
+  constructor
+  · linarith [hgd_le, hP_nn, hXnn, hsplit]
+  · linarith [hP_final, hgd_nn, hYnn, hsplit]
+
+/-- **The extreme case `|j| = m`.** -/
+theorem binomPMF_extreme (m : ℕ) (j : ℤ) (hjeq : |j| = (m:ℤ)) :
+    binomPMF m j = 1 / 2^m := by
+  rcases abs_eq (by positivity : (0:ℤ) ≤ (m:ℤ)) |>.mp hjeq with h | h
+  · have hval : (((m:ℤ)+j)/2).toNat = m := by omega
+    rw [binomPMF, hval, Nat.choose_self]
+    norm_num
+  · have hval : (((m:ℤ)+j)/2).toNat = 0 := by omega
+    rw [binomPMF, hval, Nat.choose_zero_right]
+    norm_num
+
+theorem extreme_bound (m : ℕ) (hm : 1 ≤ m) (j : ℤ) (hjeq : |(j:ℝ)| = (m:ℝ)) :
+    |Real.sqrt m * binomPMF m j - 2 * gaussianDensity ((j:ℝ)/Real.sqrt m)|
+      ≤ (4*Real.exp (-2)/(Real.log 2)^2
+          + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2*Real.exp (-1))) / (m:ℝ) := by
+  have hjeqZ : |j| = (m:ℤ) := by exact_mod_cast hjeq
+  have hbin := binomPMF_extreme m j hjeqZ
+  have hm0 : (0:ℝ) < (m:ℝ) := by exact_mod_cast hm
+  have hm1 : (1:ℝ) ≤ (m:ℝ) := by exact_mod_cast hm
+  have hlog2pos : (0:ℝ) < Real.log 2 := Real.log_pos (by norm_num)
+  have h2m : (2:ℝ)^m = Real.exp ((m:ℝ) * Real.log 2) := by
+    rw [Real.exp_nat_mul, Real.exp_log (by norm_num)]
+  have hbound1 : Real.sqrt m * binomPMF m j ≤ (4*Real.exp (-2)/(Real.log 2)^2) / (m:ℝ) := by
+    rw [hbin, h2m]
+    have heq1 : Real.sqrt (m:ℝ) * (1/Real.exp ((m:ℝ)*Real.log 2))
+        = Real.sqrt (m:ℝ) * Real.exp (-(Real.log 2 * (m:ℝ))) := by
+      rw [Real.exp_neg]
+      congr 2
+      ring
+    rw [heq1]
+    have hsqrtm_le_m : Real.sqrt (m:ℝ) ≤ (m:ℝ) := sqrt_le_self_of_one_le (m:ℝ) hm1
+    have hexp_pos : (0:ℝ) < Real.exp (-(Real.log 2 * (m:ℝ))) := Real.exp_pos _
+    have h1 : Real.sqrt (m:ℝ) * Real.exp (-(Real.log 2 * (m:ℝ)))
+        ≤ (m:ℝ) * Real.exp (-(Real.log 2 * (m:ℝ))) :=
+      mul_le_mul_of_nonneg_right hsqrtm_le_m hexp_pos.le
+    have hkey := sq_linear_exp_bound (Real.log 2) (m:ℝ) hlog2pos hm0.le
+    have h2 : (m:ℝ) * Real.exp (-(Real.log 2 * (m:ℝ))) ≤ (4*Real.exp (-2)/(Real.log 2)^2) / (m:ℝ) := by
+      rw [le_div_iff₀ hm0]
+      calc (m:ℝ) * Real.exp (-(Real.log 2 * (m:ℝ))) * (m:ℝ)
+            = (m:ℝ)^2 * Real.exp (-(Real.log 2 * (m:ℝ))) := by ring
+        _ ≤ 4*Real.exp (-2)/(Real.log 2)^2 := hkey
+    linarith [h1, h2]
+  have ht2eq : (j:ℝ)/(m:ℝ) = 1 ∨ (j:ℝ)/(m:ℝ) = -1 := by
+    rcases abs_eq hm0.le |>.mp hjeq with h | h
+    · left; rw [h]; field_simp
+    · right; rw [h]; field_simp
+  have ht2sq : ((j:ℝ)/(m:ℝ))^2 = 1 := by
+    rcases ht2eq with h | h <;> rw [h] <;> ring
+  have hB := gaussianDensity_two_eq m hm ((j:ℝ)/(m:ℝ)) j rfl
+  have hme : (m:ℝ) * Real.exp (-((1/2:ℝ)*(m:ℝ))) ≤ Real.exp (-1)/(1/2:ℝ) :=
+    linear_exp_bound (1/2) (m:ℝ) (by norm_num)
+  have heq2 : -((1/2:ℝ)*(m:ℝ)) = -(m:ℝ)/2 := by ring
+  rw [heq2] at hme
+  have heqc : Real.exp (-1:ℝ)/(1/2:ℝ) = 2*Real.exp (-1) := by ring
+  rw [heqc] at hme
+  have hexple : (m:ℝ) * Real.exp (-(m:ℝ)/2) ≤ 2*Real.exp (-1) := hme
+  have hstep : Real.exp (-(m:ℝ)/2) ≤ 2*Real.exp (-1)/(m:ℝ) := by
+    rw [le_div_iff₀ hm0]; linarith [hexple]
+  have hgd_le : 2*gaussianDensity ((j:ℝ)/Real.sqrt m)
+      ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2*Real.exp (-1)) / (m:ℝ) := by
+    rw [hB]
+    have heqexp : -(m:ℝ) * ((j:ℝ)/(m:ℝ))^2 / 2 = -(m:ℝ)/2 := by rw [ht2sq]; ring
+    rw [heqexp]
+    have hconst_nn : (0:ℝ) ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ := by positivity
+    calc Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * Real.exp (-(m:ℝ)/2)
+        ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2*Real.exp (-1)/(m:ℝ)) :=
+          mul_le_mul_of_nonneg_left hstep hconst_nn
+      _ = Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2*Real.exp (-1)) / (m:ℝ) := by ring
+  have hP_nn : (0:ℝ) ≤ Real.sqrt m * binomPMF m j := by rw [hbin]; positivity
+  have hgd_nn : (0:ℝ) ≤ 2*gaussianDensity ((j:ℝ)/Real.sqrt m) := by rw [hB]; positivity
+  have hXnn : (0:ℝ) ≤ 4*Real.exp (-2)/(Real.log 2)^2 / (m:ℝ) := by positivity
+  have hYnn : (0:ℝ) ≤ Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2*Real.exp (-1)) / (m:ℝ) := by positivity
+  have hsplit : 4*Real.exp (-2)/(Real.log 2)^2 / (m:ℝ)
+        + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2*Real.exp (-1)) / (m:ℝ)
+      = (4*Real.exp (-2)/(Real.log 2)^2
+          + Real.sqrt 2 * (Real.sqrt Real.pi)⁻¹ * (2*Real.exp (-1))) / (m:ℝ) := by ring
+  rw [abs_le]
+  constructor
+  · linarith [hgd_le, hP_nn, hXnn, hsplit]
+  · linarith [hbound1, hgd_nn, hYnn, hsplit]
+
 end LatticeProb.BinomialLCLT
 
 end
