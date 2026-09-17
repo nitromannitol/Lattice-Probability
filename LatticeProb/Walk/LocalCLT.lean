@@ -18,7 +18,7 @@ import LatticeProb.Walk.SRW
 import LatticeProb.Walk.Fourier
 import LatticeProb.Site
 
-namespace LatticeProb
+namespace LatticeProb.LocalCLT
 
 open MeasureTheory
 
@@ -1742,4 +1742,4 @@ theorem integral_gauss_tail_le (d : ℕ) (c : ℝ) (hc : 0 < c) :
       ENNReal.toReal_ofReal (by positivity)]
     exact mul_le_mul hvr le_rfl (by positivity) (by positivity)
   exact hmono.trans hs
-end LatticeProb
+end LatticeProb.LocalCLT
