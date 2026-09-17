@@ -647,7 +647,7 @@ theorem charFn_le_gauss_quartic (d : ℕ) (hd : 0 < d) (θ : Fin d → ℝ)
     (hpi : ∀ i, |θ i| ≤ Real.pi) :
     charFn d θ ≤ 1 - (∑ i, θ i ^ 2) / (2 * d) + (∑ i, θ i ^ 2) ^ 2 / (24 * d) := by
   have hcos : ∑ i, Real.cos (θ i) ≤ ∑ i, (1 - θ i ^ 2 / 2 + θ i ^ 4 / 24) :=
-    Finset.sum_le_sum (fun i _ => LatticeProb.cos_le_one_sub_half_sq_add_quartic _ (hpi i))
+    Finset.sum_le_sum (fun i _ => LatticeProb.LocalCLT.cos_le_one_sub_half_sq_add_quartic _ (hpi i))
   have hA : ∑ i, θ i ^ 4 ≤ (∑ i, θ i ^ 2) ^ 2 := by
     have hnn : ∀ i ∈ Finset.univ, 0 ≤ θ i ^ 2 := by intro i _; positivity
     have hconv : ∑ i, θ i ^ 4 = ∑ i, (θ i ^ 2) ^ 2 := Finset.sum_congr rfl (fun i _ => by ring)
@@ -728,7 +728,7 @@ theorem charFn_pow_le_exp_gauss (d : ℕ) (hd : 0 < d) (n : ℕ) (θ : Fin d →
     charFn d θ ^ n ≤ Real.exp (- n * (∑ i, θ i ^ 2) / (3 * d)) := by
   have hd' : (0:ℝ) < (d:ℝ) := by exact_mod_cast hd
   have hq : charFn d θ ≤ 1 - (∑ i, θ i ^ 2) / (2 * d) + (∑ i, θ i ^ 2) ^ 2 / (24 * d) :=
-    LatticeProb.charFn_le_gauss_quartic d hd θ (fun i => (hpi i).trans (by linarith [Real.pi_pos]))
+    LatticeProb.LocalCLT.charFn_le_gauss_quartic d hd θ (fun i => (hpi i).trans (by linarith [Real.pi_pos]))
   have hunn : 0 ≤ ∑ i, θ i ^ 2 := Finset.sum_nonneg (fun i _ => by positivity)
   have hS4 : (∑ i, θ i ^ 2) ^ 2 ≤ 4 * ∑ i, θ i ^ 2 := by nlinarith [hunn, hS]
   have h1 : (∑ i, θ i ^ 2) ^ 2 / (24 * d) ≤ (∑ i, θ i ^ 2) / (6 * d) := by
@@ -752,7 +752,7 @@ theorem charFn_pow_le_exp_gauss (d : ℕ) (hd : 0 < d) (n : ℕ) (θ : Fin d →
   have hkey : charFn d θ ^ n ≤ (1 - ((∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d))) ^ n := by
     refine pow_le_pow_left₀ hcnn ?_ n
     linarith
-  have hexp := LatticeProb.one_sub_pow_le_exp n ((∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d)) hu0 hu1
+  have hexp := LatticeProb.LocalCLT.one_sub_pow_le_exp n ((∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d)) hu0 hu1
   have hmono : Real.exp (- n * ((∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d))) ≤ Real.exp (- n * (∑ i, θ i ^ 2) / (3 * d)) := by
     apply Real.exp_le_exp.mpr
     have hE : (∑ i, θ i ^ 2) / (3 * d) ≤ (∑ i, θ i ^ 2) / (2 * d) - (∑ i, θ i ^ 2) ^ 2 / (24 * d) := by
@@ -809,7 +809,7 @@ theorem charFn_abs_le_of_region2 (d : ℕ) (hd : 0 < d) (θ : Fin d → ℝ) (η
   have hd0 : (0 : ℝ) < d := by exact_mod_cast hd
   have h1 : ∑ i ∈ F, |Real.cos (θ i)| ≤ F.card * Real.cos η := by
     have h : ∑ i ∈ F, |Real.cos (θ i)| ≤ ∑ i ∈ F, Real.cos η :=
-      Finset.sum_le_sum (fun i hi => LatticeProb.abs_cos_le_cos_eta η (θ i) hη0 (hF i hi).1 (hF i hi).2)
+      Finset.sum_le_sum (fun i hi => LatticeProb.LocalCLT.abs_cos_le_cos_eta η (θ i) hη0 (hF i hi).1 (hF i hi).2)
     simpa [Finset.sum_const, nsmul_eq_mul] using h
   have h2 : ∑ i ∈ Fᶜ, |Real.cos (θ i)| ≤ (d : ℝ) - F.card := by
     have h2a : ∑ i ∈ Fᶜ, |Real.cos (θ i)| ≤ ∑ i ∈ Fᶜ, (1 : ℝ) :=
@@ -833,13 +833,13 @@ power: the parity factor (-1) ^ n multiplies the original power.  This is
 the algebraic core of the parity form of the local central limit theorem. -/
 theorem charFn_antipode_pow (d : ℕ) (θ : Fin d → ℝ) (n : ℕ) :
     charFn d (fun i => θ i + Real.pi) ^ n = (-1) ^ n * charFn d θ ^ n := by
-  rw [LatticeProb.charFn_antipode d θ, neg_pow]
+  rw [LatticeProb.LocalCLT.charFn_antipode d θ, neg_pow]
 
 /-- The region-2 cost in Gaussian form: for 0 ≤ η ≤ π / 2,
 2 * η ^ 2 / π ^ 2 ≤ 1 - cos η. -/
 theorem two_div_pi_sq_le_one_sub_cos (η : ℝ) (hη : 0 ≤ η) (hηp : η ≤ Real.pi / 2) :
     2 * η ^ 2 / Real.pi ^ 2 ≤ 1 - Real.cos η := by
-  have h := LatticeProb.cos_le_one_sub_mul_sq η (abs_le.mpr ⟨by linarith, by linarith⟩)
+  have h := LatticeProb.LocalCLT.cos_le_one_sub_mul_sq η (abs_le.mpr ⟨by linarith, by linarith⟩)
   have h' : Real.cos η ≤ 1 - 2 * η ^ 2 / Real.pi ^ 2 := by
     rw [show 2 / Real.pi ^ 2 * η ^ 2 = 2 * η ^ 2 / Real.pi ^ 2 from by ring] at h
     linarith
@@ -905,13 +905,13 @@ theorem integrable_exp_neg_sum_sq_torusBox (d : ℕ) (c : ℝ) :
       (MeasureTheory.volume.restrict (torusBox d)) := by
   have hfin : MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict (torusBox d)) :=
     MeasureTheory.isFiniteMeasure_restrict.mpr (by
-      rw [LatticeProb.volume_torusBox d]
+      rw [LatticeProb.LocalCLT.volume_torusBox d]
       simp)
   have hmeas : MeasureTheory.AEStronglyMeasurable (fun θ : Fin d → ℝ => Real.exp (- c * ∑ i, θ i ^ 2))
       (MeasureTheory.volume.restrict (torusBox d)) :=
     (by fun_prop : Continuous (fun θ : Fin d → ℝ => Real.exp (- c * ∑ i, θ i ^ 2))).aestronglyMeasurable
   refine MeasureTheory.Integrable.of_bound hmeas (Real.exp (|c| * (d : ℝ) * Real.pi ^ 2)) ?_
-  rw [MeasureTheory.ae_restrict_iff' (LatticeProb.torusBox_measurable d)]
+  rw [MeasureTheory.ae_restrict_iff' (LatticeProb.LocalCLT.torusBox_measurable d)]
   filter_upwards with θ hθ
   have h1 : ∑ i, θ i ^ 2 ≤ ∑ i : Fin d, (Real.pi ^ 2 : ℝ) := by
     apply Finset.sum_le_sum
@@ -941,10 +941,10 @@ theorem integral_exp_neg_sum_sq_le (d : ℕ) (c : ℝ) (hc : 0 < c)
       funext θ
       simp
     rw [h1, pow_zero]
-    simp [MeasureTheory.integral_const, Measure.real, LatticeProb.volume_torusBox]
+    simp [MeasureTheory.integral_const, Measure.real, LatticeProb.LocalCLT.volume_torusBox]
   | succ d ih =>
     have hint := hInt (d + 1)
-    rw [LatticeProb.integral_torusBox_peel _ hint]
+    rw [LatticeProb.LocalCLT.integral_torusBox_peel _ hint]
     have hsplit : ∀ t, (fun θ => Real.exp (- c * ∑ i : Fin (d + 1), (Fin.cons t θ) i ^ 2))
         = fun θ => Real.exp (- c * t ^ 2) * Real.exp (- c * ∑ i, θ i ^ 2) := by
       intro t
@@ -990,12 +990,12 @@ theorem integral_exp_neg_sum_sq_le (d : ℕ) (c : ℝ) (hc : 0 < c)
       rw [setIntegral_congr_ae measurableSet_Icc (by filter_upwards with t ht using hcomm t), integral_const_mul]
       calc (Real.sqrt (Real.pi / c)) ^ d * ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2)
           ≤ (Real.sqrt (Real.pi / c)) ^ d * Real.sqrt (Real.pi / c) :=
-        mul_le_mul_of_nonneg_left (LatticeProb.box_int_le_gauss c hc) hK
+        mul_le_mul_of_nonneg_left (LatticeProb.LocalCLT.box_int_le_gauss c hc) hK
         _ = (Real.sqrt (Real.pi / c)) ^ (d + 1) := by ring
     have hstep1 : ∫ t in Set.Icc (-Real.pi) Real.pi, ∫ θ in torusBox d, Real.exp (- c * ∑ i : Fin (d + 1), (Fin.cons t θ) i ^ 2)
         ≤ ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d :=
       setIntegral_mono_of_nonneg
-        (fun t _ => setIntegral_nonneg (LatticeProb.torusBox_measurable d) (fun θ _ => by positivity))
+        (fun t _ => setIntegral_nonneg (LatticeProb.LocalCLT.torusBox_measurable d) (fun θ _ => by positivity))
         (fun t _ => hinner t) hgInt
     have hstep2 : ∫ t in Set.Icc (-Real.pi) Real.pi, Real.exp (- c * t ^ 2) * (Real.sqrt (Real.pi / c)) ^ d
         ≤ (Real.sqrt (Real.pi / c)) ^ (d + 1) := houter
@@ -1011,7 +1011,7 @@ theorem cos_le_one_sub_two_sq_div_pi_sq (η : ℝ) (hη : 0 ≤ η) (hηp : η �
     rw [abs_of_nonneg hη]
     nlinarith [hηp, Real.pi_pos]
   have hq : Real.cos η ≤ 1 - η ^ 2 / 2 + η ^ 4 / 24 :=
-    LatticeProb.cos_le_one_sub_half_sq_add_quartic η habs
+    LatticeProb.LocalCLT.cos_le_one_sub_half_sq_add_quartic η habs
   have hx : η ^ 2 ≤ Real.pi ^ 2 / 4 := by nlinarith [hη, hηp]
   have hp : (9:ℝ) ≤ Real.pi ^ 2 := by nlinarith [Real.pi_gt_three]
   have h4 : Real.pi ^ 2 ≤ 16 := by nlinarith [Real.pi_lt_four, Real.pi_pos]
@@ -1054,7 +1054,7 @@ theorem region2_exp (d : ℕ) (hd : 0 < d) (n : ℕ) (η : ℝ) (hη0 : 0 < η) 
     (hF : ∀ i ∈ F, η ≤ |θ i| ∧ |θ i| ≤ Real.pi - η) :
     |charFn d θ| ^ n ≤ Real.exp (- (n : ℝ) * (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2) := by
   have habs := charFn_abs_le_of_region2 d hd θ η hη0.le hηp F hF
-  have hcos := LatticeProb.cos_le_one_sub_two_sq_div_pi_sq η hη0.le hηp
+  have hcos := LatticeProb.LocalCLT.cos_le_one_sub_two_sq_div_pi_sq η hη0.le hηp
   have hd0 : (0:ℝ) < d := by exact_mod_cast hd
   have hk : (0:ℝ) ≤ F.card := by positivity
   have hkc : (F.card : ℝ) ≤ (d : ℝ) := by exact_mod_cast card_finset_fin_le F
@@ -1067,10 +1067,10 @@ theorem region2_exp (d : ℕ) (hd : 0 < d) (n : ℕ) (η : ℝ) (hη0 : 0 < η) 
     habs.trans (h1.trans (le_of_eq h2))
   have hterm : (0:ℝ) ≤ (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2 := by positivity
   have hu1 : (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2 ≤ 1 := by
-    have := LatticeProb.two_mul_card_mul_sq_le d hd F.card (card_finset_fin_le F) η hη0.le hηp
+    have := LatticeProb.LocalCLT.two_mul_card_mul_sq_le d hd F.card (card_finset_fin_le F) η hη0.le hηp
     field_simp at this ⊢
     linarith
-  have hfin := LatticeProb.one_sub_pow_le_exp n ((2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2) hterm hu1
+  have hfin := LatticeProb.LocalCLT.one_sub_pow_le_exp n ((2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2) hterm hu1
   have hmono : |charFn d θ| ^ n ≤ (1 - (2 * (F.card : ℝ) / d) * η ^ 2 / Real.pi ^ 2) ^ n :=
     pow_le_pow_left₀ (abs_nonneg _) hbase n
   refine hmono.trans ?_
@@ -1088,7 +1088,7 @@ theorem integral_box_le_gauss_plus_far (d : ℕ) (f : (Fin d → ℝ) → ℝ)
     ∫ x in torusBox d, f x ∂volume ≤
       ∫ x in {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2}, f x ∂volume
         + ∫ x in {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|}, f x ∂volume := by
-  have hsub := LatticeProb.torusBox_subset_gauss_or_far d
+  have hsub := LatticeProb.LocalCLT.torusBox_subset_gauss_or_far d
   have hnn : 0 ≤ᵐ[volume.restrict ({x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2}
       ∪ {x : Fin d → ℝ | ∃ i, Real.pi / 2 < |x i|} : Set (Fin d → ℝ))] f := by
     filter_upwards with x using hf x
@@ -1122,11 +1122,11 @@ theorem integral_gaussRegion_le (d : ℕ) (c : ℝ) (hc : 0 < c) :
     refine ⟨?_, ?_⟩
     · rw [Pi.le_def]; exact fun i => by have h := abs_le.mp (hx i); nlinarith [Real.pi_pos]
     · rw [Pi.le_def]; exact fun i => by have h := abs_le.mp (hx i); nlinarith [Real.pi_pos]
-  have hint := LatticeProb.integrable_exp_neg_sum_sq_torusBox d c
+  have hint := LatticeProb.LocalCLT.integrable_exp_neg_sum_sq_torusBox d c
   have hnn : 0 ≤ᵐ[volume.restrict (torusBox d)] (fun x : Fin d → ℝ => Real.exp (- c * ∑ i, x i ^ 2)) := by
     filter_upwards with x using (Real.exp_pos _).le
   have hae : {x : Fin d → ℝ | ∀ i, |x i| ≤ Real.pi / 2} ≤ᵐ[volume] torusBox d := hsub.eventuallyLE
-  exact (setIntegral_mono_set hint hnn hae).trans (LatticeProb.integral_exp_neg_sum_sq_le d c hc (fun e => LatticeProb.integrable_exp_neg_sum_sq_torusBox e c))
+  exact (setIntegral_mono_set hint hnn hae).trans (LatticeProb.LocalCLT.integral_exp_neg_sum_sq_le d c hc (fun e => LatticeProb.LocalCLT.integrable_exp_neg_sum_sq_torusBox e c))
 
 /-- The far region inside the torus box has volume at most the box volume. -/
 theorem volume_farRegion_le (d : ℕ) :
@@ -1136,7 +1136,7 @@ theorem volume_farRegion_le (d : ℕ) :
     fun x hx => hx.1
   have h1 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, Real.pi / 2 < |x i|}
       ≤ volume (torusBox d) := measure_mono hsub
-  have hv := LatticeProb.volume_torusBox d
+  have hv := LatticeProb.LocalCLT.volume_torusBox d
   have hfin : volume (torusBox d) ≠ ⊤ := by rw [hv]; exact ENNReal.ofReal_ne_top
   have hfin2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, Real.pi / 2 < |x i|} ≠ ⊤ :=
     fun h => by rw [h] at h1; exact hfin (top_le_iff.mp h1)
@@ -1159,7 +1159,7 @@ theorem charFn_pow_le_exp_of_far (d : ℕ) (n : ℕ) (η : ℝ) (hη0 : 0 < η) 
     simp only [Finset.mem_singleton] at hi
     rw [hi]
     exact ⟨hlo, hhi⟩
-  have h1 := LatticeProb.region2_exp d hd n η hη0 hηp x {i₀} hF
+  have h1 := LatticeProb.LocalCLT.region2_exp d hd n η hη0 hηp x {i₀} hF
   have hcard : ({i₀} : Finset (Fin d)).card = 1 := Finset.card_singleton i₀
   rw [hcard, Nat.cast_one] at h1
   simpa using h1
@@ -1175,20 +1175,20 @@ theorem integral_farRegion_box_le (d : ℕ) (n : ℕ) (η : ℝ) (hη0 : 0 < η)
       fun x hx => hx.1
     have h2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}
         ≤ volume (torusBox d) := measure_mono h1
-    rw [LatticeProb.volume_torusBox d] at h2
+    rw [LatticeProb.LocalCLT.volume_torusBox d] at h2
     exact lt_of_le_of_lt h2 ENNReal.ofReal_lt_top
   have hpt : ∀ x ∈ {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η},
       ‖|charFn d x| ^ n‖ ≤ Real.exp (- (n : ℝ) * (2 / (d : ℝ)) * η ^ 2 / Real.pi ^ 2) := by
     intro x hx
     obtain ⟨_, i₀, hlo, hhi⟩ := hx
     rw [Real.norm_eq_abs, abs_of_nonneg (pow_nonneg (abs_nonneg _) _)]
-    exact LatticeProb.charFn_pow_le_exp_of_far d n η hη0 hηp x i₀ hlo hhi hd
+    exact LatticeProb.LocalCLT.charFn_pow_le_exp_of_far d n η hη0 hηp x i₀ hlo hhi hd
   have h3 := norm_setIntegral_le_of_norm_le_const (μ := volume) (f := fun x => |charFn d x| ^ n) hvol hpt
   have hSmeas : MeasurableSet {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} := by
     rw [show {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}
         = torusBox d ∩ ⋃ i, {x | η ≤ |x i| ∧ |x i| ≤ Real.pi - η} from by
         ext x; simp [Set.mem_iUnion]]
-    exact (LatticeProb.torusBox_measurable d).inter
+    exact (LatticeProb.LocalCLT.torusBox_measurable d).inter
       (MeasurableSet.iUnion fun i =>
         (isClosed_Icc.preimage (continuous_abs.comp (continuous_apply i))).measurableSet)
   have hnn : 0 ≤ ∫ x in {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η},
@@ -1202,13 +1202,13 @@ theorem integral_farRegion_box_le (d : ℕ) (n : ℕ) (η : ℝ) (hη0 : 0 < η)
     have h2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η}
         ≤ volume (torusBox d) := measure_mono h1
     have hne : volume (torusBox d) ≠ ⊤ := by
-      rw [LatticeProb.volume_torusBox d]; exact ENNReal.ofReal_ne_top
+      rw [LatticeProb.LocalCLT.volume_torusBox d]; exact ENNReal.ofReal_ne_top
     have hne2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} ≠ ⊤ := by
       intro h
       rw [h] at h2
       exact hne (top_le_iff.mp h2)
     have h4 := (ENNReal.toReal_le_toReal hne2 hne).mpr h2
-    rw [LatticeProb.volume_torusBox d, ENNReal.toReal_ofReal (by positivity : (0:ℝ) ≤ (2 * Real.pi) ^ d)] at h4
+    rw [LatticeProb.LocalCLT.volume_torusBox d, ENNReal.toReal_ofReal (by positivity : (0:ℝ) ≤ (2 * Real.pi) ^ d)] at h4
     exact h4
   calc ∫ x in {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η},
         |charFn d x| ^ n ∂volume
@@ -1227,10 +1227,10 @@ theorem volume_farRegion_le' (d : ℕ) (η : ℝ) :
   have h2 : volume {x : Fin d → ℝ | x ∈ torusBox d ∧ ∃ i, η ≤ |x i| ∧ |x i| ≤ Real.pi - η} ≤ volume (torusBox d) :=
     measure_mono hsub
   have hne : volume (torusBox d) ≠ ⊤ := by
-    rw [LatticeProb.volume_torusBox d]
+    rw [LatticeProb.LocalCLT.volume_torusBox d]
     exact ENNReal.ofReal_ne_top
   have h3 := ENNReal.toReal_mono hne h2
-  rw [LatticeProb.volume_torusBox d,
+  rw [LatticeProb.LocalCLT.volume_torusBox d,
     ENNReal.toReal_ofReal (by positivity : (0 : ℝ) ≤ (2 * Real.pi) ^ d)] at h3
   exact h3
 
@@ -1252,7 +1252,7 @@ theorem charFn_pow_le_exp_gaussRegion (d : ℕ) (hd : 0 < d) (n : ℕ) (θ : Fin
     exact abs_of_nonneg (by positivity)
   have h1 : charFn d θ ≤ 1 - (∑ i, θ i ^ 2) / (8 * (d : ℝ)) := by
     have hsum : ∑ i, Real.cos (θ i) ≤ ∑ i, (1 - 2 / Real.pi ^ 2 * (θ i) ^ 2) :=
-      Finset.sum_le_sum (fun i _ => LatticeProb.cos_le_one_sub_mul_sq _ (by
+      Finset.sum_le_sum (fun i _ => LatticeProb.LocalCLT.cos_le_one_sub_mul_sq _ (by
         have h := hpi i
         rw [abs_le] at h
         exact abs_le.mpr ⟨by have := Real.pi_pos; linarith, h.2.trans (by have := Real.pi_pos; linarith)⟩))
@@ -1308,7 +1308,7 @@ theorem cos_le_one_sub_third_sq (t : ℝ) (ht : |t| ≤ Real.pi / 2) :
   have hpi : Real.pi ^ 2 ≤ 16 := by
     have h4 : Real.pi < 4 := Real.pi_lt_four
     nlinarith [Real.pi_pos]
-  have hq := LatticeProb.cos_le_one_sub_half_sq_add_quartic t
+  have hq := LatticeProb.LocalCLT.cos_le_one_sub_half_sq_add_quartic t
     (by have := Real.pi_pos; nlinarith)
   have ht2 : t ^ 2 ≤ Real.pi ^ 2 / 4 := by
     have habs : |t| ≤ Real.pi / 2 := ht
