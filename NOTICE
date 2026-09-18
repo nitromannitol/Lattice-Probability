@@ -34,4 +34,33 @@ with reduced imports, a new namespace and ASCII declaration spellings.
 The retained exploration and cyclic-order definitions support the S/W
 contour argument. No percolation library dependency is included.
 
+The following files are adapted from
+https://github.com/nitromannitol/Parking-Sharpness,
+Copyright 2026 Ahmed Bou-Rabee, under the Apache License, Version 2.0
+(see LICENSE):
+
+  LatticeProb/WhiteNoise.lean
+  LatticeProb/ContinuumHeatKernel.lean
+  LatticeProb/ContinuumNoiseField.lean
+  LatticeProb/ContinuumStoppingBounds.lean
+  LatticeProb/ContinuumStoppingValue.lean
+  LatticeProb/ContinuumQuarterBrownian.lean
+  LatticeProb/DoobMaximal.lean
+  LatticeProb/KolmogorovChentsov.lean
+  LatticeProb/WeightedJensen.lean
+  LatticeProb/Lyapunov.lean
+  LatticeProb/MomentNorm.lean
+  LatticeProb/WeakLimit.lean
+  LatticeProb/ExtendedMapping.lean
+  LatticeProb/BoxClamp.lean
+  LatticeProb/HeatKernelHolder.lean
+  LatticeProb/ZHolder.lean
+
+The first fourteen files come from commit
+c368b8884476f5588b64e6be14c80be25327b6ac; HeatKernelHolder and ZHolder come
+from commit 27c7f7c21f2f93923054357cf740c1db521093d5. Their declarations
+use subject namespaces under LatticeProb, and their imports and documentation
+are adapted to this library. ZHolder takes the heat kernel and its explicit
+formula as parameters.
+
 Files not named above are original to this repository.

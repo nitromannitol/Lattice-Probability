@@ -9,6 +9,22 @@ operator, i.i.d. fields, and site-indexed instruction stacks.
 ## Layout
 
 ```text
+LatticeProb/WhiteNoise.lean  smooth test functions, the continuum Laplacian, and spatial white noise
+LatticeProb/ContinuumHeatKernel.lean  Brownian heat kernel at variance t/4 and square-integrable noise tests
+LatticeProb/ContinuumNoiseField.lean  space-time white noise, its covariance, and the stopping-value definitions
+LatticeProb/ContinuumStoppingBounds.lean  Gaussian field laws and bounds on optimal-stopping values
+LatticeProb/ContinuumStoppingValue.lean  optimal stopping at general rewards with integrable payoffs
+LatticeProb/ContinuumQuarterBrownian.lean  continuous quarter-Brownian motion and finite-dimensional Gaussian laws
+LatticeProb/DoobMaximal.lean  Doob maximal bounds for bounded mean-zero i.i.d. partial sums
+LatticeProb/KolmogorovChentsov.lean  power, floor, and finite-sum estimates for moment bounds
+LatticeProb/WeightedJensen.lean  geometrically weighted Jensen bounds for finite sums
+LatticeProb/Lyapunov.lean  moment monotonicity under probability measures
+LatticeProb/MomentNorm.lean  real moment norms, Minkowski, and exponent comparison
+LatticeProb/WeakLimit.lean  weak limits from tightness and uniform cutoff approximation
+LatticeProb/ExtendedMapping.lean  extended continuous mapping for varying real-valued maps
+LatticeProb/BoxClamp.lean  continuous extension from compact rectangles by coordinate clamping
+LatticeProb/HeatKernelHolder.lean  power-integral estimates for heat-kernel regularity
+LatticeProb/ZHolder.lean  spatial and temporal second-moment bounds from heat-kernel covariance
 LatticeProb/Site.lean               sites, unit vectors, the lattice graph, the walk operator, boxes, components
 LatticeProb/IID.lean                i.i.d. fields, instruction stacks and arrival counts
 LatticeProb/Rank.lean               ranking a finite set by an injective key
