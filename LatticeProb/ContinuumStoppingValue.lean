@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 The Brownian optimal-stopping value for a general reward, taking the supremum
 over integrable payoffs. At reward `-Z_T`, this agrees with the noise-field

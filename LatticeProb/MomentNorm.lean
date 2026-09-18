@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 The `L^r` moment norm as a real number, `rNorm μ r f := (∫ |f|^r ∂μ)^{1/r}`, and its basic API
 (nonnegativity, monotonicity in the function and in the exponent, homogeneity under a

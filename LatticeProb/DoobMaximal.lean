@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 Doob's maximal inequality for the partial-sum process of an i.i.d. sequence of bounded,
 mean-zero real-valued steps read off an arbitrary infinite product measure `Measure.infinitePi

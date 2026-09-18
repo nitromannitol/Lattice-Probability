@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /- The weak limit of a family of real random variables from truncated approximations, by
 Prokhorov compactness, for an arbitrary probability space.
 

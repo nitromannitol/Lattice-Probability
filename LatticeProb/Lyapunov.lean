@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 Lyapunov's moment monotonicity for a nonnegative random variable, via Jensen's inequality at
 the concave map `t ↦ t^{s/p}`: if `Y ≥ 0` has an integrable `p`-th moment bounded by `M`, then

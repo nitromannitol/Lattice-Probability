@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 Power-integral bounds for heat-kernel Hölder estimates. The inequalities
 `1 - exp(-c) ≤ c^α` and `(a+b)^(-γ) ≤ 2^(-γ) (ab)^(-γ/2)` give bounds

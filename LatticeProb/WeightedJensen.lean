@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 The weighted-Jensen geometric-tail lemma: a bound on the `p`-th power of a finite sum of
 nonnegative reals, in terms of the SAME power of its individual terms weighted by a geometric

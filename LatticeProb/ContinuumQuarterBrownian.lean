@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 A continuous Brownian motion with variance `t/4`, constructed by halving
 a standard Brownian motion. Finite weighted combinations are centred Gaussian

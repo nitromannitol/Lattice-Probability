@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 Extending a continuous function on a compact rectangle `[0,T] × [-2A,2A]` to the whole plane
 by clamping the argument to the rectangle, for an arbitrary `T, A ≥ 0`.  Stated for abstract

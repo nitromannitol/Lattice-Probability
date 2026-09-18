@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 The one-dimensional Brownian heat kernel with variance `t/4`. Its square integral
 and the square integrability of its time-truncated test functions define the

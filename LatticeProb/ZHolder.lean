@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 Second-moment bounds for a continuum field whose covariance is the double time
 integral of a Brownian heat kernel with generator `(2d)⁻¹Δ`. The kernel is an

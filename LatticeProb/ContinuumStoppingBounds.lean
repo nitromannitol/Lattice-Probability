@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 Bounds on the optimal-stopping value from bounds on the stopped field,
 the Gaussian law of the field, and vanishing outside the time window.

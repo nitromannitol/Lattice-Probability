@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 Smooth compactly supported test functions, the Laplacian with generator `(2d)⁻¹Δ`,
 spatial white noise, and the coordinatewise lattice floor.

@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 Small `Real.rpow`/floor/absolute-value arithmetic facts used throughout the Kolmogorov-Chentsov
 moment chain: bounding a sum's `p`-th power by cardinality times the sum of `p`-th powers

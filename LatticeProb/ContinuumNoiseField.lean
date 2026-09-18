@@ -1,4 +1,3 @@
-/- Adapted from nitromannitol/Parking-Sharpness, Apache-2.0. -/
 /-
 The space-time white-noise field with intensity `v`, its covariance and variance,
 and the associated Brownian optimal-stopping value. The Brownian motion has

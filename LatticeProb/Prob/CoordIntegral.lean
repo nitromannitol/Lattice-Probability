@@ -7,8 +7,7 @@ factorize the integral of a function that does not read a coordinate against the
 INDICATOR of an event in that coordinate.  The conditional mean of a martingale
 increment needs the same factorization against an arbitrary function of the
 coordinate, and that is what these two lemmas are.  Nothing here is special to
-the lattice.  Taken in from `Parking/Support/CoordIntegral.lean`, statements
-verbatim with the namespace changed.
+the lattice.
 -/
 import LatticeProb.Prob.Coordinate
 
