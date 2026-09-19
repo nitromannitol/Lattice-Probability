@@ -7,7 +7,7 @@ it.  Names are elaborated by Lean before the prompt is allowed out.
 Usage: check_names.py PROMPTFILE [extra-import, ...]
 """
 import os, pathlib, re, subprocess, sys, tempfile
-ROOT = pathlib.Path(os.environ.get("LEAN_ROOT", "/home/nitro/Lattice-Probability"))
+ROOT = pathlib.Path(os.environ.get("LEAN_ROOT") or pathlib.Path(__file__).resolve().parent.parent)
 if len(sys.argv) < 2:
     print("OK (no prompt given, nothing to check)"); sys.exit(0)
 prompt = pathlib.Path(sys.argv[1]).read_text()
