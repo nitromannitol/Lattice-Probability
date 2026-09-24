@@ -158,3 +158,29 @@ library.
 #print axioms LatticeProb.sInf_coe_top
 #print axioms LatticeProb.exists_nat_bound_of_isCompact
 #print axioms LatticeProb.nearestSite_smul_mem_box
+/-! ### Scaling-limit infrastructure -/
+
+#print axioms LatticeProb.Scaling.RunningMax.continuous_runningMax
+#print axioms LatticeProb.Scaling.RunningMax.measurable_runningMax
+#print axioms LatticeProb.Scaling.BoundedFunctionalLift.abs_liftPhiOn_sub_le
+#print axioms LatticeProb.Scaling.BoundedFunctionalLift.liftPhiOn_eq_of_nice
+#print axioms LatticeProb.Scaling.CramerWold.tendstoInDistribution_of_tendsto_charFun_linearCombination_filter
+#print axioms LatticeProb.Scaling.Slutsky.tendsto_add_of_tendsto_zero
+#print axioms LatticeProb.Scaling.LipschitzLimit.lipschitzWith_one_of_tendsto
+#print axioms LatticeProb.Scaling.LocallyUniformLimit.continuous_and_monotone_of_tendstoLocallyUniformly
+#print axioms LatticeProb.Scaling.PositiveCutoff.exists_cutoff_eq_one
+
+/-! ### Convex order and the exponential reference law -/
+
+#print axioms LatticeProb.ConvexOrder.convex_integral_le_refLaw
+#print axioms LatticeProb.ConvexOrder.convex_lipschitz_integral_le_finite_pi
+#print axioms LatticeProb.ConvexOrder.twoPointLaw_convex_le
+#print axioms LatticeProb.ConvexOrder.exists_twoPoint_comparison
+
+/-! ### The binomial law and its shift correlation -/
+
+#print axioms LatticeProb.Walk.shift_energy
+
+/-! ### Lattice kernels and Riemann sums -/
+
+#print axioms LatticeProb.Walk.tendsto_latticeSum_mul_rpow
