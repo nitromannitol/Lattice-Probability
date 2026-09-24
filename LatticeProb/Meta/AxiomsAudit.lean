@@ -124,3 +124,15 @@ library.
 /-! ### Planar lattice topology -/
 
 #print axioms LatticeProb.Lattice.Planar.separation
+
+/-! ### Scaling-limit infrastructure -/
+
+#print axioms LatticeProb.Scaling.RunningMax.continuous_runningMax
+#print axioms LatticeProb.Scaling.RunningMax.measurable_runningMax
+#print axioms LatticeProb.Scaling.BoundedFunctionalLift.abs_liftPhiOn_sub_le
+#print axioms LatticeProb.Scaling.BoundedFunctionalLift.liftPhiOn_eq_of_nice
+#print axioms LatticeProb.Scaling.CramerWold.tendstoInDistribution_of_tendsto_charFun_linearCombination_filter
+#print axioms LatticeProb.Scaling.Slutsky.tendsto_add_of_tendsto_zero
+#print axioms LatticeProb.Scaling.LipschitzLimit.lipschitzWith_one_of_tendsto
+#print axioms LatticeProb.Scaling.LocallyUniformLimit.continuous_and_monotone_of_tendstoLocallyUniformly
+#print axioms LatticeProb.Scaling.PositiveCutoff.exists_cutoff_eq_one
