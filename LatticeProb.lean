@@ -317,3 +317,11 @@ import LatticeProb.Prob.Scaling.VanishingMass
 import LatticeProb.Prob.Scaling.VanishingMassError
 import LatticeProb.Prob.Scaling.WalkCLT
 import LatticeProb.Prob.Scaling.WeightedIntegral
+import LatticeProb.Prob.ExpTail
+import LatticeProb.Prob.ConvexProduct
+import LatticeProb.Prob.Laplace
+import LatticeProb.Prob.LinearConvex
+import LatticeProb.Prob.IntegerConvexMinorant
+import LatticeProb.Prob.ConvexOrder
+import LatticeProb.Prob.NearFamily
+import LatticeProb.Prob.TwoPointOrder

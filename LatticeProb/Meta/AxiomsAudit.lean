@@ -136,3 +136,10 @@ library.
 #print axioms LatticeProb.Scaling.LipschitzLimit.lipschitzWith_one_of_tendsto
 #print axioms LatticeProb.Scaling.LocallyUniformLimit.continuous_and_monotone_of_tendstoLocallyUniformly
 #print axioms LatticeProb.Scaling.PositiveCutoff.exists_cutoff_eq_one
+
+/-! ### Convex order and the exponential reference law -/
+
+#print axioms LatticeProb.ConvexOrder.convex_integral_le_refLaw
+#print axioms LatticeProb.ConvexOrder.convex_lipschitz_integral_le_finite_pi
+#print axioms LatticeProb.ConvexOrder.twoPointLaw_convex_le
+#print axioms LatticeProb.ConvexOrder.exists_twoPoint_comparison
