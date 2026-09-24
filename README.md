@@ -15,20 +15,27 @@ objects and theorems that several formalizations have in common, so that each
 of them imports one proof instead of carrying its own: simple random walk on
 `ℤ^d` and on locally finite graphs, its transition kernels and Green
 functions, local central limit theorems, electrical networks and the killed
-Green function, the discrete Gaussian free field, ergodic theorems and
-zero-one laws, correlation inequalities, concentration and moment
-inequalities, Gaussian processes and Brownian motion, regular variation, and
-the topology of curves on the square lattice.
+Green function, the discrete Gaussian free field, the classical integer
+sandpile, ergodic theorems and zero-one laws, correlation and percolation
+inequalities, concentration and moment inequalities, convex order, Gaussian
+processes and Brownian motion, scaling-limit infrastructure, regular
+variation, and the topology of curves on the square lattice.  A result proved
+inside a dependent formalization turns out, more often than not, to carry no
+content specific to that paper; once noticed, it is moved into this library,
+so the paper repository then imports the shared proof instead of keeping its
+own copy.
 
 The library is required, at a pinned commit, by the formalization
 repositories
 [`Divisible-Sandpile-Percolation`](https://github.com/nitromannitol/Divisible-Sandpile-Percolation),
 [`Divisible-Sandpile-RWRS`](https://github.com/nitromannitol/Divisible-Sandpile-RWRS),
-[`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness) and
-[`Unique-Continuation-Planar`](https://github.com/nitromannitol/Unique-Continuation-Planar),
+[`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness),
+[`Unique-Continuation-Planar`](https://github.com/nitromannitol/Unique-Continuation-Planar)
+and [`ORRW-Lower-Bound`](https://github.com/nitromannitol/ORRW-Lower-Bound),
 and by the formalizations in progress of *Dynamic dimensional reduction*,
-*Exploding sandpiles*, the random abelian sandpile and discrete elliptic
-regularity.
+*Exploding sandpiles*, the random abelian sandpile, discrete elliptic
+regularity, and `manhattan-formalization`, which is being ported to import
+the library in place of its own copies of the modules moved from it.
 
 The library has 291 modules, about 70,000 lines and 3,618 declarations.
 
@@ -90,6 +97,12 @@ general locally finite graph is `LatticeProb.Graph.heat`.
   `E|R_t|² ≤ 2 (E|R_t|)²`.
 * `LatticeProb.T_originBox_le`: the mean exit time of the box of radius `r`,
   summed over the box, is at most `C (2r + 1)^{d+2}`.
+* `LatticeProb.resistance_packing`: for `d ≥ 2`, summing over any injective
+  enumeration of `M` sites the effective resistance from each site to the
+  complement of its predecessors is at most `C M`, with `C` depending only on
+  `d`; `LatticeProb.insertion_inequality`: on the same enumeration, the sum of
+  the exit probability and the voltage at each step is at most
+  `C M^{1 + 1/d}`.
 * `LatticeProb.Graph.nash_ineq`: the Nash inequality of dimension one on an
   infinite connected graph; `LatticeProb.Graph.heat_diag_le`: the on-diagonal
   bound `p_m(x, x) ≤ 32 d / √m` when every degree is at most `d`, and
@@ -135,6 +148,16 @@ killed on leaving `C`.
 * `LatticeProb.Network.le_of_harmonicOn`: the maximum principle;
   `LatticeProb.Network.exists_voltage`: a bounded voltage with unit source and
   sink at two transient vertices.
+* `LatticeProb.Network.maximum_neighbors`: the discrete maximum principle at
+  equality, a harmonic vertex whose neighbours are all at most its own value
+  has every neighbour exactly equal to it.
+* `LatticeProb.Network.caccioppoli`: the discrete Caccioppoli inequality, a
+  cutoff-weighted Dirichlet energy of a harmonic function is controlled by
+  the Dirichlet energy of the cutoff itself, weighted by the function; this
+  feeds `LatticeProb.Network.moser_estimate` and
+  `LatticeProb.Network.moser_l2_step`, the first Moser-iteration step
+  bounding a harmonic function on a finite set by the conductance-weighted
+  mean square of its neighbours.
 
 **The discrete Gaussian free field.**  `LatticeProb/Network/GFF.lean` defines
 the field with zero boundary values on a finite set `C` as
@@ -194,6 +217,44 @@ the field with zero boundary values on a finite set `C` as
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
   inequality, Doob's maximal inequality for bounded i.i.d. partial sums, and
   Pinsker's inequality.
+* `LatticeProb.efron_stein`: the Efron-Stein inequality for a function of `M`
+  independent coordinates that is Lipschitz coordinate by coordinate, the
+  variance is at most the total one-coordinate resampling energy.
+* `LatticeProb.exists_mgf_neg_bounds`: for a centred law with an exponential
+  moment and a stretched-exponential lower tail of exponent `γ > 1`, the
+  Laplace transform of the negated variable is finite everywhere and bounded
+  by `exp(Cμ²)` for `μ ≤ 1` and by `exp(Cμ^{γ/(γ-1)})` for `μ ≥ 1`.
+* `LatticeProb.small_ball_of_exp`: a uniform exponential-moment bound puts at
+  least half the mass of a law in a window of radius `2K/θ` about the origin.
+* `LatticeProb.integral_comparison_third_order`: if two laws share their
+  first two moments and both have a sub-exponentially controlled third
+  absolute moment `T` against a test function `f`, the two integrals of `f`
+  differ by at most `JT/3`, for `J` a bound on `f`'s third derivative.
+* `LatticeProb.tendsto_measureReal_weighted`: the weak law of large numbers
+  for a weighted i.i.d. sum, with only a first moment, once the squared
+  weights are negligible against the square of their total.
+* `LatticeProb.weighted_iid_central_limit` and
+  `LatticeProb.weighted_iid_central_limit_pick`: the weighted i.i.d. central
+  limit theorem, for a triangular array of weights with vanishing sup norm
+  and second moments converging to `Q`, the weighted row sum of independent
+  copies of a centred `L²` law converges in distribution to the centred
+  Gaussian of variance `σ² Q`; the second form reads the array at distinct
+  sites of an i.i.d. field on the lattice.
+
+**Smooth maxima and softmax stability.**  `softMaximum β x = log(∑ exp(β xᵢ)) / β`
+is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
+
+* `LatticeProb.softMaximum_derivative_bound` and
+  `LatticeProb.softMinimum_derivative_bound`: for `1 ≤ k ≤ 3` the sum of
+  absolute values of the `k`-th iterated coordinate derivative of the smooth
+  maximum, respectively minimum, is at most `6|β|^{k-1}`, one bound covering
+  the first-, second- and third-order case.
+* `LatticeProb.SmoothBottleneckBound.softMaximum`: composing one more smooth
+  maximum of functions already satisfying a uniform derivative bottleneck at
+  layer `n` gives a function satisfying it at layer `n + 1`.
+* `LatticeProb.expStable_softWeightComposition`: a softmax weight built from
+  a field-nonexpansive family changes multiplicatively by at most a factor
+  `exp(2|β| a)` under a uniform field perturbation of size `a`.
 
 **Gaussian processes and Brownian motion.**
 
@@ -224,6 +285,187 @@ curve avoids every site and bond outside a finite set `V`, then two sites
 outside `V`, joined off the curve to its right side and to its left side, are
 not both in the unbounded component of the complement of `V`.
 
+**The classical integer sandpile.**  `LatticeProb.Sandpile` holds the
+classical (integer, Abelian) sandpile on `ℤ^d` under parallel toppling,
+distinct from the divisible sandpile of `LatticeProb.Graph`: a site holds an
+integer number of chips and fires once it holds at least `2d`, sending one
+chip to each neighbour.
+
+* `LatticeProb.Sandpile.lap_eq_sum_second_diff`: the lattice Laplacian is the
+  sum of the coordinatewise second differences.
+* `LatticeProb.Sandpile.podo_mono_step`: the parallel toppling odometer is
+  nondecreasing in time; `LatticeProb.Sandpile.fodo_topple_of_ge`: a site off
+  a frozen set with at least `2d` chips topples at the next step.
+* `LatticeProb.Sandpile.exists_adj_pos_of_nbrSumZ_pos`: a positive neighbour
+  sum of a nonnegative function is carried by some one neighbour.
+* `LatticeProb.Sandpile.wave_mono_time`: on a nonnegative background, the
+  Diaconis-Fulton `n`-wave is nondecreasing along any stretch of time;
+  `LatticeProb.Sandpile.lap_le_of_fixed`: a site where the wave equation
+  holds is stable there.
+* `LatticeProb.Sandpile.recurrent_const`: the constant background `η ≡ d` is
+  recurrent, firing the outer boundary of any finite set `V` once each makes
+  every site of `V` eventually topple.
+* `LatticeProb.eventually_constant_of_monotone_bounded`: a monotone sequence
+  of naturals bounded above is eventually constant;
+  `LatticeProb.finset_common_stable`: pointwise eventual stabilization on a
+  finite set gives one common stabilization time.
+* `LatticeProb.sInf_coe_attained` and `LatticeProb.sInf_coe_top`: an
+  `ℕ∞`-valued infimum of hitting times is attained at a witness natural when
+  one exists, and is `⊤` otherwise.
+* `LatticeProb.exists_nat_bound_of_isCompact` and
+  `LatticeProb.nearestSite_smul_mem_box`: a compact subset of `ℝ^d` sits in a
+  coordinate box of natural side length, and rounding a rescaled point of a
+  bounded set to the nearest lattice site keeps it inside a corresponding
+  lattice box.
+
+**Scaling-limit infrastructure.**  `LatticeProb.Scaling` collects the
+model-independent steps of a discrete-to-continuum scaling limit: running
+maxima, Lipschitz limits, Cramér-Wold, Slutsky, and the McShane extension of a
+functional off a nice class of paths.
+
+* `LatticeProb.Scaling.RunningMax.continuous_runningMax` and
+  `LatticeProb.Scaling.RunningMax.measurable_runningMax`: the running maximum
+  of a jointly continuous field over a time window is jointly continuous, and
+  is measurable in an auxiliary sample once the field is measurable at each
+  fixed time.
+* `LatticeProb.Scaling.BoundedFunctionalLift.abs_liftPhiOn_sub_le`: the
+  McShane lift of a functional off a nice class of paths is Lipschitz for the
+  unit-capped sup distance on every path, not only the nice ones;
+  `LatticeProb.Scaling.BoundedFunctionalLift.liftPhiOn_eq_of_nice`: the lift
+  recovers the original functional exactly on the nice paths.
+* `LatticeProb.Scaling.CramerWold.tendstoInDistribution_of_tendsto_charFun_linearCombination_filter`:
+  the Cramér-Wold device along a filter, convergence in distribution follows
+  from convergence of the characteristic function of every fixed linear
+  combination.
+* `LatticeProb.Scaling.Slutsky.tendsto_add_of_tendsto_zero`: Slutsky's
+  theorem, additive form, a sum of a convergent-in-distribution family and a
+  family converging to zero in probability converges in distribution to the
+  same limit.
+* `LatticeProb.Scaling.LipschitzLimit.lipschitzWith_one_of_tendsto`: a
+  pointwise limit of uniformly `1`-Lipschitz functions is `1`-Lipschitz.
+* `LatticeProb.Scaling.LocallyUniformLimit.continuous_and_monotone_of_tendstoLocallyUniformly`:
+  a locally uniform limit of continuous, time-monotone functions is
+  continuous and monotone.
+* `LatticeProb.Scaling.PositiveCutoff.exists_cutoff_eq_one`: on a compact set
+  where a continuous function is everywhere strictly positive, the Lipschitz
+  positivity cutoff built from it equals `1`.
+
+**Convex order and the exponential reference law.**  `LatticeProb.ConvexOrder`
+compares a mean-zero law with a fixed exponential reference law in convex
+order, by symmetrizing and then comparing tails.
+
+* `LatticeProb.ConvexOrder.convex_integral_le_refLaw`: any mean-zero law with
+  an exponential moment bounded by `A` lies below a canonical scaled
+  reference (Laplace-type) law in convex order, for every convex Lipschitz
+  test function.
+* `LatticeProb.ConvexOrder.convex_lipschitz_integral_le_finite_pi`: a
+  one-dimensional convex-order comparison tensorizes, lifting to every
+  convex Lipschitz function of a finite product.
+* `LatticeProb.ConvexOrder.twoPointLaw_convex_le`: a mean-zero law whose
+  positive part carries mass at least `p` dominates, in convex order, the
+  symmetric two-point law at `±a` for every `0 < a ≤ p/2`.
+* `LatticeProb.ConvexOrder.exists_twoPoint_comparison`: a near-family of
+  mean-zero integer laws is bounded below, uniformly in its parameter near
+  zero, by a fixed symmetric two-point law in convex order.
+
+**Lattice kernels, Riemann sums and the binomial shift correlation.**
+
+* `LatticeProb.Walk.tendsto_latticeSum_mul_rpow`: for `f` continuous with
+  compact support, the discrete lattice sum `∑_y f(y/R)` on `ℤ^d`, scaled by
+  the mesh volume `R^{-d}`, converges to `∫ f` as `R → ∞`.
+* `LatticeProb.Walk.shift_energy`: the fair binomial law summed over the
+  number of trials and shifted by an integer `q` satisfies
+  `∑_l ∑_j (b_l(j - q) - b_l(j))² = 4|q|`.
+
+**Recurrence of the two-dimensional simple random walk.**
+`LatticeProb.simpleRandomWalkRecurrent`: Pólya's theorem, the simple random
+walk on `ℤ²` is recurrent, its Green series diverges.
+
+**Dissipative-skew generators and their resolvent semigroups.**  For a
+bounded generator `G = S + A` on a complex Hilbert space, split into a
+self-adjoint dissipative part `S` and a skew-adjoint part `A`.
+
+* `LatticeProb.Analysis.DissipativeSkewPair.variational_bound`: for every
+  `λ > 0`, every vector `V`, and every competitor `g`, the resolvent energy of
+  `λI - G` at `V` is squeezed between `0` and `‖g‖₊² + ‖V - Ag‖₋²`, the energy
+  norms of `H = λI - S`.
+* `LatticeProb.Analysis.integral_inner_operatorSemigroup_eq_resolvent`: the
+  Green-Kubo identity, the Laplace transform of the semigroup correlation
+  `⟪u, T(t)u⟫` equals the inner product of `u` against the resolvent of `G`.
+
+**The Nash inequality on `ℤ²`, and the rate-two Poisson clock.**
+
+* `LatticeProb.NashZ2.nash`: the sharp two-dimensional Nash inequality
+  `(∑ f²)² ≤ ½ (∑ f)² E(f)` for nonnegative summable `f : ℤ² → ℝ`, with `E`
+  the Dirichlet energy of the rate-two random walk generator.
+* `LatticeProb.hasSum_poissonWeight`: the rate-two Poisson weights
+  `w_n(t) = e^{-2t}(2t)^n/n!` sum to one for every real `t`.
+* `LatticeProb.hasDerivAt_poissonWeight`: the generator identity
+  `w_n'(t) = 2(w_{n-1}(t) - w_n(t))`.
+* `LatticeProb.tsum_abs_dPoissonWeight_le`: the `L¹` concentration bound
+  `E|N_t/t - 2| ≤ √(2/t)`.
+
+**Percolation.**  `LatticeProb.Percolation` develops Russo's formula and
+pivotal-coordinate calculus for a finite product `{0,1}`-model, Bernoulli
+bond percolation on `ℤ²`, and the combinatorics behind an RSW-style crossing
+argument.
+
+* `LatticeProb.Percolation.fpr_piv` and `LatticeProb.Percolation.fpr_change`:
+  Russo's formula, the slope in one coordinate's parameter of the probability
+  of an increasing event is the probability that coordinate is pivotal for
+  the event.
+* `LatticeProb.Percolation.fpr_le_of_map`: if a map increases weights by a
+  factor at most `K` and has at most `M` preimages of every target
+  configuration, it changes probabilities by at most a factor `KM`.
+* `LatticeProb.Percolation.fpw_le_of_agree` and
+  `LatticeProb.Percolation.fpw_le_of_par`: the weight ratio of two
+  configurations agreeing outside a finite set `J`, respectively of one
+  configuration under two parameter families agreeing outside `J`, is bounded
+  by `ρ^{|J|}`.
+* `LatticeProb.Percolation.bondLaw_half_le_of_flip`: flipping one bond open
+  can only increase the probability of an event determined by that bond.
+* `LatticeProb.Percolation.bondLaw_toReal_eq_fpr`: the finite model of
+  Bernoulli bond percolation on a finite bond set is the finite-parameter
+  probability of the pivotal calculus above.
+* `LatticeProb.Percolation.card_planeRectangle_aspect_le_cube` and
+  `LatticeProb.Percolation.card_double_square_le_cube`: a rectangle of
+  bounded aspect ratio and height `r` has at most `r^3` sites, once `r` is
+  large enough.
+* `LatticeProb.Percolation.walk_prefix_hit_integer`: a walk on which an
+  integer-valued function changes by at most one per step has an initial
+  segment ending at every intermediate value of the function between its
+  endpoints.
+* `LatticeProb.Percolation.measure_boxPathEvent_le`: the union bound behind
+  an RSW-style path-existence argument, if every fixed set of vertices is
+  simultaneously good with probability at most `p`, the probability that
+  some bounded-step path is entirely good is at most the path count times
+  `p`.
+* `LatticeProb.Percolation.walkBottleneck_append`: the bisection identity,
+  the bottleneck of a concatenated walk is the minimum of the two pieces'
+  bottlenecks; `LatticeProb.Percolation.finiteMaximum_mem`: a finite maximum
+  over a nonempty index set is attained.
+
+**Total variation distance.**  `LatticeProb.pi_one_coord_le`: changing the
+law of one coordinate of a finite product changes the probability of any
+event by at most the total variation distance of that coordinate.
+`LatticeProb.pi_tv_le`: changing every coordinate changes a probability by at
+most the sum of the coordinates' total variation distances.
+`LatticeProb.infinitePi_restrict_tv_le`: the same bound for an event
+determined by finitely many coordinates of an infinite product.
+
+**Graph combinatorics.**
+
+* `LatticeProb.Graph.exists_epath`: if every vertex outside `S ∪ {y}` is
+  balanced in a finite directed edge set while `y ∉ S` has strictly more
+  in-degree than out-degree, the edge set contains a path from `S` to `y`.
+* `LatticeProb.Graph.konig`: König's lemma for a prefix-closed, finitely
+  branching predicate on finite lists, if it has members of every length,
+  it has an infinite sequence all of whose finite prefixes are members.
+* `LatticeProb.Graph.two_mul_sum_card_filter_lt`: a counting identity for the
+  cyclic rank of a transitively acting permutation, summed over the starting
+  point, how often one fixed point precedes another in the induced cyclic
+  order.
+
 ## Verified against a Mathlib-only statement
 
 So that three principal theorems can be read without trusting the library,
@@ -245,9 +487,11 @@ central limit theorem with its `1/m` error).  All three solutions build and
 depend only on `propext`, `Classical.choice` and `Quot.sound`, and
 `Audit/LatticeProbAudit/StatementRegression.lean` checks locally that each
 solution statement is exactly the challenge statement and mentions no
-constant of the library.  The comparator itself has not yet been run on them;
-the workflow
-[`.github/workflows/comparator.yml`](.github/workflows/comparator.yml) runs it.
+constant of the library.  Both `.github/workflows/build.yml` and
+[`.github/workflows/comparator.yml`](.github/workflows/comparator.yml) trigger
+on request only (`workflow_dispatch`), since the builds are Mathlib-scale; the
+comparator is instead run locally before each release, and its results are
+recorded in [`Audit/COMPARATOR_RUNS.md`](Audit/COMPARATOR_RUNS.md).
 
 ## Building
 
@@ -295,28 +539,43 @@ LatticeProb/
   Site.lean, IID.lean   sites of ℤ^d, the nearest-neighbour graph, i.i.d. fields
   Walk/                 simple and lazy random walk on ℤ^d: kernels, Gaussian bounds,
                         Green functions and their gradients, the local CLT, the Markov
-                        property, hitting probabilities, the range, exit times
+                        property, hitting probabilities, the range, exit times, the
+                        resistance packing and insertion inequalities, an abstract
+                        finite-range kernel and the lattice Riemann-sum limit, the
+                        binomial law's shift correlation, Pólya recurrence and the Nash
+                        inequality on ℤ²
   Graph/                the walk on a locally finite graph: heat kernel, Nash inequality,
                         on-diagonal bounds, exit times, the divisible sandpile and the
-                        random-walk representation of its odometer
+                        random-walk representation of its odometer, the vertex boundary,
+                        Eulerian paths, König's lemma, the cyclic rank of a permutation
+  Sandpile/             the classical (integer, Abelian) sandpile on ℤ^d: parallel
+                        toppling, the Diaconis-Fulton wave decomposition, recurrence
   Network/              electrical networks: energy, Dirichlet and Thomson principles,
                         Rayleigh monotonicity, Nash-Williams, the killed Green function,
-                        escape probabilities, the Gaussian free field
-  Prob/                 ergodic theorems, zero-one laws, correlation, concentration and
-                        moment inequalities, Brownian motion, regular variation
+                        escape probabilities, the Gaussian free field, harmonic-function
+                        algebra, the Caccioppoli inequality and the first Moser step
+  Prob/                 ergodic theorems, zero-one laws, correlation and percolation
+                        inequalities (Percolation/), concentration and moment
+                        inequalities, convex order, Brownian motion, regular variation,
+                        total variation distance, scaling-limit infrastructure (Scaling/)
   Gauss/                Gaussian measures, the isonormal process, white noise,
                         Gaussian tails
   Lattice/Planar/       curves on the square lattice and the separation lemma
-  Analysis/, Topology/  negative-order Sobolev norms; polygonal subsets of the plane
-  Support/              elementary lemmas used across the library
-  External/             the five cited results, each a Prop taken as a hypothesis
-  Meta/                 AxiomsAudit.lean
-  *.lean (top level)    continuum objects shared with Parking-Sharpness: white noise,
+  Lattice/NearestPoint.lean   rounding a point of ℝ^d to the nearest lattice site
+  Order/                 eventual stabilization of a monotone sequence, ℕ∞-valued
+                        hitting-time arithmetic
+  Analysis/, Topology/   negative-order Sobolev norms; polygonal subsets of the plane;
+                        dissipative-skew generators and their resolvent semigroups;
+                        smooth maxima, softmax weights and their stability
+  Support/               elementary lemmas used across the library
+  External/              the five cited results, each a Prop taken as a hypothesis
+  Meta/                  AxiomsAudit.lean
+  *.lean (top level)     continuum objects shared with Parking-Sharpness: white noise,
                         heat kernels, optimal stopping values, weak limits
-LatticeProb.lean        the root module (imports the whole library)
-Audit/                  Mathlib-only comparator challenges and solutions
-tools/                  the checkers listed under Building
-NOTICE                  the files adapted from other repositories, and their licenses
+LatticeProb.lean         the root module (imports the whole library)
+Audit/                   Mathlib-only comparator challenges and solutions
+tools/                   the checkers listed under Building
+NOTICE                   the files adapted from other repositories, and their licenses
 ```
 
 ## How this was built
@@ -340,6 +599,21 @@ release documentation.  The models, tooling and review status are disclosed
 in full in [`formalization.yaml`](formalization.yaml), following the
 [mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml)
 standard.
+
+On 2026-09-23 and 2026-09-24, the paper-independent modules listed above under
+Contents as harvested from a dependent formalization (the scaling-limit and
+convex-order toolkits, the classical sandpile, the vertex boundary and
+`ℕ∞`-arrival helpers, the Efron-Stein and weighted-limit modules, the smooth
+maxima, the lattice-kernel and Riemann-sum abstraction, the binomial shift
+correlation, Pólya recurrence and the Nash inequality on `ℤ²`, the
+dissipative-skew generators and their resolvent semigroups, the rate-two
+Poisson clock, the resistance packing and insertion inequalities, the
+percolation and total variation modules, and the graph-combinatorics trio)
+were moved into this library by Claude Sonnet 5 subagents, supervised by
+Claude Opus 5.5 in Claude Code.  Each move was checked by the same axiom and
+warning gates as the rest of the library before merging.  These modules were
+not written for this repository; the original authorship of each is
+described in its source repository's own disclosure, not restated here.
 
 ## Authors and citation
 

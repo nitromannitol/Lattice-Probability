@@ -156,7 +156,7 @@ automation:
         Lake builds under leanprover/lean4:v4.32.0 with Mathlib at revision
         81a5d257c8e410db227a6665ed08f64fea08e997, one shared build lock on
         one machine.  The history on main runs from 2026-09-06 (db90208) to
-        2026-09-23 (918318e); all commits are made under the author's name,
+        2026-09-24 (5e998e8); all commits are made under the author's name,
         and the division of labour below is reconstructed from the author's
         run logs and notes, not from commit metadata.  claude-opus-5 (Claude
         Code) wrote most of the library as "Library general" shifts from
@@ -183,19 +183,36 @@ automation:
         (2026-09-16) and moved modules into their own namespaces.
         labs-leanstral-1-5 (Mistral Leanstral, through vibe) wrote the proofs
         of LatticeProb/Network/GFF.lean (2026-09-23, commit 918318e) against
-        statements fixed in advance.  claude-opus-5-5 wrote
-        LatticeProb/Meta/AxiomsAudit.lean, the comparator surface
-        Audit/LatticeProbAudit/ and this release documentation (2026-09-23).
-        The author of LatticeProb/Walk/LatticeGreen.lean (commit c860b35,
-        2026-09-23) is not recorded in the logs.  Every merge was gated by
+        statements fixed in advance, verified by the supervisor.
+        claude-opus-5-5 wrote LatticeProb/Meta/AxiomsAudit.lean, the
+        comparator surface Audit/LatticeProbAudit/ and this release
+        documentation (2026-09-23).  On 2026-09-23 and 2026-09-24,
+        claude-sonnet-5 subagents, supervised by claude-opus-5-5 in Claude
+        Code, moved the paper-independent modules listed under Contents in
+        README.md as harvested from Divisible-Sandpile-Percolation,
+        Divisible-Sandpile-RWRS, Parking-Sharpness, Unique-Continuation-Planar,
+        Exploding-Sandpiles, Dynamic-Dimensional-Reduction,
+        manhattan-formalization, ORRW-Lower-Bound and rotor-23 into this
+        library, one branch per source formalization (harvest-analysis,
+        harvest-parking, harvest-manhattan, harvest-orrw,
+        harvest-percolation, harvest-sandpile).  Each move was checked by the
+        same tools/check_axioms.py and tools/check_warnings.py gates as every
+        other merge before the supervising session merged the branch.  These
+        modules were not written for this repository; the original
+        authorship of each is described in its source repository's own
+        disclosure, not restated here.  The author of
+        LatticeProb/Walk/LatticeGreen.lean (commit c860b35, 2026-09-23) is
+        not recorded in the logs.  Every merge was gated by
         tools/check_axioms.py (the axiom closure of every declaration) and
-        tools/check_warnings.py (a warning-free build).  The Lean comparator
-        (leanprover/comparator) has not yet been run on the Audit pairs;
-        .github/workflows/comparator.yml runs it.
+        tools/check_warnings.py (a warning-free build).  Both
+        .github/workflows/build.yml and .github/workflows/comparator.yml
+        trigger on request only (workflow_dispatch); the Lean comparator
+        (leanprover/comparator) is instead run locally before each release,
+        with results recorded in Audit/COMPARATOR_RUNS.md.
       cost:
         wall_time: >-
           about two and a half weeks of calendar time (2026-09-06 to
-          2026-09-23), in parallel with the formalizations that use the
+          2026-09-24), in parallel with the formalizations that use the
           library
         spend_usd: "not tracked (subscription and API accounts)"
         hardware: "a 20-thread Intel i9-9900X / 125 GB RAM Ubuntu machine; GLM and DeepSeek inference on hosted endpoints"

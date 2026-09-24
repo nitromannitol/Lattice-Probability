@@ -7,10 +7,11 @@ abstract: >-
   simple random walk on Z^d and on locally finite graphs, Gaussian kernel
   bounds, Green functions and their gradients, local central limit theorems,
   electrical networks and the killed Green function, the discrete Gaussian
-  free field, the maximal, pointwise and subadditive (Kingman) ergodic
-  theorems, zero-one laws, the Harris and van den Berg-Kesten inequalities,
-  the Bernstein, Freedman, Fuk-Nagaev, von Bahr-Esseen and Efron-Stein
-  inequalities, Brownian motion and its strong Markov property, regular
+  free field, the classical integer sandpile, the maximal, pointwise and
+  subadditive (Kingman) ergodic theorems, zero-one laws, the Harris and van
+  den Berg-Kesten inequalities, percolation and convex order, the Bernstein,
+  Freedman, Fuk-Nagaev, von Bahr-Esseen and Efron-Stein inequalities, Brownian
+  motion and its strong Markov property, scaling-limit infrastructure, regular
   variation, and Jordan separation on the square lattice.  Results cited from
   the literature are taken as explicit hypotheses.  The library contains no
   sorry and no custom axiom.
