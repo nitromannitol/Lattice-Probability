@@ -133,3 +133,10 @@ library.
 
 #print axioms LatticeProb.Analysis.DissipativeSkewPair.variational_bound
 #print axioms LatticeProb.Analysis.integral_inner_operatorSemigroup_eq_resolvent
+
+/-! ### The Nash inequality on `ℤ²`, and the rate-two Poisson clock -/
+
+#print axioms LatticeProb.NashZ2.nash
+#print axioms LatticeProb.hasSum_poissonWeight
+#print axioms LatticeProb.hasDerivAt_poissonWeight
+#print axioms LatticeProb.tsum_abs_dPoissonWeight_le

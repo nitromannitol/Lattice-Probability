@@ -187,6 +187,7 @@ import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation
 import LatticeProb.Walk.GreenPointwise
 import LatticeProb.Walk.PolyaRecurrence
+import LatticeProb.Walk.NashZ2
 import LatticeProb.Prob.ExplorationCond
 import LatticeProb.Prob.ChentsovPiLimit
 import LatticeProb.Prob.GaussianLaw
@@ -234,6 +235,8 @@ import LatticeProb.Graph.OnDiagonal
 import LatticeProb.Graph.HeatVanishing
 import LatticeProb.Prob.ConditionalMeasure
 import LatticeProb.Prob.ErgodicDecomposition
+import LatticeProb.Prob.CauchySchwarzTsum
+import LatticeProb.Prob.PoissonClock
 import LatticeProb.Lattice.Planar
 import LatticeProb.Analysis.Sobolev.Defs
 import LatticeProb.Analysis.Sobolev.Basic
