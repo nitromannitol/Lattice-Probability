@@ -143,3 +143,7 @@ library.
 #print axioms LatticeProb.ConvexOrder.convex_lipschitz_integral_le_finite_pi
 #print axioms LatticeProb.ConvexOrder.twoPointLaw_convex_le
 #print axioms LatticeProb.ConvexOrder.exists_twoPoint_comparison
+
+/-! ### The binomial law and its shift correlation -/
+
+#print axioms LatticeProb.Walk.shift_energy
