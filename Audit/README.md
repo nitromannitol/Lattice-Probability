@@ -105,9 +105,11 @@ challenge statement and depends only on `propext`, `Classical.choice` and
 `Quot.sound`.
 
 **Status.**  All three solutions build, and the statement regression and the
-axiom prints pass locally.  `leanprover/comparator` itself has not yet been
-run on these pairs: it is not installed on the development machine, and the
-workflow [`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml)
-that runs it has not yet run, because the repository is private and has no
-Actions runs.  Until it has run, the comparator claim is the local proxy
-above, not the comparator's verdict.
+axiom prints pass locally.  `leanprover/comparator` was run on all three
+pairs on 2026-09-24 at commit `bbe0b90`, and every pair passed with the Lean
+kernel and again with the independent nanoda kernel enabled.  Results and the
+reproduction command are in
+[`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  The workflow
+[`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml)
+runs the same check on request, since the repository is private and Actions
+minutes are spent only when asked for.
