@@ -89,7 +89,7 @@ theorem stirlingSeq_le_sqrt_pi_mul_exp (n : ℕ) (hn : 1 ≤ n) :
     | zero => simp
     | succ k ih =>
       rw [Finset.sum_range_succ, ← ih]
-      ring
+      ring_nf
   have hbound : ∀ k : ℕ, Real.log (Stirling.stirlingSeq n) - Real.log (Stirling.stirlingSeq (n + k))
       ≤ ∑ j ∈ Finset.range k, (1 / (12 * ((n + j : ℕ) : ℝ) * (((n + j : ℕ) : ℝ) + 1))) := by
     intro k
@@ -468,7 +468,7 @@ theorem sq_linear_exp_bound (c X : ℝ) (hc : 0 < c) (hX : 0 ≤ X) :
   have hrhs : (Real.exp (-1) / (c / 2)) ^ 2 = 4 * Real.exp (-2) / c ^ 2 := by
     rw [div_pow, ← Real.exp_nat_mul]
     push_cast
-    ring
+    ring_nf
   rw [hlhs, hrhs] at hsq
   exact hsq
 
@@ -931,7 +931,7 @@ theorem gaussianDensity_two_eq (m : ℕ) (hm : 1 ≤ m) (t : ℝ) (j : ℤ) (ht 
     nlinarith [Real.sq_sqrt (by norm_num : (0:ℝ) ≤ 2)]
   rw [show -((m:ℝ) * t^2) / 2 = -((m:ℝ)*t^2/2) from by ring]
   rw [← hconst]
-  ring
+  ring_nf
 
 
 theorem region1_A3_bounds (m : ℕ) (hm : 1 ≤ m) (t : ℝ) (htabs : |t| ≤ 1/2) :
@@ -1413,7 +1413,7 @@ theorem extreme_bound (m : ℕ) (hm : 1 ≤ m) (j : ℤ) (hjeq : |(j:ℝ)| = (m:
         = Real.sqrt (m:ℝ) * Real.exp (-(Real.log 2 * (m:ℝ))) := by
       rw [Real.exp_neg]
       congr 2
-      ring
+      ring_nf
     rw [heq1]
     have hsqrtm_le_m : Real.sqrt (m:ℝ) ≤ (m:ℝ) := sqrt_le_self_of_one_le (m:ℝ) hm1
     have hexp_pos : (0:ℝ) < Real.exp (-(Real.log 2 * (m:ℝ))) := Real.exp_pos _
