@@ -260,3 +260,10 @@ import LatticeProb.ExtendedMapping
 import LatticeProb.BoxClamp
 import LatticeProb.HeatKernelHolder
 import LatticeProb.ZHolder
+import LatticeProb.Graph.Boundary
+import LatticeProb.Lattice.NearestPoint
+import LatticeProb.Order.EventuallyConstant
+import LatticeProb.Order.ENatArrival
+import LatticeProb.Sandpile.Toppling
+import LatticeProb.Sandpile.Waves
+import LatticeProb.Sandpile.Recurrence

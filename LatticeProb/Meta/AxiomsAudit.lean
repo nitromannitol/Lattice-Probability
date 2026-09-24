@@ -124,3 +124,19 @@ library.
 /-! ### Planar lattice topology -/
 
 #print axioms LatticeProb.Lattice.Planar.separation
+
+/-! ### The classical (integer, Abelian) sandpile on `ℤ^d` -/
+
+#print axioms LatticeProb.Sandpile.lap_eq_sum_second_diff
+#print axioms LatticeProb.Sandpile.podo_mono_step
+#print axioms LatticeProb.Sandpile.fodo_topple_of_ge
+#print axioms LatticeProb.Sandpile.wave_mono_time
+#print axioms LatticeProb.Sandpile.exists_adj_pos_of_nbrSumZ_pos
+#print axioms LatticeProb.Sandpile.lap_le_of_fixed
+#print axioms LatticeProb.Sandpile.recurrent_const
+#print axioms LatticeProb.eventually_constant_of_monotone_bounded
+#print axioms LatticeProb.finset_common_stable
+#print axioms LatticeProb.sInf_coe_attained
+#print axioms LatticeProb.sInf_coe_top
+#print axioms LatticeProb.exists_nat_bound_of_isCompact
+#print axioms LatticeProb.nearestSite_smul_mem_box
