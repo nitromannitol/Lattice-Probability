@@ -111,6 +111,7 @@ import LatticeProb.Network.NashWilliams
 import LatticeProb.Network.Series
 import LatticeProb.Network.Escape
 import LatticeProb.Network.FirstReturn
+import LatticeProb.Network.GFF
 import LatticeProb.Prob.Moments
 import LatticeProb.Prob.FddTight
 import LatticeProb.Prob.NetApprox
