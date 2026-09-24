@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install elan
+        run: |
+          curl https://elan.lean-lang.org/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Get the Mathlib cache
+        run: lake exe cache get
+
+      - name: Enforce warning-free production build
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build 2>&1 | tee production-build.log
+          if grep -iE '^warning:|declaration uses .sorry' production-build.log; then
+            echo "Production build emitted a warning."
+            exit 1
+          fi
+
+      # Build the axiom audit and surface its `#print axioms` output in the log,
+      # confirming the principal theorems use only the standard Mathlib axioms.
+      - name: Axiom audit
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build LatticeProb.Meta.AxiomsAudit 2>&1 | tee axioms-audit.log
+          if grep -iE '^warning:|declaration uses .sorry' axioms-audit.log; then
+            echo "Axiom audit build emitted a warning."
+            exit 1
+          fi
+
+      # `#print axioms` on every declaration of the library.
+      - name: Axiom closure of every declaration
+        run: python3 tools/check_axioms.py

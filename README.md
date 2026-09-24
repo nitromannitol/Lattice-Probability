@@ -1,255 +1,366 @@
 # Lattice-Probability
 
-A Lean 4 library for probability on the lattice `ℤ^d`, shared by the
-formalizations of Ahmed Bou-Rabee's papers.  It collects the objects those
-papers have in common so that each formalization can import them rather than
-define its own: sites and the nearest-neighbour graph, the simple random walk
-operator, i.i.d. fields, and site-indexed instruction stacks.
+A machine-checked **Lean 4** library of discrete probability and lattice
+potential theory, built on
+[`mathlib`](https://github.com/leanprover-community/mathlib4).  It is the
+shared base of the formalizations of Ahmed Bou-Rabee's papers.
 
-## Layout
+[![CI](https://github.com/nitromannitol/Lattice-Probability/actions/workflows/build.yml/badge.svg)](https://github.com/nitromannitol/Lattice-Probability/actions/workflows/build.yml)
+[![Comparator audit](https://github.com/nitromannitol/Lattice-Probability/actions/workflows/comparator.yml/badge.svg)](https://github.com/nitromannitol/Lattice-Probability/actions/workflows/comparator.yml)
 
-```text
-LatticeProb/WhiteNoise.lean  smooth test functions, the continuum Laplacian, and spatial white noise
-LatticeProb/ContinuumHeatKernel.lean  Brownian heat kernel at variance t/4 and square-integrable noise tests
-LatticeProb/ContinuumNoiseField.lean  space-time white noise, its covariance, and the stopping-value definitions
-LatticeProb/ContinuumStoppingBounds.lean  Gaussian field laws and bounds on optimal-stopping values
-LatticeProb/ContinuumStoppingValue.lean  optimal stopping at general rewards with integrable payoffs
-LatticeProb/ContinuumQuarterBrownian.lean  continuous quarter-Brownian motion and finite-dimensional Gaussian laws
-LatticeProb/DoobMaximal.lean  Doob maximal bounds for bounded mean-zero i.i.d. partial sums
-LatticeProb/KolmogorovChentsov.lean  power, floor, and finite-sum estimates for moment bounds
-LatticeProb/WeightedJensen.lean  geometrically weighted Jensen bounds for finite sums
-LatticeProb/Lyapunov.lean  moment monotonicity under probability measures
-LatticeProb/MomentNorm.lean  real moment norms, Minkowski, and exponent comparison
-LatticeProb/WeakLimit.lean  weak limits from tightness and uniform cutoff approximation
-LatticeProb/ExtendedMapping.lean  extended continuous mapping for varying real-valued maps
-LatticeProb/BoxClamp.lean  continuous extension from compact rectangles by coordinate clamping
-LatticeProb/HeatKernelHolder.lean  power-integral estimates for heat-kernel regularity
-LatticeProb/ZHolder.lean  spatial and temporal second-moment bounds from heat-kernel covariance
-LatticeProb/Site.lean               sites, unit vectors, the lattice graph, the walk operator, boxes, components
-LatticeProb/IID.lean                i.i.d. fields, instruction stacks and arrival counts
-LatticeProb/Rank.lean               ranking a finite set by an injective key
-LatticeProb/ParticleHole.lean       the particle-hole process: driver, state, one round
-LatticeProb/ParticleHoleLemmas.lean the leaf facts about that process
-LatticeProb/Walk/Basic.lean         paths on the lattice: directions, positions, ranges, edges
-LatticeProb/Walk/Path.lean          path facts and the law of the first n steps of the walk
-LatticeProb/Walk/Lazy.lean          the lazy walk operator Q and the truncated Green function
-LatticeProb/Walk/OneDim.lean        the one-dimensional lazy kernel
-LatticeProb/Walk/SRW.lean           the simple random walk kernel, its support and parity
-LatticeProb/Walk/SRWPos.lean        positivity of the simple kernel at reachable sites
-LatticeProb/Walk/OneDimGauss.lean   the Gaussian bound on the one-dimensional lazy kernel
-LatticeProb/Walk/SRWOneDim.lean     the one-dimensional simple kernel against the lazy one
-LatticeProb/Walk/BinomialLocalCLT.lean  the binomial local central limit theorem with an explicit 1/m error
-LatticeProb/Walk/SRWDecomp.lean     the coordinate decomposition of the simple kernel
-LatticeProb/Walk/SRWGauss.lean      the ingredients of the Gaussian bound on the lattice
-LatticeProb/Walk/S1Gauss.lean       the Gaussian bound on the one-dimensional simple kernel
-LatticeProb/Walk/SRWSup.lean        the sup bound on the simple kernel
-LatticeProb/Walk/SRWGreenSup.lean   the truncated Green function of the simple walk by dimension
-LatticeProb/Walk/SRWGaussBound.lean the Gaussian upper bound on the simple kernel
-LatticeProb/Walk/SchedExtra.lean    the sharper schedule average behind the gradient bound
-LatticeProb/Walk/P1Grad.lean        the gradient of the one-dimensional lazy kernel
-LatticeProb/Walk/LazyGrad.lean      the gradient of the lazy kernel on the lattice
-LatticeProb/Walk/GaussSeries.lean   summing a Gaussian kernel bound over time
-LatticeProb/Walk/GreenIdentity.lean the lazy Green function is twice the simple one
-LatticeProb/Walk/SimpleTransfer.lean  the Green function of the simple walk
-LatticeProb/Walk/GRGrad.lean        the Green gradient bound, for both walks
-LatticeProb/Walk/Decomp.lean        the coordinate decomposition of the r-step kernel
-LatticeProb/Walk/Moment.lean        moments of the coordinate visit counts
-LatticeProb/Walk/LazyBox.lean       the r-step kernel on a box
-LatticeProb/Walk/Series.lean        the three series bounds
-LatticeProb/Walk/GreenBounds.lean   the sup, oscillation and total variation bounds
-LatticeProb/Walk/Green.lean         G_n(0,0) is of order sqrt n, log n, or bounded
-LatticeProb/Walk/Poisson.lean       the Poisson equation for the truncated Green function
-LatticeProb/Walk/RangeBox.lean      the range of a path fits in a box
-LatticeProb/Walk/Infinite.lean      the walk on infinite paths, and the finite marginals
-LatticeProb/Walk/Dirichlet.lean     the Dirichlet Laplacian, mean exit times, effective resistance
-LatticeProb/Walk/Harmonic.lean      the maximum principle, the Green function, one-point insertion
-LatticeProb/Walk/Energy.lean        the Dirichlet energy and the Thomson resistance comparison
-LatticeProb/Walk/BoxAverage.lean    the discrete Poincare inequality and the bound on T(A)
-LatticeProb/Walk/ExitTime.lean      the exit time bounds for a finite set
-LatticeProb/Walk/ExitBox.lean       the exit time of a box of radius r is of order r squared
-LatticeProb/Prob/Catalog.lean       Mathlib's probability theorems under this library's names
-LatticeProb/Prob/Harris.lean        the Harris inequality for product measures
-LatticeProb/Prob/HarrisVariants.lean  decreasing, mixed, and locally monotone forms
-LatticeProb/Prob/ZeroOne.lean       the ergodic zero-one law for coordinate shifts
-LatticeProb/Prob/Translation.lean   translation-invariant events of an i.i.d. field on the lattice
-LatticeProb/Prob/HewittSavage.lean  the Hewitt-Savage zero-one law for exchangeable events
-LatticeProb/Prob/HarrisCube.lean    the Harris inequality on the discrete and continuous cubes
-LatticeProb/Prob/BK.lean            the van den Berg-Kesten inequality on the finite cube
-LatticeProb/Prob/InfinitePiSplit.lean  the head-tail decomposition of a product over the naturals
-LatticeProb/Prob/Coordinate.lean    one coordinate of an infinite product, against the rest
-LatticeProb/Prob/CondExpParam.lean  a jointly measurable version of a conditional expectation in a parameter
-LatticeProb/Prob/CondExpParamMeas.lean  measurability of the kernel integral against the conditional-expectation kernel
-LatticeProb/Prob/UpdateSite.lean   resampling one coordinate of an infinite product, and the Fubini identity it gives
-LatticeProb/Prob/L2JointVersion.lean  jointly measurable representatives of strongly measurable L2-valued families
-LatticeProb/Prob/WhiteNoiseJoint.lean  jointly measurable versions of the canonical white noise along an L2 family
-LatticeProb/Prob/WhiteNoiseCLM.lean  the canonical white noise as a continuous linear map on L2
-LatticeProb/Prob/WhiteNoiseIsometry.lean  white-noise evaluation as a linear isometry into L2
-LatticeProb/Prob/WhiteNoiseFubini.lean  the stochastic Fubini identity for white noise
-LatticeProb/Prob/KlDivGaussianAux.lean  the Gaussian log-likelihood ratio and its integral
-LatticeProb/Prob/KlDivGaussian.lean  the relative entropy between two Gaussians of a common variance
-LatticeProb/Prob/ParticleOdometerHole.lean  a positive particle odometer excludes an unfilled hole
-LatticeProb/Prob/GaussianDensitySq.lean  the square of the Gaussian density and its integral
-LatticeProb/Prob/IidSplit.lean  the Fubini identity for an i.i.d. field split at one site
-LatticeProb/Prob/KlDivGaussianPi.lean  the relative entropy of a finite product of Gaussian shifts
-LatticeProb/Prob/MaximalErgodic.lean  the maximal ergodic theorem
-LatticeProb/Prob/Birkhoff.lean      the pointwise ergodic theorem
-LatticeProb/Prob/ConditionalMeasure.lean  regular conditional probability measures, disintegration,
-                                    and invariant fibres for a countable family of transformations
-LatticeProb/Prob/ErgodicDecomposition.lean  ergodic decomposition of a probability-preserving
-                                    transformation on a standard Borel space
-LatticeProb/Prob/Kingman.lean       the subadditive ergodic theorem
-LatticeProb/Prob/SubGaussian.lean   sub-Gaussian behaviour on a range, and its Bernstein tail
-LatticeProb/Prob/EfronStein.lean    the exponential Efron-Stein inequality on a product measure
-LatticeProb/Prob/WeightedConc.lean  weighted exponential concentration and its tail
-LatticeProb/Prob/GaussianConcentration.lean  the Chernoff step of Gaussian concentration, the
-                                    exponential moment of a Lipschitz functional, and the
-                                    permutation invariance of the standard Gaussian product law
-LatticeProb/Prob/GaussianHerbst.lean  Gaussian concentration for a Lipschitz functional of
-                                    independent standard Gaussians, from the cited Herbst bound
-LatticeProb/External/GaussianLogSobolev.lean  the cited Gaussian logarithmic Sobolev inequality
-LatticeProb/Topology/Polygonal.lean  polygonal subsets of the plane and their basic topology
-LatticeProb/External/PolygonalTopology.lean  the cited polygonal unicoherence and Janiszewski theorems
-LatticeProb/Analysis/NegSobolev.lean  negative-order Sobolev norms on a bounded domain, and the
-                                    continuous inclusion H^{-s0}(D) into H^{-s}(D) for s0 <= s
-                                    and the Herbst exponential moment bound it implies
-LatticeProb/Walk/Markov.lean        the Markov property at a fixed time and at a bounded stopping time
-LatticeProb/Prob/Ottaviani.lean     Ottaviani's maximal inequality, as a first passage decomposition
-LatticeProb/Prob/BrownianMax.lean   the Gaussian maximal estimate for Brownian motion: the tail of the
-                                    largest displacement before a time, by Ottaviani's inequality on a
-                                    dyadic grid
-LatticeProb/Prob/BrownianExit.lean  Brownian motion on R^d with generator Delta/(2d), and the Gaussian
-                                    tail of the time at which it leaves a ball, for every positive
-                                    radius and for the closed ball as well as the open one
-LatticeProb/Prob/NetApprox.lean     the partition of unity attached to a finite set of points of a
-                                    metric space, and the interpolation of a function by its values
-                                    on that set
-LatticeProb/Prob/FddTight.lean      from the finite-dimensional laws and equicontinuity in probability
-                                    to the expectation of a bounded uniformly continuous functional
-                                    of the whole path
-LatticeProb/Prob/BrownianMarkov.lean  restarting Brownian motion at a deterministic time, its natural
-                                    filtration, the event of having left a ball as an event of the
-                                    past, and the strong Markov property at a stopping time as a
-                                    stated property
-LatticeProb/Prob/IndepPi.lean       independent pairs give independent families: the supremum of one
-                                    half of a family of independent pairs is independent of the
-                                    supremum of the other half
-LatticeProb/Prob/StoppingDyadic.lean  the dyadic approximation of a stopping time from above, its
-                                    countably many values and its convergence
-LatticeProb/Prob/BrownianPathLaw.lean  the law of a pre-Brownian motion on path space, and the
-                                    invariance of the law of the increments under restarting at a
-                                    deterministic time
-LatticeProb/Prob/BrownianStrongMarkov.lean  the strong Markov property of Brownian motion on
-                                    R^d: the increments after a stopping time have the law of the
-                                    centred motion and are independent of the past
-LatticeProb/Prob/BrownianRestartIntegral.lean  the strong Markov property as a change of the
-                                    restarted path for a fresh motion inside an expectation
-LatticeProb/Prob/BrownianExitTime.lean  the exit time of a ball, its stopping-time property, and
-                                    the exit time stopped at a horizon
-LatticeProb/Prob/BrownianContAll.lean  Kolmogorov-Chentsov on the half line with every path
-                                    continuous, and a Brownian motion on R^d that has it
-LatticeProb/Prob/RegularVariation.lean  regular variation at infinity and Potter's bounds for a
-                                    monotone regularly varying function
-LatticeProb/Prob/Karamata.lean      Karamata's theorem for the integrated tail, and the layer cake
-                                    identity that makes it a statement about a law
-LatticeProb/Prob/KaramataOrigin.lean  Karamata's theorem for the integral from the origin of a
-                                    monotone regularly varying function of index above -1, for
-                                    an increasing and for a decreasing function, and the limit
-                                    of the lower tail of a law against the integral of the
-                                    reciprocal of its integrated tail
-LatticeProb/Prob/Freedman.lean      Freedman's inequality for a martingale with bounded increments,
-                                    through the exponential supermartingale
-LatticeProb/Prob/Moments.lean       the second and fourth moment of an independent centred sum
-LatticeProb/Prob/VonBahrEsseenSum.lean  the von Bahr-Esseen inequality: the p-th moment bound
-                                    for an independent centred sum (1 ≤ p ≤ 2) and its tail bound
-LatticeProb/Prob/PoissonTail.lean   the Poisson (Bennett) tail of a sum of independent
-                                    nonnegative summands bounded by a level
-LatticeProb/Prob/FukNagaev.lean     the Fuk-Nagaev tail inequality for an independent centred sum
-                                    with p-th moments, by a truncation at two levels
-LatticeProb/Prob/RpowAdd.lean       the p-th power of a sum of two nonnegative reals against
-                                    two to the p times the sum of the p-th powers
-LatticeProb/Prob/SupTailQuant.lean  the quantitative tail of the box supremum from an almost-sure modulus at a fixed scale
-LatticeProb/Prob/SupTail.lean       the p-th moment of the supremum of a process over a box,
-                                    from an almost-sure modulus of continuity, and the
-LatticeProb/Prob/CramerWold.lean    the Cramér-Wold device: convergence in distribution of a
-                                    finite-dimensional vector from its one-dimensional
-LatticeProb/Support/PowerSum.lean    sums of a real power over an initial segment, by telescoping
-LatticeProb/Support/TimeCut.lean      continuous trapezoidal weights of a time interval, increasing in the resolution
-LatticeProb/Support/Fubini.lean       Fubini for a bounded jointly measurable function of two probability spaces
-LatticeProb/Gauss/IsonormalSum.lean  almost sure convergence of the partial sums of the isonormal process
-LatticeProb/Gauss/TailMills.lean     the Gaussian tail bound from the density, and the Mills ratio comparison
-                                    projections
-                                    almost-sure modulus the Kolmogorov condition gives
-LatticeProb/Network/                electrical networks on a locally finite graph: the Dirichlet
-                                    energy and form, harmonic functions, the killed Green function
-                                    as a voltage, the maximum and Dirichlet principles, Rayleigh
-                                    monotonicity, Thomson's principle and the Nash-Williams bound
-LatticeProb/Graph/                  the divisible sandpile and the walk on a general graph, and the
-                                    random-walk (optimal-stopping) representation of the odometer,
-                                    with its specializations to the lattice
-LatticeProb/Lattice/Planar.lean  the square-lattice contour and separation interface
-LatticeProb/Lattice/Planar/Metric.lean  lattice connectivity, graph-distance bounds and finite components
-LatticeProb/Lattice/Planar/FaceGeometry.lean  coordinate formulas for the four sides of a square
-LatticeProb/Lattice/Planar/Basic.lean  integer lattice sites and directions
-LatticeProb/Lattice/Planar/RotorOrder.lean  cyclic neighbor orders for the contour exploration
-LatticeProb/Lattice/Planar/Periodic.lean  periodic vertex embeddings and translation inverses
-LatticeProb/Lattice/Planar/Square.lean  the square graph, its four neighbors and periodic embedding
-LatticeProb/Lattice/Planar/Dual.lean  right and left faces, primal and dual edges
-LatticeProb/Lattice/Planar/Exploration.lean  finite complementary components and depth-first exploration
-LatticeProb/Lattice/Planar/BlockGeom.lean  the integer sup norm
-LatticeProb/Lattice/Planar/KingPaths.lean  king adjacency of lattice sites
-LatticeProb/Lattice/Planar/SquareDual.lean  primal-dual inverses and lists of adjacent faces
-LatticeProb/Lattice/Planar/Boundary.lean  boundary successors and cancellation of outer normals
-LatticeProb/Lattice/Planar/DualGeom.lean  unit steps, rotations and dual-edge geometry
-LatticeProb/Lattice/Planar/Winding.lean  discrete winding and invariance off a closed walk
-LatticeProb/Lattice/Planar/DoubledCurve.lean  doubled curves and the winding jump across an edge
-LatticeProb/Lattice/Planar/Ring.lean  local rings, cyclic arcs and avoidance paths
-LatticeProb/Lattice/Planar/CurveSides.lean  connectivity along each side of a simple curve
-LatticeProb/Lattice/Planar/ExplInv.lean  the deterministic exploration invariant
-LatticeProb/Lattice/Planar/ExplCover.lean  avoidance reachability and finite components
-LatticeProb/Lattice/Planar/ExplTree.lean  the depth-first tree and its branch invariant
-LatticeProb/Lattice/Planar/ExplChain.lean  parent chains and winding on unbounded components
-LatticeProb/Lattice/Planar/Separation.lean  Jordan separation for doubled square-lattice curves
-LatticeProb/Lattice/Planar/FrameSector.lean  cyclic sectors of exploration frames
-LatticeProb/Lattice/Planar/SectorFacts.lean  square corners and sector geometry
-LatticeProb/Lattice/Planar/ContourPath.lean  simple contours formed from tree and branch paths
-LatticeProb/Lattice/Planar/ContourCtx.lean  the common contour context and its separation conclusion
-LatticeProb/Lattice/Planar/ContourCases.lean  the S contour and the W chord through edge midpoints
-LatticeProb/Lattice/Planar/ActiveListLemma.lean  the active-list theorem and exclusion of two closed sides
-LatticeProb/Graph/Reach.lean        the walks of a given length, the two one-step recursions for the
-                                    transition kernel, its reversibility and Chapman-Kolmogorov
-LatticeProb/Graph/Nash.lean         the Nash inequality of dimension one on an infinite connected graph
-LatticeProb/Graph/OnDiagonal.lean   the on-diagonal heat kernel bound p_n(x,x) <= 32 d n^{-1/2} on an
-                                    infinite connected graph of degree bounded by d
-LatticeProb/Graph/HeatVanishing.lean  the transition probability tends to zero there, and a graph with
-                                    a finite component where it does not
-LatticeProb/Analysis/Sobolev/Defs.lean  test functions, the Fourier-side Sobolev norms of negative order, and bounded domains
-LatticeProb/Analysis/Sobolev/Basic.lean  monotonicity of the norm and antitonicity of the dual norm
-LatticeProb/Analysis/Sobolev/Weight.lean  the high-frequency weight comparison
-LatticeProb/Analysis/Sobolev/Scaling.lean  homogeneity of the squared Sobolev norm
-LatticeProb/Analysis/Sobolev/TestFn.lean  closure of the test-function class under scaling
-LatticeProb/Analysis/Sobolev/TestFnSub.lean  closure of the test-function class under subtraction
-LatticeProb/Analysis/Sobolev/AbsApply.lean  a small test function pairs to at most its norm times the dual norm
-LatticeProb/Analysis/Sobolev/DualNet.lean  the dual norm is controlled by a finite net plus the lower-order dual norm
-LatticeProb/Analysis/Sobolev/Tight.lean  tightness transfer between negative Sobolev orders
-LatticeProb/Analysis/Sobolev/Compact.lean  the compact embedding of negative Sobolev order on a bounded domain
-LatticeProb/Analysis/Sobolev/TightTransfer.lean  tightness in H^{-s0} gives subsequential limits in H^{-s}
-LatticeProb/External/RellichKondrachovNegSobolev.lean  the cited Rellich-Kondrachov compact embedding of negative order
+## What this is
+
+This is a library, not the formalization of one paper.  It collects the
+objects and theorems that several formalizations have in common, so that each
+of them imports one proof instead of carrying its own: simple random walk on
+`ℤ^d` and on locally finite graphs, its transition kernels and Green
+functions, local central limit theorems, electrical networks and the killed
+Green function, the discrete Gaussian free field, ergodic theorems and
+zero-one laws, correlation inequalities, concentration and moment
+inequalities, Gaussian processes and Brownian motion, regular variation, and
+the topology of curves on the square lattice.
+
+The library is required, at a pinned commit, by the formalization
+repositories
+[`Divisible-Sandpile-Percolation`](https://github.com/nitromannitol/Divisible-Sandpile-Percolation),
+[`Divisible-Sandpile-RWRS`](https://github.com/nitromannitol/Divisible-Sandpile-RWRS),
+[`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness) and
+[`Unique-Continuation-Planar`](https://github.com/nitromannitol/Unique-Continuation-Planar),
+and by the formalizations in progress of *Dynamic dimensional reduction*,
+*Exploding sandpiles*, the random abelian sandpile and discrete elliptic
+regularity.
+
+The library has 291 modules, about 70,000 lines and 3,618 declarations.
+
+- **No `sorry`** anywhere in the library.  Each Mathlib-only comparator
+  challenge in `Audit/` contains its single intentional statement-level
+  `sorry`, filled by the corresponding solution file.
+- **No custom `axiom`.**  Every declaration of the library reduces to
+  `mathlib`'s three standard foundational axioms, `propext`,
+  `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py`
+  checks this for all 3,618 declarations, and
+  [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
+  prints the axioms of the principal theorems listed below.
+- **Cited results are hypotheses.**  Five results from the literature are
+  stated as propositions in `LatticeProb/External/` and never proved here: the
+  Gaussian logarithmic Sobolev inequality and its Herbst bound, polygonal
+  unicoherence, Janiszewski's theorem for polygonal sets, and the
+  Rellich-Kondrachov compact embedding in negative Sobolev order.  A theorem
+  that uses one of them takes it as an explicit hypothesis, so its statement
+  shows what it rests on.  Only the Herbst bound and the Rellich-Kondrachov
+  embedding are used, by `LatticeProb.gaussian_lipschitz_concentration` and by
+  the compactness results of `LatticeProb/Analysis/Sobolev/`.
+- Pinned to Lean `v4.32.0` and `mathlib` at revision
+  `81a5d257c8e410db227a6665ed08f64fea08e997`.  The dependent repositories use
+  the same pin.
+
+## Contents
+
+The principal theorems, by area.  Each name is a Lean declaration; all of
+them appear in `LatticeProb/Meta/AxiomsAudit.lean`.
+
+**Walks and Green functions.**  Simple random walk on `ℤ^d` is the kernel
+`srwHeat d j x = P_0(X_j = x)`, the lazy walk is `Q`, and the walk on a
+general locally finite graph is `LatticeProb.Graph.heat`.
+
+* `LatticeProb.srwHeat_gaussian`: the Gaussian upper bound
+  `p_R(0, x) ≤ 3^d C_d R^{-d/2} exp(-|x|² / (8(R + 2d)))` for `R ≥ 1`.
+* `LatticeProb.sqrt_le_gR_one_dim`, `gR_one_dim_le`, `log_le_gR_two_dim`,
+  `gR_two_dim_le`, `gR_high_dim_le`: the truncated Green function of the lazy
+  walk at the origin is of order `√n` in one dimension and `log n` in two, and
+  is bounded in dimension three and higher.
+* `LatticeProb.tsum_iterate_delta0_eq`: in dimension `d ≥ 3` the Green
+  function of the lazy walk is twice that of the simple walk.
+* `LatticeProb.exists_srwGreen_gradient` and
+  `LatticeProb.exists_srwGreenInf_gradient`: the gradient bound
+  `|G(y) - G(z)| ≤ C (1 + |y|)^{1-d}` for neighbours `y, z`, for the truncated
+  Green function uniformly in the time horizon when `d ≥ 2`, and for the Green
+  function when `d ≥ 3`.
+* `LatticeProb.exists_srwGreenInf_le`: `G(0, z) ≤ C (1 + |z|)^{2-d}` for
+  `d ≥ 4`; `LatticeProb.exists_tsum_srwGreenInf_sq_tail_le`: the tail
+  `∑_{|z| ≥ r} G(0, z)² ≤ C r^{4-d}` for `d ≥ 5`.
+* `LatticeProb.srwHitProb_eq_green_ratio`: for `d ≥ 3` the probability that
+  the walk from `x` ever hits the origin is `G(x) / G(0)`.
+* `LatticeProb.markov_stopping`: the strong Markov property at a bounded
+  stopping time.
+* `LatticeProb.exists_maxDisp_bound`: the maximal displacement up to time `n`
+  exceeds `a` with probability at most `C exp(-c a² / n)`;
+  `LatticeProb.srwTail_le`: Hoeffding's bound for the one-dimensional walk.
+* `LatticeProb.integral_rangeCard_sq_le`: the range `R_t` satisfies
+  `E|R_t|² ≤ 2 (E|R_t|)²`.
+* `LatticeProb.T_originBox_le`: the mean exit time of the box of radius `r`,
+  summed over the box, is at most `C (2r + 1)^{d+2}`.
+* `LatticeProb.Graph.nash_ineq`: the Nash inequality of dimension one on an
+  infinite connected graph; `LatticeProb.Graph.heat_diag_le`: the on-diagonal
+  bound `p_m(x, x) ≤ 32 d / √m` when every degree is at most `d`, and
+  `LatticeProb.Graph.spectralDimensionBound_of_boundedDegree`, the same as a
+  spectral dimension bound.
+* `LatticeProb.Graph.integrable_exitNat` and `LatticeProb.Graph.markov_exitTime`:
+  the exit time of a finite set is integrable, and the strong Markov property
+  holds at it.
+
+**Local central limit theorems.**
+
+* `LatticeProb.BinomialLCLT.exists_binomPMF_localCLT`: for the probability
+  `P_m(j)` that `m` independent signs sum to `j`,
+  `|√m P_m(j) - 2 φ(j / √m)| ≤ C / m` uniformly over `m ≥ 1` and the `j` of the
+  parity of `m` with `|j| ≤ m`, where `φ` is the standard normal density.
+* `LatticeProb.exists_srwHeat_one_sub_gauss_le_int`: the one-dimensional local
+  limit theorem `√(π m) p_{2m}(0, 2k) → exp(-k² / m)`, uniformly on
+  `|k| ≤ A √m`.
+* `LatticeProb.LocalCLT.srwHeat_eq_fourier`: the Fourier representation of
+  `p_j(0, x)` on `ℤ^d` as an integral over the torus `[-π, π]^d`.
+
+**Electrical networks and the killed Green function.**  A network is a locally
+finite graph with conductances `c`.  For a finite set `C` that misses some
+vertex, `killedGreenReal G C o v` is the Green function `g_C(o, v)` of the walk
+killed on leaving `C`.
+
+* `LatticeProb.Network.dirichlet_principle`: a function harmonic on `B` has
+  the least energy among the functions with its values off `B`;
+  `LatticeProb.Network.rayleigh_monotone`: the minimal energy increases with
+  the conductances; `LatticeProb.Network.thomson_principle`: the energy of the
+  voltage is at most the energy of any flow with the same divergence.
+* `LatticeProb.Network.nashWilliams_le_effRes` and
+  `LatticeProb.Network.nashWilliams_nested`: the Nash-Williams lower bound on
+  the effective resistance from disjoint cutsets and from nested boundary cuts.
+* `LatticeProb.Network.laplacian_killedGreenReal`,
+  `LatticeProb.Network.killedGreenReal_symm`: `g_C(o, ·)` vanishes off `C`, has
+  Laplacian `-1_o` on `C`, and is symmetric;
+  `LatticeProb.Network.energyOn_killedGreenReal`: its energy is twice the
+  effective resistance.
+* `LatticeProb.Network.one_sub_returnProb` and
+  `LatticeProb.Network.escape_eq_inv`: the escape probability from `o` is
+  `1 / (deg(o) R_eff)`.
+* `LatticeProb.Network.le_of_harmonicOn`: the maximum principle;
+  `LatticeProb.Network.exists_voltage`: a bounded voltage with unit source and
+  sink at two transient vertices.
+
+**The discrete Gaussian free field.**  `LatticeProb/Network/GFF.lean` defines
+the field with zero boundary values on a finite set `C` as
+`gff G C = multivariateGaussian 0 (killedGreenMatrix G C)`.
+
+* `LatticeProb.Network.killedGreenMatrix_posSemidef`: on a connected graph the
+  killed Green function is positive semidefinite on `C`, because its quadratic
+  form is half the Dirichlet energy of a potential.
+* `LatticeProb.Network.integral_gff` and `LatticeProb.Network.covariance_gff`:
+  the field is centred and its covariance is `g_C`.
+
+**Ergodic theory and zero-one laws.**
+
+* `LatticeProb.maximal_ergodic`: the maximal ergodic theorem, by Garsia's
+  proof; `LatticeProb.ae_tendsto_bAvg`: Birkhoff's pointwise ergodic theorem.
+* `LatticeProb.ae_tendsto_div`, `LatticeProb.ae_tendsto_gLow` and
+  `LatticeProb.tendsto_integral_div`: Kingman's subadditive ergodic theorem.
+  For a family subadditive along a transformation that preserves a finite
+  measure and bounded below by `c n`, `g_n / n` converges almost everywhere,
+  and the means `(∫ g_n) / n` converge to their infimum.
+* `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
+  measure-preserving transformation of a standard Borel probability space.
+* `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;
+  `LatticeProb.measure_zero_or_one_of_exchangeable`: the Hewitt-Savage
+  zero-one law; `LatticeProb.measure_zero_or_one_of_allTranslationInvariant`:
+  translation-invariant events of an i.i.d. field on `ℤ^d` have probability
+  zero or one.
+
+**Correlation inequalities.**
+
+* `LatticeProb.infinitePi_harris`: the Harris inequality for increasing events
+  of a product measure over any index set.
+* `LatticeProb.infinitePi_locallyMonotone_fkg`: the FKG inequality for locally
+  monotone events.
+* `LatticeProb.measure_pi_disjointOccSet_le`: the van den Berg-Kesten
+  inequality for increasing events of a finite product of Bernoulli measures.
+
+**Concentration and moment inequalities.**
+
+* `LatticeProb.bernstein`: Bernstein's inequality for a finite sum of
+  independent bounded centred variables.
+* `LatticeProb.freedman`: Freedman's inequality for a martingale with bounded
+  increments and bounded predictable quadratic variation.
+* `LatticeProb.fukNagaev_bound`: the Fuk-Nagaev inequality for independent
+  centred summands with `p`-th moments, `p ≥ 2`.
+* `LatticeProb.vonBahrEsseen`: the von Bahr-Esseen tail bound for
+  `1 ≤ p ≤ 2`.
+* `LatticeProb.poisson_tail`: the Poisson (Bennett) tail of a sum of
+  independent summands with values in `[0, β]`.
+* `LatticeProb.evariance_le_half_tsum_siteEnergy`: the Efron-Stein inequality
+  over a countable index set.
+* `LatticeProb.gaussian_lipschitz_concentration`: Gaussian concentration for a
+  Lipschitz function of `n` independent standard Gaussians, from the cited
+  Herbst bound.
+* `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
+  `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
+  `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
+  inequality, Doob's maximal inequality for bounded i.i.d. partial sums, and
+  Pinsker's inequality.
+
+**Gaussian processes and Brownian motion.**
+
+* `LatticeProb.exists_continuous_modification`: the Kolmogorov-Chentsov
+  theorem on `ℝ≥0`.
+* `LatticeProb.exists_isBrownian`: Brownian motion on `ℝ^d` with generator
+  `Δ / (2d)` exists; `LatticeProb.IsBrownianSpace.hasStrongMarkovRestart`: its
+  strong Markov property; `LatticeProb.brownian_exit_tail`: the probability of
+  leaving the ball of radius `A` before time `T` is at most
+  `C exp(-c A² / T)`.
+* `LatticeProb.Isonormal.ae_tendsto_partialSum`: almost sure convergence of the
+  partial sums of the isonormal process.
+* `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
+  `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
+  Gaussians with a common variance.
+* `LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner`: the
+  Cramér-Wold device; `LatticeProb.ExtendedMapping.extended_continuous_mapping`:
+  the extended continuous mapping theorem.
+
+**Regular variation.**  `LatticeProb.potter_bounds`: Potter's bounds for a
+monotone regularly varying function; `LatticeProb.karamata_integrated_tail`
+and `LatticeProb.karamata_origin_integral`: Karamata's theorem for the
+integrated tail and for the integral from the origin.
+
+**Planar lattice topology.**  `LatticeProb.Lattice.Planar.separation`: the
+Jordan separation lemma on the doubled square lattice.  If a simple closed
+curve avoids every site and bond outside a finite set `V`, then two sites
+outside `V`, joined off the curve to its right side and to its left side, are
+not both in the unbounded component of the complement of `V`.
+
+## Verified against a Mathlib-only statement
+
+So that three principal theorems can be read without trusting the library,
+they are restated using **only Mathlib**, with no library definitions, in
+`Audit/LatticeProbAudit/<X>/Challenge.lean`.  Each challenge contains one
+intentional statement-level `sorry`, which the corresponding `Solution.lean`
+fills from the library.  The configurations in
+`Audit/LatticeProbAudit/*/comparator.json` are for
+[`leanprover/comparator`](https://github.com/leanprover/comparator), which
+confirms that the two statements have identical elaborated types and that the
+proof reduces to the three standard axioms (see
+[`Audit/README.md`](Audit/README.md)).
+
+The three pairs are `Kingman` (the subadditive ergodic theorem, both halves),
+`GFF` (the killed Green function is positive semidefinite and is the
+covariance of a centred Gaussian measure, with the killed Green function
+rebuilt from Mathlib primitives) and `BinomialLocalCLT` (the binomial local
+central limit theorem with its `1/m` error).  All three solutions build and
+depend only on `propext`, `Classical.choice` and `Quot.sound`, and
+`Audit/LatticeProbAudit/StatementRegression.lean` checks locally that each
+solution statement is exactly the challenge statement and mentions no
+constant of the library.  The comparator itself has not yet been run on them;
+the workflow
+[`.github/workflows/comparator.yml`](.github/workflows/comparator.yml) runs it.
+
+## Building
+
+The project uses [`elan`](https://github.com/leanprover/elan) (the Lean
+toolchain manager) and Lake.  The toolchain is pinned in
+[`lean-toolchain`](lean-toolchain) (`leanprover/lean4:v4.32.0`), so `elan`
+installs the right Lean version automatically.
+
+```bash
+lake exe cache get   # the first time: fetch the Mathlib build cache
+lake build           # compile the library
 ```
 
-## Attribution
+`lake exe cache get` requires the committed
+[`lake-manifest.json`](lake-manifest.json), which pins the exact Mathlib
+revision.
 
-Three files under `LatticeProb/Prob/` are adapted from an Apache-2.0 licensed
-library; see `NOTICE`. The modules under `LatticeProb/Lattice/Planar/`
-are adapted from the authors’ Apache-2.0 licensed rotor-23 formalization.
-They prove separation on the square lattice `ℤ × ℤ`. Their periodic
-embedding vocabulary does not assert planarity of a general graph.
-
-## Build
-
-```sh
-lake exe cache get
-lake build
+```bash
+lake build LatticeProb.Meta.AxiomsAudit      # print the axioms of the principal theorems
+lake build LatticeProbAudit                  # the comparator challenges and solutions
+lake build LatticeProbAudit.StatementRegression
 ```
 
-The library is pinned to the Mathlib revision in `lake-manifest.json`; the
-formalizations that depend on it use the same pin.
+To use the library from another Lake project, require it at a fixed commit and
+use the same Mathlib pin:
+
+```lean
+require «lattice-probability» from git
+  "https://github.com/nitromannitol/Lattice-Probability.git" @ "<commit>"
+```
+
+`import LatticeProb` pulls in the whole library; each module can also be
+imported alone.
+
+| command | what it guarantees |
+|---|---|
+| `python3 tools/check_axioms.py` | runs Lean's `#print axioms` on every declaration of the library and fails if any closure contains `sorryAx` or an axiom other than `propext`, `Classical.choice`, `Quot.sound` |
+| `python3 tools/check_warnings.py` | the build of `LatticeProb` emits no error, no warning and no `sorry` |
+| `python3 tools/check_names.py FILE` | every `LatticeProb.*` name mentioned in a text file exists |
+
+## Repository layout
+
+```
+LatticeProb/
+  Site.lean, IID.lean   sites of ℤ^d, the nearest-neighbour graph, i.i.d. fields
+  Walk/                 simple and lazy random walk on ℤ^d: kernels, Gaussian bounds,
+                        Green functions and their gradients, the local CLT, the Markov
+                        property, hitting probabilities, the range, exit times
+  Graph/                the walk on a locally finite graph: heat kernel, Nash inequality,
+                        on-diagonal bounds, exit times, the divisible sandpile and the
+                        random-walk representation of its odometer
+  Network/              electrical networks: energy, Dirichlet and Thomson principles,
+                        Rayleigh monotonicity, Nash-Williams, the killed Green function,
+                        escape probabilities, the Gaussian free field
+  Prob/                 ergodic theorems, zero-one laws, correlation, concentration and
+                        moment inequalities, Brownian motion, regular variation
+  Gauss/                Gaussian measures, the isonormal process, white noise,
+                        Gaussian tails
+  Lattice/Planar/       curves on the square lattice and the separation lemma
+  Analysis/, Topology/  negative-order Sobolev norms; polygonal subsets of the plane
+  Support/              elementary lemmas used across the library
+  External/             the five cited results, each a Prop taken as a hypothesis
+  Meta/                 AxiomsAudit.lean
+  *.lean (top level)    continuum objects shared with Parking-Sharpness: white noise,
+                        heat kernels, optimal stopping values, weak limits
+LatticeProb.lean        the root module (imports the whole library)
+Audit/                  Mathlib-only comparator challenges and solutions
+tools/                  the checkers listed under Building
+NOTICE                  the files adapted from other repositories, and their licenses
+```
+
+## How this was built
+
+The Lean code in this repository was written by AI models under the
+supervision of the author.  Most of it was written by Claude Opus 5 in Claude
+Code, as "generals" working in shifts from 2026-09-06 on, and a Claude Code
+supervising session merged and checked every branch.  OpenAI's gpt-6-astra,
+through Codex, wrote the ergodic decomposition, the Gaussian law determined by
+its covariance and Pinsker's inequality, ported the planar lattice modules
+from rotor-23 and migrated sixteen continuum modules from Parking-Sharpness.
+GLM-5.3 proved the von Bahr-Esseen inequality, the Kolmogorov bounds on
+product spaces and the Fourier form of the heat kernel, and
+DeepSeek-v4.1-flash, driven by the same scripts, wrote modules on conditional
+expectations in a parameter, white noise, the supremum tail, negative Sobolev
+norms and the binomial kernel.  Claude Sonnet 5 wrote the binomial local
+central limit theorem.  Mistral's Leanstral wrote the proofs of the Gaussian
+free field module `LatticeProb/Network/GFF.lean`.  Claude Opus 5.5 wrote
+`LatticeProb/Meta/AxiomsAudit.lean`, the comparator surface in `Audit/` and the
+release documentation.  The models, tooling and review status are disclosed
+in full in [`formalization.yaml`](formalization.yaml), following the
+[mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml)
+standard.
+
+## Authors and citation
+
+The Lean development is by **Ahmed Bou-Rabee**.  If you use this library,
+please cite it using the metadata in [`CITATION.cff`](CITATION.cff).
+
+## Acknowledgements
+
+This library is built on [Lean 4](https://lean-lang.org) and
+[Mathlib](https://github.com/leanprover-community/mathlib4).  Three modules
+of `LatticeProb/Prob/` are adapted from the percolation library of
+[`anthropics/formal-math`](https://github.com/anthropics/formal-math), the
+modules of `LatticeProb/Lattice/Planar/` from
+[`rotor-23`](https://github.com/nitromannitol/rotor-23), and sixteen continuum
+modules from
+[`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness);
+[`NOTICE`](NOTICE) lists the files and the commits.  The comparator audit in
+[`Audit/`](Audit/) is set up for
+[`leanprover/comparator`](https://github.com/leanprover/comparator).
+
+## License
+
+The Lean code in this repository is licensed under the **Apache License 2.0**
+(see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).
