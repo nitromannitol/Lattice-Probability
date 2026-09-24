@@ -178,6 +178,12 @@ the field with zero boundary values on a finite set `C` as
   For a family subadditive along a transformation that preserves a finite
   measure and bounded below by `c n`, `g_n / n` converges almost everywhere,
   and the means `(∫ g_n) / n` converge to their infimum.
+* `LatticeProb.akcoglu_krengel_mean`: the mean half of the multiparameter
+  subadditive ergodic theorem of Akcoglu and Krengel, along cubes. A set
+  function on boxes of `ℤ^d`, stationary under a measure-preserving action of
+  the lattice, bounded by a multiple of the volume, and subadditive when a box
+  splits into two boxes, has a volume-normalised mean that converges along the
+  cubes `[0, n)^d`.
 * `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
   measure-preserving transformation of a standard Borel probability space.
 * `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;
@@ -199,6 +205,9 @@ the field with zero boundary values on a finite set `C` as
 
 * `LatticeProb.bernstein`: Bernstein's inequality for a finite sum of
   independent bounded centred variables.
+* `LatticeProb.mcdiarmid`: McDiarmid's bounded-differences inequality, the
+  upper tail of a function of independent coordinates with bounded
+  one-coordinate oscillation `c i` is at most `exp(-2t² / ∑ i, c i²)`.
 * `LatticeProb.freedman`: Freedman's inequality for a martingale with bounded
   increments and bounded predictable quadratic variation.
 * `LatticeProb.fukNagaev_bound`: the Fuk-Nagaev inequality for independent

@@ -362,3 +362,5 @@ import LatticeProb.Prob.TotalVariation
 import LatticeProb.Graph.EulerianPath
 import LatticeProb.Graph.CyclicRank
 import LatticeProb.Graph.Konig
+import LatticeProb.Prob.McDiarmid
+import LatticeProb.Prob.AkcogluKrengel

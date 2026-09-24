@@ -80,11 +80,26 @@ for f in sorted(LIB.rglob("*.lean")):
     rel = f.relative_to(ROOT)
     mods.append(str(rel)[:-5].replace("/", "."))
     text = strip_comments(f.read_text(encoding="utf-8"))
-    ns = None
+    # A stack of ("namespace", name) or ("section", None), so that a `section ... end`
+    # block (e.g. `noncomputable section`, or a named `section Foo ... end Foo` used only
+    # for local `variable`s) does not get mistaken for a namespace and does not disturb
+    # the namespace path of declarations after it closes.
+    block_stack = []
     for line in text.splitlines():
         m = re.match(r"^namespace\s+(\S+)", line)
         if m:
-            ns = m.group(1)
+            block_stack.append(("namespace", m.group(1)))
+            continue
+        m = re.match(r"^(?:noncomputable\s+)?section(?:\s+\S+)?\s*$", line)
+        if m:
+            block_stack.append(("section", None))
+            continue
+        m = re.match(r"^end(?:\s+\S+)?\s*$", line)
+        if m and block_stack:
+            block_stack.pop()
+            continue
+        ns_parts = [name for kind, name in block_stack if kind == "namespace"]
+        ns = ".".join(ns_parts) if ns_parts else None
         m = DECL.match(line)
         if m:
             nm = m.group(1)

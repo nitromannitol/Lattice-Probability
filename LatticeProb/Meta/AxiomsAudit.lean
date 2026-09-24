@@ -84,6 +84,7 @@ library.
 #print axioms LatticeProb.tendsto_integral_div
 #print axioms LatticeProb.ae_tendsto_gLow
 #print axioms LatticeProb.ae_tendsto_div
+#print axioms LatticeProb.akcoglu_krengel_mean
 #print axioms LatticeProb.ergodic_decomposition
 #print axioms LatticeProb.ergodic_coordShift_infinitePi
 #print axioms LatticeProb.measure_zero_or_one_of_exchangeable
@@ -98,6 +99,7 @@ library.
 /-! ### Concentration and moment inequalities -/
 
 #print axioms LatticeProb.bernstein
+#print axioms LatticeProb.mcdiarmid
 #print axioms LatticeProb.freedman
 #print axioms LatticeProb.fukNagaev_bound
 #print axioms LatticeProb.vonBahrEsseen
