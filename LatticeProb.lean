@@ -46,6 +46,8 @@ import LatticeProb.Walk.Harmonic
 import LatticeProb.Walk.Energy
 import LatticeProb.Walk.BoxAverage
 import LatticeProb.Walk.ExitTime
+import LatticeProb.Walk.ResistancePacking
+import LatticeProb.Walk.InsertionSum
 import LatticeProb.Prob.Harris
 import LatticeProb.Prob.ZeroOne
 import LatticeProb.Prob.Catalog

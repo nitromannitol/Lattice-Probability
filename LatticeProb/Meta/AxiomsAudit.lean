@@ -38,6 +38,8 @@ library.
 #print axioms LatticeProb.srwTail_le
 #print axioms LatticeProb.integral_rangeCard_sq_le
 #print axioms LatticeProb.T_originBox_le
+#print axioms LatticeProb.resistance_packing
+#print axioms LatticeProb.insertion_inequality
 #print axioms LatticeProb.Graph.nash_ineq
 #print axioms LatticeProb.Graph.heat_diag_le
 #print axioms LatticeProb.Graph.spectralDimensionBound_of_boundedDegree
