@@ -64,6 +64,10 @@ library.
 #print axioms LatticeProb.Network.laplacian_killedGreenReal
 #print axioms LatticeProb.Network.killedGreenReal_symm
 #print axioms LatticeProb.Network.energyOn_killedGreenReal
+#print axioms LatticeProb.Network.maximum_neighbors
+#print axioms LatticeProb.Network.caccioppoli
+#print axioms LatticeProb.Network.moser_estimate
+#print axioms LatticeProb.Network.moser_l2_step
 
 /-! ### The discrete Gaussian free field -/
 
@@ -102,6 +106,20 @@ library.
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
 #print axioms LatticeProb.pinsker
+#print axioms LatticeProb.efron_stein
+#print axioms LatticeProb.exists_mgf_neg_bounds
+#print axioms LatticeProb.small_ball_of_exp
+#print axioms LatticeProb.integral_comparison_third_order
+#print axioms LatticeProb.tendsto_measureReal_weighted
+#print axioms LatticeProb.weighted_iid_central_limit
+#print axioms LatticeProb.weighted_iid_central_limit_pick
+
+/-! ### Smooth maxima and softmax stability -/
+
+#print axioms LatticeProb.softMaximum_derivative_bound
+#print axioms LatticeProb.softMinimum_derivative_bound
+#print axioms LatticeProb.SmoothBottleneckBound.softMaximum
+#print axioms LatticeProb.expStable_softWeightComposition
 
 /-! ### Gaussian processes and Brownian motion -/
 

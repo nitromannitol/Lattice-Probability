@@ -71,6 +71,9 @@ import LatticeProb.Prob.MaximalErgodic
 import LatticeProb.Prob.Kingman
 import LatticeProb.Prob.SubGaussian
 import LatticeProb.Prob.EfronStein
+import LatticeProb.Prob.EfronSteinInequality
+import LatticeProb.Prob.LaplaceTransform
+import LatticeProb.Prob.ExponentialMoments
 import LatticeProb.Prob.WeightedConc
 import LatticeProb.Prob.GaussianConcentration
 import LatticeProb.External.GaussianLogSobolev
@@ -78,6 +81,9 @@ import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev
+import LatticeProb.Analysis.SoftMaximum
+import LatticeProb.Analysis.SoftComposition
+import LatticeProb.Analysis.SoftStability
 import LatticeProb.Graph.Basic
 import LatticeProb.Graph.Scenery
 import LatticeProb.Graph.Walk
@@ -97,6 +103,8 @@ import LatticeProb.Graph.Killed
 import LatticeProb.Graph.ZdKilled
 import LatticeProb.Prob.Birkhoff
 import LatticeProb.Network.Basic
+import LatticeProb.Network.HarmonicAlgebra
+import LatticeProb.Network.Caccioppoli
 import LatticeProb.Network.Liouville
 import LatticeProb.Network.Killed
 import LatticeProb.Graph.ExitDecomp
@@ -113,6 +121,9 @@ import LatticeProb.Network.Escape
 import LatticeProb.Network.FirstReturn
 import LatticeProb.Network.GFF
 import LatticeProb.Prob.Moments
+import LatticeProb.Prob.WeightedWeakLaw
+import LatticeProb.Prob.TaylorComparison
+import LatticeProb.Prob.WeightedCLT
 import LatticeProb.Prob.FddTight
 import LatticeProb.Prob.NetApprox
 import LatticeProb.Prob.PowerIneq
