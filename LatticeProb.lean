@@ -354,3 +354,11 @@ import LatticeProb.Prob.NearFamily
 import LatticeProb.Prob.TwoPointOrder
 import LatticeProb.Walk.LatticeKernel
 import LatticeProb.Walk.RiemannLattice
+import LatticeProb.Prob.Percolation.FiniteProductPivotal
+import LatticeProb.Prob.Percolation.BondPercolation
+import LatticeProb.Prob.Percolation.Crossing
+import LatticeProb.Prob.Percolation.RSW
+import LatticeProb.Prob.TotalVariation
+import LatticeProb.Graph.EulerianPath
+import LatticeProb.Graph.CyclicRank
+import LatticeProb.Graph.Konig
