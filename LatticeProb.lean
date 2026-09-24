@@ -326,3 +326,5 @@ import LatticeProb.Prob.IntegerConvexMinorant
 import LatticeProb.Prob.ConvexOrder
 import LatticeProb.Prob.NearFamily
 import LatticeProb.Prob.TwoPointOrder
+import LatticeProb.Walk.LatticeKernel
+import LatticeProb.Walk.RiemannLattice

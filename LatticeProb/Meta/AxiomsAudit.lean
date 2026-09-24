@@ -147,3 +147,7 @@ library.
 /-! ### The binomial law and its shift correlation -/
 
 #print axioms LatticeProb.Walk.shift_energy
+
+/-! ### Lattice kernels and Riemann sums -/
+
+#print axioms LatticeProb.Walk.tendsto_latticeSum_mul_rpow
