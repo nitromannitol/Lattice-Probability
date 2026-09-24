@@ -124,3 +124,7 @@ library.
 /-! ### Planar lattice topology -/
 
 #print axioms LatticeProb.Lattice.Planar.separation
+
+/-! ### Recurrence of the two-dimensional simple random walk on `ℤ²` -/
+
+#print axioms LatticeProb.simpleRandomWalkRecurrent

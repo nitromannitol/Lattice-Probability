@@ -184,6 +184,7 @@ import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation
 import LatticeProb.Walk.GreenPointwise
+import LatticeProb.Walk.PolyaRecurrence
 import LatticeProb.Prob.ExplorationCond
 import LatticeProb.Prob.ChentsovPiLimit
 import LatticeProb.Prob.GaussianLaw
