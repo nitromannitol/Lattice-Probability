@@ -128,3 +128,8 @@ library.
 /-! ### Recurrence of the two-dimensional simple random walk on `ℤ²` -/
 
 #print axioms LatticeProb.simpleRandomWalkRecurrent
+
+/-! ### Dissipative-skew generators and their resolvents -/
+
+#print axioms LatticeProb.Analysis.DissipativeSkewPair.variational_bound
+#print axioms LatticeProb.Analysis.integral_inner_operatorSemigroup_eq_resolvent

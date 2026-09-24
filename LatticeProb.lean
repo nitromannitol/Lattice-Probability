@@ -78,6 +78,8 @@ import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev
+import LatticeProb.Analysis.DissipativeSkewOperator
+import LatticeProb.Analysis.OperatorSemigroup
 import LatticeProb.Graph.Basic
 import LatticeProb.Graph.Scenery
 import LatticeProb.Graph.Walk
