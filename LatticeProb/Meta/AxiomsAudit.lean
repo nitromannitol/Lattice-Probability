@@ -184,3 +184,18 @@ library.
 /-! ### Lattice kernels and Riemann sums -/
 
 #print axioms LatticeProb.Walk.tendsto_latticeSum_mul_rpow
+/-! ### Recurrence of the two-dimensional simple random walk on `ℤ²` -/
+
+#print axioms LatticeProb.simpleRandomWalkRecurrent
+
+/-! ### Dissipative-skew generators and their resolvents -/
+
+#print axioms LatticeProb.Analysis.DissipativeSkewPair.variational_bound
+#print axioms LatticeProb.Analysis.integral_inner_operatorSemigroup_eq_resolvent
+
+/-! ### The Nash inequality on `ℤ²`, and the rate-two Poisson clock -/
+
+#print axioms LatticeProb.NashZ2.nash
+#print axioms LatticeProb.hasSum_poissonWeight
+#print axioms LatticeProb.hasDerivAt_poissonWeight
+#print axioms LatticeProb.tsum_abs_dPoissonWeight_le
