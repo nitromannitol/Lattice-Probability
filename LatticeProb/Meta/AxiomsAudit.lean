@@ -201,3 +201,32 @@ library.
 #print axioms LatticeProb.hasSum_poissonWeight
 #print axioms LatticeProb.hasDerivAt_poissonWeight
 #print axioms LatticeProb.tsum_abs_dPoissonWeight_le
+
+/-! ### Percolation -/
+
+#print axioms LatticeProb.Percolation.fpr_piv
+#print axioms LatticeProb.Percolation.fpr_change
+#print axioms LatticeProb.Percolation.fpr_le_of_map
+#print axioms LatticeProb.Percolation.fpw_le_of_agree
+#print axioms LatticeProb.Percolation.fpw_le_of_par
+#print axioms LatticeProb.Percolation.bondLaw_half_le_of_flip
+#print axioms LatticeProb.Percolation.bondLaw_toReal_eq_fpr
+#print axioms LatticeProb.Percolation.walk_prefix_hit_integer
+#print axioms LatticeProb.Percolation.walk_mem_support_of_induce
+#print axioms LatticeProb.Percolation.card_planeRectangle_aspect_le_cube
+#print axioms LatticeProb.Percolation.measure_boxPathEvent_le
+#print axioms LatticeProb.Percolation.card_double_square_le_cube
+#print axioms LatticeProb.Percolation.walkBottleneck_append
+#print axioms LatticeProb.Percolation.finiteMaximum_mem
+
+/-! ### Total variation distance -/
+
+#print axioms LatticeProb.pi_one_coord_le
+#print axioms LatticeProb.pi_tv_le
+#print axioms LatticeProb.infinitePi_restrict_tv_le
+
+/-! ### Graph combinatorics -/
+
+#print axioms LatticeProb.Graph.exists_epath
+#print axioms LatticeProb.Graph.konig
+#print axioms LatticeProb.Graph.two_mul_sum_card_filter_lt
