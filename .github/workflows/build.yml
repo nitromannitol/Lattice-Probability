@@ -1,9 +1,7 @@
 name: CI
 
+# Manual trigger only: these builds are Mathlib-scale, so they run on request.
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 
 # Cancel superseded runs on the same ref.

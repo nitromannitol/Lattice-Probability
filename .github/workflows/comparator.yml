@@ -10,9 +10,8 @@ name: Comparator audit
 # build is cached between runs; the first run on an empty cache builds the
 # whole LatticeProb library.
 
+# Manual trigger only: these builds are Mathlib-scale, so they run on request.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
