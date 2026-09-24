@@ -1,0 +1,13 @@
+{
+  "challenge_module": "LatticeProbAudit.BinomialLocalCLT.Challenge",
+  "solution_module": "LatticeProbAudit.BinomialLocalCLT.Solution",
+  "theorem_names": [
+    "LatticeProbAudit.binomial_local_clt"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

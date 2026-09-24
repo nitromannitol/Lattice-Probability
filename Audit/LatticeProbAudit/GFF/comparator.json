@@ -1,0 +1,13 @@
+{
+  "challenge_module": "LatticeProbAudit.GFF.Challenge",
+  "solution_module": "LatticeProbAudit.GFF.Solution",
+  "theorem_names": [
+    "LatticeProbAudit.gff"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

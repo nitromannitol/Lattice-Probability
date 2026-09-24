@@ -1,0 +1,13 @@
+{
+  "challenge_module": "LatticeProbAudit.Kingman.Challenge",
+  "solution_module": "LatticeProbAudit.Kingman.Solution",
+  "theorem_names": [
+    "LatticeProbAudit.kingman"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}
