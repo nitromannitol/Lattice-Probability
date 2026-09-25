@@ -95,7 +95,7 @@ library.
 #print axioms LatticeProb.ae_eq_comp_of_ae_le_comp
 #print axioms LatticeProb.ae_eq_comp_of_ae_le_comp_real
 #print axioms LatticeProb.ae_eq_const_of_ae_le_comp_real
-#print axioms LatticeProb.aux_kac_9
+#print axioms LatticeProb.lintegral_retTime_eq_measure_hit
 #print axioms LatticeProb.kac_le
 #print axioms LatticeProb.kac_integrable
 #print axioms LatticeProb.kac

@@ -328,7 +328,7 @@ private theorem aux_kac_8 (T : Ω → Ω) (A : Set Ω) :
 
 /-- **The first-return integral identity** (no ergodicity needed): the mean of `retTime T A` on
 `A` equals the measure of the whole basin `{x | ∃ n, T^[n] x ∈ A}`. -/
-theorem aux_kac_9 {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω} (hT : MeasurePreserving T μ μ)
+theorem lintegral_retTime_eq_measure_hit {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω} (hT : MeasurePreserving T μ μ)
     {A : Set Ω} (hA : MeasurableSet A) :
     ∫⁻ x in A, (retTime T A x : ℝ≥0∞) ∂μ = μ {x | ∃ n, T^[n] x ∈ A} := by
   rw [aux_kac_6 (μ := μ) hT.measurable hA]
@@ -367,7 +367,7 @@ private theorem aux_kac_11 {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Ω �
 theorem kac_le (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → Ω)
     (hT : MeasurePreserving T μ μ) {A : Set Ω} (hA : MeasurableSet A) :
     ∫⁻ x in A, (retTime T A x : ℝ≥0∞) ∂μ ≤ 1 := by
-  rw [aux_kac_9 hT hA]
+  rw [lintegral_retTime_eq_measure_hit hT hA]
   exact prob_le_one
 
 /-- The return time `retTime T A` is integrable on `A` (no ergodicity needed: the integral is
@@ -398,7 +398,7 @@ theorem kac (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → Ω) (herg : 
       Integrable (fun x => (retTime T A x : ℝ)) (μ.restrict A) ∧
       ∫ x in A, (retTime T A x : ℝ) ∂μ = 1 := by
   have h1 : ∫⁻ x in A, (retTime T A x : ℝ≥0∞) ∂μ = 1 := by
-    rw [aux_kac_9 herg.toMeasurePreserving hA, aux_kac_11 herg hA hA0]
+    rw [lintegral_retTime_eq_measure_hit herg.toMeasurePreserving hA, aux_kac_11 herg hA hA0]
   refine ⟨h1, kac_integrable μ T herg.toMeasurePreserving hA, ?_⟩
   rw [aux_kac_12 μ T herg.toMeasurePreserving hA, h1, ENNReal.toReal_one]
 
