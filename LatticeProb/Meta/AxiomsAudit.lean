@@ -90,6 +90,16 @@ library.
 #print axioms LatticeProb.measure_zero_or_one_of_exchangeable
 #print axioms LatticeProb.measure_zero_or_one_of_allTranslationInvariant
 
+/-! ### Sub-invariant functions and Kac's lemma -/
+
+#print axioms LatticeProb.ae_eq_comp_of_ae_le_comp
+#print axioms LatticeProb.ae_eq_comp_of_ae_le_comp_real
+#print axioms LatticeProb.ae_eq_const_of_ae_le_comp_real
+#print axioms LatticeProb.aux_kac_9
+#print axioms LatticeProb.kac_le
+#print axioms LatticeProb.kac_integrable
+#print axioms LatticeProb.kac
+
 /-! ### Correlation inequalities -/
 
 #print axioms LatticeProb.infinitePi_harris
