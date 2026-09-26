@@ -369,3 +369,6 @@ import LatticeProb.Prob.AkcogluKrengel
 import LatticeProb.Prob.Invariance
 import LatticeProb.Prob.ReturnTime
 import LatticeProb.Prob.Kac
+import LatticeProb.Prob.InducedMap
+import LatticeProb.Prob.KingmanLinear
+import LatticeProb.Prob.Strassen
