@@ -30,32 +30,37 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 /-- The rational levels used below: `(Real.toNNReal q : ℝ≥0∞)` for `q : ℚ`. -/
 private noncomputable def ratLevel (q : ℚ) : ℝ≥0∞ := ((Real.toNNReal q : NNReal) : ℝ≥0∞)
 
-private theorem aux_inv_1 {μ : Measure Ω} {T : Ω → Ω} {f : Ω → ℝ≥0∞} (hle : f ≤ᵐ[μ] f ∘ T)
+/-- The superlevel set `{f > c}` is a.e. contained in its preimage under `T`, from `f ≤ f ∘ T`. -/
+private theorem ae_subset_preimage_superlevel {μ : Measure Ω} {T : Ω → Ω} {f : Ω → ℝ≥0∞}
+    (hle : f ≤ᵐ[μ] f ∘ T)
     (c : ℝ≥0∞) :
     {x | c < f x} ≤ᵐ[μ] T ⁻¹' {x | c < f x} := by
   filter_upwards [hle] with x hx hc
   exact lt_of_lt_of_le hc hx
 
-private theorem aux_inv_2 {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω}
+/-- The superlevel set `{f > c}` a.e. equals its preimage under a measure-preserving `T`. -/
+private theorem ae_eq_preimage_superlevel {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω}
     (hT : MeasurePreserving T μ μ) {f : Ω → ℝ≥0∞} (hf : Measurable f) (hle : f ≤ᵐ[μ] f ∘ T)
     (c : ℝ≥0∞) :
     {x | c < f x} =ᵐ[μ] T ⁻¹' {x | c < f x} := by
   set s : Set Ω := {x | c < f x} with hs
-  have hsub : s ≤ᵐ[μ] T ⁻¹' s := aux_inv_1 (μ := μ) (T := T) hle c
+  have hsub : s ≤ᵐ[μ] T ⁻¹' s := ae_subset_preimage_superlevel (μ := μ) (T := T) hle c
   have hsmeas : MeasurableSet s := measurableSet_lt measurable_const hf
   have hnull : NullMeasurableSet s μ := hsmeas.nullMeasurableSet
   have hmp : μ (T ⁻¹' s) = μ s := hT.measure_preimage hnull
   exact ae_eq_of_ae_subset_of_measure_ge hsub (le_of_eq hmp) hnull (measure_ne_top μ (T ⁻¹' s))
 
-private theorem aux_inv_3 {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω}
+/-- A.e., `f x` and `f (T x)` sit on the same side of every rational level `ratLevel q`. -/
+private theorem ae_forall_ratLevel_lt_iff_comp {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω}
     (hT : MeasurePreserving T μ μ) {f : Ω → ℝ≥0∞} (hf : Measurable f) (hle : f ≤ᵐ[μ] f ∘ T) :
     ∀ᵐ x ∂μ, ∀ q : ℚ, (ratLevel q < f x ↔ ratLevel q < f (T x)) := by
   rw [ae_all_iff]
   intro q
-  filter_upwards [aux_inv_2 hT hf hle (ratLevel q)] with x hx
+  filter_upwards [ae_eq_preimage_superlevel hT hf hle (ratLevel q)] with x hx
   exact iff_of_eq hx
 
-private theorem aux_inv_4 {a b : ℝ≥0∞} (hab : a ≤ b)
+/-- Two values of `f` agreeing against every rational level, with `a ≤ b`, are equal. -/
+private theorem eq_of_forall_ratLevel_lt_iff {a b : ℝ≥0∞} (hab : a ≤ b)
     (h : ∀ q : ℚ, (ratLevel q < a ↔ ratLevel q < b)) :
     a = b := by
   by_contra hne
@@ -69,18 +74,20 @@ private theorem aux_inv_4 {a b : ℝ≥0∞} (hab : a ≤ b)
 theorem ae_eq_comp_of_ae_le_comp (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → Ω)
     (hT : MeasurePreserving T μ μ) (f : Ω → ℝ≥0∞) (hf : Measurable f)
     (hle : f ≤ᵐ[μ] f ∘ T) : f ∘ T =ᵐ[μ] f := by
-  filter_upwards [aux_inv_3 hT hf hle, hle] with x hx hxle
-  exact (aux_inv_4 hxle hx).symm
+  filter_upwards [ae_forall_ratLevel_lt_iff_comp hT hf hle, hle] with x hx hxle
+  exact (eq_of_forall_ratLevel_lt_iff hxle hx).symm
 
 /-! ### Real-valued and ergodic corollaries -/
 
 /-- The strictly monotone measurable embedding `ℝ → ℝ≥0∞` used for the real corollary. -/
 private noncomputable def embR (t : ℝ) : ℝ≥0∞ := ENNReal.ofReal (Real.exp t)
 
-private theorem aux_inv_5 {s t : ℝ} : embR s ≤ embR t ↔ s ≤ t := by
+/-- `embR` is monotone: `embR s ≤ embR t ↔ s ≤ t`. -/
+private theorem embR_le_embR_iff {s t : ℝ} : embR s ≤ embR t ↔ s ≤ t := by
   simp only [embR, ENNReal.ofReal_le_ofReal_iff (Real.exp_pos t).le, Real.exp_le_exp]
 
-private theorem aux_inv_6 : Measurable embR := by
+/-- `embR` is measurable. -/
+private theorem measurable_embR : Measurable embR := by
   unfold embR
   exact ENNReal.measurable_ofReal.comp Real.measurable_exp
 
@@ -89,11 +96,11 @@ invariant a.e. -/
 theorem ae_eq_comp_of_ae_le_comp_real (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → Ω)
     (hT : MeasurePreserving T μ μ) (f : Ω → ℝ) (hf : Measurable f)
     (hle : f ≤ᵐ[μ] f ∘ T) : f ∘ T =ᵐ[μ] f := by
-  have hmeas : Measurable (fun x => embR (f x)) := aux_inv_6.comp hf
+  have hmeas : Measurable (fun x => embR (f x)) := measurable_embR.comp hf
   have hleE : ∀ᵐ x ∂μ, embR (f x) ≤ embR (f (T x)) :=
-    hle.mono fun x hx => aux_inv_5.mpr hx
+    hle.mono fun x hx => embR_le_embR_iff.mpr hx
   have hmain := ae_eq_comp_of_ae_le_comp μ T hT (fun x => embR (f x)) hmeas hleE
-  exact hmain.mono fun x hx => le_antisymm (aux_inv_5.mp hx.le) (aux_inv_5.mp hx.ge)
+  exact hmain.mono fun x hx => le_antisymm (embR_le_embR_iff.mp hx.le) (embR_le_embR_iff.mp hx.ge)
 
 /-- For ergodic `T`, a measurable real function with `f ≤ f ∘ T` a.e. is a.e. constant. -/
 theorem ae_eq_const_of_ae_le_comp_real (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → Ω)
