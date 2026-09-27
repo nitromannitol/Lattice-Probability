@@ -147,6 +147,8 @@ automation:
         - "glm-5.3-flash"
         - "deepseek-v4.1-flash"
         - "labs-leanstral-1-5"
+        - "gpt-6-luna"
+        - "gpt-5.6-luna"
       framework: >-
         Claude Code (Anthropic) as the supervising and proving harness, which
         wrote most of the Lean code; Codex CLI (OpenAI) for gpt-6-astra; a
@@ -209,6 +211,10 @@ automation:
         trigger on request only (workflow_dispatch); the Lean comparator
         (leanprover/comparator) is instead run locally before each release,
         with results recorded in Audit/COMPARATOR_RUNS.md.
+        Final pass (2026-09-26 and 2026-09-27): a claude-opus-5-5 general in
+        Claude Code dispatched claude-sonnet-5 subagents, which renamed,
+        documented and split library modules; gpt-6-luna and gpt-5.6-luna (Codex
+        CLI) were commissioned for some proofs.
       cost:
         wall_time: >-
           about two and a half weeks of calendar time (2026-09-06 to

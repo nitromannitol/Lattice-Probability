@@ -23,3 +23,14 @@ To reproduce one pair, from the repository root:
 COMPARATOR_LANDRUN=<landrun> COMPARATOR_LEAN4EXPORT=<lean4export> \
   lake env <comparator>/.lake/build/bin/comparator Audit/<Pair>/comparator.json
 ```
+
+## Run of 2026-09-27
+
+Every pair was run again on 2026-09-27, at commit `17c03b8`, on a second local
+machine (Linux 6.17), with the same tool revisions as above.
+
+| Pair | Lean kernel | Lean and nanoda kernels |
+|---|---|---|
+| `Kingman` | passed (80 s) | passed (103 s) |
+| `BinomialLocalCLT` | passed (119 s) | passed (178 s) |
+| `GFF` | passed (139 s) | passed (206 s) |

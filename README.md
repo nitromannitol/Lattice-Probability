@@ -623,6 +623,12 @@ Claude Opus 5.5 in Claude Code.  Each move was checked by the same axiom and
 warning gates as the rest of the library before merging.  These modules were
 not written for this repository; the original authorship of each is
 described in its source repository's own disclosure, not restated here.
+In a final pass on 2026-09-26 and 2026-09-27, a Claude Opus 5.5 general in
+Claude Code and Claude Sonnet 5 subagents it dispatched renamed and documented
+the proof modules of the ergodic and potential-theory results and split the
+largest of them into per-stage files; OpenAI's gpt-6-luna and gpt-5.6-luna,
+through Codex, were commissioned for some of those proofs, and everything kept
+was checked and gated.
 
 ## Authors and citation
 
