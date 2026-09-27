@@ -53,4 +53,36 @@ def GaussianHerbstBound (n : ℕ) : Prop :=
         ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)
         ≤ Real.exp (lam ^ 2 * L ^ 2 / 2)
 
+/-- The `n = 0` case of the Gaussian log-Sobolev inequality: the space is a single point. -/
+theorem gaussianLogSobolev_zero : GaussianLogSobolev 0 := by
+  intro h hpos hint hintlog hnorm C hLip
+  haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+  have h_eq : h = fun _ => h (fun _ => 0) :=
+    funext (fun x => congrArg h (Subsingleton.elim x _))
+  have h1 : ∫ y, h y ∂(Measure.pi fun _ : Fin 0 => gaussianReal 0 1) = h (fun _ => 0) := by
+    rw [h_eq, MeasureTheory.integral_const]
+    simp
+  have hc : h (fun _ => 0) = 1 := by linarith [hnorm, h1]
+  have hconst : ∀ x : Fin 0 → ℝ, h x = 1 := fun x => by rw [h_eq]; exact hc
+  have hzero : ∫ x, h x * Real.log (h x) ∂(Measure.pi fun _ : Fin 0 => gaussianReal 0 1) = 0 := by
+    simp [hconst]
+  rw [hzero]
+  positivity
+
+/-- The `n = 0` case of the Herbst bound: the space is a single point. -/
+theorem gaussianHerbstBound_zero : GaussianHerbstBound 0 := by
+  intro f L hL hLip lam hlam
+  haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+  have hconst : ∀ x : Fin 0 → ℝ, f x = f (fun _ => 0) :=
+    fun x => congrArg f (Subsingleton.elim x _)
+  have hzero : ∀ x : Fin 0 → ℝ,
+      f x - ∫ y, f y ∂(Measure.pi fun _ : Fin 0 => gaussianReal 0 1) = 0 := by
+    intro x
+    simp [hconst]
+  simp only [hzero, mul_zero, Real.exp_zero]
+  have h1 : ∫ x, (1 : ℝ) ∂(Measure.pi fun _ : Fin 0 => gaussianReal 0 1) = 1 := by
+    simp
+  rw [h1]
+  exact Real.one_le_exp (by positivity)
+
 end LatticeProb
