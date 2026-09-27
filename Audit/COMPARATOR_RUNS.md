@@ -26,11 +26,11 @@ COMPARATOR_LANDRUN=<landrun> COMPARATOR_LEAN4EXPORT=<lean4export> \
 
 ## Run of 2026-09-27
 
-Every pair was run again on 2026-09-27, at commit `17c03b8`, on a second local
+Every pair was run again on 2026-09-27, at commit `2d30e98`, on a second local
 machine (Linux 6.17), with the same tool revisions as above.
 
 | Pair | Lean kernel | Lean and nanoda kernels |
 |---|---|---|
-| `Kingman` | passed (80 s) | passed (103 s) |
-| `BinomialLocalCLT` | passed (119 s) | passed (178 s) |
-| `GFF` | passed (139 s) | passed (206 s) |
+| `Kingman` | passed (61 s) | passed (73 s) |
+| `BinomialLocalCLT` | passed (125 s) | passed (162 s) |
+| `GFF` | passed (138 s) | passed (185 s) |
