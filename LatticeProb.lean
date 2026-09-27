@@ -83,6 +83,7 @@ import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev
+import LatticeProb.Analysis.HeatStrongMinimum
 import LatticeProb.Analysis.SoftMaximum
 import LatticeProb.Analysis.SoftComposition
 import LatticeProb.Analysis.SoftStability
