@@ -116,6 +116,7 @@ import LatticeProb.Network.KilledGreen
 import LatticeProb.Network.KilledGreenEscape
 import LatticeProb.Network.FirstPassage
 import LatticeProb.Network.Voltage
+import LatticeProb.Network.VoltageConnected
 import LatticeProb.Network.MaximumPrinciple
 import LatticeProb.Network.Variational
 import LatticeProb.Network.Flow
