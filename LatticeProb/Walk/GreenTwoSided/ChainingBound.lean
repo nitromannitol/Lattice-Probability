@@ -10,15 +10,15 @@ import LatticeProb.Walk.LocalCLTOne
 import LatticeProb.Walk.SRWOneDim
 import LatticeProb.Walk.LocalCLT
 import LatticeProb.Walk.ExitBox
-import LatticeProb.Walk.GreenTwoSided.C_UpperBound
-import LatticeProb.Walk.GreenTwoSided.D_LazyWalk
-import LatticeProb.Walk.GreenTwoSided.E_FreeLazyKernel
+import LatticeProb.Walk.GreenTwoSided.UpperBound
+import LatticeProb.Walk.GreenTwoSided.LazyWalk
+import LatticeProb.Walk.GreenTwoSided.FreeLazyKernel
 
 /-!
 # Killed near-diagonal bound and chaining
 
 The killed near-diagonal lower bound `lazyKilled B n a b ≥ c₁ / s ^ d`, obtained from the free
-bound of `E_FreeLazyKernel` by subtracting an off-diagonal correction, and the chaining lemma that
+bound of `FreeLazyKernel` by subtracting an off-diagonal correction, and the chaining lemma that
 composes such single-step bounds along a sequence of anchor points to give a lower bound at a
 matching scale over a longer time.
 -/

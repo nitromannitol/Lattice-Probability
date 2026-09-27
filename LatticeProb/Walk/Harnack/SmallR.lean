@@ -4,7 +4,7 @@ import LatticeProb.Graph.Zd
 import LatticeProb.Network.MaximumPrinciple
 import LatticeProb.Walk.SRW
 import LatticeProb.Walk.GreenTwoSided
-import LatticeProb.Walk.Harnack.G3_GreenEstimates
+import LatticeProb.Walk.Harnack.GreenEstimates
 
 /-!
 # Small R and the Harnack inequality

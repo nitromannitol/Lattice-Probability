@@ -10,7 +10,7 @@ import LatticeProb.Walk.LocalCLTOne
 import LatticeProb.Walk.SRWOneDim
 import LatticeProb.Walk.LocalCLT
 import LatticeProb.Walk.ExitBox
-import LatticeProb.Walk.GreenTwoSided.B_PointwiseBounds
+import LatticeProb.Walk.GreenTwoSided.PointwiseBounds
 
 /-!
 # The free lazy kernel

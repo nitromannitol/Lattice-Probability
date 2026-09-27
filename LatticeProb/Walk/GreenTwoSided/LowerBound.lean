@@ -10,14 +10,14 @@ import LatticeProb.Walk.LocalCLTOne
 import LatticeProb.Walk.SRWOneDim
 import LatticeProb.Walk.LocalCLT
 import LatticeProb.Walk.ExitBox
-import LatticeProb.Walk.GreenTwoSided.F_ChainingBound
+import LatticeProb.Walk.GreenTwoSided.ChainingBound
 
 /-!
 # Small scales and the lower bound
 
 The lower bound for the killed Green function of a set containing a box: for `B ⊇ box d (m+ρ)` and
 `x, y ∈ box d m` with `m ≤ Kρ`, `g_B(x,y) ≥ c(K) ρ^{2-d}`, combining the chained near-diagonal
-bound of `F_ChainingBound` (large `ρ`) with a monotone-lattice-path bound (small `ρ`). This file
+bound of `ChainingBound` (large `ρ`) with a monotone-lattice-path bound (small `ρ`). This file
 proves the module's second main public result, `killedGreenReal_ge_box`.
 -/
 

@@ -10,15 +10,15 @@ import LatticeProb.Walk.LocalCLTOne
 import LatticeProb.Walk.SRWOneDim
 import LatticeProb.Walk.LocalCLT
 import LatticeProb.Walk.ExitBox
-import LatticeProb.Walk.GreenTwoSided.A_Kernels
-import LatticeProb.Walk.GreenTwoSided.B_PointwiseBounds
+import LatticeProb.Walk.GreenTwoSided.Kernels
+import LatticeProb.Walk.GreenTwoSided.PointwiseBounds
 
 /-!
 # The upper bound
 
 The upper bound for the killed Green function of a set contained in a box: for `B ⊆ box d L` and
 `x ≠ y`, `g_B(x,y) ≤ C(L+1)^2 (r^{-d} + (L+1)^{-d})` with `r = graphNorm (x-y)`, proved in the
-time domain from the pointwise heat-kernel bounds of `B_PointwiseBounds` by splitting the Green
+time domain from the pointwise heat-kernel bounds of `PointwiseBounds` by splitting the Green
 series into a short head sum and a survival-controlled tail. This file proves the module's first
 main public result, `killedGreenReal_le_box`.
 -/

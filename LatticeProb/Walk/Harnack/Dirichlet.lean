@@ -4,7 +4,7 @@ import LatticeProb.Graph.Zd
 import LatticeProb.Network.MaximumPrinciple
 import LatticeProb.Walk.SRW
 import LatticeProb.Walk.GreenTwoSided
-import LatticeProb.Walk.Harnack.G1_Basics
+import LatticeProb.Walk.Harnack.Basics
 
 /-!
 # The minimum principle and the Dirichlet extension

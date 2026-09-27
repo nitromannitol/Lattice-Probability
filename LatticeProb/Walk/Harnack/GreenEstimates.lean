@@ -4,8 +4,8 @@ import LatticeProb.Graph.Zd
 import LatticeProb.Network.MaximumPrinciple
 import LatticeProb.Walk.SRW
 import LatticeProb.Walk.GreenTwoSided
-import LatticeProb.Walk.Harnack.G1_Basics
-import LatticeProb.Walk.Harnack.G2_Dirichlet
+import LatticeProb.Walk.Harnack.Basics
+import LatticeProb.Walk.Harnack.Dirichlet
 
 /-!
 # Box geometry, the shell representation, and the Green estimate at scale R
