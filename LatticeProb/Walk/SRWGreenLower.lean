@@ -17,6 +17,7 @@ verified by the library gates.
 -/
 import LatticeProb.Walk.SRWDiag
 import LatticeProb.Walk.VarianceScale
+import LatticeProb.Walk.SRWGreenSup
 
 open Finset
 open scoped Classical
@@ -252,6 +253,45 @@ theorem exists_le_srwGreen_one_dim :
       _ ≤ ∑ s ∈ Finset.Ico 1 (n / 2), c / Real.sqrt (s : ℝ) := hsum2
       _ ≤ ∑ s ∈ Finset.Ico 1 (n / 2), srwHeat 1 (2 * s) 0 := hlow'
       _ ≤ srwGreen 1 n 0 := hstep
+
+
+/-- The max-norm of the truncated Green function is at least the diagonal value. -/
+theorem le_srwGreen_sup (d n : ℕ) : srwGreen d n 0 ≤ ⨆ x : Site d, srwGreen d n x := by
+  have hb : BddAbove (Set.range fun x : Site d => srwGreen d n x) := by
+    rcases Nat.eq_zero_or_pos n with hn | hn
+    · subst hn
+      refine ⟨0, ?_⟩
+      rintro y ⟨x, rfl⟩
+      simp
+    · rcases Nat.eq_zero_or_pos d with hd | hd
+      · subst hd
+        refine ⟨srwGreen 0 n 0, ?_⟩
+        rintro y ⟨x, rfl⟩
+        rw [Subsingleton.elim x 0]
+      · rcases Nat.lt_or_ge d 3 with hd2 | hd3
+        · interval_cases d
+          · refine ⟨1 + 2 * (Real.sqrt 2 * greenConst 1) * Real.sqrt (n : ℝ), ?_⟩
+            rintro y ⟨x, rfl⟩
+            exact srwGreen_one_dim_le n hn x
+          · refine ⟨1 + (Real.sqrt 2 ^ 2 * greenConst 2) * (1 + Real.log (n : ℝ)), ?_⟩
+            rintro y ⟨x, rfl⟩
+            exact srwGreen_two_dim_le n hn x
+        · refine ⟨1 + 3 * (Real.sqrt 2 ^ d * greenConst d), ?_⟩
+          rintro y ⟨x, rfl⟩
+          exact srwGreen_high_dim_le hd3 n hn x
+  exact le_ciSup hb 0
+
+/-- The max-norm of the truncated Green function is at least `c √n` in one dimension. -/
+theorem exists_le_srwGreen_sup_one_dim :
+    ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 1 ≤ n → c * Real.sqrt (n : ℝ) ≤ ⨆ x : Site 1, srwGreen 1 n x := by
+  obtain ⟨c, hc, h⟩ := exists_le_srwGreen_one_dim
+  exact ⟨c, hc, fun n hn => le_trans (h n hn) (le_srwGreen_sup 1 n)⟩
+
+/-- The max-norm of the truncated Green function is at least `c log n` in two dimensions. -/
+theorem exists_le_srwGreen_sup_two_dim :
+    ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 2 ≤ n → c * Real.log (n : ℝ) ≤ ⨆ x : Site 2, srwGreen 2 n x := by
+  obtain ⟨c, hc, h⟩ := exists_le_srwGreen_two_dim
+  exact ⟨c, hc, fun n hn => le_trans (h n hn) (le_srwGreen_sup 2 n)⟩
 
 
 end LatticeProb
