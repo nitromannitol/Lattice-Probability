@@ -573,4 +573,112 @@ theorem exists_binomLaw_localCLT :
   exact h m hm j hj hjm
 
 
+/-- For `m ≥ 1`, `m * exp (-(m:ℝ)/2) ≤ 8`. -/
+theorem mul_exp_neg_half_le (m : ℕ) (_hm : 1 ≤ m) : (m : ℝ) * Real.exp (-(m : ℝ) / 2) ≤ 8 := by
+  have hm0 : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+  have h1 : (m : ℝ) ≤ 8 * Real.exp ((m : ℝ) / 2) := by
+    have h2 : (1 : ℝ) + (m : ℝ) / 2 ≤ Real.exp ((m : ℝ) / 2) := by
+      have := Real.add_one_le_exp ((m : ℝ) / 2)
+      linarith
+    nlinarith [h2, hm0]
+  have h3 : Real.exp (-(m : ℝ) / 2) = (Real.exp ((m : ℝ) / 2))⁻¹ := by
+    rw [← Real.exp_neg]
+    ring_nf
+  rw [h3]
+  rw [mul_inv_le_iff₀ (Real.exp_pos _)]
+  linarith
+
+/-- The Gaussian density at `x` is at most `1`. -/
+theorem gaussianDensity_le_one (x : ℝ) : LatticeProb.BinomialLCLT.gaussianDensity x ≤ 1 := by
+  rw [LatticeProb.BinomialLCLT.gaussianDensity]
+  have h1 : Real.exp (-(x ^ 2) / 2) ≤ 1 := by
+    rw [Real.exp_le_one_iff]
+    nlinarith [sq_nonneg x]
+  have h2 : (Real.sqrt (2 * Real.pi))⁻¹ ≤ 1 := by
+    rw [inv_le_one_iff₀]
+    right
+    exact Real.one_le_sqrt.mpr (by nlinarith [Real.pi_gt_three])
+  calc (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(x ^ 2) / 2)
+      ≤ 1 * 1 := mul_le_mul h2 h1 (Real.exp_pos _).le (by norm_num)
+    _ = 1 := by ring
+
+/-- The binomial local CLT with no restriction on `j`: for `|j| > m` the binomial law vanishes
+and the Gaussian density is bounded by the same `C/m`. -/
+theorem exists_binomLaw_localCLT' :
+    ∃ C : ℝ, 0 < C ∧ ∀ m : ℕ, 1 ≤ m → ∀ j : ℤ, j ≡ (m : ℤ) [ZMOD 2] →
+      |Real.sqrt m * LatticeProb.Walk.binomLaw m ((j + (m : ℤ)) / 2)
+        - 2 * LatticeProb.BinomialLCLT.gaussianDensity ((j : ℝ) / Real.sqrt m)| ≤ C / m := by
+  obtain ⟨C, hC, h⟩ := LatticeProb.Walk.exists_binomLaw_localCLT
+  refine ⟨C + 16, by linarith, fun m hm j hj => ?_⟩
+  by_cases hjm : |j| ≤ (m : ℤ)
+  · have h1 := h m hm j hj hjm
+    have h2 : C / m ≤ (C + 16) / m := by
+      have hm0 : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+      gcongr
+      linarith
+    linarith
+  · push Not at hjm
+    have h1 : LatticeProb.Walk.binomLaw m ((j + (m : ℤ)) / 2) = 0 := by
+      have h2 : (m : ℤ) < j ∨ j < -(m : ℤ) := by
+        rcases lt_abs.mp hjm with h3 | h3
+        · exact Or.inl h3
+        · exact Or.inr (by omega)
+      rcases h2 with h2 | h2
+      · apply LatticeProb.Walk.binomLaw_of_gt
+        have h4 : (2 : ℤ) ∣ j + (m : ℤ) := by
+          have h := hj
+          rw [Int.ModEq] at h
+          omega
+        rw [Int.lt_ediv_iff_mul_lt (by norm_num : (0:ℤ) < 2) h4]
+        omega
+      · apply LatticeProb.Walk.binomLaw_of_neg
+        omega
+    rw [h1, mul_zero, zero_sub, abs_neg]
+    have h3 : 2 * LatticeProb.BinomialLCLT.gaussianDensity ((j : ℝ) / Real.sqrt m)
+        ≤ (C + 16) / m := by
+      have hm0 : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
+      have h4 : LatticeProb.BinomialLCLT.gaussianDensity ((j : ℝ) / Real.sqrt m)
+          ≤ Real.exp (-(m : ℝ) / 2) := by
+        rw [LatticeProb.BinomialLCLT.gaussianDensity]
+        have h5 : (Real.sqrt (2 * Real.pi))⁻¹ ≤ 1 := by
+          rw [inv_le_one_iff₀]
+          right
+          exact Real.one_le_sqrt.mpr (by nlinarith [Real.pi_gt_three])
+        have h6 : ((j : ℝ) / Real.sqrt m) ^ 2 / 2 ≥ (m : ℝ) / 2 := by
+          have h7 : (m : ℝ) < |(j : ℝ)| := by
+            have h8 : ((m : ℤ) : ℝ) < |(j : ℝ)| := by
+              rw [← Int.cast_abs]
+              exact_mod_cast hjm
+            simpa using h8
+          have h8 : Real.sqrt m ^ 2 = (m : ℝ) := Real.sq_sqrt hm0.le
+          have h9 : (0 : ℝ) < Real.sqrt m := Real.sqrt_pos.mpr hm0
+          rw [div_pow, h8]
+          rw [ge_iff_le, div_le_div_iff_of_pos_right (by norm_num : (0:ℝ) < 2)]
+          have h10 : (m : ℝ) * (m : ℝ) ≤ (j : ℝ) ^ 2 := by
+            nlinarith [h7, abs_nonneg (j : ℝ), sq_abs (j : ℝ)]
+          rw [le_div_iff₀ hm0]
+          nlinarith [h10]
+        have h9 : Real.exp (-((j : ℝ) / Real.sqrt m) ^ 2 / 2) ≤ Real.exp (-(m : ℝ) / 2) := by
+          rw [Real.exp_le_exp]
+          linarith
+        calc (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-((j : ℝ) / Real.sqrt m) ^ 2 / 2)
+            ≤ 1 * Real.exp (-(m : ℝ) / 2) :=
+              mul_le_mul h5 h9 (Real.exp_pos _).le (by norm_num)
+          _ = Real.exp (-(m : ℝ) / 2) := by ring
+      have h10 := mul_exp_neg_half_le m hm
+      have h11 : 2 * Real.exp (-(m : ℝ) / 2) ≤ (C + 16) / (m : ℝ) := by
+        rw [le_div_iff₀ hm0]
+        nlinarith [h10, hC]
+      linarith
+    have h4 : |2 * LatticeProb.BinomialLCLT.gaussianDensity ((j : ℝ) / Real.sqrt m)|
+        = 2 * LatticeProb.BinomialLCLT.gaussianDensity ((j : ℝ) / Real.sqrt m) := by
+      rw [abs_of_nonneg]
+      have h5 : (0 : ℝ) ≤ LatticeProb.BinomialLCLT.gaussianDensity ((j : ℝ) / Real.sqrt m) := by
+        rw [LatticeProb.BinomialLCLT.gaussianDensity]
+        positivity
+      linarith
+    rw [h4]
+    linarith
+
+
 end LatticeProb.Walk
