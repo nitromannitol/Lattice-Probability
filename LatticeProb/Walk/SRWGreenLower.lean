@@ -18,6 +18,7 @@ verified by the library gates.
 import LatticeProb.Walk.SRWDiag
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.SRWGreenSup
+import LatticeProb.Walk.Range
 
 open Finset
 open scoped Classical
@@ -292,6 +293,16 @@ theorem exists_le_srwGreen_sup_two_dim :
     ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 2 ≤ n → c * Real.log (n : ℝ) ≤ ⨆ x : Site 2, srwGreen 2 n x := by
   obtain ⟨c, hc, h⟩ := exists_le_srwGreen_two_dim
   exact ⟨c, hc, fun n hn => le_trans (h n hn) (le_srwGreen_sup 2 n)⟩
+
+
+/-- The max-norm of the truncated Green function is at least `1` in dimension at least three. -/
+theorem exists_le_srwGreen_sup_high_dim (d : ℕ) (_hd : 3 ≤ d) :
+    ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 1 ≤ n → c ≤ ⨆ x : Site d, srwGreen d n x := by
+  refine ⟨1, one_pos, fun n hn => ?_⟩
+  have h1 : (1 : ℝ) ≤ srwGreen d n 0 := by
+    obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
+    exact one_le_srwGreen_origin m
+  exact le_trans h1 (le_srwGreen_sup d n)
 
 
 end LatticeProb
