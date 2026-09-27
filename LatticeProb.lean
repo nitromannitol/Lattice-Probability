@@ -370,6 +370,7 @@ import LatticeProb.Graph.CyclicRank
 import LatticeProb.Graph.Konig
 import LatticeProb.Prob.McDiarmid
 import LatticeProb.Prob.AkcogluKrengel
+import LatticeProb.Prob.AkcogluKrengelAE
 import LatticeProb.Prob.Invariance
 import LatticeProb.Prob.ReturnTime
 import LatticeProb.Prob.Kac
