@@ -32,8 +32,10 @@ private noncomputable def rmarg {ι : Type*} [DecidableEq ι] {Ω : ι → Type*
   ∫ y : (∀ i : s, Ω i), f (Function.updateFinset x s y) ∂Measure.pi (fun i : s => μ i)
 
 -- Finset.induction_on s generalizing x y; step: z := Function.update x i (y i);
--- z,y agree off s; x,z agree off i (Function.update_self/update_of_ne); abs_sub_le, Finset.sum_insert.
-private theorem aux_mcd_ind {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+-- z,y agree off s; x,z agree off i (Function.update_self/update_of_ne); abs_sub_le,
+-- Finset.sum_insert.
+/-- `|f x - f y| ≤ ∑ i ∈ t, c i` for `x, y` agreeing off `t`, by induction on `t`. -/
+private theorem abs_sub_le_sum_of_agree_off_core {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     (f : (∀ i, Ω i) → ℝ) (c : ι → ℝ)
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i) :
     ∀ (t : Finset ι) (x y : (∀ i, Ω i)), (∀ j, j ∉ t → x j = y j) →
@@ -63,17 +65,19 @@ private theorem aux_mcd_ind {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
         _ ≤ c a + ∑ i ∈ t, c i := add_le_add hxz hzy
         _ = ∑ i ∈ insert a t, c i := by rw [Finset.sum_insert hat]
 
-private theorem aux_mcdiarmid_1 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+/-- Restatement of `abs_sub_le_sum_of_agree_off_core`. -/
+private theorem abs_sub_le_sum_of_agree_off {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     (f : (∀ i, Ω i) → ℝ) (c : ι → ℝ)
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i)
     (s : Finset ι) : ∀ x y : (∀ i, Ω i), (∀ j, j ∉ s → x j = y j) →
       |f x - f y| ≤ ∑ i ∈ s, c i := by
   intro x y h
-  exact aux_mcd_ind f c hbd s x y h
+  exact abs_sub_le_sum_of_agree_off_core f c hbd s x y h
 
 
 -- hbd i x x (fun _ _ => rfl) gives |f x - f x| ≤ c i; simp.
-private theorem aux_mcdiarmid_2 {ι : Type*} {Ω : ι → Type*} [∀ i, Nonempty (Ω i)]
+/-- Each oscillation bound `c i` is nonnegative. -/
+private theorem nonneg_of_bound {ι : Type*} {Ω : ι → Type*} [∀ i, Nonempty (Ω i)]
     (f : (∀ i, Ω i) → ℝ) (c : ι → ℝ)
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i)
     (i : ι) : 0 ≤ c i := by
@@ -82,22 +86,26 @@ private theorem aux_mcdiarmid_2 {ι : Type*} {Ω : ι → Type*} [∀ i, Nonempt
   simpa using h
 
 
--- Fix x₀ := Classical.arbitrary; B := |f x₀| + ∑ i, c i; aux_mcdiarmid_1 with s = Finset.univ
+-- Fix x₀ := Classical.arbitrary; B := |f x₀| + ∑ i, c i; abs_sub_le_sum_of_agree_off with s =
+-- Finset.univ
 -- (Finset.mem_univ), then abs_sub_abs_le_abs_sub.
-private theorem aux_mcdiarmid_3 {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
+/-- `f` is bounded, by summing the coordinatewise oscillation bounds `c i`. -/
+private theorem exists_bound {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, Nonempty (Ω i)] (f : (∀ i, Ω i) → ℝ) (c : ι → ℝ)
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i) :
     ∃ B : ℝ, ∀ x, |f x| ≤ B := by
   classical
   refine ⟨|f (fun i => Classical.arbitrary (Ω i))| + ∑ i, c i, fun x => ?_⟩
-  have h := aux_mcdiarmid_1 f c hbd Finset.univ x (fun i => Classical.arbitrary (Ω i)) (fun j hj => by simp at hj)
+  have h := abs_sub_le_sum_of_agree_off f c hbd Finset.univ x (fun i => Classical.arbitrary (Ω i))
+      (fun j hj => by simp at hj)
   have h2 := abs_sub_abs_le_abs_sub (f x) (f (fun i => Classical.arbitrary (Ω i)))
   linarith
 
 
 -- Copy of `MeasureTheory.lmarginal_empty`: simp_rw [rmarg, Measure.pi_of_empty], then
 -- integral_dirac' (Subsingleton.stronglyMeasurable) and Function.updateFinset_empty.
-private theorem aux_mcdiarmid_4 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+/-- `rmarg μ ∅ f x = f x`. -/
+private theorem rmarg_empty {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i))
     (f : (∀ i, Ω i) → ℝ) (x : ∀ i, Ω i) : rmarg μ ∅ f x = f x := by
   unfold rmarg
@@ -108,7 +116,8 @@ private theorem aux_mcdiarmid_4 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*
 -- Copy of `MeasureTheory.lmarginal_univ` with `integral_map_equiv` in place of
 -- `lintegral_map_equiv`: e := Equiv.subtypeUnivEquiv Finset.mem_univ,
 -- (measurePreserving_piCongrLeft μ e).integral_map_equiv, Function.updateFinset_def, simp.
-private theorem aux_mcdiarmid_5 {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
+/-- `rmarg μ Finset.univ f x = ∫ y, f y ∂ Measure.pi μ`. -/
+private theorem rmarg_univ {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, SigmaFinite (μ i)]
     (f : (∀ i, Ω i) → ℝ) (x : ∀ i, Ω i) :
     rmarg μ Finset.univ f x = ∫ y, f y ∂(Measure.pi μ) := by
@@ -125,7 +134,8 @@ private theorem aux_mcdiarmid_5 {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω :
 -- (hf.comp measurable_updateFinset').stronglyMeasurable.integral_prod_right' gives strong
 -- measurability of x ↦ ∫ y, f (updateFinset x s y); then .measurable.
 -- (Name: MeasureTheory.StronglyMeasurable.integral_prod_right'; needs SFinite.)
-private theorem aux_mcdiarmid_6 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+/-- `rmarg μ s f` is measurable. -/
+private theorem measurable_rmarg {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (s : Finset ι) (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) :
     Measurable (rmarg μ s f) := by
@@ -137,7 +147,8 @@ private theorem aux_mcdiarmid_6 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*
 
 -- rmarg only depends on coordinates outside s. Copy of `MeasureTheory.lmarginal_congr`:
 -- dsimp only [rmarg, Function.updateFinset_def]; rcongr; exact h _ ‹_›.
-private theorem aux_mcdiarmid_7 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+/-- `rmarg μ s f` depends only on the coordinates outside `s`. -/
+private theorem rmarg_congr {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) (s : Finset ι)
     (f : (∀ i, Ω i) → ℝ) {x y : ∀ i, Ω i} (h : ∀ i ∉ s, x i = y i) :
     rmarg μ s f x = rmarg μ s f y := by
@@ -151,7 +162,8 @@ private theorem aux_mcdiarmid_7 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*
 -- (integrability: Integrable.of_bound, bound B, measurability from measurable_updateFinset'
 -- composed with (MeasurableEquiv.piFinsetUnion _ hst).measurable), then
 -- Function.updateFinset_updateFinset hst.  -- SPLIT? (≈20 lines in Mathlib's lintegral version)
-private theorem aux_mcdiarmid_8 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+/-- Fubini for `rmarg`: `rmarg μ (s ∪ t) f = rmarg μ s (rmarg μ t f)` on disjoint `s`, `t`. -/
+private theorem rmarg_union {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B)
     {s t : Finset ι} (hst : Disjoint s t) (x : ∀ i, Ω i) :
@@ -181,7 +193,8 @@ private theorem aux_mcdiarmid_8 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*
 
 -- Copy of `MeasureTheory.lmarginal_singleton`: e := (MeasurableEquiv.piUnique _).symm,
 -- (measurePreserving_piUnique _).symm _ |>.integral_map_equiv, Function.update_eq_updateFinset.
-private theorem aux_mcdiarmid_9 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+/-- `rmarg μ {i} f x = ∫ z, f (update x i z) ∂ μ i`. -/
+private theorem rmarg_singleton {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (i : ι) (x : ∀ i, Ω i) :
     rmarg μ {i} f x = ∫ z, f (Function.update x i z) ∂(μ i) := by
@@ -193,22 +206,24 @@ private theorem aux_mcdiarmid_9 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*
   simp [e, Function.update_eq_updateFinset]
 
 
--- Finset.insert_eq, aux_mcdiarmid_8 with Finset.disjoint_singleton_left.mpr hi, aux_mcdiarmid_9.
-private theorem aux_mcdiarmid_10 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+-- Finset.insert_eq, rmarg_union with Finset.disjoint_singleton_left.mpr hi, rmarg_singleton.
+/-- `rmarg μ (insert i s) f x = ∫ z, rmarg μ s f (update x i z) ∂ μ i`. -/
+private theorem rmarg_insert {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B)
     {s : Finset ι} {i : ι} (hi : i ∉ s) (x : ∀ i, Ω i) :
     rmarg μ (insert i s) f x = ∫ z, rmarg μ s f (Function.update x i z) ∂(μ i) := by
   rw [Finset.insert_eq]
-  rw [aux_mcdiarmid_8 μ f hf B hB (s := {i}) (t := s) (Finset.disjoint_singleton_left.mpr hi) x]
-  exact aux_mcdiarmid_9 μ (rmarg μ s f) i x
+  rw [rmarg_union μ f hf B hB (s := {i}) (t := s) (Finset.disjoint_singleton_left.mpr hi) x]
+  exact rmarg_singleton μ (rmarg μ s f) i x
 
 
 -- rmarg difference = ∫ y, (f p - f q) with p q := updateFinset (update x i z/z') s y (integral_sub,
 -- integrability via Integrable.of_bound); p,q differ only at i (i ∉ s; Function.updateFinset_def,
 -- Function.update_of_ne), so hbd gives ‖f p - f q‖ ≤ c i; conclude with
 -- norm_integral_le_of_norm_le_const and measureReal_univ_eq_one (prob. measure).
-private theorem aux_mcdiarmid_11 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+/-- Changing coordinate `i` moves `rmarg μ s f` by at most `c i`. -/
+private theorem rmarg_update_sub_le {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B) (c : ι → ℝ)
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i)
@@ -259,7 +274,8 @@ private theorem aux_mcdiarmid_11 {ι : Type*} [DecidableEq ι] {Ω : ι → Type
 
 -- a := ⨅ z, g z (bounded below by g z₀ - c). g z ≥ a: ciInf_le ⟨g z₀ - c, _⟩.
 -- g z ≤ a + c: le_ciInf (fun z' => by linarith [h z z']) gives g z - c ≤ a.
-private theorem aux_mcdiarmid_12 {α : Type*} [Nonempty α] (g : α → ℝ) (c : ℝ)
+/-- A function with bounded oscillation `c` takes values in some interval of length `c`. -/
+private theorem exists_mem_Icc_of_sub_le {α : Type*} [Nonempty α] (g : α → ℝ) (c : ℝ)
     (h : ∀ z z', g z - g z' ≤ c) : ∃ a, ∀ z, g z ∈ Set.Icc a (a + c) := by
   obtain ⟨z₀⟩ := ‹Nonempty α›
   have hbdd : BddBelow (Set.range g) :=
@@ -278,7 +294,8 @@ private theorem aux_mcdiarmid_12 {α : Type*} [Nonempty α] (g : α → ℝ) (c 
 -- Variance proxy of Hoeffding's lemma on an interval of length c: (a+c)-a = c (ring),
 -- ‖c‖₊ coerces to |c| = c (coe_nnnorm, Real.norm_eq_abs, abs_of_nonneg hc); NNReal.coe_pow,
 -- NNReal.coe_div; ring.
-private theorem aux_mcdiarmid_13_1 (a c : ℝ) (hc : 0 ≤ c) :
+/-- The Hoeffding variance proxy of an interval of length `c` equals `c^2/4`. -/
+private theorem nnnorm_sub_div_two_sq_eq (a c : ℝ) (hc : 0 ≤ c) :
     ((((‖((a + c) - a : ℝ)‖₊ / 2) ^ 2 : NNReal)) : ℝ) = c ^ 2 / 4 := by
   have h : ((‖((a + c) - a : ℝ)‖₊ : NNReal) : ℝ) = c := by
     rw [coe_nnnorm, show (a + c) - a = c by ring, Real.norm_eq_abs, abs_of_nonneg hc]
@@ -287,18 +304,22 @@ private theorem aux_mcdiarmid_13_1 (a c : ℝ) (hc : 0 ≤ c) :
 
 -- Hoeffding's lemma, centred MGF form: ProbabilityTheory.hasSubgaussianMGF_of_mem_Icc
 -- hg.aemeasurable (ae_of_all _ hab) (with b := a + c), its `.mgf_le t`, rewrite the proxy with
--- aux_mcdiarmid_13_1, and c²/4 · t²/2 = t² c²/8 (ring, via le_of_le_of_eq / convert … using 2).
-private theorem aux_mcdiarmid_13_2 {α : Type*} [MeasurableSpace α] (ν : Measure α)
+-- nnnorm_sub_div_two_sq_eq, and c²/4 · t²/2 = t² c²/8 (ring, via le_of_le_of_eq / convert … using
+-- 2).
+/-- Hoeffding's lemma: the centred MGF of a `[a, a+c]`-valued `g` is at most `exp(t^2 c^2/8)`. -/
+private theorem mgf_sub_integral_le_of_mem_Icc {α : Type*} [MeasurableSpace α] (ν : Measure α)
     [IsProbabilityMeasure ν] (g : α → ℝ) (hg : Measurable g) (a c : ℝ) (hc : 0 ≤ c)
     (hab : ∀ z, g z ∈ Set.Icc a (a + c)) (t : ℝ) :
     mgf (fun z => g z - ∫ z, g z ∂ν) ν t ≤ Real.exp (t ^ 2 * c ^ 2 / 8) := by
   have h := (hasSubgaussianMGF_of_mem_Icc (μ := ν) hg.aemeasurable (ae_of_all _ hab)).mgf_le t
-  rw [aux_mcdiarmid_13_1 a c hc] at h
+  rw [nnnorm_sub_div_two_sq_eq a c hc] at h
   exact h.trans (le_of_eq (by ring_nf))
 
 -- Factor out the mean: unfold ProbabilityTheory.mgf; ← integral_const_mul; integral_congr_ae /
 -- congr with funext; ← Real.exp_add; ring_nf.
-private theorem aux_mcdiarmid_13_3 {α : Type*} [MeasurableSpace α] (ν : Measure α) (g : α → ℝ) (t : ℝ) :
+/-- `∫ exp(t g) = exp(t ∫ g) * mgf (g - ∫ g) t`, factoring out the mean. -/
+private theorem integral_exp_eq_exp_mul_mgf {α : Type*} [MeasurableSpace α] (ν : Measure α)
+    (g : α → ℝ) (t : ℝ) :
     ∫ z, Real.exp (t * g z) ∂ν
       = Real.exp (t * ∫ z, g z ∂ν) * mgf (fun z => g z - ∫ z, g z ∂ν) ν t := by
   unfold mgf
@@ -308,16 +329,20 @@ private theorem aux_mcdiarmid_13_3 {α : Type*} [MeasurableSpace α] (ν : Measu
   rw [← Real.exp_add]
   ring_nf
 
-private theorem aux_mcdiarmid_13 {α : Type*} [MeasurableSpace α] (ν : Measure α)
+/-- `∫ exp(t g) ≤ exp(t ∫ g + t^2 c^2/8)` for `[a, a+c]`-valued `g`. -/
+private theorem integral_exp_le_of_mem_Icc {α : Type*} [MeasurableSpace α] (ν : Measure α)
     [IsProbabilityMeasure ν] (g : α → ℝ) (hg : Measurable g) (a c : ℝ) (hc : 0 ≤ c)
     (hab : ∀ z, g z ∈ Set.Icc a (a + c)) (t : ℝ) :
     ∫ z, Real.exp (t * g z) ∂ν ≤ Real.exp (t * ∫ z, g z ∂ν + t ^ 2 * c ^ 2 / 8) := by
-  rw [aux_mcdiarmid_13_3, Real.exp_add]
-  exact mul_le_mul_of_nonneg_left (aux_mcdiarmid_13_2 ν g hg a c hc hab t) (Real.exp_nonneg _)
+  rw [integral_exp_eq_exp_mul_mgf, Real.exp_add]
+  exact mul_le_mul_of_nonneg_left (mgf_sub_integral_le_of_mem_Icc ν g hg a c hc hab t)
+      (Real.exp_nonneg _)
 
 -- ← ofReal_integral_eq_lintegral_ofReal (integrable: Integrable.of_bound with bound
--- exp(|t|·(|a|+|c|)); nonneg: Real.exp_pos) then ENNReal.ofReal_le_ofReal (aux_mcdiarmid_13).
-private theorem aux_mcdiarmid_14 {α : Type*} [MeasurableSpace α] (ν : Measure α)
+-- exp(|t|·(|a|+|c|)); nonneg: Real.exp_pos) then ENNReal.ofReal_le_ofReal
+-- (integral_exp_le_of_mem_Icc).
+/-- The `lintegral`/`ofReal` form of `integral_exp_le_of_mem_Icc`. -/
+private theorem lintegral_ofReal_exp_le_of_mem_Icc {α : Type*} [MeasurableSpace α] (ν : Measure α)
     [IsProbabilityMeasure ν] (g : α → ℝ) (hg : Measurable g) (a c : ℝ) (hc : 0 ≤ c)
     (hab : ∀ z, g z ∈ Set.Icc a (a + c)) (t : ℝ) :
     ∫⁻ z, ENNReal.ofReal (Real.exp (t * g z)) ∂ν
@@ -341,13 +366,15 @@ private theorem aux_mcdiarmid_14 {α : Type*} [MeasurableSpace α] (ν : Measure
           mul_le_mul_of_nonneg_left (hbound z) (abs_nonneg t)
         linarith)
   rw [← ofReal_integral_eq_lintegral_ofReal hf_int (ae_of_all _ fun z => (Real.exp_pos _).le)]
-  exact ENNReal.ofReal_le_ofReal (aux_mcdiarmid_13 ν g hg a c hc hab t)
+  exact ENNReal.ofReal_le_ofReal (integral_exp_le_of_mem_Icc ν g hg a c hc hab t)
 
 
 -- Pure ENNReal algebra: exp(t g + K) = exp K * exp(t g) (Real.exp_add, ENNReal.ofReal_mul),
 -- lintegral_const_mul' (ofReal ≠ ⊤: ENNReal.ofReal_ne_top), mul_le_mul_left', then
 -- ← ENNReal.ofReal_mul (Real.exp_nonneg), ← Real.exp_add, ring_nf.
-private theorem aux_mcdiarmid_15a {α : Type*} [MeasurableSpace α] (ν : Measure α) (g : α → ℝ) (t K : ℝ) :
+/-- `∫⁻ ofReal (exp (t g + K)) = ofReal (exp K) * ∫⁻ ofReal (exp (t g))`. -/
+private theorem lintegral_ofReal_exp_add_const_eq {α : Type*} [MeasurableSpace α] (ν : Measure α)
+    (g : α → ℝ) (t K : ℝ) :
     ∫⁻ z, ENNReal.ofReal (Real.exp (t * g z + K)) ∂ν
       = ENNReal.ofReal (Real.exp K) * ∫⁻ z, ENNReal.ofReal (Real.exp (t * g z)) ∂ν := by
   calc ∫⁻ z, ENNReal.ofReal (Real.exp (t * g z + K)) ∂ν
@@ -360,29 +387,35 @@ private theorem aux_mcdiarmid_15a {α : Type*} [MeasurableSpace α] (ν : Measur
     _ = ENNReal.ofReal (Real.exp K) * ∫⁻ z, ENNReal.ofReal (Real.exp (t * g z)) ∂ν :=
         lintegral_const_mul' _ _ ENNReal.ofReal_ne_top
 
-private theorem aux_mcdiarmid_15b (t m K L : ℝ) :
+/-- `ofReal (exp K) * ofReal (exp (t m + L)) = ofReal (exp (t m + (K + L)))`. -/
+private theorem ofReal_exp_mul_ofReal_exp_add_eq (t m K L : ℝ) :
     ENNReal.ofReal (Real.exp K) * ENNReal.ofReal (Real.exp (t * m + L))
       = ENNReal.ofReal (Real.exp (t * m + (K + L))) := by
   rw [← ENNReal.ofReal_mul (le_of_lt (Real.exp_pos K)), ← Real.exp_add]
   congr 1
   ring_nf
 
-private theorem aux_mcdiarmid_15 {α : Type*} [MeasurableSpace α] (ν : Measure α)
+/-- Chaining `lintegral_ofReal_exp_add_const_eq` and a bound gives `A ≤ ofReal (exp (t m +
+(K+L)))`. -/
+private theorem le_ofReal_exp_add_of_le {α : Type*} [MeasurableSpace α] (ν : Measure α)
     (g : α → ℝ) (t m K L : ℝ) (A : ENNReal)
     (hA : A ≤ ∫⁻ z, ENNReal.ofReal (Real.exp (t * g z + K)) ∂ν)
     (hg : ∫⁻ z, ENNReal.ofReal (Real.exp (t * g z)) ∂ν ≤ ENNReal.ofReal (Real.exp (t * m + L))) :
     A ≤ ENNReal.ofReal (Real.exp (t * m + (K + L))) := by
-  exact le_trans (le_trans hA (le_of_eq (aux_mcdiarmid_15a ν g t K)))
-    (le_trans (mul_le_mul_right hg _) (le_of_eq (aux_mcdiarmid_15b t m K L)))
+  exact le_trans (le_trans hA (le_of_eq (lintegral_ofReal_exp_add_const_eq ν g t K)))
+    (le_trans (mul_le_mul_right hg _) (le_of_eq (ofReal_exp_mul_ofReal_exp_add_eq t m K L)))
 
 
 -- Induction step. lmarginal_insert (measurable: (hf.const_mul t).exp.ennreal_ofReal) rewrites the
 -- LHS as ∫⁻ z, (∫⋯∫⁻_s ..)(update x i z) ∂μ i ≤ (lintegral_mono, ih) ∫⁻ ofReal(exp(t g z + K));
--- g z := rmarg μ s f (update x i z), measurable by aux_mcdiarmid_6 comp measurable_update' ;
--- aux_mcdiarmid_12 + aux_mcdiarmid_11 give the Icc; aux_mcdiarmid_14; aux_mcdiarmid_10 identifies
--- ∫ g = rmarg μ (insert i s) f x; aux_mcdiarmid_15; Finset.sum_insert hi and ring for exponents.
+-- g z := rmarg μ s f (update x i z), measurable by measurable_rmarg comp measurable_update' ;
+-- exists_mem_Icc_of_sub_le + rmarg_update_sub_le give the Icc; lintegral_ofReal_exp_le_of_mem_Icc;
+-- rmarg_insert identifies
+-- ∫ g = rmarg μ (insert i s) f x; le_ofReal_exp_add_of_le; Finset.sum_insert hi and ring for
+-- exponents.
 -- SPLIT? (≈15-20 lines)
-private theorem aux_mcdiarmid_16 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+/-- The induction step of the tensorized MGF bound, peeling off coordinate `i`. -/
+private theorem lmarginal_ofReal_exp_insert_le {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B) (c : ι → ℝ)
     (hc : ∀ i, 0 ≤ c i)
@@ -395,21 +428,34 @@ private theorem aux_mcdiarmid_16 {ι : Type*} [DecidableEq ι] {Ω : ι → Type
       ≤ ENNReal.ofReal (Real.exp (t * rmarg μ (insert i s) f x
           + t ^ 2 * (∑ j ∈ insert i s, c j ^ 2) / 8)) := by
   letI : Nonempty (Ω i) := nonempty_of_isProbabilityMeasure (μ i)
-  have hF : Measurable (fun y : (∀ i, Ω i) => ENNReal.ofReal (Real.exp (t * f y))) := ((hf.const_mul t).exp).ennreal_ofReal
+  have hF : Measurable (fun y : (∀ i, Ω i) => ENNReal.ofReal (Real.exp (t * f y))) :=
+      ((hf.const_mul t).exp).ennreal_ofReal
   rw [lmarginal_insert _ hF hi]
-  have hgm : Measurable (fun z : Ω i => rmarg μ s f (Function.update x i z)) := (aux_mcdiarmid_6 μ s f hf).comp (by fun_prop)
-  have hbdd : ∀ z z' : Ω i, rmarg μ s f (Function.update x i z) - rmarg μ s f (Function.update x i z') ≤ c i := fun z z' => aux_mcdiarmid_11 μ f hf B hB c hbd hi x z z'
-  obtain ⟨a, ha⟩ := aux_mcdiarmid_12 (fun z : Ω i => rmarg μ s f (Function.update x i z)) (c i) hbdd
-  have hint : ∫ z, rmarg μ s f (Function.update x i z) ∂μ i = rmarg μ (insert i s) f x := (aux_mcdiarmid_10 μ f hf B hB hi x).symm
-  have hg := aux_mcdiarmid_14 (μ i) (fun z : Ω i => rmarg μ s f (Function.update x i z)) hgm a (c i) (hc i) ha t
+  have hgm : Measurable (fun z : Ω i => rmarg μ s f (Function.update x i z)) :=
+      (measurable_rmarg μ s f hf).comp (by fun_prop)
+  have hbdd : ∀ z z' : Ω i, rmarg μ s f (Function.update x i z) - rmarg μ s f
+      (Function.update x i z') ≤ c i := fun z z' => rmarg_update_sub_le μ f hf B hB c hbd hi x z z'
+  obtain ⟨a, ha⟩ := exists_mem_Icc_of_sub_le (fun z : Ω i => rmarg μ s f (Function.update x i z))
+      (c i) hbdd
+  have hint : ∫ z, rmarg μ s f (Function.update x i z) ∂μ i = rmarg μ (insert i s) f x :=
+      (rmarg_insert μ f hf B hB hi x).symm
+  have hg := lintegral_ofReal_exp_le_of_mem_Icc (μ i)
+      (fun z : Ω i => rmarg μ s f (Function.update x i z)) hgm a (c i) (hc i) ha t
   rw [hint] at hg
-  have hA : ∫⁻ z : Ω i, (∫⋯∫⁻_s, (fun y => ENNReal.ofReal (Real.exp (t * f y))) ∂μ) (Function.update x i z) ∂μ i ≤ ∫⁻ z : Ω i, ENNReal.ofReal (Real.exp (t * rmarg μ s f (Function.update x i z) + t ^ 2 * (∑ j ∈ s, c j ^ 2) / 8)) ∂μ i := lintegral_mono fun z => ih (Function.update x i z)
-  refine (aux_mcdiarmid_15 (μ i) (fun z : Ω i => rmarg μ s f (Function.update x i z)) t (rmarg μ (insert i s) f x) (t ^ 2 * (∑ j ∈ s, c j ^ 2) / 8) (t ^ 2 * (c i) ^ 2 / 8) _ hA hg).trans (ENNReal.ofReal_le_ofReal (le_of_eq (by rw [Finset.sum_insert hi]; ring_nf)))
+  have hA : ∫⁻ z : Ω i, (∫⋯∫⁻_s, (fun y => ENNReal.ofReal (Real.exp (t * f y))) ∂μ)
+      (Function.update x i z) ∂μ i ≤ ∫⁻ z : Ω i, ENNReal.ofReal
+      (Real.exp (t * rmarg μ s f (Function.update x i z) + t ^ 2 * (∑ j ∈ s, c j ^ 2) / 8)) ∂μ i :=
+      lintegral_mono fun z => ih (Function.update x i z)
+  refine
+      (le_ofReal_exp_add_of_le (μ i) (fun z : Ω i => rmarg μ s f (Function.update x i z)) t
+      (rmarg μ (insert i s) f x) (t ^ 2 * (∑ j ∈ s, c j ^ 2) / 8) (t ^ 2 * (c i) ^ 2 / 8) _ hA
+      hg).trans (ENNReal.ofReal_le_ofReal (le_of_eq (by rw [Finset.sum_insert hi]; ring_nf)))
 
 
--- Finset.induction_on s: empty case lmarginal_empty, aux_mcdiarmid_4, simp;
--- insert case aux_mcdiarmid_16.
-private theorem aux_mcdiarmid_17 {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
+-- Finset.induction_on s: empty case lmarginal_empty, rmarg_empty, simp;
+-- insert case lmarginal_ofReal_exp_insert_le.
+/-- The tensorized MGF bound on `(∫⋯∫⁻_s, ofReal (exp (t f))) x` by `rmarg` and `∑ c^2`. -/
+private theorem lmarginal_ofReal_exp_le {ι : Type*} [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B) (c : ι → ℝ)
     (hc : ∀ i, 0 ≤ c i)
@@ -420,32 +466,36 @@ private theorem aux_mcdiarmid_17 {ι : Type*} [DecidableEq ι] {Ω : ι → Type
   classical
   induction s using Finset.induction_on generalizing x with
   | empty =>
-    simp [lmarginal_empty, aux_mcdiarmid_4]
+    simp [lmarginal_empty, rmarg_empty]
   | insert i s hi ih =>
-    exact aux_mcdiarmid_16 μ f hf B hB c hc hbd t hi ih x
+    exact lmarginal_ofReal_exp_insert_le μ f hf B hB c hc hbd t hi ih x
 
 
--- aux_mcdiarmid_17 at s = univ, x := Classical.arbitrary; lintegral_eq_lmarginal_univ,
--- aux_mcdiarmid_5; convert via ofReal_integral_eq_lintegral_ofReal (integrable: Integrable.of_bound,
+-- lmarginal_ofReal_exp_le at s = univ, x := Classical.arbitrary; lintegral_eq_lmarginal_univ,
+-- rmarg_univ; convert via ofReal_integral_eq_lintegral_ofReal (integrable: Integrable.of_bound,
 -- bound exp(|t| B)) and ENNReal.ofReal_le_ofReal_iff (Real.exp_nonneg); then
 -- exp(t(f - m)) = exp(-t m) * exp(t f): integral_const_mul, Real.exp_add, Real.exp_le_exp-free
 -- algebra: multiply the bound by exp(-t m) (mul_le_mul_of_nonneg_left).
-private theorem aux_mcdiarmid_18_g {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
+/-- `lmarginal_ofReal_exp_le` at `s = Finset.univ`, identifying `rmarg` with the full integral. -/
+private theorem lintegral_ofReal_exp_le {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B) (c : ι → ℝ)
     (hc : ∀ i, 0 ≤ c i)
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i)
     (t : ℝ) :
     ∫⁻ z, ENNReal.ofReal (Real.exp (t * f z)) ∂(Measure.pi μ)
-      ≤ ENNReal.ofReal (Real.exp (t * (∫ y, f y ∂(Measure.pi μ)) + t ^ 2 * (∑ j, c j ^ 2) / 8)) := by
+      ≤ ENNReal.ofReal (Real.exp (t * (∫ y, f y ∂(Measure.pi μ)) + t ^ 2 * (∑ j, c j ^ 2) / 8)) :=
+          by
   have hne : ∀ i, Nonempty (Ω i) := fun i => nonempty_of_isProbabilityMeasure (μ i)
   let x₀ : ∀ i, Ω i := fun i => Classical.choice (hne i)
-  have h17 := aux_mcdiarmid_17 μ f hf B hB c hc hbd t Finset.univ x₀
+  have h17 := lmarginal_ofReal_exp_le μ f hf B hB c hc hbd t Finset.univ x₀
   rw [lintegral_eq_lmarginal_univ (μ := μ) (f := fun y => ENNReal.ofReal (Real.exp (t * f y))) x₀]
   refine h17.trans (le_of_eq ?_)
-  rw [aux_mcdiarmid_5 μ f x₀]
+  rw [rmarg_univ μ f x₀]
 
-private theorem aux_mcdiarmid_18_main {α : Type*} [MeasurableSpace α] (ν : Measure α) [IsProbabilityMeasure ν]
+/-- Converts an `lintegral`/`ofReal` MGF bound to a real-integral MGF bound. -/
+private theorem integral_exp_sub_le_of_lintegral_ofReal_exp_le {α : Type*} [MeasurableSpace α]
+    (ν : Measure α) [IsProbabilityMeasure ν]
     (F : α → ℝ) (hFm : Measurable F) (BF : ℝ) (hBF : ∀ z, |F z| ≤ BF) (t m K : ℝ)
     (hb : ∫⁻ z, ENNReal.ofReal (Real.exp (t * F z)) ∂ν
       ≤ ENNReal.ofReal (Real.exp (t * m + K))) :
@@ -493,7 +543,8 @@ private theorem aux_mcdiarmid_18_main {α : Type*} [MeasurableSpace α] (ν : Me
           ring
   exact (ENNReal.ofReal_le_ofReal_iff (Real.exp_pos K).le).mp hmain
 
-private theorem aux_mcdiarmid_18 {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
+/-- `∫ exp(t (f - ∫ f)) ≤ exp(t^2 ∑ c^2/8)`, combining the tensorized and real bounds. -/
+private theorem integral_exp_sub_mean_le {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B) (c : ι → ℝ)
     (hc : ∀ i, 0 ≤ c i)
@@ -501,14 +552,17 @@ private theorem aux_mcdiarmid_18 {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω 
     (t : ℝ) :
     ∫ x, Real.exp (t * (f x - ∫ y, f y ∂(Measure.pi μ))) ∂(Measure.pi μ)
       ≤ Real.exp (t ^ 2 * (∑ j, c j ^ 2) / 8) := by
-  have hb := aux_mcdiarmid_18_g μ f hf B hB c hc hbd t
-  exact aux_mcdiarmid_18_main (Measure.pi μ) f hf B hB t (∫ y, f y ∂(Measure.pi μ))
+  have hb := lintegral_ofReal_exp_le μ f hf B hB c hc hbd t
+  exact integral_exp_sub_le_of_lintegral_ofReal_exp_le (Measure.pi μ) f hf B hB t
+      (∫ y, f y ∂(Measure.pi μ))
     (t ^ 2 * (∑ j, c j ^ 2) / 8) hb
 
 
 -- |∫ f| ≤ B: norm_integral_le_of_norm_le_const (bound ae_of_all from hB, Real.norm_eq_abs),
 -- then probReal_univ / measureReal_univ_eq_one and mul_one.
-private theorem aux_mcdiarmid_19_1 {α : Type*} [MeasurableSpace α] (ν : Measure α) [IsProbabilityMeasure ν]
+/-- `|∫ f| ≤ B`, from the pointwise bound `|f| ≤ B`. -/
+private theorem abs_integral_le {α : Type*} [MeasurableSpace α] (ν : Measure α)
+    [IsProbabilityMeasure ν]
     (f : α → ℝ) (B : ℝ) (hB : ∀ x, |f x| ≤ B) : |∫ y, f y ∂ν| ≤ B := by
   have h := norm_integral_le_of_norm_le_const (μ := ν) (f := f) (C := B)
     (ae_of_all _ fun x => by simpa [Real.norm_eq_abs] using hB x)
@@ -518,7 +572,9 @@ private theorem aux_mcdiarmid_19_1 {α : Type*} [MeasurableSpace α] (ν : Measu
 -- Integrable.of_bound (((hf.sub_const m).const_mul t).exp.aestronglyMeasurable) with bound
 -- exp(|t| (2B)); Real.norm_eq_abs, abs_of_pos (Real.exp_pos _), Real.exp_le_exp, le_abs_self,
 -- abs_mul, abs_sub ≤ |f x| + |m| (abs_sub), mul_le_mul_of_nonneg_left.
-private theorem aux_mcdiarmid_19_2 {α : Type*} [MeasurableSpace α] (ν : Measure α) [IsProbabilityMeasure ν]
+/-- `exp(t (f - m))` is integrable, for bounded measurable `f` and `|m| ≤ B`. -/
+private theorem integrable_exp_mul_sub {α : Type*} [MeasurableSpace α] (ν : Measure α)
+    [IsProbabilityMeasure ν]
     (f : α → ℝ) (hf : Measurable f) (B m : ℝ) (hB : ∀ x, |f x| ≤ B) (hm : |m| ≤ B) (t : ℝ) :
     Integrable (fun x => Real.exp (t * (f x - m))) ν := by
   refine Integrable.of_bound (((hf.sub_const m).const_mul t).exp.aestronglyMeasurable)
@@ -529,39 +585,46 @@ private theorem aux_mcdiarmid_19_2 {α : Type*} [MeasurableSpace α] (ν : Measu
   refine mul_le_mul_of_nonneg_left ((abs_sub _ _).trans ?_) (abs_nonneg t)
   linarith [hB x]
 
--- mgf_le in the target proxy: unfold ProbabilityTheory.mgf; aux_mcdiarmid_18 gives the bound
--- exp(t² S/8); the proxy coerces by Real.coe_toNNReal _ (div_nonneg (Finset.sum_nonneg …) (by norm_num))
+-- mgf_le in the target proxy: unfold ProbabilityTheory.mgf; integral_exp_sub_mean_le gives the
+-- bound
+-- exp(t² S/8); the proxy coerces by Real.coe_toNNReal _ (div_nonneg (Finset.sum_nonneg …) (by
+-- norm_num))
 -- and S/4 · t²/2 = t² S/8 (ring).
-private theorem aux_mcdiarmid_19_3 {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
+/-- The subgaussian MGF bound for `f - ∫ f`, in `NNReal`-proxy form. -/
+private theorem mgf_sub_integral_le {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B) (c : ι → ℝ)
     (hc : ∀ i, 0 ≤ c i)
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i) (t : ℝ) :
     mgf (fun x => f x - ∫ y, f y ∂(Measure.pi μ)) (Measure.pi μ) t
       ≤ Real.exp (((Real.toNNReal ((∑ i, c i ^ 2) / 4) : NNReal) : ℝ) * t ^ 2 / 2) := by
-  have hS : 0 ≤ (∑ i, c i ^ 2) / 4 := div_nonneg (Finset.sum_nonneg fun i _ => sq_nonneg _) (by norm_num)
+  have hS : 0 ≤ (∑ i, c i ^ 2) / 4 := div_nonneg (Finset.sum_nonneg fun i _ => sq_nonneg _)
+      (by norm_num)
   rw [Real.coe_toNNReal _ hS]
   unfold mgf
-  exact (aux_mcdiarmid_18 μ f hf B hB c hc hbd t).trans (le_of_eq (by ring_nf))
+  exact (integral_exp_sub_mean_le μ f hf B hB c hc hbd t).trans (le_of_eq (by ring_nf))
 
 -- Build the structure: integrable_exp_mul t := Integrable.of_bound (measurability by fun_prop /
 -- (hf.sub_const _).const_mul _ |>.exp) with bound exp(|t| * 2B) (Real.exp_le_exp, abs_le);
--- mgf_le t := by unfold ProbabilityTheory.mgf; simpa/convert aux_mcdiarmid_18 with
+-- mgf_le t := by unfold ProbabilityTheory.mgf; simpa/convert integral_exp_sub_mean_le with
 -- Real.coe_toNNReal _ (by positivity) and ring_nf on exponents (S/4 * t²/2 = t² S/8).
-private theorem aux_mcdiarmid_19 {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
+/-- `f - ∫ f` has a subgaussian MGF with variance proxy `(∑ i, c i^2)/4`. -/
+private theorem hasSubgaussianMGF_sub_integral {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {Ω : ι → Type*}
     [∀ i, MeasurableSpace (Ω i)] (μ : ∀ i, Measure (Ω i)) [∀ i, IsProbabilityMeasure (μ i)]
     (f : (∀ i, Ω i) → ℝ) (hf : Measurable f) (B : ℝ) (hB : ∀ x, |f x| ≤ B) (c : ι → ℝ)
     (hc : ∀ i, 0 ≤ c i)
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i) :
     HasSubgaussianMGF (fun x => f x - ∫ y, f y ∂(Measure.pi μ))
       (Real.toNNReal ((∑ i, c i ^ 2) / 4)) (Measure.pi μ) := by
-  exact ⟨fun t => aux_mcdiarmid_19_2 (Measure.pi μ) f hf B _ hB
-      (aux_mcdiarmid_19_1 (Measure.pi μ) f B hB) t,
-    fun t => aux_mcdiarmid_19_3 μ f hf B hB c hc hbd t⟩
+  exact ⟨fun t => integrable_exp_mul_sub (Measure.pi μ) f hf B _ hB
+      (abs_integral_le (Measure.pi μ) f B hB) t,
+    fun t => mgf_sub_integral_le μ f hf B hB c hc hbd t⟩
 
 -- Real algebra incl. the junk case S = 0 (both sides are -…/0 = 0): by_cases hS : S = 0;
 -- simp [hS]; otherwise field_simp; ring.
-private theorem aux_mcdiarmid_20 (S t : ℝ) (hS : 0 ≤ S) :
+/-- `-t^2 / (2 * toNNReal (S/4)) = -2 t^2 / S`, including the junk case `S = 0`. -/
+private theorem neg_sq_div_two_toNNReal_eq (S t : ℝ) (hS : 0 ≤ S) :
     -t ^ 2 / (2 * ((Real.toNNReal (S / 4) : NNReal) : ℝ)) = -2 * t ^ 2 / S := by
   by_cases hS0 : S = 0
   · subst hS0
@@ -586,10 +649,10 @@ theorem mcdiarmid {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
     (Measure.pi μ).real {x | t ≤ f x - ∫ y, f y ∂(Measure.pi μ)}
       ≤ Real.exp (-2 * t ^ 2 / ∑ i, c i ^ 2) := by
   haveI : ∀ i, Nonempty (Ω i) := fun i => nonempty_of_isProbabilityMeasure (μ i)
-  have hc : ∀ i, 0 ≤ c i := aux_mcdiarmid_2 f c hbd
-  obtain ⟨B, hB⟩ := aux_mcdiarmid_3 f c hbd
-  have hsg := aux_mcdiarmid_19 μ f hf B hB c hc hbd
+  have hc : ∀ i, 0 ≤ c i := nonneg_of_bound f c hbd
+  obtain ⟨B, hB⟩ := exists_bound f c hbd
+  have hsg := hasSubgaussianMGF_sub_integral μ f hf B hB c hc hbd
   have h := hsg.measure_ge_le ht
-  rwa [aux_mcdiarmid_20 _ t (Finset.sum_nonneg fun i _ => sq_nonneg (c i))] at h
+  rwa [neg_sq_div_two_toNNReal_eq _ t (Finset.sum_nonneg fun i _ => sq_nonneg (c i))] at h
 
 end LatticeProb
