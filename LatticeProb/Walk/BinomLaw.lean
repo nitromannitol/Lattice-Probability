@@ -34,6 +34,7 @@ Moved from Parking-Sharpness (`Parking.binomLaw` of `Parking/Support/Oriented.le
 `Parking.conv` together with the shift-energy identity of `Parking/Support/Shift.lean`).
 -/
 import Mathlib
+import LatticeProb.Walk.BinomialLocalCLT
 
 noncomputable section
 
@@ -541,5 +542,35 @@ theorem shift_energy (q : ℤ) :
     exact (summable_shiftSeries n).mul_left 2
   · rw [tsum_congr hterm, tsum_mul_left, tsum_shiftSeries n, hcast]
     ring
+
+/-- The binomial law indexed by successes equals the binomial law indexed by position, for
+`|j| ≤ m` and `j ≡ m (mod 2)`. -/
+theorem binomLaw_eq_binomPMF (m : ℕ) (j : ℤ) (_hj : j ≡ (m : ℤ) [ZMOD 2])
+    (hjm : |j| ≤ (m : ℤ)) :
+    binomLaw m ((j + (m : ℤ)) / 2) = LatticeProb.BinomialLCLT.binomPMF m j := by
+  rw [binomLaw, LatticeProb.BinomialLCLT.binomPMF]
+  have h2 : ((j + (m : ℤ)) / 2).toNat = ((m + j) / 2).toNat := by
+    congr 1
+    omega
+  rw [h2]
+  have h3 : 0 ≤ (j + (m : ℤ)) / 2 := by
+    have h4 : -(m : ℤ) ≤ j := by
+      have := abs_le.mp hjm
+      exact this.1
+    omega
+  rw [if_pos h3]
+
+/-- The binomial local CLT in the form the paper uses: for the fair binomial law indexed by the
+position `j` of the walk, `sqrt m * P(S_m = j)` is within `C/m` of `2 * gaussianDensity (j/sqrt m)`,
+for `j` of the parity of `m` with `|j| ≤ m`. -/
+theorem exists_binomLaw_localCLT :
+    ∃ C : ℝ, 0 < C ∧ ∀ m : ℕ, 1 ≤ m → ∀ j : ℤ, j ≡ (m : ℤ) [ZMOD 2] → |j| ≤ (m : ℤ) →
+      |Real.sqrt m * LatticeProb.Walk.binomLaw m ((j + (m : ℤ)) / 2)
+        - 2 * LatticeProb.BinomialLCLT.gaussianDensity ((j : ℝ) / Real.sqrt m)| ≤ C / m := by
+  obtain ⟨C, hC, h⟩ := LatticeProb.BinomialLCLT.exists_binomPMF_localCLT
+  refine ⟨C, hC, fun m hm j hj hjm => ?_⟩
+  rw [binomLaw_eq_binomPMF m j hj hjm]
+  exact h m hm j hj hjm
+
 
 end LatticeProb.Walk
