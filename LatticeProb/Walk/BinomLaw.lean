@@ -1,4 +1,9 @@
-/-
+import Mathlib
+import LatticeProb.Walk.BinomialLocalCLT
+
+/-!
+# The fair binomial law and its shift-energy identity
+
 The fair binomial law on `ℤ` (the number of successes in `l` trials of success
 probability `1/2`, extended by zero outside `[0, l]`), its autocorrelation `conv`
 with its own translate, and the shift energy identity
@@ -33,8 +38,6 @@ that module builds the local-CLT Gaussian approximation, not this shift-correlat
 Moved from Parking-Sharpness (`Parking.binomLaw` of `Parking/Support/Oriented.lean`, and
 `Parking.conv` together with the shift-energy identity of `Parking/Support/Shift.lean`).
 -/
-import Mathlib
-import LatticeProb.Walk.BinomialLocalCLT
 
 noncomputable section
 

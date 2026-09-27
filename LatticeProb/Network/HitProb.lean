@@ -1,4 +1,8 @@
-/-
+import LatticeProb.Network.FirstReturn
+
+/-!
+# Hitting probability before leaving a set
+
 The hitting probability of a vertex before leaving a set, and its harmonicity.
 
 `hitProb G C o x` is the probability that the walk from `x`, killed on leaving `C`, ever visits
@@ -13,7 +17,6 @@ This is the hitting-probability construction of the voltage function, which surv
 The proof was written by the library's proof fleet from a statement-owned decomposition and
 verified by the library gates.
 -/
-import LatticeProb.Network.FirstReturn
 
 open Finset
 open scoped Classical
@@ -28,9 +31,11 @@ variable {V : Type*} {G : SimpleGraph V} [G.LocallyFinite]
 noncomputable def hitProb (G : SimpleGraph V) [G.LocallyFinite] (C : Set V) (o : V) (x : V) : ℝ :=
   ∑' k : ℕ, firstHit G C o k x
 
+/-- `hitProb` is nonnegative. -/
 theorem hitProb_nonneg (C : Set V) (o : V) (x : V) : 0 ≤ hitProb G C o x :=
   tsum_nonneg fun k => firstHit_nonneg C o k x
 
+/-- `hitProb` is at most one. -/
 theorem hitProb_le_one (C : Set V) (o : V) (x : V) : hitProb G C o x ≤ 1 := by
   rw [hitProb]
   refine Real.tsum_le_of_sum_range_le (fun k => firstHit_nonneg C o k x) fun n => ?_
@@ -72,6 +77,7 @@ theorem hitProb_le_one (C : Set V) (o : V) (x : V) : hitProb G C o x ≤ 1 := by
   · simp
   · exact hkey m x
 
+/-- The first-passage probabilities are summable in `k`, so `hitProb` is a well-defined series. -/
 theorem summable_firstHit (C : Set V) (o : V) (x : V) : Summable fun k => firstHit G C o k x :=
   summable_of_sum_range_le (c := 1) (fun k => firstHit_nonneg C o k x) fun n => by
     have hkey : ∀ n, ∀ x, ∑ k ∈ Finset.range (n + 1), firstHit G C o k x ≤ 1 := by
@@ -112,6 +118,7 @@ theorem summable_firstHit (C : Set V) (o : V) (x : V) : Summable fun k => firstH
     · simp
     · exact hkey m x
 
+/-- `hitProb` is harmonic at every vertex of `C` other than `o`. -/
 theorem hitProb_laplacian (C : Set V) (o : V) {x : V} (hxC : x ∈ C) (hx : x ≠ o) :
     laplacian G (hitProb G C o) x = 0 := by
   have hsum : ∀ y : V, Summable fun k => firstHit G C o k y := fun y => summable_firstHit C o y

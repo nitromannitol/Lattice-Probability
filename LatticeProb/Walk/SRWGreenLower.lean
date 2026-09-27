@@ -1,4 +1,11 @@
-/-
+import LatticeProb.Walk.SRWDiag
+import LatticeProb.Walk.VarianceScale
+import LatticeProb.Walk.SRWGreenSup
+import LatticeProb.Walk.Range
+
+/-!
+# Lower bounds for the truncated Green function
+
 Lower bounds for the truncated Green function of the simple random walk at the origin.
 
 `exists_le_srwGreen_one_dim` and `exists_le_srwGreen_two_dim` give the matching lower halves of
@@ -15,16 +22,13 @@ on-diagonal heat lower bound `exists_srwHeat_diag_lower` at the even times `j = 
 The proof was written by the library's proof fleet from a statement-owned decomposition and
 verified by the library gates.
 -/
-import LatticeProb.Walk.SRWDiag
-import LatticeProb.Walk.VarianceScale
-import LatticeProb.Walk.SRWGreenSup
-import LatticeProb.Walk.Range
 
 open Finset
 open scoped Classical
 
 namespace LatticeProb
 
+/-- A lower bound `√m / 2 ≤ ∑_{s<m} s^{-1/2}`. -/
 theorem sum_Ico_inv_sqrt_ge {m : ℕ} (hm : 2 ≤ m) :
     Real.sqrt (m : ℝ) / 2 ≤ ∑ s ∈ Finset.Ico 1 m, (Real.sqrt (s : ℝ))⁻¹ := by
   have hmR : (0 : ℝ) < (m : ℝ) := by positivity
@@ -73,6 +77,7 @@ theorem log_le_four_of_lt (n : ℕ) (hn : n < 24) (h2 : 2 ≤ n) : Real.log (n :
   have hnR : (n : ℝ) ≤ 23 := by exact_mod_cast (by omega : n ≤ 23)
   exact le_trans (Real.log_le_log (by positivity) hnR) log_23_le_four
 
+/-- A matching lower bound `c log n ≤ srwGreen 2 n 0` for the two-dimensional truncated Green function at the origin. -/
 theorem exists_le_srwGreen_two_dim :
     ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 2 ≤ n → c * Real.log (n : ℝ) ≤ srwGreen 2 n 0 := by
   obtain ⟨c, hc, hlow⟩ := exists_srwHeat_diag_lower (d := 2) (by norm_num)
@@ -173,6 +178,7 @@ theorem exists_le_srwGreen_two_dim :
       linarith [hA, hB.le, hB.ge, hC, hD.le, hD.ge, hE]
     exact hchain
 
+/-- A matching lower bound `c √n ≤ srwGreen 1 n 0` for the one-dimensional truncated Green function at the origin. -/
 theorem exists_le_srwGreen_one_dim :
     ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 1 ≤ n → c * Real.sqrt (n : ℝ) ≤ srwGreen 1 n 0 := by
   obtain ⟨c, hc, hlow⟩ := exists_srwHeat_diag_lower (d := 1) (by norm_num)

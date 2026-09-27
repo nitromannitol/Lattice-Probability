@@ -1,4 +1,8 @@
-/-
+import Mathlib
+
+/-!
+# The Gaussian log-Sobolev inequality and the Herbst bound
+
 The Gaussian logarithmic Sobolev inequality and the exponential moment bound it
 implies, the classical input from outside the papers that the Gaussian
 concentration inequality rests on.
@@ -20,8 +24,6 @@ the bound itself is cited.
 These are cited results, carried as explicit hypotheses of the theorems that use
 them, never as axioms.
 -/
-
-import Mathlib
 
 noncomputable section
 open MeasureTheory ProbabilityTheory
