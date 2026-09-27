@@ -117,6 +117,7 @@ import LatticeProb.Network.Liouville
 import LatticeProb.Network.Killed
 import LatticeProb.Graph.ExitDecomp
 import LatticeProb.Network.KilledGreen
+import LatticeProb.Network.HitProb
 import LatticeProb.Network.KilledGreenEscape
 import LatticeProb.Network.FirstPassage
 import LatticeProb.Network.Voltage
