@@ -173,13 +173,6 @@ private theorem exists_nonneg_eq_sum_shell_mul (hd : 1 ≤ d) {R : ℕ} (hR : 4 
 
 /-! ### Green function estimates at scale `R` (the analytic input) -/
 
--- This is `LatticeProb.GreenTwoSided.killedGreenReal_le_box`, whose statement (`box`,
--- `graphNorm`, `Graph.killedGreenReal` are all shared top-level library definitions, not local
--- to the `GreenTwoSided` namespace) is byte-identical to this one, and which already has a
--- complete proof in scratch/decomp/green-two-sided/node.lean (line 658): head
--- `∑_{k<N} killedHeat ≤ N·C/r^d` from `srwHeat_gaussian`, tail via the killed Chapman–Kolmogorov
--- identity and `Network.sum_range_survival_le`.  Wire this file to that module (or a shared
--- `Network.KilledGreen`-adjacent module) instead of reproving it here.
 /-- Implementation lemma for `killedGreenReal_le_box_of_mem`, obtained directly from
 `LatticeProb.GreenTwoSided.killedGreenReal_le_box`. -/
 private theorem killedGreenReal_le_box_of_mem' (hd : 1 ≤ d) :
@@ -344,14 +337,6 @@ private theorem harnackGreen_le_mul_rpow_two_sub (hd : 1 ≤ d) :
     (fun z hz => (mem_harnackBox_iff_mem_box _ z).1 hz) y x hyx) ?_
   exact mul_add_one_sq_mul_le_mul_rpow_two_sub C hC hR _ hr
 
--- This is `LatticeProb.GreenTwoSided.killedGreenReal_ge_box` (same shared top-level definitions
--- as `killedGreenReal_le_box_of_mem'`), which is itself still an open lemma in
--- scratch/decomp/green-two-sided/node.lean (line 1966); once that file's carving of it lands,
--- wire this file to it instead of reproving it here.  Route (there): lazy killed walk (binomial
--- mixture of `killedHeat`), free lazy near-diagonal lower bound from `iterate_delta0_eq` and the
--- 1D local CLT `exists_srwHeat_one_sub_gauss_le_int`, killing correction from the off-diagonal
--- bound, chaining over `O_K(1)` cubes of side `≍ ρ` at `s²` different times; small `ρ` by a
--- lattice path.
 /-- Implementation lemma for `killedGreenReal_ge_box_of_mem`, obtained directly from
 `LatticeProb.GreenTwoSided.killedGreenReal_ge_box`. -/
 private theorem killedGreenReal_ge_box_of_mem' (hd : 1 ≤ d) (K : ℕ) :
