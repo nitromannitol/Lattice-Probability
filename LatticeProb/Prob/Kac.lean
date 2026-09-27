@@ -36,7 +36,8 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 /-! ### Restated from the induced-map formalization -/
 
 omit [MeasurableSpace Ω] in
-private theorem aux_kac_R1 (T : Ω → Ω) (A : Set Ω) (x : Ω) {n : ℕ} (hn : 0 < n) :
+/-- For `0 < n`, `retTime T A x = n` iff `T^[n] x ∈ A` and no earlier positive iterate does. -/
+private theorem retTime_eq_iff (T : Ω → Ω) (A : Set Ω) (x : Ω) {n : ℕ} (hn : 0 < n) :
     retTime T A x = n ↔ T^[n] x ∈ A ∧ ∀ j, 0 < j → j < n → T^[j] x ∉ A := by
   classical
   unfold retTime
@@ -53,7 +54,9 @@ private theorem aux_kac_R1 (T : Ω → Ω) (A : Set Ω) (x : Ω) {n : ℕ} (hn :
     · rintro ⟨hmem, _⟩
       exact absurd ⟨n, hn, hmem⟩ h
 
-private theorem aux_kac_meas_avoid {Ω : Type*} [MeasurableSpace Ω] {T : Ω → Ω} (hT : Measurable T)
+/-- The set of points that have not returned to `A` before time `l` is measurable. -/
+private theorem measurableSet_avoidCondition {Ω : Type*} [MeasurableSpace Ω] {T : Ω → Ω}
+    (hT : Measurable T)
     {A : Set Ω} (hA : MeasurableSet A) (l : ℕ) :
     MeasurableSet {x : Ω | ∀ j, 0 < j → j < l → T^[j] x ∉ A} := by
   have hset : {x : Ω | ∀ j, 0 < j → j < l → T^[j] x ∉ A}
@@ -80,7 +83,8 @@ private theorem aux_kac_meas_avoid {Ω : Type*} [MeasurableSpace Ω] {T : Ω →
       ext x; simp [h]
     rw [this]; exact MeasurableSet.univ
 
-private theorem aux_kac_meas_levelset {Ω : Type*} [MeasurableSpace Ω] {T : Ω → Ω}
+/-- Each level set `{retTime T A = n}` is measurable. -/
+private theorem measurableSet_retTime_preimage_singleton {Ω : Type*} [MeasurableSpace Ω] {T : Ω → Ω}
     (hT : Measurable T) {A : Set Ω} (hA : MeasurableSet A) (n : ℕ) :
     MeasurableSet (retTime T A ⁻¹' {n}) := by
   classical
@@ -112,15 +116,19 @@ private theorem aux_kac_meas_levelset {Ω : Type*} [MeasurableSpace Ω] {T : Ω 
         = {x | T^[m + 1] x ∈ A} ∩ {x | ∀ j, 0 < j → j < m + 1 → T^[j] x ∉ A} := by
       ext x
       simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff, Set.mem_setOf_eq]
-      exact aux_kac_R1 T A x (Nat.succ_pos m)
+      exact retTime_eq_iff T A x (Nat.succ_pos m)
     rw [hset]
-    exact MeasurableSet.inter ((hT.iterate (m + 1)) hA) (aux_kac_meas_avoid hT hA (m + 1))
+    exact MeasurableSet.inter ((hT.iterate (m + 1)) hA) (measurableSet_avoidCondition hT hA (m + 1))
 
-private theorem aux_kac_R2 {T : Ω → Ω} (hT : Measurable T) {A : Set Ω} (hA : MeasurableSet A) :
+/-- `retTime T A` is measurable. -/
+private theorem measurable_retTime {T : Ω → Ω} (hT : Measurable T) {A : Set Ω}
+    (hA : MeasurableSet A) :
     Measurable (retTime T A) := by
-  exact measurable_to_countable' fun n => aux_kac_meas_levelset hT hA n
+  exact measurable_to_countable' fun n => measurableSet_retTime_preimage_singleton hT hA n
 
-private theorem aux_kac_R3 {T : Ω → Ω} (hT : Measurable T) {A B : Set Ω} (hA : MeasurableSet A)
+/-- `retSet T A B n` and `avoidSet T A B n` are measurable. -/
+private theorem measurableSet_retSet_and_avoidSet {T : Ω → Ω} (hT : Measurable T) {A B : Set Ω}
+    (hA : MeasurableSet A)
     (hB : MeasurableSet B) (n : ℕ) :
     MeasurableSet (retSet T A B n) ∧ MeasurableSet (avoidSet T A B n) := by
   constructor
@@ -142,7 +150,8 @@ private theorem aux_kac_R3 {T : Ω → Ω} (hT : Measurable T) {A B : Set Ω} (h
     exact (hT.iterate n hB).inter (MeasurableSet.iInter fun k => (hT.iterate k.1) hA.compl)
 
 omit [MeasurableSpace Ω] in
-private theorem aux_kac_R4_set (T : Ω → Ω) (A B : Set Ω) (n : ℕ) :
+/-- `T⁻¹ (avoidSet T A B n)` splits as the return-at-`(n+1)` set union `avoidSet T A B (n+1)`. -/
+private theorem preimage_avoidSet_eq_union (T : Ω → Ω) (A B : Set Ω) (n : ℕ) :
     T ⁻¹' avoidSet T A B n = (A ∩ retSet T A B (n + 1)) ∪ avoidSet T A B (n + 1) := by
   ext x
   simp only [mem_preimage, avoidSet, retSet, mem_setOf_eq, mem_inter_iff, mem_union]
@@ -167,19 +176,24 @@ private theorem aux_kac_R4_set (T : Ω → Ω) (A B : Set Ω) (n : ℕ) :
     · obtain ⟨hB, hA⟩ := h
       exact ⟨hB, fun j hj => hA (j + 1) (by omega)⟩
 
-private theorem aux_kac_R4 {μ : Measure Ω} {T : Ω → Ω} (hT : MeasurePreserving T μ μ)
+/-- `μ (avoidSet T A B n)` splits as a return-at-`(n+1)` measure plus `μ (avoidSet T A B (n+1))`. -/
+private theorem measure_avoidSet_eq_add_measure_avoidSet_succ {μ : Measure Ω} {T : Ω → Ω}
+    (hT : MeasurePreserving T μ μ)
     {A B : Set Ω} (hA : MeasurableSet A) (hB : MeasurableSet B) (n : ℕ) :
     μ (avoidSet T A B n) = μ (A ∩ retSet T A B (n + 1)) + μ (avoidSet T A B (n + 1)) := by
-  have hm : MeasurableSet (avoidSet T A B n) := (aux_kac_R3 hT.measurable hA hB n).2
-  have hm' : MeasurableSet (avoidSet T A B (n + 1)) := (aux_kac_R3 hT.measurable hA hB (n + 1)).2
+  have hm : MeasurableSet (avoidSet T A B n) :=
+      (measurableSet_retSet_and_avoidSet hT.measurable hA hB n).2
+  have hm' : MeasurableSet (avoidSet T A B (n + 1)) :=
+      (measurableSet_retSet_and_avoidSet hT.measurable hA hB (n + 1)).2
   have h1 : μ (T ⁻¹' avoidSet T A B n) = μ (avoidSet T A B n) :=
     hT.measure_preimage hm.nullMeasurableSet
-  rw [← h1, aux_kac_R4_set]
+  rw [← h1, preimage_avoidSet_eq_union]
   exact measure_union
     (Set.disjoint_left.mpr fun x hx1 hx2 => hx2.2 0 (Nat.succ_pos n) (by simpa using hx1.1)) hm'
 
 omit [MeasurableSpace Ω] in
-private theorem aux_kac_R5 (T : Ω → Ω) {A B : Set Ω} (hBA : B ⊆ A) :
+/-- The sets `avoidSet T A B n`, for `B ⊆ A`, are pairwise disjoint. -/
+private theorem pairwise_disjoint_avoidSet (T : Ω → Ω) {A B : Set Ω} (hBA : B ⊆ A) :
     Pairwise (Function.onFun Disjoint (avoidSet T A B)) := by
   intro m n hmn
   rw [Function.onFun, Set.disjoint_left]
@@ -188,11 +202,15 @@ private theorem aux_kac_R5 (T : Ω → Ω) {A B : Set Ω} (hBA : B ⊆ A) :
   · exact hn.2 m h (hBA hm.1)
   · exact hm.2 n h (hBA hn.1)
 
-private theorem aux_kac_R6 {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω} (hT : Measurable T)
+/-- `μ (avoidSet T A B n) → 0` as `n → ∞`, from finite total measure. -/
+private theorem tendsto_measure_avoidSet_atTop_nhds_zero {μ : Measure Ω} [IsFiniteMeasure μ]
+    {T : Ω → Ω} (hT : Measurable T)
     {A B : Set Ω} (hA : MeasurableSet A) (hB : MeasurableSet B) (hBA : B ⊆ A) :
     Tendsto (fun n => μ (avoidSet T A B n)) atTop (𝓝 0) := by
-  have hdisj : Pairwise (Function.onFun Disjoint (avoidSet T A B)) := aux_kac_R5 T hBA
-  have hmeas : ∀ n, MeasurableSet (avoidSet T A B n) := fun n => (aux_kac_R3 hT hA hB n).2
+  have hdisj : Pairwise (Function.onFun Disjoint (avoidSet T A B)) := pairwise_disjoint_avoidSet T
+      hBA
+  have hmeas : ∀ n, MeasurableSet (avoidSet T A B n) := fun n =>
+      (measurableSet_retSet_and_avoidSet hT hA hB n).2
   have hUnion : ∑' n, μ (avoidSet T A B n) = μ (⋃ n, avoidSet T A B n) :=
     (measure_iUnion hdisj hmeas).symm
   have hle : μ (⋃ n, avoidSet T A B n) ≤ μ Set.univ := measure_mono (subset_univ _)
@@ -202,17 +220,20 @@ private theorem aux_kac_R6 {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω
 /-! ### The tower identity -/
 
 omit [MeasurableSpace Ω] in
-private theorem aux_kac_1 (T : Ω → Ω) (A : Set Ω) (n : ℕ) :
+/-- `A ∩ retSet T A A (n+1) = A ∩ {retTime T A = n+1}`. -/
+private theorem inter_retSet_succ_eq_inter_retTime_eq (T : Ω → Ω) (A : Set Ω) (n : ℕ) :
     A ∩ retSet T A A (n + 1) = A ∩ {x | retTime T A x = n + 1} := by
   ext x
   simp only [Set.mem_inter_iff, Set.mem_setOf_eq, retSet]
   constructor
   · rintro ⟨ha, hcond⟩
-    exact ⟨ha, (aux_kac_R1 T A x (Nat.succ_pos n)).2 hcond⟩
+    exact ⟨ha, (retTime_eq_iff T A x (Nat.succ_pos n)).2 hcond⟩
   · rintro ⟨ha, hr⟩
-    exact ⟨ha, (aux_kac_R1 T A x (Nat.succ_pos n)).1 hr⟩
+    exact ⟨ha, (retTime_eq_iff T A x (Nat.succ_pos n)).1 hr⟩
 
-private theorem aux_kac_2 {μ : Measure Ω} {T : Ω → Ω} (hT : MeasurePreserving T μ μ) {A : Set Ω}
+/-- Telescoping identity for `μ (avoidSet T A A n)` after `m` steps. -/
+private theorem measure_avoidSet_eq_sum_add_measure_avoidSet_add {μ : Measure Ω} {T : Ω → Ω}
+    (hT : MeasurePreserving T μ μ) {A : Set Ω}
     (hA : MeasurableSet A) (n m : ℕ) :
     μ (avoidSet T A A n) =
       (∑ k ∈ Finset.range m, μ (A ∩ {x | retTime T A x = n + 1 + k})) +
@@ -221,25 +242,27 @@ private theorem aux_kac_2 {μ : Measure Ω} {T : Ω → Ω} (hT : MeasurePreserv
   | zero => simp
   | succ m ih =>
     rw [Finset.sum_range_succ, ih]
-    have h4 := aux_kac_R4 hT hA hA (n + m)
-    rw [aux_kac_1 T A (n + m)] at h4
+    have h4 := measure_avoidSet_eq_add_measure_avoidSet_succ hT hA hA (n + m)
+    rw [inter_retSet_succ_eq_inter_retTime_eq T A (n + m)] at h4
     rw [show n + m + 1 = n + 1 + m from by omega] at h4
     rw [h4]
     ring
 
-private theorem aux_kac_3 {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω}
+/-- `μ (avoidSet T A A n)` equals the tail sum `∑' k, μ (A ∩ {retTime = n+1+k})`. -/
+private theorem measure_avoidSet_eq_tsum_measure_retTime_eq {μ : Measure Ω} [IsFiniteMeasure μ]
+    {T : Ω → Ω}
     (hT : MeasurePreserving T μ μ) {A : Set Ω} (hA : MeasurableSet A) (n : ℕ) :
     μ (avoidSet T A A n) = ∑' k : ℕ, μ (A ∩ {x | retTime T A x = n + 1 + k}) := by
   have h2 : ∀ m : ℕ, μ (avoidSet T A A n) =
       (∑ k ∈ Finset.range m, μ (A ∩ {x | retTime T A x = n + 1 + k})) +
         μ (avoidSet T A A (n + m)) :=
-    fun m => aux_kac_2 hT hA n m
+    fun m => measure_avoidSet_eq_sum_add_measure_avoidSet_add hT hA n m
   have hsum : Tendsto
       (fun m : ℕ => ∑ k ∈ Finset.range m, μ (A ∩ {x | retTime T A x = n + 1 + k}))
       atTop (𝓝 (∑' k : ℕ, μ (A ∩ {x | retTime T A x = n + 1 + k}))) :=
     ENNReal.tendsto_nat_tsum _
   have hrem : Tendsto (fun m : ℕ => μ (avoidSet T A A (n + m))) atTop (𝓝 (0 : ℝ≥0∞)) :=
-    (aux_kac_R6 hT.measurable hA hA (subset_refl A)).comp
+    (tendsto_measure_avoidSet_atTop_nhds_zero hT.measurable hA hA (subset_refl A)).comp
       ((tendsto_add_atTop_nat n).congr (fun m => Nat.add_comm m n))
   have hplus : Tendsto
       (fun m : ℕ => (∑ k ∈ Finset.range m, μ (A ∩ {x | retTime T A x = n + 1 + k})) +
@@ -252,7 +275,9 @@ private theorem aux_kac_3 {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω}
     hplus.congr (fun m => (h2 m).symm)
   exact tendsto_nhds_unique tendsto_const_nhds hconst
 
-private theorem aux_kac_4 {μ : Measure Ω} {T : Ω → Ω} (hT : Measurable T) {A : Set Ω}
+/-- The tail sum of `μ (A ∩ {retTime = n+1+k})` equals `μ (A ∩ {n < retTime})`. -/
+private theorem tsum_measure_retTime_eq_eq_measure_lt_retTime {μ : Measure Ω} {T : Ω → Ω}
+    (hT : Measurable T) {A : Set Ω}
     (hA : MeasurableSet A) (n : ℕ) :
     ∑' k : ℕ, μ (A ∩ {x | retTime T A x = n + 1 + k}) = μ (A ∩ {x | n < retTime T A x}) := by
   have hset : A ∩ {x | n < retTime T A x} = ⋃ k, A ∩ {x | retTime T A x = n + 1 + k} :=
@@ -265,8 +290,9 @@ private theorem aux_kac_4 {μ : Measure Ω} {T : Ω → Ω} (hT : Measurable T) 
       · rintro ⟨k, hxA, hk⟩
         exact ⟨hxA, by omega⟩
   have hmeas : ∀ k : ℕ, MeasurableSet (A ∩ {x | retTime T A x = n + 1 + k}) := fun k =>
-    hA.inter ((aux_kac_R2 hT hA) (measurableSet_singleton (n + 1 + k)))
-  have hdisj : Pairwise (Function.onFun Disjoint fun k : ℕ => A ∩ {x | retTime T A x = n + 1 + k}) :=
+    hA.inter ((measurable_retTime hT hA) (measurableSet_singleton (n + 1 + k)))
+  have hdisj : Pairwise (Function.onFun Disjoint fun k : ℕ => A ∩ {x | retTime T A x = n + 1 + k})
+      :=
     fun k l hkl => Set.disjoint_left.mpr (by
       intro x hx hxl
       simp only [Set.mem_inter_iff, Set.mem_setOf_eq] at hx hxl
@@ -274,7 +300,8 @@ private theorem aux_kac_4 {μ : Measure Ω} {T : Ω → Ω} (hT : Measurable T) 
   rw [← measure_iUnion hdisj hmeas]
   exact congrArg μ hset.symm
 
-private theorem aux_sum_ite_lt (k : ℕ) :
+/-- `(k : ℝ≥0∞)` is the sum over `n` of the indicator of `n < k`. -/
+private theorem natCast_eq_tsum_ite_lt (k : ℕ) :
     (k : ℝ≥0∞) = ∑' n : ℕ, (if n < k then (1 : ℝ≥0∞) else 0) := by
   rw [tsum_eq_sum (s := Finset.range k) (fun n hn => by
     simp only [Finset.mem_range, not_lt] at hn
@@ -284,36 +311,44 @@ private theorem aux_sum_ite_lt (k : ℕ) :
     Finset.card_range]
 
 omit [MeasurableSpace Ω] in
-private theorem aux_kac_5 (T : Ω → Ω) (A : Set Ω) (x : Ω) :
+/-- `retTime T A x`, cast to `ℝ≥0∞`, is a layer-cake sum of indicators of `{n < retTime}`. -/
+private theorem natCast_retTime_eq_tsum_indicator_lt (T : Ω → Ω) (A : Set Ω) (x : Ω) :
     ((retTime T A x : ℕ) : ℝ≥0∞) =
       ∑' n : ℕ, ({y | n < retTime T A y} : Set Ω).indicator (fun _ => (1 : ℝ≥0∞)) x := by
   classical
   simp only [Set.indicator_apply, Set.mem_setOf_eq]
-  exact aux_sum_ite_lt (retTime T A x)
+  exact natCast_eq_tsum_ite_lt (retTime T A x)
 
-private theorem aux_kac_6 {μ : Measure Ω} {T : Ω → Ω} (hT : Measurable T) {A : Set Ω}
+/-- `∫⁻_A retTime` equals `∑' n, μ (A ∩ {n < retTime})`, by the layer-cake formula. -/
+private theorem lintegral_retTime_eq_tsum_measure_lt_retTime {μ : Measure Ω} {T : Ω → Ω}
+    (hT : Measurable T) {A : Set Ω}
     (hA : MeasurableSet A) :
     ∫⁻ x in A, (retTime T A x : ℝ≥0∞) ∂μ = ∑' n : ℕ, μ (A ∩ {x | n < retTime T A x}) := by
   classical
-  rw [lintegral_congr (fun x => aux_kac_5 T A x)]
+  rw [lintegral_congr (fun x => natCast_retTime_eq_tsum_indicator_lt T A x)]
   rw [lintegral_tsum]
   · refine tsum_congr (fun n => ?_)
     rw [← lintegral_indicator hA]
     rw [indicator_indicator]
-    rw [lintegral_indicator_const (hA.inter (measurableSet_lt measurable_const (aux_kac_R2 hT hA))) 1]
+    rw
+        [lintegral_indicator_const
+        (hA.inter (measurableSet_lt measurable_const (measurable_retTime hT hA))) 1]
     rw [one_mul]
   · intro n
     exact (measurable_const.indicator
-      (measurableSet_lt measurable_const (aux_kac_R2 hT hA))).aemeasurable
+      (measurableSet_lt measurable_const (measurable_retTime hT hA))).aemeasurable
 
-private theorem aux_kac_7 {μ : Measure Ω} {T : Ω → Ω} (hT : Measurable T) {A : Set Ω}
+/-- `∑' n, μ (avoidSet T A A n) = μ (⋃ n, avoidSet T A A n)`, by disjointness. -/
+private theorem tsum_measure_avoidSet_eq_measure_iUnion {μ : Measure Ω} {T : Ω → Ω}
+    (hT : Measurable T) {A : Set Ω}
     (hA : MeasurableSet A) :
     ∑' n : ℕ, μ (avoidSet T A A n) = μ (⋃ n, avoidSet T A A n) := by
-  exact (measure_iUnion (aux_kac_R5 T (subset_refl A : A ⊆ A))
-    (fun n => (aux_kac_R3 hT hA hA n).2)).symm
+  exact (measure_iUnion (pairwise_disjoint_avoidSet T (subset_refl A : A ⊆ A))
+    (fun n => (measurableSet_retSet_and_avoidSet hT hA hA n).2)).symm
 
 omit [MeasurableSpace Ω] in
-private theorem aux_kac_8 (T : Ω → Ω) (A : Set Ω) :
+/-- `⋃ n, avoidSet T A A n` is exactly the first-entrance set `{x | ∃ n, T^[n] x ∈ A}`. -/
+private theorem iUnion_avoidSet_eq_setOf_exists_mem (T : Ω → Ω) (A : Set Ω) :
     (⋃ n, avoidSet T A A n) = {x | ∃ n, T^[n] x ∈ A} := by
   classical
   ext x
@@ -328,18 +363,23 @@ private theorem aux_kac_8 (T : Ω → Ω) (A : Set Ω) :
 
 /-- **The first-return integral identity** (no ergodicity needed): the mean of `retTime T A` on
 `A` equals the measure of the whole basin `{x | ∃ n, T^[n] x ∈ A}`. -/
-theorem lintegral_retTime_eq_measure_hit {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω} (hT : MeasurePreserving T μ μ)
+theorem lintegral_retTime_eq_measure_hit {μ : Measure Ω} [IsFiniteMeasure μ] {T : Ω → Ω}
+    (hT : MeasurePreserving T μ μ)
     {A : Set Ω} (hA : MeasurableSet A) :
     ∫⁻ x in A, (retTime T A x : ℝ≥0∞) ∂μ = μ {x | ∃ n, T^[n] x ∈ A} := by
-  rw [aux_kac_6 (μ := μ) hT.measurable hA]
+  rw [lintegral_retTime_eq_tsum_measure_lt_retTime (μ := μ) hT.measurable hA]
   trans ∑' n : ℕ, μ (avoidSet T A A n)
-  · exact (tsum_congr (fun n => (aux_kac_3 (μ := μ) hT hA n).trans
-      (aux_kac_4 (μ := μ) hT.measurable hA n))).symm
-  · rw [aux_kac_7 (μ := μ) hT.measurable hA, aux_kac_8]
+  · exact (tsum_congr (fun n => (measure_avoidSet_eq_tsum_measure_retTime_eq (μ := μ) hT hA n).trans
+      (tsum_measure_retTime_eq_eq_measure_lt_retTime (μ := μ) hT.measurable hA n))).symm
+  · rw
+      [tsum_measure_avoidSet_eq_measure_iUnion (μ := μ) hT.measurable hA,
+      iUnion_avoidSet_eq_setOf_exists_mem]
 
 /-! ### Ergodicity: the orbit of `A` is almost everything -/
 
-private theorem aux_kac_10 {T : Ω → Ω} (hT : Measurable T) {A : Set Ω} (hA : MeasurableSet A) :
+/-- The basin `{x | ∃ n, T^[n] x ∈ A}` is measurable, contains `A`, and is forward invariant. -/
+private theorem measurableSet_basin_subset_and_forward_invariant {T : Ω → Ω} (hT : Measurable T)
+    {A : Set Ω} (hA : MeasurableSet A) :
     MeasurableSet {x | ∃ n, T^[n] x ∈ A} ∧ A ⊆ {x | ∃ n, T^[n] x ∈ A} ∧
       T ⁻¹' {x | ∃ n, T^[n] x ∈ A} ⊆ {x | ∃ n, T^[n] x ∈ A} := by
   refine ⟨?_, ?_, ?_⟩
@@ -350,10 +390,12 @@ private theorem aux_kac_10 {T : Ω → Ω} (hT : Measurable T) {A : Set Ω} (hA 
   · rintro x ⟨n, hn⟩
     exact ⟨n + 1, by rw [Function.iterate_succ_apply]; exact hn⟩
 
-private theorem aux_kac_11 {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Ω → Ω}
+/-- For ergodic `T` and `μ A ≠ 0`, the basin of `A` has full measure. -/
+private theorem measure_basin_eq_one_of_ergodic {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Ω → Ω}
     (herg : Ergodic T μ) {A : Set Ω} (hA : MeasurableSet A) (hA0 : μ A ≠ 0) :
     μ {x | ∃ n, T^[n] x ∈ A} = 1 := by
-  obtain ⟨hUm, hAU, hTU⟩ := aux_kac_10 herg.toMeasurePreserving.measurable hA
+  obtain ⟨hUm, hAU, hTU⟩ := measurableSet_basin_subset_and_forward_invariant
+      herg.toMeasurePreserving.measurable hA
   rcases herg.ae_empty_or_univ_of_preimage_ae_le hUm.nullMeasurableSet hTU.eventuallyLE with h | h
   · exfalso
     have hle : μ A ≤ μ {x | ∃ n, T^[n] x ∈ A} := measure_mono hAU
@@ -377,16 +419,18 @@ theorem kac_integrable (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → �
     Integrable (fun x => (retTime T A x : ℝ)) (μ.restrict A) := by
   have hcast : Measurable fun n : ℕ => ((n : ℕ) : ℝ≥0∞) := measurable_from_nat
   have hm : Measurable fun x => ((retTime T A x : ℕ) : ℝ≥0∞) :=
-    hcast.comp (aux_kac_R2 hT.measurable hA)
+    hcast.comp (measurable_retTime hT.measurable hA)
   refine (integrable_toReal_of_lintegral_ne_top hm.aemeasurable ?_ :
     Integrable (fun x => ENNReal.toReal ((retTime T A x : ℕ) : ℝ≥0∞)) (μ.restrict A))
   exact ne_top_of_le_ne_top ENNReal.one_ne_top (kac_le μ T hT hA)
 
-private theorem aux_kac_12 (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → Ω)
+/-- The Bochner integral of `retTime` on `A` is the real part of its `lintegral`. -/
+private theorem integral_retTime_eq_toReal_lintegral_retTime (μ : Measure Ω)
+    [IsProbabilityMeasure μ] (T : Ω → Ω)
     (hT : MeasurePreserving T μ μ) {A : Set Ω} (hA : MeasurableSet A) :
     ∫ x in A, (retTime T A x : ℝ) ∂μ = (∫⁻ x in A, (retTime T A x : ℝ≥0∞) ∂μ).toReal := by
   have hfm : AEMeasurable (fun x => (retTime T A x : ℝ≥0∞)) (μ.restrict A) :=
-    ((Measurable.comp measurable_from_nat (aux_kac_R2 hT.measurable hA))).aemeasurable
+    ((Measurable.comp measurable_from_nat (measurable_retTime hT.measurable hA))).aemeasurable
   have hfin : ∀ᵐ x ∂(μ.restrict A), (retTime T A x : ℝ≥0∞) < ∞ :=
     Filter.Eventually.of_forall fun x => ENNReal.natCast_lt_top _
   simpa [ENNReal.toReal_natCast] using integral_toReal hfm hfin
@@ -398,8 +442,12 @@ theorem kac (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Ω → Ω) (herg : 
       Integrable (fun x => (retTime T A x : ℝ)) (μ.restrict A) ∧
       ∫ x in A, (retTime T A x : ℝ) ∂μ = 1 := by
   have h1 : ∫⁻ x in A, (retTime T A x : ℝ≥0∞) ∂μ = 1 := by
-    rw [lintegral_retTime_eq_measure_hit herg.toMeasurePreserving hA, aux_kac_11 herg hA hA0]
+    rw
+        [lintegral_retTime_eq_measure_hit herg.toMeasurePreserving hA,
+        measure_basin_eq_one_of_ergodic herg hA hA0]
   refine ⟨h1, kac_integrable μ T herg.toMeasurePreserving hA, ?_⟩
-  rw [aux_kac_12 μ T herg.toMeasurePreserving hA, h1, ENNReal.toReal_one]
+  rw
+      [integral_retTime_eq_toReal_lintegral_retTime μ T herg.toMeasurePreserving hA, h1,
+      ENNReal.toReal_one]
 
 end LatticeProb
