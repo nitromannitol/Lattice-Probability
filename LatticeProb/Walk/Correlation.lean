@@ -697,7 +697,7 @@ theorem exists_tsum_srwGreen_mul_le (hd : 1 ≤ d) (hd4 : d ≤ 4) :
       (show (0 : ℝ) ≤ C₁ * corrRate d m n by positivity), hfac]
   exact (hT m n hm hmn).trans hstep
 
-/-! ### The tail of the kernel above dimension four -/
+/-! ### The tail of the kernel in dimension four and above -/
 
 /-- `∑_{m ≤ s < N} s^{-(k+4)/2} ≤ 2 / (m √m^k)`, the tail sum in every dimension
 above four.  It is `sum_Ico_inv_sq_le` with the extra `k` powers of `√s`
@@ -735,8 +735,8 @@ theorem sum_Ico_inv_sqrt_pow_le (k : ℕ) {m : ℕ} (hm : 1 ≤ m) (N : ℕ) :
         rw [div_eq_mul_inv, div_eq_mul_inv, mul_inv]
         ring
 
-/-- **The time tail of the kernel above dimension four.**  In dimension
-`k + 5` the kernel summed from time `m` on is `O(m^{(2-d)/2})`, uniformly in the
+/-- **The time tail of the kernel in dimension four and above.**  In dimension
+`k + 4` the kernel summed from time `m` on is `O(m^{(2-d)/2})`, uniformly in the
 site. -/
 theorem sum_Ico_srwHeat_high_le {k : ℕ} {m : ℕ} (hm : 1 ≤ m) (N : ℕ) (y : Site (k + 4)) :
     ∑ s ∈ Finset.Ico m N, srwHeat (k + 4) s y

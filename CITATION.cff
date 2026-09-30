@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this library, please cite it as below."
+title: "Lattice-Probability: a Lean 4 library of discrete probability and lattice potential theory"
+abstract: >-
+  A machine-checked Lean 4 / mathlib library of discrete probability and
+  lattice potential theory, shared by the formalizations of several papers:
+  simple random walk on Z^d and on locally finite graphs, Gaussian kernel
+  bounds, Green functions and their gradients, local central limit theorems,
+  electrical networks and the killed Green function, the discrete Gaussian
+  free field, the classical integer sandpile, the maximal, pointwise and
+  subadditive (Kingman) ergodic theorems, zero-one laws, the Harris and van
+  den Berg-Kesten inequalities, percolation and convex order, the Bernstein,
+  Freedman, Fuk-Nagaev, von Bahr-Esseen and Efron-Stein inequalities, Brownian
+  motion and its strong Markov property, scaling-limit infrastructure, regular
+  variation, and Jordan separation on the square lattice.  Results cited from
+  the literature are taken as explicit hypotheses.  The library contains no
+  sorry and no custom axiom.
+type: software
+authors:
+  - family-names: Bou-Rabee
+    given-names: Ahmed
+keywords:
+  - Lean
+  - mathlib
+  - formal verification
+  - probability
+  - random walk
+  - potential theory
+  - Gaussian free field
+  - ergodic theory
+license: Apache-2.0
+# Add a Zenodo DOI here once an archived release is minted.
+repository-code: "https://github.com/nitromannitol/Lattice-Probability"

@@ -1,5 +1,5 @@
 /-
-The pointwise Green bound `G(0,z) ≤ C(1+|z|)^{2-d}` above dimension four.
+The pointwise Green bound `G(0,z) ≤ C(1+|z|)^{2-d}` in dimension four and above.
 
 The Green function is the kernel summed over time, and the sum is split at
 `j = |z|^2`.  Past that time the kernel is below its on-diagonal value and the
@@ -267,7 +267,7 @@ theorem sum_range_srwHeat_le {k : ℕ} {z : Site (k + 4)} (hz : 1 ≤ graphNorm 
         / ((graphNorm z : ℕ) : ℝ) ^ (k + 2) := by ring
   linarith [hnear, hfar]
 
-/-- **The pointwise Green bound above dimension four**:
+/-- **The pointwise Green bound in dimension four and above**:
 `G(0,z) ≤ C (1+|z|_1)^{2-d}`, with `|z|_1` the graph norm, which is at least the
 Euclidean norm, so this is the stronger form of the bound. -/
 theorem exists_srwGreenInf_le (k : ℕ) :

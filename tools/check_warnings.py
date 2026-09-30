@@ -3,9 +3,8 @@
 import os, pathlib, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-_lock = os.environ.get("LAKE_LOCK")
-_cmd = (["flock", _lock] if _lock else []) + ["lake", "build"]
-r = subprocess.run(_cmd,
+_lock = os.environ.get("LAKE_LOCK")  # optional: serialise builds on a shared machine
+r = subprocess.run((["flock", _lock] if _lock else []) + ["lake", "build"],
                    cwd=ROOT, capture_output=True, text=True, timeout=7200,
                    env={**os.environ,
                         "PATH": os.path.expanduser("~/.elan/bin") + ":" + os.environ["PATH"]})

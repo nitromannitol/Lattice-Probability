@@ -1,0 +1,330 @@
+version: "v0.3"
+
+project:
+  name: "Lattice-Probability"
+  authors:
+    - "Ahmed Bou-Rabee"
+  license: "Apache-2.0"
+
+# A library, not the formalization of one source.  Its theorems are standard
+# results of probability and potential theory, each cited in its docstring.
+# The sources listed are those of the three comparator-audited theorems and
+# the three repositories from which modules were adapted (see NOTICE).
+sources:
+  - title: "The ergodic theory of subadditive stochastic processes"
+    authors:
+      - "J. F. C. Kingman"
+    id: "J. Roy. Statist. Soc. Ser. B 30 (1968)"
+    type: "journal article"
+    license: ""
+    author_contacted: "no"
+    prior_work: "Kingman's subadditive ergodic theorem; the library follows Steele's 1989 proof"
+  - title: "percolation library (PercolationContinuity), anthropics/formal-math, commit 795efb86"
+    authors:
+      - "Anthropic, PBC"
+    id: "https://github.com/anthropics/formal-math"
+    type: "software"
+    license: "Apache-2.0"
+    author_contacted: "no"
+    prior_work: "LatticeProb/Prob/Harris.lean, ZeroOne.lean and HarrisVariants.lean are adapted from it"
+  - title: "rotor-23, commit 703754d6"
+    authors:
+      - "Ahmed Bou-Rabee"
+    id: "https://github.com/nitromannitol/rotor-23"
+    type: "software"
+    license: "Apache-2.0"
+    author_contacted: "n/a"     # the same author
+    prior_work: "the modules of LatticeProb/Lattice/Planar/ are adapted from it"
+  - title: "Parking-Sharpness, commits c368b888 and 27c7f7c2"
+    authors:
+      - "Ahmed Bou-Rabee"
+    id: "https://github.com/nitromannitol/Parking-Sharpness"
+    type: "software"
+    license: "Apache-2.0"
+    author_contacted: "n/a"     # the same author
+    prior_work: "sixteen top-level continuum modules of LatticeProb/ are adapted from it"
+
+status:
+  scope: >-
+    A Lean 4 / Mathlib library of discrete probability and lattice potential
+    theory, shared by the formalization repositories Divisible-Sandpile-Percolation,
+    Divisible-Sandpile-RWRS, Parking-Sharpness and Unique-Continuation-Planar and
+    by formalizations in progress.  It covers simple random walk on Z^d and on
+    locally finite graphs (Gaussian kernel bounds, Green functions and their
+    gradients, hitting probabilities, the Markov property, exit times, the Nash
+    inequality and on-diagonal heat kernel bounds), local central limit
+    theorems, electrical networks and the killed Green function, the discrete
+    Gaussian free field with zero boundary values, the maximal, pointwise and
+    subadditive ergodic theorems and the ergodic decomposition, zero-one laws,
+    the Harris, FKG and van den Berg-Kesten inequalities, the Bernstein,
+    Freedman, Fuk-Nagaev, von Bahr-Esseen, Poisson-tail, Efron-Stein,
+    Paley-Zygmund, Ottaviani, Doob and Pinsker inequalities, the
+    Kolmogorov-Chentsov theorem, Brownian motion on R^d and its strong Markov
+    property, the isonormal process, regular variation, and Jordan separation
+    on the square lattice.  392 modules, about 87,000 lines, 4,541
+    declarations.  SCOPE BOUNDARY: five results from the literature are stated
+    as propositions in LatticeProb/External/ and not proved (the Gaussian
+    logarithmic Sobolev inequality and its Herbst bound, polygonal
+    unicoherence, Janiszewski's theorem for polygonal sets, the
+    Rellich-Kondrachov embedding in negative Sobolev order); the theorems that
+    use them take them as explicit hypotheses.  A sixth proposition there,
+    PotentialKernelAsymptotics (Lawler-Limic, Theorems 4.3.1 and 4.4.4), is
+    stated for the formalizations that cite it and proved in
+    LatticeProb/External/PotentialKernelAsymptoticsProved.lean.  The principal theorems are
+    listed in README.md and their axioms printed by
+    LatticeProb/Meta/AxiomsAudit.lean; three of them are additionally restated
+    over a Mathlib-only vocabulary for the Lean comparator
+    (Audit/LatticeProbAudit/).
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms:
+    - "propext"
+    - "Classical.choice"
+    - "Quot.sound"
+  main_results:
+    - declaration: "LatticeProb.ae_tendsto_div"
+      file: "LatticeProb/Prob/Kingman.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "Audit/LatticeProbAudit/Kingman/comparator.json"
+      literature_dependencies: []
+    - declaration: "LatticeProb.tendsto_integral_div"
+      file: "LatticeProb/Prob/Kingman.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "Audit/LatticeProbAudit/Kingman/comparator.json"
+      literature_dependencies: []
+    - declaration: "LatticeProb.Network.covariance_gff"
+      file: "LatticeProb/Network/GFF.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "Audit/LatticeProbAudit/GFF/comparator.json"
+      literature_dependencies: []
+    - declaration: "LatticeProb.Network.killedGreenMatrix_posSemidef"
+      file: "LatticeProb/Network/GFF.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "Audit/LatticeProbAudit/GFF/comparator.json"
+      literature_dependencies: []
+    - declaration: "LatticeProb.BinomialLCLT.exists_binomPMF_localCLT"
+      file: "LatticeProb/Walk/BinomialLocalCLT.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "Audit/LatticeProbAudit/BinomialLocalCLT/comparator.json"
+      literature_dependencies: []
+    - declaration: "LatticeProb.exists_abs_srwGreenInf_sub_le"
+      file: "LatticeProb/Walk/GreenAsymptotic.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.exists_abs_potentialKernel_sub_log_le"
+      file: "LatticeProb/Walk/PotentialKernel.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.External.potentialKernelAsymptotics_holds"
+      file: "LatticeProb/External/PotentialKernelAsymptoticsProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.gaussian_lipschitz_concentration"
+      file: "LatticeProb/Prob/GaussianHerbst.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies:
+        - "Gaussian Herbst bound from the logarithmic Sobolev inequality, Gross 1975 and Bakry-Emery 1985 (LatticeProb.GaussianHerbstBound), hypothesis"
+    - declaration: "LatticeProbAudit.kingman"
+      file: "Audit/LatticeProbAudit/Kingman/Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "Audit/LatticeProbAudit/Kingman/comparator.json"
+      literature_dependencies: []
+    - declaration: "LatticeProbAudit.gff"
+      file: "Audit/LatticeProbAudit/GFF/Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "Audit/LatticeProbAudit/GFF/comparator.json"
+      literature_dependencies: []
+    - declaration: "LatticeProbAudit.binomial_local_clt"
+      file: "Audit/LatticeProbAudit/BinomialLocalCLT/Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "Audit/LatticeProbAudit/BinomialLocalCLT/comparator.json"
+      literature_dependencies: []
+
+automation:
+  methods:
+    - method: "agent"
+      models:
+        - "claude-opus-5"
+        - "claude-sonnet-5"
+        - "claude-opus-5-5"
+        - "gpt-6-astra"
+        - "glm-5.3"
+        - "glm-5.3-flash"
+        - "deepseek-v4.1-flash"
+        - "labs-leanstral-1-5"
+        - "gpt-6-luna"
+        - "gpt-5.6-luna"
+      framework: >-
+        Claude Code (Anthropic) as the supervising and proving harness, which
+        wrote most of the Lean code; Codex CLI (OpenAI) for gpt-6-astra; a
+        scripted general (glm_general.py) driving glm-5.3, glm-5.3-flash and
+        deepseek-v4.1-flash; Mistral Vibe (vibe --agent lean) for Leanstral; the Pi agent
+        harness for the deepseek-v4.1-flash workers of the 2026-09-30 campaign
+      tool_setup: >-
+        Lake builds under leanprover/lean4:v4.32.0 with Mathlib at revision
+        81a5d257c8e410db227a6665ed08f64fea08e997, one shared build lock on
+        one machine.  The history on main runs from 2026-09-06 (db90208) to
+        2026-09-24 (5e998e8); all commits are made under the author's name,
+        and the division of labour below is reconstructed from the author's
+        run logs and notes, not from commit metadata.  claude-opus-5 (Claude
+        Code) wrote most of the library as "Library general" shifts from
+        2026-09-06 to 2026-09-08 (sites, i.i.d. fields, the walk modules, BK,
+        Kingman, Birkhoff, Kolmogorov-Chentsov, Brownian motion) and as
+        further Opus runs on 2026-09-11/12 (the strong Markov property,
+        Potter, Karamata, Freedman, the Nash heat kernel bound, Fuk-Nagaev);
+        a Claude Code supervising session merged every branch, ran the gates
+        and removed references to an unreleased repository (2026-09-18).
+        gpt-6-astra (Codex CLI, reasoning high to max) wrote the Gaussian law
+        determined by its covariance and Pinsker's inequality (2026-09-11),
+        the ergodic decomposition (2026-09-12), ported LatticeProb/Lattice/Planar/
+        from rotor-23 (2026-09-12), ran a comparator-style statement audit
+        (2026-09-12), and migrated sixteen continuum modules from
+        Parking-Sharpness (2026-09-17).  glm-5.3, sampling glm-5.3-flash for
+        compile-filtered proof candidates, proved the von Bahr-Esseen
+        inequality, the Kolmogorov modulus and moment bounds on product
+        spaces and the Fourier form of the heat kernel (2026-09-09 to
+        2026-09-11).  deepseek-v4.1-flash, driven by the same script, wrote
+        modules on conditional expectations in a parameter, white noise, the
+        supremum tail, negative-order Sobolev norms, Liouville's theorem and
+        the binomial kernel (2026-09-12 to 2026-09-16).  claude-sonnet-5
+        wrote the binomial local central limit theorem with its 1/m error
+        (2026-09-16) and moved modules into their own namespaces.
+        labs-leanstral-1-5 (Mistral Leanstral, through vibe) wrote the proofs
+        of LatticeProb/Network/GFF.lean (2026-09-23, commit 918318e) against
+        statements fixed in advance, verified by the supervisor.
+        claude-opus-5-5 wrote LatticeProb/Meta/AxiomsAudit.lean, the
+        comparator surface Audit/LatticeProbAudit/ and this release
+        documentation (2026-09-23).  On 2026-09-23 and 2026-09-24,
+        claude-sonnet-5 subagents, supervised by claude-opus-5-5 in Claude
+        Code, moved the paper-independent modules listed under Contents in
+        README.md as harvested from Divisible-Sandpile-Percolation,
+        Divisible-Sandpile-RWRS, Parking-Sharpness, Unique-Continuation-Planar,
+        Exploding-Sandpiles, Dynamic-Dimensional-Reduction,
+        manhattan-formalization, ORRW-Lower-Bound and rotor-23 into this
+        library, one branch per source formalization (harvest-analysis,
+        harvest-parking, harvest-manhattan, harvest-orrw,
+        harvest-percolation, harvest-sandpile).  Each move was checked by the
+        same tools/check_axioms.py and tools/check_warnings.py gates as every
+        other merge before the supervising session merged the branch.  These
+        modules were not written for this repository; the original
+        authorship of each is described in its source repository's own
+        disclosure, not restated here.  The author of
+        LatticeProb/Walk/LatticeGreen.lean (commit c860b35, 2026-09-23) is
+        not recorded in the logs.  Every merge was gated by
+        tools/check_axioms.py (the axiom closure of every declaration) and
+        tools/check_warnings.py (a warning-free build).  Both
+        .github/workflows/build.yml and .github/workflows/comparator.yml
+        trigger on request only (workflow_dispatch); the Lean comparator
+        (leanprover/comparator) is instead run locally before each release,
+        with results recorded in Audit/COMPARATOR_RUNS.md.
+        Final pass (2026-09-26 and 2026-09-27): a claude-opus-5-5 general in
+        Claude Code dispatched claude-sonnet-5 subagents, which renamed,
+        documented and split library modules; gpt-6-luna and gpt-5.6-luna (Codex
+        CLI) were commissioned for some proofs.
+        On 2026-09-30 a claude-opus-5-5 director in Claude Code proved the
+        Green function and planar potential kernel asymptotics
+        (LatticeProb/Walk/LineKernel.lean through LatticeProb/Walk/PotentialKernel.lean
+        and LatticeProb/External/PotentialKernelAsymptotics*.lean) on the branch
+        potential-kernel-asymptotics: it wrote the statements, the route and the
+        assembly, and four deepseek-v4.1-flash workers in the Pi agent harness
+        proved bounded packets of lemmas against those fixed statements, each
+        compiled and byte-checked by the director before it was kept.
+      cost:
+        wall_time: >-
+          about two and a half weeks of calendar time (2026-09-06 to
+          2026-09-24), in parallel with the formalizations that use the
+          library
+        spend_usd: "not tracked (subscription and API accounts)"
+        hardware: "a 20-thread Intel i9-9900X / 125 GB RAM Ubuntu machine; GLM and DeepSeek inference on hosted endpoints"
+      prompting_notes: >-
+        Human-directed agent work, supervised by the author.  Library requests
+        came from the formalizations that needed a result; statements were
+        written before their proofs were attempted, and proofs were accepted
+        only through the axiom and warning gates.
+  spend_usd: "not tracked (subscription and API accounts)"
+  notes: >-
+    All Lean code in this repository was written by the listed models under the
+    supervision of the author.  Every proof is checked by the Lean kernel and
+    Mathlib; the library contains no sorry and no custom axiom.  The results
+    cited from the literature enter as explicit hypotheses, not axioms.  The
+    Mathlib-only comparator challenge files (Audit/LatticeProbAudit/*/Challenge.lean)
+    each contain exactly one intentional statement-level sorry (the theorem
+    body), which is filled by the corresponding Solution.lean.  Three modules
+    are adapted from the percolation library of anthropics/formal-math, a
+    separate formalization not written for this repository; NOTICE lists them.
+
+fidelity:
+  divergences: >-
+    A library states its own theorems, so there is no source text to diverge
+    from.  Where a definition divides, truncates or takes a toReal, the
+    theorems that use it carry the hypotheses under which it has its intended
+    meaning (for example |j| <= m in the binomial local limit theorem, a vertex
+    outside C for the killed Green function).  The five cited results in
+    LatticeProb/External/ are hypotheses whose Lean statements render the
+    cited theorems; that they do so faithfully is a reading, not a check.
+
+review:
+  status: "author-verified"
+  reviewers:
+    - "Ahmed Bou-Rabee"
+  notes: >-
+    Correctness of every proof is guaranteed by the Lean kernel and Mathlib (no
+    sorry, no custom axiom).  The statements of the three audited theorems are
+    additionally checked against Mathlib-only restatements by
+    Audit/LatticeProbAudit/StatementRegression.lean.  This is not external
+    peer review.
+
+alignment:
+  namespace: "LatticeProb"
+  statements:
+    - source: "Kingman's subadditive ergodic theorem (Kingman 1968)"
+      lean: "LatticeProb.ae_tendsto_div"
+      module: "LatticeProb.Prob.Kingman"
+      status: "proved"
+      note: "With LatticeProb.tendsto_integral_div. Comparator challenge Audit/LatticeProbAudit/Kingman/."
+    - source: "The discrete Gaussian free field with zero boundary values"
+      lean: "LatticeProb.Network.covariance_gff"
+      module: "LatticeProb.Network.GFF"
+      status: "proved"
+      note: "With killedGreenMatrix_posSemidef and integral_gff. Comparator challenge Audit/LatticeProbAudit/GFF/."
+    - source: "The binomial local central limit theorem with a 1/m error"
+      lean: "LatticeProb.BinomialLCLT.exists_binomPMF_localCLT"
+      module: "LatticeProb.Walk.BinomialLocalCLT"
+      status: "proved"
+      note: "Comparator challenge Audit/LatticeProbAudit/BinomialLocalCLT/."
+    - source: "Lawler-Limic, Random Walk: A Modern Introduction, Theorems 4.3.1 (d >= 3) and 4.4.4 (d = 2): the Green function and potential kernel asymptotics"
+      lean: "LatticeProb.External.potentialKernelAsymptotics_holds"
+      module: "LatticeProb.External.PotentialKernelAsymptoticsProved"
+      status: "proved"
+      note: "From LatticeProb.exists_abs_srwGreenInf_sub_le, LatticeProb.tendsto_potentialKernel and LatticeProb.exists_abs_potentialKernel_sub_log_le."
+    - source: "The principal theorems listed under Contents in README.md"
+      lean: "LatticeProb.*"
+      module: "LatticeProb.Meta.AxiomsAudit"
+      status: "proved"
+      note: "Axioms printed by LatticeProb/Meta/AxiomsAudit.lean."
+    - source: "Cited results (Gaussian log-Sobolev and Herbst bound, polygonal unicoherence, Janiszewski, Rellich-Kondrachov in negative order)"
+      lean: "LatticeProb.GaussianLogSobolev, LatticeProb.GaussianHerbstBound, LatticeProb.PolygonalUnicoherence, LatticeProb.PolygonalJaniszewski, LatticeProb.External.RellichKondrachovNegSobolev"
+      module: "LatticeProb.External"
+      status: "assumed"
+      note: "Explicit hypotheses of the theorems that use them."
+
+acknowledgements: >-
+  Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are
+  adapted from the percolation library of anthropics/formal-math, from
+  rotor-23 and from Parking-Sharpness (see NOTICE).

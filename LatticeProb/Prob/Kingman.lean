@@ -802,6 +802,39 @@ theorem ae_tendsto_div [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
 
 end Cost
 
-end LatticeProb
+/-- Kingman's theorem for a two-index array `X m n` (with `m ≤ n`) that is stationary under `θ`
+and subadditive in the middle index. -/
+theorem ae_tendsto_div_array (μ : Measure Ω) [IsProbabilityMeasure μ] (θ : Ω → Ω)
+    (hθ : MeasurePreserving θ μ μ) (X : ℕ → ℕ → Ω → ℝ)
+    (hXm : ∀ m n, Measurable (X m n))
+    (hstat : ∀ m n ω, X m n (θ ω) = X (m + 1) (n + 1) ω)
+    (hsub : ∀ m k n ω, m ≤ k → k ≤ n → X m n ω ≤ X m k ω + X k n ω)
+    (hint : Integrable (X 0 1) μ)
+    (hlow : ∃ c : ℝ, ∀ n ω, 1 ≤ n → c * n ≤ X 0 n ω) :
+    ∀ᵐ ω ∂μ, ∃ L : ℝ, Tendsto (fun n : ℕ => X 0 n ω / (n : ℝ)) atTop (𝓝 L) := by
+  obtain ⟨c, hc⟩ := hlow
+  have hstat' : ∀ m n ω, m ≤ n → X m n ω = X 0 (n - m) (θ^[m] ω) := by
+    intro m
+    induction m with
+    | zero => intro n ω _; simp
+    | succ k ih =>
+      intro n ω hkn
+      have h1 : X (k + 1) n ω = X k (n - 1) (θ ω) := by
+        have h2 := hstat k (n - 1) ω
+        have h3 : n - 1 + 1 = n := Nat.sub_add_cancel (by omega : 1 ≤ n)
+        rw [h3] at h2
+        exact h2.symm
+      rw [h1, ih (n - 1) (θ ω) (by omega)]
+      congr 1
+      omega
+  have hsub' : SubadditiveAlong θ (fun n ω => X 0 n ω) := by
+    intro m n ω
+    have h := hsub 0 m (m + n) ω (Nat.zero_le _) (Nat.le_add_right _ _)
+    rw [hstat' m (m + n) ω (Nat.le_add_right _ _), Nat.add_sub_cancel_left] at h
+    simpa using h
+  have hgm : ∀ n, Measurable (fun ω => X 0 n ω) := fun n => hXm 0 n
+  have hlow' : ∀ n y, 1 ≤ n → c * n ≤ X 0 n y := hc
+  exact ae_tendsto_div hθ hsub' hgm hint hlow'
 
-end
+
+end LatticeProb
