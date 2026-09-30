@@ -138,6 +138,15 @@ general locally finite graph is `LatticeProb.Graph.heat`.
   `|k| ≤ A √m`.
 * `LatticeProb.LocalCLT.srwHeat_eq_fourier`: the Fourier representation of
   `p_j(0, x)` on `ℤ^d` as an integral over the torus `[-π, π]^d`.
+* `LatticeProb.LocalCLT.exists_abs_srwHeat_add_succ_sub_le`: the paired local
+  central limit theorem on `ℤ^d`, `|p_n(x) + p_{n+1}(x) - 2 (d/(2πn))^{d/2}
+  e^{-d|x|²/(2n)}| ≤ C n^{-(d+2)/2}` for `n ≥ 1`, uniformly in `x`, and
+  `LatticeProb.LocalCLT.exists_abs_srwHeat_sub_le`, its parity form at the sites
+  of the parity of `n` (Lawler–Limic, Theorem 2.1.3); with the forms
+  `LatticeProb.LocalCLT.exists_abs_heatKernel_four_add_succ_sub_le` (`d = 4`,
+  error `C/n³`) and `LatticeProb.LocalCLT.exists_window_abs_heatKernel_sub_heatKernelBM_le`,
+  `LatticeProb.LocalCLT.exists_window_abs_srwHeat_sub_gauss_lt` (uniform on
+  parabolic windows) cited by the divisible-sandpile and parking formalizations.
 * `LatticeProb.ContinuousTime.exists_abs_lineKernel_sub_lineGauss_le`: the
   local limit theorem for the continuous-time walk on `ℤ` with a
   Gaussian-weighted error, `|q_s(k) - g_s(k)| ≤ C s^{-3/2} exp(-k²/(10(s + |k|)))`

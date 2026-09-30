@@ -212,6 +212,13 @@ import LatticeProb.Walk.LogTimeIntegral
 import LatticeProb.Walk.GreenAsymptotic
 import LatticeProb.Walk.PotentialKernelFourier
 import LatticeProb.Walk.PotentialKernel
+import LatticeProb.Walk.PairedFourier
+import LatticeProb.Walk.PairedMultiplier
+import LatticeProb.Walk.PairedMultiplierOff
+import LatticeProb.Walk.PairedGaussMoments
+import LatticeProb.Walk.PairedOffIntegral
+import LatticeProb.Walk.PairedLocalCLT
+import LatticeProb.Walk.LocalCLTWindow
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation

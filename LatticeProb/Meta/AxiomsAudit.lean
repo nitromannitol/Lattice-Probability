@@ -59,6 +59,11 @@ library.
 #print axioms LatticeProb.LocalCLT.srwHeat_eq_fourier
 #print axioms LatticeProb.ContinuousTime.exists_abs_lineKernel_sub_lineGauss_le
 #print axioms LatticeProb.ContinuousTime.exists_abs_ctHeat_sub_ctGauss_le
+#print axioms LatticeProb.LocalCLT.exists_abs_srwHeat_add_succ_sub_le
+#print axioms LatticeProb.LocalCLT.exists_abs_srwHeat_sub_le
+#print axioms LatticeProb.LocalCLT.exists_abs_heatKernel_four_add_succ_sub_le
+#print axioms LatticeProb.LocalCLT.exists_window_abs_heatKernel_sub_heatKernelBM_le
+#print axioms LatticeProb.LocalCLT.exists_window_abs_srwHeat_sub_gauss_lt
 
 /-! ### Electrical networks and the killed Green function -/
 
