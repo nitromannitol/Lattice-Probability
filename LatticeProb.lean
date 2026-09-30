@@ -290,6 +290,8 @@ import LatticeProb.Analysis.Sobolev.TightTransfer
 import LatticeProb.External.RellichKondrachovNegSobolev
 import LatticeProb.External.PotentialKernelAsymptotics
 import LatticeProb.External.PotentialKernelAsymptoticsProved
+import LatticeProb.External.FeyMeesterRedigLeastAction
+import LatticeProb.External.FeyMeesterRedigLeastActionProved
 import LatticeProb.WhiteNoise
 import LatticeProb.ContinuumHeatKernel
 import LatticeProb.ContinuumNoiseField
@@ -312,6 +314,7 @@ import LatticeProb.Order.EventuallyConstant
 import LatticeProb.Order.ENatArrival
 import LatticeProb.Sandpile.Toppling
 import LatticeProb.Sandpile.Waves
+import LatticeProb.Sandpile.LeastAction
 import LatticeProb.Sandpile.Recurrence
 
 import LatticeProb.Prob.Scaling.BackwardPositivity

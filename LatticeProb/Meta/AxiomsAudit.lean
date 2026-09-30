@@ -40,6 +40,7 @@ library.
 #print axioms LatticeProb.walkOp_potentialKernel_sub
 #print axioms LatticeProb.exists_abs_potentialKernel_sub_log_le
 #print axioms LatticeProb.External.potentialKernelAsymptotics_holds
+#print axioms LatticeProb.External.feyMeesterRedigLeastAction_holds
 #print axioms LatticeProb.markov_stopping
 #print axioms LatticeProb.exists_maxDisp_bound
 #print axioms LatticeProb.srwTail_le
@@ -180,6 +181,7 @@ library.
 #print axioms LatticeProb.Sandpile.exists_adj_pos_of_nbrSumZ_pos
 #print axioms LatticeProb.Sandpile.lap_le_of_fixed
 #print axioms LatticeProb.Sandpile.recurrent_const
+#print axioms LatticeProb.Sandpile.le_of_isLegalToppling
 #print axioms LatticeProb.eventually_constant_of_monotone_bounded
 #print axioms LatticeProb.finset_common_stable
 #print axioms LatticeProb.sInf_coe_attained

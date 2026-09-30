@@ -61,7 +61,7 @@ status:
     Paley-Zygmund, Ottaviani, Doob and Pinsker inequalities, the
     Kolmogorov-Chentsov theorem, Brownian motion on R^d and its strong Markov
     property, the isonormal process, regular variation, and Jordan separation
-    on the square lattice.  473 modules, about 110,000 lines, 5,068
+    on the square lattice.  476 modules, about 110,000 lines, 5,076
     declarations.  SCOPE BOUNDARY: five results from the literature are stated
     as propositions in LatticeProb/External/ and not proved (the Gaussian
     logarithmic Sobolev inequality and its Herbst bound, polygonal
@@ -70,7 +70,9 @@ status:
     use them take them as explicit hypotheses.  A sixth proposition there,
     PotentialKernelAsymptotics (Lawler-Limic, Theorems 4.3.1 and 4.4.4), is
     stated for the formalizations that cite it and proved in
-    LatticeProb/External/PotentialKernelAsymptoticsProved.lean.  The principal theorems are
+    LatticeProb/External/PotentialKernelAsymptoticsProved.lean, and a seventh,
+    FeyMeesterRedigLeastAction (Fey-Meester-Redig, Theorem 2.8), likewise in
+    LatticeProb/External/FeyMeesterRedigLeastActionProved.lean.  The principal theorems are
     listed in README.md and their axioms printed by
     LatticeProb/Meta/AxiomsAudit.lean; three of them are additionally restated
     over a Mathlib-only vocabulary for the Lean comparator
@@ -126,6 +128,12 @@ status:
       literature_dependencies: []
     - declaration: "LatticeProb.External.potentialKernelAsymptotics_holds"
       file: "LatticeProb/External/PotentialKernelAsymptoticsProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.External.feyMeesterRedigLeastAction_holds"
+      file: "LatticeProb/External/FeyMeesterRedigLeastActionProved.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
@@ -341,6 +349,11 @@ alignment:
       module: "LatticeProb.Walk.IntersectionMoment"
       status: "proved"
       note: "E_x E_y I(X, Y)^2 <= C (1 + |x - y|)^(4 - d), through the local times and the Green function convolution bounds of LatticeProb.Walk.GreenPointwise."
+    - source: "Fey, Meester and Redig, Stabilizability and percolation in the infinite volume sandpile model, Ann. Probab. 37 (2009), Theorem 2.8: the least action principle for legal topplings"
+      lean: "LatticeProb.External.feyMeesterRedigLeastAction_holds"
+      module: "LatticeProb.External.FeyMeesterRedigLeastActionProved"
+      status: "proved"
+      note: "From LatticeProb.Sandpile.le_of_isLegalToppling_of_eventually_eq, for legal toppling procedures in discrete time."
     - source: "The principal theorems listed under Contents in README.md"
       lean: "LatticeProb.*"
       module: "LatticeProb.Meta.AxiomsAudit"

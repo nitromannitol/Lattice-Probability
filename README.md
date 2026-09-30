@@ -37,7 +37,7 @@ and by the formalizations in progress of *Dynamic dimensional reduction*,
 regularity, and `manhattan-formalization`, which is being ported to import
 the library in place of its own copies of the modules moved from it.
 
-The library has 473 modules, about 110,000 lines and 5,068 declarations.
+The library has 476 modules, about 110,000 lines and 5,076 declarations.
 
 - **No `sorry`** anywhere in the library.  Each Mathlib-only comparator
   challenge in `Audit/` contains its single intentional statement-level
@@ -45,7 +45,7 @@ The library has 473 modules, about 110,000 lines and 5,068 declarations.
 - **No custom `axiom`.**  Every declaration of the library reduces to
   `mathlib`'s three standard foundational axioms, `propext`,
   `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py`
-  checks this for all 5,068 declarations, and
+  checks this for all 5,076 declarations, and
   [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
   prints the axioms of the principal theorems listed below.
 - **Cited results are hypotheses.**  Five results from the literature are
@@ -56,10 +56,13 @@ The library has 473 modules, about 110,000 lines and 5,068 declarations.
   that uses one of them takes it as an explicit hypothesis, so its statement
   shows what it rests on.  Only the Herbst bound and the Rellich-Kondrachov
   embedding are used, by `LatticeProb.gaussian_lipschitz_concentration` and by
-  the compactness results of `LatticeProb/Analysis/Sobolev/`.  One further
-  proposition there, `PotentialKernelAsymptotics`, the Green function and
-  potential kernel asymptotics that formalizations cite from Lawler–Limic, is
-  proved in the library (`LatticeProb/External/PotentialKernelAsymptoticsProved.lean`).
+  the compactness results of `LatticeProb/Analysis/Sobolev/`.  Two further
+  propositions there are proved in the library: `PotentialKernelAsymptotics`,
+  the Green function and potential kernel asymptotics that formalizations cite
+  from Lawler–Limic (`LatticeProb/External/PotentialKernelAsymptoticsProved.lean`),
+  and `FeyMeesterRedigLeastAction`, the least action principle for legal
+  topplings cited from Fey–Meester–Redig
+  (`LatticeProb/External/FeyMeesterRedigLeastActionProved.lean`).
 - Pinned to Lean `v4.32.0` and `mathlib` at revision
   `81a5d257c8e410db227a6665ed08f64fea08e997`.  The dependent repositories use
   the same pin.
@@ -350,6 +353,11 @@ chip to each neighbour.
 * `LatticeProb.Sandpile.recurrent_const`: the constant background `η ≡ d` is
   recurrent, firing the outer boundary of any finite set `V` once each makes
   every site of `V` eventually topple.
+* `LatticeProb.Sandpile.le_of_isLegalToppling`: the least action principle
+  (Fey–Meester–Redig, Theorem 2.8), a legal toppling procedure never topples a
+  site more often than a nonnegative odometer `w` with `s₀ + Δw` stable; it
+  proves the proposition `LatticeProb.External.FeyMeesterRedigLeastAction`
+  (`LatticeProb.External.feyMeesterRedigLeastAction_holds`).
 * `LatticeProb.eventually_constant_of_monotone_bounded`: a monotone sequence
   of naturals bounded above is eventually constant;
   `LatticeProb.finset_common_stable`: pointwise eventual stabilization on a
@@ -596,7 +604,8 @@ LatticeProb/
                         random-walk representation of its odometer, the vertex boundary,
                         Eulerian paths, König's lemma, the cyclic rank of a permutation
   Sandpile/             the classical (integer, Abelian) sandpile on ℤ^d: parallel
-                        toppling, the Diaconis-Fulton wave decomposition, recurrence
+                        toppling, the Diaconis-Fulton wave decomposition, recurrence,
+                        the least action principle
   Network/              electrical networks: energy, Dirichlet and Thomson principles,
                         Rayleigh monotonicity, Nash-Williams, the killed Green function,
                         escape probabilities, the Gaussian free field, harmonic-function
@@ -616,7 +625,8 @@ LatticeProb/
                         smooth maxima, softmax weights and their stability
   Support/               elementary lemmas used across the library
   External/              the five cited results, each a Prop taken as a hypothesis, and the
-                        Green function asymptotics, stated as a Prop and proved
+                        Green function asymptotics and the least action principle,
+                        each stated as a Prop and proved
   Meta/                  AxiomsAudit.lean
   *.lean (top level)     continuum objects shared with Parking-Sharpness: white noise,
                         heat kernels, optimal stopping values, weak limits
