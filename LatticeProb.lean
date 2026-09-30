@@ -179,6 +179,7 @@ import LatticeProb.Walk.Fourier
 import LatticeProb.Walk.FourierRec
 import LatticeProb.Walk.GreenSq
 import LatticeProb.Walk.LatticeGreen
+import LatticeProb.Walk.LineKernel
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation
