@@ -180,6 +180,8 @@ import LatticeProb.Walk.FourierRec
 import LatticeProb.Walk.GreenSq
 import LatticeProb.Walk.LatticeGreen
 import LatticeProb.Walk.LineKernel
+import LatticeProb.Walk.LineKernelGauss
+import LatticeProb.Walk.LineKernelLocalLimit
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation

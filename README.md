@@ -68,6 +68,8 @@ LatticeProb/Walk/BoxAverage.lean    the discrete Poincare inequality and the bou
 LatticeProb/Walk/ExitTime.lean      the exit time bounds for a finite set
 LatticeProb/Walk/ExitBox.lean       the exit time of a box of radius r is of order r squared
 LatticeProb/Walk/LineKernel.lean    the continuous-time kernel on the line, its contour shift and exponential bound
+LatticeProb/Walk/LineKernelGauss.lean  the Gaussian integral on a shifted line and the comparison of the two integrands
+LatticeProb/Walk/LineKernelLocalLimit.lean  the local limit theorem on the line with a Gaussian-weighted error
 LatticeProb/Prob/Catalog.lean       Mathlib's probability theorems under this library's names
 LatticeProb/Prob/Harris.lean        the Harris inequality for product measures
 LatticeProb/Prob/HarrisVariants.lean  decreasing, mixed, and locally monotone forms

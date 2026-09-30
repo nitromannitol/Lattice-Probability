@@ -3,13 +3,13 @@ import Mathlib
 /-!
 # The one-dimensional continuous-time kernel
 
-`lineKernel s k = (2π)⁻¹ ∫_{-π}^{π} e^{-s(1 - cos θ)} cos(kθ) dθ` is the kernel at time `s` of
-the continuous-time simple random walk on `ℤ` that jumps at rate one, written through its
-Fourier symbol `e^{-s(1 - cos θ)}`. This module proves the complex form of the integral, the
-shift of the contour of integration to the line `Im θ = λ`, and the exponential bound
-`|lineKernel s k| ≤ exp(-λk + s(cosh λ - 1))` that the shift gives. The contour shift is the
-Cauchy-Goursat theorem on a rectangle, whose vertical sides cancel by `2π`-periodicity. Nothing
-probabilistic is used: every statement is read off the integral.
+`lineKernel s k = (2π)⁻¹ ∫_{-π}^{π} e^{-s(1 - cos θ)} cos(kθ) dθ` is the kernel at
+time `s` of the continuous-time simple random walk on `ℤ` that jumps at rate one, written
+through its Fourier symbol `e^{-s(1 - cos θ)}`. This module proves the complex form of the
+integral, the shift of the contour of integration to the line `Im θ = λ`, and the
+exponential bound `|lineKernel s k| ≤ exp(-λk + s(cosh λ - 1))` that the shift gives. The
+contour shift is the Cauchy-Goursat theorem on a rectangle, whose vertical sides cancel by
+`2π`-periodicity. Nothing probabilistic is used: every statement is read off the integral.
 -/
 
 open MeasureTheory
@@ -149,7 +149,8 @@ theorem lineIntegrand_add_two_pi (s : ℝ) (k : ℤ) (z : ℂ) :
           rw [lineIntegrand]
 
 /-- The integrand is an entire function. -/
-theorem differentiable_lineIntegrand (s : ℝ) (k : ℤ) : Differentiable ℂ (lineIntegrand s k) := by
+theorem differentiable_lineIntegrand (s : ℝ) (k : ℤ) :
+    Differentiable ℂ (lineIntegrand s k) := by
   unfold lineIntegrand
   fun_prop
 
@@ -197,23 +198,27 @@ theorem abs_lineKernel_le_exp {s : ℝ} (hs : 0 ≤ s) (k : ℤ) (l : ℝ) :
     |lineKernel s k| ≤ Real.exp (-(l * k) + s * (Real.cosh l - 1)) := by
   have hpi := Real.pi_pos
   have hbound : ∀ θ ∈ Set.uIoc (-Real.pi) Real.pi,
-      ‖lineIntegrand s k (θ + l * Complex.I)‖ ≤ Real.exp (-(l * k) + s * (Real.cosh l - 1)) := by
+      ‖lineIntegrand s k (θ + l * Complex.I)‖
+        ≤ Real.exp (-(l * k) + s * (Real.cosh l - 1)) := by
     intro θ _
     rw [norm_lineIntegrand_shift]
     apply Real.exp_le_exp.mpr
     have h1 : Real.cos θ ≤ 1 := Real.cos_le_one θ
     have h2 : 1 ≤ Real.cosh l := Real.one_le_cosh l
-    nlinarith [mul_nonneg hs (mul_nonneg (sub_nonneg.mpr h1) (by linarith : (0:ℝ) ≤ Real.cosh l))]
+    have h3 : (0 : ℝ) ≤ Real.cosh l := by linarith
+    nlinarith [mul_nonneg hs (mul_nonneg (sub_nonneg.mpr h1) h3)]
   have hint := intervalIntegral.norm_integral_le_of_norm_le_const hbound
   have hq : |lineKernel s k| = (2 * Real.pi)⁻¹
       * ‖∫ θ in (-Real.pi)..Real.pi, lineIntegrand s k (θ + l * Complex.I)‖ := by
     rw [← integral_lineIntegrand_shift, ← Real.norm_eq_abs, ← Complex.norm_real,
       lineKernel_eq_integral, norm_mul, norm_inv]
     congr 2
-    rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) by push_cast; ring, Complex.norm_real,
+    rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) by push_cast; ring,
+      Complex.norm_real,
       Real.norm_eq_abs, abs_of_pos (by positivity)]
   rw [hq]
-  calc (2 * Real.pi)⁻¹ * ‖∫ θ in (-Real.pi)..Real.pi, lineIntegrand s k (θ + l * Complex.I)‖
+  calc (2 * Real.pi)⁻¹
+        * ‖∫ θ in (-Real.pi)..Real.pi, lineIntegrand s k (θ + l * Complex.I)‖
       ≤ (2 * Real.pi)⁻¹ * (Real.exp (-(l * k) + s * (Real.cosh l - 1))
           * |Real.pi - -Real.pi|) := by gcongr
     _ = Real.exp (-(l * k) + s * (Real.cosh l - 1)) := by
