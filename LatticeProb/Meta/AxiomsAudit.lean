@@ -32,6 +32,7 @@ library.
 #print axioms LatticeProb.exists_srwGreenInf_gradient
 #print axioms LatticeProb.exists_srwGreenInf_le
 #print axioms LatticeProb.exists_tsum_srwGreenInf_sq_tail_le
+#print axioms LatticeProb.Intersection.exists_lintegral_interCount_sq_le
 #print axioms LatticeProb.srwHitProb_eq_green_ratio
 #print axioms LatticeProb.exists_abs_srwGreenInf_sub_le
 #print axioms LatticeProb.tendsto_potentialKernel

@@ -223,6 +223,7 @@ import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation
 import LatticeProb.Walk.GreenPointwise
+import LatticeProb.Walk.IntersectionMoment
 import LatticeProb.Walk.PolyaRecurrence
 import LatticeProb.Walk.NashZ2
 import LatticeProb.Prob.ExplorationCond

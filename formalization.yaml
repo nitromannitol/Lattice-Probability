@@ -142,6 +142,12 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.Intersection.exists_lintegral_interCount_sq_le"
+      file: "LatticeProb/Walk/IntersectionMoment.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.gaussian_lipschitz_concentration"
       file: "LatticeProb/Prob/GaussianHerbst.lean"
       sorry_count: 0
@@ -330,6 +336,11 @@ alignment:
       module: "LatticeProb.Walk.PairedLocalCLT"
       status: "proved"
       note: "Parity form LatticeProb.LocalCLT.exists_abs_srwHeat_sub_le; window and d = 4 forms in LatticeProb.Walk.LocalCLTWindow."
+    - source: "Lawler, Intersections of Random Walks, proof of Theorem 3.3.2 with Proposition 3.2.1: the second moment of the intersection count of two walks in d >= 5"
+      lean: "LatticeProb.Intersection.exists_lintegral_interCount_sq_le"
+      module: "LatticeProb.Walk.IntersectionMoment"
+      status: "proved"
+      note: "E_x E_y I(X, Y)^2 <= C (1 + |x - y|)^(4 - d), through the local times and the Green function convolution bounds of LatticeProb.Walk.GreenPointwise."
     - source: "The principal theorems listed under Contents in README.md"
       lean: "LatticeProb.*"
       module: "LatticeProb.Meta.AxiomsAudit"

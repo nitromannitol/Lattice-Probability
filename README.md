@@ -89,6 +89,11 @@ general locally finite graph is `LatticeProb.Graph.heat`.
 * `LatticeProb.exists_srwGreenInf_le`: `G(0, z) ≤ C (1 + |z|)^{2-d}` for
   `d ≥ 4`; `LatticeProb.exists_tsum_srwGreenInf_sq_tail_le`: the tail
   `∑_{|z| ≥ r} G(0, z)² ≤ C r^{4-d}` for `d ≥ 5`.
+* `LatticeProb.Intersection.exists_lintegral_interCount_sq_le`: the second
+  moment of the number `I = ∑_{i,j} 1{X_i = Y_j}` of intersections of two
+  independent simple random walks from `x` and `y` on `ℤ^d`, `d ≥ 5`,
+  `E_x E_y I² ≤ C (1 + |x - y|)^{4-d}` (Lawler, *Intersections of Random
+  Walks*, proof of Theorem 3.3.2).
 * `LatticeProb.srwHitProb_eq_green_ratio`: for `d ≥ 3` the probability that
   the walk from `x` ever hits the origin is `G(x) / G(0)`.
 * `LatticeProb.exists_abs_srwGreenInf_sub_le`: the Green function asymptotics
