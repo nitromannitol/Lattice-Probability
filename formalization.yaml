@@ -61,7 +61,7 @@ status:
     Paley-Zygmund, Ottaviani, Doob and Pinsker inequalities, the
     Kolmogorov-Chentsov theorem, Brownian motion on R^d and its strong Markov
     property, the isonormal process, regular variation, and Jordan separation
-    on the square lattice.  480 modules, about 111,000 lines, 5,103
+    on the square lattice.  483 modules, about 111,000 lines, 5,112
     declarations.  SCOPE BOUNDARY: five results from the literature are stated
     as propositions in LatticeProb/External/ and not proved (the Gaussian
     logarithmic Sobolev inequality and its Herbst bound, polygonal
@@ -70,9 +70,10 @@ status:
     use them take them as explicit hypotheses.  A sixth proposition there,
     PotentialKernelAsymptotics (Lawler-Limic, Theorems 4.3.1 and 4.4.4), is
     stated for the formalizations that cite it and proved in
-    LatticeProb/External/PotentialKernelAsymptoticsProved.lean, and two more,
-    FeyMeesterRedigLeastAction (Fey-Meester-Redig, Theorem 2.8) and
-    CarneVaropoulos (Lyons-Peres, Theorem 13.4), likewise in
+    LatticeProb/External/PotentialKernelAsymptoticsProved.lean, and three more,
+    FeyMeesterRedigLeastAction (Fey-Meester-Redig, Theorem 2.8),
+    CarneVaropoulos (Lyons-Peres, Theorem 13.4) and GreenNorms (Bou-Rabee and
+    Panagiotis, Section 3.1), likewise in
     LatticeProb/External/*Proved.lean.  The principal theorems are
     listed in README.md and their axioms printed by
     LatticeProb/Meta/AxiomsAudit.lean; three of them are additionally restated
@@ -147,6 +148,18 @@ status:
       literature_dependencies: []
     - declaration: "LatticeProb.External.carneVaropoulos_holds"
       file: "LatticeProb/External/CarneVaropoulosProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.greenNorms"
+      file: "LatticeProb/Walk/GreenNorms.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.External.greenNorms_holds"
+      file: "LatticeProb/External/GreenNormsProved.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
@@ -372,6 +385,11 @@ alignment:
       module: "LatticeProb.Graph.CarneVaropoulos"
       status: "proved"
       note: "Heat-kernel form LatticeProb.Graph.heat_le_carneVaropoulos; the proposition LatticeProb.External.CarneVaropoulos by LatticeProb.External.carneVaropoulos_holds."
+    - source: "Bou-Rabee and Panagiotis, Section 3.1 (as quoted in parking.tex, eq:green-norms): the l2 norm and the maximum of the truncated Green function"
+      lean: "LatticeProb.greenNorms"
+      module: "LatticeProb.Walk.GreenNorms"
+      status: "proved"
+      note: "The proposition LatticeProb.External.GreenNorms by LatticeProb.External.greenNorms_holds."
     - source: "The principal theorems listed under Contents in README.md"
       lean: "LatticeProb.*"
       module: "LatticeProb.Meta.AxiomsAudit"

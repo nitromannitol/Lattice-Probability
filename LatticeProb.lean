@@ -220,6 +220,7 @@ import LatticeProb.Walk.PairedOffIntegral
 import LatticeProb.Walk.PairedLocalCLT
 import LatticeProb.Walk.LocalCLTWindow
 import LatticeProb.Walk.VarianceScale
+import LatticeProb.Walk.GreenNorms
 import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation
 import LatticeProb.Walk.GreenPointwise
@@ -296,6 +297,8 @@ import LatticeProb.External.FeyMeesterRedigLeastAction
 import LatticeProb.External.FeyMeesterRedigLeastActionProved
 import LatticeProb.External.CarneVaropoulos
 import LatticeProb.External.CarneVaropoulosProved
+import LatticeProb.External.GreenNorms
+import LatticeProb.External.GreenNormsProved
 import LatticeProb.WhiteNoise
 import LatticeProb.ContinuumHeatKernel
 import LatticeProb.ContinuumNoiseField
