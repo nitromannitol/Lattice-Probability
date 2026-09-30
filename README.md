@@ -70,6 +70,13 @@ LatticeProb/Walk/ExitBox.lean       the exit time of a box of radius r is of ord
 LatticeProb/Walk/LineKernel.lean    the continuous-time kernel on the line, its contour shift and exponential bound
 LatticeProb/Walk/LineKernelGauss.lean  the Gaussian integral on a shifted line and the comparison of the two integrands
 LatticeProb/Walk/LineKernelLocalLimit.lean  the local limit theorem on the line with a Gaussian-weighted error
+LatticeProb/Walk/ContinuousHeat.lean  the walk on Z^d in continuous time: Poissonisation and G = integral of q_t
+LatticeProb/Walk/ContinuousHeatGauss.lean  the local limit theorem for the continuous-time walk on Z^d
+LatticeProb/Walk/GaussTimeIntegral.lean  time integrals of the Gaussian kernel and of the local limit error
+LatticeProb/Walk/LogTimeIntegral.lean  the planar logarithm as a time integral
+LatticeProb/Walk/GreenAsymptotic.lean  the Green function is 2/((d-2) w_d) |x|^(2-d) + O(|x|^-d) for d >= 3
+LatticeProb/Walk/PotentialKernelFourier.lean  the planar partial sums converge to the Fourier form of the potential kernel
+LatticeProb/Walk/PotentialKernel.lean  the planar potential kernel, (P - I) b = delta_0, and b = (2/pi) log|x| + k + O(|x|^-2)
 LatticeProb/Prob/Catalog.lean       Mathlib's probability theorems under this library's names
 LatticeProb/Prob/Harris.lean        the Harris inequality for product measures
 LatticeProb/Prob/HarrisVariants.lean  decreasing, mixed, and locally monotone forms
@@ -238,6 +245,7 @@ LatticeProb/Analysis/Sobolev/Compact.lean  the compact embedding of negative Sob
 LatticeProb/Analysis/Sobolev/TightTransfer.lean  tightness in H^{-s0} gives subsequential limits in H^{-s}
 LatticeProb/External/RellichKondrachovNegSobolev.lean  the cited Rellich-Kondrachov compact embedding of negative order
 LatticeProb/External/PotentialKernelAsymptotics.lean  the lattice Green function and planar potential kernel asymptotics
+LatticeProb/External/PotentialKernelAsymptoticsProved.lean  that proposition, proved in every dimension
 ```
 
 ## Attribution

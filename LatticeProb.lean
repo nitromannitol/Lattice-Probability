@@ -182,6 +182,13 @@ import LatticeProb.Walk.LatticeGreen
 import LatticeProb.Walk.LineKernel
 import LatticeProb.Walk.LineKernelGauss
 import LatticeProb.Walk.LineKernelLocalLimit
+import LatticeProb.Walk.ContinuousHeat
+import LatticeProb.Walk.ContinuousHeatGauss
+import LatticeProb.Walk.GaussTimeIntegral
+import LatticeProb.Walk.LogTimeIntegral
+import LatticeProb.Walk.GreenAsymptotic
+import LatticeProb.Walk.PotentialKernelFourier
+import LatticeProb.Walk.PotentialKernel
 import LatticeProb.Walk.VarianceScale
 import LatticeProb.Walk.WindowD4
 import LatticeProb.Walk.Correlation
@@ -247,6 +254,7 @@ import LatticeProb.Analysis.Sobolev.Compact
 import LatticeProb.Analysis.Sobolev.TightTransfer
 import LatticeProb.External.RellichKondrachovNegSobolev
 import LatticeProb.External.PotentialKernelAsymptotics
+import LatticeProb.External.PotentialKernelAsymptoticsProved
 import LatticeProb.WhiteNoise
 import LatticeProb.ContinuumHeatKernel
 import LatticeProb.ContinuumNoiseField
