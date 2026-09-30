@@ -37,7 +37,7 @@ and by the formalizations in progress of *Dynamic dimensional reduction*,
 regularity, and `manhattan-formalization`, which is being ported to import
 the library in place of its own copies of the modules moved from it.
 
-The library has 476 modules, about 110,000 lines and 5,076 declarations.
+The library has 480 modules, about 111,000 lines and 5,103 declarations.
 
 - **No `sorry`** anywhere in the library.  Each Mathlib-only comparator
   challenge in `Audit/` contains its single intentional statement-level
@@ -45,7 +45,7 @@ The library has 476 modules, about 110,000 lines and 5,076 declarations.
 - **No custom `axiom`.**  Every declaration of the library reduces to
   `mathlib`'s three standard foundational axioms, `propext`,
   `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py`
-  checks this for all 5,076 declarations, and
+  checks this for all 5,103 declarations, and
   [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
   prints the axioms of the principal theorems listed below.
 - **Cited results are hypotheses.**  Five results from the literature are
@@ -56,13 +56,15 @@ The library has 476 modules, about 110,000 lines and 5,076 declarations.
   that uses one of them takes it as an explicit hypothesis, so its statement
   shows what it rests on.  Only the Herbst bound and the Rellich-Kondrachov
   embedding are used, by `LatticeProb.gaussian_lipschitz_concentration` and by
-  the compactness results of `LatticeProb/Analysis/Sobolev/`.  Two further
+  the compactness results of `LatticeProb/Analysis/Sobolev/`.  Three further
   propositions there are proved in the library: `PotentialKernelAsymptotics`,
   the Green function and potential kernel asymptotics that formalizations cite
   from Lawler–Limic (`LatticeProb/External/PotentialKernelAsymptoticsProved.lean`),
-  and `FeyMeesterRedigLeastAction`, the least action principle for legal
+  `FeyMeesterRedigLeastAction`, the least action principle for legal
   topplings cited from Fey–Meester–Redig
-  (`LatticeProb/External/FeyMeesterRedigLeastActionProved.lean`).
+  (`LatticeProb/External/FeyMeesterRedigLeastActionProved.lean`), and
+  `CarneVaropoulos`, the Carne–Varopoulos bound
+  (`LatticeProb/External/CarneVaropoulosProved.lean`).
 - Pinned to Lean `v4.32.0` and `mathlib` at revision
   `81a5d257c8e410db227a6665ed08f64fea08e997`.  The dependent repositories use
   the same pin.
@@ -131,6 +133,12 @@ general locally finite graph is `LatticeProb.Graph.heat`.
   bound `p_m(x, x) ≤ 32 d / √m` when every degree is at most `d`, and
   `LatticeProb.Graph.spectralDimensionBound_of_boundedDegree`, the same as a
   spectral dimension bound.
+* `LatticeProb.Graph.walkLaw_eval_le_carneVaropoulos`: the Carne–Varopoulos
+  bound `P_x(X_n = y) ≤ 2 √(deg y / deg x) e^{-dist(x, y)²/(2n)}` for the
+  simple random walk on a connected locally finite graph (Lyons–Peres,
+  Theorem 13.4), and `LatticeProb.Graph.heat_le_carneVaropoulos`, the same for
+  the heat kernel; they prove the proposition
+  `LatticeProb.External.CarneVaropoulos` (`LatticeProb.External.carneVaropoulos_holds`).
 * `LatticeProb.Graph.integrable_exitNat` and `LatticeProb.Graph.markov_exitTime`:
   the exit time of a finite set is integrable, and the strong Markov property
   holds at it.
@@ -625,8 +633,8 @@ LatticeProb/
                         smooth maxima, softmax weights and their stability
   Support/               elementary lemmas used across the library
   External/              the five cited results, each a Prop taken as a hypothesis, and the
-                        Green function asymptotics and the least action principle,
-                        each stated as a Prop and proved
+                        Green function asymptotics, the least action principle and the
+                        Carne–Varopoulos bound, each stated as a Prop and proved
   Meta/                  AxiomsAudit.lean
   *.lean (top level)     continuum objects shared with Parking-Sharpness: white noise,
                         heat kernels, optimal stopping values, weak limits

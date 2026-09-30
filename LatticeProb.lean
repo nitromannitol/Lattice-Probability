@@ -268,6 +268,8 @@ import LatticeProb.Prob.Karamata
 import LatticeProb.Prob.Freedman
 import LatticeProb.Prob.KaramataOrigin
 import LatticeProb.Graph.Reach
+import LatticeProb.Graph.ChebyshevWalk
+import LatticeProb.Graph.CarneVaropoulos
 import LatticeProb.Graph.Nash
 import LatticeProb.Graph.OnDiagonal
 import LatticeProb.Graph.HeatVanishing
@@ -292,6 +294,8 @@ import LatticeProb.External.PotentialKernelAsymptotics
 import LatticeProb.External.PotentialKernelAsymptoticsProved
 import LatticeProb.External.FeyMeesterRedigLeastAction
 import LatticeProb.External.FeyMeesterRedigLeastActionProved
+import LatticeProb.External.CarneVaropoulos
+import LatticeProb.External.CarneVaropoulosProved
 import LatticeProb.WhiteNoise
 import LatticeProb.ContinuumHeatKernel
 import LatticeProb.ContinuumNoiseField

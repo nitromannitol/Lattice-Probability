@@ -41,6 +41,7 @@ library.
 #print axioms LatticeProb.exists_abs_potentialKernel_sub_log_le
 #print axioms LatticeProb.External.potentialKernelAsymptotics_holds
 #print axioms LatticeProb.External.feyMeesterRedigLeastAction_holds
+#print axioms LatticeProb.External.carneVaropoulos_holds
 #print axioms LatticeProb.markov_stopping
 #print axioms LatticeProb.exists_maxDisp_bound
 #print axioms LatticeProb.srwTail_le
@@ -51,6 +52,8 @@ library.
 #print axioms LatticeProb.Graph.nash_ineq
 #print axioms LatticeProb.Graph.heat_diag_le
 #print axioms LatticeProb.Graph.spectralDimensionBound_of_boundedDegree
+#print axioms LatticeProb.Graph.walkLaw_eval_le_carneVaropoulos
+#print axioms LatticeProb.Graph.heat_le_carneVaropoulos
 #print axioms LatticeProb.Graph.markov_exitTime
 #print axioms LatticeProb.Graph.integrable_exitNat
 
