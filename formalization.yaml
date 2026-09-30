@@ -61,7 +61,7 @@ status:
     Paley-Zygmund, Ottaviani, Doob and Pinsker inequalities, the
     Kolmogorov-Chentsov theorem, Brownian motion on R^d and its strong Markov
     property, the isonormal process, regular variation, and Jordan separation
-    on the square lattice.  392 modules, about 87,000 lines, 4,541
+    on the square lattice.  465 modules, about 107,000 lines, 5,013
     declarations.  SCOPE BOUNDARY: five results from the literature are stated
     as propositions in LatticeProb/External/ and not proved (the Gaussian
     logarithmic Sobolev inequality and its Herbst bound, polygonal

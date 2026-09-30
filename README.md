@@ -37,7 +37,7 @@ and by the formalizations in progress of *Dynamic dimensional reduction*,
 regularity, and `manhattan-formalization`, which is being ported to import
 the library in place of its own copies of the modules moved from it.
 
-The library has 392 modules, about 87,000 lines and 4,541 declarations.
+The library has 465 modules, about 107,000 lines and 5,013 declarations.
 
 - **No `sorry`** anywhere in the library.  Each Mathlib-only comparator
   challenge in `Audit/` contains its single intentional statement-level
@@ -45,7 +45,7 @@ The library has 392 modules, about 87,000 lines and 4,541 declarations.
 - **No custom `axiom`.**  Every declaration of the library reduces to
   `mathlib`'s three standard foundational axioms, `propext`,
   `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py`
-  checks this for all 4,541 declarations, and
+  checks this for all 5,013 declarations, and
   [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
   prints the axioms of the principal theorems listed below.
 - **Cited results are hypotheses.**  Five results from the literature are
