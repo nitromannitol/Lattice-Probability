@@ -234,6 +234,7 @@ LatticeProb/Analysis/Sobolev/Tight.lean  tightness transfer between negative Sob
 LatticeProb/Analysis/Sobolev/Compact.lean  the compact embedding of negative Sobolev order on a bounded domain
 LatticeProb/Analysis/Sobolev/TightTransfer.lean  tightness in H^{-s0} gives subsequential limits in H^{-s}
 LatticeProb/External/RellichKondrachovNegSobolev.lean  the cited Rellich-Kondrachov compact embedding of negative order
+LatticeProb/External/PotentialKernelAsymptotics.lean  the lattice Green function and planar potential kernel asymptotics
 ```
 
 ## Attribution

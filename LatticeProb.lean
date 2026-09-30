@@ -243,6 +243,7 @@ import LatticeProb.Analysis.Sobolev.Tight
 import LatticeProb.Analysis.Sobolev.Compact
 import LatticeProb.Analysis.Sobolev.TightTransfer
 import LatticeProb.External.RellichKondrachovNegSobolev
+import LatticeProb.External.PotentialKernelAsymptotics
 import LatticeProb.WhiteNoise
 import LatticeProb.ContinuumHeatKernel
 import LatticeProb.ContinuumNoiseField
