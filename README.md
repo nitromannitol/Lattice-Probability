@@ -655,53 +655,7 @@ NOTICE                   the files adapted from other repositories, and their li
 
 ## How this was built
 
-The Lean code in this repository was written by AI models under the
-supervision of the author.  Most of it was written by Claude Opus 5 in Claude
-Code, as "generals" working in shifts from 2026-09-06 on, and a Claude Code
-supervising session merged and checked every branch.  OpenAI's gpt-6-astra,
-through Codex, wrote the ergodic decomposition, the Gaussian law determined by
-its covariance and Pinsker's inequality, ported the planar lattice modules
-from rotor-23 and migrated sixteen continuum modules from Parking-Sharpness.
-GLM-5.3 proved the von Bahr-Esseen inequality, the Kolmogorov bounds on
-product spaces and the Fourier form of the heat kernel, and
-DeepSeek-v4.1-flash, driven by the same scripts, wrote modules on conditional
-expectations in a parameter, white noise, the supremum tail, negative Sobolev
-norms and the binomial kernel.  Claude Sonnet 5 wrote the binomial local
-central limit theorem.  Mistral's Leanstral wrote the proofs of the Gaussian
-free field module `LatticeProb/Network/GFF.lean`.  Claude Opus 5.5 wrote
-`LatticeProb/Meta/AxiomsAudit.lean`, the comparator surface in `Audit/` and the
-release documentation.  The models, tooling and review status are disclosed
-in full in [`formalization.yaml`](formalization.yaml), following the
-[mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml)
-standard.
-
-On 2026-09-23 and 2026-09-24, the paper-independent modules listed above under
-Contents as harvested from a dependent formalization (the scaling-limit and
-convex-order toolkits, the classical sandpile, the vertex boundary and
-`ℕ∞`-arrival helpers, the Efron-Stein and weighted-limit modules, the smooth
-maxima, the lattice-kernel and Riemann-sum abstraction, the binomial shift
-correlation, Pólya recurrence and the Nash inequality on `ℤ²`, the
-dissipative-skew generators and their resolvent semigroups, the rate-two
-Poisson clock, the resistance packing and insertion inequalities, the
-percolation and total variation modules, and the graph-combinatorics trio)
-were moved into this library by Claude Sonnet 5 subagents, supervised by
-Claude Opus 5.5 in Claude Code.  Each move was checked by the same axiom and
-warning gates as the rest of the library before merging.  These modules were
-not written for this repository; the original authorship of each is
-described in its source repository's own disclosure, not restated here.
-In a final pass on 2026-09-26 and 2026-09-27, a Claude Opus 5.5 general in
-Claude Code and Claude Sonnet 5 subagents it dispatched renamed and documented
-the proof modules of the ergodic and potential-theory results and split the
-largest of them into per-stage files; OpenAI's gpt-6-luna and gpt-5.6-luna,
-through Codex, were commissioned for some of those proofs, and everything kept
-was checked and gated.
-On 2026-09-30 a Claude Opus 5.5 director in Claude Code proved the Green
-function and planar potential kernel asymptotics (the walk in continuous time,
-its local limit theorem, and `LatticeProb/Walk/GreenAsymptotic.lean` and
-`LatticeProb/Walk/PotentialKernel.lean`): it wrote the statements, the route
-and the assembly, and DeepSeek-v4.1-flash workers proved bounded packets of
-lemmas against those fixed statements, each compiled and checked before it was
-kept.
+The Lean code was written by claude-opus-5, claude-opus-5-5, claude-sonnet-5, deepseek-v4.1-flash, glm-5.3, glm-5.3-flash, gpt-5.6-luna, gpt-6-astra, gpt-6-luna, labs-leanstral-1-5 under the close supervision of the author; models, tooling and cost are disclosed in `formalization.yaml`.
 
 ## Authors and citation
 
