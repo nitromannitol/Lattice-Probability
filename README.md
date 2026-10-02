@@ -8,7 +8,7 @@ shared base of the formalizations of Ahmed Bou-Rabee's papers.
 [![CI](https://github.com/nitromannitol/Lattice-Probability/actions/workflows/build.yml/badge.svg)](https://github.com/nitromannitol/Lattice-Probability/actions/workflows/build.yml)
 [![Comparator audit](https://github.com/nitromannitol/Lattice-Probability/actions/workflows/comparator.yml/badge.svg)](https://github.com/nitromannitol/Lattice-Probability/actions/workflows/comparator.yml)
 
-## What this is
+## What is proved
 
 This is a library, not the formalization of one paper.  It collects the
 objects and theorems that several formalizations have in common, so that each
@@ -19,11 +19,9 @@ Green function, the discrete Gaussian free field, the classical integer
 sandpile, ergodic theorems and zero-one laws, correlation and percolation
 inequalities, concentration and moment inequalities, convex order, Gaussian
 processes and Brownian motion, scaling-limit infrastructure, regular
-variation, and the topology of curves on the square lattice.  A result proved
-inside a dependent formalization turns out, more often than not, to carry no
-content specific to that paper; once noticed, it is moved into this library,
-so the paper repository then imports the shared proof instead of keeping its
-own copy.
+variation, and the topology of curves on the square lattice.  A result that
+carries no content specific to one paper lives here, and the paper
+repositories import the shared proof.
 
 The library is required, at a pinned commit, by the formalization
 repositories
@@ -34,47 +32,47 @@ repositories
 and [`ORRW-Lower-Bound`](https://github.com/nitromannitol/ORRW-Lower-Bound),
 and by the formalizations in progress of *Dynamic dimensional reduction*,
 *Exploding sandpiles*, the random abelian sandpile, discrete elliptic
-regularity, and `manhattan-formalization`, which is being ported to import
-the library in place of its own copies of the modules moved from it.
+regularity, and `manhattan-formalization`.
 
-The library has 483 modules, about 111,000 lines and 5,112 declarations.
+Every theorem of the library is proved.  A theorem that rests on a result
+cited from the literature and not proved here is conditional on it and takes
+it as an explicit hypothesis; those results are listed next.  The library has
+no single source text: each principal theorem states its result in its
+docstring with the citation, and the `alignment` section of
+[`formalization.yaml`](formalization.yaml) matches the theorems that formalize
+a cited result with their sources.
 
-- **No `sorry`** anywhere in the library.  Each Mathlib-only comparator
-  challenge in `Audit/` contains its single intentional statement-level
-  `sorry`, filled by the corresponding solution file.
-- **No custom `axiom`.**  Every declaration of the library reduces to
-  `mathlib`'s three standard foundational axioms, `propext`,
-  `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py`
-  checks this for all 5,112 declarations, and
-  [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
-  prints the axioms of the principal theorems listed below.
-- **Cited results are hypotheses.**  Five results from the literature are
-  stated as propositions in `LatticeProb/External/` and never proved here: the
-  Gaussian logarithmic Sobolev inequality and its Herbst bound, polygonal
-  unicoherence, Janiszewski's theorem for polygonal sets, and the
-  Rellich-Kondrachov compact embedding in negative Sobolev order.  A theorem
-  that uses one of them takes it as an explicit hypothesis, so its statement
-  shows what it rests on.  Only the Herbst bound and the Rellich-Kondrachov
-  embedding are used, by `LatticeProb.gaussian_lipschitz_concentration` and by
-  the compactness results of `LatticeProb/Analysis/Sobolev/`.  Four further
-  propositions there are proved in the library: `PotentialKernelAsymptotics`,
-  the Green function and potential kernel asymptotics that formalizations cite
-  from Lawler–Limic (`LatticeProb/External/PotentialKernelAsymptoticsProved.lean`),
-  `FeyMeesterRedigLeastAction`, the least action principle for legal
-  topplings cited from Fey–Meester–Redig
-  (`LatticeProb/External/FeyMeesterRedigLeastActionProved.lean`),
-  `CarneVaropoulos`, the Carne–Varopoulos bound
-  (`LatticeProb/External/CarneVaropoulosProved.lean`), and `GreenNorms`, the
-  two norms of the truncated Green function
-  (`LatticeProb/External/GreenNormsProved.lean`).
-- Pinned to Lean `v4.32.0` and `mathlib` at revision
-  `81a5d257c8e410db227a6665ed08f64fea08e997`.  The dependent repositories use
-  the same pin.
+### Cited results taken as hypotheses
 
-## Contents
+Five results from the literature are stated as propositions in
+`LatticeProb/External/` and never proved here: the Gaussian logarithmic Sobolev
+inequality and its Herbst bound, polygonal unicoherence, Janiszewski's theorem
+for polygonal sets, and the Rellich-Kondrachov compact embedding in negative
+Sobolev order.  A theorem that uses one of them takes it as an explicit
+hypothesis, so its statement shows what it rests on.  Only the Herbst bound and
+the Rellich-Kondrachov embedding are used, by
+`LatticeProb.gaussian_lipschitz_concentration` and by the compactness results
+of `LatticeProb/Analysis/Sobolev/`.
 
-The principal theorems, by area.  Each name is a Lean declaration; all of
-them appear in `LatticeProb/Meta/AxiomsAudit.lean`.
+Four further propositions there are proved in the library:
+`PotentialKernelAsymptotics`, the Green function and potential kernel
+asymptotics that formalizations cite from Lawler–Limic
+(`LatticeProb/External/PotentialKernelAsymptoticsProved.lean`),
+`FeyMeesterRedigLeastAction`, the least action principle for legal topplings
+cited from Fey–Meester–Redig
+(`LatticeProb/External/FeyMeesterRedigLeastActionProved.lean`),
+`CarneVaropoulos`, the Carne–Varopoulos bound
+(`LatticeProb/External/CarneVaropoulosProved.lean`), and `GreenNorms`, the two
+norms of the truncated Green function
+(`LatticeProb/External/GreenNormsProved.lean`).
+
+### Contents
+
+The principal theorems, by area.  Each name is a Lean declaration.  Every
+theorem named appears in
+[`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean); the
+propositions of `LatticeProb/External/` are definitions, and the `…_holds`
+theorems that prove them appear there.
 
 **Walks and Green functions.**  Simple random walk on `ℤ^d` is the kernel
 `srwHeat d j x = P_0(X_j = x)`, the lazy walk is `Q`, and the walk on a
@@ -535,32 +533,65 @@ determined by finitely many coordinates of an infinite product.
   point, how often one fixed point precedes another in the induced cyclic
   order.
 
-## Verified against a Mathlib-only statement
+## Guarantees
 
-So that three principal theorems can be read without trusting the library,
-they are restated using **only Mathlib**, with no library definitions, in
-`Audit/LatticeProbAudit/<X>/Challenge.lean`.  Each challenge contains one
-intentional statement-level `sorry`, which the corresponding `Solution.lean`
-fills from the library.  The configurations in
-`Audit/LatticeProbAudit/*/comparator.json` are for
-[`leanprover/comparator`](https://github.com/leanprover/comparator), which
-confirms that the two statements have identical elaborated types and that the
-proof reduces to the three standard axioms (see
-[`Audit/README.md`](Audit/README.md)).
+- **No `sorry`** in the library.  Each of the three Mathlib-only comparator
+  challenges under `Audit/LatticeProbAudit/` contains its single intentional
+  statement-level `sorry`, which the corresponding solution file proves.
+  `python3 tools/check_warnings.py` checks that the build of `LatticeProb`
+  emits no error, no warning and no `sorry`.
+- **No custom `axiom`.**  Every declaration of the library reduces to
+  `mathlib`'s three standard foundational axioms, `propext`,
+  `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py` checks
+  this for all 5,112 declarations, and
+  [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
+  prints the axioms of the principal theorems.  The results cited from the
+  literature are hypotheses, not axioms.
+- **Independent check of the statements.** Three principal theorems are
+  restated using only Mathlib, with no library definitions, in
+  [`Audit/LatticeProbAudit/Kingman/Challenge.lean`](Audit/LatticeProbAudit/Kingman/Challenge.lean),
+  [`Audit/LatticeProbAudit/GFF/Challenge.lean`](Audit/LatticeProbAudit/GFF/Challenge.lean)
+  and
+  [`Audit/LatticeProbAudit/BinomialLocalCLT/Challenge.lean`](Audit/LatticeProbAudit/BinomialLocalCLT/Challenge.lean).
+  The comparator workflow submits each challenge and its solution to
+  [leanprover/comparator](https://github.com/leanprover/comparator), which
+  checks that the two statements have identical elaborated types and that the
+  proof reduces to the three standard axioms, through the Lean kernel and the
+  independent nanoda kernel.  See [`Audit/README.md`](Audit/README.md).
+- **Pinned toolchain.** Lean `v4.32.0` and `mathlib` at revision
+  `81a5d257c8e410db227a6665ed08f64fea08e997`, the only git dependency of the
+  library; the dependencies of mathlib are pinned in
+  [`lake-manifest.json`](lake-manifest.json) at plausible `e12c1910fe85`,
+  LeanSearchClient `c5d5b8fe6e51`, importGraph `7e9612bf0b9e`, proofwidgets
+  `6e311e2a844d`, aesop `a7dbf0c63b69`, Qq `38d591e778f1`, batteries
+  `023ce7d62a05` and Cli `88679d088c97`.  The dependent repositories use the
+  same pin.
 
 The three pairs are `Kingman` (the subadditive ergodic theorem, both halves),
 `GFF` (the killed Green function is positive semidefinite and is the
 covariance of a centred Gaussian measure, with the killed Green function
 rebuilt from Mathlib primitives) and `BinomialLocalCLT` (the binomial local
-central limit theorem with its `1/m` error).  All three solutions build and
-depend only on `propext`, `Classical.choice` and `Quot.sound`, and
-`Audit/LatticeProbAudit/StatementRegression.lean` checks locally that each
-solution statement is exactly the challenge statement and mentions no
-constant of the library.  Both `.github/workflows/build.yml` and
+central limit theorem with its `1/m` error).  Each challenge contains one
+intentional statement-level `sorry`, which the corresponding `Solution.lean`
+fills from the library.  The configurations
+`Audit/LatticeProbAudit/*/comparator.json` are for
+[`leanprover/comparator`](https://github.com/leanprover/comparator).  All three
+solutions build and depend only on `propext`, `Classical.choice` and
+`Quot.sound`, and `Audit/LatticeProbAudit/StatementRegression.lean` checks
+locally that each solution statement is exactly the challenge statement and
+mentions no constant of the library.  Both
+[`.github/workflows/build.yml`](.github/workflows/build.yml) and
 [`.github/workflows/comparator.yml`](.github/workflows/comparator.yml) trigger
 on request only (`workflow_dispatch`), since the builds are Mathlib-scale; the
-comparator is instead run locally before each release, and its results are
+comparator is also run locally before each release, and its results are
 recorded in [`Audit/COMPARATOR_RUNS.md`](Audit/COMPARATOR_RUNS.md).
+
+## Size
+
+About 111,000 lines of Lean in 484 modules (the root `LatticeProb.lean` and 483
+modules under `LatticeProb/`), of which about 87,000 lines are code once
+comments and blank lines are removed, with 5,112 declarations, on top of
+mathlib.  The count excludes the comparator surface in `Audit/`.
 
 ## Building
 
@@ -582,7 +613,21 @@ revision.
 lake build LatticeProb.Meta.AxiomsAudit      # print the axioms of the principal theorems
 lake build LatticeProbAudit                  # the comparator challenges and solutions
 lake build LatticeProbAudit.StatementRegression
+bash Audit/check_standalone.sh --vocabulary  # the GFF vocabulary block is shared verbatim
 ```
+
+To run the comparator on one pair, build `LatticeProbAudit` and then, from the
+repository root,
+
+```bash
+COMPARATOR_LANDRUN=<landrun> COMPARATOR_LEAN4EXPORT=<lean4export> \
+  lake env <comparator>/.lake/build/bin/comparator Audit/LatticeProbAudit/Kingman/comparator.json
+```
+
+The revisions of the comparator, `lean4export`, `landrun` and `nanoda` are
+pinned in [`.github/workflows/comparator.yml`](.github/workflows/comparator.yml)
+and recorded in [`Audit/COMPARATOR_RUNS.md`](Audit/COMPARATOR_RUNS.md); see
+[`Audit/README.md`](Audit/README.md).
 
 To use the library from another Lake project, require it at a fixed commit and
 use the same Mathlib pin:
@@ -645,70 +690,43 @@ LatticeProb/
                         Carne–Varopoulos bound and the norms of the truncated Green
                         function, each stated as a Prop and proved
   Meta/                  AxiomsAudit.lean
-  *.lean (top level)     continuum objects shared with Parking-Sharpness: white noise,
-                        heat kernels, optimal stopping values, weak limits
+  *.lean (top level)     the particle-hole process on ℤ^d (ParticleHole, ParticleDriven,
+                        Equivariance, Invariance, ReadIndex, Rank) and the continuum
+                        objects shared with Parking-Sharpness: white noise, heat kernels,
+                        optimal stopping values, weak limits
 LatticeProb.lean         the root module (imports the whole library)
-Audit/                   Mathlib-only comparator challenges and solutions
-tools/                   the checkers listed under Building
-NOTICE                   the files adapted from other repositories, and their licenses
+Audit/
+  LatticeProbAudit/      the Mathlib-only comparator pairs Kingman/, GFF/ and
+                         BinomialLocalCLT/ (each with Challenge.lean, Solution.lean and
+                         comparator.json), Support/, and StatementRegression.lean
+  README.md              the comparator surface and what each challenge checks
+  COMPARATOR_RUNS.md     the recorded comparator runs and the tool revisions
+  check_standalone.sh    elaborates a challenge standalone; checks the shared vocabulary
+tools/                   check_axioms.py, check_warnings.py and check_names.py, listed
+                         under Building
+.github/workflows/       build.yml and comparator.yml, run on request
+lakefile.lean, lake-manifest.json, lean-toolchain   the Lake project and its pins
+CITATION.cff, CONTRIBUTING.md, formalization.yaml   citation, contribution notes, disclosure
+LICENSE, NOTICE          the license, and the files adapted from other repositories
 ```
 
 ## How this was built
 
-The Lean code in this repository was written by AI models under the
-supervision of the author.  Most of it was written by Claude Opus 5 in Claude
-Code, as "generals" working in shifts from 2026-09-06 on, and a Claude Code
-supervising session merged and checked every branch.  OpenAI's gpt-6-astra,
-through Codex, wrote the ergodic decomposition, the Gaussian law determined by
-its covariance and Pinsker's inequality, ported the planar lattice modules
-from rotor-23 and migrated sixteen continuum modules from Parking-Sharpness.
-GLM-5.3 proved the von Bahr-Esseen inequality, the Kolmogorov bounds on
-product spaces and the Fourier form of the heat kernel, and
-DeepSeek-v4.1-flash, driven by the same scripts, wrote modules on conditional
-expectations in a parameter, white noise, the supremum tail, negative Sobolev
-norms and the binomial kernel.  Claude Sonnet 5 wrote the binomial local
-central limit theorem.  Mistral's Leanstral wrote the proofs of the Gaussian
-free field module `LatticeProb/Network/GFF.lean`.  Claude Opus 5.5 wrote
-`LatticeProb/Meta/AxiomsAudit.lean`, the comparator surface in `Audit/` and the
-release documentation.  The models, tooling and review status are disclosed
-in full in [`formalization.yaml`](formalization.yaml), following the
+The Lean code was written mostly by Claude Opus 5, with contributions by Claude
+Opus 5.5, Claude Sonnet 5, OpenAI's gpt-6-astra, gpt-6-luna and gpt-5.6-luna,
+GLM-5.3 (sampling GLM-5.3-flash), DeepSeek-v4.1-flash and Mistral's Leanstral,
+under the close supervision of the author; models, tooling, cost and review
+status are disclosed in [`formalization.yaml`](formalization.yaml), following
+the
 [mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml)
-standard.
+standard.  Modules moved here from the formalizations that use the library were
+not written for this repository; their authorship is disclosed in those
+repositories.
 
-On 2026-09-23 and 2026-09-24, the paper-independent modules listed above under
-Contents as harvested from a dependent formalization (the scaling-limit and
-convex-order toolkits, the classical sandpile, the vertex boundary and
-`ℕ∞`-arrival helpers, the Efron-Stein and weighted-limit modules, the smooth
-maxima, the lattice-kernel and Riemann-sum abstraction, the binomial shift
-correlation, Pólya recurrence and the Nash inequality on `ℤ²`, the
-dissipative-skew generators and their resolvent semigroups, the rate-two
-Poisson clock, the resistance packing and insertion inequalities, the
-percolation and total variation modules, and the graph-combinatorics trio)
-were moved into this library by Claude Sonnet 5 subagents, supervised by
-Claude Opus 5.5 in Claude Code.  Each move was checked by the same axiom and
-warning gates as the rest of the library before merging.  These modules were
-not written for this repository; the original authorship of each is
-described in its source repository's own disclosure, not restated here.
-In a final pass on 2026-09-26 and 2026-09-27, a Claude Opus 5.5 general in
-Claude Code and Claude Sonnet 5 subagents it dispatched renamed and documented
-the proof modules of the ergodic and potential-theory results and split the
-largest of them into per-stage files; OpenAI's gpt-6-luna and gpt-5.6-luna,
-through Codex, were commissioned for some of those proofs, and everything kept
-was checked and gated.
-On 2026-09-30 a Claude Opus 5.5 director in Claude Code proved the Green
-function and planar potential kernel asymptotics (the walk in continuous time,
-its local limit theorem, and `LatticeProb/Walk/GreenAsymptotic.lean` and
-`LatticeProb/Walk/PotentialKernel.lean`): it wrote the statements, the route
-and the assembly, and DeepSeek-v4.1-flash workers proved bounded packets of
-lemmas against those fixed statements, each compiled and checked before it was
-kept.
+## Authors, citation, acknowledgements
 
-## Authors and citation
-
-The Lean development is by **Ahmed Bou-Rabee**.  If you use this library,
-please cite it using the metadata in [`CITATION.cff`](CITATION.cff).
-
-## Acknowledgements
+The Lean development is by **Ahmed Bou-Rabee**.  To cite it, use
+[`CITATION.cff`](CITATION.cff).
 
 This library is built on [Lean 4](https://lean-lang.org) and
 [Mathlib](https://github.com/leanprover-community/mathlib4).  Three modules

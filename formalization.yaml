@@ -1,7 +1,20 @@
-version: "v0.3"
+version: "v0.4"
 
 project:
   name: "Lattice-Probability"
+  description: >-
+    A Lean 4 / Mathlib library of discrete probability and lattice potential
+    theory, shared by the formalizations of several papers: simple random walk
+    on Z^d and on locally finite graphs, Green functions and their
+    asymptotics, local central limit theorems, electrical networks and the
+    discrete Gaussian free field, the classical integer sandpile, ergodic
+    theorems and zero-one laws, correlation, percolation, concentration and
+    moment inequalities, Brownian motion, scaling-limit infrastructure, regular
+    variation and Jordan separation on the square lattice.  Three principal
+    theorems (Kingman's subadditive ergodic theorem, the discrete Gaussian
+    free field with zero boundary values and the binomial local central limit
+    theorem) are independently checked using the comparator pairs under
+    Audit/LatticeProbAudit/.
   authors:
     - "Ahmed Bou-Rabee"
   license: "Apache-2.0"
@@ -16,40 +29,44 @@ sources:
       - "J. F. C. Kingman"
     id: "J. Roy. Statist. Soc. Ser. B 30 (1968)"
     type: "journal article"
+    relationship: "formalizes"
+    note: "Kingman's subadditive ergodic theorem; the library follows Steele's 1989 proof"
     license: ""
-    author_contacted: "no"
-    prior_work: "Kingman's subadditive ergodic theorem; the library follows Steele's 1989 proof"
+    author_endorsement: "not-contacted"
   - title: "percolation library (PercolationContinuity), anthropics/formal-math, commit 795efb86"
     authors:
       - "Anthropic, PBC"
     id: "https://github.com/anthropics/formal-math"
     type: "software"
+    relationship: "adapts"
+    note: "LatticeProb/Prob/Harris.lean, ZeroOne.lean and HarrisVariants.lean are adapted from it"
     license: "Apache-2.0"
-    author_contacted: "no"
-    prior_work: "LatticeProb/Prob/Harris.lean, ZeroOne.lean and HarrisVariants.lean are adapted from it"
+    author_endorsement: "not-contacted"
   - title: "rotor-23, commit 703754d6"
     authors:
       - "Ahmed Bou-Rabee"
     id: "https://github.com/nitromannitol/rotor-23"
     type: "software"
+    relationship: "adapts"
+    note: "the modules of LatticeProb/Lattice/Planar/ are adapted from it"
     license: "Apache-2.0"
-    author_contacted: "n/a"     # the same author
-    prior_work: "the modules of LatticeProb/Lattice/Planar/ are adapted from it"
+    author_endorsement: "n/a"     # the same author
   - title: "Parking-Sharpness, commits c368b888 and 27c7f7c2"
     authors:
       - "Ahmed Bou-Rabee"
     id: "https://github.com/nitromannitol/Parking-Sharpness"
     type: "software"
+    relationship: "adapts"
+    note: "sixteen top-level continuum modules of LatticeProb/ are adapted from it"
     license: "Apache-2.0"
-    author_contacted: "n/a"     # the same author
-    prior_work: "sixteen top-level continuum modules of LatticeProb/ are adapted from it"
+    author_endorsement: "n/a"     # the same author
 
 status:
   scope: >-
     A Lean 4 / Mathlib library of discrete probability and lattice potential
     theory, shared by the formalization repositories Divisible-Sandpile-Percolation,
-    Divisible-Sandpile-RWRS, Parking-Sharpness and Unique-Continuation-Planar and
-    by formalizations in progress.  It covers simple random walk on Z^d and on
+    Divisible-Sandpile-RWRS, Parking-Sharpness, Unique-Continuation-Planar and
+    ORRW-Lower-Bound and by formalizations in progress.  It covers simple random walk on Z^d and on
     locally finite graphs (Gaussian kernel bounds, Green functions and their
     gradients, hitting probabilities, the Markov property, exit times, the Nash
     inequality and on-diagonal heat kernel bounds), local central limit
@@ -61,7 +78,7 @@ status:
     Paley-Zygmund, Ottaviani, Doob and Pinsker inequalities, the
     Kolmogorov-Chentsov theorem, Brownian motion on R^d and its strong Markov
     property, the isonormal process, regular variation, and Jordan separation
-    on the square lattice.  483 modules, about 111,000 lines, 5,112
+    on the square lattice.  484 modules, about 111,000 lines, 5,112
     declarations.  SCOPE BOUNDARY: five results from the literature are stated
     as propositions in LatticeProb/External/ and not proved (the Gaussian
     logarithmic Sobolev inequality and its Herbst bound, polygonal
@@ -75,11 +92,14 @@ status:
     CarneVaropoulos (Lyons-Peres, Theorem 13.4) and GreenNorms (Bou-Rabee and
     Panagiotis, Section 3.1), likewise in
     LatticeProb/External/*Proved.lean.  The principal theorems are
-    listed in README.md and their axioms printed by
+    listed in the Contents subsection of "What is proved" in README.md and
+    their axioms printed by
     LatticeProb/Meta/AxiomsAudit.lean; three of them are additionally restated
     over a Mathlib-only vocabulary for the Lean comparator
     (Audit/LatticeProbAudit/).
   sorry_count: 0
+  sorry_count_scope: "LatticeProb library only"
+  comparator_challenge_sorry_count: 3
   sorry_in_definitions: 0
   axioms:
     - "propext"
@@ -188,7 +208,8 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies:
-        - "Gaussian Herbst bound from the logarithmic Sobolev inequality, Gross 1975 and Bakry-Emery 1985 (LatticeProb.GaussianHerbstBound), hypothesis"
+        - statement: "The Gaussian Herbst bound, from the logarithmic Sobolev inequality (LatticeProb.GaussianHerbstBound), taken as an explicit hypothesis"
+          source: "Gross 1975 and Bakry-Emery 1985"
     - declaration: "LatticeProbAudit.kingman"
       file: "Audit/LatticeProbAudit/Kingman/Solution.lean"
       sorry_count: 0
@@ -224,84 +245,76 @@ automation:
         - "gpt-5.6-luna"
       framework: >-
         Claude Code (Anthropic) as the supervising and proving harness, which
-        wrote most of the Lean code; Codex CLI (OpenAI) for gpt-6-astra; a
-        scripted general (glm_general.py) driving glm-5.3, glm-5.3-flash and
-        deepseek-v4.1-flash; Mistral Vibe (vibe --agent lean) for Leanstral; the Pi agent
-        harness for the deepseek-v4.1-flash workers of the 2026-09-30 campaign
+        wrote most of the Lean code; Codex CLI (OpenAI) for gpt-6-astra,
+        gpt-6-luna and gpt-5.6-luna; a scripted driver (glm_general.py) for
+        glm-5.3, glm-5.3-flash and deepseek-v4.1-flash; Mistral Vibe
+        (vibe --agent lean) for Leanstral; the Pi agent harness for
+        deepseek-v4.1-flash workers
       tool_setup: >-
         Lake builds under leanprover/lean4:v4.32.0 with Mathlib at revision
         81a5d257c8e410db227a6665ed08f64fea08e997, one shared build lock on
-        one machine.  The history on main runs from 2026-09-06 (db90208) to
-        2026-09-24 (5e998e8); all commits are made under the author's name,
-        and the division of labour below is reconstructed from the author's
-        run logs and notes, not from commit metadata.  claude-opus-5 (Claude
-        Code) wrote most of the library as "Library general" shifts from
-        2026-09-06 to 2026-09-08 (sites, i.i.d. fields, the walk modules, BK,
-        Kingman, Birkhoff, Kolmogorov-Chentsov, Brownian motion) and as
-        further Opus runs on 2026-09-11/12 (the strong Markov property,
-        Potter, Karamata, Freedman, the Nash heat kernel bound, Fuk-Nagaev);
-        a Claude Code supervising session merged every branch, ran the gates
-        and removed references to an unreleased repository (2026-09-18).
-        gpt-6-astra (Codex CLI, reasoning high to max) wrote the Gaussian law
-        determined by its covariance and Pinsker's inequality (2026-09-11),
-        the ergodic decomposition (2026-09-12), ported LatticeProb/Lattice/Planar/
-        from rotor-23 (2026-09-12), ran a comparator-style statement audit
-        (2026-09-12), and migrated sixteen continuum modules from
-        Parking-Sharpness (2026-09-17).  glm-5.3, sampling glm-5.3-flash for
+        one machine.  All commits are made under the author's name, and the
+        division of labour below is reconstructed from the author's run logs
+        and notes, not from commit metadata.  claude-opus-5 (Claude Code)
+        wrote most of the library (sites, i.i.d. fields, the walk modules, BK,
+        Kingman, Birkhoff, Kolmogorov-Chentsov, Brownian motion, the strong
+        Markov property, Potter, Karamata, Freedman, the Nash heat kernel
+        bound, Fuk-Nagaev); a supervising Claude Code instance merged every
+        branch and ran the gates.  gpt-6-astra (Codex CLI, reasoning high to
+        max) wrote the Gaussian law determined by its covariance, Pinsker's
+        inequality and the ergodic decomposition, adapted
+        LatticeProb/Lattice/Planar/ from rotor-23, ran a comparator-style
+        statement audit, and migrated sixteen continuum modules from
+        Parking-Sharpness.  glm-5.3, sampling glm-5.3-flash for
         compile-filtered proof candidates, proved the von Bahr-Esseen
-        inequality, the Kolmogorov modulus and moment bounds on product
-        spaces and the Fourier form of the heat kernel (2026-09-09 to
-        2026-09-11).  deepseek-v4.1-flash, driven by the same script, wrote
-        modules on conditional expectations in a parameter, white noise, the
-        supremum tail, negative-order Sobolev norms, Liouville's theorem and
-        the binomial kernel (2026-09-12 to 2026-09-16).  claude-sonnet-5
-        wrote the binomial local central limit theorem with its 1/m error
-        (2026-09-16) and moved modules into their own namespaces.
-        labs-leanstral-1-5 (Mistral Leanstral, through vibe) wrote the proofs
-        of LatticeProb/Network/GFF.lean (2026-09-23, commit 918318e) against
-        statements fixed in advance, verified by the supervisor.
-        claude-opus-5-5 wrote LatticeProb/Meta/AxiomsAudit.lean, the
-        comparator surface Audit/LatticeProbAudit/ and this release
-        documentation (2026-09-23).  On 2026-09-23 and 2026-09-24,
-        claude-sonnet-5 subagents, supervised by claude-opus-5-5 in Claude
-        Code, moved the paper-independent modules listed under Contents in
-        README.md as harvested from Divisible-Sandpile-Percolation,
+        inequality, the Kolmogorov modulus and moment bounds on product spaces
+        and the Fourier form of the heat kernel.  deepseek-v4.1-flash, driven
+        by the same script, wrote modules on conditional expectations in a
+        parameter, white noise, the supremum tail, negative-order Sobolev
+        norms, Liouville's theorem and the binomial kernel.  claude-sonnet-5
+        wrote the binomial local central limit theorem with its 1/m error and
+        moved modules into their own namespaces.  labs-leanstral-1-5 (Mistral
+        Leanstral, through vibe) wrote the proofs of
+        LatticeProb/Network/GFF.lean (commit 918318e) against statements fixed
+        in advance, verified by the supervisor.  claude-opus-5-5 wrote
+        LatticeProb/Meta/AxiomsAudit.lean, the comparator surface
+        Audit/LatticeProbAudit/ and the release documentation.
+        claude-sonnet-5 workers, supervised by claude-opus-5-5 in Claude Code,
+        moved paper-independent modules from Divisible-Sandpile-Percolation,
         Divisible-Sandpile-RWRS, Parking-Sharpness, Unique-Continuation-Planar,
         Exploding-Sandpiles, Dynamic-Dimensional-Reduction,
         manhattan-formalization, ORRW-Lower-Bound and rotor-23 into this
-        library, one branch per source formalization (harvest-analysis,
-        harvest-parking, harvest-manhattan, harvest-orrw,
-        harvest-percolation, harvest-sandpile).  Each move was checked by the
-        same tools/check_axioms.py and tools/check_warnings.py gates as every
-        other merge before the supervising session merged the branch.  These
-        modules were not written for this repository; the original
+        library (the results they prove are listed in the Contents subsection
+        of README.md).  Each move was checked by the same
+        tools/check_axioms.py and tools/check_warnings.py gates as every other
+        change before it was merged.
+        These modules were not written for this repository; the original
         authorship of each is described in its source repository's own
         disclosure, not restated here.  The author of
-        LatticeProb/Walk/LatticeGreen.lean (commit c860b35, 2026-09-23) is
-        not recorded in the logs.  Every merge was gated by
-        tools/check_axioms.py (the axiom closure of every declaration) and
-        tools/check_warnings.py (a warning-free build).  Both
-        .github/workflows/build.yml and .github/workflows/comparator.yml
-        trigger on request only (workflow_dispatch); the Lean comparator
-        (leanprover/comparator) is instead run locally before each release,
-        with results recorded in Audit/COMPARATOR_RUNS.md.
-        Final pass (2026-09-26 and 2026-09-27): a claude-opus-5-5 general in
-        Claude Code dispatched claude-sonnet-5 subagents, which renamed,
-        documented and split library modules; gpt-6-luna and gpt-5.6-luna (Codex
-        CLI) were commissioned for some proofs.
-        On 2026-09-30 a claude-opus-5-5 director in Claude Code proved the
-        Green function and planar potential kernel asymptotics
-        (LatticeProb/Walk/LineKernel.lean through LatticeProb/Walk/PotentialKernel.lean
-        and LatticeProb/External/PotentialKernelAsymptotics*.lean) on the branch
-        potential-kernel-asymptotics: it wrote the statements, the route and the
-        assembly, and four deepseek-v4.1-flash workers in the Pi agent harness
-        proved bounded packets of lemmas against those fixed statements, each
-        compiled and byte-checked by the director before it was kept.
+        LatticeProb/Walk/LatticeGreen.lean (commit c860b35) is not recorded in
+        the logs.  Every change was gated by tools/check_axioms.py (the axiom
+        closure of every declaration) and tools/check_warnings.py (a
+        warning-free build).  Both .github/workflows/build.yml and
+        .github/workflows/comparator.yml trigger on request only
+        (workflow_dispatch); the Lean comparator (leanprover/comparator) is
+        also run locally before each release, with results recorded in
+        Audit/COMPARATOR_RUNS.md.  claude-opus-5-5 in Claude Code, with
+        claude-sonnet-5 workers, renamed, documented and split library
+        modules; gpt-6-luna and gpt-5.6-luna (Codex CLI) were commissioned for
+        some proofs.  claude-opus-5-5 (Claude Code) proved the Green function
+        and planar potential kernel asymptotics
+        (LatticeProb/Walk/LineKernel.lean through
+        LatticeProb/Walk/PotentialKernel.lean and
+        LatticeProb/External/PotentialKernelAsymptotics*.lean): it wrote the
+        statements, the route and the assembly, and four deepseek-v4.1-flash
+        workers in the Pi agent harness proved bounded groups of lemmas
+        against those fixed statements, each compiled and byte-checked before
+        it was kept.
       cost:
         wall_time: >-
-          about two and a half weeks of calendar time (2026-09-06 to
-          2026-09-24), in parallel with the formalizations that use the
-          library
+          about two and a half weeks of calendar time for the bulk of the
+          library, followed by shorter targeted runs, in parallel with the
+          formalizations that use the library
         spend_usd: "not tracked (subscription and API accounts)"
         hardware: "a 20-thread Intel i9-9900X / 125 GB RAM Ubuntu machine; GLM and DeepSeek inference on hosted endpoints"
       prompting_notes: >-
@@ -312,14 +325,15 @@ automation:
   spend_usd: "not tracked (subscription and API accounts)"
   notes: >-
     All Lean code in this repository was written by the listed models under the
-    supervision of the author.  Every proof is checked by the Lean kernel and
-    Mathlib; the library contains no sorry and no custom axiom.  The results
-    cited from the literature enter as explicit hypotheses, not axioms.  The
-    Mathlib-only comparator challenge files (Audit/LatticeProbAudit/*/Challenge.lean)
-    each contain exactly one intentional statement-level sorry (the theorem
-    body), which is filled by the corresponding Solution.lean.  Three modules
-    are adapted from the percolation library of anthropics/formal-math, a
-    separate formalization not written for this repository; NOTICE lists them.
+    close supervision of the author.  Every proof is checked by the Lean kernel
+    and Mathlib; the library contains no sorry and no custom axiom.  The
+    results cited from the literature enter as explicit hypotheses, not
+    axioms.  The Mathlib-only comparator challenge files
+    (Audit/LatticeProbAudit/*/Challenge.lean) each contain exactly one
+    intentional statement-level sorry (the theorem body), which is filled by
+    the corresponding Solution.lean.  Three modules are adapted from the
+    percolation library of anthropics/formal-math, a separate formalization not
+    written for this repository; NOTICE lists them.
 
 fidelity:
   divergences: >-
@@ -390,7 +404,7 @@ alignment:
       module: "LatticeProb.Walk.GreenNorms"
       status: "proved"
       note: "The proposition LatticeProb.External.GreenNorms by LatticeProb.External.greenNorms_holds."
-    - source: "The principal theorems listed under Contents in README.md"
+    - source: "The principal theorems listed in the Contents subsection of \"What is proved\" in README.md"
       lean: "LatticeProb.*"
       module: "LatticeProb.Meta.AxiomsAudit"
       status: "proved"

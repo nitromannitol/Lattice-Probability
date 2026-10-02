@@ -102,14 +102,25 @@ lake build LatticeProbAudit.StatementRegression
 
 which prints, for each of the three theorems, that it is identical to the
 challenge statement and depends only on `propext`, `Classical.choice` and
-`Quot.sound`.
+`Quot.sound`.  To run the comparator itself on one pair, build
+`LatticeProbAudit` and then, from the repository root,
+
+```bash
+COMPARATOR_LANDRUN=<landrun> COMPARATOR_LEAN4EXPORT=<lean4export> \
+  lake env <comparator>/.lake/build/bin/comparator Audit/LatticeProbAudit/Kingman/comparator.json
+```
+
+with `GFF` or `BinomialLocalCLT` in place of `Kingman` for the other pairs; the
+tool revisions are pinned in
+[`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml) and
+listed in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  A pass is the output
+`Your solution is okay!`.
 
 **Status.**  All three solutions build, and the statement regression and the
-axiom prints pass locally.  `leanprover/comparator` was run on all three
-pairs on 2026-09-24 at commit `bbe0b90`, and every pair passed with the Lean
-kernel and again with the independent nanoda kernel enabled.  Results and the
-reproduction command are in
-[`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  The workflow
-[`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml)
-runs the same check on request, since the repository is private and Actions
+axiom prints pass locally.  `leanprover/comparator` was run on all three pairs
+at commits `bbe0b90` and `2d30e98`, and every pair passed with the Lean kernel
+and again with the independent nanoda kernel enabled.  Results and the
+reproduction command are in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  The
+workflow [`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml)
+runs the same check on request, since the builds are Mathlib-scale and Actions
 minutes are spent only when asked for.

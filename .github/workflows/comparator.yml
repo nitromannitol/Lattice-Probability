@@ -19,10 +19,10 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  COMPARATOR_REV: "5756749"      # leanprover/comparator commit
-  LEAN4EXPORT_REV: "v4.32.0"     # MUST match ./lean-toolchain
-  NANODA_REV: "6ae1f0c"          # ammkrn/nanoda_lib commit
-  LANDRUN_REV: "811cfff"         # Zouuup/landrun commit (v0.1.18)
+  COMPARATOR_REV: "575674928e239f5bc452aab72d1dd7b0f1326494"  # leanprover/comparator commit
+  LEAN4EXPORT_REV: "v4.32.0"                                  # MUST match ./lean-toolchain
+  NANODA_REV: "6ae1f0cd962f081f6c423454c5da729d841236a7"      # ammkrn/nanoda_lib commit
+  LANDRUN_REV: "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4"     # Zouuup/landrun commit (v0.1.18)
 
 jobs:
   comparator:
