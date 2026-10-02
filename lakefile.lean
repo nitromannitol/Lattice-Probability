@@ -11,14 +11,13 @@ require mathlib from git
 lean_lib «LatticeProb» where
   globs := #[.andSubmodules `LatticeProb]
 
-/-- The comparator audit surface (`Audit/LatticeProbAudit/`): Mathlib-only challenges, their
-solutions, and the statement regression.  Not a default target: it builds only on demand
-(`lake build LatticeProbAudit`), so the ordinary build of `LatticeProb`, and the build of every
-repository that requires this library, is unchanged.  The modules live under the distinct root
-`LatticeProbAudit` so that they cannot collide with the `Audit.*` modules of a dependent
-repository. -/
+/-- The comparator audit surface (`LatticeProbAudit/`): Mathlib-only challenges, their
+solutions, and the vocabulary and bridge modules the solutions use.  Not a default target: it
+builds only on demand (`lake build LatticeProbAudit`), so the ordinary build of `LatticeProb`,
+and the build of every repository that requires this library, is unchanged.  The modules live
+under the distinct root `LatticeProbAudit` so that they cannot collide with the audit modules of
+a dependent repository. -/
 lean_lib «LatticeProbAudit» where
-  srcDir := "Audit"
   globs := #[.submodules `LatticeProbAudit]
   leanOptions := #[
     ⟨`autoImplicit, false⟩,

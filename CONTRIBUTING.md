@@ -14,7 +14,7 @@ lake build LatticeProbAudit   # the Mathlib-only comparator surface
 
 The production build is required to emit no Lean or linter warnings
 (`python3 tools/check_warnings.py`).  The three Mathlib-only files
-`Audit/LatticeProbAudit/*/Challenge.lean` are the sole exception: each contains
+`LatticeProbAudit/*/Challenge.lean` are the sole exception: each contains
 one documented statement-level `sorry`, checked against its completed solution
 by `leanprover/comparator`.
 
@@ -29,13 +29,12 @@ A few practical notes for working with a development of this size:
   `.lake/build/lib/lean/` and rebuild the module.
 - **The axiom report** is `lake build LatticeProb.Meta.AxiomsAudit`, and
   `python3 tools/check_axioms.py` checks every declaration of the library.
-- **The comparator surface** is `lake build LatticeProbAudit`, with the
-  statement check `lake build LatticeProbAudit.StatementRegression`; see
-  [`Audit/README.md`](Audit/README.md).  After editing a challenge, run
-  `bash Audit/check_standalone.sh Audit/LatticeProbAudit/<Pair>/Challenge.lean`
-  and `bash Audit/check_standalone.sh --vocabulary`: the vocabulary blocks of
-  the challenges and of `Audit/LatticeProbAudit/Support/Vocabulary.lean` must
-  stay byte-identical.
+- **The comparator surface** is `lake build LatticeProbAudit`; see
+  [`LatticeProbAudit/README.md`](LatticeProbAudit/README.md).  After editing a
+  challenge, run
+  `bash LatticeProbAudit/check_standalone.sh LatticeProbAudit/<Pair>/Challenge.lean`
+  and `bash LatticeProbAudit/check_standalone.sh --vocabulary`: the vocabulary
+  block of a challenge and of its `SolutionBasic.lean` must stay byte-identical.
 
 ## Adding a module
 

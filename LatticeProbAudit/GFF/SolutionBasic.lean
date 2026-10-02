@@ -1,14 +1,14 @@
 import Mathlib
 
 /-!
-# Mathlib-only statement vocabulary for the comparator solutions
+# Statement vocabulary for the `GFF` comparator
 
-A verbatim copy of the vocabulary block (between `VOCABULARY-BEGIN` and
-`VOCABULARY-END`) of `Audit/LatticeProbAudit/GFF/Challenge.lean`, the only
-challenge that needs definitions beyond Mathlib's.  It imports only Mathlib, so
-the definitions it declares elaborate exactly as they do in the challenge;
-`Audit/check_standalone.sh --vocabulary` checks that the blocks are
-byte-identical.
+Verbatim copy of the vocabulary block (between `VOCABULARY-BEGIN` and `VOCABULARY-END`) of
+`LatticeProbAudit/GFF/Challenge.lean`, the vocabulary of the killed Green function; a
+mechanical copy, not hand-edited.  It imports only Mathlib, so the definitions it declares
+elaborate exactly as they do in the challenge, and the two blocks must stay byte-identical so
+that the comparator's constant-by-constant closure check passes;
+`LatticeProbAudit/check_standalone.sh --vocabulary` checks that they are.
 -/
 
 -- VOCABULARY-BEGIN

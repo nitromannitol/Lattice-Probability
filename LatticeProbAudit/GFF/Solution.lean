@@ -1,19 +1,19 @@
 import Mathlib
 import LatticeProb.Network.GFF
-import LatticeProbAudit.Support.Vocabulary
-import LatticeProbAudit.Support.Bridge
+import LatticeProbAudit.GFF.SolutionBasic
+import LatticeProbAudit.Support.GFFBridge
 
 /-!
 # Solution: GFF
 
-The challenge module `Audit/LatticeProbAudit/GFF/Challenge.lean` imports only
-Mathlib and states the theorem with one intentional `sorry`.  This solution
-imports the library together with `LatticeProbAudit.Support.Vocabulary`, a
-verbatim copy of the challenge's vocabulary, rewrites the vocabulary's killed
-Green function into the library's (`Audit/LatticeProbAudit/Support/Bridge.lean`),
-and proves the byte-identical statement with the library's field
-`LatticeProb.Network.gff`, from `LatticeProb.Network.killedGreenMatrix_posSemidef`,
-`LatticeProb.Network.integral_gff` and `LatticeProb.Network.covariance_gff`.
+The challenge module `LatticeProbAudit/GFF/Challenge.lean` imports only Mathlib and states the
+theorem with one intentional `sorry`.  This solution imports the library together with
+`LatticeProbAudit.GFF.SolutionBasic`, a verbatim copy of the challenge's vocabulary, rewrites
+the vocabulary's killed Green function into the library's
+(`LatticeProbAudit/Support/GFFBridge.lean`), and proves the byte-identical statement with the
+library's field `LatticeProb.Network.gff`, from
+`LatticeProb.Network.killedGreenMatrix_posSemidef`, `LatticeProb.Network.integral_gff` and
+`LatticeProb.Network.covariance_gff`.
 -/
 
 namespace LatticeProbAudit

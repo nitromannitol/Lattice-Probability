@@ -14,7 +14,7 @@ project:
     theorems (Kingman's subadditive ergodic theorem, the discrete Gaussian
     free field with zero boundary values and the binomial local central limit
     theorem) are independently checked using the comparator pairs under
-    Audit/LatticeProbAudit/.
+    LatticeProbAudit/.
   authors:
     - "Ahmed Bou-Rabee"
   license: "Apache-2.0"
@@ -96,7 +96,7 @@ status:
     their axioms printed by
     LatticeProb/Meta/AxiomsAudit.lean; three of them are additionally restated
     over a Mathlib-only vocabulary for the Lean comparator
-    (Audit/LatticeProbAudit/).
+    (LatticeProbAudit/).
   sorry_count: 0
   sorry_count_scope: "LatticeProb library only"
   comparator_challenge_sorry_count: 3
@@ -110,31 +110,31 @@ status:
       file: "LatticeProb/Prob/Kingman.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/LatticeProbAudit/Kingman/comparator.json"
+      comparator_config: "LatticeProbAudit/Kingman/comparator.json"
       literature_dependencies: []
     - declaration: "LatticeProb.tendsto_integral_div"
       file: "LatticeProb/Prob/Kingman.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/LatticeProbAudit/Kingman/comparator.json"
+      comparator_config: "LatticeProbAudit/Kingman/comparator.json"
       literature_dependencies: []
     - declaration: "LatticeProb.Network.covariance_gff"
       file: "LatticeProb/Network/GFF.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/LatticeProbAudit/GFF/comparator.json"
+      comparator_config: "LatticeProbAudit/GFF/comparator.json"
       literature_dependencies: []
     - declaration: "LatticeProb.Network.killedGreenMatrix_posSemidef"
       file: "LatticeProb/Network/GFF.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/LatticeProbAudit/GFF/comparator.json"
+      comparator_config: "LatticeProbAudit/GFF/comparator.json"
       literature_dependencies: []
     - declaration: "LatticeProb.BinomialLCLT.exists_binomPMF_localCLT"
       file: "LatticeProb/Walk/BinomialLocalCLT.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/LatticeProbAudit/BinomialLocalCLT/comparator.json"
+      comparator_config: "LatticeProbAudit/BinomialLocalCLT/comparator.json"
       literature_dependencies: []
     - declaration: "LatticeProb.exists_abs_srwGreenInf_sub_le"
       file: "LatticeProb/Walk/GreenAsymptotic.lean"
@@ -211,22 +211,22 @@ status:
         - statement: "The Gaussian Herbst bound, from the logarithmic Sobolev inequality (LatticeProb.GaussianHerbstBound), taken as an explicit hypothesis"
           source: "Gross 1975 and Bakry-Emery 1985"
     - declaration: "LatticeProbAudit.kingman"
-      file: "Audit/LatticeProbAudit/Kingman/Solution.lean"
+      file: "LatticeProbAudit/Kingman/Solution.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/LatticeProbAudit/Kingman/comparator.json"
+      comparator_config: "LatticeProbAudit/Kingman/comparator.json"
       literature_dependencies: []
     - declaration: "LatticeProbAudit.gff"
-      file: "Audit/LatticeProbAudit/GFF/Solution.lean"
+      file: "LatticeProbAudit/GFF/Solution.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/LatticeProbAudit/GFF/comparator.json"
+      comparator_config: "LatticeProbAudit/GFF/comparator.json"
       literature_dependencies: []
     - declaration: "LatticeProbAudit.binomial_local_clt"
-      file: "Audit/LatticeProbAudit/BinomialLocalCLT/Solution.lean"
+      file: "LatticeProbAudit/BinomialLocalCLT/Solution.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: "Audit/LatticeProbAudit/BinomialLocalCLT/comparator.json"
+      comparator_config: "LatticeProbAudit/BinomialLocalCLT/comparator.json"
       literature_dependencies: []
 
 automation:
@@ -278,7 +278,7 @@ automation:
         LatticeProb/Network/GFF.lean (commit 918318e) against statements fixed
         in advance, verified by the supervisor.  claude-opus-5-5 wrote
         LatticeProb/Meta/AxiomsAudit.lean, the comparator surface
-        Audit/LatticeProbAudit/ and the release documentation.
+        LatticeProbAudit/ and the release documentation.
         claude-sonnet-5 workers, supervised by claude-opus-5-5 in Claude Code,
         moved paper-independent modules from Divisible-Sandpile-Percolation,
         Divisible-Sandpile-RWRS, Parking-Sharpness, Unique-Continuation-Planar,
@@ -298,7 +298,7 @@ automation:
         .github/workflows/comparator.yml trigger on request only
         (workflow_dispatch); the Lean comparator (leanprover/comparator) is
         also run locally before each release, with results recorded in
-        Audit/COMPARATOR_RUNS.md.  claude-opus-5-5 in Claude Code, with
+        LatticeProbAudit/COMPARATOR_RUNS.md.  claude-opus-5-5 in Claude Code, with
         claude-sonnet-5 workers, renamed, documented and split library
         modules; gpt-6-luna and gpt-5.6-luna (Codex CLI) were commissioned for
         some proofs.  claude-opus-5-5 (Claude Code) proved the Green function
@@ -329,7 +329,7 @@ automation:
     and Mathlib; the library contains no sorry and no custom axiom.  The
     results cited from the literature enter as explicit hypotheses, not
     axioms.  The Mathlib-only comparator challenge files
-    (Audit/LatticeProbAudit/*/Challenge.lean) each contain exactly one
+    (LatticeProbAudit/*/Challenge.lean) each contain exactly one
     intentional statement-level sorry (the theorem body), which is filled by
     the corresponding Solution.lean.  Three modules are adapted from the
     percolation library of anthropics/formal-math, a separate formalization not
@@ -352,9 +352,8 @@ review:
   notes: >-
     Correctness of every proof is guaranteed by the Lean kernel and Mathlib (no
     sorry, no custom axiom).  The statements of the three audited theorems are
-    additionally checked against Mathlib-only restatements by
-    Audit/LatticeProbAudit/StatementRegression.lean.  This is not external
-    peer review.
+    additionally checked by the Lean comparator against the Mathlib-only
+    restatements in LatticeProbAudit/.  This is not external peer review.
 
 alignment:
   namespace: "LatticeProb"
@@ -363,17 +362,17 @@ alignment:
       lean: "LatticeProb.ae_tendsto_div"
       module: "LatticeProb.Prob.Kingman"
       status: "proved"
-      note: "With LatticeProb.tendsto_integral_div. Comparator challenge Audit/LatticeProbAudit/Kingman/."
+      note: "With LatticeProb.tendsto_integral_div. Comparator challenge LatticeProbAudit/Kingman/."
     - source: "The discrete Gaussian free field with zero boundary values"
       lean: "LatticeProb.Network.covariance_gff"
       module: "LatticeProb.Network.GFF"
       status: "proved"
-      note: "With killedGreenMatrix_posSemidef and integral_gff. Comparator challenge Audit/LatticeProbAudit/GFF/."
+      note: "With killedGreenMatrix_posSemidef and integral_gff. Comparator challenge LatticeProbAudit/GFF/."
     - source: "The binomial local central limit theorem with a 1/m error"
       lean: "LatticeProb.BinomialLCLT.exists_binomPMF_localCLT"
       module: "LatticeProb.Walk.BinomialLocalCLT"
       status: "proved"
-      note: "Comparator challenge Audit/LatticeProbAudit/BinomialLocalCLT/."
+      note: "Comparator challenge LatticeProbAudit/BinomialLocalCLT/."
     - source: "Lawler-Limic, Random Walk: A Modern Introduction, Theorems 4.3.1 (d >= 3) and 4.4.4 (d = 2): the Green function and potential kernel asymptotics"
       lean: "LatticeProb.External.potentialKernelAsymptotics_holds"
       module: "LatticeProb.External.PotentialKernelAsymptoticsProved"

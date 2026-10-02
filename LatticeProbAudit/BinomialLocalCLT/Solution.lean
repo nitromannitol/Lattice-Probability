@@ -4,7 +4,7 @@ import LatticeProb.Walk.BinomialLocalCLT
 /-!
 # Solution: BinomialLocalCLT
 
-The challenge module `Audit/LatticeProbAudit/BinomialLocalCLT/Challenge.lean`
+The challenge module `LatticeProbAudit/BinomialLocalCLT/Challenge.lean`
 imports only Mathlib and states the theorem with one intentional `sorry`.  This
 solution proves the byte-identical statement by
 `LatticeProb.BinomialLCLT.exists_binomPMF_localCLT`, whose statement is the

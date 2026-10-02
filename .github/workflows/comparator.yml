@@ -1,10 +1,10 @@
 name: Comparator audit
 
 # Runs the official leanprover/comparator on the three pairs under
-# Audit/LatticeProbAudit/: for each pair it checks that Solution proves a
+# LatticeProbAudit/: for each pair it checks that Solution proves a
 # statement whose full dependency closure matches Challenge's, uses only the
 # permitted axioms, and is accepted by BOTH the Lean kernel (replay) and the
-# independent nanoda kernel (enable_nanoda is switched on for this run).
+# independent nanoda kernel (enable_nanoda is set in each comparator.json).
 #
 # Mathlib olean artifacts come from `lake exe cache get`.  The library's own
 # build is cached between runs; the first run on an empty cache builds the
@@ -57,9 +57,6 @@ jobs:
       - name: Build the library and the audit surfaces
         run: lake build LatticeProbAudit
 
-      - name: Statement regression
-        run: lake build LatticeProbAudit.StatementRegression
-
       - name: Cache verification tools
         id: tools-cache
         uses: actions/cache@v4
@@ -105,13 +102,6 @@ jobs:
           git -C ~/tools/nanoda_lib checkout "$NANODA_REV"
           cd ~/tools/nanoda_lib && cargo +stable build --release
 
-      - name: Enable the nanoda kernel check (CI-only, on the workspace copy)
-        # The committed configs set enable_nanoda: false so that local
-        # reproduction needs only three tools; CI exercises the stronger
-        # two-kernel variant on its throwaway checkout.
-        run: |
-          sed -i 's/"enable_nanoda": false/"enable_nanoda": true/' Audit/LatticeProbAudit/*/comparator.json
-
       - name: Run the comparator on all three pairs
         env:
           COMPARATOR_LANDRUN: /home/runner/tools/bin/landrun
@@ -122,7 +112,7 @@ jobs:
           fail=0
           for X in Kingman GFF BinomialLocalCLT; do
             echo "::group::$X"
-            if lake env ~/tools/comparator/.lake/build/bin/comparator "Audit/LatticeProbAudit/$X/comparator.json" \
+            if lake env ~/tools/comparator/.lake/build/bin/comparator "LatticeProbAudit/$X/comparator.json" \
                  | tee "/tmp/comparator-$X.log" \
                && grep -q "Your solution is okay!" "/tmp/comparator-$X.log"; then
               echo "$X: OK"

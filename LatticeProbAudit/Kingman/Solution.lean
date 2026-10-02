@@ -4,7 +4,7 @@ import LatticeProb.Prob.Kingman
 /-!
 # Solution: Kingman
 
-The challenge module `Audit/LatticeProbAudit/Kingman/Challenge.lean` imports only
+The challenge module `LatticeProbAudit/Kingman/Challenge.lean` imports only
 Mathlib and states the theorem with one intentional `sorry`.  This solution
 proves the byte-identical statement from `LatticeProb.ae_tendsto_div` and
 `LatticeProb.tendsto_integral_div`.  The only work is the lower bound on the

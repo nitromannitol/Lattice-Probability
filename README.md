@@ -536,7 +536,7 @@ determined by finitely many coordinates of an infinite product.
 ## Guarantees
 
 - **No `sorry`** in the library.  Each of the three Mathlib-only comparator
-  challenges under `Audit/LatticeProbAudit/` contains its single intentional
+  challenges under `LatticeProbAudit/` contains its single intentional
   statement-level `sorry`, which the corresponding solution file proves.
   `python3 tools/check_warnings.py` checks that the build of `LatticeProb`
   emits no error, no warning and no `sorry`.
@@ -549,15 +549,15 @@ determined by finitely many coordinates of an infinite product.
   literature are hypotheses, not axioms.
 - **Independent check of the statements.** Three principal theorems are
   restated using only Mathlib, with no library definitions, in
-  [`Audit/LatticeProbAudit/Kingman/Challenge.lean`](Audit/LatticeProbAudit/Kingman/Challenge.lean),
-  [`Audit/LatticeProbAudit/GFF/Challenge.lean`](Audit/LatticeProbAudit/GFF/Challenge.lean)
+  [`LatticeProbAudit/Kingman/Challenge.lean`](LatticeProbAudit/Kingman/Challenge.lean),
+  [`LatticeProbAudit/GFF/Challenge.lean`](LatticeProbAudit/GFF/Challenge.lean)
   and
-  [`Audit/LatticeProbAudit/BinomialLocalCLT/Challenge.lean`](Audit/LatticeProbAudit/BinomialLocalCLT/Challenge.lean).
+  [`LatticeProbAudit/BinomialLocalCLT/Challenge.lean`](LatticeProbAudit/BinomialLocalCLT/Challenge.lean).
   The comparator workflow submits each challenge and its solution to
   [leanprover/comparator](https://github.com/leanprover/comparator), which
   checks that the two statements have identical elaborated types and that the
   proof reduces to the three standard axioms, through the Lean kernel and the
-  independent nanoda kernel.  See [`Audit/README.md`](Audit/README.md).
+  independent nanoda kernel.  See [`LatticeProbAudit/README.md`](LatticeProbAudit/README.md).
 - **Pinned toolchain.** Lean `v4.32.0` and `mathlib` at revision
   `81a5d257c8e410db227a6665ed08f64fea08e997`, the only git dependency of the
   library; the dependencies of mathlib are pinned in
@@ -574,24 +574,23 @@ rebuilt from Mathlib primitives) and `BinomialLocalCLT` (the binomial local
 central limit theorem with its `1/m` error).  Each challenge contains one
 intentional statement-level `sorry`, which the corresponding `Solution.lean`
 fills from the library.  The configurations
-`Audit/LatticeProbAudit/*/comparator.json` are for
+`LatticeProbAudit/*/comparator.json` are for
 [`leanprover/comparator`](https://github.com/leanprover/comparator).  All three
 solutions build and depend only on `propext`, `Classical.choice` and
-`Quot.sound`, and `Audit/LatticeProbAudit/StatementRegression.lean` checks
-locally that each solution statement is exactly the challenge statement and
-mentions no constant of the library.  Both
+`Quot.sound`, and the comparator checks that each solution statement is
+exactly the challenge statement.  Both
 [`.github/workflows/build.yml`](.github/workflows/build.yml) and
 [`.github/workflows/comparator.yml`](.github/workflows/comparator.yml) trigger
 on request only (`workflow_dispatch`), since the builds are Mathlib-scale; the
 comparator is also run locally before each release, and its results are
-recorded in [`Audit/COMPARATOR_RUNS.md`](Audit/COMPARATOR_RUNS.md).
+recorded in [`LatticeProbAudit/COMPARATOR_RUNS.md`](LatticeProbAudit/COMPARATOR_RUNS.md).
 
 ## Size
 
 About 111,000 lines of Lean in 484 modules (the root `LatticeProb.lean` and 483
 modules under `LatticeProb/`), of which about 87,000 lines are code once
 comments and blank lines are removed, with 5,112 declarations, on top of
-mathlib.  The count excludes the comparator surface in `Audit/`.
+mathlib.  The count excludes the comparator surface in `LatticeProbAudit/`.
 
 ## Building
 
@@ -612,22 +611,21 @@ revision.
 ```bash
 lake build LatticeProb.Meta.AxiomsAudit      # print the axioms of the principal theorems
 lake build LatticeProbAudit                  # the comparator challenges and solutions
-lake build LatticeProbAudit.StatementRegression
-bash Audit/check_standalone.sh --vocabulary  # the GFF vocabulary block is shared verbatim
+bash LatticeProbAudit/check_standalone.sh --vocabulary   # the GFF vocabulary block, Challenge vs SolutionBasic
 ```
 
 To run the comparator on one pair, build `LatticeProbAudit` and then, from the
 repository root,
 
 ```bash
-COMPARATOR_LANDRUN=<landrun> COMPARATOR_LEAN4EXPORT=<lean4export> \
-  lake env <comparator>/.lake/build/bin/comparator Audit/LatticeProbAudit/Kingman/comparator.json
+COMPARATOR_LANDRUN=<landrun> COMPARATOR_LEAN4EXPORT=<lean4export> COMPARATOR_NANODA=<nanoda_bin> \
+  lake env <comparator>/.lake/build/bin/comparator LatticeProbAudit/Kingman/comparator.json
 ```
 
 The revisions of the comparator, `lean4export`, `landrun` and `nanoda` are
 pinned in [`.github/workflows/comparator.yml`](.github/workflows/comparator.yml)
-and recorded in [`Audit/COMPARATOR_RUNS.md`](Audit/COMPARATOR_RUNS.md); see
-[`Audit/README.md`](Audit/README.md).
+and recorded in [`LatticeProbAudit/COMPARATOR_RUNS.md`](LatticeProbAudit/COMPARATOR_RUNS.md); see
+[`LatticeProbAudit/README.md`](LatticeProbAudit/README.md).
 
 To use the library from another Lake project, require it at a fixed commit and
 use the same Mathlib pin:
@@ -695,13 +693,13 @@ LatticeProb/
                         objects shared with Parking-Sharpness: white noise, heat kernels,
                         optimal stopping values, weak limits
 LatticeProb.lean         the root module (imports the whole library)
-Audit/
-  LatticeProbAudit/      the Mathlib-only comparator pairs Kingman/, GFF/ and
-                         BinomialLocalCLT/ (each with Challenge.lean, Solution.lean and
-                         comparator.json), Support/, and StatementRegression.lean
-  README.md              the comparator surface and what each challenge checks
+LatticeProbAudit/
+  Kingman/, GFF/,        the Mathlib-only comparator pairs (each with Challenge.lean,
+  BinomialLocalCLT/      Solution.lean and comparator.json; GFF/ also has SolutionBasic.lean)
+  Support/               GFFBridge.lean, the bridge of the GFF solution to the library
+  README.md, DESIGN.md   the comparator surface, what each challenge checks, and its design
   COMPARATOR_RUNS.md     the recorded comparator runs and the tool revisions
-  check_standalone.sh    elaborates a challenge standalone; checks the shared vocabulary
+  check_standalone.sh    elaborates a challenge standalone; checks the vocabulary blocks
 tools/                   check_axioms.py, check_warnings.py and check_names.py, listed
                          under Building
 .github/workflows/       build.yml and comparator.yml, run on request
@@ -737,7 +735,7 @@ modules of `LatticeProb/Lattice/Planar/` from
 modules from
 [`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness);
 [`NOTICE`](NOTICE) lists the files and the commits.  The comparator audit in
-[`Audit/`](Audit/) is set up for
+[`LatticeProbAudit/`](LatticeProbAudit/) is set up for
 [`leanprover/comparator`](https://github.com/leanprover/comparator).
 
 ## License
