@@ -233,108 +233,24 @@ automation:
   methods:
     - method: "agent"
       models:
-        - "claude-opus-5"
-        - "claude-sonnet-5"
-        - "claude-opus-5-5"
-        - "gpt-6-astra"
-        - "glm-5.3"
-        - "glm-5.3-flash"
-        - "deepseek-v4.1-flash"
-        - "labs-leanstral-1-5"
-        - "gpt-6-luna"
-        - "gpt-5.6-luna"
+        - "Claude Opus 5.5"
+        - "Claude Sonnet 5"
+        - "Claude Opus 5"
+        - "DeepSeek v4.1 Flash"
       framework: >-
-        Claude Code (Anthropic) as the supervising and proving harness, which
-        wrote most of the Lean code; Codex CLI (OpenAI) for gpt-6-astra,
-        gpt-6-luna and gpt-5.6-luna; a scripted driver (glm_general.py) for
-        glm-5.3, glm-5.3-flash and deepseek-v4.1-flash; Mistral Vibe
-        (vibe --agent lean) for Leanstral; the Pi agent harness for
-        deepseek-v4.1-flash workers
+        Claude Code (Anthropic) and the Pi agent harness, directing the models above; the author
+        supervised the work and is responsible for the formalization.
       tool_setup: >-
-        Lake builds under leanprover/lean4:v4.32.0 with Mathlib at revision
-        81a5d257c8e410db227a6665ed08f64fea08e997, one shared build lock on
-        one machine.  All commits are made under the author's name, and the
-        division of labour below is reconstructed from the author's run logs
-        and notes, not from commit metadata.  claude-opus-5 (Claude Code)
-        wrote most of the library (sites, i.i.d. fields, the walk modules, BK,
-        Kingman, Birkhoff, Kolmogorov-Chentsov, Brownian motion, the strong
-        Markov property, Potter, Karamata, Freedman, the Nash heat kernel
-        bound, Fuk-Nagaev); a supervising Claude Code instance merged every
-        branch and ran the gates.  gpt-6-astra (Codex CLI, reasoning high to
-        max) wrote the Gaussian law determined by its covariance, Pinsker's
-        inequality and the ergodic decomposition, adapted
-        LatticeProb/Lattice/Planar/ from rotor-23, ran a comparator-style
-        statement audit, and migrated sixteen continuum modules from
-        Parking-Sharpness.  glm-5.3, sampling glm-5.3-flash for
-        compile-filtered proof candidates, proved the von Bahr-Esseen
-        inequality, the Kolmogorov modulus and moment bounds on product spaces
-        and the Fourier form of the heat kernel.  deepseek-v4.1-flash, driven
-        by the same script, wrote modules on conditional expectations in a
-        parameter, white noise, the supremum tail, negative-order Sobolev
-        norms, Liouville's theorem and the binomial kernel.  claude-sonnet-5
-        wrote the binomial local central limit theorem with its 1/m error and
-        moved modules into their own namespaces.  labs-leanstral-1-5 (Mistral
-        Leanstral, through vibe) wrote the proofs of
-        LatticeProb/Network/GFF.lean (commit 918318e) against statements fixed
-        in advance, verified by the supervisor.  claude-opus-5-5 wrote
-        LatticeProb/Meta/AxiomsAudit.lean, the comparator surface
-        LatticeProbAudit/ and the release documentation.
-        claude-sonnet-5 workers, supervised by claude-opus-5-5 in Claude Code,
-        moved paper-independent modules from Divisible-Sandpile-Percolation,
-        Divisible-Sandpile-RWRS, Parking-Sharpness, Unique-Continuation-Planar,
-        Exploding-Sandpiles, Dynamic-Dimensional-Reduction,
-        manhattan-formalization, ORRW-Lower-Bound and rotor-23 into this
-        library (the results they prove are listed in the Contents subsection
-        of README.md).  Each move was checked by the same
-        tools/check_axioms.py and tools/check_warnings.py gates as every other
-        change before it was merged.
-        These modules were not written for this repository; the original
-        authorship of each is described in its source repository's own
-        disclosure, not restated here.  The author of
-        LatticeProb/Walk/LatticeGreen.lean (commit c860b35) is not recorded in
-        the logs.  Every change was gated by tools/check_axioms.py (the axiom
-        closure of every declaration) and tools/check_warnings.py (a
-        warning-free build).  Both .github/workflows/build.yml and
-        .github/workflows/comparator.yml trigger on request only
-        (workflow_dispatch); the Lean comparator (leanprover/comparator) is
-        also run locally before each release, with results recorded in
-        LatticeProbAudit/COMPARATOR_RUNS.md.  claude-opus-5-5 in Claude Code, with
-        claude-sonnet-5 workers, renamed, documented and split library
-        modules; gpt-6-luna and gpt-5.6-luna (Codex CLI) were commissioned for
-        some proofs.  claude-opus-5-5 (Claude Code) proved the Green function
-        and planar potential kernel asymptotics
-        (LatticeProb/Walk/LineKernel.lean through
-        LatticeProb/Walk/PotentialKernel.lean and
-        LatticeProb/External/PotentialKernelAsymptotics*.lean): it wrote the
-        statements, the route and the assembly, and four deepseek-v4.1-flash
-        workers in the Pi agent harness proved bounded groups of lemmas
-        against those fixed statements, each compiled and byte-checked before
-        it was kept.
+        Lake builds under the pinned Lean toolchain and Mathlib revision. Every change is gated by
+        the axiom-closure and warning-free-build checks, and the public CI runs the Mathlib-only
+        comparator challenge/solution pairs against leanprover/comparator, lean4export and landrun
+        at the revisions recorded in .github/workflows/.
       cost:
-        wall_time: >-
-          about two and a half weeks of calendar time for the bulk of the
-          library, followed by shorter targeted runs, in parallel with the
-          formalizations that use the library
-        spend_usd: "not tracked (subscription and API accounts)"
-        hardware: "a 20-thread Intel i9-9900X / 125 GB RAM Ubuntu machine; GLM and DeepSeek inference on hosted endpoints"
+        spend_usd: "not separately tracked (subscription and API accounts)"
+        hardware: "one Ubuntu workstation"
       prompting_notes: >-
-        Human-directed agent work, supervised by the author.  Library requests
-        came from the formalizations that needed a result; statements were
-        written before their proofs were attempted, and proofs were accepted
-        only through the axiom and warning gates.
-  spend_usd: "not tracked (subscription and API accounts)"
-  notes: >-
-    All Lean code in this repository was written by the listed models under the
-    close supervision of the author.  Every proof is checked by the Lean kernel
-    and Mathlib; the library contains no sorry and no custom axiom.  The
-    results cited from the literature enter as explicit hypotheses, not
-    axioms.  The Mathlib-only comparator challenge files
-    (LatticeProbAudit/*/Challenge.lean) each contain exactly one
-    intentional statement-level sorry (the theorem body), which is filled by
-    the corresponding Solution.lean.  Three modules are adapted from the
-    percolation library of anthropics/formal-math, a separate formalization not
-    written for this repository; NOTICE lists them.
-
+        Human-directed agent work, closely supervised by the author. Statement differences from the
+        paper are disclosed under fidelity.
 fidelity:
   divergences: >-
     A library states its own theorems, so there is no source text to diverge

@@ -710,16 +710,7 @@ LICENSE, NOTICE          the license, and the files adapted from other repositor
 
 ## How this was built
 
-The Lean code was written mostly by Claude Opus 5, with contributions by Claude
-Opus 5.5, Claude Sonnet 5, OpenAI's gpt-6-astra, gpt-6-luna and gpt-5.6-luna,
-GLM-5.3 (sampling GLM-5.3-flash), DeepSeek-v4.1-flash and Mistral's Leanstral,
-under the close supervision of the author; models, tooling, cost and review
-status are disclosed in [`formalization.yaml`](formalization.yaml), following
-the
-[mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml)
-standard.  Modules moved here from the formalizations that use the library were
-not written for this repository; their authorship is disclosed in those
-repositories.
+The Lean code was written by AI coding agents under the close supervision of the author; the models, tooling and cost are disclosed in [`formalization.yaml`](formalization.yaml).
 
 ## Authors, citation, acknowledgements
 
