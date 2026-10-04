@@ -33,7 +33,7 @@ variable {Ω : Type*} {m₀ : MeasurableSpace Ω} {μ : @Measure Ω m₀}
 If `S` is `m`-strongly-measurable, `E[ξ | m] = 0`, and `|S|^{p-2} S ξ` is integrable,
 then `E[|S|^{p-2} S ξ | m] = 0`: the `m`-measurable factor `|S|^{p-2} S` pulls out of the
 conditional expectation and annihilates `E[ξ | m]`. -/
-private theorem condExp_rpow_mul_mul_ae_eq_zero [IsProbabilityMeasure μ] {m : MeasurableSpace Ω}
+theorem condExp_rpow_mul_mul_ae_eq_zero [IsProbabilityMeasure μ] {m : MeasurableSpace Ω}
     {p : ℝ} {S ξ : Ω → ℝ}
     (hS : StronglyMeasurable[m] fun ω => |S ω| ^ (p - 2) * S ω)
     (hmean : μ[ξ | m] =ᵐ[μ] 0)
