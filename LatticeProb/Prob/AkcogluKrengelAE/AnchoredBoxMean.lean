@@ -96,4 +96,60 @@ theorem AnchoredBoxErgodic_of_MaximalMean
   exact (Hup c 2 (by norm_num)) hc (by norm_num) μ τ hτ hadd
     (Hmax c 2 (by norm_num)) (Hdense c 2 (by norm_num)) h hh hb
 
+/-- The anchored-box average is measurable in the state. -/
+theorem measurable_anchoredBoxAvgMean {h : Ω → ℝ} (hh : Measurable h)
+    {τ : Site d → Ω → Ω} (hτ : ∀ z, Measurable (τ z)) (c : Fin d → ℝ) (N : ℕ) :
+    Measurable fun ω => anchoredBoxAvgMean h τ c N ω := by
+  unfold anchoredBoxAvgMean
+  exact measurable_const.mul (Finset.measurable_sum _ fun x _ => hh.comp (hτ x))
+
+/-- **Step (a): the maximal function is finite a.e.**  The sup has been rewritten as the countable
+sup over `R : ℕ` of `if 1 ≤ R then |box average at R - (∏c)∫h| else 0`, a sup of measurable
+functions, so it is measurable; the maximal inequality makes its `p`-th power `L¹`-finite, hence it
+is finite a.e. -/
+theorem anchoredBoxMaximal_ae_lt_top {c : Fin d → ℝ} {p : ℝ} (hp : 0 < p)
+    {μ : Measure Ω} [IsProbabilityMeasure μ] (τ : Site d → Ω → Ω)
+    (hτ : ∀ z, MeasurePreserving (τ z) μ μ) (_hadd : ∀ z w ω, τ (z + w) ω = τ z (τ w ω))
+    {h : Ω → ℝ} (hh : Measurable h) (_hb : ∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) {C : ℝ}
+    (hC : ∫⁻ ω, (⨆ N : ℕ,
+        ENNReal.ofReal |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) ^ p ∂μ ≤
+      ENNReal.ofReal C * ∫⁻ ω, (ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|) ^ p ∂μ)
+    (hint : ∫⁻ ω, (ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|) ^ p ∂μ ≠ ⊤) :
+    ∀ᵐ ω ∂μ, (⨆ R : ℕ, ENNReal.ofReal
+      (if 1 ≤ R then |anchoredBoxAvgMean h τ c R ω - (∏ i, c i) * ∫ ω, h ω ∂μ| else 0)) < ⊤ := by
+  have hmN : ∀ R : ℕ, Measurable fun ω : Ω => ENNReal.ofReal
+      (if 1 ≤ R then |anchoredBoxAvgMean h τ c R ω - (∏ i, c i) * ∫ ω, h ω ∂μ| else 0) := by
+    intro R
+    refine ENNReal.measurable_ofReal.comp ?_
+    by_cases hR : 1 ≤ R
+    · simp only [hR, ↓reduceIte]
+      exact ((measurable_anchoredBoxAvgMean hh (fun z => (hτ z).measurable) c R).sub
+        measurable_const).abs
+    · simp only [hR, ↓reduceIte]
+      exact measurable_const
+  have hsup : Measurable fun ω : Ω => (⨆ R : ℕ, ENNReal.ofReal
+      (if 1 ≤ R then |anchoredBoxAvgMean h τ c R ω - (∏ i, c i) * ∫ ω, h ω ∂μ| else 0)) :=
+    Measurable.iSup hmN
+  have hle : ∀ ω, (⨆ R : ℕ, ENNReal.ofReal
+      (if 1 ≤ R then |anchoredBoxAvgMean h τ c R ω - (∏ i, c i) * ∫ ω, h ω ∂μ| else 0)) ≤
+      (⨆ R : ℕ, ENNReal.ofReal |anchoredBoxAvgMean h τ c R ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) :=
+    fun ω => iSup_le fun R => by
+      by_cases hR : 1 ≤ R
+      · simp only [hR, ↓reduceIte]
+        exact le_iSup (fun R' => ENNReal.ofReal
+          |anchoredBoxAvgMean h τ c R' ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) R
+      · simp [hR]
+  have hLfin : ∫⁻ ω, (⨆ R : ℕ, ENNReal.ofReal
+      (if 1 ≤ R then |anchoredBoxAvgMean h τ c R ω - (∏ i, c i) * ∫ ω, h ω ∂μ| else 0)) ^ p ∂μ
+      ≠ ⊤ :=
+    ne_top_of_le_ne_top (ne_top_of_le_ne_top (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hint) hC)
+      (lintegral_mono fun ω => ENNReal.rpow_le_rpow (hle ω) hp.le)
+  have hf : Measurable fun ω : Ω => (⨆ R : ℕ, ENNReal.ofReal
+      (if 1 ≤ R then |anchoredBoxAvgMean h τ c R ω - (∏ i, c i) * ∫ ω, h ω ∂μ| else 0)) ^ p :=
+    ENNReal.continuous_rpow_const.measurable.comp hsup
+  filter_upwards [ae_lt_top hf hLfin] with ω hω
+  exact (ENNReal.rpow_lt_top_iff_of_pos hp).mp hω
+
 end LatticeProb
+
+#print axioms LatticeProb.anchoredBoxMaximal_ae_lt_top
