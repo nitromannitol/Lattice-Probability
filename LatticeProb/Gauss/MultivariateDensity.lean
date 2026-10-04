@@ -29,8 +29,9 @@ theorem multivariateGaussian_eq_withDensity {n : ℕ} (S : Matrix (Fin n) (Fin n
             Real.exp (-(x ⬝ᵥ (S⁻¹ *ᵥ x)) / 2))
 ```
 
-Its ingredients are `Matrix.PosDef.isUnit` (so `√S` is invertible and the change of variables of
-`map_withDensity_linearEquiv_apply` applies), the determinant factor
+Landed here: the determinant factor `det_sqrt_mul_self`.  Still needed: `Matrix.PosDef.isUnit`
+(so `√S` is invertible and the change of variables of `map_withDensity_linearEquiv_apply`
+applies), the scoped `MatrixOrder` instance (now opened below), the determinant factor
 `det (√S) · det (√S) = det S` (from `CFC.sqrt_mul_sqrt_self`, which needs the Loewner
 `PartialOrder` on `Matrix (Fin n) (Fin n) ℝ` — available only under `open scoped MatrixOrder`
 that is not synthesizable from `import Mathlib` in this checkout), and the exponent identification
@@ -55,6 +56,13 @@ theorem multivariateGaussian_eq_map {n : ℕ} (S : Matrix (Fin n) (Fin n) ℝ) :
           (fun x => Matrix.toEuclideanCLM (𝕜 := ℝ) (CFC.sqrt S) x) := by
   simp [multivariateGaussian]
 
+/-- **The determinant factor** of the correlated Gaussian density: for positive semidefinite `S`,
+`det (√S) * det (√S) = det S`, i.e. `det (√S) = (det S)^{1/2}`. -/
+theorem det_sqrt_mul_self {n : ℕ} {S : Matrix (Fin n) (Fin n) ℝ} (hS : S.PosSemidef) :
+    (CFC.sqrt S).det * (CFC.sqrt S).det = S.det := by
+  rw [← Matrix.det_mul, CFC.sqrt_mul_sqrt_self S hS.nonneg]
+
 end LatticeProb
 
 #print axioms LatticeProb.multivariateGaussian_eq_map
+#print axioms LatticeProb.det_sqrt_mul_self
