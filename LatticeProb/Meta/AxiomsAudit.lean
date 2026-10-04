@@ -174,6 +174,8 @@ library.
 #print axioms LatticeProb.gaussianLogSobolev_succ_of_one
 #print axioms LatticeProb.gaussianLogSobolev_of_one_of_tensorStep
 #print axioms LatticeProb.gaussianHerbstBound_of_one_of_tensorStep
+#print axioms LatticeProb.gaussianLogSobolevGrad_of_one_of_tensorStep
+#print axioms LatticeProb.gaussianLogSobolev_of_grad_smooth
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
@@ -334,3 +336,12 @@ library.
 #print axioms LatticeProb.Sobolev.fourier_realToComplexSchwartz
 #print axioms LatticeProb.Sobolev.fourier_bandTrunc_real
 #print axioms LatticeProb.Sobolev.fourier_bandTrunc_real_eq_zero
+#print axioms LatticeProb.Sobolev.mul_fourier_eq_fourier_convolution
+#print axioms LatticeProb.Sobolev.integrable_fourier_mul
+#print axioms LatticeProb.Sobolev.fourier_smul
+
+/-! ### Band-limited Bernstein bound -/
+
+#print axioms LatticeProb.Sobolev.fourierInv_eq_setIntegral
+#print axioms LatticeProb.Sobolev.norm_iteratedFDeriv_fourierInv_le_setIntegral
+#print axioms LatticeProb.Sobolev.exists_iteratedFDeriv_bandTrunc_le

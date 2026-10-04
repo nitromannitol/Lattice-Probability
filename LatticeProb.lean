@@ -303,8 +303,10 @@ import LatticeProb.Analysis.Sobolev.RellichLowFreq
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.BandLimited
 import LatticeProb.Analysis.Sobolev.FrequencyTruncation
+import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
 import LatticeProb.Analysis.Sobolev.BandTruncReal
 import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
+import LatticeProb.Analysis.Sobolev.FejerSideCondition
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.Scaling
 import LatticeProb.Analysis.Sobolev.TestFn
