@@ -10,6 +10,7 @@ import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityCore
 import LatticeProb.Prob.AkcogluKrengelAE.UnitScaleLowerBound
 import LatticeProb.Prob.AkcogluKrengelAE.CoarseGraining
 import LatticeProb.Prob.AkcogluKrengelAE.Assembly
+import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
 
 /-!
 # The almost-everywhere Akcoglu-Krengel subadditive ergodic theorem
