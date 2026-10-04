@@ -433,6 +433,60 @@ theorem coboundaryBound (d : ℕ) : CoboundaryBound d := by
       push_cast
       ring
 
+/-! ## ERRATUM: `AnchoredBoxLimsupBound` is false as stated
+
+The standalone step-(c) `Prop` at line 223 carries only additivity, so it applies to the
+identity action.  With `h = h'` an indicator and a Dirac measure the left side is `1/2` and the
+right side is `0`.  The fix is to restrict `h'` to the dense class on which
+`avg_N h' → (∏c) ∫h'` is *known* (measure preservation is not enough: the identity action is
+measure preserving). -/
+
+omit [MeasurableSpace Ω] in
+/-- The anchored-box average at scale `0` vanishes when `d ≥ 1`. -/
+theorem anchoredBoxAvgMean_zero {d : ℕ} (hd : 1 ≤ d) (h : Ω → ℝ) (τ : Site d → Ω → Ω)
+    (c : Fin d → ℝ) (ω : Ω) : anchoredBoxAvgMean h τ c 0 ω = 0 := by
+  unfold anchoredBoxAvgMean
+  have h0 : ((0 : ℕ) : ℝ) ^ (-(d : ℝ)) = 0 := by
+    rw [show ((0 : ℕ) : ℝ) = (0 : ℝ) by norm_num]
+    exact Real.zero_rpow (by
+      have : (0 : ℝ) < (d : ℝ) := by exact_mod_cast (by omega : 0 < d)
+      linarith)
+  rw [h0, zero_mul]
+
+/-- **`AnchoredBoxLimsupBound` is false as stated.**  On `Bool` with the Dirac measure at
+`false`, the identity action, `h = h' = 1_{false}`, `d = 1`, `c = 1/2`, the left side of the
+claimed inequality at `true` is `1/2` while the right side is `0`. -/
+theorem not_anchoredBoxLimsupBound :
+    ¬ AnchoredBoxLimsupBound 1 (fun _ => (1 / 2 : ℝ)) := by
+  intro H
+  let h : Bool → ℝ := fun b => if b then 0 else 1
+  have hineq := H (Ω := Bool) (Measure.dirac false) (fun _ => id) h h
+      (fun _ _ _ => rfl) true
+  have hA : ∀ N : ℕ,
+      anchoredBoxAvgMean (d := 1) h (fun _ => id) (fun _ => (1 / 2 : ℝ)) N true = 0 := by
+    intro N
+    simp [anchoredBoxAvgMean, h]
+  have hseq : (fun N : ℕ => |anchoredBoxAvgMean (d := 1) h (fun _ => id)
+        (fun _ => (1 / 2 : ℝ)) N true -
+        (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ b, h b ∂Measure.dirac false|) =
+      fun _ => (1 / 2 : ℝ) := by
+    funext N
+    rw [hA N]
+    simp [h]
+  have hLHS : ENNReal.ofReal (limsup (fun N : ℕ =>
+        |anchoredBoxAvgMean (d := 1) h (fun _ => id) (fun _ => (1 / 2 : ℝ)) N true -
+          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ b, h b ∂Measure.dirac false|) atTop) =
+      ENNReal.ofReal (1 / 2) := by
+    rw [hseq]
+    simp
+  have hRHS : (⨆ N : ℕ, ENNReal.ofReal
+        |anchoredBoxAvgMean (d := 1) (h - h) (fun _ => id) (fun _ => (1 / 2 : ℝ)) N true|) +
+      ENNReal.ofReal |(∏ _i : Fin 1, (1 / 2 : ℝ)) *
+        (∫ b, h b ∂Measure.dirac false - ∫ b, h b ∂Measure.dirac false)| = 0 := by
+    simp [anchoredBoxAvgMean, h]
+  rw [hLHS, hRHS] at hineq
+  exact (not_le_of_gt (ENNReal.ofReal_pos.mpr (by norm_num : (0 : ℝ) < 1 / 2))) hineq
+
 end LatticeProb
 
 #print axioms LatticeProb.anchoredBoxMaximal_ae_lt_top
@@ -442,3 +496,5 @@ end LatticeProb
 #print axioms LatticeProb.abs_sum_sub_le_card_mul
 #print axioms LatticeProb.sum_shift_anchoredBox
 #print axioms LatticeProb.coboundaryBound
+#print axioms LatticeProb.anchoredBoxAvgMean_zero
+#print axioms LatticeProb.not_anchoredBoxLimsupBound
