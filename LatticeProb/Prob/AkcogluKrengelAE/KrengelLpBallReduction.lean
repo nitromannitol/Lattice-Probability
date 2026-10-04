@@ -111,7 +111,15 @@ noncomputable def anchoredBoxAvgCentred {Ω : Type*} [MeasurableSpace Ω] (μ : 
 /-- **The centred anchored-box weak-type `(1,1)` input** (the true replacement for the false
 `AnchoredBoxMaximal`).  To be identified with, and later replaced by,
 `LatticeProb.AnchoredBoxMaximalCentred` (`AnchoredBoxMean.lean`, branch `ds-errata`) once both
-branches reach `main`. -/
+branches reach `main`.
+
+**Caution (correction).**  This anchored-*at-zero* form is **insufficient** for `KrengelLpBall`:
+the negative-orthant pieces of the `ℓ¹` ball are translates of anchored boxes by offsets that grow
+with `R`, so the ball maximal is a sup over anchored boxes at *unboundedly many anchors*, which no
+quantification over `c, N` with the box anchored at `0` controls.  The correct input for the ball
+statement is the all-anchor form `KrengelMaximalInputCentredTrans` below.  The anchored form here is
+exactly what the *ergodic* (Følner) chain needs, which is why the library's anchored-only
+`AnchoredBoxMaximalCentred` is fine for the rectangle ergodic chain but not for `KrengelLpBall`. -/
 def KrengelMaximalInputCentred (d : ℕ) (c : Fin d → ℝ) : Prop :=
   (∀ i, 0 ≤ c i) →
   ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
@@ -441,6 +449,44 @@ theorem l1BallMax_le_orthantBoxMax (hd : 1 ≤ d) (T : Site d → Ω → Ω) (f 
           (Finset.le_sup (f := fun s : Fin d → Bool =>
             ⨆ R : ℕ, avg (orthantBox s R) (fun y => f (T y ω))) (Finset.mem_univ s))
 
+/-- The anchored box translated by `z`. -/
+noncomputable def shiftedAnchoredBox {d : ℕ} (z : Site d) (c : Fin d → ℝ) (N : ℕ) : Finset (Site d) :=
+  (anchoredBox c N).map (Equiv.addRight z).toEmbedding
+
+/-- **The all-anchor centred anchored-box weak-type `(1,1)` input.**  The correct input for
+`KrengelLpBall`: the centred weak type for the supremum over ALL anchors `z`, shapes `c` and
+scales `N` of the averaged anchored box.  Since `τ` is additive, `avg (z + anchoredBox c N) (f ∘ τ)`
+at `ω` is literally the anchored-box average of `f ∘ τ` at `τ z ω`, so this is the
+translation-invariant form the classical multiparameter theorem uses. -/
+def KrengelMaximalInputCentredTrans (d : ℕ) (c : Fin d → ℝ) : Prop :=
+  (∀ i, 0 ≤ c i) →
+  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (τ : Site d → Ω → Ω),
+    (∀ z, MeasurePreserving (τ z) μ μ) →
+    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    ∀ (h : Ω → ℝ), Measurable h → (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
+      ∀ t : ℝ, 0 < t →
+        ENNReal.ofReal t * μ {ω | ENNReal.ofReal t <
+            ⨆ (z : Site d) (N : ℕ), ENNReal.ofReal
+              |(((shiftedAnchoredBox z c N).card : ℝ))⁻¹ *
+                ∑ x ∈ shiftedAnchoredBox z c N, h (τ x ω) - ∫ ω, h ω ∂μ|} ≤
+          ∫⁻ ω, ({ω | ENNReal.ofReal t <
+            ⨆ (z : Site d) (N : ℕ), ENNReal.ofReal
+              |(((shiftedAnchoredBox z c N).card : ℝ))⁻¹ *
+                ∑ x ∈ shiftedAnchoredBox z c N, h (τ x ω) - ∫ ω, h ω ∂μ|}.indicator
+              (fun ω => ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|)) ω ∂μ
+
+/-- **The geometry transfer, all-anchor form, stated.**  Assuming the all-anchor centred input for
+every shape `c`, the `ℓ¹`-ball weak type holds.  The constant is `(2d)^d` by
+`l1BallMax_le_orthantBoxMax` (each orthant piece is a translate, hence an all-anchor box). -/
+def L1BallCoverTransferTrans (d : ℕ) : Prop :=
+  (∀ c : Fin d → ℝ, KrengelMaximalInputCentredTrans d c) → KrengelLpBallWeakType d
+
+/-- **The full reduction, all-anchor form.** -/
+theorem KrengelLpBall_of_centredTrans (htransfer : L1BallCoverTransferTrans d)
+    (hbox : ∀ c : Fin d → ℝ, KrengelMaximalInputCentredTrans d c) : KrengelLpBall d :=
+  KrengelLpBall_of_weakType (htransfer hbox)
+
 omit [MeasurableSpace Ω] in
 /-- **Translation bookkeeping (finite sets).**  Averaging over a translate `B + z` is averaging
 the shifted function over `B`. -/
@@ -482,6 +528,7 @@ theorem KrengelLpBall_of_centredBox (htransfer : L1BallCoverTransfer d)
 #print axioms card_mul_avg
 #print axioms avg_l1Ball_le_orthantBoxMax
 #print axioms l1BallMax_le_orthantBoxMax
+#print axioms KrengelLpBall_of_centredTrans
 
 end
 
