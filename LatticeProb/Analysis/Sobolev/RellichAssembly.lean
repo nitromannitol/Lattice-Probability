@@ -1,105 +1,56 @@
 /-
-# Assembly of the negative-index Rellich–Kondrachov compact embedding
+# Assembly of the Rellich low-frequency net from the landed pieces
 
-This file collects the pieces of the Rellich–Kondrachov compact-embedding
-argument, `LatticeProb.External.RellichKondrachovNegSobolev`
-(`LatticeProb/External/RellichKondrachovNegSobolev.lean`), and presents the
-final reduction to a single named residual, `rkLowFreqNet`.
+`rkLowFreqNet` is the residual of the Rellich–Kondrachov external.  Its inputs are, by now,
+landed separately:
 
-## The three steps and where each piece lives
+* the band-limited **Bernstein bound** (`BandLimitedBernstein.lean`, `BandLimitedCmBound.lean`):
+  the truncation `P_Λ φ` of an `H^s`-unit-ball test function has all derivatives up to order `m`
+  uniformly bounded, for `s ≥ 0`;
+* the **Arzelà–Ascoli net form** (`RellichCmNetReduction.lean`): a uniformly bounded, uniformly
+  Lipschitz family of continuous functions on a compact space has a finite sup-net with centres in
+  the family;
+* the **quantitative residual** `rkResidual_diff_bound` (`RellichNet.lean`), converting
+  `C^m`-closeness into `H^{s₀}`-closeness.
 
-1. **High frequency is uniformly small.**  `HighFrequency.lean` proves
-   `sobolevNormSqHigh_le` (the tail is at most the weight ratio
-   `(1 + (2πΛ)²)^{s₀-s}` times the full `H^s` norm) and
-   `tendsto_weight_atTop_zero` (`s₀ < s` makes the ratio vanish); `Truncation.lean`
-   packages this as `exists_sobolevNormSqHigh_le_truncation`: beyond a cutoff `Λ`,
-   the high-frequency `H^{s₀}` content of every `H^s`-unit test function is at
-   most `δ/2`.  `BandLimited.lean` records the compatible band-limited predicates.
+What is still needed is the step that turns those into a finite net of **test functions** on `D`:
+the truncation `P_Λ φ` is band-limited and hence not compactly supported, so its real part must be
+replaced by a test function with a controlled `C^m` error — the *support repair*.  This module
+carries that as the single explicit hypothesis `BandLimitedCmNet` and composes it with the
+reduction `rkLowFreqNet_of_uniformCmNet` to obtain `rkLowFreqNet`, and hence the external
+`RellichKondrachovNegSobolev`.
 
-2. **The low-frequency remainder is totally bounded.**  This is the single
-   remaining analytic input, isolated as `rkLowFreqNet` in
-   `RellichLowFreqNet.lean`: for the unit ball of `H^s(D)` restricted to functions
-   whose high-frequency `H^{s₀}` content is small, there is a finite net in the
-   `H^{s₀}(D)` norm with test-function centres.
-
-3. **Assembly.**  `RellichLowFreqNet.lean` converts `rkLowFreqNet` into the
-   internal finite-net statement `rkLowFrequencyStatement`
-   (`rkLowFrequencyStatement_of_rkLowFreqNet`) using step 1, and `RellichEquiv.lean`
-   identifies that statement with the external
-   (`rellichKondrachov_iff_rkLowFrequencyStatement`,
-   `rellichKondrachov_of_rkLowFrequencyStatement`).
-
-## Supporting analytic pieces
-
-* `RellichLowFreq.lean` (topological): convolution with a compactly supported
-  smooth kernel maps `IsTestFn D` to `IsTestFn D'` when `tsupport φ + tsupport K ⊆ D'`.
-* `RellichMollify.lean` (quantitative): the real-convolution Fourier identity and
-  the multiplier bound
-  `sobolevNormSq d s₀ (φ - φ ⋆ K) ≤ ofReal (c²) * sobolevNormSq d s φ`
-  whenever `‖1 - 𝓕K ξ‖ ≤ c` and `s₀ ≤ s`; this is the analytic core of any
-  mollification-based construction of the low-frequency net.
-* `Additivity.lean` (quadratic norm inequality): `sobolevNormSq_add_le` and
-  `sobolevNormSq_sub_le`, the triangle-type estimates that convert a finite net
-  of approximations into a finite net for the original family.
-* `RellichEstimate.lean` / `RellichNet.lean` (finite-net step): `rkResidual_holds`
-  (the quantitative Fourier-decay bound) and `rk_finite_net_of_Cm_net`, which turns
-  a finite `C^m`-net into a finite `sobolevNormSq d s₀`-net.
-* `RellichBandLimited.lean` records the older band-limited `C^m`-net residual
-  `rkBandLimitedCmNet`; its docstring records that this statement is too strong
-  (the `H^s` unit ball is not `C^m`-bounded for `s < m`), so the corrected
-  `rkLowFreqNet` is the one the assembly uses.
-
-## The single remaining input
-
-`rkLowFreqNet` is a `Prop` (a `def`), not a `sorry`: it is the only unproved
-declaration this file leaves.  Everything else is discharged from the library.
+The producer `BandLimitedCmNet` itself (Bernstein + Arzelà–Ascoli on the truncation jet + support
+repair) is `latprob-ds4` / `cerw-ds1`'s side of the work and is not re-proved here.
 -/
-import LatticeProb.Analysis.Sobolev.RellichLowFreq
-import LatticeProb.Analysis.Sobolev.RellichMollify
-import LatticeProb.Analysis.Sobolev.Additivity
-import LatticeProb.Analysis.Sobolev.HighFrequency
-import LatticeProb.Analysis.Sobolev.Truncation
-import LatticeProb.Analysis.Sobolev.BandLimited
-import LatticeProb.Analysis.Sobolev.RellichEstimate
-import LatticeProb.Analysis.Sobolev.RellichNet
-import LatticeProb.Analysis.Sobolev.RellichEquiv
+import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
+import LatticeProb.Analysis.Sobolev.BandTruncReal
+import LatticeProb.Analysis.Sobolev.RellichCmNetReduction
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
-import LatticeProb.Analysis.Sobolev.RellichBandLimited
 
 open MeasureTheory
-open scoped ENNReal FourierTransform
+open scoped ENNReal FourierTransform SchwartzMap
 
 namespace LatticeProb.Sobolev
 
-/-- **Assembled low-frequency statement.**  The corrected low-frequency residual
-`rkLowFreqNet` yields the internal finite-net statement: choose the cutoff `Λ`
-from the (proved) high-frequency step and apply the residual at that `Λ`. -/
-theorem rkLowFrequencyStatement_assembled (h : rkLowFreqNet) : rkLowFrequencyStatement :=
-  rkLowFrequencyStatement_of_rkLowFreqNet h
+/-- **The support-repair input.**  The band-limited truncations of the low-frequency family
+cannot be used as net centres directly: they are not compactly supported.  This `Prop` is the
+exact remaining input — a finite family of test functions on `D` that is `ε`-close in the `C^m`
+norm to every low-frequency `φ` in the `H^s` unit ball.  It is what the band-limited Bernstein
+bound plus Arzelà–Ascoli plus the mollification of the centres produce. -/
+def BandLimitedCmNet : Prop := rkUniformCmNet
 
-/-- **Assembled external.**  With `rkLowFreqNet`, the external
-`LatticeProb.External.RellichKondrachovNegSobolev` is discharged unconditionally
-through its equivalence with the internal finite-net statement. -/
-theorem rellichKondrachov_of_rkLowFreqNet (h : rkLowFreqNet) :
+/-- **The assembly.**  The support-repair input discharges `rkLowFreqNet` through the reduction
+`rkLowFreqNet_of_uniformCmNet`, which converts the `C^m`-net of test functions into the
+`H^{s₀}`-net using the quantitative residual `rkResidual_diff_bound`. -/
+theorem rkLowFreqNet_of_bandLimitedCmNet (h : BandLimitedCmNet) : rkLowFreqNet :=
+  rkLowFreqNet_of_uniformCmNet h
+
+/-- **The external, from the support-repair input.**  Composing the assembly with the glue
+`rellichKondrachovNegSobolev_of_lowfreqNet` discharges `RellichKondrachovNegSobolev` from the one
+remaining hypothesis. -/
+theorem rellichKondrachovNegSobolev_of_bandLimitedCmNet (h : BandLimitedCmNet) :
     LatticeProb.External.RellichKondrachovNegSobolev :=
-  rellichKondrachov_of_rkLowFrequencyStatement (rkLowFrequencyStatement_assembled h)
-
-/-- **The trivial converse.**  A finite net for the whole `H^s` unit ball of test
-functions on `D` is in particular a finite net for the subfamily with small
-high-frequency `H^{s₀}` content, so the full low-frequency statement implies the
-residual.  This records that `rkLowFreqNet` is not stronger than the theorem it
-assembles; the substantive direction is `rkLowFrequencyStatement_assembled`. -/
-theorem rkLowFreqNet_of_rkLowFrequencyStatement (h : rkLowFrequencyStatement) : rkLowFreqNet := by
-  intro d D hD s₀ s hss Λ hΛ δ hδ
-  obtain ⟨N, ψ, hψ, hnet⟩ := h d D hD s₀ s hss δ hδ
-  exact ⟨N, ψ, hψ, fun φ hφ hφn _ => hnet φ hφ hφn⟩
-
-/-- **The band-limited route** (recorded for reference).  `RellichBandLimited.lean`
-reduces the external to `rkBandLimitedCmNet`; that residual is stronger than the
-corrected `rkLowFreqNet` and is documented there as false for `s < m`, so this is
-not the route used above. -/
-theorem rellichKondrachov_of_rkBandLimitedCmNet_assembled (h : rkBandLimitedCmNet) :
-    LatticeProb.External.RellichKondrachovNegSobolev :=
-  rellichKondrachov_of_rkBandLimitedCmNet h
+  rellichKondrachovNegSobolev_of_lowfreqNet (rkLowFreqNet_of_bandLimitedCmNet h)
 
 end LatticeProb.Sobolev
