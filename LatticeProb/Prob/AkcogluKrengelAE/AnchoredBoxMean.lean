@@ -150,6 +150,35 @@ theorem anchoredBoxMaximal_ae_lt_top {c : Fin d → ℝ} {p : ℝ} (hp : 0 < p)
   filter_upwards [ae_lt_top hf hLfin] with ω hω
   exact (ENNReal.rpow_lt_top_iff_of_pos hp).mp hω
 
+
+omit [MeasurableSpace Ω] in
+/-- **Invariant model case (algebraic part).**  For a function invariant under the action, every
+box average is the value times the normalised box volume: `A_N h ω = (N^{-d} |anchoredBox c N|) h ω`.
+Since `N^{-d} |anchoredBox c N| → ∏ᵢ cᵢ`, its a.e. limit is `(∏ᵢ cᵢ) h`, which equals `(∏ᵢ cᵢ) ∫h`
+under ergodicity. -/
+theorem anchoredBoxAvgMean_invariant {h : Ω → ℝ} (hinv : ∀ z ω, h (τ z ω) = h ω)
+    (c : Fin d → ℝ) (N : ℕ) (ω : Ω) :
+    anchoredBoxAvgMean h τ c N ω = (N : ℝ) ^ (-(d : ℝ)) * ((anchoredBox c N).card : ℝ) * h ω := by
+  unfold anchoredBoxAvgMean
+  rw [Finset.sum_congr rfl (fun x _ => hinv x ω), Finset.sum_const, nsmul_eq_mul]
+  ring
+
+/-- **The two model cases of step (b)**, stated together: (i) functions invariant under the action
+have box averages equal to `(N^{-d} |anchoredBox c N|) h`, converging a.e. to `(∏ᵢ cᵢ) ∫h` under
+ergodicity (their a.e. value is the integral); (ii) a coboundary `h = g - g ∘ τ x` has box-sum
+boundary of size `O(N^{d-1})`, so its average tends to `0 = ∫h`.  The density assembly (finite sums
+plus the maximal inequality on the approximation error) is the remaining named step. -/
+def AnchoredBoxDenseCases (d : ℕ) : Prop :=
+  (∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+      (τ : Site d → Ω → Ω) (h : Ω → ℝ) (c : Fin d → ℝ),
+      (∀ z ω, h (τ z ω) = h ω) →
+      (∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => anchoredBoxAvgMean h τ c N ω) atTop
+        (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ)))) ∧
+  (∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+      (τ : Site d → Ω → Ω) (x : Site d) (g : Ω → ℝ) (c : Fin d → ℝ),
+      (∀ᵐ ω ∂μ, Tendsto (fun N : ℕ =>
+        anchoredBoxAvgMean (fun ω => g ω - g (τ x ω)) τ c N ω) atTop (𝓝 0)))
+
 end LatticeProb
 
 #print axioms LatticeProb.anchoredBoxMaximal_ae_lt_top
