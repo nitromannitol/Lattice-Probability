@@ -55,7 +55,9 @@ the Rellich-Kondrachov embedding are used, by
 of `LatticeProb/Analysis/Sobolev/`.
 
 The frequency-truncation half of Rellich-Kondrachov is proved (`Truncation.lean`,
-`HighFrequency.lean`), and the remaining low-frequency compactness step is
+`HighFrequency.lean`), the frequency-truncation operator `P_Λ` and the
+band-limitedness of its output are built (`FrequencyTruncation.lean`), and the
+remaining low-frequency compactness step is
 isolated as `LatticeProb.Sobolev.rkLowFreqNet`, whose consumer
 `rellichKondrachovNegSobolev_of_lowfreqNet` reduces the cited embedding to it
 (`Analysis/Sobolev/RellichLowFreqNet.lean`).  The earlier `C^m`-net formulation of

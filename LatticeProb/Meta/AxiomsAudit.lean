@@ -303,3 +303,5 @@ library.
 
 #print axioms LatticeProb.Sobolev.rkLowFrequencyStatement_of_rkLowFreqNet
 #print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_lowfreqNet
+#print axioms LatticeProb.Sobolev.fourier_bandTrunc
+#print axioms LatticeProb.Sobolev.fourier_bandTrunc_eq_zero
