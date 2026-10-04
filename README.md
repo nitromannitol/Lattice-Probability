@@ -307,6 +307,8 @@ the field with zero boundary values on a finite set `C` as
   the gradient (carré-du-champ) form of the Gaussian log-Sobolev inequality, its
   one-step tensorization as a named residual, and the proof that it implies the
   Lipschitz form for `C¹` densities.
+* `LatticeProb.entropy_prod_split`: the entropy chain rule for a product measure,
+  the first step of the Γ-form tensorization.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal

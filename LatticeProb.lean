@@ -88,6 +88,7 @@ import LatticeProb.Prob.GaussianConcentrationL2
 import LatticeProb.Prob.BracketProcess
 import LatticeProb.Prob.GaussianLogSobolevTensor
 import LatticeProb.Prob.GaussianLogSobolevGrad
+import LatticeProb.Prob.GaussianLogSobolevGradTensor
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev

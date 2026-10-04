@@ -176,6 +176,7 @@ library.
 #print axioms LatticeProb.gaussianHerbstBound_of_one_of_tensorStep
 #print axioms LatticeProb.gaussianLogSobolevGrad_of_one_of_tensorStep
 #print axioms LatticeProb.gaussianLogSobolev_of_grad_smooth
+#print axioms LatticeProb.entropy_prod_split
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
