@@ -41,4 +41,28 @@ complement of `A` is bounded. -/
 def Separates (A : Set Plane) (p : Plane) : Prop :=
   Bornology.IsBounded (connectedComponentIn Aᶜ p)
 
+/-- `Separates` is monotone in the separating set: a larger set separates at
+least as much. -/
+theorem Separates.mono {A B : Set Plane} {p : Plane} (hAB : A ⊆ B)
+    (h : Separates A p) : Separates B p := by
+  exact h.subset (connectedComponentIn_mono p (compl_subset_compl.mpr hAB))
+
+/-- The empty set separates nothing. -/
+theorem not_separates_empty (p : Plane) : ¬ Separates (∅ : Set Plane) p := by
+  intro h
+  have hcomp : (∅ : Set Plane)ᶜ = Set.univ := by simp
+  rw [Separates, hcomp, connectedComponentIn_univ] at h
+  haveI : ProperSpace Plane := inferInstance
+  have hc : CompactSpace Plane :=
+    Metric.compactSpace_iff_isBounded_univ.mpr (by
+      rw [← PreconnectedSpace.connectedComponent_eq_univ (x := p)]
+      exact h)
+  haveI : NoncompactSpace Plane := inferInstance
+  exact (not_compactSpace_iff.mpr inferInstance) hc
+
+/-- A point is not separated from itself by a set it avoids. -/
+theorem not_separates_of_mem_compl {A : Set Plane} {p : Plane} (hp : p ∉ A) :
+    p ∈ connectedComponentIn Aᶜ p :=
+  mem_connectedComponentIn (by simpa using hp)
+
 end LatticeProb
