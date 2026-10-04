@@ -477,6 +477,26 @@ theorem l1BallMax_eq_iSup_min (T : Site d → Ω → Ω) (f : Ω → ℝ≥0∞)
     refine iSup_le fun R => iSup_le fun hR => ?_
     exact le_iSup_of_le R (le_iSup_of_le hR (avg_mono (fun y => min_le_left _ _)))
 
+/-- **The multiparameter anchored-box restricted maximal ergodic theorem** — the one missing
+ingredient of the transfer.  For `f : Ω → ℝ≥0∞` measurable and `t > 0`, the anchored-box level set
+satisfies the *restricted* weak type `t · μ{E_t} ≤ ∫_{E_t} f`.  Its classical proof is induction on
+`d` from the one-parameter restricted maximal ergodic theorem the library already has
+(`LatticeProb.maximalSet_restricted_le`, Garsia); not formalised here.  Together with the centred
+input `KrengelMaximalInputCentred` (which supplies the *whole-space* weak type) and the pointwise
+domination `l1BallMax_le_orthantBoxMax`, it is what `L1BallCoverTransfer` needs. -/
+def MultiParameterMaximalErgodicRestricted (d : ℕ) : Prop :=
+  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω), IsProbabilityMeasure μ →
+    ∀ (τ : Site d → Ω → Ω),
+      (∀ z, MeasurePreserving (τ z) μ μ) →
+      (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+      ∀ (c : Fin d → ℝ), (∀ i, 0 ≤ c i) →
+      ∀ (f : Ω → ℝ≥0∞), Measurable f →
+        ∀ t : ℝ, 0 < t →
+          ENNReal.ofReal t * μ {ω | ENNReal.ofReal t <
+              ⨆ N : ℕ, avg (anchoredBox c N) (fun y => f (τ y ω))} ≤
+            ∫⁻ ω, ({ω | ENNReal.ofReal t <
+              ⨆ N : ℕ, avg (anchoredBox c N) (fun y => f (τ y ω))}.indicator f) ω ∂μ
+
 omit [MeasurableSpace Ω] in
 /-- **Translation bookkeeping (finite sets).**  Averaging over a translate `B + z` is averaging
 the shifted function over `B`. -/
