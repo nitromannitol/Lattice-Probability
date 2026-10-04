@@ -295,6 +295,8 @@ import LatticeProb.Analysis.Sobolev.Tight
 import LatticeProb.Analysis.Sobolev.Compact
 import LatticeProb.Analysis.Sobolev.TightTransfer
 import LatticeProb.Analysis.Sobolev.RellichLowFreq
+import LatticeProb.Analysis.Sobolev.RellichMollify
+import LatticeProb.Analysis.Sobolev.RellichAssembly
 import LatticeProb.External.RellichKondrachovNegSobolev
 import LatticeProb.External.PotentialKernelAsymptotics
 import LatticeProb.External.PotentialKernelAsymptoticsProved
