@@ -156,7 +156,8 @@ omit [MeasurableSpace Ω] in
 box average is the value times the normalised box volume: `A_N h ω = (N^{-d} |anchoredBox c N|) h ω`.
 Since `N^{-d} |anchoredBox c N| → ∏ᵢ cᵢ`, its a.e. limit is `(∏ᵢ cᵢ) h`, which equals `(∏ᵢ cᵢ) ∫h`
 under ergodicity. -/
-theorem anchoredBoxAvgMean_invariant (τ : Site d → Ω → Ω) {h : Ω → ℝ} (hinv : ∀ z ω, h (τ z ω) = h ω)
+theorem anchoredBoxAvgMean_invariant {h : Ω → ℝ} (τ : Site d → Ω → Ω)
+    (hinv : ∀ z ω, h (τ z ω) = h ω)
     (c : Fin d → ℝ) (N : ℕ) (ω : Ω) :
     anchoredBoxAvgMean h τ c N ω = (N : ℝ) ^ (-(d : ℝ)) * ((anchoredBox c N).card : ℝ) * h ω := by
   unfold anchoredBoxAvgMean
@@ -308,6 +309,63 @@ theorem sdiff_anchoredBox_shift_subset_eq_top {c : Fin d → ℝ} (N : ℕ) (j :
       rw [hval]
       simpa using hi
 
+omit [MeasurableSpace Ω] in
+/-- **Slab cardinality, anchored box.**  Pinning the `j`-th coordinate of the anchored box at any
+integer leaves at most `∏_{i ≠ j} m i` sites, `m i = ⌈N cᵢ⌉.toNat`. -/
+theorem card_filter_anchoredBox_le {c : Fin d → ℝ} (N : ℕ) (j : Fin d) (a : ℤ) :
+    ((anchoredBox c N).filter (fun y => y j = a)).card ≤
+      ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat := by
+  rw [anchoredBox, Fintype.card_filter_piFinset_eq
+    (s := fun i => Finset.Ico (0 : ℤ) ⌈(N : ℝ) * c i⌉) j a]
+  split_ifs with h
+  · refine le_of_eq (Finset.prod_congr rfl (fun i _ => ?_))
+    rw [Int.card_Ico, sub_zero]
+  · exact Nat.zero_le _
+
+omit [MeasurableSpace Ω] in
+/-- **Slab cardinality, unit-shifted box.**  The `j`-face `{y j = m j}` of the translated box
+`anchoredBox c N + unit j` has at most `∏_{i ≠ j} m i` sites.  Under the right translation by
+`unit j` this face is the slab `{x j = m j - 1}` of the anchored box, so it is the previous
+lemma. -/
+theorem card_filter_map_anchoredBox_le {c : Fin d → ℝ} (N : ℕ) (j : Fin d) :
+    (((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding).filter
+        (fun y => y j = ⌈(N : ℝ) * c j⌉)).card ≤
+      ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat := by
+  refine le_trans (le_of_eq ?_) (card_filter_anchoredBox_le (c := c) N j (⌈(N : ℝ) * c j⌉ - 1))
+  rw [Finset.filter_map, Finset.card_map]
+  congr 1
+  refine Finset.filter_congr (fun x _ => ?_)
+  change (Equiv.addRight (unit j)).toEmbedding x j = ⌈(N : ℝ) * c j⌉ ↔
+    x j = ⌈(N : ℝ) * c j⌉ - 1
+  have hx : (Equiv.addRight (unit j)).toEmbedding x j = x j + 1 := by
+    change (x + unit j) j = x j + 1
+    simp [Pi.add_apply, unit, Pi.single_eq_same]
+  rw [hx]
+  omega
+
+omit [MeasurableSpace Ω] in
+/-- **The two-face cardinality bound, proved.**  The symmetric difference of the anchored box and
+its unit-`j` translate lies in the union of the two slabs `{y j = 0}` and `{y j = m j}`, each of
+cardinality at most `∏_{i ≠ j} m i`, so its cardinality is at most twice that product. -/
+theorem symmDiffFaceBound (d : ℕ) : SymmDiffFaceBound d := by
+  intro c hc j N
+  have hsub1 := sdiff_anchoredBox_subset_eq_zero (c := c) N j
+  have hsub2 := sdiff_anchoredBox_shift_subset_eq_top (c := c) N j
+  refine le_trans (Finset.card_le_card (Finset.union_subset_union hsub1 hsub2)) ?_
+  refine le_trans (Finset.card_union_le _ _) ?_
+  have h1 := card_filter_anchoredBox_le (c := c) N j (0 : ℤ)
+  have h2 := card_filter_map_anchoredBox_le (c := c) N j
+  calc
+    ((anchoredBox c N).filter (fun y => y j = 0)).card +
+        (((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding).filter
+          (fun y => y j = ⌈(N : ℝ) * c j⌉)).card
+        ≤ (∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat) +
+            ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat := Nat.add_le_add h1 h2
+    _ = 2 * ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat := by ring
+
 end LatticeProb
 
 #print axioms LatticeProb.anchoredBoxMaximal_ae_lt_top
+#print axioms LatticeProb.card_filter_anchoredBox_le
+#print axioms LatticeProb.card_filter_map_anchoredBox_le
+#print axioms LatticeProb.symmDiffFaceBound
