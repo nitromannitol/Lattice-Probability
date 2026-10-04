@@ -138,6 +138,9 @@ library.
 #print axioms LatticeProb.poisson_tail
 #print axioms LatticeProb.evariance_le_half_tsum_siteEnergy
 #print axioms LatticeProb.gaussian_lipschitz_concentration
+#print axioms LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist
+#print axioms LatticeProb.lipschitzWith_pi_of_hasSum_sq
+#print axioms LatticeProb.gaussian_lipschitz_concentration_l2_fin
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
