@@ -530,13 +530,20 @@ theorem ae_eq_of_measurePreserving_idempotent {Ω : Type*} [MeasurableSpace Ω] 
   rw [this, measure_compl hBmeas (by rw [hB]; exact ENNReal.one_ne_top), measure_univ, hB,
     tsub_self]
 
-/-- **The multiparameter anchored-box restricted maximal ergodic theorem** — the one missing
-ingredient of the transfer.  For `f : Ω → ℝ≥0∞` measurable and `t > 0`, the anchored-box level set
-satisfies the *restricted* weak type `t · μ{E_t} ≤ ∫_{E_t} f`.  Its classical proof is induction on
-`d` from the one-parameter restricted maximal ergodic theorem the library already has
-(`LatticeProb.maximalSet_restricted_le`, Garsia); not formalised here.  Together with the centred
-input `KrengelMaximalInputCentred` (which supplies the *whole-space* weak type) and the pointwise
-domination `l1BallMax_le_orthantBoxMax`, it is what `L1BallCoverTransfer` needs. -/
+/-- **The multiparameter anchored-box (`Følner`) restricted maximal ergodic theorem** — the one
+missing ingredient of the transfer.  For `f : Ω → ℝ≥0∞` measurable and `t > 0`, the anchored-box
+level set satisfies the *restricted* weak type `t · μ{E_t} ≤ ∫_{E_t} f`, with the supremum over ALL
+`N` (the same index set as the level set and the restricted integral).
+
+**Proof shape (not Garsia).**  Garsia's argument needs a downward-closed index set and therefore
+does *not* apply to the anchored-box family when the box lengths `{⌈N cᵢ⌉}` form a proper
+subsequence of the naturals.  The correct proof is the **Følner maximal lemma** (the
+covering/overlap argument comparing the sum over the level set with the sum over its shift),
+iterated over the `d` coordinates; in `d = 1` the family is the interval family `[0, ⌈N c₀⌉)`, and
+for `c₀ = 1` it is the full interval family, so the claim then reduces to the library's
+one-parameter `LatticeProb.maximalSet_restricted_le`.  Together with the centred input
+`KrengelMaximalInputCentred` (whole-space weak type) and the pointwise domination
+`l1BallMax_le_orthantBoxMax`, it is what `L1BallCoverTransfer` needs. -/
 def MultiParameterMaximalErgodicRestricted (d : ℕ) : Prop :=
   ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω), IsProbabilityMeasure μ →
     ∀ (τ : Site d → Ω → Ω),
