@@ -55,6 +55,50 @@ def KernelInvariant {X : Type*} [MeasurableSpace X] (κ : X → Measure X)
     (B : Set X) : Prop :=
   ∀ x, κ x B = B.indicator (fun _ => (1 : ℝ≥0∞)) x
 
+/-- The kernel-invariant events form a σ-algebra: the largest sub-σ-algebra on which
+`KernelInvariant` holds.  This is the `m` of `KernelErgodicDecomposition`. -/
+@[reducible] def kernelInvariantSigma {X : Type*} [MeasurableSpace X] (κ : X → Measure X)
+    [∀ x, IsProbabilityMeasure (κ x)] : MeasurableSpace X where
+  MeasurableSet' B := MeasurableSet B ∧ KernelInvariant κ B
+  measurableSet_empty := by
+    refine ⟨MeasurableSet.empty, ?_⟩
+    unfold KernelInvariant
+    intro x
+    simp
+  measurableSet_compl := by
+    classical
+    intro B hB
+    refine ⟨hB.1.compl, ?_⟩
+    unfold KernelInvariant at hB ⊢
+    intro x
+    have hcompl : κ x Bᶜ = 1 - κ x B := by
+      rw [measure_compl hB.1 (measure_ne_top (κ x) B), measure_univ]
+    rw [hcompl, hB.2 x]
+    by_cases hx : x ∈ B <;> simp [Set.indicator, hx]
+  measurableSet_iUnion := by
+    classical
+    intro f hf
+    refine ⟨MeasurableSet.iUnion (fun n => (hf n).1), ?_⟩
+    unfold KernelInvariant at hf ⊢
+    intro x
+    by_cases hx : x ∈ ⋃ n, f n
+    · obtain ⟨n, hn⟩ := Set.mem_iUnion.mp hx
+      have h1 : κ x (f n) = 1 := by rw [(hf n).2 x]; simp [Set.indicator_of_mem hn]
+      have hle : κ x (f n) ≤ κ x (⋃ n, f n) := measure_mono (Set.subset_iUnion f n)
+      have hle1 : κ x (⋃ n, f n) ≤ 1 := by
+        rw [← measure_univ (μ := κ x)]
+        exact measure_mono (Set.subset_univ _)
+      rw [Set.indicator_of_mem hx]
+      exact le_antisymm hle1 (le_trans (le_of_eq h1.symm) hle)
+    · have h0 : ∀ n, κ x (f n) = 0 := by
+        intro n
+        rw [(hf n).2 x]
+        rw [Set.indicator_apply, if_neg (fun hn => hx (Set.mem_iUnion.mpr ⟨n, hn⟩))]
+      have hle : κ x (⋃ n, f n) ≤ ∑' n, κ x (f n) := measure_iUnion_le f
+      have hz : (∑' n, κ x (f n)) = 0 := by simp [h0]
+      rw [Set.indicator_apply, if_neg hx]
+      exact le_antisymm (le_trans hle (le_of_eq hz)) (by positivity)
+
 /-- The abstract ergodic-decomposition contract of a stationary Markov kernel,
 disintegrated over the σ-algebra `m` of kernel-invariant events.  This is the
 library form of `RWRS.External.ErgodicDecomposition`; its last clause is the
