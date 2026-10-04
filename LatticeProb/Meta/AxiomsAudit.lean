@@ -143,6 +143,7 @@ library.
 #print axioms LatticeProb.gaussianLogSobolevGrad_of_one_of_tensorStep
 #print axioms LatticeProb.gaussianLogSobolev_of_grad_smooth
 #print axioms LatticeProb.entropy_prod_split
+#print axioms LatticeProb.norm_sq_integral_le_integral_norm_sq
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
@@ -293,3 +294,9 @@ library.
 #print axioms LatticeProb.Sobolev.fourierInv_eq_setIntegral
 #print axioms LatticeProb.Sobolev.norm_iteratedFDeriv_fourierInv_le_setIntegral
 #print axioms LatticeProb.Sobolev.exists_iteratedFDeriv_bandTrunc_le
+
+/-! ### Band-limited C^m bound -/
+
+#print axioms LatticeProb.Sobolev.exists_iteratedFDeriv_bandTrunc_le_L2
+#print axioms LatticeProb.Sobolev.exists_iteratedFDeriv_bandTrunc_le_Hs
+#print axioms LatticeProb.Sobolev.bandLimitedCmBound_holds
