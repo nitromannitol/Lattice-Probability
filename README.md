@@ -282,6 +282,11 @@ the field with zero boundary values on a finite set `C` as
   tilted density and the integration of the resulting differential inequality
   for the moment generating function (`LatticeProb.hasDerivAt_mgf_centred`,
   `LatticeProb.mgf_centred_pos`).
+* `LatticeProb.gaussian_lipschitz_concentration_l2_fin`: the same concentration
+  on `Fin n → ℝ` from the l2 (Cameron–Martin) Lipschitz condition, with the
+  constant `L √n` produced by `LatticeProb.lipschitzWith_pi_of_hasSum_sq` and
+  the l2-versus-sup comparison
+  `LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist`.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal

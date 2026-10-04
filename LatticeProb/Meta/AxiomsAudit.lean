@@ -168,6 +168,9 @@ library.
 #print axioms LatticeProb.integral_sub_integral_eq_zero
 #print axioms LatticeProb.lipschitzWith_sub_integral
 #print axioms LatticeProb.mgf_centred_pos
+#print axioms LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist
+#print axioms LatticeProb.lipschitzWith_pi_of_hasSum_sq
+#print axioms LatticeProb.gaussian_lipschitz_concentration_l2_fin
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
