@@ -237,6 +237,24 @@ theorem cubePayoffs_nonempty {d : ℕ} (B : NNReal → Ω → EuclideanSpace ℝ
   · filter_upwards with ω s hs
     exact absurd hs (not_lt.mpr (by simp))
 
+/-- The cube-killed payoff set is bounded above as soon as the reward is bounded and the
+integrand is integrable for every admissible stopping rule. -/
+theorem bddAbove_cubePayoffs {d : ℕ} (B : NNReal → Ω → EuclideanSpace ℝ (Fin d))
+    (hB : ∀ t, StronglyMeasurable (B t)) (P : Measure Ω) [IsProbabilityMeasure P]
+    (h : ℝ → EuclideanSpace ℝ (Fin d) → ℝ) (T L M : ℝ) (u : EuclideanSpace ℝ (Fin d))
+    (hb : ∀ (s : ℝ) (y : EuclideanSpace ℝ (Fin d)), |h s y| ≤ M)
+    (hint : ∀ τ : Ω → NNReal, IsBrownianStopping B hB τ → (∀ ω, (τ ω : ℝ) ≤ T) →
+      Integrable (fun ω => -h (T - τ ω) (B (τ ω) ω)) P) :
+    BddAbove (cubePayoffs B hB P h T L u) := by
+  refine ⟨M, ?_⟩
+  rintro a ⟨τ, hτ, hτT, _hcube, rfl⟩
+  calc ∫ ω, -h (T - (τ ω : ℝ)) (B (τ ω) ω) ∂P ≤ ∫ _ω : Ω, M ∂P := by
+        refine integral_mono (hint τ hτ hτT) (integrable_const M) ?_
+        intro ω
+        exact le_trans (neg_le_abs _) (hb _ _)
+    _ = M := by simp
+
+
 /-- The lattice box `Q(⌊Rx⌋,R)` of the paper, as the ball of radius `R` for the
 `ℓ^∞` metric about a lattice site. -/
 def latticeBox {d : ℕ} (x : Site d) (R : ℝ) : Set (Site d) :=
