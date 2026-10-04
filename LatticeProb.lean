@@ -294,6 +294,7 @@ import LatticeProb.Analysis.Sobolev.RellichEquiv
 import LatticeProb.Analysis.Sobolev.RellichNet
 import LatticeProb.Analysis.Sobolev.RellichBandLimited
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
+import LatticeProb.Analysis.Sobolev.RellichLowFreq
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.BandLimited
 import LatticeProb.Analysis.Sobolev.Truncation
