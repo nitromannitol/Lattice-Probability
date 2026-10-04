@@ -186,6 +186,9 @@ library.
 #print axioms LatticeProb.gaussianLogSobolevGrad_zero
 #print axioms LatticeProb.gaussianLogSobolevGradProdStep_of_tensorStep
 #print axioms LatticeProb.gaussianLogSobolevGradProdStep_iff_tensorStep
+#print axioms LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist
+#print axioms LatticeProb.lipschitzWith_pi_of_hasSum_sq
+#print axioms LatticeProb.gaussian_lipschitz_concentration_l2_fin
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
