@@ -14,6 +14,7 @@ Both are stated through the a.e. vanishing of the Fourier transform off the
 ball, which is the mathematically honest form of "band-limited" and avoids any
 choice of representative.
 -/
+import LatticeProb.Analysis.Sobolev.Weight
 import LatticeProb.Analysis.Sobolev.Truncation
 
 open MeasureTheory
