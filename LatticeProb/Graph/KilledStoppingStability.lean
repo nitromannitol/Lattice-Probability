@@ -32,10 +32,19 @@ for the stopped walk, applied with both problems killed on exiting a cube.
    Brownian discount `cubeDiscount` introduced in this file over `EuclideanSpace ℝ (Fin d)` and
    `IsBrownianSpace`.
 
+4. **Well-posedness of the continuum value.**  `cubePayoffs_nonempty`, `bddAbove_cubePayoffs`
+   and the measurability/integrability lemmas below make the `sSup` in `cubeDiscount` genuine in
+   the `CubeStoppingStability` context: the payoff set is nonempty and bounded above, hence
+   `cubeDiscount` is its least upper bound.
+
 ## The exact remaining gap
 
-The sub-lemma of item 2 is proved.  What the *whole* `CubeStoppingStability` still needs is the
-other half of Coquet-Toldo, and this file deliberately stops there.
+The sub-lemma of item 2 is proved, and the continuum side is now well posed: in the
+`CubeStoppingStability` context the `cubeDiscount` payoff set is nonempty and bounded above
+(`cubePayoffs_nonempty`, `bddAbove_cubePayoffs`, `integrable_stopped_payoff_of_bounded`,
+`cubeDiscount_genuine_of_continuous`, `isLUB_cubePayoffs_of_continuous`), so its `sSup` is
+genuine.  What the *whole* `CubeStoppingStability` still needs is the other half of
+Coquet-Toldo, and this file deliberately stops there.
 
 - **The invariance principle for the killed stopped walk.**  From
   `LatticeProb.Graph.Zd.localizedStopping'` the killed discrete problem is the value of the
@@ -51,12 +60,13 @@ other half of Coquet-Toldo, and this file deliberately stops there.
   set of starting points and the horizon window.  `abs_killedRewardValue_sub_le` is the
   order-theoretic tool the comparison uses once the coupling is available; it does not supply the
   coupling.
-- **The continuum cube discount is only stated here, not proved to be non-junk in the
-  unbounded-reward case.**  `cubeDiscount` is an `sSup`; the paper only ever uses it with the
-  bounded continuous rewards of the statement (`|G| ≤ M`), where the payoffs are bounded and the
-  supremum is genuine.  A faithful development should add `zero_mem_cubePayoffs` from the rule
-  that stops at the horizon, once the horizon rule is known to be admissible, and a
-  `BddAbove` lemma from the bound `M`.
+- **Resolved: the continuum `sSup` is genuine.**  `cubePayoffs_nonempty` (the rule that stops
+  at time `0`) and `bddAbove_cubePayoffs`, with `integrable_stopped_payoff_of_bounded` supplying
+  the integrability of a continuous bounded stopped payoff from the stopped-position
+  measurability `aemeasurable_stopped_position`, give that in the `CubeStoppingStability` context
+  the payoff set is nonempty and bounded above, so `cubeDiscount` is the genuine least upper
+  bound of its payoff set (`isLUB_cubePayoffs_of_continuous`, `cubeDiscount_genuine_in_context`).
+  Nothing further is needed for well-posedness.
 
 The frozen `Sandpile.External.CubeStoppingStability` and every frozen statement of the paper
 repository are untouched: this file only states the library analogue and proves the sub-lemma.
@@ -253,6 +263,124 @@ theorem bddAbove_cubePayoffs {d : ℕ} (B : NNReal → Ω → EuclideanSpace ℝ
         intro ω
         exact le_trans (neg_le_abs _) (hb _ _)
     _ = M := by simp
+
+/-! ### Well-posedness in the `CubeStoppingStability` context -/
+
+/-- A `natFiltration` Brownian stopping time is measurable for the ambient σ-algebra. -/
+theorem measurable_of_isBrownianStopping {d : ℕ} {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)}
+    {hB : ∀ t, StronglyMeasurable (B t)} {τ : Ω → ℝ≥0} (hτ : IsBrownianStopping B hB τ) :
+    Measurable τ :=
+  measurable_coe_nnreal_ennreal_iff.1 hτ.measurable'
+
+/-- The stopped position `ω ↦ B (τ ω) ω` is almost-everywhere measurable, from
+almost-everywhere continuity of the paths and almost-everywhere measurability of the stopping
+time.  Off the null set of discontinuous paths `B` is replaced by the identically zero process,
+which is jointly measurable, and the two agree almost everywhere. -/
+theorem aemeasurable_stopped_position {d : ℕ} {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)}
+    {τ : Ω → ℝ≥0} (P : Measure Ω)
+    (hm : ∀ t, AEMeasurable (B t) P) (hc : ∀ᵐ ω ∂P, Continuous fun t => B t ω)
+    (hτ : AEMeasurable τ P) : AEMeasurable (fun ω => B (τ ω) ω) P := by
+  classical
+  let S : Set Ω := {ω | Continuous fun t => B t ω}
+  have hS : NullMeasurableSet S P := by
+    simpa only [compl_compl] using
+      (NullMeasurableSet.of_null (show P Sᶜ = 0 from ae_iff.1 hc)).compl
+  let C : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d) :=
+    fun t => S.piecewise (B t) (fun _ => 0)
+  have hmC : ∀ t, @Measurable (NullMeasurableSpace Ω P) (EuclideanSpace ℝ (Fin d))
+      inferInstance inferInstance (C t) := fun t =>
+    (hm t).nullMeasurable.measurable'.piecewise hS measurable_const
+  have hcC : ∀ ω, Continuous fun t => C t ω := by
+    intro ω
+    by_cases hω : ω ∈ S
+    · simpa only [C, Set.piecewise, if_pos hω] using
+        (show Continuous (fun t => B t ω) from hω)
+    · simpa only [C, Set.piecewise, if_neg hω] using
+        (continuous_const : Continuous fun _ : ℝ≥0 => (0 : EuclideanSpace ℝ (Fin d)))
+  have hY : NullMeasurable (fun ω => C (τ ω) ω) P :=
+    (measurable_uncurry_of_continuous_of_measurable hcC hmC).comp
+      (hτ.nullMeasurable.measurable'.prodMk measurable_id)
+  refine hY.aemeasurable.congr ?_
+  filter_upwards [hc] with ω hω
+  exact if_pos hω
+
+/-- A stopped payoff with a continuous reward and a Brownian stopping time is almost-everywhere
+measurable. -/
+theorem aemeasurable_stopped_payoff {d : ℕ}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} {P : Measure Ω}
+    (hB : ∀ t, StronglyMeasurable (B t)) (hcont : ∀ᵐ ω ∂P, Continuous fun t => B t ω)
+    {τ : Ω → ℝ≥0} (hτ : IsBrownianStopping B hB τ)
+    (G : ℝ → EuclideanSpace ℝ (Fin d) → ℝ)
+    (hG : Continuous (fun q : ℝ × EuclideanSpace ℝ (Fin d) => G q.1 q.2)) (T : ℝ) :
+    AEMeasurable (fun ω => G (T - τ ω) (B (τ ω) ω)) P := by
+  have ht : AEMeasurable τ P := (measurable_of_isBrownianStopping hτ).aemeasurable
+  have hY : AEMeasurable (fun ω => B (τ ω) ω) P :=
+    aemeasurable_stopped_position P (fun t => (hB t).aemeasurable) hcont ht
+  exact hG.measurable.comp_aemeasurable
+    (((aemeasurable_const (b := T)).sub
+      (measurable_coe_nnreal_real.comp_aemeasurable ht)).prodMk hY)
+
+/-- A stopped payoff with a continuous bounded reward is integrable, by comparison with the
+constant reward bound. -/
+theorem integrable_stopped_payoff_of_bounded {d : ℕ}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} {P : Measure Ω} [IsFiniteMeasure P]
+    (hB : ∀ t, StronglyMeasurable (B t)) (hcont : ∀ᵐ ω ∂P, Continuous fun t => B t ω)
+    {τ : Ω → ℝ≥0} (hτ : IsBrownianStopping B hB τ)
+    (G : ℝ → EuclideanSpace ℝ (Fin d) → ℝ)
+    (hG : Continuous (fun q : ℝ × EuclideanSpace ℝ (Fin d) => G q.1 q.2))
+    (T M : ℝ) (hGM : ∀ (s : ℝ) (y : EuclideanSpace ℝ (Fin d)), |G s y| ≤ M) :
+    Integrable (fun ω => G (T - τ ω) (B (τ ω) ω)) P :=
+  Integrable.of_bound (aemeasurable_stopped_payoff hB hcont hτ G hG T).aestronglyMeasurable M <| by
+    filter_upwards with ω
+    rw [Real.norm_eq_abs]
+    exact hGM _ _
+
+/-- **`cubeDiscount` is genuine when the reward is continuous and bounded**: the cube-killed
+payoff set is nonempty and bounded above, so its `sSup` is not a junk value. -/
+theorem cubeDiscount_genuine_of_continuous {d : ℕ}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} {P : Measure Ω} [IsProbabilityMeasure P]
+    (hB : ∀ t, StronglyMeasurable (B t)) (hcont : ∀ᵐ ω ∂P, Continuous fun t => B t ω)
+    (G : ℝ → EuclideanSpace ℝ (Fin d) → ℝ)
+    (hG : Continuous (fun q : ℝ × EuclideanSpace ℝ (Fin d) => G q.1 q.2))
+    (T L M : ℝ) (hT : 0 ≤ T) (u : EuclideanSpace ℝ (Fin d))
+    (hGM : ∀ (s : ℝ) (y : EuclideanSpace ℝ (Fin d)), |G s y| ≤ M) :
+    (cubePayoffs B hB P (fun s y => -G s y) T L u).Nonempty ∧
+      BddAbove (cubePayoffs B hB P (fun s y => -G s y) T L u) :=
+  ⟨cubePayoffs_nonempty B hB P (fun s y => -G s y) T L u hT,
+    bddAbove_cubePayoffs B hB P (fun s y => -G s y) T L M u
+      (fun s y => by simpa using hGM s y)
+      (fun τ hτ _hτT => by
+        simpa using integrable_stopped_payoff_of_bounded hB hcont hτ G hG T M hGM)⟩
+
+/-- **The cube-killed discount is the least upper bound of its payoff set** in the
+`CubeStoppingStability` context, so it is the genuine value of the killed stopping problem. -/
+theorem isLUB_cubePayoffs_of_continuous {d : ℕ}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} {P : Measure Ω} [IsProbabilityMeasure P]
+    (hB : ∀ t, StronglyMeasurable (B t)) (hcont : ∀ᵐ ω ∂P, Continuous fun t => B t ω)
+    (G : ℝ → EuclideanSpace ℝ (Fin d) → ℝ)
+    (hG : Continuous (fun q : ℝ × EuclideanSpace ℝ (Fin d) => G q.1 q.2))
+    (T L M : ℝ) (hT : 0 ≤ T) (u : EuclideanSpace ℝ (Fin d))
+    (hGM : ∀ (s : ℝ) (y : EuclideanSpace ℝ (Fin d)), |G s y| ≤ M) :
+    IsLUB (cubePayoffs B hB P (fun s y => -G s y) T L u)
+      (cubeDiscount B hB P (fun s y => -G s y) T L u) := by
+  obtain ⟨hne, hbdd⟩ := cubeDiscount_genuine_of_continuous hB hcont G hG T L M hT u hGM
+  simpa [cubeDiscount] using isLUB_csSup hne hbdd
+
+/-- The `CubeStoppingStability` context: for the family `B` indexed by the starting point, the
+continuous reward `G` bounded by `M`, and a horizon `T ≥ 0`, the `cubeDiscount` appearing in the
+statement is the genuine least upper bound of its payoff set. -/
+theorem cubeDiscount_genuine_in_context {d : ℕ}
+    (ΩB : Type) [MeasurableSpace ΩB] (PB : Measure ΩB) [IsProbabilityMeasure PB]
+    (B : EuclideanSpace ℝ (Fin d) → ℝ≥0 → ΩB → EuclideanSpace ℝ (Fin d))
+    (hBrown : ∀ y : EuclideanSpace ℝ (Fin d), IsBrownianSpace d y (B y) PB)
+    (hBsm : ∀ (y : EuclideanSpace ℝ (Fin d)) (t : ℝ≥0), StronglyMeasurable (B y t))
+    (G : ℝ → EuclideanSpace ℝ (Fin d) → ℝ)
+    (hG : Continuous (fun q : ℝ × EuclideanSpace ℝ (Fin d) => G q.1 q.2))
+    (T L M : ℝ) (hT : 0 ≤ T) (x : EuclideanSpace ℝ (Fin d))
+    (hGM : ∀ (s : ℝ) (y : EuclideanSpace ℝ (Fin d)), |G s y| ≤ M) :
+    (cubePayoffs (B x) (hBsm x) PB (fun s y => -G s y) T L x).Nonempty ∧
+      BddAbove (cubePayoffs (B x) (hBsm x) PB (fun s y => -G s y) T L x) :=
+  cubeDiscount_genuine_of_continuous (hBsm x) ((hBrown x).cont) G hG T L M hT x hGM
 
 
 /-- The lattice box `Q(⌊Rx⌋,R)` of the paper, as the ball of radius `R` for the
