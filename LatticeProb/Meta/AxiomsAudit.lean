@@ -127,6 +127,25 @@ library.
 #print axioms LatticeProb.infinitePi_locallyMonotone_fkg
 #print axioms LatticeProb.measure_pi_disjointOccSet_le
 
+/-! ### Negative-order Sobolev norms and the Rellich–Kondrachov reduction -/
+
+#print axioms LatticeProb.Sobolev.exists_sobolevNormSqHigh_le
+#print axioms LatticeProb.Sobolev.isBandLimited_mono
+#print axioms LatticeProb.Sobolev.rellichKondrachov_iff_rkLowFrequencyStatement
+#print axioms LatticeProb.Sobolev.rellichKondrachov_of_rkBandLimitedCmNet
+#print axioms LatticeProb.Sobolev.rellichKondrachov_of_rkLowFrequencyStatement
+#print axioms LatticeProb.Sobolev.rk_finite_net_of_Cm_net
+#print axioms LatticeProb.Sobolev.rkLowFrequencyStatement_of_rkBandLimitedCmNet
+#print axioms LatticeProb.Sobolev.rkResidual_diff_bound
+#print axioms LatticeProb.Sobolev.rkResidual_holds
+#print axioms LatticeProb.Sobolev.sobolevNormSqHigh_eq_zero_of_isBandLimited
+#print axioms LatticeProb.Sobolev.sobolevNormSqHigh_le
+#print axioms LatticeProb.Sobolev.sobolevNormSqLow_add_high
+#print axioms LatticeProb.Sobolev.sobolevNormSq_add_le
+#print axioms LatticeProb.Sobolev.sobolevNormSq_eq_low_of_isBandLimited
+#print axioms LatticeProb.Sobolev.sobolevNormSq_sub_le
+#print axioms LatticeProb.Sobolev.tendsto_weight_atTop_zero
+
 /-! ### Concentration and moment inequalities -/
 
 #print axioms LatticeProb.bernstein
@@ -137,6 +156,18 @@ library.
 #print axioms LatticeProb.poisson_tail
 #print axioms LatticeProb.evariance_le_half_tsum_siteEnergy
 #print axioms LatticeProb.gaussian_lipschitz_concentration
+#print axioms LatticeProb.gaussianHerbstBound_of_logSobolev
+#print axioms LatticeProb.hasDerivAt_mgf_centred
+#print axioms LatticeProb.herbstTilt_entropy_le
+#print axioms LatticeProb.herbstTilt_integral
+#print axioms LatticeProb.herbstTilt_log_lipschitz
+#print axioms LatticeProb.herbstTilt_pos
+#print axioms LatticeProb.herbst_entropy_le
+#print axioms LatticeProb.integrable_exp_sub_integral
+#print axioms LatticeProb.integrable_mul_exp_sub_integral
+#print axioms LatticeProb.integral_sub_integral_eq_zero
+#print axioms LatticeProb.lipschitzWith_sub_integral
+#print axioms LatticeProb.mgf_centred_pos
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le

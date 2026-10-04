@@ -23,6 +23,7 @@ import LatticeProb.External.GaussianLogSobolev
 import LatticeProb.Prob.GaussianConcentration
 import LatticeProb.Prob.ConvexProduct
 import LatticeProb.Prob.ExponentialMoments
+import LatticeProb.Prob.GaussianHerbst
 
 noncomputable section
 open Filter MeasureTheory ProbabilityTheory
@@ -553,6 +554,20 @@ theorem gaussianHerbstBound_of_logSobolev (n : ℕ) (h : GaussianLogSobolev n) :
   calc M lam = Real.exp (Real.log (M lam)) := (Real.exp_log (hMpos lam)).symm
     _ ≤ Real.exp (lam ^ 2 * L ^ 2 / 2) := Real.exp_le_exp.mpr hlog
 
+
+/-- **Gaussian concentration from the log-Sobolev inequality.**  Composing the
+Herbst argument with the Chernoff step: for an `L`-Lipschitz functional of `n`
+independent standard Gaussians, the log-Sobolev inequality alone gives the
+Tsirelson–Ibragimov–Sudakov tail bound `exp(-t²/(2L²))`.  This is the form the
+downstream concentration external consumes, with the cited log-Sobolev
+inequality as its only hypothesis. -/
+theorem gaussian_lipschitz_concentration_of_logSobolev (n : ℕ)
+    (h : GaussianLogSobolev n) (f : (Fin n → ℝ) → ℝ) (L : ℝ) (hL : 0 < L)
+    (hf : LipschitzWith ⟨L, hL.le⟩ f) (t : ℝ) (ht : 0 ≤ t) :
+    (Measure.pi fun _ : Fin n => gaussianReal 0 1).real
+        {x | t ≤ f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)}
+      ≤ Real.exp (-(t ^ 2) / (2 * L ^ 2)) :=
+  gaussian_lipschitz_concentration n (gaussianHerbstBound_of_logSobolev n h) f L hL hf t ht
 
 end LatticeProb
 

@@ -276,6 +276,12 @@ the field with zero boundary values on a finite set `C` as
 * `LatticeProb.gaussian_lipschitz_concentration`: Gaussian concentration for a
   Lipschitz function of `n` independent standard Gaussians, from the cited
   Herbst bound.
+* `LatticeProb.gaussianHerbstBound_of_logSobolev` and
+  `LatticeProb.herbst_entropy_le`: the Gaussian logarithmic Sobolev inequality
+  implies the Herbst exponential moment bound, through the entropy of the
+  tilted density and the integration of the resulting differential inequality
+  for the moment generating function (`LatticeProb.hasDerivAt_mgf_centred`,
+  `LatticeProb.mgf_centred_pos`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
@@ -304,6 +310,39 @@ the field with zero boundary values on a finite set `C` as
   copies of a centred `L²` law converges in distribution to the centred
   Gaussian of variance `σ² Q`; the second form reads the array at distinct
   sites of an i.i.d. field on the lattice.
+
+**Negative-order Sobolev norms and the Rellich–Kondrachov reduction.**
+`LatticeProb.Analysis.Sobolev` develops the Fourier-side `H^s` and `H^{-s}`
+norms and the frequency-truncation and finite-net steps behind the
+Rellich–Kondrachov compact embedding in negative Sobolev order.
+
+* `LatticeProb.Sobolev.sobolevNormSqHigh_le` and
+  `LatticeProb.Sobolev.exists_sobolevNormSqHigh_le`: the high-frequency part of
+  the `H^{s₀}` norm is at most `(1 + (2πΛ)²)^{s₀-s}` times the `H^s` norm, and
+  can be made small uniformly on the `H^s` unit ball beyond a cutoff `Λ`.
+* `LatticeProb.Sobolev.sobolevNormSqLow_add_high`,
+  `LatticeProb.Sobolev.sobolevNormSq_add_le` and
+  `LatticeProb.Sobolev.sobolevNormSq_sub_le`: the low- and high-frequency parts
+  add to the full norm, and the squared norm is subadditive up to the factor
+  two.
+* `LatticeProb.Sobolev.sobolevNormSqHigh_eq_zero_of_isBandLimited` and
+  `LatticeProb.Sobolev.sobolevNormSq_eq_low_of_isBandLimited`: band-limited
+  functions have vanishing high-frequency tail, and low-frequency integral
+  equal to the full norm.
+* `LatticeProb.Sobolev.rkResidual_holds`: the quantitative Fourier-decay
+  residual, a smooth function supported in a fixed compact set with derivatives
+  up to order `m` bounded by one has `H^{s₀}` norm squared bounded by a constant
+  depending only on the set, on `s₀` and on `m`.
+* `LatticeProb.Sobolev.rkResidual_diff_bound` and
+  `LatticeProb.Sobolev.rk_finite_net_of_Cm_net`: the de-normalised residual,
+  turning uniform `C^m` closeness on a compact set into `H^{s₀}` closeness with
+  explicit accuracy `C ε²`, and the finite-net-from-uniform-bound lemma.
+* `LatticeProb.Sobolev.rellichKondrachov_iff_rkLowFrequencyStatement`,
+  `LatticeProb.Sobolev.rellichKondrachov_of_rkLowFrequencyStatement`,
+  `LatticeProb.Sobolev.rkLowFrequencyStatement_of_rkBandLimitedCmNet` and
+  `LatticeProb.Sobolev.rellichKondrachov_of_rkBandLimitedCmNet`: the external
+  `RellichKondrachovNegSobolev` is equivalent to the internal low-frequency
+  finite-net statement, which follows from the band-limited `C^m`-net residual.
 
 **Smooth maxima and softmax stability.**  `softMaximum β x = log(∑ exp(β xᵢ)) / β`
 is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.

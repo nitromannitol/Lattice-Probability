@@ -217,6 +217,66 @@ status:
       literature_dependencies:
         - statement: "The Gaussian Herbst bound, from the logarithmic Sobolev inequality (LatticeProb.GaussianHerbstBound), taken as an explicit hypothesis"
           source: "Gross 1975 and Bakry-Emery 1985"
+    - declaration: "LatticeProb.Sobolev.sobolevNormSq_add_le"
+      file: "LatticeProb/Analysis/Sobolev/Additivity.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevNormSqHigh_eq_zero_of_isBandLimited"
+      file: "LatticeProb/Analysis/Sobolev/BandLimited.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevNormSqHigh_le"
+      file: "LatticeProb/Analysis/Sobolev/HighFrequency.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.rellichKondrachov_of_rkBandLimitedCmNet"
+      file: "LatticeProb/Analysis/Sobolev/RellichBandLimited.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies:
+        - statement: "Rellich-Kondrachov compact embedding in negative Sobolev order (LatticeProb.External.RellichKondrachovNegSobolev), reduced to the band-limited finite-net residual"
+          source: "Rellich 1930; Kondrachov 1945"
+    - declaration: "LatticeProb.Sobolev.rellichKondrachov_iff_rkLowFrequencyStatement"
+      file: "LatticeProb/Analysis/Sobolev/RellichEquiv.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies:
+        - statement: "Rellich-Kondrachov compact embedding in negative Sobolev order (LatticeProb.External.RellichKondrachovNegSobolev), equivalent to the internal low-frequency finite-net statement"
+          source: "Rellich 1930; Kondrachov 1945"
+    - declaration: "LatticeProb.Sobolev.rkResidual_holds"
+      file: "LatticeProb/Analysis/Sobolev/RellichEstimate.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.rk_finite_net_of_Cm_net"
+      file: "LatticeProb/Analysis/Sobolev/RellichNet.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.exists_sobolevNormSqHigh_le"
+      file: "LatticeProb/Analysis/Sobolev/Truncation.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.gaussianHerbstBound_of_logSobolev"
+      file: "LatticeProb/Prob/HerbstFromLSI.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies:
+        - statement: "The Gaussian logarithmic Sobolev inequality (LatticeProb.GaussianLogSobolev), taken as an explicit hypothesis; the Herbst exponential moment bound follows"
+          source: "Gross 1975; Bakry-Emery 1985; Herbst 1975"
     - declaration: "LatticeProbAudit.kingman"
       file: "LatticeProbAudit/Kingman/Solution.lean"
       sorry_count: 0
