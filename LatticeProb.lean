@@ -277,6 +277,7 @@ import LatticeProb.Graph.HeatVanishing
 import LatticeProb.Prob.ConditionalMeasure
 import LatticeProb.Prob.ErgodicDecomposition
 import LatticeProb.Prob.KernelErgodicDecomposition
+import LatticeProb.Prob.MartingaleRosenthal
 import LatticeProb.Prob.CauchySchwarzTsum
 import LatticeProb.Prob.PoissonClock
 import LatticeProb.Lattice.Planar
