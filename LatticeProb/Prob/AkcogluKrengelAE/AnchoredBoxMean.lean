@@ -179,6 +179,26 @@ def AnchoredBoxDenseCases (d : ℕ) : Prop :=
       (∀ᵐ ω ∂μ, Tendsto (fun N : ℕ =>
         anchoredBoxAvgMean (fun ω => g ω - g (τ x ω)) τ c N ω) atTop (𝓝 0)))
 
+
+
+omit [MeasurableSpace Ω] in
+/-- **Coboundary model case (algebraic telescoping).**  For `h = g - g ∘ τ x`, the box sum is the
+difference of the box sum of `g` and the sum of `g ∘ τ` over the shifted box (written as `x + y`):
+`Σ_{y∈box} h(τ y ω) = Σ_{y∈box} g(τ y ω) - Σ_{y∈box} g(τ (x+y) ω)`.  The two overlap except on the
+boundary of size `O(|x| N^{d-1})`, so dividing by `N^d` gives `O(1/N) → 0`, matching `∫h = 0`. -/
+theorem anchoredBoxAvgMean_coboundary (g : Ω → ℝ) (τ : Site d → Ω → Ω)
+    (hadd : ∀ z w ω, τ (z + w) ω = τ z (τ w ω)) (x : Site d) (c : Fin d → ℝ) (N : ℕ)
+    (ω : Ω) :
+    anchoredBoxAvgMean (fun ω => g ω - g (τ x ω)) τ c N ω =
+      (N : ℝ) ^ (-(d : ℝ)) *
+        ((∑ y ∈ anchoredBox c N, g (τ y ω)) -
+          ∑ y ∈ anchoredBox c N, g (τ (x + y) ω)) := by
+  unfold anchoredBoxAvgMean
+  rw [Finset.sum_congr rfl (fun y _ =>
+    show g (τ y ω) - g (τ x (τ y ω)) = g (τ y ω) - g (τ (x + y) ω) from by
+      rw [hadd x y ω])]
+  rw [Finset.sum_sub_distrib]
+
 end LatticeProb
 
 #print axioms LatticeProb.anchoredBoxMaximal_ae_lt_top
