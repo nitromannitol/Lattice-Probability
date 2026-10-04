@@ -289,6 +289,7 @@ import LatticeProb.Analysis.Sobolev.HighFrequency
 import LatticeProb.Analysis.Sobolev.RellichEstimate
 import LatticeProb.Analysis.Sobolev.RellichEquiv
 import LatticeProb.Analysis.Sobolev.RellichNet
+import LatticeProb.Analysis.Sobolev.RellichBandLimited
 import LatticeProb.Analysis.Sobolev.Scaling
 import LatticeProb.Analysis.Sobolev.TestFn
 import LatticeProb.Analysis.Sobolev.TestFnSub
