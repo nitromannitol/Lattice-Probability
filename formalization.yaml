@@ -84,7 +84,8 @@ status:
     logarithmic Sobolev inequality and its Herbst bound, polygonal
     unicoherence, Janiszewski's theorem for polygonal sets, the
     Rellich-Kondrachov embedding in negative Sobolev order); the theorems that
-    use them take them as explicit hypotheses.  A sixth proposition there,
+    use them take them as explicit hypotheses, except the two polygonal
+    topology propositions, which no theorem here consumes.  A sixth proposition there,
     PotentialKernelAsymptotics (Lawler-Limic, Theorems 4.3.1 and 4.4.4), is
     stated for the formalizations that cite it and proved in
     LatticeProb/External/PotentialKernelAsymptoticsProved.lean, and three more,
@@ -334,7 +335,7 @@ alignment:
       lean: "LatticeProb.GaussianLogSobolev, LatticeProb.GaussianHerbstBound, LatticeProb.PolygonalUnicoherence, LatticeProb.PolygonalJaniszewski, LatticeProb.External.RellichKondrachovNegSobolev"
       module: "LatticeProb.External"
       status: "assumed"
-      note: "Explicit hypotheses of the theorems that use them."
+      note: "Explicit hypotheses of the theorems that use them; the two polygonal topology propositions are not currently consumed by any theorem here."
 
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are
