@@ -272,6 +272,42 @@ theorem sdiff_anchoredBox_subset_eq_zero {c : Fin d → ℝ} (N : ℕ) (j : Fin 
     change ((y - unit j) + unit j) i = y i
     simp [Pi.add_apply, Pi.sub_apply]
 
+
+omit [MeasurableSpace Ω] in
+/-- **Containment of the second face.** -/
+theorem sdiff_anchoredBox_shift_subset_eq_top {c : Fin d → ℝ} (N : ℕ) (j : Fin d) :
+    ((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding) \ (anchoredBox c N)
+      ⊆ ((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding).filter
+          (fun y => y j = ⌈(N : ℝ) * c j⌉) := by
+  intro y hy
+  obtain ⟨x, hx, rfl⟩ := Finset.mem_map.1 (Finset.mem_sdiff.1 hy).1
+  rw [mem_anchoredBox] at hx
+  rw [Finset.mem_filter]
+  refine ⟨(Finset.mem_sdiff.1 hy).1, ?_⟩
+  have hyB : x + unit j ∉ anchoredBox c N := (Finset.mem_sdiff.1 hy).2
+  change (x + unit j) j = ⌈(N : ℝ) * c j⌉
+  have hxj : (x + unit j) j = x j + 1 := by simp [Pi.add_apply, unit, Pi.single_eq_same]
+  rw [hxj]
+  refine le_antisymm ?_ ?_
+  · have := hx j
+    simp only [Finset.mem_Ico] at this
+    omega
+  · by_contra hlt
+    push Not at hlt
+    apply hyB
+    rw [mem_anchoredBox]
+    intro i
+    change (x + unit j) i ∈ Finset.Ico 0 ⌈(N : ℝ) * c i⌉
+    have hi := hx i
+    simp only [Finset.mem_Ico] at hi
+    by_cases hij : i = j
+    · rw [← hij] at hlt ⊢
+      simp only [Pi.add_apply, unit, Pi.single_eq_same, Finset.mem_Ico]
+      constructor <;> omega
+    · have hval : (x + unit j) i = x i := by simp [Pi.add_apply, unit, Ne.symm hij]
+      rw [hval]
+      simpa using hi
+
 end LatticeProb
 
 #print axioms LatticeProb.anchoredBoxMaximal_ae_lt_top
