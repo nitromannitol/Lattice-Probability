@@ -54,6 +54,14 @@ the Rellich-Kondrachov embedding are used, by
 `LatticeProb.gaussian_lipschitz_concentration` and by the compactness results
 of `LatticeProb/Analysis/Sobolev/`.
 
+The frequency-truncation half of Rellich-Kondrachov is proved (`Truncation.lean`,
+`HighFrequency.lean`), and the remaining low-frequency compactness step is
+isolated as `LatticeProb.Sobolev.rkLowFreqNet`, whose consumer
+`rellichKondrachovNegSobolev_of_lowfreqNet` reduces the cited embedding to it
+(`Analysis/Sobolev/RellichLowFreqNet.lean`).  The earlier `C^m`-net formulation of
+that step (`rkBandLimitedCmNet`) is false as stated — the `H^s` unit ball is not
+`C^m`-bounded for `s < m` — and is not used.
+
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
 asymptotics that formalizations cite from Lawler–Limic

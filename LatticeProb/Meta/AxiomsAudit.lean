@@ -264,3 +264,8 @@ library.
 #print axioms LatticeProb.Graph.exists_epath
 #print axioms LatticeProb.Graph.konig
 #print axioms LatticeProb.Graph.two_mul_sum_card_filter_lt
+
+/-! ### Rellich–Kondrachov -/
+
+#print axioms LatticeProb.Sobolev.rkLowFrequencyStatement_of_rkLowFreqNet
+#print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_lowfreqNet

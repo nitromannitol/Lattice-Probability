@@ -84,7 +84,6 @@ import LatticeProb.Prob.GaussianConcentration
 import LatticeProb.External.GaussianLogSobolev
 import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Prob.HerbstFromLSI
-import LatticeProb.Prob.HerbstBound
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev
@@ -292,6 +291,7 @@ import LatticeProb.Analysis.Sobolev.RellichEstimate
 import LatticeProb.Analysis.Sobolev.RellichEquiv
 import LatticeProb.Analysis.Sobolev.RellichNet
 import LatticeProb.Analysis.Sobolev.RellichBandLimited
+import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.BandLimited
 import LatticeProb.Analysis.Sobolev.Truncation
