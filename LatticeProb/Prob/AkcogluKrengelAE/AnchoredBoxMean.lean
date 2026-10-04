@@ -96,6 +96,54 @@ theorem AnchoredBoxErgodic_of_MaximalMean
   exact (Hup c 2 (by norm_num)) hc (by norm_num) μ τ hτ hadd
     (Hmax c 2 (by norm_num)) (Hdense c 2 (by norm_num)) h hh hb
 
+/-- **The centred-function form of the anchored-box maximal inequality.**  The library's
+`AnchoredBoxMaximal` is false as stated (`not_anchoredBoxMaximal`): its left side compares
+`A_N h` with `(∏ᵢ cᵢ) ∫h`, but the anchored box `∏ᵢ [0, ⌈N cᵢ⌉)` has cardinality `∏ᵢ ⌈N cᵢ⌉`,
+which differs from `N^d ∏ᵢ cᵢ` at every finite `N`; for a constant `h` the right-hand side built
+from the centred function is identically zero, so the discrepancy is invisible to it.  The
+satisfiable replacement centres the function: for `c ≥ 0` and `p > 1` there is `C ≥ 0` with the
+`Lᵖ` norm of `sup_N |A_N (h - ∫h)|` bounded by `C` times the `Lᵖ` norm of `h - ∫h`.  This is
+exactly the maximal input the density/`limsup` upgrade consumes. -/
+def AnchoredBoxMaximalCentred (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
+  (∀ i, 0 ≤ c i) →
+  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (τ : Site d → Ω → Ω),
+    (∀ z, MeasurePreserving (τ z) μ μ) →
+    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (h : Ω → ℝ), Measurable h →
+      (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
+      ∫⁻ ω, (⨆ N : ℕ,
+          ENNReal.ofReal |anchoredBoxAvgMean (fun ω => h ω - ∫ x, h x ∂μ) τ c N ω|) ^ p ∂μ ≤
+        ENNReal.ofReal C *
+          ∫⁻ ω, (ENNReal.ofReal |h ω - ∫ x, h x ∂μ|) ^ p ∂μ
+
+/-- **The dense/`limsup` upgrade with the centred maximal hypothesis.**  Identical body to
+`AnchoredBoxDensityUpgrade`, with `AnchoredBoxMaximal` replaced by the satisfiable
+`AnchoredBoxMaximalCentred`. -/
+def AnchoredBoxDensityUpgradeCentred (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
+  (∀ i, 0 ≤ c i) → 1 < p →
+  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (τ : Site d → Ω → Ω),
+    (∀ z, MeasurePreserving (τ z) μ μ) →
+    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    AnchoredBoxMaximalCentred d c p → AnchoredBoxDenseClass d c p →
+    ∀ (h : Ω → ℝ), Measurable h → (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
+      ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => anchoredBoxAvgMean h τ c N ω) atTop
+        (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ))
+
+/-- **The pair-to-anchored-box reduction, with the satisfiable centred hypothesis.**  Exact
+analogue of `AnchoredBoxErgodic_of_MaximalMean` in which the (false) `AnchoredBoxMaximal` is
+replaced by `AnchoredBoxMaximalCentred`. -/
+theorem AnchoredBoxErgodic_of_MaximalMeanCentred
+    (Hmax : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMaximalCentred d c p)
+    (_Hmean : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMean d c p)
+    (Hdense : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxDenseClass d c p)
+    (Hup : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxDensityUpgradeCentred d c p) :
+    AnchoredBoxErgodic d := by
+  intro Ω _ μ _ τ hτ hadd _herg h hh hb c hc
+  exact (Hup c 2 (by norm_num)) hc (by norm_num) μ τ hτ hadd
+    (Hmax c 2 (by norm_num)) (Hdense c 2 (by norm_num)) h hh hb
+
 /-- The anchored-box average is measurable in the state. -/
 theorem measurable_anchoredBoxAvgMean {h : Ω → ℝ} (hh : Measurable h)
     {τ : Site d → Ω → Ω} (hτ : ∀ z, Measurable (τ z)) (c : Fin d → ℝ) (N : ℕ) :
@@ -658,3 +706,6 @@ end LatticeProb
 #print axioms LatticeProb.not_anchoredBoxLimsupBound
 #print axioms LatticeProb.not_anchoredBoxMaximal
 #print axioms LatticeProb.not_anchoredBoxMaximal_ge_one
+#print axioms LatticeProb.AnchoredBoxMaximalCentred
+#print axioms LatticeProb.AnchoredBoxDensityUpgradeCentred
+#print axioms LatticeProb.AnchoredBoxErgodic_of_MaximalMeanCentred
