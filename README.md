@@ -298,6 +298,9 @@ the field with zero boundary values on a finite set `C` as
   Lipschitz form for `C¹` densities.
 * `LatticeProb.entropy_prod_split`: the entropy chain rule for a product measure,
   the first step of the Γ-form tensorization.
+* `LatticeProb.norm_sq_integral_le_integral_norm_sq`: squared Jensen for a
+  probability measure, the vector-valued half of the slicewise Jensen bound in
+  the Γ-form tensorization.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
