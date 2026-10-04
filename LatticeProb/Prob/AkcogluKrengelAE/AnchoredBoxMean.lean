@@ -487,80 +487,163 @@ theorem not_anchoredBoxLimsupBound :
   rw [hLHS, hRHS] at hineq
   exact (not_le_of_gt (ENNReal.ofReal_pos.mpr (by norm_num : (0 : ℝ) < 1 / 2))) hineq
 
-/-- **`AnchoredBoxMaximal` is *also* false as stated.**  The `⨆ N : ℕ` includes `N = 0`, where
-`anchoredBoxAvgMean _ _ _ 0 _ = 0`, so the left side is at least `(∏c) |∫h|`.  Taking the
-constant `h = 1`, `d = 1`, `c = 1/2`, the left side is at least `1/4` while the right side
-`∫ |h - ∫h|ᵖ = 0`.  The statement needs the supremum over `N ≥ 1` (or `h` centred). -/
+/-- **`AnchoredBoxMaximal` is *also* false as stated.**  The defect is the box **cardinality**:
+`#∏ᵢ[0,⌈N cᵢ⌉) = ∏ᵢ⌈N cᵢ⌉` equals `N^d ∏ᵢ cᵢ` only asymptotically, so the box average of a
+constant function is not `∏c`.  With the constant `h = 1`, `d = 1`, `c = 1/2`, the box at
+`N = 1` is `{0}` (cardinality `1`), so `anchoredBoxAvgMean h id c 1 () = 1` while
+`(∏c)∫h = 1/2`; the left side is therefore at least `1/4` while the right side `∫ |h - ∫h|ᵖ = 0`.
+(The `N = 0` term, where `anchoredBoxAvgMean _ _ _ 0 _ = 0`, is a further witness, but it is *not*
+the root cause: restricting to `N ≥ 1` does not repair the statement — see
+`not_anchoredBoxMaximal_ge_one`.) -/
 theorem not_anchoredBoxMaximal :
     ¬ AnchoredBoxMaximal 1 (fun _ => (1 / 2 : ℝ)) 2 := by
   intro H
   obtain ⟨C, _hC0, hC⟩ := H (fun _ => by norm_num)
-      (Ω := Bool) (Measure.dirac (false : Bool)) (fun _ => id)
-      (fun _ => MeasurePreserving.id (Measure.dirac (false : Bool)))
+      (Ω := Unit) (Measure.dirac ()) (fun _ => id)
+      (fun _ => MeasurePreserving.id (Measure.dirac ()))
       (fun _ _ _ => rfl)
   have hineq := hC (fun _ => (1 : ℝ)) measurable_const ⟨(1 : ℝ), by norm_num, fun _ => by simp⟩
   simp only [ENNReal.rpow_two] at hineq
-  have hRHS : ENNReal.ofReal C * ∫⁻ _b : Bool,
-      (ENNReal.ofReal |(1 : ℝ) - ∫ _b, (1 : ℝ) ∂Measure.dirac false|) ^ (2 : ℕ)
-        ∂Measure.dirac false = 0 := by
-    have hint : ∫ _b : Bool, (1 : ℝ) ∂Measure.dirac false = 1 := by
-      rw [MeasureTheory.integral_dirac]
+  have hint : ∫ _ω : Unit, (1 : ℝ) ∂Measure.dirac () = 1 := by
+    rw [MeasureTheory.integral_dirac]
+  have hceil : ⌈(2 : ℝ)⁻¹⌉ = 1 := by
+    rw [Int.ceil_eq_iff]
+    norm_num
+  have hcard : (anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1).card = 1 := by
+    rw [anchoredBox, Fintype.card_piFinset]
+    simp [Int.card_Ico, hceil]
+  have hsum : (∑ x ∈ anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1,
+      (fun _ => (1 : ℝ)) ((fun _ => id) x ())) = 1 := by
+    have hconst : ∀ x ∈ anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1,
+        (fun _ => (1 : ℝ)) ((fun _ => id) x ()) = (1 : ℝ) := fun x _ => rfl
+    rw [Finset.sum_congr rfl hconst, Finset.sum_const, hcard]
+    simp
+  have hbox : anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
+      (fun _ => (1 / 2 : ℝ)) 1 () = 1 := by
+    rw [anchoredBoxAvgMean, hsum]
+    norm_num
+  have hRHS : ENNReal.ofReal C * ∫⁻ _ω : Unit,
+      (ENNReal.ofReal |(1 : ℝ) - ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
+        ∂Measure.dirac () = 0 := by
     rw [hint]
     simp
-  have hpoint : ∀ b : Bool, (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ) ≤
+  have hpow : ENNReal.ofReal (1 / 4) = (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ) := by
+    rw [sq, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+    norm_num
+  have hpoint : ENNReal.ofReal (1 / 4) ≤ ∫⁻ _ω : Unit,
       (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-          (fun _ => id) (fun _ => (1 / 2 : ℝ)) N b -
-          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _b, (1 : ℝ) ∂Measure.dirac false|) ^ (2 : ℕ) := by
-    intro b
-    have h0 : anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-        (fun _ => (1 / 2 : ℝ)) 0 b = 0 :=
-      anchoredBoxAvgMean_zero (d := 1) le_rfl (fun _ => (1 : ℝ)) (fun _ => id)
-        (fun _ => (1 / 2 : ℝ)) b
-    have hterm : ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-          (fun _ => id) (fun _ => (1 / 2 : ℝ)) 0 b -
-          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _b, (1 : ℝ) ∂Measure.dirac false| =
-        ENNReal.ofReal (1 / 2) := by
-      rw [h0, MeasureTheory.integral_dirac]
-      simp
+          (fun _ => id) (fun _ => (1 / 2 : ℝ)) N _ω -
+          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
+        ∂Measure.dirac () := by
+    rw [MeasureTheory.lintegral_dirac]
+    have h1 : ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
+        (fun _ => (1 / 2 : ℝ)) 1 () -
+        (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()| = ENNReal.ofReal (1 / 2) := by
+      rw [hbox, hint]
+      norm_num
+    rw [hpow, ← h1]
+    exact ENNReal.pow_le_pow_left (le_iSup (fun N : ℕ => ENNReal.ofReal
+      |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
+        (fun _ => (1 / 2 : ℝ)) N () -
+        (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) 1)
+  have hcontra : ENNReal.ofReal (1 / 4) ≤ 0 := by
     calc
-      (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ)
-          = (ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-              (fun _ => id) (fun _ => (1 / 2 : ℝ)) 0 b -
-              (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _b, (1 : ℝ) ∂Measure.dirac false|) ^
-                (2 : ℕ) := by rw [hterm]
-      _ ≤ (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-              (fun _ => id) (fun _ => (1 / 2 : ℝ)) N b -
-              (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _b, (1 : ℝ) ∂Measure.dirac false|) ^
-                (2 : ℕ) :=
-            ENNReal.pow_le_pow_left (le_iSup (fun N : ℕ => ENNReal.ofReal
-              |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-                (fun _ => (1 / 2 : ℝ)) N b -
-                (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _b, (1 : ℝ) ∂Measure.dirac false|) 0)
-  have hLHS : (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ) ≤ ∫⁻ x : Bool,
-      (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-          (fun _ => id) (fun _ => (1 / 2 : ℝ)) N x -
-          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _b, (1 : ℝ) ∂Measure.dirac false|) ^ (2 : ℕ)
-        ∂Measure.dirac false := by
-    calc
-      (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ)
-          = ∫⁻ _x : Bool, (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ) ∂Measure.dirac false := by
-            rw [MeasureTheory.lintegral_const]
-            simp
-      _ ≤ _ := lintegral_mono hpoint
-  have hcontra : (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ) ≤ 0 := by
-    calc
-      (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ)
-          ≤ ∫⁻ x : Bool,
-              (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-                (fun _ => id) (fun _ => (1 / 2 : ℝ)) N x -
-                (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _b, (1 : ℝ) ∂Measure.dirac false|) ^ (2 : ℕ)
-              ∂Measure.dirac false := hLHS
-      _ ≤ ENNReal.ofReal C * ∫⁻ _b : Bool,
-            (ENNReal.ofReal |(1 : ℝ) - ∫ _b, (1 : ℝ) ∂Measure.dirac false|) ^ (2 : ℕ)
-              ∂Measure.dirac false := hineq
+      ENNReal.ofReal (1 / 4) ≤ ∫⁻ _ω : Unit,
+          (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
+            (fun _ => id) (fun _ => (1 / 2 : ℝ)) N _ω -
+            (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
+          ∂Measure.dirac () := hpoint
+      _ ≤ ENNReal.ofReal C * ∫⁻ _ω : Unit,
+            (ENNReal.ofReal |(1 : ℝ) - ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
+              ∂Measure.dirac () := hineq
       _ = 0 := hRHS
-  exact (not_le_of_gt (ENNReal.pow_pos (ENNReal.ofReal_pos.mpr (by norm_num : (0 : ℝ) < 1 / 2)) 2))
-    hcontra
+  exact (not_le_of_gt (ENNReal.ofReal_pos.mpr (by norm_num : (0 : ℝ) < 1 / 4))) hcontra
+
+/-- **`AnchoredBoxMaximal` with the supremum restricted to `N ≥ 1`.**  This is the natural
+"repair" of the `N = 0` anomaly, but it is still false. -/
+def AnchoredBoxMaximalGeOne (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
+  (∀ i, 0 ≤ c i) →
+  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (τ : Site d → Ω → Ω),
+    (∀ z, MeasurePreserving (τ z) μ μ) →
+    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (h : Ω → ℝ), Measurable h →
+      (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
+      ∫⁻ ω, (⨆ N : ℕ, ⨆ (_ : 1 ≤ N),
+          ENNReal.ofReal |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) ^ p ∂μ ≤
+        ENNReal.ofReal C *
+          ∫⁻ ω, (ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|) ^ p ∂μ
+
+/-- **The `N ≥ 1` repair of `AnchoredBoxMaximal` is also false.**  The witness is at `N = 1`
+(box `{0}`, average `1`, mean `1/2`), so the `N = 0` term was a red herring *for the repair*: the
+real defect is that `#∏ᵢ[0,⌈N cᵢ⌉) = ∏ᵢ⌈N cᵢ⌉` differs from `N^d ∏ᵢ cᵢ` at every finite `N`,
+and that discrepancy is invisible to the right-hand side built from the centred function. -/
+theorem not_anchoredBoxMaximal_ge_one :
+    ¬ AnchoredBoxMaximalGeOne 1 (fun _ => (1 / 2 : ℝ)) 2 := by
+  intro H
+  obtain ⟨C, _hC0, hC⟩ := H (fun _ => by norm_num)
+      (Ω := Unit) (Measure.dirac ()) (fun _ => id)
+      (fun _ => MeasurePreserving.id (Measure.dirac ()))
+      (fun _ _ _ => rfl)
+  have hineq := hC (fun _ => (1 : ℝ)) measurable_const ⟨(1 : ℝ), by norm_num, fun _ => by simp⟩
+  simp only [ENNReal.rpow_two] at hineq
+  have hint : ∫ _ω : Unit, (1 : ℝ) ∂Measure.dirac () = 1 := by
+    rw [MeasureTheory.integral_dirac]
+  have hceil : ⌈(2 : ℝ)⁻¹⌉ = 1 := by rw [Int.ceil_eq_iff]; norm_num
+  have hcard : (anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1).card = 1 := by
+    rw [anchoredBox, Fintype.card_piFinset]
+    simp [Int.card_Ico, hceil]
+  have hsum : (∑ x ∈ anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1,
+      (fun _ => (1 : ℝ)) ((fun _ => id) x ())) = 1 := by
+    have hconst : ∀ x ∈ anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1,
+        (fun _ => (1 : ℝ)) ((fun _ => id) x ()) = (1 : ℝ) := fun x _ => rfl
+    rw [Finset.sum_congr rfl hconst, Finset.sum_const, hcard]
+    simp
+  have hbox : anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
+      (fun _ => (1 / 2 : ℝ)) 1 () = 1 := by
+    rw [anchoredBoxAvgMean, hsum]
+    norm_num
+  have h1 : ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
+      (fun _ => (1 / 2 : ℝ)) 1 () -
+      (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()| = ENNReal.ofReal (1 / 2) := by
+    rw [hbox, hint]
+    norm_num
+  have hpow : ENNReal.ofReal (1 / 4) = (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ) := by
+    rw [sq, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+    norm_num
+  have hRHS : ENNReal.ofReal C * ∫⁻ _ω : Unit,
+      (ENNReal.ofReal |(1 : ℝ) - ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
+        ∂Measure.dirac () = 0 := by
+    rw [hint]
+    simp
+  have hpoint : ENNReal.ofReal (1 / 4) ≤ ∫⁻ _ω : Unit,
+      (⨆ N : ℕ, ⨆ (_ : 1 ≤ N), ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
+          (fun _ => id) (fun _ => (1 / 2 : ℝ)) N _ω -
+          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
+        ∂Measure.dirac () := by
+    rw [MeasureTheory.lintegral_dirac, hpow]
+    have hle : ENNReal.ofReal (1 / 2) ≤ ⨆ N : ℕ, ⨆ (_ : 1 ≤ N),
+        ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
+          (fun _ => (1 / 2 : ℝ)) N () -
+          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()| := by
+      rw [← h1]
+      exact le_trans (le_iSup (fun _ : 1 ≤ (1 : ℕ) => ENNReal.ofReal
+          |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
+            (fun _ => (1 / 2 : ℝ)) 1 () -
+            (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) le_rfl)
+        (le_iSup (fun N : ℕ => ⨆ (_ : 1 ≤ N), ENNReal.ofReal
+          |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
+            (fun _ => (1 / 2 : ℝ)) N () -
+            (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) 1)
+    exact ENNReal.pow_le_pow_left hle
+  have hcontra : ENNReal.ofReal (1 / 4) ≤ 0 := by
+    calc
+      ENNReal.ofReal (1 / 4) ≤ _ := hpoint
+      _ ≤ ENNReal.ofReal C * ∫⁻ _ω : Unit,
+            (ENNReal.ofReal |(1 : ℝ) - ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
+              ∂Measure.dirac () := hineq
+      _ = 0 := hRHS
+  exact (not_le_of_gt (ENNReal.ofReal_pos.mpr (by norm_num : (0 : ℝ) < 1 / 4))) hcontra
 
 end LatticeProb
 
@@ -574,3 +657,4 @@ end LatticeProb
 #print axioms LatticeProb.anchoredBoxAvgMean_zero
 #print axioms LatticeProb.not_anchoredBoxLimsupBound
 #print axioms LatticeProb.not_anchoredBoxMaximal
+#print axioms LatticeProb.not_anchoredBoxMaximal_ge_one
