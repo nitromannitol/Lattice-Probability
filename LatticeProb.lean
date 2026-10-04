@@ -85,6 +85,7 @@ import LatticeProb.External.GaussianLogSobolev
 import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Prob.HerbstFromLSI
 import LatticeProb.Prob.GaussianConcentrationL2
+import LatticeProb.Prob.BracketProcess
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev

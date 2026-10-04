@@ -238,6 +238,78 @@ theorem boxFinset_eq_biUnion_orthantBox (r : ℕ) :
       simp only [Pi.zero_apply, sub_zero]
       rw [abs_of_neg hi.2]; omega
 
+/-! ### Cardinality of the `ℓ∞` box as the sum over orthant boxes -/
+
+omit [MeasurableSpace Ω] in
+/-- **Volume lower bound.**  The positive orthant box `{0 ≤ xᵢ ≤ R/d}` sits inside the `ℓ¹` ball
+of radius `R`, so `(R/d + 1)^d ≤ (l1Ball 0 R).card`. -/
+theorem orthantBox_true_subset_l1Ball (R : ℕ) :
+    orthantBox (fun _ : Fin d => true) (R / d) ⊆ l1Ball (0 : Site d) R := by
+  intro x hx
+  have hxbox : ∀ i, x i ∈ Finset.Ico (0 : ℤ) ((R / d : ℕ) + 1) := by
+    intro i
+    have := (mem_orthantBox.mp hx) i
+    simpa using this
+  have hx0 : ∀ i, 0 ≤ x i := fun i => (Finset.mem_Ico.mp (hxbox i)).1
+  have hxle : ∀ i, x i ≤ (R / d : ℤ) := fun i => by
+    have := (Finset.mem_Ico.mp (hxbox i)).2; omega
+  rw [l1Ball, Finset.mem_filter, Fintype.mem_piFinset]
+  constructor
+  · intro i
+    rw [Finset.mem_Icc]
+    simp only [Pi.zero_apply, zero_sub, zero_add]
+    constructor
+    · have : (0 : ℤ) ≤ x i := hx0 i
+      omega
+    · have h1 : x i ≤ (R : ℤ) := by
+        have := hxle i
+        have : (R / d : ℤ) ≤ (R : ℤ) := by exact_mod_cast Nat.div_le_self R d
+        omega
+      have hRceil : (R : ℤ) ≤ (⌈((R : ℕ) : ℝ)⌉₊ : ℤ) := by
+        exact_mod_cast Nat.le_ceil ((R : ℕ) : ℝ)
+      omega
+  · rw [sub_zero]
+    have hgn : graphNorm x ≤ d * (R / d) := by
+      rw [graphNorm]
+      calc ∑ i, (x i).natAbs ≤ ∑ _i : Fin d, (R / d) :=
+            Finset.sum_le_sum fun i _ => by
+              have h1 : ((x i).natAbs : ℤ) = x i := Int.natAbs_of_nonneg (hx0 i)
+              have h2 : ((x i).natAbs : ℤ) ≤ (R / d : ℤ) := by rw [h1]; exact hxle i
+              exact_mod_cast h2
+        _ = d * (R / d) := by
+              rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
+    exact_mod_cast (le_trans hgn (Nat.mul_div_le R d))
+
+omit [MeasurableSpace Ω] in
+theorem card_l1Ball_ge (R : ℕ) : (R / d + 1) ^ d ≤ (l1Ball (0 : Site d) R).card := by
+  calc (R / d + 1) ^ d = (orthantBox (fun _ : Fin d => true) (R / d)).card := by
+        rw [card_orthantBox]; simp
+    _ ≤ (l1Ball (0 : Site d) R).card := Finset.card_le_card (orthantBox_true_subset_l1Ball R)
+
+omit [MeasurableSpace Ω] in
+/-- **Cover / average comparison, stated.**  The finite-set step of the transfer: for `R ≥ 1` and
+nonnegative `f`, the average over the `ℓ¹` ball of radius `R` is at most `(2d)^d` times the maximum
+of the averages over the `2^d` orthant boxes `orthantBox s R`.  The cover `l1Ball 0 R ⊆
+⋃_s orthantBox s R` is proved (`l1Ball_subset_boxFinset`, `boxFinset_eq_biUnion_orthantBox`), and
+the constant follows from the volume bound `card_l1Ball_ge` via `(2R+1)^d / (R/d+1)^d ≤ (2d)^d` for
+`R ≥ 1`.  The remaining ingredient is the finite disjoint-union sum rearrangement over the `2^d`
+sign vectors. -/
+def L1BallAverageComparison (d : ℕ) : Prop :=
+  ∀ (R : ℕ), 1 ≤ R → ∀ f : Site d → ℝ≥0∞,
+    avg (l1Ball (0 : Site d) R) f ≤
+      (((2 * d) ^ d : ℕ) : ℝ≥0∞) *
+        (Finset.univ.sup fun s : Fin d → Bool => avg (orthantBox s R) f)
+
+omit [MeasurableSpace Ω] in
+/-- **Translation bookkeeping (finite sets).**  Averaging over a translate `B + z` is averaging
+the shifted function over `B`. -/
+theorem avg_map_addRight (B : Finset (Site d)) (z : Site d) (f : Site d → ℝ≥0∞) :
+    avg (B.map (Equiv.addRight z).toEmbedding) f = avg B (fun x => f (x + z)) := by
+  unfold avg
+  rw [Finset.card_map, Finset.sum_map]
+  rfl
+
+
 /-! ### The stated geometric transfer -/
 
 /-- **The geometry transfer, stated.**  Assuming the centred anchored-box weak-type input for
