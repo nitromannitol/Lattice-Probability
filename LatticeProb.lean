@@ -391,6 +391,7 @@ import LatticeProb.Prob.NearFamily
 import LatticeProb.Prob.TwoPointOrder
 import LatticeProb.Walk.LatticeKernel
 import LatticeProb.Walk.RiemannLattice
+import LatticeProb.Walk.BallGreenBounds
 import LatticeProb.Prob.Percolation.FiniteProductPivotal
 import LatticeProb.Prob.Percolation.BondPercolation
 import LatticeProb.Prob.Percolation.Crossing
