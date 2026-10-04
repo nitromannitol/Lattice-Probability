@@ -183,6 +183,29 @@ library.
 #print axioms LatticeProb.weighted_iid_central_limit
 #print axioms LatticeProb.weighted_iid_central_limit_pick
 
+/-! ### The bracket process and the Dambis–Dubins–Schwarz representation -/
+
+#print axioms LatticeProb.condExp_cross_eq_zero
+#print axioms LatticeProb.condExp_dyadic_cross_eq_zero
+#print axioms LatticeProb.crossTerm_eq_sum
+#print axioms LatticeProb.dyadicPoint_le_mid
+#print axioms LatticeProb.dyadicPoint_mid_le
+#print axioms LatticeProb.dyadicPoint_nonneg
+#print axioms LatticeProb.dyadicPoint_two_mul
+#print axioms LatticeProb.dyadicPoint_two_mul_add_two
+#print axioms LatticeProb.dyadicPoint_zero_time
+#print axioms LatticeProb.integral_crossTerm_eq_zero
+#print axioms LatticeProb.integral_realizedQVar_succ_eq
+#print axioms LatticeProb.measurable_crossTerm
+#print axioms LatticeProb.measurable_realizedQVar
+#print axioms LatticeProb.realizedQVar_eq_succ_add_cross
+#print axioms LatticeProb.realizedQVar_nonneg
+#print axioms LatticeProb.realizedQVar_refine
+#print axioms LatticeProb.realizedQVar_zero_grid
+#print axioms LatticeProb.realizedQVar_zero_time
+#print axioms LatticeProb.sq_sub_sq_decomp
+#print axioms LatticeProb.sum_range_two_mul'
+
 /-! ### Smooth maxima and softmax stability -/
 
 #print axioms LatticeProb.softMaximum_derivative_bound

@@ -358,6 +358,18 @@ Rellich–Kondrachov compact embedding in negative Sobolev order.
   `LatticeProb.Sobolev.rellichKondrachov_of_rkBandLimitedCmNet`: the external
   `RellichKondrachovNegSobolev` is equivalent to the internal low-frequency
   finite-net statement, which follows from the band-limited `C^m`-net residual.
+**The bracket process and the Dambis–Dubins–Schwarz representation.**
+`LatticeProb/Prob/BracketProcess.lean` is Stage 1 of the bracket process of a
+continuous martingale: the dyadic realized quadratic variation
+`realizedQVar M T n = ∑_{k<2ⁿ}(M((k+1)T/2ⁿ) - M(kT/2ⁿ))²`, its refinement
+identity, and the cross-term splitting whose summands have conditional mean
+zero, so the mean of `realizedQVar` is independent of the mesh.
+
+* `LatticeProb.realizedQVar_eq_succ_add_cross`: `Q_n = Q_{n+1} + 2 * crossTerm_n`.
+* `LatticeProb.condExp_cross_eq_zero` and
+  `LatticeProb.condExp_dyadic_cross_eq_zero`: each cross-term summand has
+  conditional mean zero, whence `LatticeProb.integral_crossTerm_eq_zero` and
+  `LatticeProb.integral_realizedQVar_succ_eq`, the constant-mean property.
 
 **Smooth maxima and softmax stability.**  `softMaximum β x = log(∑ exp(β xᵢ)) / β`
 is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
