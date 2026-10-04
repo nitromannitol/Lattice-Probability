@@ -635,5 +635,78 @@ theorem herbstBound_l2_of_logSobolev (n : ℕ) (h : GaussianLogSobolev n)
     exact gaussianHerbstBound_of_logSobolev n h f (L * Real.sqrt n)
       (mul_pos hL hnpos) hsup lam hlam
 
+/-- **The `ℓ²`-gradient form of the Gaussian log-Sobolev inequality.**  Gross's
+inequality is stated for the Cameron–Martin gradient: for a positive density `h`
+on `Fin n → ℝ` whose logarithm has `ℓ²` gradient of norm at most `C` at every
+point, the entropy of `h` against the standard Gaussian product is at most
+`C²/2`.  This is the form in which the inequality is applied to a Lipschitz
+functional. -/
+def GaussianLogSobolevL2 (n : ℕ) : Prop :=
+  ∀ h : (Fin n → ℝ) → ℝ, (∀ x, 0 < h x) →
+    Integrable h (Measure.pi fun _ : Fin n => gaussianReal 0 1) →
+    Integrable (fun x => h x * Real.log (h x))
+      (Measure.pi fun _ : Fin n => gaussianReal 0 1) →
+    (∫ x, h x ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) = 1) →
+    ∀ C : NNReal, (∀ x y : Fin n → ℝ,
+        |Real.log (h x) - Real.log (h y)| ≤ C * Real.sqrt (∑ i, (x i - y i) ^ 2)) →
+    ∫ x, h x * Real.log (h x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)
+      ≤ (C : ℝ) ^ 2 / 2
+
+/-- The `ℓ²`-gradient form of the log-Sobolev inequality implies the sup-metric
+form, since the sup metric is at most the `ℓ²` distance. -/
+theorem gaussianLogSobolev_of_l2 (n : ℕ) (h : GaussianLogSobolevL2 n) :
+    GaussianLogSobolev n := by
+  intro g hpos hint hintlog hnorm C hLip
+  refine h g hpos hint hintlog hnorm C fun x y => ?_
+  have hd : dist x y ≤ Real.sqrt (∑ i, (x i - y i) ^ 2) := by
+    rw [dist_pi_le_iff (Real.sqrt_nonneg _)]
+    intro i
+    rw [Real.dist_eq, ← Real.sqrt_sq_eq_abs]
+    exact Real.sqrt_le_sqrt
+      (Finset.single_le_sum (fun j _ => sq_nonneg (x j - y j)) (Finset.mem_univ i))
+  have hxy := hLip.dist_le_mul x y
+  rw [Real.dist_eq] at hxy
+  calc |Real.log (g x) - Real.log (g y)| ≤ (C : ℝ) * dist x y := hxy
+    _ ≤ (C : ℝ) * Real.sqrt (∑ i, (x i - y i) ^ 2) :=
+        mul_le_mul_of_nonneg_left hd (by positivity)
+
+/-- The logarithm of the tilted density is `λ f` up to an additive constant, so
+it is `λ L`-Lipschitz for the `ℓ²` distance when `f` is. -/
+theorem herbstTilt_log_lipschitz_l2 (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L lam : ℝ)
+    (hL : 0 ≤ L) (lam0 : 0 ≤ lam)
+    (hf : ∀ x y : Fin n → ℝ, |f x - f y| ≤ L * Real.sqrt (∑ i, (x i - y i) ^ 2))
+    (hM : 0 < ∫ x, Real.exp (lam * (f x - ∫ y, f y
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) :
+    ∀ x y : Fin n → ℝ,
+      |Real.log (herbstTilt n f lam x) - Real.log (herbstTilt n f lam y)|
+        ≤ (⟨lam * L, mul_nonneg lam0 hL⟩ : NNReal) * Real.sqrt (∑ i, (x i - y i) ^ 2) := by
+  have hconst : ∀ x, Real.log (herbstTilt n f lam x)
+      = lam * f x - lam * (∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        - Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) := by
+    intro x
+    unfold herbstTilt
+    rw [Real.log_div (Real.exp_ne_zero _) hM.ne', Real.log_exp]
+    ring
+  intro x y
+  rw [hconst x, hconst y]
+  have hdiff : (lam * f x - lam * (∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        - Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+      - (lam * f y - lam * (∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        - Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+      = lam * (f x - f y) := by ring
+  rw [hdiff, abs_mul, abs_of_nonneg lam0]
+  calc lam * |f x - f y| ≤ lam * (L * Real.sqrt (∑ i, (x i - y i) ^ 2)) :=
+        mul_le_mul_of_nonneg_left (hf x y) lam0
+    _ = ((⟨lam * L, mul_nonneg lam0 hL⟩ : NNReal) : ℝ)
+          * Real.sqrt (∑ i, (x i - y i) ^ 2) := by
+        ring
+
 end LatticeProb
 
