@@ -277,6 +277,30 @@ status:
       literature_dependencies:
         - statement: "The Gaussian logarithmic Sobolev inequality (LatticeProb.GaussianLogSobolev), taken as an explicit hypothesis; the Herbst exponential moment bound follows"
           source: "Gross 1975; Bakry-Emery 1985; Herbst 1975"
+    - declaration: "LatticeProb.gaussian_lipschitz_concentration_of_logSobolev"
+      file: "LatticeProb/Prob/HerbstFromLSI.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies:
+        - statement: "The Gaussian logarithmic Sobolev inequality (LatticeProb.GaussianLogSobolev), taken as an explicit hypothesis; the Tsirelson-Ibragimov-Sudakov tail bound follows"
+          source: "Gross 1975; Bakry-Emery 1985; Herbst 1975"
+    - declaration: "LatticeProb.herbstBound_l2_of_logSobolevL2"
+      file: "LatticeProb/Prob/HerbstFromLSI.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies:
+        - statement: "The Gaussian logarithmic Sobolev inequality in the Cameron-Martin gradient form (LatticeProb.GaussianLogSobolevL2), taken as an explicit hypothesis; the Herbst exponential moment bound with the exact constant follows"
+          source: "Gross 1975; Bakry-Emery 1985; Herbst 1975"
+    - declaration: "LatticeProb.gaussian_lipschitz_concentration_l2_of_logSobolevL2"
+      file: "LatticeProb/Prob/HerbstFromLSI.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies:
+        - statement: "The Gaussian logarithmic Sobolev inequality in the Cameron-Martin gradient form (LatticeProb.GaussianLogSobolevL2), taken as an explicit hypothesis; the Tsirelson-Ibragimov-Sudakov tail bound in the l2-Lipschitz form follows"
+          source: "Gross 1975; Bakry-Emery 1985; Herbst 1975"
     - declaration: "LatticeProbAudit.kingman"
       file: "LatticeProbAudit/Kingman/Solution.lean"
       sorry_count: 0
