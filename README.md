@@ -54,7 +54,7 @@ the Rellich-Kondrachov embedding are used, by
 `LatticeProb.gaussian_lipschitz_concentration` and by the compactness results
 of `LatticeProb/Analysis/Sobolev/`.
 
-Four further propositions there are proved in the library:
+Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
 asymptotics that formalizations cite from Lawler–Limic
 (`LatticeProb/External/PotentialKernelAsymptoticsProved.lean`),
@@ -62,9 +62,11 @@ asymptotics that formalizations cite from Lawler–Limic
 cited from Fey–Meester–Redig
 (`LatticeProb/External/FeyMeesterRedigLeastActionProved.lean`),
 `CarneVaropoulos`, the Carne–Varopoulos bound
-(`LatticeProb/External/CarneVaropoulosProved.lean`), and `GreenNorms`, the two
+(`LatticeProb/External/CarneVaropoulosProved.lean`), `GreenNorms`, the two
 norms of the truncated Green function
-(`LatticeProb/External/GreenNormsProved.lean`).
+(`LatticeProb/External/GreenNormsProved.lean`), and `BallGreenBounds`, the
+ball-killed Green estimates in dimension four
+(`LatticeProb/External/BallGreenBoundsProved.lean`).
 
 ### Contents
 
