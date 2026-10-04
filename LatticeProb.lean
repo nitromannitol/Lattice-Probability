@@ -151,6 +151,7 @@ import LatticeProb.Prob.EfronSteinCov
 import LatticeProb.Prob.Bernstein
 import LatticeProb.Prob.BernsteinOneStep
 import LatticeProb.Prob.BernsteinInduction
+import LatticeProb.Prob.PinelisReduction
 import LatticeProb.Prob.BrownianTail
 import LatticeProb.Prob.FukNagaev
 import LatticeProb.Prob.PoissonTail
