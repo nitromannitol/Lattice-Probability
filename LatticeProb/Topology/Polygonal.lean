@@ -65,4 +65,38 @@ theorem not_separates_of_mem_compl {A : Set Plane} {p : Plane} (hp : p ∉ A) :
     p ∈ connectedComponentIn Aᶜ p :=
   mem_connectedComponentIn (by simpa using hp)
 
+/-- A polygonal set is compact. -/
+theorem IsPolygonal.isCompact {A : Set Plane} (h : IsPolygonal A) : IsCompact A := by
+  obtain ⟨L, rfl⟩ := h
+  exact L.finite_toSet.isCompact_biUnion fun p _ => isCompact_segment p.1 p.2
+
+/-- The complement of a polygonal set is open. -/
+theorem IsPolygonal.isOpen_compl {A : Set Plane} (h : IsPolygonal A) : IsOpen Aᶜ :=
+  h.isClosed.isOpen_compl
+
+/-- A finite union of polygonal sets is polygonal. -/
+theorem IsPolygonal.union {A B : Set Plane} (hA : IsPolygonal A) (hB : IsPolygonal B) :
+    IsPolygonal (A ∪ B) := by
+  obtain ⟨L, rfl⟩ := hA
+  obtain ⟨M, rfl⟩ := hB
+  refine ⟨L ++ M, ?_⟩
+  ext x
+  simp only [Set.mem_iUnion, Set.mem_union, exists_prop, List.mem_append]
+  constructor
+  · rintro (⟨i, hi, hx⟩ | ⟨i, hi, hx⟩)
+    · exact ⟨i, Or.inl hi, hx⟩
+    · exact ⟨i, Or.inr hi, hx⟩
+  · rintro ⟨i, hi | hi, hx⟩
+    · exact Or.inl ⟨i, hi, hx⟩
+    · exact Or.inr ⟨i, hi, hx⟩
+
+/-- A polygonal set is a finite union of compact segments, so it is a finite
+union of connected sets meeting at their endpoints; in particular it is
+preconnected when the segments form a chain.  Recorded here is the weaker
+statement the plane-topology arguments use: a polygonal set is closed and
+compact. -/
+theorem IsPolygonal.closed_compact {A : Set Plane} (h : IsPolygonal A) :
+    IsClosed A ∧ IsCompact A :=
+  ⟨h.isClosed, h.isCompact⟩
+
 end LatticeProb
