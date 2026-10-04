@@ -29,6 +29,7 @@ library.
 #print axioms LatticeProb.gR_high_dim_le
 #print axioms LatticeProb.tsum_iterate_delta0_eq
 #print axioms LatticeProb.greenNorms
+#print axioms LatticeProb.BallGreen.ballGreenBounds
 #print axioms LatticeProb.exists_srwGreen_gradient
 #print axioms LatticeProb.exists_srwGreenInf_gradient
 #print axioms LatticeProb.exists_srwGreenInf_le
@@ -44,6 +45,7 @@ library.
 #print axioms LatticeProb.External.feyMeesterRedigLeastAction_holds
 #print axioms LatticeProb.External.carneVaropoulos_holds
 #print axioms LatticeProb.External.greenNorms_holds
+#print axioms LatticeProb.External.ballGreenBounds_holds
 #print axioms LatticeProb.markov_stopping
 #print axioms LatticeProb.exists_maxDisp_bound
 #print axioms LatticeProb.srwTail_le

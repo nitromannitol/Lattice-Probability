@@ -100,6 +100,12 @@ general locally finite graph is `LatticeProb.Graph.heat`.
 * `LatticeProb.exists_srwGreenInf_le`: `G(0, z) ≤ C (1 + |z|)^{2-d}` for
   `d ≥ 4`; `LatticeProb.exists_tsum_srwGreenInf_sq_tail_le`: the tail
   `∑_{|z| ≥ r} G(0, z)² ≤ C r^{4-d}` for `d ≥ 5`.
+* `LatticeProb.BallGreen.ballGreenBounds`: the seven ball-killed Green
+  estimates in dimension four (`Sandpile.External.BallGreenBounds`): the
+  pointwise and square bounds, the annular gradient bound, the cutoff field and
+  its shifts, and the finite-time tail; it proves the proposition
+  `LatticeProb.External.BallGreenBounds`
+  (`LatticeProb.External.ballGreenBounds_holds`).
 * `LatticeProb.Intersection.exists_lintegral_interCount_sq_le`: the second
   moment of the number `I = ∑_{i,j} 1{X_i = Y_j}` of intersections of two
   independent simple random walks from `x` and `y` on `ℤ^d`, `d ≥ 5`,
