@@ -59,7 +59,8 @@ theorem bandCut_eq_one (d : ℕ) (Λ : ℝ) (hΛ : 0 < Λ) {ξ : Space d} (hξ :
   exact hξ
 
 /-- The cutoff is `0` outside the closed ball of radius `2Λ`. -/
-theorem bandCut_eq_zero (d : ℕ) (Λ : ℝ) (hΛ : 0 < Λ) {ξ : Space d} (hξ : 2 * Λ ≤ ‖ξ‖) :
+theorem bandCut_eq_zero (d : ℕ) (Λ : ℝ) (hΛ : 0 < Λ) {ξ : Space d}
+    (hξ : 2 * Λ ≤ ‖ξ‖) :
     bandCut d Λ ξ = 0 := by
   unfold bandCut
   apply (default : ContDiffBump (0 : Space d)).zero_of_le_dist
