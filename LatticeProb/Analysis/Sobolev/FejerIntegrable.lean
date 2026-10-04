@@ -4,7 +4,7 @@
 This finishes the second side condition of the smoothed Fejér route started in
 `FejerSideCondition.lean`.  For Schwartz `m` and `φ`:
 
-* `fourier_convolution_fourierInv_mul` — item 1: `𝓕 ((𝓕⁻ m) ⋆ φ) = m · 𝓕 φ`, i.e. the
+* `fourier_convolution_fourierInv_mul` — item 1: `𝓕 ((𝓕⁻ m) ⋆ φ) = m · 𝓕 φ`, the
   product is the Fourier transform of a genuine `L¹ ∩ L²` convolution;
 * `integrable_convolution_fourierInv_mul` — item 2, Young: `(𝓕⁻ m) ⋆ φ` is integrable
   as the convolution of two `L¹` Schwartz functions;
@@ -29,7 +29,8 @@ theorem fourier_convolution_fourierInv_mul (d : ℕ) (m φ : 𝓢(Space d, ℂ))
     𝓕 ((𝓕⁻ m : 𝓢(Space d, ℂ))
         ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] (φ : Space d → ℂ)) ξ
       = m ξ * 𝓕 φ ξ := by
-  have h := SchwartzMap.fourier_convolution_apply (ContinuousLinearMap.mul ℂ ℂ) (𝓕⁻ m) φ ξ
+  have h := SchwartzMap.fourier_convolution_apply (ContinuousLinearMap.mul ℂ ℂ)
+    (𝓕⁻ m) φ ξ
   rw [← h, SchwartzMap.fourier_convolution, SchwartzMap.pairing_apply_apply,
     FourierTransform.fourier_fourierInv_eq]
   rfl
