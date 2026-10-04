@@ -569,5 +569,71 @@ theorem gaussian_lipschitz_concentration_of_logSobolev (n : ℕ)
       ≤ Real.exp (-(t ^ 2) / (2 * L ^ 2)) :=
   gaussian_lipschitz_concentration n (gaussianHerbstBound_of_logSobolev n h) f L hL hf t ht
 
+/-- **The `ℓ²`-Lipschitz form of the Herbst bound, with the `√n` loss.**  The
+frozen `GaussianLogSobolev` is stated for a density whose logarithm is Lipschitz
+for the *sup* metric on `Fin n → ℝ`.  A functional that is `L`-Lipschitz for the
+`ℓ²` distance `√(∑ i, (x i - y i)²)` is `L√n`-Lipschitz for the sup metric, since
+the sup metric is at most the `ℓ²` distance, so the Herbst bound applies with the
+constant `L√n`.  The `√n` is not an artefact of the proof: the sup metric is
+strictly smaller than the `ℓ²` metric for `n ≥ 2`, so the exact-constant `ℓ²`
+form needs the log-Sobolev inequality stated for the `ℓ²` gradient. -/
+theorem herbstBound_l2_of_logSobolev (n : ℕ) (h : GaussianLogSobolev n)
+    (f : (Fin n → ℝ) → ℝ) (L : ℝ) (hL : 0 < L)
+    (hf : ∀ x y : Fin n → ℝ, |f x - f y| ≤ L * Real.sqrt (∑ i, (x i - y i) ^ 2))
+    (lam : ℝ) (hlam : 0 < lam) :
+    ∫ x, Real.exp (lam * (f x - ∫ y, f y
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)
+      ≤ Real.exp (lam ^ 2 * (L * Real.sqrt n) ^ 2 / 2) := by
+  have hsup : LipschitzWith ⟨L * Real.sqrt n, mul_nonneg hL.le (Real.sqrt_nonneg n)⟩ f := by
+    refine LipschitzWith.of_dist_le_mul fun x y => ?_
+    have hd : dist x y ≤ Real.sqrt (∑ i, (x i - y i) ^ 2) := by
+      rw [dist_pi_le_iff (Real.sqrt_nonneg _)]
+      intro i
+      rw [Real.dist_eq, ← Real.sqrt_sq_eq_abs]
+      exact Real.sqrt_le_sqrt
+        (Finset.single_le_sum (fun j _ => sq_nonneg (x j - y j)) (Finset.mem_univ i))
+    have hl2 : Real.sqrt (∑ i, (x i - y i) ^ 2) ≤ Real.sqrt n * dist x y := by
+      rw [← Real.sqrt_sq (dist_nonneg (x := x) (y := y)), ← Real.sqrt_mul (Nat.cast_nonneg n)]
+      refine Real.sqrt_le_sqrt ?_
+      calc ∑ i, (x i - y i) ^ 2 ≤ ∑ _i : Fin n, dist x y ^ 2 :=
+            Finset.sum_le_sum fun i _ => by
+              have hi : |x i - y i| ≤ dist x y := by
+                have h := (dist_pi_le_iff (show (0:ℝ) ≤ dist x y from dist_nonneg)).mp le_rfl
+                simpa [Real.dist_eq] using h i
+              nlinarith [abs_nonneg (x i - y i), sq_abs (x i - y i),
+                dist_nonneg (x := x) (y := y)]
+        _ = (n : ℝ) * dist x y ^ 2 := by
+            rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    calc |f x - f y| ≤ L * Real.sqrt (∑ i, (x i - y i) ^ 2) := hf x y
+      _ ≤ L * (Real.sqrt n * dist x y) := mul_le_mul_of_nonneg_left hl2 hL.le
+      _ = ((⟨L * Real.sqrt n, mul_nonneg hL.le (Real.sqrt_nonneg n)⟩ : NNReal) : ℝ) * dist x y := by
+          ring
+  rcases Nat.eq_zero_or_pos n with h0 | h0
+  · subst h0
+    haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+    have hconst : ∀ x : Fin 0 → ℝ, f x = f (fun _ => 0) :=
+      fun x => congrArg f (Subsingleton.elim x _)
+    have h1 : ∫ x, Real.exp (lam * (f x - ∫ y, f y
+        ∂(Measure.pi fun _ : Fin 0 => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin 0 => gaussianReal 0 1) = 1 := by
+      have h2 : ∀ x : Fin 0 → ℝ, f x - ∫ y, f y
+          ∂(Measure.pi fun _ : Fin 0 => gaussianReal 0 1) = 0 := by
+        intro x
+        rw [hconst x]
+        have : ∫ y, f y ∂(Measure.pi fun _ : Fin 0 => gaussianReal 0 1)
+            = f (fun _ => 0) := by
+          rw [show f = fun _ => f (fun _ => 0) from funext hconst]
+          simp
+        rw [this, sub_self]
+      simp only [h2, mul_zero, Real.exp_zero]
+      rw [MeasureTheory.integral_const]
+      simp
+    rw [h1, show Real.sqrt ((0:ℕ) : ℝ) = 0 by simp]
+    simp
+  · have hnpos : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.mpr (Nat.cast_pos.mpr h0)
+    exact gaussianHerbstBound_of_logSobolev n h f (L * Real.sqrt n)
+      (mul_pos hL hnpos) hsup lam hlam
+
 end LatticeProb
 
