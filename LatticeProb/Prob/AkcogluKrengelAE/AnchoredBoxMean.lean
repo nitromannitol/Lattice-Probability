@@ -12,7 +12,7 @@ half); a box is contained in an `ℓ¹` ball, so it dominates the box maximal.
 -/
 
 open MeasureTheory Filter Topology
-open scoped BigOperators ENNReal
+open scoped BigOperators ENNReal symmDiff
 
 namespace LatticeProb
 
@@ -198,6 +198,79 @@ theorem anchoredBoxAvgMean_coboundary (g : Ω → ℝ) (τ : Site d → Ω → �
     show g (τ y ω) - g (τ x (τ y ω)) = g (τ y ω) - g (τ (x + y) ω) from by
       rw [hadd x y ω])]
   rw [Finset.sum_sub_distrib]
+
+
+/-- **The quantitative coboundary bound, stated.**  For `h = g - g ∘ τ (unit j)` with `|g| ≤ M`, the
+box sum telescopes along coordinate `j`: for each choice of the other coordinates the inner sum
+`Σ_{k<m_j} (g(τ(z + k e_j)ω) - g(τ(z + (k+1)e_j)ω))` collapses to `g(τ z ω) - g(τ(z + m_j e_j)ω)`, so
+the whole sum is over the two `j`-faces and is at most `2 M ∏_{i≠j} m_i`, `m_i = ⌈N c_i⌉.toNat`.
+Dividing by `N^d` gives `≤ 2M (∏_{i≠j} m_i / N^{d-1}) / N → 0` when `c_j > 0`, matching `∫h = 0`.
+The telescoping/cardinality proof of this bound is the remaining formal step. -/
+def CoboundaryBound (d : ℕ) : Prop :=
+  ∀ {Ω : Type} [MeasurableSpace Ω] (g : Ω → ℝ) {M : ℝ} (_hM : 0 ≤ M)
+    (_hb : ∀ ω, |g ω| ≤ M) (τ : Site d → Ω → Ω)
+    (_hadd : ∀ z w ω, τ (z + w) ω = τ z (τ w ω)) (c : Fin d → ℝ) (hc : ∀ i, 0 ≤ c i)
+    (j : Fin d) (_hcj : 0 < c j) (ω : Ω) (N : ℕ),
+    |∑ y ∈ anchoredBox c N, (g (τ y ω) - g (τ (unit j) (τ y ω)))| ≤
+      2 * M * ∏ i ∈ Finset.univ.erase j, ((⌈(N : ℝ) * c i⌉).toNat : ℝ)
+
+
+/-- **Step (iii), the `limsup` comparison.**  For every `h` and every `h'`, a.e.
+`limsup_N |A_N h - (∏c)∫h| ≤ (⨆N |A_N (h - h')|) + |(∏c)∫(h - h')|`.  The invariant and coboundary
+cases give `limsup_N |A_N h' - (∏c)∫h'| = 0`, and the `Lᵖ` density of the span lets
+`∫ |(h - h') - ∫(h - h')|ᵖ → 0`, so the `limsup` vanishes. -/
+def AnchoredBoxLimsupBound (d : ℕ) (c : Fin d → ℝ) : Prop :=
+  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (τ : Site d → Ω → Ω) (h h' : Ω → ℝ),
+    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) → ∀ ω,
+      ENNReal.ofReal (limsup (fun N : ℕ =>
+          |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) atTop) ≤
+        (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (h - h') τ c N ω|) +
+          ENNReal.ofReal |(∏ i, c i) * (∫ ω, h ω ∂μ - ∫ ω, h' ω ∂μ)|
+
+
+/-- **The two-face cardinality bound.**  The symmetric difference of `anchoredBox c N` and its unit
+shift in coordinate `j` is contained in the union of the two `j`-faces `{y ∈ box : y j = 0}` and
+`{y ∈ box + unit j : y j = m j}`, each of cardinality `∏_{i≠j} ⌈N cᵢ⌉.toNat`, so it has at most
+`2 ∏_{i≠j} ⌈N cᵢ⌉.toNat` elements.  This is the exact cardinality input of `CoboundaryBound`, and
+it is the remaining formal step: the proof is `box \ box' ⊆ {y ∈ box : y j = 0}` and
+`box' \ box ⊆ {y ∈ box' : y j = m j}` by membership in `Fintype.piFinset`, then
+`Finset.card_le_card` with `Fintype.card_piFinset` on the slices. -/
+def SymmDiffFaceBound (d : ℕ) : Prop :=
+  ∀ (c : Fin d → ℝ) (hc : ∀ i, 0 ≤ c i) (j : Fin d) (N : ℕ),
+    (((anchoredBox c N) \ ((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding)) ∪
+        (((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding) \ (anchoredBox c N))).card ≤
+      2 * ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat
+
+
+omit [MeasurableSpace Ω] in
+/-- **Containment of the first face.**  A site in the box but not in its unit-`j` translate has
+`j`-coordinate `0`. -/
+theorem sdiff_anchoredBox_subset_eq_zero {c : Fin d → ℝ} (N : ℕ) (j : Fin d) :
+    (anchoredBox c N) \ ((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding)
+      ⊆ (anchoredBox c N).filter (fun y => y j = 0) := by
+  intro y hy
+  rw [Finset.mem_sdiff] at hy
+  rw [Finset.mem_filter]
+  refine ⟨hy.1, ?_⟩
+  by_contra hne
+  apply hy.2
+  rw [Finset.mem_map]
+  refine ⟨y - unit j, ?_, ?_⟩
+  · rw [mem_anchoredBox] at hy ⊢
+    intro i
+    have hi := hy.1 i
+    simp only [Finset.mem_Ico] at hi ⊢
+    simp only [unit, Pi.sub_apply, Pi.single_apply]
+    by_cases hij : i = j
+    · subst hij
+      simp only [↓reduceIte]
+      constructor <;> omega
+    · simp only [hij, ↓reduceIte, sub_zero]
+      exact hi
+  · ext i
+    change ((y - unit j) + unit j) i = y i
+    simp [Pi.add_apply, Pi.sub_apply]
 
 end LatticeProb
 
