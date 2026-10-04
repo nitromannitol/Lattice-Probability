@@ -285,6 +285,7 @@ import LatticeProb.Prob.PoissonClock
 import LatticeProb.Lattice.Planar
 import LatticeProb.Analysis.Sobolev.Defs
 import LatticeProb.Analysis.Sobolev.Basic
+import LatticeProb.Analysis.Sobolev.Additivity
 import LatticeProb.Analysis.Sobolev.Weight
 import LatticeProb.Analysis.Sobolev.HighFrequency
 import LatticeProb.Analysis.Sobolev.RellichEstimate
