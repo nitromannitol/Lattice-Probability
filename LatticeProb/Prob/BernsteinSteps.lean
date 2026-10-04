@@ -141,7 +141,7 @@ theorem condExp_exp_eq_tsum' {m : MeasurableSpace Ω} (_hm : m ≤ m₀) [IsProb
 /-- **The deterministic Bernstein series bound.**  If the terms `f q` are bounded by `1`, `0` and
 the Bernstein coefficients at `q = 0, 1` and at `q >= 2`, and the series is summable, then
 summable, then `∑' f q <= exp (lam^2 v / (2 (1 - a lam)))`. -/
-theorem tsum_le_exp_bernstein {a v lam : ℝ} (ha : 0 < a) (hv : 0 ≤ v) (hlam : 0 ≤ lam)
+theorem tsum_le_exp_bernstein {a v lam : ℝ} (ha : 0 < a) (_hv : 0 ≤ v) (hlam : 0 ≤ lam)
     (hlam_a : lam * a < 1) {f : ℕ → ℝ} (hs : Summable f)
     (hf0 : f 0 ≤ 1) (hf1 : f 1 ≤ 0)
     (hf : ∀ q : ℕ, f (q + 2) ≤ lam ^ (q + 2) / (Nat.factorial (q + 2) : ℝ)
@@ -189,6 +189,80 @@ theorem tsum_le_exp_bernstein {a v lam : ℝ} (ha : 0 < a) (hv : 0 ≤ v) (hlam 
         linarith
 
 
+/-- The factorial series of `x` is summable. -/
+theorem summable_exp_series_div' (x : ℝ) :
+    Summable (fun n : ℕ => x ^ n / (Nat.factorial n : ℝ)) :=
+  (NormedSpace.expSeries_div_hasSum_exp (𝔸 := ℝ) x).summable
+
+/-- **Item 6, the `condExp_tsum` summability.**  If `Real.exp (lam * |X|)` is integrable then the
+factorial-series lintegral `∑' q, ∫⁻ ‖(lam X)^q / q!‖ₑ` is finite.  This is the summability
+hypothesis of `condExp_tsum` in `condExp_exp_eq_tsum'`, obtained from
+`lintegral_tsum` and the factorial series of the exponential. -/
+theorem tsum_lintegral_factorial_ne_top [IsProbabilityMeasure μ]
+    {X : Ω → ℝ} {lam : ℝ} (hlam : 0 ≤ lam) (hX : Measurable[m₀] X)
+    (hexp : Integrable (fun ω => Real.exp (lam * |X ω|)) μ) :
+    (∑' q : ℕ, ∫⁻ ω, ‖(lam * X ω) ^ q / (Nat.factorial q : ℝ)‖ₑ ∂μ) ≠ ∞ := by
+  have hmeas : ∀ q : ℕ, AEMeasurable
+      (fun ω => ‖(lam * X ω) ^ q / (Nat.factorial q : ℝ)‖ₑ) μ := by
+    intro q
+    exact (((hX.const_mul lam).pow_const q).div_const _).enorm.aemeasurable
+  have hpoint : ∀ ω : Ω, (∑' q : ℕ, ‖(lam * X ω) ^ q / (Nat.factorial q : ℝ)‖ₑ)
+      = ENNReal.ofReal (Real.exp (lam * |X ω|)) := by
+    intro ω
+    have hfun : (fun q : ℕ => ‖(lam * X ω) ^ q / (Nat.factorial q : ℝ)‖ₑ)
+        = fun q : ℕ => ENNReal.ofReal ((lam * |X ω|) ^ q / (Nat.factorial q : ℝ)) := by
+      funext q
+      rw [Real.enorm_eq_ofReal_abs, abs_div, abs_pow, Nat.abs_cast, abs_mul,
+        abs_of_nonneg hlam]
+    rw [hfun, ← ENNReal.ofReal_tsum_of_nonneg (fun q => by positivity)
+      (summable_exp_series_div' _)]
+    congr 1
+    exact (exp_eq_tsum_div' (lam * |X ω|)).symm
+  rw [(lintegral_tsum (f := fun q (ω : Ω) => ‖(lam * X ω) ^ q / (Nat.factorial q : ℝ)‖ₑ)
+    hmeas).symm]
+  refine ne_of_lt ?_
+  calc ∫⁻ ω, ∑' q : ℕ, ‖(lam * X ω) ^ q / (Nat.factorial q : ℝ)‖ₑ ∂μ
+      = ∫⁻ ω, ENNReal.ofReal (Real.exp (lam * |X ω|)) ∂μ := lintegral_congr hpoint
+    _ = ENNReal.ofReal (∫ ω, Real.exp (lam * |X ω|) ∂μ) :=
+        (ofReal_integral_eq_lintegral_ofReal hexp
+          (Eventually.of_forall fun ω => (Real.exp_pos _).le)).symm
+    _ < ∞ := ENNReal.ofReal_lt_top
+
+/-- **Item 6, the termwise conditional factorial bound.**  For `q >= ?` (here `q >= 2`), if the
+`q`-th conditional moment is bounded by the Bernstein coefficient,
+`μ[|X|^q | m] ≤ (q!/2) a^{q-2} v`, and the `q`-th powers are integrable, then the `q`-th
+factorial-series conditional moment is bounded by `lam^q/q! * ((q!/2) a^{q-2} v)`.  The
+`lam^q/q!` factor pulls out of the conditional expectation and `X^q ≤ |X|^q`. -/
+theorem condExp_factorial_term_le {m : MeasurableSpace Ω} [IsProbabilityMeasure μ]
+    {X : Ω → ℝ} {a v lam : ℝ} (hlam : 0 ≤ lam) {q : ℕ}
+    (hfac : μ[fun ω => |X ω| ^ q | m] ≤ᵐ[μ]
+      fun _ => (Nat.factorial q : ℝ) / 2 * a ^ (q - 2) * v)
+    (hXq : Integrable (fun ω => X ω ^ q) μ)
+    (habsq : Integrable (fun ω => |X ω| ^ q) μ) :
+    μ[fun ω => (lam * X ω) ^ q / (Nat.factorial q : ℝ) | m] ≤ᵐ[μ]
+      fun _ => lam ^ q / (Nat.factorial q : ℝ)
+        * ((Nat.factorial q : ℝ) / 2 * a ^ (q - 2) * v) := by
+  have heq : (fun ω => (lam * X ω) ^ q / (Nat.factorial q : ℝ))
+      = (lam ^ q / (Nat.factorial q : ℝ)) • (fun ω => X ω ^ q) := by
+    funext ω
+    simp only [Pi.smul_apply, smul_eq_mul]
+    rw [mul_pow]
+    ring
+  have h1 : μ[fun ω => (lam * X ω) ^ q / (Nat.factorial q : ℝ) | m]
+      =ᵐ[μ] fun ω => lam ^ q / (Nat.factorial q : ℝ)
+        * (μ[fun ω => X ω ^ q | m]) ω := by
+    rw [heq]
+    have hsm := condExp_smul (μ := μ) (m := m) (lam ^ q / (Nat.factorial q : ℝ))
+      (fun ω => X ω ^ q)
+    filter_upwards [hsm] with ω hω
+    simpa only [Pi.smul_apply, smul_eq_mul] using hω
+  have h2 : μ[fun ω => X ω ^ q | m] ≤ᵐ[μ] μ[fun ω => |X ω| ^ q | m] :=
+    condExp_mono hXq habsq (Eventually.of_forall fun ω => by
+      simpa only [abs_pow] using le_abs_self (X ω ^ q))
+  filter_upwards [h1, h2, hfac] with ω h1ω h2ω h3ω
+  rw [h1ω]
+  exact mul_le_mul_of_nonneg_left (h2ω.trans h3ω) (by positivity)
+
 /-- **Item 6, `condExp_exp_le_of_factorial`.**  From the conditional factorial-moment bound on a
 centred increment `X` — the `q = 0, 1` terms bounded by `1` and `0`, the `q >= 2` terms by the
 Bernstein coefficients `(q!/2) a^{q-2} v` — the conditional exponential moment is bounded by the
@@ -199,13 +273,18 @@ theorem condExp_exp_le_of_factorial {m : MeasurableSpace Ω} (hm : m ≤ m₀) [
     (hX : Measurable[m₀] X)
     (h0 : μ[fun ω => (lam * X ω) ^ 0 / (Nat.factorial 0 : ℝ) | m] ≤ᵐ[μ] fun _ => 1)
     (h1 : μ[fun ω => (lam * X ω) ^ 1 / (Nat.factorial 1 : ℝ) | m] ≤ᵐ[μ] fun _ => 0)
-    (hterm : ∀ q : ℕ, 2 ≤ q → μ[fun ω => (lam * X ω) ^ q / (Nat.factorial q : ℝ) | m] ≤ᵐ[μ]
-      fun _ => lam ^ q / (Nat.factorial q : ℝ) * ((Nat.factorial q : ℝ) / 2 * a ^ (q - 2) * v))
+    (hfac : ∀ q : ℕ, 2 ≤ q → μ[fun ω => |X ω| ^ q | m] ≤ᵐ[μ]
+      fun _ => (Nat.factorial q : ℝ) / 2 * a ^ (q - 2) * v)
+    (hintX : ∀ q : ℕ, Integrable (fun ω => X ω ^ q) μ)
+    (hintabs : ∀ q : ℕ, Integrable (fun ω => |X ω| ^ q) μ)
     (hsumm : ∀ᵐ ω ∂μ, Summable
       (fun q : ℕ => μ[fun ω' => (lam * X ω') ^ q / (Nat.factorial q : ℝ) | m] ω))
     (hsum : ∑' q : ℕ, ∫⁻ ω, ‖(lam * X ω) ^ q / (Nat.factorial q : ℝ)‖ₑ ∂μ ≠ ∞) :
     μ[fun ω => Real.exp (lam * X ω) | m] ≤ᵐ[μ]
       fun _ => Real.exp (lam ^ 2 * v / (2 * (1 - a * lam))) := by
+  have hterm : ∀ q : ℕ, 2 ≤ q → μ[fun ω => (lam * X ω) ^ q / (Nat.factorial q : ℝ) | m] ≤ᵐ[μ]
+      fun _ => lam ^ q / (Nat.factorial q : ℝ) * ((Nat.factorial q : ℝ) / 2 * a ^ (q - 2) * v) :=
+    fun q hq => condExp_factorial_term_le hlam (hfac q hq) (hintX q) (hintabs q)
   have hinter := condExp_exp_eq_tsum' hm hX lam hsum
   have hb : ∀ q : ℕ, ∀ᵐ ω ∂μ,
       (μ[fun ω' => (lam * X ω') ^ q / (Nat.factorial q : ℝ) | m]) ω
@@ -215,7 +294,6 @@ theorem condExp_exp_le_of_factorial {m : MeasurableSpace Ω} (hm : m ≤ m₀) [
     intro q
     rcases Nat.eq_zero_or_pos q with hq | hq
     · subst hq
-      simp only [if_pos rfl]
       exact h0
     · by_cases hq2 : 2 ≤ q
       · have hq0 : q ≠ 0 := by omega
@@ -224,7 +302,7 @@ theorem condExp_exp_le_of_factorial {m : MeasurableSpace Ω} (hm : m ≤ m₀) [
         exact hterm q hq2
       · have hq1 : q = 1 := by omega
         subst hq1
-        simp only [if_neg (by norm_num : (1 : ℕ) ≠ 0), if_pos rfl]
+        simp only [if_neg (by norm_num : (1 : ℕ) ≠ 0)]
         exact h1
   have hall : ∀ᵐ ω ∂μ, ∀ q : ℕ,
       (μ[fun ω' => (lam * X ω') ^ q / (Nat.factorial q : ℝ) | m]) ω
@@ -245,5 +323,8 @@ theorem condExp_exp_le_of_factorial {m : MeasurableSpace Ω} (hm : m ≤ m₀) [
 #print axioms LatticeProb.condExp_exp_eq_tsum'
 #print axioms LatticeProb.tsum_le_exp_bernstein
 #print axioms LatticeProb.condExp_exp_le_of_factorial
+#print axioms LatticeProb.summable_exp_series_div'
+#print axioms LatticeProb.tsum_lintegral_factorial_ne_top
+#print axioms LatticeProb.condExp_factorial_term_le
 
 end LatticeProb
