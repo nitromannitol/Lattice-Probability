@@ -313,6 +313,7 @@ import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
 import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
 import LatticeProb.Analysis.Sobolev.FejerSideCondition
 import LatticeProb.Analysis.Sobolev.FejerIntegrable
+import LatticeProb.Analysis.Sobolev.FejerLimit
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.Scaling
 import LatticeProb.Analysis.Sobolev.TestFn

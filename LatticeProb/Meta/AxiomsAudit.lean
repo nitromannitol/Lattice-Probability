@@ -346,6 +346,14 @@ library.
 #print axioms LatticeProb.Sobolev.integrable_fourier_mul_conv
 #print axioms LatticeProb.Sobolev.fejer_integrable_side_condition
 
+/-! ### The Fejér limit and the real projection -/
+
+#print axioms LatticeProb.Sobolev.bandCut_neg
+#print axioms LatticeProb.Sobolev.bandTrunc_im_eq_zero
+#print axioms LatticeProb.Sobolev.fourier_bandProj
+#print axioms LatticeProb.Sobolev.isBandLimited_bandProj
+#print axioms LatticeProb.Sobolev.sobolevNormSqHigh_bandProj_eq_zero
+
 /-! ### Band-limited Bernstein bound -/
 
 #print axioms LatticeProb.Sobolev.fourierInv_eq_setIntegral
