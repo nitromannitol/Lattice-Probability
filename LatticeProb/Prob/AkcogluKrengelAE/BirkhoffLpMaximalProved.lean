@@ -30,9 +30,6 @@ namespace LatticeProb
 
 noncomputable section
 
-/-! ### Reusable layer-cake helpers (copied verbatim from `wip/MomentsDefs.lean`) -/
-
-/-- The half-line integral of `t ^ (q - 1)` diverges for `q > 0`. -/
 theorem lintegral_Ioi_rpow_sub_one_eq_top {q : ℝ} (hq : 0 < q) :
     ∫⁻ t in Set.Ioi (0 : ℝ), ENNReal.ofReal (t ^ (q - 1)) = ⊤ := by
   by_contra h
@@ -183,13 +180,7 @@ theorem iSup_min_rpow (a : ℝ≥0∞) {p : ℝ} (hp : 1 ≤ p) :
         rw [← ENNReal.ofReal_toReal ha]
         simpa using ENNReal.ofReal_le_ofReal hN
       rwa [min_eq_left haN]
-
-
-/-! ## The Birkhoff maximal function and the named statements -/
-
--- The general-`p` layer cake is already in Mathlib (real-valued `f`):
-#check @MeasureTheory.lintegral_rpow_eq_lintegral_meas_lt_mul
-#check @MeasureTheory.lintegral_rpow_eq_lintegral_meas_le_mul
+/-! ## The one-parameter maximal function -/
 
 /-- The one-parameter maximal function `Mf x = sup_N (N : ℝ≥0∞)⁻¹ * Σ_{k<N} f(T^[k] x)`. -/
 noncomputable def birkhoffMax {Ω : Type*} [MeasurableSpace Ω] (T : Ω → Ω) (f : Ω → ℝ≥0∞) :
@@ -594,13 +585,6 @@ theorem marcinkiewicz_abstract
   rw [hconv]
   exact ciSup_le key
 
-/-- Measurability of the Birkhoff maximal function. -/
-theorem measurable_birkhoffMax {Ω : Type*} [MeasurableSpace Ω] {T : Ω → Ω} {f : Ω → ℝ≥0∞}
-    (hT : Measurable T) (hf : Measurable f) : Measurable (birkhoffMax T f) := by
-  refine Measurable.iSup fun N => ?_
-  exact measurable_const.mul (Finset.measurable_sum _ fun k _ => hf.comp (hT.iterate k))
-
-
 /-! ## The `ℝ≥0∞`-valued weak type and the strong `Lᵖ` maximal -/
 
 theorem birkhoffMax_mono {f₁ f₂ : Ω → ℝ≥0∞} (h : f₁ ≤ f₂) :
@@ -609,6 +593,11 @@ theorem birkhoffMax_mono {f₁ f₂ : Ω → ℝ≥0∞} (h : f₁ ≤ f₂) :
   simp only [birkhoffMax]
   refine iSup_le fun N => ?_
   exact le_iSup_of_le N (mul_le_mul' (le_refl _) (Finset.sum_le_sum fun k _ => h _))
+
+theorem measurable_birkhoffMax {Ω : Type*} [MeasurableSpace Ω] {T : Ω → Ω} {f : Ω → ℝ≥0∞}
+    (hT : Measurable T) (hf : Measurable f) : Measurable (birkhoffMax T f) := by
+  refine Measurable.iSup fun N => ?_
+  exact measurable_const.mul (Finset.measurable_sum _ fun k _ => hf.comp (hT.iterate k))
 
 /-- The `ℝ≥0∞` normalised weak-type bound for `birkhoffMax`, obtained from the pin's maximal
 ergodic theorem (`maximalSet_restricted_le`) by truncating `f` at each natural level and passing
@@ -712,6 +701,7 @@ theorem birkhoffLpMaximal : BirkhoffLpMaximal := by
 
 #print axioms birkhoffLpMaximal
 #print axioms birkhoffMax_weakType
+
 
 end
 
