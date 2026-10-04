@@ -86,6 +86,7 @@ import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Prob.HerbstFromLSI
 import LatticeProb.Prob.GaussianLogSobolevTensor
 import LatticeProb.Prob.GaussianLogSobolevGrad
+import LatticeProb.Prob.GaussianLogSobolevGradTensor
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev
