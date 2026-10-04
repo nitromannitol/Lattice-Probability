@@ -20,7 +20,8 @@ Proved in this file (the parts of Stage 1 not blocked):
   `realizedQVar M T n = realizedQVar M T (n+1) + 2 * crossTerm M T n`,
   where `crossTerm` is the sum of products of the two halves of each refined increment;
 * the martingale identity `E[(M b - M a)(M c - M b) | ℱ a] = 0` for `a ≤ b ≤ c`, hence
-  `crossTerm` has conditional mean zero and `E[realizedQVar M T n]` is independent of `n`.
+  `crossTerm` has conditional mean zero and `E[realizedQVar M T n]` is independent of `n`
+  (`integral_crossTerm_eq_zero`, `integral_realizedQVar_succ_eq`).
 
 Not in this file (see the closing note): the existence of the limit `bracket`, the identity
 `Martingale.sq_sub_bracket`, and `tendstoInMeasure_realizedQVar_bracket`.  Those are blocked on
@@ -54,6 +55,16 @@ def crossTerm (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (n : ℕ) (ω : Ω) : �
   ∑ j ∈ Finset.range (2 ^ n),
     (M (dyadicPoint T (n + 1) (2 * j + 1)) ω - M (dyadicPoint T n j) ω) *
       (M (dyadicPoint T n (j + 1)) ω - M (dyadicPoint T (n + 1) (2 * j + 1)) ω)
+
+/-- The `j`-th summand of `crossTerm`: the product of the two halves of the `j`-th refined
+increment.  It is the unit whose conditional expectation `condExp_dyadic_cross_eq_zero` kills. -/
+def crossIncrement (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (n j : ℕ) (ω : Ω) : ℝ :=
+  (M (dyadicPoint T (n + 1) (2 * j + 1)) ω - M (dyadicPoint T n j) ω) *
+    (M (dyadicPoint T n (j + 1)) ω - M (dyadicPoint T (n + 1) (2 * j + 1)) ω)
+
+/-- `crossTerm` is the sum of its summands. -/
+theorem crossTerm_eq_sum (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (n : ℕ) (ω : Ω) :
+    crossTerm M T n ω = ∑ j ∈ Finset.range (2 ^ n), crossIncrement M T n j ω := rfl
 
 @[simp] theorem dyadicPoint_zero_time (n k : ℕ) : dyadicPoint (0 : ℝ≥0) n k = 0 := by
   simp [dyadicPoint]
@@ -222,6 +233,49 @@ theorem condExp_dyadic_cross_eq_zero [MeasurableSpace Ω] {μ : Measure Ω} [IsP
           - M (dyadicPoint T (n + 1) (2 * j + 1)) ω
       | ℱ (dyadicPoint T n j)] =ᵐ[μ] 0 :=
   condExp_cross_eq_zero (μ := μ) hM (dyadicPoint_le_mid T n j) (dyadicPoint_mid_le T n j) hfg hg
+
+/-! ### The constant-mean corollary -/
+
+/-- **The cross term integrates to zero.**  Every summand of `crossTerm M T n` has conditional
+mean zero for `ℱ (dyadicPoint T n j)` (`condExp_dyadic_cross_eq_zero`), so `∫ crossTerm = 0`. -/
+theorem integral_crossTerm_eq_zero [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {ℱ : Filtration ℝ≥0 ‹MeasurableSpace Ω›} {M : ℝ≥0 → Ω → ℝ}
+    (hM : Martingale M ℱ μ) (T : ℝ≥0) (n : ℕ)
+    (hint : ∀ j ∈ Finset.range (2 ^ n), Integrable (crossIncrement M T n j) μ)
+    (hintg : ∀ j ∈ Finset.range (2 ^ n),
+      Integrable (fun ω => M (dyadicPoint T n (j + 1)) ω
+        - M (dyadicPoint T (n + 1) (2 * j + 1)) ω) μ) :
+    ∫ ω, crossTerm M T n ω ∂μ = 0 := by
+  simp_rw [crossTerm_eq_sum]
+  rw [integral_finsetSum _ (fun j hj => hint j hj)]
+  refine Finset.sum_eq_zero fun j hj => ?_
+  have hcond := condExp_dyadic_cross_eq_zero (μ := μ) hM T n j (hint j hj) (hintg j hj)
+  rw [← integral_condExp (μ := μ) (m := ℱ (dyadicPoint T n j)) (ℱ.le _)
+    (f := crossIncrement M T n j)]
+  exact integral_eq_zero_of_ae hcond
+
+/-- **The mean of the realized quadratic variation is independent of the mesh.**  From the
+cross-term splitting and `integral_crossTerm_eq_zero`. -/
+theorem integral_realizedQVar_succ_eq [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {ℱ : Filtration ℝ≥0 ‹MeasurableSpace Ω›} {M : ℝ≥0 → Ω → ℝ}
+    (hM : Martingale M ℱ μ) (T : ℝ≥0) (n : ℕ)
+    (hQ : Integrable (realizedQVar M T (n + 1)) μ)
+    (hcross : Integrable (crossTerm M T n) μ)
+    (hint : ∀ j ∈ Finset.range (2 ^ n), Integrable (crossIncrement M T n j) μ)
+    (hintg : ∀ j ∈ Finset.range (2 ^ n),
+      Integrable (fun ω => M (dyadicPoint T n (j + 1)) ω
+        - M (dyadicPoint T (n + 1) (2 * j + 1)) ω) μ) :
+    ∫ ω, realizedQVar M T n ω ∂μ = ∫ ω, realizedQVar M T (n + 1) ω ∂μ := by
+  have hcross0 := integral_crossTerm_eq_zero (μ := μ) hM T n hint hintg
+  calc ∫ ω, realizedQVar M T n ω ∂μ
+      = ∫ ω, (realizedQVar M T (n + 1) ω + 2 * crossTerm M T n ω) ∂μ :=
+        integral_congr_ae
+          (Filter.Eventually.of_forall fun ω => realizedQVar_eq_succ_add_cross M T n ω)
+    _ = ∫ ω, realizedQVar M T (n + 1) ω ∂μ + ∫ ω, 2 * crossTerm M T n ω ∂μ :=
+        integral_add hQ (hcross.const_mul 2)
+    _ = ∫ ω, realizedQVar M T (n + 1) ω ∂μ + 2 * ∫ ω, crossTerm M T n ω ∂μ := by
+        rw [integral_const_mul]
+    _ = ∫ ω, realizedQVar M T (n + 1) ω ∂μ := by rw [hcross0, mul_zero, add_zero]
 
 end LatticeProb
 
