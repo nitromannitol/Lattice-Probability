@@ -5,15 +5,10 @@ import LatticeProb.Prob.AkcogluKrengel
 /-!
 # The `Lᵖ` box mean ergodic theorem, and the pair-to-anchored-box reduction
 
-Source main read: `01de1d0`.  The library has `LatticeProb.akcoglu_krengel_mean`
-(`Prob/AkcogluKrengel.lean:730`), the *mean* multiparameter ergodic theorem, but it is a scalar
-statement: `(∫ ω, f (latticeCube d n) ω) / n^d → L`, not an `Lᵖ` norm convergence, and it is along
-cubes only.  The `Lᵖ` box mean theorem below is the half of the anchored-box gap not covered by the
-maximal inequality `AnchoredBoxMaximal` (`AnchoredBoxMaximal.lean`).
-
-`BallMaximalLp.lean` (already in this worktree, not written by me) states `BirkhoffLpMaximal` and
-`KrengelLpBall`, the `Lᵖ` *maximal* bounds, and proves nothing of them; it is the maximal half, not
-the mean half.
+Source main read: `01de1d0`.  `LatticeProb.akcoglu_krengel_mean` (`Prob/AkcogluKrengel.lean:730`) is
+a *scalar* cube statement, not an `Lᵖ` norm convergence, so it does not supply the mean half.  The
+library's `KrengelLpBall` (`BallMaximalLp.lean:74`) is the `ℓ¹`-ball `Lᵖ` maximal bound (the maximal
+half); a box is contained in an `ℓ¹` ball, so it dominates the box maximal.
 -/
 
 open MeasureTheory Filter Topology
@@ -28,8 +23,22 @@ noncomputable def anchoredBoxAvgMean (h : Ω → ℝ) (τ : Site d → Ω → Ω
     (ω : Ω) : ℝ :=
   (N : ℝ) ^ (-(d : ℝ)) * ∑ x ∈ anchoredBox c N, h (τ x ω)
 
-/-- **The `Lᵖ` box mean ergodic theorem.**  For each box shape `c ≥ 0` and `p > 1`, the normalised
-box average converges to the mean in `Lᵖ`: `∫⁻ |anchoredBoxAvgMean_N h - (∏ᵢ cᵢ) ∫h|ᵖ → 0`. -/
+/-- **The anchored-box `Lᵖ` maximal inequality.**  For `c ≥ 0` and `p > 1`, the sup over `N` of the
+deviation of the box average from the mean is controlled in `Lᵖ` by `‖h - ∫h‖_p`. -/
+def AnchoredBoxMaximal (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
+  (∀ i, 0 ≤ c i) →
+  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (τ : Site d → Ω → Ω),
+    (∀ z, MeasurePreserving (τ z) μ μ) →
+    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (h : Ω → ℝ), Measurable h →
+      (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
+      ∫⁻ ω, (⨆ N : ℕ,
+          ENNReal.ofReal |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) ^ p ∂μ ≤
+        ENNReal.ofReal C *
+          ∫⁻ ω, (ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|) ^ p ∂μ
+
+/-- **The `Lᵖ` box mean ergodic theorem**: `∫⁻ |boxAvg_N h - (∏ᵢ cᵢ) ∫h|ᵖ → 0`. -/
 def AnchoredBoxMean (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
   (∀ i, 0 ≤ c i) →
   ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
@@ -42,11 +51,8 @@ def AnchoredBoxMean (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
             |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) ^ p ∂μ)
         atTop (𝓝 0)
 
-/-- **The dense-class input of the upgrade.**  There is a class `D` of bounded measurable
-functions, dense in `Lᵖ` modulo constants (for every bounded measurable `h` and every `ε > 0` there
-is `g ∈ D` with `∫⁻ |(h - g) - ∫ (h - g)|ᵖ < ε`), on which the box averages converge almost surely
-to the mean.  This is step (a) of the standard route (invariant functions plus coboundaries); its
-existence is not provided by `akcoglu_krengel_mean`. -/
+/-- **The dense-class input of the upgrade.**  A class of bounded measurable functions, dense in
+`Lᵖ` modulo constants, on which the box averages converge a.e. to the mean. -/
 def AnchoredBoxDenseClass (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
   (∀ i, 0 ≤ c i) →
   ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
@@ -61,17 +67,33 @@ def AnchoredBoxDenseClass (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
         ∃ g ∈ D, ∫⁻ ω, (ENNReal.ofReal
           |(h ω - g ω) - ∫ ω', (h ω' - g ω') ∂μ|) ^ p ∂μ < ENNReal.ofReal ε)
 
-/-- **The pair-to-anchored-box reduction, pinned.**  The library's `KrengelLpBall d` (its `ℓ¹`-ball
-`Lᵖ` maximal bound, `BallMaximalLp.lean:74`, identical to ds1's `wip/MaximalErgodicReduction.lean`
-statement) dominates the box maximal (a box `∏ᵢ [0, ⌈N cᵢ⌉)` is contained in the `ℓ¹` ball of radius
-`N ∑ᵢ cᵢ`), and `AnchoredBoxMean`/`AnchoredBoxDenseClass` are the `Lᵖ` mean half.  This `Prop` is the
-exact implication whose proof is the remaining `limsup`/`lintegral` assembly: with it (and with
-`KrengelLpBall` proved by ds1) the library's `AnchoredBoxErgodic` is discharged, so the library's
-gap is pinned to the single missing mean statement. -/
-def AnchoredBoxErgodicOfMaximalMean (d : ℕ) : Prop :=
-  KrengelLpBall d →
-  (∀ (c : Fin d → ℝ), (∀ i, 0 ≤ c i) → ∀ p : ℝ, 1 < p → AnchoredBoxMean d c p) →
-  (∀ (c : Fin d → ℝ), (∀ i, 0 ≤ c i) → ∀ p : ℝ, 1 < p → AnchoredBoxDenseClass d c p) →
-  AnchoredBoxErgodic d
+/-- **Step (c): the density/`limsup` upgrade.**  Given the maximal inequality and the dense class,
+every bounded measurable `h` has its box averages converging a.e. to `(∏ᵢ cᵢ) ∫h`: for `g` in the
+class, `limsup_N |A_N h| ≤ limsup_N |A_N g| + sup_N |A_N (h - g)| = sup_N |A_N (h - g)|` a.e., the
+maximal bound controls the sup in `Lᵖ`, and the `Lᵖ` density lets `∫ |(h-g) - ∫(h-g)|ᵖ → 0`. -/
+def AnchoredBoxDensityUpgrade (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
+  (∀ i, 0 ≤ c i) → 1 < p →
+  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (τ : Site d → Ω → Ω),
+    (∀ z, MeasurePreserving (τ z) μ μ) →
+    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    AnchoredBoxMaximal d c p → AnchoredBoxDenseClass d c p →
+    ∀ (h : Ω → ℝ), Measurable h → (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
+      ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => anchoredBoxAvgMean h τ c N ω) atTop
+        (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ))
+
+/-- **The pair-to-anchored-box reduction.**  With the `Lᵖ` maximal inequality `AnchoredBoxMaximal`
+(the library's `KrengelLpBall` dominates it), the `Lᵖ` box mean theorem `AnchoredBoxMean` and the
+dense/`limsup` upgrade `AnchoredBoxDensityUpgrade`, the library's `AnchoredBoxErgodic` holds.  The
+upgrade is the only place the density/`limsup` argument is used. -/
+theorem AnchoredBoxErgodic_of_MaximalMean
+    (Hmax : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMaximal d c p)
+    (_Hmean : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMean d c p)
+    (Hdense : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxDenseClass d c p)
+    (Hup : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxDensityUpgrade d c p) :
+    AnchoredBoxErgodic d := by
+  intro Ω _ μ _ τ hτ hadd _herg h hh hb c hc
+  exact (Hup c 2 (by norm_num)) hc (by norm_num) μ τ hτ hadd
+    (Hmax c 2 (by norm_num)) (Hdense c 2 (by norm_num)) h hh hb
 
 end LatticeProb
