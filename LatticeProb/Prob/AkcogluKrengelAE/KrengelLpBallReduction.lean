@@ -416,6 +416,32 @@ theorem avg_l1Ball_le_orthantBoxMax (R : ℕ) (hd : 1 ≤ d) (f : Site d → ℝ
         gcongr
 
 omit [MeasurableSpace Ω] in
+/-- **Pointwise maximal domination.**  The `ℓ¹`-ball maximal of the action is at most `(2d)^d`
+times the maximum over the `2^d` orthant-box maximals, pointwise in `ω`.  This is the
+action-level lifting of `avg_l1Ball_le_orthantBoxMax`. -/
+theorem l1BallMax_le_orthantBoxMax (hd : 1 ≤ d) (T : Site d → Ω → Ω) (f : Ω → ℝ≥0∞) (ω : Ω) :
+    l1BallMax T f ω ≤
+      (((2 * d) ^ d : ℕ) : ℝ≥0∞) *
+        (Finset.univ.sup fun s : Fin d → Bool =>
+          ⨆ R : ℕ, avg (orthantBox s R) (fun y => f (T y ω))) := by
+  rw [l1BallMax]
+  refine iSup_le fun R => iSup_le fun _ => ?_
+  calc avg (l1Ball (0 : Site d) R) (fun y => f (T y ω))
+      ≤ (((2 * d) ^ d : ℕ) : ℝ≥0∞) *
+          (Finset.univ.sup fun s : Fin d → Bool =>
+            avg (orthantBox s R) (fun y => f (T y ω))) :=
+        avg_l1Ball_le_orthantBoxMax R hd _
+    _ ≤ (((2 * d) ^ d : ℕ) : ℝ≥0∞) *
+          (Finset.univ.sup fun s : Fin d → Bool =>
+            ⨆ R : ℕ, avg (orthantBox s R) (fun y => f (T y ω))) := by
+        refine mul_le_mul' le_rfl ?_
+        refine Finset.sup_le_iff.mpr fun s _ => ?_
+        exact le_trans
+          (le_iSup (fun R => avg (orthantBox s R) (fun y => f (T y ω))) R)
+          (Finset.le_sup (f := fun s : Fin d → Bool =>
+            ⨆ R : ℕ, avg (orthantBox s R) (fun y => f (T y ω))) (Finset.mem_univ s))
+
+omit [MeasurableSpace Ω] in
 /-- **Translation bookkeeping (finite sets).**  Averaging over a translate `B + z` is averaging
 the shifted function over `B`. -/
 theorem avg_map_addRight (B : Finset (Site d)) (z : Site d) (f : Site d → ℝ≥0∞) :
@@ -455,6 +481,7 @@ theorem KrengelLpBall_of_centredBox (htransfer : L1BallCoverTransfer d)
 #print axioms pairwiseDisjoint_orthantBox
 #print axioms card_mul_avg
 #print axioms avg_l1Ball_le_orthantBoxMax
+#print axioms l1BallMax_le_orthantBoxMax
 
 end
 
