@@ -41,12 +41,8 @@ theorem condExp_mul_mul_ae_eq_zero' [IsProbabilityMeasure μ] {m : MeasurableSpa
     (hmean : μ[ξ | m] =ᵐ[μ] 0)
     (hint : Integrable (fun ω => |S ω| ^ (p - 2) * S ω * ξ ω) μ)
     (hξ : Integrable ξ μ) :
-    μ[fun ω => |S ω| ^ (p - 2) * S ω * ξ ω | m] =ᵐ[μ] (0 : Ω → ℝ) := by
-  change μ[(fun ω => |S ω| ^ (p - 2) * S ω) * ξ | m] =ᵐ[μ] (0 : Ω → ℝ)
-  have hpull := condExp_mul_of_stronglyMeasurable_left (μ := μ) (m := m) hS hint hξ
-  filter_upwards [hpull, hmean] with ω e1 e2
-  simp only [Pi.mul_apply, Pi.zero_apply] at e1 e2 ⊢
-  rw [e1, e2, mul_zero]
+    μ[fun ω => |S ω| ^ (p - 2) * S ω * ξ ω | m] =ᵐ[μ] (0 : Ω → ℝ) :=
+  condExp_rpow_mul_mul_ae_eq_zero hS hmean hint hξ
 
 /-- **Conditional Lyapunov bound.**  For `p ≥ 2`,
 `E[ξ² | m] ≤ (E[|ξ|^p | m])^{2/p}`, the conditional form of `L² ⊆ L^p` on a
