@@ -478,6 +478,16 @@ theorem l1BallMax_eq_iSup_min (T : Site d → Ω → Ω) (f : Ω → ℝ≥0∞)
     exact le_iSup_of_le R (le_iSup_of_le hR (avg_mono (fun y => min_le_left _ _)))
 
 omit [MeasurableSpace Ω] in
+/-- **`d = 1` anchored-box cardinality.**  For `Fin 1`, the anchored box is the interval
+`Ico 0 ⌈N c₀⌉`, so its cardinality is `(⌈N c₀⌉).toNat`; this matches `avg`'s `(card)⁻¹` with the
+Birkhoff weight. -/
+theorem card_anchoredBox_fin1 (c : Fin 1 → ℝ) (N : ℕ) :
+    (anchoredBox c N).card = (⌈(N : ℝ) * c 0⌉).toNat := by
+  rw [anchoredBox, Fintype.card_piFinset]
+  simp only [Fin.prod_univ_one]
+  rw [Int.card_Ico]; simp
+
+omit [MeasurableSpace Ω] in
 /-- **Pointwise iteration identity.**  By additivity alone, for every `ω` and `n`,
 `τ (n • 1) ω = (τ 1)^[n] (τ 0 ω)`.  No measurability or a.e. statement is involved. -/
 theorem tau_nsmul_one_eq_iterate (τ : Site d → Ω → Ω)
@@ -584,6 +594,7 @@ theorem KrengelLpBall_of_centredBox (htransfer : L1BallCoverTransfer d)
 #print axioms l1BallMax_eq_iSup_min
 #print axioms ae_eq_of_measurePreserving_idempotent
 #print axioms tau_nsmul_one_eq_iterate
+#print axioms card_anchoredBox_fin1
 
 end
 
