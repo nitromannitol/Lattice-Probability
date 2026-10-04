@@ -156,7 +156,7 @@ omit [MeasurableSpace Ω] in
 box average is the value times the normalised box volume: `A_N h ω = (N^{-d} |anchoredBox c N|) h ω`.
 Since `N^{-d} |anchoredBox c N| → ∏ᵢ cᵢ`, its a.e. limit is `(∏ᵢ cᵢ) h`, which equals `(∏ᵢ cᵢ) ∫h`
 under ergodicity. -/
-theorem anchoredBoxAvgMean_invariant {h : Ω → ℝ} (hinv : ∀ z ω, h (τ z ω) = h ω)
+theorem anchoredBoxAvgMean_invariant (τ : Site d → Ω → Ω) {h : Ω → ℝ} (hinv : ∀ z ω, h (τ z ω) = h ω)
     (c : Fin d → ℝ) (N : ℕ) (ω : Ω) :
     anchoredBoxAvgMean h τ c N ω = (N : ℝ) ^ (-(d : ℝ)) * ((anchoredBox c N).card : ℝ) * h ω := by
   unfold anchoredBoxAvgMean
