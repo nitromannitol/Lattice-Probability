@@ -89,14 +89,14 @@ theorem realizedQVar_zero_grid (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (ω : 
   simp [realizedQVar, dyadicPoint]
 
 /-- Measurability of the dyadic realized quadratic variation. -/
-theorem measurable_realizedQVar [MeasurableSpace Ω] (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (n : ℕ)
-    (hM : ∀ t, Measurable (M t)) : Measurable (realizedQVar M T n) := by
+theorem measurable_realizedQVar [MeasurableSpace Ω] (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0)
+    (n : ℕ) (hM : ∀ t, Measurable (M t)) : Measurable (realizedQVar M T n) := by
   refine Finset.measurable_sum _ fun k _ => ?_
   exact (((hM _).sub (hM _))).pow_const 2
 
 /-- Measurability of the cross term. -/
-theorem measurable_crossTerm [MeasurableSpace Ω] (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (n : ℕ)
-    (hM : ∀ t, Measurable (M t)) : Measurable (crossTerm M T n) := by
+theorem measurable_crossTerm [MeasurableSpace Ω] (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0)
+    (n : ℕ) (hM : ∀ t, Measurable (M t)) : Measurable (crossTerm M T n) := by
   refine Finset.measurable_sum _ fun j _ => ?_
   exact (((hM _).sub (hM _)).mul ((hM _).sub (hM _)))
 
@@ -153,9 +153,9 @@ theorem dyadicPoint_mid_le (T : ℝ≥0) (n j : ℕ) :
 
 /-! ### The dyadic refinement -/
 
-/-- **The refinement of the realized quadratic variation.**  Splitting each increment of the
-mesh-`2⁻ⁿ` grid into its two halves and reindexing the finer sum gives the level-`n+1` quantity as
-a sum over the level-`n` grid.  The `mid` point is `dyadicPoint T (n+1) (2j+1)`. -/
+/-- **The refinement of the realized quadratic variation.**  Splitting each increment of
+the mesh-`2⁻ⁿ` grid into its two halves and reindexing the finer sum gives the level-`n+1`
+quantity as a sum over the level-`n` grid.  The `mid` point is `dyadicPoint T (n+1) (2j+1)`. -/
 theorem realizedQVar_refine (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (n : ℕ) (ω : Ω) :
     realizedQVar M T (n + 1) ω
       = ∑ j ∈ Finset.range (2 ^ n),
@@ -176,7 +176,8 @@ theorem sq_sub_sq_decomp (a b c : ℝ) :
 /-- **The cross-term splitting of the realized quadratic variation.**
 `realizedQVar M T n = realizedQVar M T (n+1) + 2 * crossTerm M T n`: passing to the finer grid
 exposes the `L²`-orthogonal cross products of the two halves of each increment. -/
-theorem realizedQVar_eq_succ_add_cross (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (n : ℕ) (ω : Ω) :
+theorem realizedQVar_eq_succ_add_cross (M : ℝ≥0 → Ω → ℝ) (T : ℝ≥0) (n : ℕ)
+    (ω : Ω) :
     realizedQVar M T n ω = realizedQVar M T (n + 1) ω + 2 * crossTerm M T n ω := by
   have h := realizedQVar_refine M T n ω
   rw [realizedQVar, h, crossTerm, Finset.mul_sum, ← Finset.sum_add_distrib]
@@ -212,15 +213,17 @@ theorem condExp_cross_eq_zero [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabil
     filter_upwards [hpull, hgb] with ω e1 e2
     simp only [Pi.mul_apply, Pi.zero_apply] at e1 e2 ⊢
     rw [e1, e2, mul_zero]
-  have h0 : μ[μ[(fun ω => M b ω - M a ω) * fun ω => M c ω - M b ω | ℱ b] | ℱ a] =ᵐ[μ] 0 := by
+  have h0 : μ[μ[(fun ω => M b ω - M a ω) * fun ω => M c ω - M b ω | ℱ b] | ℱ a]
+      =ᵐ[μ] 0 := by
     have h1 := condExp_congr_ae (μ := μ) (m := ℱ a) hmid
     simpa using h1
   exact (condExp_condExp_of_le (μ := μ) (ℱ.mono hab) (ℱ.le b)).symm.trans h0
 
 /-- The `j`-th summand of `crossTerm` has conditional mean zero with respect to the past
 σ-algebra `ℱ (dyadicPoint T n j)` at the left endpoint of its increment. -/
-theorem condExp_dyadic_cross_eq_zero [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
-    {ℱ : Filtration ℝ≥0 ‹MeasurableSpace Ω›} {M : ℝ≥0 → Ω → ℝ}
+theorem condExp_dyadic_cross_eq_zero [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {ℱ : Filtration ℝ≥0 ‹MeasurableSpace Ω›}
+    {M : ℝ≥0 → Ω → ℝ}
     (hM : Martingale M ℱ μ) (T : ℝ≥0) (n j : ℕ)
     (hfg : Integrable ((fun ω => M (dyadicPoint T (n + 1) (2 * j + 1)) ω
           - M (dyadicPoint T n j) ω)
@@ -257,8 +260,8 @@ theorem integral_crossTerm_eq_zero [MeasurableSpace Ω] {μ : Measure Ω} [IsPro
 /-- **The mean of the realized quadratic variation is independent of the mesh.**  From the
 cross-term splitting and `integral_crossTerm_eq_zero`. -/
 theorem integral_realizedQVar_succ_eq [MeasurableSpace Ω] {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {ℱ : Filtration ℝ≥0 ‹MeasurableSpace Ω›} {M : ℝ≥0 → Ω → ℝ}
-    (hM : Martingale M ℱ μ) (T : ℝ≥0) (n : ℕ)
+    [IsProbabilityMeasure μ] {ℱ : Filtration ℝ≥0 ‹MeasurableSpace Ω›}
+    {M : ℝ≥0 → Ω → ℝ} (hM : Martingale M ℱ μ) (T : ℝ≥0) (n : ℕ)
     (hQ : Integrable (realizedQVar M T (n + 1)) μ)
     (hcross : Integrable (crossTerm M T n) μ)
     (hint : ∀ j ∈ Finset.range (2 ^ n), Integrable (crossIncrement M T n j) μ)
@@ -312,9 +315,11 @@ theorem tendsto_zero_sq_increment_realizedQVar {μ : Measure Ω} [IsProbabilityM
     Tendsto (fun n => ∫ ω, (realizedQVar M T (n + 1) ω - realizedQVar M T n ω) ^ 2 ∂μ)
       atTop (𝓝 0)
 
-theorem exists_bracket ... : ∃ A : ℝ≥0 → Ω → ℝ, (∀ t, A t =ᵐ[μ] limUnder atTop (realizedQVar M t ·)) ∧ ...
+theorem exists_bracket ... : ∃ A : ℝ≥0 → Ω → ℝ,
+    (∀ t, A t =ᵐ[μ] limUnder atTop (realizedQVar M t ·)) ∧ ...
 
-theorem Martingale.sq_sub_bracket ... : Martingale (fun t ω => M t ω ^ 2 - bracket M ℱ μ t ω) ℱ μ
+theorem Martingale.sq_sub_bracket ... :
+    Martingale (fun t ω => M t ω ^ 2 - bracket M ℱ μ t ω) ℱ μ
 ```
 
 Mathlib supplies neither a continuous-time Doob–Meyer decomposition nor the uniform-in-the-mesh
