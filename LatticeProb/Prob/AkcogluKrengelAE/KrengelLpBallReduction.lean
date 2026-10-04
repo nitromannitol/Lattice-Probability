@@ -331,6 +331,10 @@ theorem KrengelLpBall_of_centredBox (htransfer : L1BallCoverTransfer d)
 #print axioms KrengelLpBall_of_centredBox
 #print axioms boxFinset_eq_biUnion_orthantBox
 #print axioms anchoredBox_subset_l1Ball
+#print axioms orthantBox_true_subset_l1Ball
+#print axioms card_l1Ball_ge
+#print axioms card_orthantBox
+#print axioms avg_map_addRight
 
 end
 
