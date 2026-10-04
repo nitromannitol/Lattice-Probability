@@ -268,6 +268,7 @@ import LatticeProb.Prob.BrownianContAll
 import LatticeProb.Prob.RegularVariation
 import LatticeProb.Prob.Karamata
 import LatticeProb.Prob.Freedman
+import LatticeProb.Prob.BracketProcess
 import LatticeProb.Prob.KaramataOrigin
 import LatticeProb.Graph.Reach
 import LatticeProb.Graph.ChebyshevWalk
@@ -292,6 +293,7 @@ import LatticeProb.Analysis.Sobolev.DualNet
 import LatticeProb.Analysis.Sobolev.Tight
 import LatticeProb.Analysis.Sobolev.Compact
 import LatticeProb.Analysis.Sobolev.TightTransfer
+import LatticeProb.Analysis.Sobolev.RellichLowFreq
 import LatticeProb.External.RellichKondrachovNegSobolev
 import LatticeProb.External.PotentialKernelAsymptotics
 import LatticeProb.External.PotentialKernelAsymptoticsProved
