@@ -78,4 +78,53 @@ theorem exists_finite_supNet_of_uniformLip {α : Type*} [PseudoMetricSpace α] [
   rw [Metric.mem_eball, edist_dist, ENNReal.ofReal_lt_ofReal_iff hε] at hfg
   exact le_of_lt hfg
 
+/-! ### The `C^m`-net input and the reduction -/
+
+/-- **The band-limited `C^m`-net input.**  For every domain, orders, cutoff and accuracy, the
+low-frequency family of test functions on `D` (the `H^s` unit ball with high-frequency part at
+most `δ/2`) admits, for every order `m` and every `ε > 0`, a finite net of test functions that is
+`ε`-close in the `C^m` norm.  This is exactly what the band-limited Bernstein bound plus
+Arzelà–Ascoli produce; it is carried here as an explicit hypothesis. -/
+def rkUniformCmNet : Prop :=
+  ∀ (d : ℕ) (D : Set (Space d)), IsDomain D → ∀ (s₀ s : ℝ), s₀ < s →
+    ∀ (Λ : ℝ), 0 ≤ Λ → ∀ (δ : ℝ), 0 < δ →
+    ∀ (m : ℕ) (ε : ℝ), 0 < ε →
+      ∃ (N : ℕ) (ψ : Fin N → Space d → ℝ), (∀ i, IsTestFn D (ψ i)) ∧
+        ∀ (φ : Space d → ℝ), IsTestFn D φ → sobolevNormSq d s φ ≤ 1 →
+          sobolevNormSqHigh d s₀ Λ φ ≤ ENNReal.ofReal (δ / 2) →
+            ∃ i, ∀ k ≤ m, ∀ x, ‖iteratedFDeriv ℝ k (fun y => φ y - ψ i y) x‖ ≤ ε
+
+/-- **The reduction.**  The `C^m`-net input implies `rkLowFreqNet`: choose the order `m` and the
+constant `C` from the quantitative residual `rkResidual_diff_bound`, take the `C^m`-net at a
+tolerance `ε` with `C ε² ≤ δ`, and convert the `C^m`-closeness into `H^{s₀}`-closeness with the
+residual. -/
+theorem rkLowFreqNet_of_uniformCmNet (h : rkUniformCmNet) : rkLowFreqNet := by
+  intro d D hD s₀ s hss Λ hΛ δ hδ
+  have hK : IsCompact (closure D) := hD.2.1.isCompact_closure
+  obtain ⟨m, C, hC0, hres⟩ := rkResidual_diff_bound (d := d) (K := closure D) hK s₀
+  have hCp1 : (0 : ℝ) < C + 1 := by linarith
+  set ε : ℝ := Real.sqrt (δ / (C + 1)) with hεdef
+  have hεpos : 0 < ε := Real.sqrt_pos_of_pos (by positivity)
+  have hεδ : C * ε ^ 2 ≤ δ := by
+    have h1 : ε ^ 2 = δ / (C + 1) := by
+      rw [hεdef, Real.sq_sqrt (by positivity : (0 : ℝ) ≤ δ / (C + 1))]
+    rw [h1]
+    have h2 : C * (δ / (C + 1)) = δ * (C / (C + 1)) := by ring
+    rw [h2]
+    have h3 : C / (C + 1) ≤ 1 := by
+      rw [div_le_one hCp1]
+      linarith
+    calc δ * (C / (C + 1)) ≤ δ * 1 := mul_le_mul_of_nonneg_left h3 hδ.le
+      _ = δ := mul_one _
+  obtain ⟨N, ψ, hψ, hnet⟩ := h d D hD s₀ s hss Λ hΛ δ hδ m ε hεpos
+  refine ⟨N, ψ, hψ, fun φ hφ hLow hφn => ?_⟩
+  obtain ⟨i, hi⟩ := hnet φ hφ hLow hφn
+  refine ⟨i, ?_⟩
+  have hsub : tsupport (fun x => φ x - ψ i x) ⊆ closure D :=
+    ((tsupport_sub φ (ψ i)).trans
+      (Set.union_subset hφ.2.2 (hψ i).2.2)).trans subset_closure
+  have hdiff : ContDiff ℝ (⊤ : ℕ∞) (fun x => φ x - ψ i x) := hφ.1.sub (hψ i).1
+  exact (hres (fun x => φ x - ψ i x) hdiff hsub ε hεpos hi).trans
+    (ENNReal.ofReal_le_ofReal hεδ)
+
 end LatticeProb.Sobolev
