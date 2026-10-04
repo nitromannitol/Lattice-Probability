@@ -301,6 +301,9 @@ the field with zero boundary values on a finite set `C` as
 * `LatticeProb.norm_sq_integral_le_integral_norm_sq`: squared Jensen for a
   probability measure, the vector-valued half of the slicewise Jensen bound in
   the Γ-form tensorization.
+* `LatticeProb.hasFDerivAt_integral_marginal`: differentiation under the integral
+  for the marginal `x ↦ ∫ h(x,y) dν(y)`, the last input of the slicewise Jensen
+  step of the Γ-form tensorization.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
