@@ -22,10 +22,11 @@ The argument is the classical one of Herbst (1975), as presented in Ledoux,
 import LatticeProb.External.GaussianLogSobolev
 import LatticeProb.Prob.GaussianConcentration
 import LatticeProb.Prob.ConvexProduct
+import LatticeProb.Prob.ExponentialMoments
 
 noncomputable section
-open MeasureTheory ProbabilityTheory
-open scoped NNReal
+open Filter MeasureTheory ProbabilityTheory
+open scoped NNReal Topology
 
 namespace LatticeProb
 
@@ -240,4 +241,318 @@ theorem herbstTilt_entropy_le (n : ℕ) (h : GaussianLogSobolev n) (f : (Fin n �
   exact h (herbstTilt n f lam) hpos hint hintlog hnorm ⟨lam * L, mul_nonneg hlam.le hL.le⟩ hlip
 
 
+/-- **The entropy form of the Herbst differential inequality.**  With
+`M(λ) = ∫ exp(λ (f - ∫f))`, the entropy of the tilted density is
+`λ M'(λ)/M(λ) - log M(λ)`, and the Gaussian log-Sobolev inequality bounds it by
+`(λ L)²/2`.  This is the differential inequality the Herbst argument integrates:
+it says `(log M / λ)' ≤ L²/2`. -/
+theorem herbst_entropy_le (n : ℕ) (h : GaussianLogSobolev n) (f : (Fin n → ℝ) → ℝ)
+    (L lam : ℝ) (hL : 0 < L) (hf : LipschitzWith ⟨L, hL.le⟩ f) (hlam : 0 < lam) :
+    lam * ((∫ x, (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        * Real.exp (lam * (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+      / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+      - Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+      ≤ (lam * L) ^ 2 / 2 := by
+  have hMpos := mgf_centred_pos n f L lam hL hf
+  have hent := herbstTilt_entropy_le n h f L lam hL hf hlam
+  have hsplit : ∫ x, herbstTilt n f lam x * Real.log (herbstTilt n f lam x)
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)
+      = lam * ((∫ x, (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+          * Real.exp (lam * (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        - Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) := by
+    have hpt : ∀ x, herbstTilt n f lam x * Real.log (herbstTilt n f lam x)
+        = lam * ((f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+            * Real.exp (lam * (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+            / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+                ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+              ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          - Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+              ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+            * (Real.exp (lam * (f x - ∫ y, f y
+                ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+              / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+                  ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+                ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))) := by
+      intro x
+      unfold herbstTilt
+      rw [Real.log_div (Real.exp_ne_zero _) hMpos.ne', Real.log_exp]
+      ring
+    rw [integral_congr_ae (Filter.Eventually.of_forall hpt)]
+    have h1 : ∫ x, lam * ((f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        * Real.exp (lam * (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)
+        = lam * ((∫ x, (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+            * Real.exp (lam * (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+          / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+              ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))) := by
+      rw [integral_const_mul, integral_div]
+    have h2 : ∫ x, Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        * (Real.exp (lam * (f x - ∫ y, f y
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+              ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)
+        = Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) := by
+      rw [integral_const_mul, integral_div]
+      have hT : (∫ x, Real.exp (lam * (f x - ∫ y, f y
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+          / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+              ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) = 1 := div_self hMpos.ne'
+      rw [hT, mul_one]
+    rw [integral_sub, h1, h2]
+    · exact (((integrable_mul_exp_sub_integral n f L lam hL hf).div_const _).const_mul lam)
+    · exact ((integrable_exp_sub_integral n f L lam hL hf).div_const _).const_mul _
+  have hlogM : 0 < ∫ x, Real.exp (lam * (f x - ∫ y, f y
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) := hMpos
+  have hkey : lam * ((∫ x, (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        * Real.exp (lam * (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+      / (∫ x, Real.exp (lam * (f x - ∫ y, f y
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+      - Real.log (∫ x, Real.exp (lam * (f x - ∫ y, f y
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+      ≤ (lam * L) ^ 2 / 2 := by
+    rw [← hsplit]; exact hent
+  exact hkey
+
+/-- The centred functional has mean zero. -/
+theorem integral_sub_integral_eq_zero (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L : ℝ) (hL : 0 < L)
+    (hf : LipschitzWith ⟨L, hL.le⟩ f) :
+    ∫ x, (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) = 0 := by
+  haveI : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
+    isProbabilityMeasure_pi_gaussianReal n
+  have hid : Integrable (id : (Fin n → ℝ) → (Fin n → ℝ))
+      (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
+    ConvexOrder.integrable_id_pi (fun _ : Fin n => gaussianReal 0 1)
+      (fun _ => integrable_id_of_exp_moment (gaussianReal 0 1) 1 one_pos
+        (integrable_exp_abs_gaussian 1 1))
+  have hfint : Integrable f (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
+    ConvexOrder.integrable_real_lipschitz hf hid
+  rw [integral_sub hfint (integrable_const _), integral_const]
+  simp
+
+/-- The moment generating function of the centred functional is differentiable at
+every time, with derivative the first moment of the tilted law. -/
+theorem hasDerivAt_mgf_centred (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L t : ℝ) (hL : 0 < L)
+    (hf : LipschitzWith ⟨L, hL.le⟩ f) :
+    HasDerivAt (fun s => ∫ x, Real.exp (s * (f x - ∫ y, f y
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+      (∫ x, (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        * Real.exp (t * (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) t := by
+  have hmem : t ∈ interior (integrableExpSet (fun x => f x - ∫ y, f y
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+      (Measure.pi fun _ : Fin n => gaussianReal 0 1)) := by
+    have hsub : integrableExpSet (fun x => f x - ∫ y, f y
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+        (Measure.pi fun _ : Fin n => gaussianReal 0 1) = Set.univ := by
+      ext s
+      simp only [integrableExpSet, Set.mem_setOf_eq, Set.mem_univ, iff_true]
+      exact integrable_exp_sub_integral n f L s hL hf
+    rw [hsub, interior_univ]
+    exact Set.mem_univ t
+  exact ProbabilityTheory.hasDerivAt_mgf (X := fun x => f x - ∫ y, f y
+    ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+    (μ := Measure.pi fun _ : Fin n => gaussianReal 0 1) hmem
+
+/-- **The Herbst argument, completed.**  The Gaussian log-Sobolev inequality
+implies the exponential moment bound for a Lipschitz functional: for an
+`L`-Lipschitz `f` and every `λ > 0`, `∫ exp(λ (f - ∫f)) ≤ exp(λ² L² / 2)`. -/
+theorem gaussianHerbstBound_of_logSobolev (n : ℕ) (h : GaussianLogSobolev n) :
+    GaussianHerbstBound n := by
+  intro f L hL hf lam hlam
+  set g : (Fin n → ℝ) → ℝ := fun x => f x - ∫ y, f y
+    ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) with hg
+  set M : ℝ → ℝ := fun t => ∫ x, Real.exp (t * g x)
+    ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) with hM
+  have hMpos : ∀ t : ℝ, 0 < M t := fun t => mgf_centred_pos n f L t hL hf
+  have hderiv : ∀ t : ℝ, HasDerivAt M (∫ x, g x * Real.exp (t * g x)
+      ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) t :=
+    fun t => hasDerivAt_mgf_centred n f L t hL hf
+  have hM0 : M 0 = 1 := by simp [hM, hg]
+  have hderiv0 : HasDerivAt M 0 0 := by
+    have h0 := hderiv 0
+    have hz : (∫ x, g x * Real.exp (0 * g x)
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) = 0 := by
+      simp only [zero_mul, Real.exp_zero, mul_one]
+      exact integral_sub_integral_eq_zero n f L hL hf
+    rw [hz] at h0
+    exact h0
+  -- The entropy inequality in the form `M'(t)/M(t) - t L²/2 ≤ log M(t)/t`.
+  have hkey : ∀ t : ℝ, 0 < t →
+      (∫ x, g x * Real.exp (t * g x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t
+        ≤ ((t * L) ^ 2 / 2 + Real.log (M t)) / t := by
+    intro t ht
+    have hd := herbst_entropy_le n h f L t hL hf ht
+    have h2 : t * ((∫ x, g x * Real.exp (t * g x)
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t)
+        ≤ (t * L) ^ 2 / 2 + Real.log (M t) := by linarith [hd]
+    rw [le_div_iff₀ ht]
+    have h3 : t * ((∫ x, g x * Real.exp (t * g x)
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t) * t
+        ≤ ((t * L) ^ 2 / 2 + Real.log (M t)) * t := by
+      exact mul_le_mul_of_nonneg_right h2 ht.le
+    have h4 : t * ((∫ x, g x * Real.exp (t * g x)
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t) * t
+        = t * (((∫ x, g x * Real.exp (t * g x)
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t) * t) := by ring
+    rw [h4] at h3
+    have h5 : ((∫ x, g x * Real.exp (t * g x)
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t) * t
+        ≤ (t * L) ^ 2 / 2 + Real.log (M t) := by
+      have h6 : t * (((∫ x, g x * Real.exp (t * g x)
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t) * t)
+          ≤ t * ((t * L) ^ 2 / 2 + Real.log (M t)) := by
+        calc t * (((∫ x, g x * Real.exp (t * g x)
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t) * t)
+            = t * ((∫ x, g x * Real.exp (t * g x)
+              ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M t) * t := by ring
+          _ ≤ ((t * L) ^ 2 / 2 + Real.log (M t)) * t := by
+              rw [mul_assoc]; exact h3
+          _ = t * ((t * L) ^ 2 / 2 + Real.log (M t)) := by ring
+      exact le_of_mul_le_mul_left h6 ht
+    linarith [h5]
+
+  -- `G t = log M t / t - t L²/2` has derivative at most `0` on `t > 0`.
+  have hGderiv : ∀ t : ℝ, 0 < t →
+      HasDerivAt (fun s => Real.log (M s) / s - s * L ^ 2 / 2)
+        ((∫ x, g x * Real.exp (t * g x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+            / M t / t - Real.log (M t) / t ^ 2 - L ^ 2 / 2) t := by
+    intro t ht
+    have h1 : HasDerivAt (fun s => Real.log (M s))
+        ((∫ x, g x * Real.exp (t * g x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+          / M t) t :=
+      (hderiv t).log (hMpos t).ne'
+    have h2 : HasDerivAt (fun s => Real.log (M s) / s)
+        ((∫ x, g x * Real.exp (t * g x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+            / M t / t - Real.log (M t) / t ^ 2) t := by
+      have h3 := h1.div (hasDerivAt_id t) ht.ne'
+      have h4 : ((∫ x, g x * Real.exp (t * g x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+              / M t * t - Real.log (M t) * 1) / t ^ 2
+          = (∫ x, g x * Real.exp (t * g x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+              / M t / t - Real.log (M t) / t ^ 2 := by
+        field_simp
+        ring
+      have h5 : HasDerivAt (fun s => Real.log (M s) / s)
+          (((∫ x, g x * Real.exp (t * g x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+              / M t * t - Real.log (M t) * 1) / t ^ 2) t := by
+        have h6 : HasDerivAt (fun s => Real.log (M s) / s)
+            (((∫ x, g x * Real.exp (t * g x) ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+                / M t * t - Real.log (M t) * 1) / t ^ 2) t :=
+          h3.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => rfl)
+        exact h6
+      rw [h4] at h5
+      exact h5
+    have h7 : HasDerivAt (fun s : ℝ => s * L ^ 2 / 2) (L ^ 2 / 2) t := by
+      have h8 : HasDerivAt (fun s : ℝ => s * (L ^ 2 / 2)) (L ^ 2 / 2) t := by
+        simpa using (hasDerivAt_id t).mul_const (L ^ 2 / 2)
+      have h9 : (fun s : ℝ => s * L ^ 2 / 2) = fun s => s * (L ^ 2 / 2) := by
+        funext s; ring
+      rw [h9]; exact h8
+    have h10 : (fun s : ℝ => Real.log (M s) / s - s * L ^ 2 / 2)
+        = (fun s => Real.log (M s) / s) - fun s => s * L ^ 2 / 2 := rfl
+    rw [h10]
+    exact h2.sub h7
+  have hanti : AntitoneOn (fun s => Real.log (M s) / s - s * L ^ 2 / 2) (Set.Ioi 0) := by
+    refine antitoneOn_of_deriv_nonpos (convex_Ioi 0) ?_ ?_ ?_
+    · intro s hs
+      have hs' : 0 < s := by simpa [interior_Ioi] using hs
+      exact (hGderiv s hs').continuousAt.continuousWithinAt
+    · intro s hs
+      have hs' : 0 < s := by simpa [interior_Ioi] using hs
+      exact (hGderiv s hs').differentiableAt.differentiableWithinAt
+    · intro s hs
+      have hs' : 0 < s := by simpa [interior_Ioi] using hs
+      rw [(hGderiv s hs').deriv]
+      have hb := hkey s hs'
+      have hs2 : (0 : ℝ) < s ^ 2 := by positivity
+      have h1 : (∫ x, g x * Real.exp (s * g x)
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M s * s
+          ≤ (s * L) ^ 2 / 2 + Real.log (M s) := by
+        rw [le_div_iff₀ hs'] at hb
+        linarith [hb]
+      have h2 : (∫ x, g x * Real.exp (s * g x)
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M s * s - Real.log (M s)
+          ≤ s ^ 2 * L ^ 2 / 2 := by
+        nlinarith [h1]
+      have h3 : ((∫ x, g x * Real.exp (s * g x)
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M s * s - Real.log (M s)) / s ^ 2
+          ≤ L ^ 2 / 2 := by
+        rw [div_le_iff₀ hs2]
+        nlinarith [h2]
+      have h4 : (∫ x, g x * Real.exp (s * g x)
+          ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M s / s
+          - Real.log (M s) / s ^ 2
+          = ((∫ x, g x * Real.exp (s * g x)
+              ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) / M s * s - Real.log (M s)) / s ^ 2 := by
+        field_simp
+        ring
+      rw [h4]
+      linarith [h3]
+  -- `G t → 0` as `t → 0+`, since `log M` has derivative `0` at `0`.
+  have hlim : Filter.Tendsto (fun s => Real.log (M s) / s - s * L ^ 2 / 2)
+      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+    have hlog0 : Real.log (M 0) = 0 := by rw [hM0, Real.log_one]
+    have hlogderiv : HasDerivAt (fun s => Real.log (M s)) 0 0 := by
+      have h1 : HasDerivAt (fun s => Real.log (M s)) (0 / M 0) 0 :=
+        hderiv0.log (by rw [hM0]; norm_num)
+      simpa using h1
+    have hconv : Filter.Tendsto (fun t : ℝ => t⁻¹ * (Real.log (M (0 + t)) - Real.log (M 0)))
+        (𝓝[>] (0 : ℝ)) (𝓝 0) := hlogderiv.tendsto_slope_zero_right
+    have h1 : Filter.Tendsto (fun s => Real.log (M s) / s) (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+      have hconv' : Filter.Tendsto (fun t : ℝ => t⁻¹ * Real.log (M t))
+          (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+        simpa [hlog0] using hconv
+      simpa [div_eq_inv_mul] using hconv'
+    have h2 : Filter.Tendsto (fun s : ℝ => s * L ^ 2 / 2) (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+      have h3 : Filter.Tendsto (fun s : ℝ => s * L ^ 2 / 2) (𝓝 (0 : ℝ)) (𝓝 0) := by
+        have heq : (fun s : ℝ => s * L ^ 2 / 2) = fun s => (L ^ 2 / 2) * s := by
+          funext s; ring
+        rw [heq]
+        simpa using tendsto_const_nhds.mul (tendsto_id : Filter.Tendsto (fun s : ℝ => s)
+          (𝓝 (0:ℝ)) (𝓝 0))
+      exact h3.mono_left nhdsWithin_le_nhds
+    simpa using h1.sub h2
+  have hle : Real.log (M lam) / lam - lam * L ^ 2 / 2 ≤ 0 := by
+    refine le_of_tendsto_of_tendsto tendsto_const_nhds hlim ?_
+    filter_upwards [self_mem_nhdsWithin, nhdsWithin_le_nhds (Iio_mem_nhds hlam)] with s hs0 hslam
+    exact hanti hs0 (show lam ∈ Set.Ioi (0:ℝ) from hlam) (show s ≤ lam from le_of_lt hslam)
+  have hlog : Real.log (M lam) ≤ lam ^ 2 * L ^ 2 / 2 := by
+    have h1 : Real.log (M lam) / lam ≤ lam * L ^ 2 / 2 := by linarith [hle]
+    rw [div_le_iff₀ hlam] at h1
+    nlinarith [h1]
+  calc M lam = Real.exp (Real.log (M lam)) := (Real.exp_log (hMpos lam)).symm
+    _ ≤ Real.exp (lam ^ 2 * L ^ 2 / 2) := Real.exp_le_exp.mpr hlog
+
+
 end LatticeProb
+
