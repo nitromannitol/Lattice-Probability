@@ -137,6 +137,9 @@ library.
 #print axioms LatticeProb.poisson_tail
 #print axioms LatticeProb.evariance_le_half_tsum_siteEnergy
 #print axioms LatticeProb.gaussian_lipschitz_concentration
+#print axioms LatticeProb.gaussianLogSobolev_succ_of_one
+#print axioms LatticeProb.gaussianLogSobolev_of_one_of_tensorStep
+#print axioms LatticeProb.gaussianHerbstBound_of_one_of_tensorStep
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
