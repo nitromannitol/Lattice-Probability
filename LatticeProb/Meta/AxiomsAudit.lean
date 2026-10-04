@@ -308,3 +308,7 @@ library.
 #print axioms LatticeProb.Sobolev.exists_iteratedFDeriv_bandTrunc_le_L2
 #print axioms LatticeProb.Sobolev.exists_iteratedFDeriv_bandTrunc_le_Hs
 #print axioms LatticeProb.Sobolev.bandLimitedCmBound_holds
+
+/-! ### Rellich C^m net supply -/
+
+#print axioms LatticeProb.Sobolev.exists_bandTrunc_Cm_jet_bound
