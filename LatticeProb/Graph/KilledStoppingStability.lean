@@ -221,6 +221,22 @@ noncomputable def cubeDiscount {d : ℕ} (B : ℝ≥0 → Ω → EuclideanSpace 
     (T L : ℝ) (u : EuclideanSpace ℝ (Fin d)) : ℝ :=
   sSup (cubePayoffs B hB P h T L u)
 
+/-- The cube-killed payoff set is nonempty: the rule that stops at time `0` is admissible when
+`0 ≤ T`, so `cubeDiscount`'s `sSup` is never `sSup ∅ = 0`. -/
+theorem cubePayoffs_nonempty {d : ℕ} (B : NNReal → Ω → EuclideanSpace ℝ (Fin d))
+    (hB : ∀ t, StronglyMeasurable (B t)) (P : Measure Ω)
+    (h : ℝ → EuclideanSpace ℝ (Fin d) → ℝ) (T L : ℝ) (u : EuclideanSpace ℝ (Fin d))
+    (hT : 0 ≤ T) :
+    (cubePayoffs B hB P h T L u).Nonempty := by
+  refine ⟨∫ ω, -h (T - 0) (B 0 ω) ∂P, ?_⟩
+  refine ⟨fun _ => (0 : NNReal), ?_, ?_, ?_, rfl⟩
+  · rw [IsBrownianStopping, IsStoppingTime]
+    intro t
+    simp
+  · intro ω; simpa using hT
+  · filter_upwards with ω s hs
+    exact absurd hs (not_lt.mpr (by simp))
+
 /-- The lattice box `Q(⌊Rx⌋,R)` of the paper, as the ball of radius `R` for the
 `ℓ^∞` metric about a lattice site. -/
 def latticeBox {d : ℕ} (x : Site d) (R : ℝ) : Set (Site d) :=
