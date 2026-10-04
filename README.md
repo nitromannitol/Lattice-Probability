@@ -292,6 +292,10 @@ the field with zero boundary values on a finite set `C` as
   the tensorization step, and the resulting Herbst moment bound; the sharp
   tensorization of the Lipschitz form is obstructed by a factor two, recorded in
   `LatticeProb/Prob/GaussianLogSobolevTensor.lean`.
+* `LatticeProb.GaussianLogSobolevGrad`, `LatticeProb.gaussianLogSobolev_of_grad_smooth`:
+  the gradient (carré-du-champ) form of the Gaussian log-Sobolev inequality, its
+  one-step tensorization as a named residual, and the proof that it implies the
+  Lipschitz form for `C¹` densities.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
