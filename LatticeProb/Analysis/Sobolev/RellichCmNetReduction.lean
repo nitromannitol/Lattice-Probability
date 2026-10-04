@@ -15,11 +15,14 @@ This module proves the two pieces:
 * `exists_finite_supNet_of_uniformLip`: the Arzelà–Ascoli step — a uniformly bounded,
   uniformly Lipschitz family of continuous functions on a compact space has a finite sup-net
   with centres in the family (so the centres stay inside the family of test functions);
-* `rkLowFreqNet_of_uniformCmBound`: the reduction, carrying the band-limited Bernstein input as
-  the explicit hypothesis that the low-frequency family is uniformly `C^m`-bounded for **every**
-  order `m` (which is the form a Bernstein bound produces).
+* `rkLowFreqNet_of_uniformCmNet`: the reduction, carrying the band-limited Bernstein input as
+  the explicit `C^m`-net hypothesis `rkUniformCmNet` and converting it to `rkLowFreqNet` through
+  the quantitative residual `rkResidual_diff_bound`.
 
-The band-limited Bernstein bound itself is not proved here; it is the hypothesis `hBern`.
+The band-limited Bernstein bound itself is not proved here.  Deriving `rkUniformCmNet` from a
+uniform `C^m` bound on the low-frequency family (Arzelà–Ascoli applied to the iterated-derivative
+jet, using `norm_image_sub_le_of_norm_fderiv_le` for the jet's Lipschitz bound) is the remaining
+step; it is the only gap between this module and `rkLowFreqNet_of_uniformCmBound`.
 -/
 import Mathlib
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
@@ -96,7 +99,7 @@ def rkUniformCmNet : Prop :=
 
 /-- **The reduction.**  The `C^m`-net input implies `rkLowFreqNet`: choose the order `m` and the
 constant `C` from the quantitative residual `rkResidual_diff_bound`, take the `C^m`-net at a
-tolerance `ε` with `C ε² ≤ δ`, and convert the `C^m`-closeness into `H^{s₀}`-closeness with the
+tolerance `ε` with `C ε² ≤ δ`, and convert the closeness into `H^{s₀}`-closeness with the
 residual. -/
 theorem rkLowFreqNet_of_uniformCmNet (h : rkUniformCmNet) : rkLowFreqNet := by
   intro d D hD s₀ s hss Λ hΛ δ hδ

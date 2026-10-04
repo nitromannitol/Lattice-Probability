@@ -283,6 +283,10 @@ library.
 #print axioms LatticeProb.Sobolev.mul_fourier_eq_fourier_convolution
 #print axioms LatticeProb.Sobolev.integrable_fourier_mul
 #print axioms LatticeProb.Sobolev.fourier_smul
+#print axioms LatticeProb.Sobolev.fourier_convolution_fourierInv_mul
+#print axioms LatticeProb.Sobolev.integrable_convolution_fourierInv_mul
+#print axioms LatticeProb.Sobolev.integrable_fourier_mul_conv
+#print axioms LatticeProb.Sobolev.fejer_integrable_side_condition
 
 /-! ### Band-limited Bernstein bound -/
 
