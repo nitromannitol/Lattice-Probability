@@ -271,3 +271,6 @@ library.
 #print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_lowfreqNet
 #print axioms LatticeProb.Sobolev.fourier_bandTrunc
 #print axioms LatticeProb.Sobolev.fourier_bandTrunc_eq_zero
+#print axioms LatticeProb.Sobolev.fourier_realToComplexSchwartz
+#print axioms LatticeProb.Sobolev.fourier_bandTrunc_real
+#print axioms LatticeProb.Sobolev.fourier_bandTrunc_real_eq_zero
