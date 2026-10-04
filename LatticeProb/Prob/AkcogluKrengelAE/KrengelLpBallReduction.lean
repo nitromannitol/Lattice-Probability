@@ -477,6 +477,49 @@ theorem l1BallMax_eq_iSup_min (T : Site d → Ω → Ω) (f : Ω → ℝ≥0∞)
     refine iSup_le fun R => iSup_le fun hR => ?_
     exact le_iSup_of_le R (le_iSup_of_le hR (avg_mono (fun y => min_le_left _ _)))
 
+omit [MeasurableSpace Ω] in
+/-- **Pointwise iteration identity.**  By additivity alone, for every `ω` and `n`,
+`τ (n • 1) ω = (τ 1)^[n] (τ 0 ω)`.  No measurability or a.e. statement is involved. -/
+theorem tau_nsmul_one_eq_iterate (τ : Site d → Ω → Ω)
+    (hadd : ∀ z w ω, τ (z + w) ω = τ z (τ w ω)) :
+    ∀ (n : ℕ) (ω : Ω), τ (n • (1 : Site d)) ω = (τ (1 : Site d))^[n] (τ 0 ω) := by
+  intro n
+  induction n with
+  | zero => intro ω; simp
+  | succ n ih =>
+      intro ω
+      rw [succ_nsmul, hadd, ih (τ (1 : Site d) ω),
+        show τ 0 (τ (1 : Site d) ω) = τ (1 : Site d) ω from by
+          rw [← hadd (0 : Site d) (1 : Site d) ω, zero_add],
+        Function.iterate_succ_apply,
+        show τ (1 : Site d) (τ 0 ω) = τ (1 : Site d) ω from by
+          rw [← hadd (1 : Site d) (0 : Site d) ω, add_zero]]
+
+/-- **An idempotent measure-preserving self-map of a probability space is the identity a.e.**
+For `S : Ω → Ω` with `MeasurePreserving S μ μ` and `S (S ω) = S ω`, the fixed-point set
+`{ω | S ω = ω}` is conull: both it and its complement are mapped into it by `S`, so
+`S ⁻¹' {S = id} = univ`, whence `μ {S = id} = 1`.  Applied to `S = τ 0` (idempotent by additivity),
+this removes the `τ 0` factor in the iteration `τ (n • one) = (τ one)^[n]`. -/
+theorem ae_eq_of_measurePreserving_idempotent {Ω : Type*} [MeasurableSpace Ω] [MeasurableEq Ω]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {S : Ω → Ω} (hS : MeasurePreserving S μ μ)
+    (hidem : ∀ ω, S (S ω) = S ω) : ∀ᵐ ω ∂μ, S ω = ω := by
+  have hBmeas : MeasurableSet {ω | S ω = ω} := measurableSet_eq_fun hS.measurable measurable_id
+  have hsub : (Set.univ : Set Ω) ⊆ S ⁻¹' {ω | S ω = ω} := by
+    intro ω _
+    by_cases h : S ω = ω
+    · simp [h]
+    · simp only [Set.mem_preimage, Set.mem_setOf_eq]
+      exact hidem ω
+  have hpre : S ⁻¹' {ω | S ω = ω} = Set.univ := Set.eq_univ_of_univ_subset hsub
+  have hB : μ {ω | S ω = ω} = 1 := by
+    have h := hS.measure_preimage hBmeas.nullMeasurableSet
+    rw [hpre, measure_univ] at h
+    exact h.symm
+  rw [ae_iff]
+  have : {ω | ¬ S ω = ω} = ({ω | S ω = ω})ᶜ := rfl
+  rw [this, measure_compl hBmeas (by rw [hB]; exact ENNReal.one_ne_top), measure_univ, hB,
+    tsub_self]
+
 /-- **The multiparameter anchored-box restricted maximal ergodic theorem** — the one missing
 ingredient of the transfer.  For `f : Ω → ℝ≥0∞` measurable and `t > 0`, the anchored-box level set
 satisfies the *restricted* weak type `t · μ{E_t} ≤ ∫_{E_t} f`.  Its classical proof is induction on
@@ -539,6 +582,8 @@ theorem KrengelLpBall_of_centredBox (htransfer : L1BallCoverTransfer d)
 #print axioms avg_l1Ball_le_orthantBoxMax
 #print axioms l1BallMax_le_orthantBoxMax
 #print axioms l1BallMax_eq_iSup_min
+#print axioms ae_eq_of_measurePreserving_idempotent
+#print axioms tau_nsmul_one_eq_iterate
 
 end
 
