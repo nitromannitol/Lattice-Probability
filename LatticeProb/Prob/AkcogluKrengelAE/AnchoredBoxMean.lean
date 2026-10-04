@@ -1,4 +1,5 @@
 import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+import LatticeProb.Prob.AkcogluKrengelAE.BallMaximalLp
 import LatticeProb.Prob.AkcogluKrengel
 
 /-!
@@ -60,16 +61,17 @@ def AnchoredBoxDenseClass (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
         ∃ g ∈ D, ∫⁻ ω, (ENNReal.ofReal
           |(h ω - g ω) - ∫ ω', (h ω' - g ω') ∂μ|) ^ p ∂μ < ENNReal.ofReal ε)
 
-/-! ### The reduction, stated
-
-The upgrade is standard: for `h`, the maximal inequality applied to `h - g` gives
-`∫⁻ ω, (⨆ N, ofReal |anchoredBoxAvgMean (h - g) τ c N ω|) ^ p ∂μ ≤ C ∫⁻ |(h - g) - ∫(h - g)| ^ p`,
-while on a.e. `ω` and every `g` in the dense class `D` of `AnchoredBoxDenseClass`,
-`limsup_N |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) ∫ h| ≤ sup_N |anchoredBoxAvgMean (h - g) τ c N ω|`.
-Combining the two and letting `g` approximate `h` in `Lᵖ` (modulo the constant `∫ (h - g)`) makes the
-`limsup` vanish a.e., giving `AnchoredBoxErgodic d`.  The formal assembly of this
-`limsup`/`lintegral` bookkeeping is the remaining step; it is pinned exactly to the pair
-(`AnchoredBoxMaximal`, the `Lᵖ` maximal inequality) + (`AnchoredBoxMean`/`AnchoredBoxDenseClass`, the
-mean half). -/
+/-- **The pair-to-anchored-box reduction, pinned.**  The library's `KrengelLpBall d` (its `ℓ¹`-ball
+`Lᵖ` maximal bound, `BallMaximalLp.lean:74`, identical to ds1's `wip/MaximalErgodicReduction.lean`
+statement) dominates the box maximal (a box `∏ᵢ [0, ⌈N cᵢ⌉)` is contained in the `ℓ¹` ball of radius
+`N ∑ᵢ cᵢ`), and `AnchoredBoxMean`/`AnchoredBoxDenseClass` are the `Lᵖ` mean half.  This `Prop` is the
+exact implication whose proof is the remaining `limsup`/`lintegral` assembly: with it (and with
+`KrengelLpBall` proved by ds1) the library's `AnchoredBoxErgodic` is discharged, so the library's
+gap is pinned to the single missing mean statement. -/
+def AnchoredBoxErgodicOfMaximalMean (d : ℕ) : Prop :=
+  KrengelLpBall d →
+  (∀ (c : Fin d → ℝ), (∀ i, 0 ≤ c i) → ∀ p : ℝ, 1 < p → AnchoredBoxMean d c p) →
+  (∀ (c : Fin d → ℝ), (∀ i, 0 ≤ c i) → ∀ p : ℝ, 1 < p → AnchoredBoxDenseClass d c p) →
+  AnchoredBoxErgodic d
 
 end LatticeProb
