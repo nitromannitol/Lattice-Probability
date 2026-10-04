@@ -171,6 +171,9 @@ library.
 #print axioms LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist
 #print axioms LatticeProb.lipschitzWith_pi_of_hasSum_sq
 #print axioms LatticeProb.gaussian_lipschitz_concentration_l2_fin
+#print axioms LatticeProb.gaussianLogSobolev_succ_of_one
+#print axioms LatticeProb.gaussianLogSobolev_of_one_of_tensorStep
+#print axioms LatticeProb.gaussianHerbstBound_of_one_of_tensorStep
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le

@@ -297,6 +297,12 @@ the field with zero boundary values on a finite set `C` as
   constant `L √n` produced by `LatticeProb.lipschitzWith_pi_of_hasSum_sq` and
   the l2-versus-sup comparison
   `LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist`.
+* `LatticeProb.gaussianLogSobolev_of_one_of_tensorStep`,
+  `LatticeProb.gaussianHerbstBound_of_one_of_tensorStep`: the Gaussian
+  log-Sobolev inequality in every dimension from its one-dimensional case and
+  the tensorization step, and the resulting Herbst moment bound; the sharp
+  tensorization of the Lipschitz form is obstructed by a factor two, recorded in
+  `LatticeProb/Prob/GaussianLogSobolevTensor.lean`.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
