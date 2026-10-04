@@ -363,9 +363,82 @@ theorem symmDiffFaceBound (d : ℕ) : SymmDiffFaceBound d := by
             ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat := Nat.add_le_add h1 h2
     _ = 2 * ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat := by ring
 
+/-- **Difference of partial sums over the symmetric difference.**  For any two finsets `s`, `t`
+and any `F` bounded by `M` in absolute value, the difference of the sums is bounded by `M` times the
+cardinality of `(s \ t) ∪ (t \ s)`. -/
+theorem abs_sum_sub_le_card_mul {α : Type*} [DecidableEq α] (s t : Finset α) (F : α → ℝ) (M : ℝ)
+    (_hM : 0 ≤ M) (hF : ∀ x, |F x| ≤ M) :
+    |∑ x ∈ s, F x - ∑ x ∈ t, F x| ≤ M * (((s \ t) ∪ (t \ s)).card : ℝ) := by
+  rw [← Finset.sum_sdiff_sub_sum_sdiff]
+  have hbound : ∀ a b : Finset α, |∑ x ∈ a \ b, F x| ≤ M * ((a \ b).card : ℝ) := by
+    intro a b
+    calc
+      |∑ x ∈ a \ b, F x| ≤ ∑ x ∈ a \ b, |F x| := Finset.abs_sum_le_sum_abs F (a \ b)
+      _ ≤ ∑ _x ∈ a \ b, M := Finset.sum_le_sum (fun x _ => hF x)
+      _ = M * ((a \ b).card : ℝ) := by
+        rw [Finset.sum_const, nsmul_eq_mul]
+        ring
+  have hdisj : Disjoint (s \ t) (t \ s) := by
+    rw [Finset.disjoint_left]
+    intro x hx1 hx2
+    exact (Finset.mem_sdiff.mp hx1).2 (Finset.mem_sdiff.mp hx2).1
+  calc
+    |(∑ x ∈ s \ t, F x) - (∑ x ∈ t \ s, F x)| ≤
+        |∑ x ∈ s \ t, F x| + |∑ x ∈ t \ s, F x| := by
+      simpa only [sub_eq_add_neg, abs_neg] using
+        abs_add_le (∑ x ∈ s \ t, F x) (-(∑ x ∈ t \ s, F x))
+    _ ≤ M * ((s \ t).card : ℝ) + M * ((t \ s).card : ℝ) :=
+      add_le_add (hbound s t) (hbound t s)
+    _ = M * (((s \ t) ∪ (t \ s)).card : ℝ) := by
+      rw [← mul_add, Finset.card_union_of_disjoint hdisj, Nat.cast_add]
+
+omit [MeasurableSpace Ω] in
+/-- **The unit-`j`-shifted box sum.**  The sum of `g ∘ τ` over the unit-`j` translate of the
+anchored box is the sum over the translated finset. -/
+theorem sum_shift_anchoredBox (g : Ω → ℝ) (τ : Site d → Ω → Ω)
+    (hadd : ∀ z w ω, τ (z + w) ω = τ z (τ w ω)) (c : Fin d → ℝ) (j : Fin d) (N : ℕ) (ω : Ω) :
+    ∑ y ∈ anchoredBox c N, g (τ (unit j) (τ y ω)) =
+      ∑ z ∈ (anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding, g (τ z ω) := by
+  rw [Finset.sum_map]
+  refine Finset.sum_congr rfl (fun y _ => ?_)
+  have he : (Equiv.addRight (unit j)).toEmbedding y = y + unit j := rfl
+  rw [he, ← hadd (unit j) y ω, add_comm]
+
+/-- **The quantitative coboundary bound, proved.**  Combining the telescoping shift with the
+two-face cardinality bound `SymmDiffFaceBound`. -/
+theorem coboundaryBound (d : ℕ) : CoboundaryBound d := by
+  intro Ω _ g M hM hb τ hadd c hc j hcj ω N
+  have h1 : ∑ y ∈ anchoredBox c N, (g (τ y ω) - g (τ (unit j) (τ y ω))) =
+      (∑ y ∈ anchoredBox c N, g (τ y ω)) -
+        ∑ z ∈ (anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding, g (τ z ω) := by
+    rw [Finset.sum_sub_distrib, sum_shift_anchoredBox g τ hadd c j N ω]
+  rw [h1]
+  refine le_trans (abs_sum_sub_le_card_mul (anchoredBox c N)
+      ((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding)
+      (fun z => g (τ z ω)) M hM (fun z => hb (τ z ω))) ?_
+  have hcast : (((anchoredBox c N) \
+        ((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding)) ∪
+        (((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding) \
+          (anchoredBox c N))).card ≤
+      ((2 * ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat : ℕ) : ℝ) :=
+    Nat.cast_le.mpr (symmDiffFaceBound d c hc j N)
+  calc
+    M * ((((anchoredBox c N) \
+          ((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding)) ∪
+          (((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding) \
+            (anchoredBox c N))).card : ℝ)
+        ≤ M * (((2 * ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat : ℕ) : ℝ)) :=
+      mul_le_mul_of_nonneg_left hcast hM
+    _ = 2 * M * ∏ i ∈ Finset.univ.erase j, ((⌈(N : ℝ) * c i⌉).toNat : ℝ) := by
+      push_cast
+      ring
+
 end LatticeProb
 
 #print axioms LatticeProb.anchoredBoxMaximal_ae_lt_top
 #print axioms LatticeProb.card_filter_anchoredBox_le
 #print axioms LatticeProb.card_filter_map_anchoredBox_le
 #print axioms LatticeProb.symmDiffFaceBound
+#print axioms LatticeProb.abs_sum_sub_le_card_mul
+#print axioms LatticeProb.sum_shift_anchoredBox
+#print axioms LatticeProb.coboundaryBound
