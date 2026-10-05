@@ -554,3 +554,23 @@ library.
 #print axioms LatticeProb.mvbe_polarization
 #print axioms LatticeProb.mvbe_polarization_iteratedFDeriv
 #print axioms LatticeProb.mvbe_stein_expectation
+
+/-! ### Multivariate Berry–Esseen, orthant route, stage 1 (continued) -/
+
+#print axioms LatticeProb.mvbe_gaussian_layer_diff_le
+#print axioms LatticeProb.mvbe_gaussian_diff_layer_le
+#print axioms LatticeProb.mvbe_gaussian_layer_diff_le_of_le_sqrt
+#print axioms LatticeProb.mvbe_gaussian_diff_layer_le_of_le_sqrt
+#print axioms LatticeProb.MvbeRegularClass.image_gammaStar_le
+#print axioms LatticeProb.MvbeRegularClass.image_gammaStar_le_max
+#print axioms LatticeProb.MvbeRegularClass.image_negOpen
+#print axioms LatticeProb.mehlerN_contDiff
+#print axioms LatticeProb.mehlerN_iteratedDeriv_line
+#print axioms LatticeProb.mehlerN_iteratedDeriv_line_bound
+#print axioms LatticeProb.mehlerN_iteratedDeriv_three_C2b_unit
+#print axioms LatticeProb.mehlerN_iteratedFDeriv_diag_bound
+#print axioms LatticeProb.mehlerI_hasDerivAt
+#print axioms LatticeProb.mehlerI_interpolation
+#print axioms LatticeProb.mehlerI_interpolation_integrableOn
+#print axioms LatticeProb.MvbeRegularClass.raic_lemma_2_1
+#print axioms LatticeProb.mvbeRoundedRegularClass_negOpen
