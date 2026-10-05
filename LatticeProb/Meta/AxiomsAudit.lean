@@ -381,5 +381,12 @@ library.
 
 #print axioms LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le
 #print axioms LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_apply_le
+
+/-! ### The sound low-frequency glue -/
+
+#print axioms LatticeProb.Sobolev.rkLowFreqNet_of_truncation_and_supportRepair
+#print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_truncation_and_supportRepair
+#print axioms LatticeProb.Sobolev.bandLimitedTestFnApproxOnDomain_of_approx
+#print axioms LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
 #print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc
