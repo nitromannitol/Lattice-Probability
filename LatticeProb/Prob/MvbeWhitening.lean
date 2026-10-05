@@ -9,8 +9,8 @@ with explicit constants" (arXiv:1802.06475, Thm 1.3), orthant case.
 ## Statement
 
 * `MvbeFrozenShape F`: the frozen `Sandpile.External.MultivariateBerryEsseen` with the factor
-  `m ^ (1/4)` replaced by `F m` (vocabulary `gram`, `coeffNorm`, `quadForm` copied as `mvbeGram`,
-  `mvbeCoeffNorm`, `mvbeQuadForm`).  `MvbeFrozenQuarter` is the frozen statement itself.
+  `m ^ (1/4)` replaced by `F m` (vocabulary `gram`, `coeffNorm`, `quadForm` copied as `mvbeWhGram`,
+  `mvbeWhCoeffNorm`, `mvbeWhQuadForm`).  `MvbeFrozenQuarter` is the frozen statement itself.
 * `MvbeWhitenedBound F`: the abstract identity-covariance input.  For independent mean-zero
   `μ_i` on `ℝ^m` with `∑ Cov μ_i = I` and finite third moments, and for the set
   `A_{L,h} = {x | ∀ j, (L⁻¹ x) j ≤ h j} = L (O_h)`,
@@ -22,7 +22,7 @@ with explicit constants" (arXiv:1802.06475, Thm 1.3), orthant case.
 
 ## Proof (all steps are public lemmas)
 
-(i) `mvbeGram_posDef`, `mvbe_sqrt_posDef`, `mvbe_sqrtInv_*`: spectral facts on `G`, `√G`,
+(i) `mvbeWhGram_posDef`, `mvbe_sqrt_posDef`, `mvbe_sqrtInv_*`: spectral facts on `G`, `√G`,
 `L = (√G)⁻¹`; (ii) `mvbeLaw_*`, `mvbe_cov_sum`, `mvbe_sum_third_moment_le`: the summands
 `X_i = ξ_i • L a_i` (mean zero, covariance sum `L G L = I`, third moments); (iii) `mvbe_pi_map`,
 `mvbe_pi_apply`, `mvbe_event_eq`: `Measure.pi ν` pushes forward to the law of the sum and the
@@ -40,16 +40,16 @@ namespace LatticeProb
 /-! ### Vocabulary (copied verbatim from the frozen file) -/
 
 /-- The covariance matrix of the linear forms `Y_j = ∑_i a_i(j) ξ_i` (copy of `gram`). -/
-noncomputable def mvbeGram {N m : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m → ℝ) :
+noncomputable def mvbeWhGram {N m : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m → ℝ) :
     Matrix (Fin m) (Fin m) ℝ :=
   Matrix.of fun j k => variance id ν * ∑ i, a i j * a i k
 
 /-- The Euclidean norm of the `i`-th coefficient vector (copy of `coeffNorm`). -/
-noncomputable def mvbeCoeffNorm {N m : ℕ} (a : Fin N → Fin m → ℝ) (i : Fin N) : ℝ :=
+noncomputable def mvbeWhCoeffNorm {N m : ℕ} (a : Fin N → Fin m → ℝ) (i : Fin N) : ℝ :=
   Real.sqrt (∑ j, a i j ^ 2)
 
 /-- The quadratic form `v ↦ ⟨Sv, v⟩` of a matrix (copy of `quadForm`). -/
-noncomputable def mvbeQuadForm {m : ℕ} (S : Matrix (Fin m) (Fin m) ℝ) (v : Fin m → ℝ) : ℝ :=
+noncomputable def mvbeWhQuadForm {m : ℕ} (S : Matrix (Fin m) (Fin m) ℝ) (v : Fin m → ℝ) : ℝ :=
   ∑ j, ∑ k, S j k * v j * v k
 
 /-! ### The frozen shape and the whitened input -/
@@ -68,21 +68,21 @@ def MvbeFrozenShape (F : ℕ → ℝ) : Prop :=
           ∀ a : Fin N → Fin m → ℝ,
             (∀ v : Fin m → ℝ,
               (1 - δ) * ∑ j, v j ^ 2 ≤
-                  mvbeQuadForm (mvbeGram ν a) v ∧
-                mvbeQuadForm (mvbeGram ν a) v ≤
+                  mvbeWhQuadForm (mvbeWhGram ν a) v ∧
+                mvbeWhQuadForm (mvbeWhGram ν a) v ≤
                   (1 + δ) * ∑ j, v j ^ 2) →
             ∀ h : Fin m → ℝ,
               |((Measure.pi fun _ : Fin N => ν)
                       {ξ | ∀ j, ∑ i, a i j * ξ i ≤ h j}).toReal -
                   (multivariateGaussian 0
-                      (mvbeGram ν a)
+                      (mvbeWhGram ν a)
                       {y | ∀ j, y j ≤ h j}).toReal| ≤
                 C * F m * variance id ν ^ ((3 : ℝ) / 2) *
-                  ∑ i, mvbeCoeffNorm a i ^ 3
+                  ∑ i, mvbeWhCoeffNorm a i ^ 3
 
 /-- The frozen statement itself (`C * m ^ (1/4)`), in the vocabulary of this file: textually the
 frozen `Sandpile.External.MultivariateBerryEsseen` with `gram`, `coeffNorm`, `quadForm` renamed
-to `mvbeGram`, `mvbeCoeffNorm`, `mvbeQuadForm`. -/
+to `mvbeWhGram`, `mvbeWhCoeffNorm`, `mvbeWhQuadForm`. -/
 def MvbeFrozenQuarter : Prop :=
   ∀ M δ : ℝ, 0 < M → 0 < δ → δ < 1 →
     ∃ C : ℝ, 0 < C ∧
@@ -94,17 +94,17 @@ def MvbeFrozenQuarter : Prop :=
           ∀ a : Fin N → Fin m → ℝ,
             (∀ v : Fin m → ℝ,
               (1 - δ) * ∑ j, v j ^ 2 ≤
-                  mvbeQuadForm (mvbeGram ν a) v ∧
-                mvbeQuadForm (mvbeGram ν a) v ≤
+                  mvbeWhQuadForm (mvbeWhGram ν a) v ∧
+                mvbeWhQuadForm (mvbeWhGram ν a) v ≤
                   (1 + δ) * ∑ j, v j ^ 2) →
             ∀ h : Fin m → ℝ,
               |((Measure.pi fun _ : Fin N => ν)
                       {ξ | ∀ j, ∑ i, a i j * ξ i ≤ h j}).toReal -
                   (multivariateGaussian 0
-                      (mvbeGram ν a)
+                      (mvbeWhGram ν a)
                       {y | ∀ j, y j ≤ h j}).toReal| ≤
                 C * (m : ℝ) ^ ((1 : ℝ) / 4) * variance id ν ^ ((3 : ℝ) / 2) *
-                  ∑ i, mvbeCoeffNorm a i ^ 3
+                  ∑ i, mvbeWhCoeffNorm a i ^ 3
 
 /-- `MvbeFrozenQuarter` is `MvbeFrozenShape` at `F m = m ^ (1/4)`. -/
 theorem mvbeFrozenQuarter_iff :
@@ -148,9 +148,9 @@ section Spectral
 variable {m : ℕ}
 
 /-- The quadratic form is `v ⬝ᵥ S *ᵥ v`. -/
-theorem mvbeQuadForm_eq_dotProduct (S : Matrix (Fin m) (Fin m) ℝ) (v : Fin m → ℝ) :
-    mvbeQuadForm S v = v ⬝ᵥ (S *ᵥ v) := by
-  unfold mvbeQuadForm
+theorem mvbeWhQuadForm_eq_dotProduct (S : Matrix (Fin m) (Fin m) ℝ) (v : Fin m → ℝ) :
+    mvbeWhQuadForm S v = v ⬝ᵥ (S *ᵥ v) := by
+  unfold mvbeWhQuadForm
   simp only [dotProduct, Matrix.mulVec, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => ?_
   ring
@@ -160,10 +160,10 @@ theorem mvbe_sum_sq_eq_dotProduct (v : Fin m → ℝ) : ∑ j, v j ^ 2 = v ⬝�
   simp [dotProduct, sq]
 
 /-- The Gram matrix is symmetric. -/
-theorem mvbeGram_transpose {N : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m → ℝ) :
-    (mvbeGram ν a)ᵀ = mvbeGram ν a := by
+theorem mvbeWhGram_transpose {N : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m → ℝ) :
+    (mvbeWhGram ν a)ᵀ = mvbeWhGram ν a := by
   ext j k
-  simp only [mvbeGram, transpose_apply, Matrix.of_apply]
+  simp only [mvbeWhGram, transpose_apply, Matrix.of_apply]
   congr 1
   exact Finset.sum_congr rfl fun i _ => mul_comm _ _
 
@@ -171,14 +171,14 @@ theorem mvbeGram_transpose {N : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m →
 positive definite. -/
 theorem mvbe_posDef_of_quadForm_lower {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ < 1)
     (hGt : Gᵀ = G)
-    (hlow : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm G v) : G.PosDef := by
+    (hlow : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm G v) : G.PosDef := by
   rw [posDef_iff_dotProduct_mulVec]
   refine ⟨?_, fun v hv => ?_⟩
   · show Gᴴ = G
     rw [conjTranspose_eq_transpose_of_trivial]
     exact hGt
   · have h1 := hlow v
-    rw [mvbeQuadForm_eq_dotProduct] at h1
+    rw [mvbeWhQuadForm_eq_dotProduct] at h1
     have hpos : 0 < ∑ j, v j ^ 2 := by
       rw [mvbe_sum_sq_eq_dotProduct]
       exact lt_of_le_of_ne (dotProduct_self_star_nonneg v) (fun h => hv (by
@@ -188,10 +188,10 @@ theorem mvbe_posDef_of_quadForm_lower {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ
 
 /-- The Gram matrix of a one-site law with the frozen quadratic-form bounds is positive
 definite (only the lower bound is used). -/
-theorem mvbeGram_posDef {N : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m → ℝ) {δ : ℝ} (hδ : δ < 1)
-    (hlow : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm (mvbeGram ν a) v) :
-    (mvbeGram ν a).PosDef :=
-  mvbe_posDef_of_quadForm_lower hδ (mvbeGram_transpose ν a) hlow
+theorem mvbeWhGram_posDef {N : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m → ℝ) {δ : ℝ} (hδ : δ < 1)
+    (hlow : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm (mvbeWhGram ν a) v) :
+    (mvbeWhGram ν a).PosDef :=
+  mvbe_posDef_of_quadForm_lower hδ (mvbeWhGram_transpose ν a) hlow
 
 /-- The square root of a positive semidefinite matrix is symmetric. -/
 theorem mvbe_sqrt_transpose {G : Matrix (Fin m) (Fin m) ℝ} :
@@ -213,19 +213,19 @@ theorem mvbe_sqrt_mulVec_sq {G : Matrix (Fin m) (Fin m) ℝ} (hG : G.PosSemidef)
 
 /-- Two-sided quadratic-form bounds on `G` transfer to `‖√G v‖²`. -/
 theorem mvbe_sqrt_sq_bounds {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hG : G.PosSemidef)
-    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm G v ∧
-      mvbeQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) (v : Fin m → ℝ) :
+    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm G v ∧
+      mvbeWhQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) (v : Fin m → ℝ) :
     (1 - δ) * ∑ j, v j ^ 2 ≤ ∑ j, (CFC.sqrt G *ᵥ v) j ^ 2 ∧
       ∑ j, (CFC.sqrt G *ᵥ v) j ^ 2 ≤ (1 + δ) * ∑ j, v j ^ 2 := by
   rw [mvbe_sqrt_mulVec_sq hG]
   have := hq v
-  rwa [mvbeQuadForm_eq_dotProduct] at this
+  rwa [mvbeWhQuadForm_eq_dotProduct] at this
 
 /-- Under the frozen quadratic-form bounds, `√G` is positive definite. -/
 theorem mvbe_sqrt_posDef {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ < 1)
     (hG : G.PosSemidef)
-    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm G v ∧
-      mvbeQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) : (CFC.sqrt G).PosDef := by
+    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm G v ∧
+      mvbeWhQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) : (CFC.sqrt G).PosDef := by
   have hS : (CFC.sqrt G).PosSemidef := (CFC.sqrt_nonneg G).posSemidef
   rw [posDef_iff_dotProduct_mulVec]
   refine ⟨hS.isHermitian, fun v hv => ?_⟩
@@ -243,15 +243,15 @@ theorem mvbe_sqrt_posDef {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ <
 /-- The whitening matrix `L = (√G)⁻¹` is positive definite. -/
 theorem mvbe_sqrtInv_posDef {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ < 1)
     (hG : G.PosSemidef)
-    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm G v ∧
-      mvbeQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) : (CFC.sqrt G)⁻¹.PosDef :=
+    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm G v ∧
+      mvbeWhQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) : (CFC.sqrt G)⁻¹.PosDef :=
   (mvbe_sqrt_posDef hδ hG hq).inv
 
 /-- The inverse of the whitening matrix is `√G`. -/
 theorem mvbe_sqrtInv_inv {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ < 1)
     (hG : G.PosSemidef)
-    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm G v ∧
-      mvbeQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) : (CFC.sqrt G)⁻¹⁻¹ = CFC.sqrt G :=
+    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm G v ∧
+      mvbeWhQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) : (CFC.sqrt G)⁻¹⁻¹ = CFC.sqrt G :=
   nonsing_inv_nonsing_inv _
     ((isUnit_iff_isUnit_det _).1 (mvbe_sqrt_posDef hδ hG hq).isUnit)
 
@@ -259,8 +259,8 @@ theorem mvbe_sqrtInv_inv {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ <
 matrix. -/
 theorem mvbe_sqrtInv_sq_le {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ < 1)
     (hG : G.PosSemidef)
-    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm G v ∧
-      mvbeQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) (v : Fin m → ℝ) :
+    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm G v ∧
+      mvbeWhQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) (v : Fin m → ℝ) :
     ∑ j, ((CFC.sqrt G)⁻¹ *ᵥ v) j ^ 2 ≤ (1 - δ)⁻¹ * ∑ j, v j ^ 2 := by
   have hdet : IsUnit (CFC.sqrt G).det :=
     (isUnit_iff_isUnit_det _).1 (mvbe_sqrt_posDef hδ hG hq).isUnit
@@ -273,8 +273,8 @@ theorem mvbe_sqrtInv_sq_le {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ
 /-- `‖L⁻¹ v‖² ≤ (1 + δ) ‖v‖²` for `L = (√G)⁻¹`. -/
 theorem mvbe_sqrtInv_inv_sq_le {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ < 1)
     (hG : G.PosSemidef)
-    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm G v ∧
-      mvbeQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) (v : Fin m → ℝ) :
+    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm G v ∧
+      mvbeWhQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) (v : Fin m → ℝ) :
     ∑ j, ((CFC.sqrt G)⁻¹⁻¹ *ᵥ v) j ^ 2 ≤ (1 + δ) * ∑ j, v j ^ 2 := by
   rw [mvbe_sqrtInv_inv hδ hG hq]
   exact (mvbe_sqrt_sq_bounds hG hq v).2
@@ -282,8 +282,8 @@ theorem mvbe_sqrtInv_inv_sq_le {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ 
 /-- The whitening identity `L G L = 1` for `L = (√G)⁻¹`. -/
 theorem mvbe_sqrtInv_mul_mul {G : Matrix (Fin m) (Fin m) ℝ} {δ : ℝ} (hδ : δ < 1)
     (hG : G.PosSemidef)
-    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm G v ∧
-      mvbeQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) :
+    (hq : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm G v ∧
+      mvbeWhQuadForm G v ≤ (1 + δ) * ∑ j, v j ^ 2) :
     (CFC.sqrt G)⁻¹ * G * (CFC.sqrt G)⁻¹ = 1 := by
   have hdet : IsUnit (CFC.sqrt G).det :=
     (isUnit_iff_isUnit_det _).1 (mvbe_sqrt_posDef hδ hG hq).isUnit
@@ -376,10 +376,10 @@ theorem mvbe_dotProduct_mulVec_symm {L : Matrix (Fin m) (Fin m) ℝ} (hL : Lᵀ 
 `p ⬝ᵥ G q = Var ν ∑_i ⟨a_i, p⟩⟨a_i, q⟩`. -/
 theorem mvbe_dotProduct_gram_mulVec {N : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m → ℝ)
     (p q : Fin m → ℝ) :
-    p ⬝ᵥ (mvbeGram ν a *ᵥ q) = ∑ i, variance id ν * ((a i ⬝ᵥ p) * (a i ⬝ᵥ q)) := by
-  have h1 : p ⬝ᵥ (mvbeGram ν a *ᵥ q)
+    p ⬝ᵥ (mvbeWhGram ν a *ᵥ q) = ∑ i, variance id ν * ((a i ⬝ᵥ p) * (a i ⬝ᵥ q)) := by
+  have h1 : p ⬝ᵥ (mvbeWhGram ν a *ᵥ q)
       = ∑ j, ∑ k, ∑ i, variance id ν * ((a i j * p j) * (a i k * q k)) := by
-    simp only [dotProduct, Matrix.mulVec, mvbeGram, Matrix.of_apply, Finset.mul_sum,
+    simp only [dotProduct, Matrix.mulVec, mvbeWhGram, Matrix.of_apply, Finset.mul_sum,
       Finset.sum_mul]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ =>
       Finset.sum_congr rfl fun i _ => ?_
@@ -400,7 +400,7 @@ theorem mvbe_dotProduct_gram_mulVec {N : ℕ} (ν : Measure ℝ) (a : Fin N → 
 /-- The covariance sum of the whitened summands: if `L G L = 1`, `L` symmetric, `G` the Gram
 matrix of `ν` and `a`, then `∑_i E⟨X_i,u⟩⟨X_i,v⟩ = ⟨u,v⟩` for `X_i = ξ_i • L a_i`. -/
 theorem mvbe_cov_sum {N : ℕ} (ν : Measure ℝ) (a : Fin N → Fin m → ℝ)
-    (L : Matrix (Fin m) (Fin m) ℝ) (hLt : Lᵀ = L) (hLGL : L * mvbeGram ν a * L = 1)
+    (L : Matrix (Fin m) (Fin m) ℝ) (hLt : Lᵀ = L) (hLGL : L * mvbeWhGram ν a * L = 1)
     (hvar : ∫ z, z ^ 2 ∂ν = variance id ν) (u v : EuclideanSpace ℝ (Fin m)) :
     ∑ i, ∫ x, inner ℝ x u * inner ℝ x v ∂(mvbeLaw ν (mvbeVec L a i))
       = inner ℝ u v := by
@@ -423,8 +423,8 @@ theorem mvbe_whiten_norm_toLp (y : Fin m → ℝ) :
 /-- The whitened coefficient vector satisfies `‖L a_i‖ ≤ √c₀ |a_i|`. -/
 theorem mvbe_norm_mvbeVec_le {N : ℕ} (L : Matrix (Fin m) (Fin m) ℝ) (a : Fin N → Fin m → ℝ)
     {c0 : ℝ} (hc0 : 0 ≤ c0) (hL : ∀ v : Fin m → ℝ, ∑ j, (L *ᵥ v) j ^ 2 ≤ c0 * ∑ j, v j ^ 2)
-    (i : Fin N) : ‖mvbeVec L a i‖ ≤ Real.sqrt c0 * mvbeCoeffNorm a i := by
-  unfold mvbeVec mvbeCoeffNorm
+    (i : Fin N) : ‖mvbeVec L a i‖ ≤ Real.sqrt c0 * mvbeWhCoeffNorm a i := by
+  unfold mvbeVec mvbeWhCoeffNorm
   rw [mvbe_whiten_norm_toLp, ← Real.sqrt_mul hc0]
   exact Real.sqrt_le_sqrt (hL (a i))
 
@@ -435,17 +435,17 @@ theorem mvbe_sum_third_moment_le {N : ℕ} (ν : Measure ℝ) (a : Fin N → Fin
     (hL : ∀ v : Fin m → ℝ, ∑ j, (L *ᵥ v) j ^ 2 ≤ c0 * ∑ j, v j ^ 2)
     (hB : ∫ z, |z| ^ 3 ∂ν ≤ B) :
     ∑ i, ∫ x, ‖x‖ ^ 3 ∂(mvbeLaw ν (mvbeVec L a i))
-      ≤ B * Real.sqrt c0 ^ 3 * ∑ i, mvbeCoeffNorm a i ^ 3 := by
+      ≤ B * Real.sqrt c0 ^ 3 * ∑ i, mvbeWhCoeffNorm a i ^ 3 := by
   have hI : 0 ≤ ∫ z, |z| ^ 3 ∂ν := integral_nonneg fun z => by positivity
   rw [Finset.mul_sum]
   refine Finset.sum_le_sum fun i _ => ?_
   rw [mvbeLaw_integral_norm_cube]
-  have h1 : ‖mvbeVec L a i‖ ^ 3 ≤ (Real.sqrt c0 * mvbeCoeffNorm a i) ^ 3 :=
+  have h1 : ‖mvbeVec L a i‖ ^ 3 ≤ (Real.sqrt c0 * mvbeWhCoeffNorm a i) ^ 3 :=
     pow_le_pow_left₀ (norm_nonneg _) (mvbe_norm_mvbeVec_le L a hc0 hL i) 3
   calc (∫ z, |z| ^ 3 ∂ν) * ‖mvbeVec L a i‖ ^ 3
-      ≤ B * (Real.sqrt c0 * mvbeCoeffNorm a i) ^ 3 :=
+      ≤ B * (Real.sqrt c0 * mvbeWhCoeffNorm a i) ^ 3 :=
         mul_le_mul hB h1 (by positivity) (hI.trans hB)
-    _ = B * Real.sqrt c0 ^ 3 * mvbeCoeffNorm a i ^ 3 := by ring
+    _ = B * Real.sqrt c0 ^ 3 * mvbeWhCoeffNorm a i ^ 3 := by ring
 
 end Law
 
@@ -647,28 +647,28 @@ theorem mvbe_frozenShape_of_whitenedBound_of_nonneg (F : ℕ → ℝ) (hF : ∀ 
   refine ⟨K * M * Real.sqrt ((1 - δ)⁻¹) ^ 3, by positivity, ?_⟩
   intro N m hm ν hνprob hmean hvar hint hmom a hq h
   haveI := hνprob
-  have hlow : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeQuadForm (mvbeGram ν a) v :=
+  have hlow : ∀ v : Fin m → ℝ, (1 - δ) * ∑ j, v j ^ 2 ≤ mvbeWhQuadForm (mvbeWhGram ν a) v :=
     fun v => (hq v).1
-  have hGpd : (mvbeGram ν a).PosDef := mvbeGram_posDef ν a hδ1 hlow
-  have hGps : (mvbeGram ν a).PosSemidef := hGpd.posSemidef
-  have hSpd : (CFC.sqrt (mvbeGram ν a)).PosDef := mvbe_sqrt_posDef hδ1 hGps hq
-  have hdetS : IsUnit (CFC.sqrt (mvbeGram ν a)).det :=
+  have hGpd : (mvbeWhGram ν a).PosDef := mvbeWhGram_posDef ν a hδ1 hlow
+  have hGps : (mvbeWhGram ν a).PosSemidef := hGpd.posSemidef
+  have hSpd : (CFC.sqrt (mvbeWhGram ν a)).PosDef := mvbe_sqrt_posDef hδ1 hGps hq
+  have hdetS : IsUnit (CFC.sqrt (mvbeWhGram ν a)).det :=
     (isUnit_iff_isUnit_det _).1 hSpd.isUnit
-  have hLpd : (CFC.sqrt (mvbeGram ν a))⁻¹.PosDef := hSpd.inv
-  have hLt : ((CFC.sqrt (mvbeGram ν a))⁻¹)ᵀ = (CFC.sqrt (mvbeGram ν a))⁻¹ :=
+  have hLpd : (CFC.sqrt (mvbeWhGram ν a))⁻¹.PosDef := hSpd.inv
+  have hLt : ((CFC.sqrt (mvbeWhGram ν a))⁻¹)ᵀ = (CFC.sqrt (mvbeWhGram ν a))⁻¹ :=
     hLpd.isHermitian.eq
-  have hdetL : IsUnit ((CFC.sqrt (mvbeGram ν a))⁻¹).det :=
+  have hdetL : IsUnit ((CFC.sqrt (mvbeWhGram ν a))⁻¹).det :=
     (isUnit_iff_isUnit_det _).1 hLpd.isUnit
   have hvar' : ∫ z, z ^ 2 ∂ν = variance id ν :=
     (variance_of_integral_eq_zero (X := id) aemeasurable_id hmean).symm
-  have hbound := hKb m N hm (fun i => mvbeLaw ν (mvbeVec (CFC.sqrt (mvbeGram ν a))⁻¹ a i))
+  have hbound := hKb m N hm (fun i => mvbeLaw ν (mvbeVec (CFC.sqrt (mvbeWhGram ν a))⁻¹ a i))
     (fun i => mvbeLaw_integrable_norm_cube ν _ hint)
     (fun i => mvbeLaw_integral_id ν _ hmean)
     (fun u v => mvbe_cov_sum ν a _ hLt (mvbe_sqrtInv_mul_mul hδ1 hGps hq) hvar' u v)
-    (CFC.sqrt (mvbeGram ν a))⁻¹ hLpd (mvbe_sqrtInv_sq_le hδ1 hGps hq)
+    (CFC.sqrt (mvbeWhGram ν a))⁻¹ hLpd (mvbe_sqrtInv_sq_le hδ1 hGps hq)
     (mvbe_sqrtInv_inv_sq_le hδ1 hGps hq) h
-  have hP : ((Measure.pi fun i => mvbeLaw ν (mvbeVec (CFC.sqrt (mvbeGram ν a))⁻¹ a i))
-        {ω | (∑ i, ω i) ∈ mvbeOrthantImage (CFC.sqrt (mvbeGram ν a))⁻¹ h})
+  have hP : ((Measure.pi fun i => mvbeLaw ν (mvbeVec (CFC.sqrt (mvbeWhGram ν a))⁻¹ a i))
+        {ω | (∑ i, ω i) ∈ mvbeOrthantImage (CFC.sqrt (mvbeWhGram ν a))⁻¹ h})
       = (Measure.pi fun _ : Fin N => ν) {ξ | ∀ j, ∑ i, a i j * ξ i ≤ h j} := by
     rw [mvbe_pi_apply ν _ (measurableSet_mvbeOrthantImage _ h)]
     congr 1
@@ -676,14 +676,14 @@ theorem mvbe_frozenShape_of_whitenedBound_of_nonneg (F : ℕ → ℝ) (hF : ∀ 
     exact mvbe_event_eq _ hdetL a h ξ
   rw [hP, ← mvbe_multivariateGaussian_orthant_eq hdetS h] at hbound
   refine hbound.trans ?_
-  have hmom' := mvbe_sum_third_moment_le ν a (CFC.sqrt (mvbeGram ν a))⁻¹ hc0
+  have hmom' := mvbe_sum_third_moment_le ν a (CFC.sqrt (mvbeWhGram ν a))⁻¹ hc0
     (mvbe_sqrtInv_sq_le hδ1 hGps hq) hmom
   have hKF : 0 ≤ K * F m := mul_nonneg hK.le (hF m hm)
-  calc K * F m * ∑ i, ∫ x, ‖x‖ ^ 3 ∂(mvbeLaw ν (mvbeVec (CFC.sqrt (mvbeGram ν a))⁻¹ a i))
+  calc K * F m * ∑ i, ∫ x, ‖x‖ ^ 3 ∂(mvbeLaw ν (mvbeVec (CFC.sqrt (mvbeWhGram ν a))⁻¹ a i))
       ≤ K * F m * (M * variance id ν ^ ((3 : ℝ) / 2) * Real.sqrt ((1 - δ)⁻¹) ^ 3 *
-          ∑ i, mvbeCoeffNorm a i ^ 3) := mul_le_mul_of_nonneg_left hmom' hKF
+          ∑ i, mvbeWhCoeffNorm a i ^ 3) := mul_le_mul_of_nonneg_left hmom' hKF
     _ = K * M * Real.sqrt ((1 - δ)⁻¹) ^ 3 * F m * variance id ν ^ ((3 : ℝ) / 2) *
-          ∑ i, mvbeCoeffNorm a i ^ 3 := by ring
+          ∑ i, mvbeWhCoeffNorm a i ^ 3 := by ring
 
 /-- **Main theorem (item L14).**  The whitened identity-covariance bound with dimension factor
 `F` implies the frozen multivariate Berry-Esseen shape with the same `F`; the constant is
