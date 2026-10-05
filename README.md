@@ -411,7 +411,31 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   `WithLp.toLp 2` to `EuclideanSpace`, the route's setting),
   `LatticeProb.integral_integral_mixed_deriv` and
   `LatticeProb.integral_Iic_deriv_eq_of_tendsto` are the orthant box-Fubini and
-  two-coordinate integration-by-parts substrate (route item 4).
+  two-coordinate integration-by-parts substrate (route item 4).  The signed orthant
+  transport to `EuclideanSpace` (`LatticeProb.integral_orthant_eq`,
+  `LatticeProb.integrableOn_orthant_iff`), the coordinate
+  permutation (`LatticeProb.integral_Iic_perm`, `LatticeProb.exists_perm_zero_one`) and the
+  mixed-derivative orthant integral in an arbitrary pair of distinct coordinates
+  (`LatticeProb.integral_Iic_mixed_deriv₂`, `LatticeProb.integral_Iic_mixed_deriv_pair`,
+  `LatticeProb.exists_perm_integral_Iic_mixed_deriv`) complete route item 4 for general
+  dimension.
+* `LatticeProb.covDensity`: the density of the centred Gaussian `N(0, S)` on `Fin n → ℝ`,
+  with its coordinate partials and Gaussian decay
+  (`LatticeProb.hasDerivAt_covDensity_update`,
+  `LatticeProb.hasDerivAt_covDensity_partial_update`,
+  `LatticeProb.tendsto_partial_covDensity_update_atBot`), its integrability and unit mass
+  (`LatticeProb.integrable_partial2_covDensity`, `LatticeProb.integral_covDensity`), the
+  covariance derivative along a line of matrices
+  (`LatticeProb.hasDerivAt_covDensity_add_smul`, with Jacobi's formula
+  `LatticeProb.hasDerivAt_det_add_smul`), the identification of the `2 × 2` case with the
+  bivariate density (`LatticeProb.covDensity_two_cov`), the uniform Gaussian majorants along
+  the smart path (`LatticeProb.exists_covDensity_path_majorant`,
+  `LatticeProb.exists_partial2_path_majorant`), positive definiteness and differentiability of
+  the smart path (`LatticeProb.normalComparisonSmartPath_posDef`,
+  `LatticeProb.hasDerivAt_normalComparisonSmartPath`), and the orthant identity for the mixed
+  second partial of the density
+  (`LatticeProb.integral_Iic_partial2_covDensity`): route items 2, 3 (pointwise part) and 4 of
+  the Li--Shao normal comparison.
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.
