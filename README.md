@@ -109,7 +109,9 @@ quantitative bound `LatticeProb.Sobolev.sobolevNormSq_translate_sub_le` (split a
 phase bound `LatticeProb.Sobolev.norm_fourierChar_sub_one_le_two` of
 `Analysis/Sobolev/FourierCharPhase.lean` above `R`) assembles with the uniform high-frequency
 smallness into `LatticeProb.Sobolev.bandLimitedTranslationContinuous`, leaving `FrechetKolmogorovH`
-as the only open input of the route.
+as the only open input of the route.  `Analysis/Sobolev/SobolevTranslate.lean` adds the translation
+invariance `LatticeProb.Sobolev.sobolevNormSq_comp_add_right` of the Fourier-side norm, the input of
+the mollification step in the classical proof of `FrechetKolmogorovH`.
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
