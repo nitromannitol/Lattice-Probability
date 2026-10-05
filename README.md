@@ -71,10 +71,11 @@ Lipschitz (`k = 1`) form (`LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrun
 
 The truncation identity `‖φ − P_Λφ‖_{H^s} ≤ ‖φ‖_{H^s,>Λ}` is proved
 (`LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le`, `bandProjHighFreq`), and the sound
-composition `LatticeProb.Sobolev.rkLowFreqNet_of_truncation_and_supportRepair` reduces
-`rkLowFreqNet` to the single support-repair input (`BandLimitedTestFnApprox`), with
+composition `LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair` reduces `rkLowFreqNet` to
+the single support-repair input `BandLimitedTestFnApproxOnDomain` (the domain-restricted form,
+since the unrestricted `BandLimitedTestFnApprox` is too strong), with
 `rellichKondrachovNegSobolev_of_truncation_and_supportRepair` the corresponding discharge of the
-external (`Analysis/Sobolev/RellichLowFreqGlue.lean`).
+external (`Analysis/Sobolev/RellichLowFreqGlue.lean`, `Analysis/Sobolev/SupportRepair.lean`).
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
