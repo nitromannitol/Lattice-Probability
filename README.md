@@ -365,6 +365,36 @@ the field with zero boundary values on a finite set `C` as
   route, the generator/heat equation `∂_t P_t f = L P_t f`; it is a `Prop`, never
   an axiom, and it is what remains of the `n = 1` Gaussian log-Sobolev
   inequality beyond the semigroup layer built here.
+* `LatticeProb.ouHeatEquation_holds`: the named input above, proved
+  (`LatticeProb/Prob/MehlerSmoothing.lean`): for the Mehler smoothing
+  `U_a f (w) = ∫ f (w cos a + z sin a) dγ(z)` of a bounded Borel `f`,
+  `LatticeProb.mehlerSmooth_iteratedDeriv` gives all derivatives
+  `U_a f ^{(r)} = (cot a)^r ∫ f (…) He_r dγ`, `mehlerSmooth_contDiff` that it is `C^∞`, and
+  `mehlerSmooth_hasDerivAt_angle` the angle equation `∂_a U_a f = tan a (U_a f'' − w U_a f')`
+  for `f ∈ C²_b`.  The log-Sobolev modules still carry `OUHeatEquation` as a hypothesis.
+
+**Multivariate Berry–Esseen, orthant route (Raič, *Bernoulli* 25 (2019), Thm 1.3), stage 1.**
+Building blocks only; the bootstrapping theorem and the `m^{1/4}` perimeter input are
+not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` is untouched.
+
+* `LatticeProb.MvbeRegularClass`, `LatticeProb.mvbeRoundedRegularClass`: Raič's assumptions
+  (A1)–(A8) as a structure, and the class of rounded orthants `{ρ_h ≤ s}` as a regular
+  class with `κ = 1`; `LatticeProb.mvbeUnitGradAE_volume`: `ρ_h` has unit gradient a.e.
+* `LatticeProb.mvbe_perim_stdGaussian_layer_le`: for a 1-Lipschitz coordinatewise monotone
+  `ρ` with unit gradient a.e., `γ{a < ρ ≤ b} ≤ (m / √(2π)) (b − a)` (linear in `m`).
+* `LatticeProb.mvbe_keyEstimate_optimised`: the real-analysis core of Raič's Lemma 2.7;
+  `LatticeProb.mvbe_lemma_2_5`: the Gaussian tensor bounds `|∫ f ∇^r φ [u^r]| ≤ c_r M ‖u‖^r`.
+* `LatticeProb.mvbeRoundedRegularClass_gammaStar_le`: the generalised Gaussian perimeter of
+  the rounded-orthant class is at most `m / √(2π)`.
+* `LatticeProb.mvbe_polarization`, `LatticeProb.mvbe_stein_expectation`: polarisation of
+  symmetric trilinear forms with constant `9/2`, and Götze's identity (Raič Lemma 2.4)
+  for `E[Δg(W) − ⟨∇g(W), W⟩]` of a sum of independent mean-zero vectors with identity
+  covariance, for `g ∈ C³_b`.
+* `LatticeProb.mvbe_multivariateGaussian_add`, `mvbe_gaussian_decomp`, `mvbe_layer_of_conv`:
+  sums of independent Gaussians and the layer decomposition `N(μ,S) = σ Z + N(0, S − σ² I)`.
+* `LatticeProb.mvbe_frozenShape_of_whitenedBound`: the frozen multivariate Berry–Esseen
+  shape (and, as corollaries, its `m^{1/4}` form `mvbe_frozenQuarter_of_whitenedBound`)
+  follows from the whitened identity-covariance bound `MvbeWhitenedBound`.
 * `LatticeProb.ae_subset_iUnion_iInter_of_tendsto_ae`,
   `LatticeProb.measure_le_of_tendsto_ae_of_isOpen`,
   `LatticeProb.measure_le_of_tendsto_ae_of_lt`: the a.e. Fatou limit: an almost
