@@ -351,7 +351,7 @@ library.
 /-! ### The sound low-frequency glue (domain-restricted) -/
 
 #print axioms LatticeProb.Sobolev.bandLimitedTestFnApproxOnDomain_of_approx
-#print axioms LatticeProb.Sobolev.bandLimitedTestFnApproxOnDomain_of_jetNet_and_supportRepair
+-- conditional on the refuted BandLimitedTestFnApproxOnDomain
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair
 #print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_domainSupportRepair
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_projectionNetWitness

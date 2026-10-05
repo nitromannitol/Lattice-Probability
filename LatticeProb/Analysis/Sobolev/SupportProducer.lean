@@ -1,8 +1,12 @@
 /-
-# The corrected support-repair producer
+# The support-repair producer — REFUTED; the live input is `BandLimitedProjectionNetWitness`
 
-`SupportRepair.lean` states the corrected residual `BandLimitedTestFnApproxOnDomain` and the sound
-glue `rkLowFreqNet_of_domainSupportRepair`.  This module packages the two halves that produce it:
+`SupportRepair.lean` states the residual `BandLimitedTestFnApproxOnDomain`, but that residual and
+its support-repair half `BandCentreSupportRepair` below are **false**, so the producer built here is
+dead.  The sound, live input is
+`SupportProducerWitness.BandLimitedProjectionNetWitness`, which pairs each net centre with a
+witness test function instead of repairing its support.  This module keeps the two halves as the
+record of the route:
 
 * `BandLimitedProjectionNet` — the **jet-net** half, the finite `H^{s₀}`-net of the
   low-frequency
@@ -16,9 +20,10 @@ glue `rkLowFreqNet_of_domainSupportRepair`.  This module packages the two halves
   `χ ∈ C_c^∞(D)`.
 
 `bandLimitedTestFnApproxOnDomain_of_jetNet_and_supportRepair` composes them by the three-term
-`sobolevNormSq` inequality, giving the producer `BandLimitedTestFnApproxOnDomain`.  The generator of
-`BandLimitedProjectionNet` from `rkBandLimitedJetNet` + `rkResidual_holds` (the `C^m`-to-`H^{s₀}`
-transfer for the non-compactly-supported band-limited centres) is the remaining named gap.
+`sobolevNormSq` inequality, but its conclusion `BandLimitedTestFnApproxOnDomain` is **refuted** (the
+support-repair half is false), so the composition is dead; the jet-net half
+`BandLimitedProjectionNet` above remains the sound first ingredient.  The live producer
+`BandLimitedProjectionNetWitness` uses witnesses in place of the support repair.
 -/
 import LatticeProb.Analysis.Sobolev.SupportRepair
 import LatticeProb.Analysis.Sobolev.MollifierFourier
@@ -44,9 +49,11 @@ def BandLimitedProjectionNet : Prop :=
               (fun x => bandProj d Λ hΛ.ne' φ hφ.1 hφ.2.1 x - g i x)
             ≤ ENNReal.ofReal η
 
-/-- **The support-repair half.**  Every integrable net centre is within `η` of a test function on
-`D` in the `H^{s₀}` norm.  This is the step `MollifierFourierTendsto` and the convolution theorem
-feed. -/
+/-- **The support-repair half — REFUTED, do not use as a hypothesis.**  Every integrable net centre
+is within `η` of a test function on `D` in the `H^{s₀}` norm.  This is **false as stated**: a
+band-limited projection of a unit test function on `D` is never `H^{s₀}`-close to a test function
+on the fixed bounded `D`.  The live producer is
+`SupportProducerWitness.BandLimitedProjectionNetWitness`. -/
 def BandCentreSupportRepair : Prop :=
   ∀ (d : ℕ) (D : Set (Space d)), IsDomain D → ∀ (s₀ : ℝ) (g : Space d → ℝ),
     Integrable (fun x => (g x : ℂ)) → ∀ (η : ℝ), 0 < η →

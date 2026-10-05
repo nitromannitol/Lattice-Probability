@@ -1,5 +1,5 @@
 /-
-# The domain-restricted support repair: the sound last input of `rkLowFreqNet`
+# The domain-restricted support repair — REFUTED
 
 `RellichLowFreqGlue.lean` reduces `rkLowFreqNet` to a single input, `BandLimitedTestFnApprox`,
 which asks that the real projections `P_Λ φ = bandProj d Λ … φ` of the rough fields `φ` be
@@ -23,15 +23,12 @@ bounded below independently of `ψ`.  For `δ` below that bound no centre covers
 `BandLimitedTestFnApprox` is too strong to be the residual, and the committed implication is from
 an unprovable premise.
 
-This module lands the **domain-restricted** residual that the composition actually consumes,
-
-* `BandLimitedTestFnApproxOnDomain` — the same conclusion but for `IsTestFn D φ`;
-* `bandLimitedTestFnApproxOnDomain_of_approx` — the unrestricted residual implies it;
-* `rkLowFreqNet_of_domainSupportRepair` — the composition re-proved from the restricted input,
-
-so that `rkLowFreqNet` rests on the input the data supports.  The genuinely missing analytic
-content — the compactness of the projected family plus the support repair of each net
-centre — is unchanged and remains the open analytic obligation.
+**REFUTED.**  The domain-restricted residual below is **false** (a band-limited projection of a
+unit test function on `D` is never `H^{s₀}`-close to a test function on the fixed bounded `D`), so
+the composition `rkLowFreqNet_of_domainSupportRepair` rests on an unprovable premise.  This module
+is kept only as the record of that route; the sound producer is
+`SupportProducerWitness.BandLimitedProjectionNetWitness`, which replaces the support repair by
+witnesses and needs none.
 -/
 import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 
@@ -40,9 +37,11 @@ open scoped ENNReal FourierTransform
 
 namespace LatticeProb.Sobolev
 
-/-- **The domain-restricted support-repair residual.**  Like `BandLimitedTestFnApprox`, but the
-fields are `IsTestFn D` (so `tsupport φ ⊆ D`), which is exactly what `rkLowFreqNet` supplies and
-what the composition can use. -/
+/-- **The domain-restricted support-repair residual — REFUTED, do not use as a hypothesis.**
+Like `BandLimitedTestFnApprox`, but the fields are `IsTestFn D` (so `tsupport φ ⊆ D`).  This is
+**false as stated**: the projection `P_Λ φ` of a unit test function on `D` is not
+`H^{s₀}`-approximable by a test function on the fixed bounded `D`.  The sound replacement is
+`SupportProducerWitness.BandLimitedProjectionNetWitness` (witnesses instead of a support repair). -/
 def BandLimitedTestFnApproxOnDomain : Prop :=
   ∀ (d : ℕ) (D : Set (Space d)), IsDomain D → ∀ (s₀ s : ℝ), s₀ < s →
     ∀ (Λ : ℝ) (hΛ : 0 < Λ) (δ : ℝ), 0 < δ →
