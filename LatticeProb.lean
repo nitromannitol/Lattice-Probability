@@ -83,6 +83,7 @@ import LatticeProb.Prob.WeightedConc
 import LatticeProb.Prob.GaussianConcentration
 import LatticeProb.External.GaussianLogSobolev
 import LatticeProb.Prob.GaussianHerbst
+import LatticeProb.Prob.HerbstBound
 import LatticeProb.Prob.HerbstFromLSI
 import LatticeProb.Prob.GaussianConcentrationL2
 import LatticeProb.Prob.BracketProcess
