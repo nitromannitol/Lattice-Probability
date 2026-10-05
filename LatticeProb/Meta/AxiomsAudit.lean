@@ -350,6 +350,8 @@ library.
 #print axioms LatticeProb.Sobolev.bandLimitedTestFnApproxOnDomain_of_jetNet_and_supportRepair
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair
 #print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_domainSupportRepair
+#print axioms LatticeProb.Sobolev.rkLowFreqNet_of_projectionNetWitness
+#print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_projectionNetWitness
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
 #print axioms LatticeProb.Sobolev.exists_finite_supNet_of_uniformLip_of_proper
 #print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc

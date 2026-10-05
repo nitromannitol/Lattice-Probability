@@ -323,6 +323,7 @@ import LatticeProb.Analysis.Sobolev.SupportDensity
 import LatticeProb.Analysis.Sobolev.MollifierFourier
 import LatticeProb.Analysis.Sobolev.TestFnCutoff
 import LatticeProb.Analysis.Sobolev.SupportProducer
+import LatticeProb.Analysis.Sobolev.SupportProducerWitness
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.Scaling
 import LatticeProb.Analysis.Sobolev.TestFn
