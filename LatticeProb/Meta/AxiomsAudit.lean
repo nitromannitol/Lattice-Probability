@@ -104,6 +104,7 @@ library.
 #print axioms LatticeProb.ae_tendsto_bAvg
 #print axioms LatticeProb.tendsto_integral_div
 #print axioms LatticeProb.ae_tendsto_gLow
+#print axioms LatticeProb.kingman_array
 #print axioms LatticeProb.ae_tendsto_div
 #print axioms LatticeProb.akcoglu_krengel_mean
 #print axioms LatticeProb.ergodic_decomposition
