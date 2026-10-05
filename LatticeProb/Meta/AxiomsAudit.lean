@@ -165,6 +165,8 @@ library.
 #print axioms LatticeProb.gaussianLogSobolevGrad_one_iff_exp
 #print axioms LatticeProb.gaussianLogSobolevGrad_of_ouFlow
 #print axioms LatticeProb.gaussianLogSobolevGradOneExp_of_ouFlow
+#print axioms LatticeProb.gaussianOUFlowContraction_of_dissipation_convergence
+#print axioms LatticeProb.gaussianLogSobolevGradOneExp_of_dissipation_convergence
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le

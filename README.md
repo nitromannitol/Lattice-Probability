@@ -367,9 +367,12 @@ the field with zero boundary values on a finite set `C` as
   variables (`LatticeProb/Prob/GaussianLogSobolevGradOneForm.lean`).
 * `LatticeProb.gaussianOUSemigroup`, `LatticeProb.GaussianOUFlowContraction`,
   `LatticeProb.gaussianLogSobolevGrad_of_ouFlow`,
-  `LatticeProb.gaussianLogSobolevGradOneExp_of_ouFlow`: the one-dimensional Γ-form Gaussian
-  log-Sobolev inequality reduced to the named Ornstein–Uhlenbeck heat-flow contraction along the
-  Mehler semigroup (`LatticeProb/Prob/GaussianLogSobolevOUFlow.lean`).
+  `LatticeProb.gaussianLogSobolevGradOneExp_of_ouFlow`,
+  `LatticeProb.GaussianOUDissipation`, `LatticeProb.GaussianOUEntropyConvergence`,
+  `LatticeProb.gaussianOUFlowContraction_of_dissipation_convergence`: the one-dimensional Γ-form
+  Gaussian log-Sobolev inequality reduced to the named Ornstein–Uhlenbeck heat-flow contraction
+  along the Mehler semigroup, itself factored into the independent dissipation and
+  entropy-convergence halves (`LatticeProb/Prob/GaussianLogSobolevOUFlow.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal

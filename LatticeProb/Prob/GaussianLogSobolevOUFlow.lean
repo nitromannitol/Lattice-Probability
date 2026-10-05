@@ -103,4 +103,56 @@ theorem gaussianLogSobolevGradOneExp_of_ouFlow (hou : GaussianOUFlowContraction)
     GaussianLogSobolevGradOneExp :=
   gaussianLogSobolevGradOneExp_of_grad (gaussianLogSobolevGrad_of_ouFlow hou)
 
+/-- **The dissipation half of `GaussianOUFlowContraction`.**  Along the Mehler semigroup the
+entropy drops by at least the sharp Fisher term.  This is the integrated Fisher decay
+`I(P_s h) ≤ e^{-2s} I(h)` produced by the `Γ₂` criterion for the Gaussian. -/
+def GaussianOUDissipation : Prop :=
+  ∀ h : (Fin 1 → ℝ) → ℝ, (∀ x, 0 < h x) → ContDiff ℝ 1 h →
+    Integrable h (Measure.pi fun _ : Fin 1 => gaussianReal 0 1) →
+    Integrable (fun x => h x * Real.log (h x))
+      (Measure.pi fun _ : Fin 1 => gaussianReal 0 1) →
+    Integrable (fun x => ‖fderiv ℝ (fun y => Real.log (h y)) x‖ ^ 2 * h x)
+      (Measure.pi fun _ : Fin 1 => gaussianReal 0 1) →
+    (∫ x, h x ∂(Measure.pi fun _ : Fin 1 => gaussianReal 0 1) = 1) →
+    ∀ t : ℝ, 0 ≤ t →
+      (∫ x, h x * Real.log (h x) ∂(Measure.pi fun _ : Fin 1 => gaussianReal 0 1))
+        - (∫ x, gaussianOUSemigroup t h x * Real.log (gaussianOUSemigroup t h x)
+            ∂(Measure.pi fun _ : Fin 1 => gaussianReal 0 1))
+        ≤ (1 - Real.exp (-2 * t)) / 2
+            * (∫ x, ‖fderiv ℝ (fun y => Real.log (h y)) x‖ ^ 2 * h x
+                ∂(Measure.pi fun _ : Fin 1 => gaussianReal 0 1))
+
+/-- **The convergence half of `GaussianOUFlowContraction`.**  The entropy along the Mehler
+semigroup becomes arbitrarily small: the ergodicity of the Ornstein–Uhlenbeck flow drives `P_t h`
+to the equilibrium `1`. -/
+def GaussianOUEntropyConvergence : Prop :=
+  ∀ h : (Fin 1 → ℝ) → ℝ, (∀ x, 0 < h x) → ContDiff ℝ 1 h →
+    Integrable h (Measure.pi fun _ : Fin 1 => gaussianReal 0 1) →
+    Integrable (fun x => h x * Real.log (h x))
+      (Measure.pi fun _ : Fin 1 => gaussianReal 0 1) →
+    Integrable (fun x => ‖fderiv ℝ (fun y => Real.log (h y)) x‖ ^ 2 * h x)
+      (Measure.pi fun _ : Fin 1 => gaussianReal 0 1) →
+    (∫ x, h x ∂(Measure.pi fun _ : Fin 1 => gaussianReal 0 1) = 1) →
+    ∀ ε : ℝ, 0 < ε → ∃ t : ℝ, 0 ≤ t ∧
+      (∫ x, gaussianOUSemigroup t h x * Real.log (gaussianOUSemigroup t h x)
+        ∂(Measure.pi fun _ : Fin 1 => gaussianReal 0 1)) ≤ ε
+
+/-- **`GaussianOUFlowContraction` from its two halves.**  The two clauses are independent — the
+dissipation bound alone only gives a lower bound on `Ent(P_t h)`, never that it vanishes — so the
+input splits into the dissipation and the entropy-convergence factors. -/
+theorem gaussianOUFlowContraction_of_dissipation_convergence
+    (hd : GaussianOUDissipation) (hc : GaussianOUEntropyConvergence) :
+    GaussianOUFlowContraction := by
+  intro h hpos hcont hint hintlog hgradint hnorm
+  refine ⟨hc h hpos hcont hint hintlog hgradint hnorm, fun t ht => ?_⟩
+  have h := hd h hpos hcont hint hintlog hgradint hnorm t ht
+  linarith
+
+/-- **The exponential form from the two halves**, through `GaussianOUFlowContraction`. -/
+theorem gaussianLogSobolevGradOneExp_of_dissipation_convergence
+    (hd : GaussianOUDissipation) (hc : GaussianOUEntropyConvergence) :
+    GaussianLogSobolevGradOneExp :=
+  gaussianLogSobolevGradOneExp_of_ouFlow
+    (gaussianOUFlowContraction_of_dissipation_convergence hd hc)
+
 end LatticeProb
