@@ -125,7 +125,9 @@ approximation `f ≈ f ⋆ ρ` — is `LatticeProb.Sobolev.fourier_lift_convReal
 `LatticeProb.Sobolev.lift_convReal`) in `Analysis/Sobolev/SobolevConvolution.lean`.
 The remaining input to `FrechetKolmogorovMollifiedCompact`
 is the `C^m`-boundedness of `{f ⋆ ρ}`, via the `H^s`-`H^{-s}` duality bound
-(`LatticeProb.Sobolev.abs_apply_le_negSobolevNorm`, `Analysis/Sobolev/AbsApply.lean`).
+(`LatticeProb.Sobolev.abs_apply_le_negSobolevNorm`, `Analysis/Sobolev/AbsApply.lean`); the elementary
+first step is Cauchy–Schwarz on the convolution integral (`integral_mul_le_Lp_mul_Lq_of_nonneg`
+with `p = q = 2`), `|(f ⋆ ρ)(x)| ≤ ‖f‖_{L²} ‖ρ(x−·)‖_{L²}`.
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
