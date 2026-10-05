@@ -472,3 +472,16 @@ library.
 #print axioms LatticeProb.mehlerI_interpolation_integrableOn
 #print axioms LatticeProb.MvbeRegularClass.raic_lemma_2_1
 #print axioms LatticeProb.mvbeRoundedRegularClass_negOpen
+
+/-! ### Multivariate Berry–Esseen, orthant route, stage 1 (Lemma 2.6, 2.7 pieces, mollification) -/
+
+#print axioms LatticeProb.mvbe_lemma_2_6
+#print axioms LatticeProb.mvbe_lemma_2_6_min
+#print axioms LatticeProb.mvbe_layerCake_diff_le
+#print axioms LatticeProb.mvbe_H_sub_eq
+#print axioms LatticeProb.mvbe_H_abs_le_large_angle
+#print axioms LatticeProb.mvbe_class_deviation
+#print axioms LatticeProb.mvbe_small_angle_bound
+#print axioms LatticeProb.mvbe_small_angle_corollary
+#print axioms LatticeProb.mvbeMollify_exists
+#print axioms LatticeProb.mvbeMollify_exists_euclidean
