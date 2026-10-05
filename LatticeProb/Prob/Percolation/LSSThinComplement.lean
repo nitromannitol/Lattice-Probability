@@ -1,35 +1,46 @@
 /-
 # The thin-form complement bridge for the Liggett--Schonmann--Stacey input
 
-The Liggett--Schonmann--Stacey domination theorem has two dual halves.  On a `{0,1}`-field
-indexed by a set `S`, the *dense* (lower-domination) half says that a sufficiently dense
-`k`-dependent field stochastically dominates a product Bernoulli field of some density `ρ < 1`
-on increasing events.  The *thin* (upper-domination) half says that a sufficiently thin field is
-stochastically dominated by a product Bernoulli field of some small density on increasing events.
-The two halves are related by complementing every bit of the field: complementing a field of
-density `p` gives a field of density `1 - p`, and complementing an increasing event gives a
-decreasing one.
+The Liggett--Schonmann--Stacey domination theorem has two dual halves on a `{0,1}`-field.  The
+*dense* (lower-domination) half says that a sufficiently dense finite-range dependent field
+stochastically dominates a product Bernoulli field on increasing events; the *thin*
+(upper-domination) half says that a sufficiently thin field is stochastically dominated by a
+product Bernoulli field on increasing events.  The dense half is proved elsewhere
+(`Exploding.xlse_lss_general`, `Exploding/Support/ExtLSSCountable.lean`); this module proves the
+**deterministic bridge** from that half to the thin half, with the dense domination entering
+only as an explicit hypothesis on the complement field.
 
-This module proves that relation in the library's own vocabulary.  It does **not** prove either
-LSS half: the dense hypothesis enters as an explicit argument of the theorems.  What is proved is
-the complement bridge — the fact that the dense half, applied to the complement field at density
-`7/8`, yields the thin half for the original field at density `1/8` — together with the bit-level
-ingredients: the complement is an order-reversing involution, the complement of an increasing
-event is decreasing, and the bit complement of a Bernoulli law is the Bernoulli law of the
-complementary parameter.  No `Prop` is frozen here and no cited domination statement is assumed.
+The bridge is the bit complement of the field.  Complementing a field of density `p` gives a
+field of density `1 - p`; complementing an increasing event gives a decreasing one; the
+parameter arithmetic is `1 - 7/8 = 1/8`.  The module proves every deterministic ingredient:
+
+* the carrier map `bitCompl`, its involution law, and its measurability;
+* the complement image of an increasing set is decreasing (and conversely);
+* transport of `KDependent` across the carrier map (independence is preserved by the
+  coordinatewise complement);
+* the one-site probability complement relation `μ {ω s = false} = 1 - μ {ω s = true}` and the
+  complement-field transport `(μ.map bitCompl) {ω s = true} = μ {ω s = false}`;
+* the bit-level Bernoulli complement `(bernoulli p).map not = bernoulli (1 - p)` and the product
+  field complement law `(bitProduct p).map bitCompl = bitProduct (1 - p)`;
+* the measure-complement inequality: dense domination on increasing events bounds every
+  decreasing set from above;
+* the parameter arithmetic `1 - 7/8 = 1/8`.
+
+No `Prop` is frozen, no cited statement is assumed, and `Rotor.External.LSS` is not claimed.
 -/
 
 import LatticeProb.Prob.Percolation.BondPercolation
 import LatticeProb.Prob.Strassen.Defs
+import LatticeProb.Site
 
-open MeasureTheory
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 namespace LatticeProb.Percolation
 
 variable {S : Type}
 
-/-! ### The bit complement and its order reversal -/
+/-! ### The carrier map: the bit complement -/
 
 /-- The coordinatewise bit complement of a `{0,1}`-field. -/
 def bitCompl (ω : S → Bool) : S → Bool := fun s => !ω s
@@ -39,6 +50,44 @@ def bitCompl (ω : S → Bool) : S → Bool := fun s => !ω s
 /-- The bit complement is an involution. -/
 @[simp] theorem bitCompl_involutive (ω : S → Bool) : bitCompl (bitCompl ω) = ω := by
   funext s; simp [bitCompl]
+
+theorem measurable_bool_not : Measurable (fun b : Bool => !b) :=
+  fun _ _ => MeasurableSet.of_discrete
+
+theorem measurable_bitCompl : Measurable (bitCompl : (S → Bool) → (S → Bool)) := by
+  refine measurable_pi_lambda _ fun s => ?_
+  exact measurable_bool_not.comp (measurable_pi_apply s)
+
+/-- Membership in the complement image is membership in the preimage under the involution. -/
+theorem bitCompl_image_eq_preimage (A : Set (S → Bool)) :
+    bitCompl '' A = bitCompl ⁻¹' A := by
+  ext ω
+  constructor
+  · rintro ⟨a, ha, rfl⟩
+    simpa using ha
+  · intro h
+    exact ⟨bitCompl ω, by simpa using h, by simp⟩
+
+/-- The complement image of the complement image is the original set. -/
+theorem bitCompl_image_image (A : Set (S → Bool)) : bitCompl '' (bitCompl '' A) = A := by
+  ext ω
+  constructor
+  · rintro ⟨a, ⟨b, hb, rfl⟩, rfl⟩
+    simpa using hb
+  · intro h
+    exact ⟨bitCompl ω, ⟨ω, h, rfl⟩, by simp⟩
+
+/-- The preimage of the complement image is the original set. -/
+theorem bitCompl_preimage_image (A : Set (S → Bool)) : bitCompl ⁻¹' (bitCompl '' A) = A := by
+  rw [← bitCompl_image_eq_preimage]
+  exact bitCompl_image_image A
+
+theorem measurableSet_bitCompl_image {A : Set (S → Bool)} (hA : MeasurableSet A) :
+    MeasurableSet (bitCompl '' A) := by
+  rw [bitCompl_image_eq_preimage]
+  exact hA.preimage measurable_bitCompl
+
+/-! ### Increasing and decreasing events -/
 
 /-- The coordinatewise order on `{0,1}`-fields: every bit set in `x` is set in `y`. -/
 def leField (x y : S → Bool) : Prop := ∀ s, x s = true → y s = true
@@ -75,98 +124,86 @@ theorem isIncreasingSet_compl {D : Set (S → Bool)} (hD : IsDecreasingSet D) :
   intro x y hx hle
   exact fun hy => hx (hD y x hy hle)
 
-/-- Membership in the complement image is membership in the preimage under the involution. -/
-theorem bitCompl_image_eq_preimage (A : Set (S → Bool)) :
-    bitCompl '' A = bitCompl ⁻¹' A := by
+/-! ### The dependent-field predicate and its transport -/
+
+/-- A field law is `k`-dependent when bits at two finite index sets separated by more than `k`
+in some coordinate are independent.  This is the finite-range dependence of the Liggett--
+Schonmann--Stacey statement on the lattice `ℤ^d`. -/
+def KDependent {d : ℕ} (k : ℕ) (μ : Measure (LatticeProb.Site d → Bool)) : Prop :=
+  ∀ I J : Finset (LatticeProb.Site d),
+    (∀ a ∈ I, ∀ b ∈ J, ∃ l : Fin d, (k : ℤ) < |a l - b l|) →
+    IndepFun (fun ω : LatticeProb.Site d → Bool => fun i : I => ω i)
+      (fun ω => fun j : J => ω j) μ
+
+theorem measurable_finsetRestrict {d : ℕ} (I : Finset (LatticeProb.Site d)) :
+    Measurable (fun ω : LatticeProb.Site d → Bool => fun i : I => ω i) :=
+  measurable_pi_lambda _ fun i => measurable_pi_apply (i : LatticeProb.Site d)
+
+theorem measurable_finsetCompl {d : ℕ} (I : Finset (LatticeProb.Site d)) :
+    Measurable (fun f : I → Bool => fun i : I => !(f i)) :=
+  measurable_pi_lambda _ fun i => measurable_bool_not.comp (measurable_pi_apply i)
+
+/-- Independence transfers across a measurable carrier map: `X` and `Y` are independent under
+`μ.map T` exactly when their pullbacks are independent under `μ`. -/
+theorem indepFun_map_iff_of_measurable {α β Ω Ω' : Type*} [MeasurableSpace Ω]
+    [MeasurableSpace Ω'] [MeasurableSpace α] [MeasurableSpace β]
+    {T : Ω → Ω'} (hT : Measurable T) {X : Ω' → α} {Y : Ω' → β}
+    (hX : Measurable X) (hY : Measurable Y) (μ : Measure Ω) [IsFiniteMeasure μ] :
+    IndepFun X Y (μ.map T) ↔ IndepFun (X ∘ T) (Y ∘ T) μ := by
+  have hXT : Measurable (X ∘ T) := hX.comp hT
+  have hYT : Measurable (Y ∘ T) := hY.comp hT
+  haveI : IsFiniteMeasure (μ.map T) := by infer_instance
+  rw [indepFun_iff_map_prod_eq_prod_map_map hX.aemeasurable hY.aemeasurable,
+    indepFun_iff_map_prod_eq_prod_map_map hXT.aemeasurable hYT.aemeasurable,
+    Measure.map_map (hX.prod hY) hT, Measure.map_map hX hT, Measure.map_map hY hT]
+  rfl
+
+/-- **`KDependent` transports across the carrier map.**  A `k`-dependent field remains
+`k`-dependent after complementing every bit, because complementing bits is a measurable
+coordinatewise bijection and independence is preserved by it. -/
+theorem kDependent_map_bitCompl {d : ℕ} (k : ℕ) {μ : Measure (LatticeProb.Site d → Bool)}
+    [IsFiniteMeasure μ] (h : KDependent k μ) : KDependent k (μ.map bitCompl) := by
+  intro I J hfar
+  have h' := h I J hfar
+  refine (indepFun_map_iff_of_measurable (T := bitCompl) measurable_bitCompl
+    (measurable_finsetRestrict I) (measurable_finsetRestrict J) μ).mpr ?_
+  have := h'.comp (measurable_finsetCompl I) (measurable_finsetCompl J)
+  exact this
+
+/-! ### The complement field of a single site -/
+
+/-- The complement field exchanges the one-site events `ω s = true` and `ω s = false`. -/
+theorem compl_map_oneSite {d : ℕ} (μ : Measure (LatticeProb.Site d → Bool)) (s : LatticeProb.Site d) :
+    (μ.map bitCompl) {ω | ω s = true} = μ {ω | ω s = false} := by
+  have hs : MeasurableSet {ω : LatticeProb.Site d → Bool | ω s = true} := by
+    have h : {ω : LatticeProb.Site d → Bool | ω s = true} =
+        (fun f : LatticeProb.Site d → Bool => f s) ⁻¹' ({true} : Set Bool) := by
+      ext ω; simp
+    rw [h]
+    exact (measurable_pi_apply s) (measurableSet_singleton true)
+  rw [Measure.map_apply measurable_bitCompl hs]
+  congr 1
   ext ω
-  constructor
-  · rintro ⟨a, ha, rfl⟩
-    simpa using ha
-  · intro h
-    exact ⟨bitCompl ω, by simpa using h, by simp⟩
+  simp [bitCompl]
 
-/-- The complement image of the complement image is the original set. -/
-theorem bitCompl_image_image (A : Set (S → Bool)) : bitCompl '' (bitCompl '' A) = A := by
-  ext ω
-  constructor
-  · rintro ⟨a, ⟨b, hb, rfl⟩, rfl⟩
-    simpa using hb
-  · intro h
-    exact ⟨bitCompl ω, ⟨ω, h, rfl⟩, by simp⟩
+/-- The one-site probabilities of a probability law sum to one. -/
+theorem compl_oneSite_eq_one_sub {d : ℕ} (μ : Measure (LatticeProb.Site d → Bool))
+    [IsProbabilityMeasure μ] (s : LatticeProb.Site d) :
+    μ {ω | ω s = false} = 1 - μ {ω | ω s = true} := by
+  have hs : MeasurableSet {ω : LatticeProb.Site d → Bool | ω s = true} := by
+    have h : {ω : LatticeProb.Site d → Bool | ω s = true} =
+        (fun f : LatticeProb.Site d → Bool => f s) ⁻¹' ({true} : Set Bool) := by
+      ext ω; simp
+    rw [h]
+    exact (measurable_pi_apply s) (measurableSet_singleton true)
+  have h : {ω : LatticeProb.Site d → Bool | ω s = false} = {ω | ω s = true}ᶜ := by
+    ext ω; simp
+  rw [h, prob_compl_eq_one_sub hs]
 
-/-- The preimage of the complement image is the original set. -/
-theorem bitCompl_preimage_image (A : Set (S → Bool)) : bitCompl ⁻¹' (bitCompl '' A) = A := by
-  rw [← bitCompl_image_eq_preimage]
-  exact bitCompl_image_image A
+/-! ### The product Bernoulli field and its complement law -/
 
-/-- The bit complement is measurable, the measurable space on `Bool` being discrete. -/
-theorem measurable_bool_not : Measurable (fun b : Bool => !b) :=
-  fun _ _ => MeasurableSet.of_discrete
-
-theorem measurable_bitCompl : Measurable (bitCompl : (S → Bool) → (S → Bool)) := by
-  refine measurable_pi_lambda _ fun s => ?_
-  exact measurable_bool_not.comp (measurable_pi_apply s)
-
-theorem measurableSet_bitCompl_image {A : Set (S → Bool)} (hA : MeasurableSet A) :
-    MeasurableSet (bitCompl '' A) := by
-  rw [bitCompl_image_eq_preimage]
-  exact hA.preimage measurable_bitCompl
-
-/-! ### The dense-to-decreasing step -/
-
-/-- The dense (lower-domination) statement at the field `B` and the field law `ν`. -/
-def DenseLower (B ν : Measure (S → Bool)) : Prop :=
-  ∀ C : Set (S → Bool), MeasurableSet C → StrassenAux.IsIncreasingSet C → B C ≤ ν C
-
-/-- The thin (upper-domination) statement at the field `B` and the field law `μ`. -/
-def ThinUpper (B μ : Measure (S → Bool)) : Prop :=
-  ∀ A : Set (S → Bool), MeasurableSet A → StrassenAux.IsIncreasingSet A → μ A ≤ B A
-
-/-- **Dense domination bounds every DECREASING set from above.**  If a probability measure `ν`
-dominates `Q` on increasing sets, then on decreasing sets `Q` bounds `ν` from above: the
-complement of a decreasing set is increasing, and the probabilities of complementary events sum
-to one. -/
-theorem le_of_dense_of_isDecreasing {Q ν : Measure (S → Bool)} [IsProbabilityMeasure Q]
-    [IsProbabilityMeasure ν] (hdense : DenseLower Q ν) :
-    ∀ D : Set (S → Bool), MeasurableSet D → IsDecreasingSet D → ν D ≤ Q D := by
-  intro D hD hdec
-  have hDc : MeasurableSet Dᶜ := hD.compl
-  have hinc : StrassenAux.IsIncreasingSet Dᶜ := isIncreasingSet_compl hdec
-  have hle : Q Dᶜ ≤ ν Dᶜ := hdense Dᶜ hDc hinc
-  calc ν D = ν (Dᶜ)ᶜ := by rw [compl_compl]
-    _ = 1 - ν Dᶜ := prob_compl_eq_one_sub hDc
-    _ ≤ 1 - Q Dᶜ := tsub_le_tsub_left hle 1
-    _ = Q (Dᶜ)ᶜ := (prob_compl_eq_one_sub hDc).symm
-    _ = Q D := by rw [compl_compl]
-
-/-! ### The complement bridge -/
-
-/-- **The complement bridge.**  If a probability measure `ν` dominates the field `B` on
-increasing events (`B` might be a product field), and `μ` is the field whose bit complement has
-law `ν`, and `B` and `B'` are complementary fields (`B.map bitCompl = B'`), then `μ` is dominated
-by `B'` on increasing events.  This is the abstract form; the concrete product fields are
-`bitProduct` below. -/
-theorem thinUpper_of_denseLower_compl {B B' ν μ : Measure (S → Bool)}
-    [IsProbabilityMeasure B] [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
-    (hB : B.map bitCompl = B') (hν : μ.map bitCompl = ν) (hdense : DenseLower B ν) :
-    ThinUpper B' μ := by
-  intro A hAmeas hAinc
-  have hDmeas : MeasurableSet (bitCompl '' A) := measurableSet_bitCompl_image hAmeas
-  have hDdec : IsDecreasingSet (bitCompl '' A) := isDecreasingSet_bitCompl_image hAinc
-  have hupper : ν (bitCompl '' A) ≤ B (bitCompl '' A) :=
-    le_of_dense_of_isDecreasing hdense (bitCompl '' A) hDmeas hDdec
-  have hνA : ν (bitCompl '' A) = μ A := by
-    rw [← hν, Measure.map_apply measurable_bitCompl hDmeas, bitCompl_preimage_image]
-  have hBA : B (bitCompl '' A) = B' A := by
-    rw [← hB, Measure.map_apply measurable_bitCompl hAmeas, bitCompl_image_eq_preimage]
-  calc μ A = ν (bitCompl '' A) := hνA.symm
-    _ ≤ B (bitCompl '' A) := hupper
-    _ = B' A := hBA
-
-/-! ### The concrete Bernoulli product field -/
-
-/-- The product Bernoulli field on `S → Bool` of density `p`.  For `S = Sym2 Site` this is
-`bondLaw p`; it is the field the LSS producers are stated over. -/
+/-- The product Bernoulli field on `S → Bool` of density `p`.  For the lattice carrier
+`S = Site d` this is the product field the LSS statements are stated over. -/
 noncomputable def bitProduct (p : NNReal) (hp : p ≤ 1) (S : Type*) : Measure (S → Bool) :=
   Measure.infinitePi (fun _ : S => bernoulli p hp)
 
@@ -228,10 +265,53 @@ theorem bitProduct_map_bitCompl (p : NNReal) (hp : p ≤ 1) :
   rw [bitProduct, h, bernoulli_map_not]
   rfl
 
-/-- **The thin form from the dense form, at complementary parameters.**  If a probability
-measure `ν` dominates the product Bernoulli field of density `ρ` on increasing events, and `μ`
-is the field whose bit complement has law `ν`, then `μ` is dominated by the product Bernoulli
-field of density `1 - ρ` on increasing events. -/
+/-! ### The dense-to-decreasing step and the bridge -/
+
+/-- The dense (lower-domination) statement at the field `B` and the field law `ν`. -/
+def DenseLower (B ν : Measure (S → Bool)) : Prop :=
+  ∀ C : Set (S → Bool), MeasurableSet C → StrassenAux.IsIncreasingSet C → B C ≤ ν C
+
+/-- The thin (upper-domination) statement at the field `B` and the field law `μ`. -/
+def ThinUpper (B μ : Measure (S → Bool)) : Prop :=
+  ∀ A : Set (S → Bool), MeasurableSet A → StrassenAux.IsIncreasingSet A → μ A ≤ B A
+
+/-- **Dense domination bounds every DECREASING set from above.**  The complement of a decreasing
+set is increasing, and the probabilities of complementary events sum to one. -/
+theorem le_of_dense_of_isDecreasing {Q ν : Measure (S → Bool)} [IsProbabilityMeasure Q]
+    [IsProbabilityMeasure ν] (hdense : DenseLower Q ν) :
+    ∀ D : Set (S → Bool), MeasurableSet D → IsDecreasingSet D → ν D ≤ Q D := by
+  intro D hD hdec
+  have hDc : MeasurableSet Dᶜ := hD.compl
+  have hinc : StrassenAux.IsIncreasingSet Dᶜ := isIncreasingSet_compl hdec
+  have hle : Q Dᶜ ≤ ν Dᶜ := hdense Dᶜ hDc hinc
+  calc ν D = ν (Dᶜ)ᶜ := by rw [compl_compl]
+    _ = 1 - ν Dᶜ := prob_compl_eq_one_sub hDc
+    _ ≤ 1 - Q Dᶜ := tsub_le_tsub_left hle 1
+    _ = Q (Dᶜ)ᶜ := (prob_compl_eq_one_sub hDc).symm
+    _ = Q D := by rw [compl_compl]
+
+/-- **The complement bridge.**  If a probability measure `ν` dominates the field `B` on
+increasing events, `μ` is the field whose bit complement has law `ν`, and `B` and `B'` are
+complementary fields (`B.map bitCompl = B'`), then `μ` is dominated by `B'` on increasing
+events. -/
+theorem thinUpper_of_denseLower_compl {B B' ν μ : Measure (S → Bool)}
+    [IsProbabilityMeasure B] [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    (hB : B.map bitCompl = B') (hν : μ.map bitCompl = ν) (hdense : DenseLower B ν) :
+    ThinUpper B' μ := by
+  intro A hAmeas hAinc
+  have hDmeas : MeasurableSet (bitCompl '' A) := measurableSet_bitCompl_image hAmeas
+  have hDdec : IsDecreasingSet (bitCompl '' A) := isDecreasingSet_bitCompl_image hAinc
+  have hupper : ν (bitCompl '' A) ≤ B (bitCompl '' A) :=
+    le_of_dense_of_isDecreasing hdense (bitCompl '' A) hDmeas hDdec
+  have hνA : ν (bitCompl '' A) = μ A := by
+    rw [← hν, Measure.map_apply measurable_bitCompl hDmeas, bitCompl_preimage_image]
+  have hBA : B (bitCompl '' A) = B' A := by
+    rw [← hB, Measure.map_apply measurable_bitCompl hAmeas, bitCompl_image_eq_preimage]
+  calc μ A = ν (bitCompl '' A) := hνA.symm
+    _ ≤ B (bitCompl '' A) := hupper
+    _ = B' A := hBA
+
+/-- **The thin form from the dense form, at complementary parameters.** -/
 theorem thinUpper_bitProduct_compl {ρ : NNReal} (hρ : ρ ≤ 1) {ν μ : Measure (S → Bool)}
     [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     (hν : μ.map bitCompl = ν) (hdense : DenseLower (bitProduct ρ hρ S) ν) :
@@ -239,8 +319,7 @@ theorem thinUpper_bitProduct_compl {ρ : NNReal} (hρ : ρ ≤ 1) {ν μ : Measu
   thinUpper_of_denseLower_compl (bitProduct_map_bitCompl (S := S) ρ hρ) hν hdense
 
 /-- **The thin form at `1/8` from the dense form at `7/8`.**  The parameter arithmetic is the
-complement `1 - 7/8 = 1/8`; this is the form in which the rotor repository uses the thin LSS
-input, with one-site probability at most `2ε` small and dominating Bernoulli `1/8`. -/
+complement `1 - 7/8 = 1/8`. -/
 theorem thinUpper_eighth_of_dense_seven_eighths {ν μ : Measure (S → Bool)}
     [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     (hν : μ.map bitCompl = ν)
@@ -248,5 +327,33 @@ theorem thinUpper_eighth_of_dense_seven_eighths {ν μ : Measure (S → Bool)}
     ThinUpper (bitProduct (1 / 8) one_eighth_le_one S) μ := by
   simpa only [one_sub_seven_eighths] using
     (thinUpper_bitProduct_compl (S := S) (ρ := 7 / 8) seven_eighths_le_one hν hdense)
+
+/-- **The deterministic bridge, parameterised by the exact transported dense-domination
+hypothesis.**  The hypothesis `hdense` is the dense (lower-domination) statement on the lattice
+carrier, as supplied by the dense LSS half; applied to the complement field it yields the thin
+(upper-domination) statement for the original field at the complementary parameter `1/8`.  The
+dependence and density preconditions of the dense statement are met on the complement field by
+`kDependent_map_bitCompl` and `compl_map_oneSite`. -/
+theorem thinUpper_of_transported_dense {d : ℕ} (p : ℝ)
+    (hdense : ∀ ν : Measure (LatticeProb.Site d → Bool), IsProbabilityMeasure ν →
+      KDependent 2 ν →
+      (∀ s : LatticeProb.Site d, ENNReal.ofReal p ≤ ν {ω | ω s = true}) →
+      DenseLower (bitProduct (7 / 8) seven_eighths_le_one (LatticeProb.Site d)) ν)
+    {μ : Measure (LatticeProb.Site d → Bool)} [IsProbabilityMeasure μ]
+    (hKD : KDependent 2 μ)
+    (hsite : ∀ s : LatticeProb.Site d, ENNReal.ofReal p ≤ μ {ω | ω s = false}) :
+    ThinUpper (bitProduct (1 / 8) one_eighth_le_one (LatticeProb.Site d)) μ := by
+  haveI : IsProbabilityMeasure (μ.map bitCompl) :=
+    Measure.isProbabilityMeasure_map measurable_bitCompl.aemeasurable
+  have hKDν : KDependent 2 (μ.map bitCompl) := kDependent_map_bitCompl 2 hKD
+  have hsiteν : ∀ s : LatticeProb.Site d,
+      ENNReal.ofReal p ≤ (μ.map bitCompl) {ω | ω s = true} := by
+    intro s
+    rw [compl_map_oneSite]
+    exact hsite s
+  have hd : DenseLower (bitProduct (7 / 8) seven_eighths_le_one (LatticeProb.Site d))
+      (μ.map bitCompl) :=
+    hdense (μ.map bitCompl) inferInstance hKDν hsiteν
+  exact thinUpper_eighth_of_dense_seven_eighths (S := LatticeProb.Site d) rfl hd
 
 end LatticeProb.Percolation
