@@ -365,8 +365,6 @@ library.
 #print axioms LatticeProb.Sobolev.hasCompactSupport_convReal
 #print axioms LatticeProb.Sobolev.contDiff_convReal
 #print axioms LatticeProb.Sobolev.frechetKolmogorovHInt_of_mollify_and_compact
-#print axioms LatticeProb.Sobolev.hasCompactSupport_convReal
-#print axioms LatticeProb.Sobolev.contDiff_convReal
 #print axioms LatticeProb.Sobolev.fourier_translate_sub_lift
 #print axioms LatticeProb.Sobolev.bandLimitedPrecompact_of_frechetKolmogorov
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_bandLimitedPrecompact
