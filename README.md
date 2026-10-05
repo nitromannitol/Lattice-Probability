@@ -323,6 +323,12 @@ the field with zero boundary values on a finite set `C` as
 * `LatticeProb.fderiv_log`, `LatticeProb.gaussianLogSobolevGradTensorStep_of_prodStep`: the
   chain rule for `log` and the reduction of the Γ tensorization step to the
   abstract product step.
+* `LatticeProb.gaussianLogSobolevGrad_all_of_one_of_prodStep`,
+  `LatticeProb.gaussianLogSobolev_all_of_one_of_prodStep`,
+  `LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep`: the Γ-form chain composed to the
+  general-`n` log-Sobolev and Herbst bounds, conditional on the one-dimensional Γ-form, the
+  abstract product step and the named regularity bridge `GaussianLogSobolevGradToLipschitz`
+  (`LatticeProb/Prob/GaussianLogSobolevGeneral.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal

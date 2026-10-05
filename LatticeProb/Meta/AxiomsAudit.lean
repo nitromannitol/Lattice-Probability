@@ -148,6 +148,9 @@ library.
 #print axioms LatticeProb.hasFDerivAt_integral_marginal
 #print axioms LatticeProb.fderiv_log
 #print axioms LatticeProb.gaussianLogSobolevGradTensorStep_of_prodStep
+#print axioms LatticeProb.gaussianLogSobolevGrad_all_of_one_of_prodStep
+#print axioms LatticeProb.gaussianLogSobolev_all_of_one_of_prodStep
+#print axioms LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
