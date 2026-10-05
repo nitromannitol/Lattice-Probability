@@ -264,6 +264,10 @@ the field with zero boundary values on a finite set `C` as
   For a family subadditive along a transformation that preserves a finite
   measure and bounded below by `c n`, `g_n / n` converges almost everywhere,
   and the means `(∫ g_n) / n` converge to their infimum.
+* `LatticeProb.kingman_array`: Kingman's theorem in array form: for a nonnegative integrable measurable
+  array `X m n` over a probability space, stationary under a measure-preserving `θ`
+  (`X m n ∘ θ = X (m+1) (n+1)`) and subadditive in the middle index, `X 0 n / n` converges almost
+  everywhere to a measurable, almost everywhere `θ`-invariant limit.
 * `LatticeProb.akcoglu_krengel_mean`: the mean half of the multiparameter
   subadditive ergodic theorem of Akcoglu and Krengel, along cubes. A set
   function on boxes of `ℤ^d`, stationary under a measure-preserving action of
@@ -365,6 +369,107 @@ the field with zero boundary values on a finite set `C` as
   route, the generator/heat equation `∂_t P_t f = L P_t f`; it is a `Prop`, never
   an axiom, and it is what remains of the `n = 1` Gaussian log-Sobolev
   inequality beyond the semigroup layer built here.
+* `LatticeProb.ouHeatEquation_holds`: the named input above, proved
+  (`LatticeProb/Prob/MehlerSmoothing.lean`): for the Mehler smoothing
+  `U_a f (w) = ∫ f (w cos a + z sin a) dγ(z)` of a bounded Borel `f`,
+  `LatticeProb.mehlerSmooth_iteratedDeriv` gives all derivatives
+  `U_a f ^{(r)} = (cot a)^r ∫ f (…) He_r dγ`, `mehlerSmooth_contDiff` that it is `C^∞`, and
+  `mehlerSmooth_hasDerivAt_angle` the angle equation `∂_a U_a f = tan a (U_a f'' − w U_a f')`
+  for `f ∈ C²_b`.  The log-Sobolev modules still carry `OUHeatEquation` as a hypothesis.
+
+**Multivariate Berry–Esseen, orthant route (Raič, *Bernoulli* 25 (2019), Thm 1.3).**
+Raič's Theorem 1.3 is proved here (`mvbe_thmR`) for regular classes of rounded orthants and their linear
+images, and so is the comparison of the frozen `Sandpile.External.MultivariateBerryEsseen`
+(`mvbe_frozenQuarter_unconditional`, with the frozen factor `m^{1/4}`; with the factor `m`:
+`mvbe_frozenShape_linear_unconditional`).  The one input that Raič takes from his Theorem 1.2, the Gaussian
+perimeter bound `MvbeOrthantPerimeterQuarter` for the rounded orthants, is proved too
+(`mvbe_orthantPerimeterQuarter_proved`), by an elementary argument that avoids the coarea formula:
+the exact Stein-type identity `s f_N(s) = E[V; N > s]` for the distance `N` to the orthant, a tilted
+Cauchy-Schwarz chain, and a two-regime estimate, giving the true order `O(1 + √log m)`.
+
+* `LatticeProb.MvbeRegularClass`, `LatticeProb.mvbeRoundedRegularClass`: Raič's assumptions
+  (A1)–(A8) as a structure, and the class of rounded orthants `{ρ_h ≤ s}` as a regular
+  class with `κ = 1`; `LatticeProb.mvbeUnitGradAE_volume`: `ρ_h` has unit gradient a.e.
+* `LatticeProb.mvbe_perim_stdGaussian_layer_le`: for a 1-Lipschitz coordinatewise monotone
+  `ρ` with unit gradient a.e., `γ{a < ρ ≤ b} ≤ (m / √(2π)) (b − a)` (linear in `m`).
+* `LatticeProb.mvbe_keyEstimate_optimised`: the real-analysis core of Raič's Lemma 2.7;
+  `LatticeProb.mvbe_lemma_2_5`: the Gaussian tensor bounds `|∫ f ∇^r φ [u^r]| ≤ c_r M ‖u‖^r`.
+* `LatticeProb.mvbeRoundedRegularClass_gammaStar_le`: the generalised Gaussian perimeter of
+  the rounded-orthant class is at most `m / √(2π)`.
+* `LatticeProb.mvbe_gaussian_layer_diff_le`, `mvbe_gaussian_diff_layer_le`: Raič's Lemma 2.2,
+  `N(μ,S)(A^{ε|ρ} ∖ A) ≤ γ*(C) ε/σ` for any regular class `C` when `S ⪰ σ² I`; and
+  `LatticeProb.MvbeRegularClass.image`, `image_gammaStar_le_max`: the image class `{L A}` is a
+  regular class with the same `κ` and perimeter at most `max(1,‖L‖) ‖L⁻¹‖ γ*(C)`.
+* `LatticeProb.MvbeRegularClass.raic_lemma_2_1`: the Bentkus smoothing `f = g(ρ_A/ε)`, `C¹` with
+  `4(1+κ)/ε²`-Lipschitz gradient, for regular classes in which `{ρ_A < 0}` is open
+  (`MvbeNegOpen`; Lemma 2.1 as printed needs this extra hypothesis, which holds for the
+  rounded orthants and is preserved by images); the second derivative vanishes a.e. off the layer.
+* `LatticeProb.mehlerN_contDiff`, `mehlerN_iteratedDeriv_line`: the Mehler smoothing in dimension
+  `d` is `C^∞` with the Hermite derivative formulas; `LatticeProb.mehlerI_hasDerivAt`,
+  `mehlerI_interpolation`: for `f ∈ C²_b`, `∂_a U_a f = tan a · (Δ − w·∇) U_a f` and
+  `E f(W) − γ f = −∫_0^{π/2} tan a · E[(Δ − w·∇) U_a f (W)] da` (Raič (2.5)).
+* `LatticeProb.mvbe_lemma_2_6`: Raič's Lemma 2.6, `|N(μ,Σ)[∇^r U_α f](u^r)| ≤ c_r M cos^rα ‖u‖^r / σ^r`
+  for `r ≤ 3`, `0 < α ≤ π/2`, `σ ≤ 1`, `σ I ≤ Σ^{1/2}` (false for `σ > 1`).
+* `LatticeProb.mvbe_H_abs_le_large_angle`, `mvbe_small_angle_bound`, `mvbe_class_deviation`:
+  the two angle regimes of Raič's Lemma 2.7,
+  `|E⟨∇³U_a f(W), u^{⊗3}⟩| ≤ c₃cos³a/(2σ³) + c₃ D cot³a` when the level sets of `f` are class members
+  and `W` is `D`-close to `N(μ,Σ)` on the class, and
+  `≤ Λ c₁ (cos³a / sin a)(M₀ + 2D)` for `f ∈ C²_b` whose Hessian lives on a layer of mass `M₀`.
+* `LatticeProb.mvbeMollify_exists_euclidean`: mollification of a `C¹` function with `L`-Lipschitz
+  gradient into a smooth `g` with `‖D²g‖ ≤ L`, `|g − f| ≤ L η²`, and `D²g = 0` where `f` is locally
+  constant (replaces Rademacher's theorem in the proof of Lemma 2.7).
+* `LatticeProb.mvbe_frozenShape_linear_unconditional`: the multivariate Berry–Esseen comparison for
+  orthants, in the shape of the cited `Sandpile.External.MultivariateBerryEsseen` but with `C m` in place
+  of `C m^{1/4}`: for i.i.d. mean-zero summands with third moment `≤ M var^{3/2}` and coefficients whose
+  covariance matrix has quadratic form in `[1−δ, 1+δ]`, the law of the linear forms and the matching
+  centred Gaussian differ on every orthant by at most `C m var^{3/2} ∑_i |a(i)|³`.  It follows from
+  `mvbe_thmR`, the whitening reduction, the image-class lemma and the linear perimeter bound
+  `mvbeRoundedRegularClass_gammaStar_le`.  `LatticeProb.mvbe_frozenQuarter_of_perimeter` gives the
+  frozen `m^{1/4}` statement itself from one named proposition, `MvbeOrthantPerimeterQuarter`
+  (`γ*` of the rounded orthants is `O(m^{1/4})`, a consequence of Raič's Theorem 1.2, which needs
+  the coarea formula; it is now proved, see below).
+* `LatticeProb.mvbe_orthantPerimeterQuarter_proved`, `LatticeProb.mvbe_frozenQuarter_unconditional`:
+  the Gaussian perimeter of the rounded orthants is `O(m^{1/4})` (indeed `O(1 + √log m)`), hence the
+  multivariate Berry–Esseen comparison for orthants holds exactly as frozen, with the factor `m^{1/4}`.
+  The pieces: `perim_stdGaussian_inner_layer_le` (the max-coordinate layer, an exact product formula),
+  `perim_G1`, `perim_G2`, `perim_G3`, `perim_G4` (Stein-type identities on the product Gaussian and the band
+  corollary), `perim_tilt_chain` (tilted Cauchy-Schwarz), `perimR1_rhs_le`, `perimR2_rhs_le` (two regimes),
+  `perimP_psi_bound` and `perimB_quarter` (assembly).
+* `LatticeProb.mvbe_thmR`: **Raič's Theorem 1.3, form (1.4)**, unconditionally and with existential
+  absolute constants: for every regular class `C` (assumptions (A1)–(A8), `{ρ_A < 0}` open) of finite
+  Gaussian perimeter `γ*`, independent mean-zero summands in `ℝ^d` with identity total covariance and
+  finite third moments, and every `A ∈ C`,
+  `|P(W ∈ A) − N(0,I){A}| ≤ max(c₀, 1 + c₁ γ* √(1+κ)) ∑ E‖X_i‖³`.  The proof is Götze's bootstrapping
+  (`mvbeK`, `mvbe_main_step`), using the Slepian interpolation, the Stein expectation, Lemma 2.7
+  and the image-class lemma.
+* `LatticeProb.mvbe_keyLemma_proved`: **Raič's Lemma 2.7.** For a regular class with `{ρ_A < 0}`
+  open and finite Gaussian perimeter `γ*`, a member `A`, `ε > 0`, `f ∈ {f_A^{ε}, f_A^{-ε}}`, and a
+  random vector `W` that is `D`-close to `N(μ, S)` on the class (`σ I ≤ S^{1/2}`, `σ ≤ 1`), there is
+  a measurable majorant `b` of `|E⟨∇³U_a f(W), u^{⊗3}⟩|` (uniformly in `‖u‖ ≤ 1`) with
+  `∫_0^{π/2} b(a) tan a da ≤ c₃/(6σ³) + √(2(1+κ)c₁c₃) (γ*/σ + 4D/ε)`.  Assembled from
+  `mvbe_smooth_small_angle_outer` / `_inner` (the small-angle estimate (2.17) for the Bentkus
+  smoothing, by mollification), `mvbe_smoothing_large_angle`, and `mvbe_keyEstimate_optimised`.
+* `LatticeProb.mvbe_polarization`, `LatticeProb.mvbe_stein_expectation`: polarisation of
+  symmetric trilinear forms with constant `9/2`, and Götze's identity (Raič Lemma 2.4)
+  for `E[Δg(W) − ⟨∇g(W), W⟩]` of a sum of independent mean-zero vectors with identity
+  covariance, for `g ∈ C³_b`.
+* `LatticeProb.mvbe_multivariateGaussian_add`, `mvbe_gaussian_decomp`, `mvbe_layer_of_conv`:
+  sums of independent Gaussians and the layer decomposition `N(μ,S) = σ Z + N(0, S − σ² I)`.
+* `LatticeProb.mvbe_frozenShape_of_whitenedBound`: the frozen multivariate Berry–Esseen
+  shape (and, as corollaries, its `m^{1/4}` form `mvbe_frozenQuarter_of_whitenedBound`)
+  follows from the whitened identity-covariance bound `MvbeWhitenedBound`.
+
+**Pitt's Gaussian association theorem.**  `LatticeProb.pitt_gaussian_fkg`: a centred Gaussian family
+`X : T → Ω → ℝ` (any index set) with nonnegative integrable covariances is positively associated: for
+finitely many indices and bounded Borel coordinatewise nondecreasing `f`, `g`,
+`E f(Y) E g(Y) ≤ E f(Y) g(Y)` with `Y = (X (q i))_i`, including singular covariance matrices
+(Pitt, Ann. Probab. 10 (1982); the statement of `Sandpile.External.PittGaussianFKG`).  The proof runs
+`pitt_covRep` (covariance representation `Cov(F,G) = ∫_0^{π/2} sin a ∑_i E[∂_iF(Z) E_W ∂_iG(cos a Z + sin a W)] da`
+for the standard Gaussian, from the Mehler interpolation), `pitt_smooth` (smooth monotone functions,
+`A = √S`), `pitt_nondeg` (bounded Borel functions, positive definite `S`, by mollification) and `pitt_full`
+(singular `S`, by semicontinuous envelopes along `S·1` and the coupling `X + √ε Z'`); `pitt_fullStmt` is the
+vector form.
+
 * `LatticeProb.ae_subset_iUnion_iInter_of_tendsto_ae`,
   `LatticeProb.measure_le_of_tendsto_ae_of_isOpen`,
   `LatticeProb.measure_le_of_tendsto_ae_of_lt`: the a.e. Fatou limit: an almost
@@ -698,7 +803,7 @@ determined by finitely many coordinates of an infinite product.
 
 ## Guarantees
 
-- **No `sorry`** in the library.  Each of the three Mathlib-only comparator
+- **No `sorry`** in the library.  Each of the six Mathlib-only comparator
   challenges under `LatticeProbAudit/` contains its single intentional
   statement-level `sorry`, which the corresponding solution file proves.
   `python3 tools/check_warnings.py` checks that the build of `LatticeProb`
@@ -706,16 +811,14 @@ determined by finitely many coordinates of an infinite product.
 - **No custom `axiom`.**  Every declaration of the library reduces to
   `mathlib`'s three standard foundational axioms, `propext`,
   `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py` checks
-  this for all 5,112 declarations, and
+  this for all 7,305 declarations, and
   [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
   prints the axioms of the principal theorems.  The results cited from the
   literature are hypotheses, not axioms.
-- **Independent check of the statements.** Three principal theorems are
-  restated using only Mathlib, with no library definitions, in
-  [`LatticeProbAudit/Kingman/Challenge.lean`](LatticeProbAudit/Kingman/Challenge.lean),
-  [`LatticeProbAudit/GFF/Challenge.lean`](LatticeProbAudit/GFF/Challenge.lean)
-  and
-  [`LatticeProbAudit/BinomialLocalCLT/Challenge.lean`](LatticeProbAudit/BinomialLocalCLT/Challenge.lean).
+- **Independent check of the statements.** Six principal theorems are
+  restated using only Mathlib, with no library definitions, in the `Challenge.lean` files of
+  [`LatticeProbAudit/`](LatticeProbAudit/): `Kingman`, `GFF`, `BinomialLocalCLT`, `PittGaussianFKG`,
+  `MultivariateBerryEsseen` and `MultivariateBerryEsseenQuarter`.
   The comparator workflow submits each challenge and its solution to
   [leanprover/comparator](https://github.com/leanprover/comparator), which
   checks that the two statements have identical elaborated types and that the
@@ -730,15 +833,18 @@ determined by finitely many coordinates of an infinite product.
   `023ce7d62a05` and Cli `88679d088c97`.  The dependent repositories use the
   same pin.
 
-The three pairs are `Kingman` (the subadditive ergodic theorem, both halves),
+The six pairs are `Kingman` (the subadditive ergodic theorem, both halves),
 `GFF` (the killed Green function is positive semidefinite and is the
 covariance of a centred Gaussian measure, with the killed Green function
 rebuilt from Mathlib primitives) and `BinomialLocalCLT` (the binomial local
-central limit theorem with its `1/m` error).  Each challenge contains one
+central limit theorem with its `1/m` error), `PittGaussianFKG` (Pitt's Gaussian association theorem for
+Gaussian families), `MultivariateBerryEsseen` (the multivariate Berry-Esseen comparison for orthants with
+the factor `m`) and `MultivariateBerryEsseenQuarter` (the same with the frozen factor `m^{1/4}`).  Each
+challenge contains one
 intentional statement-level `sorry`, which the corresponding `Solution.lean`
 fills from the library.  The configurations
 `LatticeProbAudit/*/comparator.json` are for
-[`leanprover/comparator`](https://github.com/leanprover/comparator).  All three
+[`leanprover/comparator`](https://github.com/leanprover/comparator).  All six
 solutions build and depend only on `propext`, `Classical.choice` and
 `Quot.sound`, and the comparator checks that each solution statement is
 exactly the challenge statement.  Both
@@ -750,9 +856,9 @@ recorded in [`LatticeProbAudit/COMPARATOR_RUNS.md`](LatticeProbAudit/COMPARATOR_
 
 ## Size
 
-About 111,000 lines of Lean in 484 modules (the root `LatticeProb.lean` and 483
-modules under `LatticeProb/`), of which about 87,000 lines are code once
-comments and blank lines are removed, with 5,112 declarations, on top of
+About 157,000 lines of Lean in 653 modules (the root `LatticeProb.lean` and 652
+modules under `LatticeProb/`), of which about 122,000 lines are code once
+comments and blank lines are removed, with 7,305 declarations, on top of
 mathlib.  The count excludes the comparator surface in `LatticeProbAudit/`.
 
 ## Building
