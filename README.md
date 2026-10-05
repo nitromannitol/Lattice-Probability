@@ -891,7 +891,7 @@ determined by finitely many coordinates of an infinite product.
 
 ## Guarantees
 
-- **No `sorry`** in the library.  Each of the three Mathlib-only comparator
+- **No `sorry`** in the library.  Each of the seven Mathlib-only comparator
   challenges under `LatticeProbAudit/` contains its single intentional
   statement-level `sorry`, which the corresponding solution file proves.
   `python3 tools/check_warnings.py` checks that the build of `LatticeProb`
@@ -923,15 +923,18 @@ determined by finitely many coordinates of an infinite product.
   `023ce7d62a05` and Cli `88679d088c97`.  The dependent repositories use the
   same pin.
 
-The three pairs are `Kingman` (the subadditive ergodic theorem, both halves),
+The seven pairs are `Kingman` (the subadditive ergodic theorem, both halves),
 `GFF` (the killed Green function is positive semidefinite and is the
 covariance of a centred Gaussian measure, with the killed Green function
 rebuilt from Mathlib primitives) and `BinomialLocalCLT` (the binomial local
-central limit theorem with its `1/m` error).  Each challenge contains one
+central limit theorem with its `1/m` error), `NormalComparison` (the Li-Shao normal comparison inequality for the
+orthant), `BerryEsseen` (the one-dimensional Berry-Esseen theorem for independent non-identical summands),
+`PittGaussianFKG` (Pitt's Gaussian association theorem for Gaussian families) and `MultivariateBerryEsseen`
+(the multivariate Berry-Esseen comparison for orthants with the factor `m`).  Each challenge contains one
 intentional statement-level `sorry`, which the corresponding `Solution.lean`
 fills from the library.  The configurations
 `LatticeProbAudit/*/comparator.json` are for
-[`leanprover/comparator`](https://github.com/leanprover/comparator).  All three
+[`leanprover/comparator`](https://github.com/leanprover/comparator).  All seven
 solutions build and depend only on `propext`, `Classical.choice` and
 `Quot.sound`, and the comparator checks that each solution statement is
 exactly the challenge statement.  Both
