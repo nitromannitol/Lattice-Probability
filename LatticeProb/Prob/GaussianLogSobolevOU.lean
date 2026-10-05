@@ -280,6 +280,78 @@ theorem ouSemigroup_add (s t : ℝ) (hs : 0 ≤ s) (ht : 0 ≤ t) (f : ℝ → �
   rw [hmap2]
   exact integral_map (by fun_prop) (hmap2 ▸ hf').aestronglyMeasurable
 
+/-- **The intertwining identity** `∂_x P_t f = e^{-t} P_t (∂_x f)`.  For a Lipschitz `f` with
+derivative `g` bounded by the Lipschitz constant, the derivative of `P_t f` is `e^{-t}` times
+`P_t g`.  The proof differentiates under the integral sign
+(`hasDerivAt_integral_of_dominated_loc_of_deriv_le`) with the dominating function `e^{-t} L`. -/
+theorem hasDerivAt_ouSemigroup (t : ℝ) (f g : ℝ → ℝ) (L : ℝ) (hL : 0 ≤ L)
+    (hf : LipschitzWith ⟨L, hL⟩ f) (hderiv : ∀ y, HasDerivAt f (g y) y)
+    (hg : ∀ y, |g y| ≤ L) (hgm : Measurable g) (x : ℝ) :
+    HasDerivAt (ouSemigroup t f) (Real.exp (-t) * ouSemigroup t g x) x := by
+  set a : ℝ := Real.exp (-t) with ha
+  set b : ℝ := Real.sqrt (1 - Real.exp (-2 * t)) with hb
+  have hapos : 0 < a := Real.exp_pos _
+  have hb1 : |b| ≤ 1 := by
+    rw [abs_of_nonneg (Real.sqrt_nonneg _), Real.sqrt_le_one, sub_le_iff_le_add]
+    exact le_add_of_nonneg_right (Real.exp_nonneg _)
+  have hmem : MemLp (fun z : ℝ => |z|) 2 (gaussianReal 0 1) :=
+    (memLp_id_gaussianReal (μ := 0) (v := 1) 2).norm
+  have hFint : Integrable (fun z : ℝ => f (a * x + b * z)) (gaussianReal 0 1) := by
+    refine Integrable.mono' ((integrable_const (|f 0| + L * |a * x|)).add
+      (hmem.integrable (by norm_num) |>.const_mul L))
+      (hf.continuous.aestronglyMeasurable.comp_aemeasurable (by fun_prop)) ?_
+    filter_upwards with z
+    have h1 : |f (a * x + b * z) - f 0| ≤ L * |a * x + b * z| := by
+      have h := hf.dist_le_mul (a * x + b * z) 0
+      rw [Real.dist_eq, Real.dist_eq, sub_zero] at h
+      convert h using 2
+      exact (NNReal.coe_mk L hL).symm
+    have h2 : |a * x + b * z| ≤ |a * x| + |z| := by
+      calc |a * x + b * z| ≤ |a * x| + |b * z| := abs_add_le _ _
+        _ = |a * x| + |b| * |z| := by simp only [abs_mul]
+        _ ≤ |a * x| + 1 * |z| :=
+            add_le_add le_rfl (mul_le_mul_of_nonneg_right hb1 (abs_nonneg _))
+        _ = |a * x| + |z| := by ring
+    have h3 : |f (a * x + b * z)| ≤ |f 0| + L * |a * x| + L * |z| := by
+      have h4 : |f (a * x + b * z)| ≤ L * (|a * x| + |z|) + |f 0| := by
+        calc |f (a * x + b * z)|
+            = |(f (a * x + b * z) - f 0) + f 0| := by ring_nf
+          _ ≤ |f (a * x + b * z) - f 0| + |f 0| := abs_add_le _ _
+          _ ≤ L * (|a * x| + |z|) + |f 0| := by
+              have := h1.trans (mul_le_mul_of_nonneg_left h2 hL)
+              linarith
+      nlinarith [h4]
+    rw [Real.norm_eq_abs]
+    exact h3
+  have hF'meas : AEStronglyMeasurable (fun z : ℝ => g (a * x + b * z) * a) (gaussianReal 0 1) :=
+    ((hgm.comp (by fun_prop)).aestronglyMeasurable).mul_const a
+  have hmain := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (s := Set.univ) (x₀ := x) (μ := gaussianReal 0 1)
+    (F := fun s z => f (a * s + b * z))
+    (F' := fun s z => g (a * s + b * z) * a)
+    (bound := fun _ : ℝ => a * L)
+    Filter.univ_mem
+    (by filter_upwards with s
+        exact (hf.continuous.aestronglyMeasurable.comp_aemeasurable (by fun_prop)))
+    hFint
+    hF'meas
+    (by
+      filter_upwards with z s _
+      rw [Real.norm_eq_abs, abs_mul, abs_of_pos hapos, mul_comm]
+      exact mul_le_mul_of_nonneg_left (hg _) hapos.le)
+    (integrable_const _)
+    (by
+      filter_upwards with z s _
+      have h1 : HasDerivAt (fun s : ℝ => a * s + b * z) a s := by
+        simpa using ((hasDerivAt_id s).const_mul a).add_const (b * z)
+      exact (hderiv (a * s + b * z)).comp s h1)
+  have hval : ∫ z, g (a * x + b * z) * a ∂(gaussianReal 0 1) = a * ouSemigroup t g x := by
+    rw [integral_mul_const]
+    simp only [ouSemigroup]
+    ring
+  rw [hval] at hmain
+  exact hmain.2
+
 /-- **The generator/heat equation** `∂_t P_t f = L P_t f`, for smooth compactly supported `f`.
 This is the named open input: it packages the heat equation together with the two weighted
 integrations by parts and the `Γ₂` identity, which are the missing Mathlib layer recorded in
