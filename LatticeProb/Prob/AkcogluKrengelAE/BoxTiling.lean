@@ -277,6 +277,32 @@ theorem ae_tendsto_bAvg_movingTarget_seq {μ : Measure Ω} [IsProbabilityMeasure
     _ < ε := by rw [Real.dist_eq]; linarith
 
 
+omit [MeasurableSpace Ω] in
+/-- Iterates of two commuting maps commute. -/
+theorem iterate_comm {T S : Ω → Ω} (hcomm : ∀ ω, T (S ω) = S (T ω)) (k : ℕ) (ω : Ω) :
+    (T^[k]) (S ω) = S ((T^[k]) ω) := by
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ih, hcomm]
+
+omit [MeasurableSpace Ω] in
+/-- `bLimsup T f` commutes with a map `S` that commutes with `T`. -/
+theorem bLimsup_comp_apply {T S : Ω → Ω} (hcomm : ∀ ω, T (S ω) = S (T ω))
+    (f : Ω → ℝ) :
+    bLimsup T f ∘ S = bLimsup T (f ∘ S) := by
+  funext ω
+  have h : (fun n => bAvg T f n (S ω)) = fun n => bAvg T (f ∘ S) n ω := by
+    funext n
+    unfold bAvg birkhoffSum
+    congr 1
+    apply Finset.sum_congr rfl
+    intro k _
+    rw [iterate_comm hcomm k ω]
+    rfl
+  simp only [bLimsup, Function.comp_apply]
+  rw [h]
+
 /-- For each coordinate set `s`, the box average `boxAvg σ h s (m N)` converges a.e., as
 `N → ∞` along any sequence of boxes all of whose sides over `s` tend to infinity, to a bounded
 measurable limit depending only on `s` (not on the sequence). -/
@@ -287,37 +313,49 @@ theorem exists_ae_tendsto_boxAvg {d : ℕ} {σ : Site d → Ω → Ω} {μ : Mea
     {h : Ω → ℝ} (hh : Measurable h) {M : ℝ} (hM : 0 ≤ M) (hb : ∀ x, |h x| ≤ M)
     (s : Finset (Fin d)) :
     ∃ G : Ω → ℝ, Measurable G ∧ (∀ x, |G x| ≤ M) ∧
-      ∀ (m : ℕ → Fin d → ℕ), (∀ i ∈ s, Tendsto (fun N => m N i) atTop atTop) →
-        ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω)) := by
+      (∀ (m : ℕ → Fin d → ℕ), (∀ i ∈ s, Tendsto (fun N => m N i) atTop atTop) →
+        ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω))) ∧
+      (∀ j ∈ s, G ∘ σ (unit j) = G) := by
   induction s using Finset.induction with
   | empty =>
-    refine ⟨fun ω => h (σ (natToSite 0) ω), hh.comp (hσ _).measurable, fun x => hb _, ?_⟩
-    intro m _hm
-    filter_upwards with ω
-    have hconst : (fun N : ℕ => boxAvg σ h ∅ (m N) ω) =
-        fun _ : ℕ => h (σ (natToSite 0) ω) := by
-      funext N; exact boxAvg_empty σ h (m N) ω
-    rw [hconst]; exact tendsto_const_nhds
+    refine ⟨fun ω => h (σ (natToSite 0) ω), hh.comp (hσ _).measurable, fun x => hb _,
+      ?_, ?_⟩
+    · intro m _hm
+      filter_upwards with ω
+      have hconst : (fun N : ℕ => boxAvg σ h ∅ (m N) ω) =
+          fun _ : ℕ => h (σ (natToSite 0) ω) := by
+        funext N; exact boxAvg_empty σ h (m N) ω
+      rw [hconst]; exact tendsto_const_nhds
+    · intro j hj; exact absurd hj (Finset.notMem_empty j)
   | insert i s hi ih =>
-    obtain ⟨G, hGm, hGb, hGconv⟩ := ih
+    obtain ⟨G, hGm, hGb, hGconv, hinv⟩ := ih
     refine ⟨bLimsup (σ (unit i)) G, measurable_bLimsup (hσ _).measurable hGm,
-      fun x => abs_bLimsup_le_of_abs_le hM hGb x, ?_⟩
-    intro m hm
-    have hmi : Tendsto (fun N => m N i) atTop atTop := hm i (Finset.mem_insert_self i s)
-    have hms : ∀ j ∈ s, Tendsto (fun N => m N j) atTop atTop :=
-      fun j hj => hm j (Finset.mem_insert_of_mem hj)
-    have hconv : ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω)) :=
-      hGconv m hms
-    have hmeas : ∀ N, Measurable (boxAvg σ h s (m N)) :=
-      fun N => measurable_boxAvg hσ hh s (m N)
-    have hbdd : ∀ N x, |boxAvg σ h s (m N) x| ≤ M :=
-      fun N x => abs_boxAvg_le σ h hM hb s (m N) x
-    have hmt := ae_tendsto_bAvg_movingTarget_seq (hσ (unit i)) hM hmeas hGm hbdd hGb hmi hconv
-    filter_upwards [hmt] with ω hω
-    have heq : (fun N => boxAvg σ h (insert i s) (m N) ω)
-        = fun N => bAvg (σ (unit i)) (boxAvg σ h s (m N)) (m N i) ω := by
-      funext N; exact boxAvg_insert_eq_bAvg_boxAvg hσadd h s i hi (m N) ω
-    rw [heq]; exact hω
+      fun x => abs_bLimsup_le_of_abs_le hM hGb x, ?_, ?_⟩
+    · intro m hm
+      have hmi : Tendsto (fun N => m N i) atTop atTop := hm i (Finset.mem_insert_self i s)
+      have hms : ∀ j ∈ s, Tendsto (fun N => m N j) atTop atTop :=
+        fun j hj => hm j (Finset.mem_insert_of_mem hj)
+      have hconv : ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω)) :=
+        hGconv m hms
+      have hmeas : ∀ N, Measurable (boxAvg σ h s (m N)) :=
+        fun N => measurable_boxAvg hσ hh s (m N)
+      have hbdd : ∀ N x, |boxAvg σ h s (m N) x| ≤ M :=
+        fun N x => abs_boxAvg_le σ h hM hb s (m N) x
+      have hmt := ae_tendsto_bAvg_movingTarget_seq (hσ (unit i)) hM hmeas hGm hbdd hGb hmi hconv
+      filter_upwards [hmt] with ω hω
+      have heq : (fun N => boxAvg σ h (insert i s) (m N) ω)
+          = fun N => bAvg (σ (unit i)) (boxAvg σ h s (m N)) (m N i) ω := by
+        funext N; exact boxAvg_insert_eq_bAvg_boxAvg hσadd h s i hi (m N) ω
+      rw [heq]; exact hω
+    · intro j hj
+      rcases Finset.mem_insert.mp hj with rfl | hjs
+      · funext ω
+        exact bLimsup_comp hM hGb ω
+      · have hcomm : ∀ ω, σ (unit i) (σ (unit j) ω) = σ (unit j) (σ (unit i) ω) := by
+          intro ω
+          rw [← hσadd, ← hσadd, add_comm]
+        funext ω
+        rw [congrFun (bLimsup_comp_apply hcomm G) ω, hinv j hjs]
 
 
 /-- The box `∏_{i∈s} [0, mᵢ) ⊂ ℤ^d` with integer corners; `anchoredBox c N` is this with
@@ -491,7 +529,8 @@ theorem exists_ae_tendsto_anchoredBox_with_integral {d : ℕ} {σ : Site d → �
       ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ ∧
       ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
           ∑ x ∈ anchoredBox c N, h (σ x ω)) atTop (𝓝 ((∏ i, c i) * G ω)) := by
-  obtain ⟨G, hGm, hGb, hGconv⟩ := exists_ae_tendsto_boxAvg hσ hσadd hh hM hb Finset.univ
+  obtain ⟨G, hGm, hGb, hGconv, _hinv⟩ :=
+    exists_ae_tendsto_boxAvg hσ hσadd hh hM hb Finset.univ
   have hGint : ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ := by
     have hconv : ∀ᵐ ω ∂μ, Tendsto (fun N => gridAvg σ h Finset.univ N ω) atTop
         (𝓝 (G ω)) := by
