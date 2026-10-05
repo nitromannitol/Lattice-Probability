@@ -29,6 +29,18 @@ A pass means the comparator printed `nanoda kernel accepts the solution`, `Lean 
 |---|---|
 | Lean and nanoda kernels | passed (276 s) |
 
+## `NormalComparison`
+
+| Check | Result |
+|---|---|
+| Lean and nanoda kernels | passed (324 s) |
+
+## `BerryEsseen`
+
+| Check | Result |
+|---|---|
+| Lean and nanoda kernels | passed (215 s) |
+
 To reproduce one pair, build `LatticeProbAudit` and then, from the repository root:
 
 ```
@@ -36,4 +48,4 @@ COMPARATOR_LANDRUN=<landrun> COMPARATOR_LEAN4EXPORT=<lean4export> COMPARATOR_NAN
   lake env <comparator>/.lake/build/bin/comparator LatticeProbAudit/<Pair>/comparator.json
 ```
 
-with `<Pair>` one of `Kingman`, `GFF` and `BinomialLocalCLT`.
+with `<Pair>` one of `Kingman`, `GFF`, `BinomialLocalCLT`, `NormalComparison` and `BerryEsseen`.
