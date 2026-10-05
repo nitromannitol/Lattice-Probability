@@ -70,12 +70,14 @@ Lipschitz (`k = 1`) form (`LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrun
 `BandLimitedLip.lean`).
 
 The truncation identity `‖φ − P_Λφ‖_{H^s} ≤ ‖φ‖_{H^s,>Λ}` is proved
-(`LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le`, `bandProjHighFreq`), and the sound
-composition `LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair` reduces `rkLowFreqNet` to
-the single support-repair input `BandLimitedTestFnApproxOnDomain` (the domain-restricted form,
-since the unrestricted `BandLimitedTestFnApprox` is too strong), with
-`rellichKondrachovNegSobolev_of_truncation_and_supportRepair` the corresponding discharge of the
-external (`Analysis/Sobolev/RellichLowFreqGlue.lean`, `Analysis/Sobolev/SupportRepair.lean`).
+(`LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le`), and the sound composition
+`LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair` reduces `rkLowFreqNet` to the single
+support-repair input `BandLimitedTestFnApproxOnDomain` (the domain-restricted form, since the
+unrestricted `BandLimitedTestFnApprox` is false as stated), which
+`rellichKondrachovNegSobolev_of_lowfreqNet` composes into the external discharge
+(`Analysis/Sobolev/SupportRepair.lean`).  The earlier unrestricted glue
+`Analysis/Sobolev/RellichLowFreqGlue.lean` is quarantined: its premise `BandLimitedTestFnApprox` is
+refuted there and its implications have been removed.
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
