@@ -137,10 +137,11 @@ theorem mollifierFourierTendsto {d : ℕ} {φ : Space d → ℂ} (hf : Integrabl
 /-- **Dominated convergence with a bounded Fourier factor.**  The general form of
 `tendsto_sobolevNormSq_of_fourier_factor` (`TestFnApprox.lean`) where the factor is bounded by an
 arbitrary `C ≥ 0` rather than `1`.  The convolution factor of the standard mollifier,
-`c n = 1 - 𝓕 χ_n`, satisfies only `‖c n‖ ≤ 2` (since `‖𝓕 χ_n‖ ≤ 1`), so this is the form the
+`c n = 1 - 𝓕 χ_n`, satisfies only `‖c n‖ ≤ 2` (since `‖𝓕 χ_n‖ ≤ 1`), so this is
+the form the
 density route needs. -/
 theorem tendsto_sobolevNormSq_of_fourier_factor_le {d : ℕ} {s : ℝ} {u : Space d → ℝ}
-    {w : ℕ → Space d → ℝ} {c : ℕ → Space d → ℂ} {C : ℝ} (hC : 0 ≤ C)
+    {w : ℕ → Space d → ℝ} {c : ℕ → Space d → ℂ} {C : ℝ}
     (hu : sobolevNormSq d s u < ⊤)
     (hid : ∀ n ξ, 𝓕 (fun x => (w n x : ℂ)) ξ = 𝓕 (fun x => (u x : ℂ)) ξ * c n ξ)
     (hF : ∀ n, AEMeasurable (fun ξ => ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s *
@@ -189,7 +190,8 @@ theorem tendsto_sobolevNormSq_of_fourier_factor_le {d : ℕ} {s : ℝ} {u : Spac
         filter_upwards with ξ
         apply ENNReal.ofReal_le_ofReal
         have hw : 0 ≤ (1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s := Real.rpow_nonneg (by positivity) s
-        have h1 : ‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖ ≤ C * ‖𝓕 (fun x => (u x : ℂ)) ξ‖ := by
+        have h1 : ‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖
+            ≤ C * ‖𝓕 (fun x => (u x : ℂ)) ξ‖ := by
           rw [mul_comm C]
           exact mul_le_mul_of_nonneg_left (hbound n ξ)
             (norm_nonneg (𝓕 (fun x => (u x : ℂ)) ξ))
@@ -199,7 +201,8 @@ theorem tendsto_sobolevNormSq_of_fourier_factor_le {d : ℕ} {s : ℝ} {u : Spac
         filter_upwards with ξ
         have h1 : Tendsto (fun n => ‖c n ξ‖) atTop (𝓝 0) :=
           by simpa using Filter.Tendsto.norm (hcv ξ)
-        have h3 : Tendsto (fun n => ‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) atTop (𝓝 0) := by
+        have h3 : Tendsto (fun n => ‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) atTop
+            (𝓝 0) := by
           simpa using h1.const_mul (‖𝓕 (fun x => (u x : ℂ)) ξ‖)
         have h4 : Tendsto (fun n => (‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) ^ 2)
             atTop (𝓝 0) := by simpa using h3.pow 2
@@ -211,13 +214,14 @@ theorem tendsto_sobolevNormSq_of_fourier_factor_le {d : ℕ} {s : ℝ} {u : Spac
   simpa using hlim
 
 /-- **The density theorem with a bounded Fourier factor.**  The general form of
-`exists_testFn_approx_of_fourier_tendsto` (`SupportDensity.lean`) with `‖c n‖ ≤ C`; it composes
+`exists_testFn_approx_of_fourier_tendsto` (`SupportDensity.lean`) with `‖c n‖ ≤ C`; it
+composes
 `tendsto_sobolevNormSq_of_fourier_factor_le` with the definition of convergence.  The standard
 mollifier factor `c n = 1 - 𝓕 χ_n` has `C = 2`. -/
 theorem exists_testFn_approx_of_fourier_tendsto_le {d : ℕ} {D : Set (Space d)}
     {u : Space d → ℝ} {s : ℝ} (hu : sobolevNormSq d s u < ⊤)
     (w : ℕ → Space d → ℝ) (hw : ∀ n, IsTestFn D (fun x => u x - w n x))
-    (c : ℕ → Space d → ℂ) {C : ℝ} (hC : 0 ≤ C)
+    (c : ℕ → Space d → ℂ) {C : ℝ}
     (hid : ∀ n ξ, 𝓕 (fun x => (w n x : ℂ)) ξ = 𝓕 (fun x => (u x : ℂ)) ξ * c n ξ)
     (hF : ∀ n, AEMeasurable (fun ξ => ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s *
         (‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) ^ 2)) volume)
@@ -226,7 +230,7 @@ theorem exists_testFn_approx_of_fourier_tendsto_le {d : ℕ} {D : Set (Space d)}
     {η : ℝ} (hη : 0 < η) :
     ∃ ψ : Space d → ℝ, IsTestFn D ψ ∧
       sobolevNormSq d s (fun x => u x - ψ x) ≤ ENNReal.ofReal η := by
-  have ht := tendsto_sobolevNormSq_of_fourier_factor_le hC hu hid hF hbound hcv
+  have ht := tendsto_sobolevNormSq_of_fourier_factor_le hu hid hF hbound hcv
   have hlt : ∀ᶠ n in atTop, sobolevNormSq d s (w n) < ENNReal.ofReal η :=
     (tendsto_order.1 ht).2 (ENNReal.ofReal η) (ENNReal.ofReal_pos.mpr hη)
   obtain ⟨n, hn⟩ := hlt.exists
