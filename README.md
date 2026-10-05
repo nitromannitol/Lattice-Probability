@@ -84,6 +84,15 @@ unrestricted glue
 `Analysis/Sobolev/RellichLowFreqGlue.lean` is quarantined: its premise `BandLimitedTestFnApprox` is
 refuted there and its implications have been removed.
 
+The domain-restricted residual `BandLimitedTestFnApproxOnDomain` was later refuted as well
+(`LatticeProbAudit/RELLICH-LOWFREQ-SUPPORT-REPAIR.md`: band-limited projections are never
+`H^{s₀}`-close to test functions on a fixed bounded domain).  The corrected producer
+`Analysis/Sobolev/SupportProducerWitness.lean` replaces it by the witnessed jet-net input
+`LatticeProb.Sobolev.BandLimitedProjectionNetWitness`, which pairs every centre with a unit test
+function whose projection is close to it: `LatticeProb.Sobolev.rkLowFreqNet_of_projectionNetWitness`
+and `LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_projectionNetWitness` discharge `rkLowFreqNet`
+and the external `RellichKondrachovNegSobolev` from it.
+
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
 asymptotics that formalizations cite from Lawler–Limic
