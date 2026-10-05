@@ -50,8 +50,8 @@ Neither (1) (density of test functions in `H^s(D)`) nor (2) (the localised conti
 therefore closes here; the two lemmas below are the largest pieces that do.
 -/
 
-open MeasureTheory
-open scoped ENNReal FourierTransform
+open MeasureTheory Filter
+open scoped ENNReal FourierTransform Topology
 
 namespace LatticeProb.Sobolev
 
@@ -175,4 +175,65 @@ theorem sobolevNormSq_le_of_fourier_norm_le {d : ℕ} {s : ℝ} {u v : Space d �
             ENNReal.ofReal_mul (sq_nonneg C)]]
         rw [MeasureTheory.lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
 
+
+/-- **The dominated-convergence step of the mollification density.**  If a family `w n` has
+Fourier transforms `𝓕 (w n) = 𝓕 u · c n` with `‖c n ξ‖ ≤ 1` for every `ξ` and `c n ξ → 0` at every
+`ξ` as `n → ∞`, then `sobolevNormSq d s (w n) → 0`.  This is the analytic core of the density of
+test functions in `H^s(D)`: with `w n = u - χ_{ε_n} * u` the factor is
+`c n = 1 - 𝓕 χ_{ε_n}`, and the hypothesis is exactly that the mollifier's Fourier transform tends
+to `1`.
+
+The two measurability hypotheses are the ones the dominated-convergence theorem needs; both hold
+in the intended application (the `c n` are Fourier transforms of Schwartz mollifiers, and
+`𝓕 u` is measurable when `u` is). -/
+theorem tendsto_sobolevNormSq_of_fourier_factor {d : ℕ} {s : ℝ} {u : Space d → ℝ}
+    {w : ℕ → Space d → ℝ} {c : ℕ → Space d → ℂ}
+    (hu : sobolevNormSq d s u < ⊤)
+    (hid : ∀ n ξ, 𝓕 (fun x => (w n x : ℂ)) ξ = 𝓕 (fun x => (u x : ℂ)) ξ * c n ξ)
+    (hF : ∀ n, AEMeasurable (fun ξ => ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s *
+        (‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) ^ 2)) volume)
+    (hbound : ∀ n ξ, ‖c n ξ‖ ≤ 1)
+    (hcv : ∀ ξ, Tendsto (fun n => c n ξ) atTop (𝓝 0)) :
+    Tendsto (fun n => sobolevNormSq d s (w n)) atTop (𝓝 0) := by
+  have key : (fun n => sobolevNormSq d s (w n))
+      = fun n => ∫⁻ ξ, ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s *
+          (‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) ^ 2) := by
+    funext n
+    unfold sobolevNormSq
+    refine lintegral_congr fun ξ => ?_
+    rw [hid n ξ, norm_mul]
+  rw [key]
+  have hfin : ∫⁻ ξ, ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s *
+      ‖𝓕 (fun x => (u x : ℂ)) ξ‖ ^ 2) ≠ ⊤ := hu.ne
+  have hlim := tendsto_lintegral_of_dominated_convergence'
+      (F := fun n ξ => ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s *
+        (‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) ^ 2))
+      (f := fun _ => (0 : ℝ≥0∞))
+      (bound := fun ξ => ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s *
+        ‖𝓕 (fun x => (u x : ℂ)) ξ‖ ^ 2))
+      hF (fun n => by
+        filter_upwards with ξ
+        apply ENNReal.ofReal_le_ofReal
+        have hw : 0 ≤ (1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s := Real.rpow_nonneg (by positivity) s
+        have h1 : ‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖ ≤ ‖𝓕 (fun x => (u x : ℂ)) ξ‖ :=
+          (mul_le_mul_of_nonneg_left (hbound n ξ)
+            (norm_nonneg (𝓕 (fun x => (u x : ℂ)) ξ))).trans_eq (mul_one _)
+        exact mul_le_mul_of_nonneg_left
+          (pow_le_pow_left₀ (mul_nonneg (norm_nonneg (𝓕 (fun x => (u x : ℂ)) ξ))
+            (norm_nonneg (c n ξ))) h1 2) hw)
+      hfin (by
+        filter_upwards with ξ
+        have h1 : Tendsto (fun n => ‖c n ξ‖) atTop (𝓝 0) := by
+          simpa using Filter.Tendsto.norm (hcv ξ)
+        have h3 : Tendsto (fun n => ‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) atTop (𝓝 0) := by
+          simpa using h1.const_mul (‖𝓕 (fun x => (u x : ℂ)) ξ‖)
+        have h4 : Tendsto (fun n =>
+            (‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) ^ 2) atTop (𝓝 0) := by
+          simpa using h3.pow 2
+        have h5 : Tendsto (fun n => (1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s *
+            (‖𝓕 (fun x => (u x : ℂ)) ξ‖ * ‖c n ξ‖) ^ 2) atTop (𝓝 0) := by
+          simpa using h4.const_mul ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s)
+        simpa only [Function.comp_def, ENNReal.ofReal_zero] using
+          (ENNReal.continuous_ofReal.tendsto 0).comp h5)
+  simpa using hlim
 end LatticeProb.Sobolev
