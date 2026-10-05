@@ -614,3 +614,13 @@ library.
 #print axioms LatticeProb.mvbe_frozenShape_linear_unconditional
 #print axioms LatticeProb.mvbe_frozenQuarter
 #print axioms LatticeProb.mvbe_frozenQuarter_of_perimeter
+
+/-! ### Pitt's Gaussian association theorem -/
+
+#print axioms LatticeProb.pitt_covRep
+#print axioms LatticeProb.pitt_smooth
+#print axioms LatticeProb.pitt_nondeg
+#print axioms LatticeProb.pitt_full
+#print axioms LatticeProb.pitt_associated_of_gaussianProcess
+#print axioms LatticeProb.pitt_fullStmt
+#print axioms LatticeProb.pitt_gaussian_fkg
