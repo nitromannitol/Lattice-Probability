@@ -198,6 +198,13 @@ import LatticeProb.Prob.NormalComparisonOrthantIcc
 import LatticeProb.Prob.NormalComparisonInterpolation
 import LatticeProb.Prob.NormalComparisonLimit
 import LatticeProb.Prob.NormalComparisonFinal
+import LatticeProb.Prob.FejerKernel
+import LatticeProb.Prob.EsseenDeconvolution
+import LatticeProb.Prob.CdfDifferenceFourier
+import LatticeProb.Prob.BerryEsseenCharFun
+import LatticeProb.Prob.ProdSubProd
+import LatticeProb.Prob.GaussianBerryEsseenFacts
+import LatticeProb.Prob.BerryEsseenSumCharFun
 import LatticeProb.Gauss.Process
 import LatticeProb.Gauss.WhiteNoise
 import LatticeProb.Gauss.Brownian

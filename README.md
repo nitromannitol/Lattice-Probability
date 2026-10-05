@@ -469,6 +469,17 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   S i j / v)))` for a centred Gaussian vector with covariance `S`, common variance `v` and
   nonnegative correlations, and `LatticeProb.normalComparison_exists` states it with an
   existential constant in exactly the shape of the cited proposition.
+* `LatticeProb.sup_cdf_sub_le_of_smoothed`, `LatticeProb.fejerKernel`,
+  `LatticeProb.integral_cdf_sub_mul_exp`, `LatticeProb.charFun_norm_le_exp_of_sq_le`,
+  `LatticeProb.norm_prod_charFun_sub_gaussian_le`: the building blocks of a one-dimensional
+  Berry–Esseen theorem for independent, non-identically distributed summands.  Esseen's smoothing
+  step is split into the deconvolution of a difference of distribution functions from a smoothed
+  one (needing only a tail bound on the kernel and a Lipschitz bound for the Gaussian
+  distribution function, `LatticeProb.gaussianReal_Iic_lipschitz`), the Fejér kernel with its
+  Fourier representation and unit mass, and the Fourier transform of a difference of distribution
+  functions; the characteristic-function side gives, for a finite family of centred laws of total
+  variance one and a window `|t| ρ ≤ 1/8`, the comparison of the product of characteristic
+  functions with the Gaussian one, with the Gaussian damping `exp (−t²/3)`.
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.
