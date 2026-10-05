@@ -37,7 +37,7 @@ import LatticeProb.Gauss.MultivariateDensity
 import LatticeProb.Prob.GaussDensity
 
 open MeasureTheory ProbabilityTheory
-open scoped NNReal ENNReal MatrixOrder
+open scoped NNReal ENNReal MatrixOrder Matrix
 
 namespace LatticeProb
 
@@ -230,5 +230,20 @@ theorem integral_one_sub_sq_rpow_neg_half_le {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r 
         sq_nonneg (t * r), hr0, hr1])
   rw [hcongr]
   exact integral_one_div_sqrt_one_sub_sq_mul_le hr0 hr1
+
+/-! ### The remaining quantitative input, recorded as a named `Prop`
+
+This is the declaration the Li--Shao route still needs (route item 1).  It is a
+statement, not a proof: a `def : Prop`, so the file stays sorry-free while making
+the remaining obligation precise. -/
+
+/-- **Route item 1 (the density).**  The density of a nondegenerate centred
+multivariate Gaussian `N(0, S)` on `EuclideanSpace ℝ (Fin n)`. -/
+def multivariateGaussianDensityFormula : Prop :=
+  ∀ (n : ℕ) (S : Matrix (Fin n) (Fin n) ℝ), S.PosDef →
+    multivariateGaussian (0 : EuclideanSpace ℝ (Fin n)) S
+      = (volume : Measure (EuclideanSpace ℝ (Fin n))).withDensity fun x => ENNReal.ofReal
+          ((2 * Real.pi) ^ (-(n : ℝ) / 2) * (S.det) ^ (-(1 : ℝ) / 2) *
+            Real.exp (-(x ⬝ᵥ (S⁻¹ *ᵥ x)) / 2))
 
 end LatticeProb

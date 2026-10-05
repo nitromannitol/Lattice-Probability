@@ -166,6 +166,23 @@ theorem ouHeatEquationN_comp_eval (n : ℕ) (h1 : OUHeatEquation)
   rw [hsem, hgen]
   exact h1 g hg hgc t ht (x i)
 
+/-- **Tensorisation of the semigroup on product functions.**  On a tensor product
+`f x = ∏ i, g i (x i)` the `n`-dimensional Mehler semigroup factorises into the product of the
+`1`-dimensional semigroups: the product Gaussian law is a product measure, so
+`integral_fintype_prod_eq_prod` applies. -/
+theorem ouSemigroupN_prod (n : ℕ) (t : ℝ) (g : Fin n → ℝ → ℝ) :
+    ouSemigroupN n t (fun x => ∏ i, g i (x i))
+      = fun x => ∏ i, ouSemigroup t (g i) (x i) := by
+  funext x
+  simp only [ouSemigroupN, ouSemigroup]
+  rw [show (∫ z : Fin n → ℝ, ∏ i, g i (Real.exp (-t) * x i
+        + Real.sqrt (1 - Real.exp (-2 * t)) * z i)
+        ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
+      = ∏ i, ∫ y : ℝ, g i (Real.exp (-t) * x i
+        + Real.sqrt (1 - Real.exp (-2 * t)) * y) ∂(gaussianReal 0 1) from
+    integral_fintype_prod_eq_prod (fun i y => g i (Real.exp (-t) * x i
+      + Real.sqrt (1 - Real.exp (-2 * t)) * y))]
+
 end
 
 end LatticeProb

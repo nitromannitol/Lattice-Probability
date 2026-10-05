@@ -112,4 +112,35 @@ def rkLowFreqUniformJetBound : Prop :=
         ∀ φ : Space d → ℝ, IsBandLimited Λ φ → sobolevNormSq d s φ ≤ 1 →
           ∀ k ≤ m + 1, ∀ x ∈ K, ‖iteratedFDeriv ℝ k φ x‖ ≤ C
 
+/-- **The per-order Bernstein bound (the reduced open input).**  For each single order
+`k`, the `Λ`-band-limited fields of the `H^s` unit ball have their `k`-th derivative
+bounded by one constant.  This is the form the classical Bernstein estimate produces; the
+uniform-over-`k` packaging is the finite maximum below. -/
+def bandLimitedSobolevBernstein : Prop :=
+  ∀ (d : ℕ) (Λ : ℝ), 0 < Λ → ∀ (s : ℝ), 0 ≤ s → ∀ k : ℕ,
+    ∃ C : ℝ, 0 < C ∧
+      ∀ φ : Space d → ℝ, IsBandLimited Λ φ → sobolevNormSq d s φ ≤ 1 →
+        ∀ x : Space d, ‖iteratedFDeriv ℝ k φ x‖ ≤ C
+
+/-- **The uniform jet bound from the per-order Bernstein bound.**  `bandLimitedSobolevBernstein`
+supplies one constant per order; the single constant required by `rkLowFreqUniformJetBound` is
+the finite maximum over `k ≤ m + 1`. -/
+theorem rkLowFreqUniformJetBound_of_bandLimitedSobolevBernstein
+    (h : bandLimitedSobolevBernstein) : rkLowFreqUniformJetBound := by
+  intro d K hK Λ hΛ s hs m
+  classical
+  choose C hCpos hC using fun k : ℕ => h d Λ hΛ s hs k
+  have hne : (Finset.range (m + 2)).Nonempty :=
+    ⟨0, Finset.mem_range.mpr (by omega)⟩
+  refine ⟨(Finset.range (m + 2)).sup' hne C + 1, ?_, ?_⟩
+  · have hmem0 : 0 ∈ Finset.range (m + 2) := Finset.mem_range.mpr (by omega)
+    have h0 := Finset.le_sup' C hmem0
+    linarith [hCpos 0]
+  · intro φ hbl hφ k hk x _hx
+    have hmem : k ∈ Finset.range (m + 2) := Finset.mem_range.mpr (by omega)
+    have hsup := Finset.le_sup' C hmem
+    calc ‖iteratedFDeriv ℝ k φ x‖ ≤ C k := hC k φ hbl hφ x
+      _ ≤ (Finset.range (m + 2)).sup' hne C := hsup
+      _ ≤ (Finset.range (m + 2)).sup' hne C + 1 := le_add_of_nonneg_right zero_le_one
+
 end LatticeProb.Sobolev
