@@ -1,0 +1,14 @@
+{
+  "challenge_module": "LatticeProbAudit.PittGaussianFKG.Challenge",
+  "solution_module": "LatticeProbAudit.PittGaussianFKG.Solution",
+  "theorem_names": [
+    "LatticeProbAudit.pitt_gaussian_fkg"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": true
+}
