@@ -1,0 +1,14 @@
+{
+  "challenge_module": "LatticeProbAudit.NormalComparison.Challenge",
+  "solution_module": "LatticeProbAudit.NormalComparison.Solution",
+  "theorem_names": [
+    "LatticeProbAudit.normal_comparison"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": true
+}
