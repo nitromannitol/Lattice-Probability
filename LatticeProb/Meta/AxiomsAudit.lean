@@ -350,3 +350,4 @@ library.
 #print axioms LatticeProb.Sobolev.fourier_normalized_dilation
 #print axioms LatticeProb.Sobolev.tendsto_fourier_mollifierDil
 #print axioms LatticeProb.Sobolev.mollifierFourierTendsto
+#print axioms LatticeProb.Sobolev.exists_isTestFn_eqOn_one
