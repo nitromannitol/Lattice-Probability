@@ -108,4 +108,20 @@ theorem bandLimitedTestFnApproxOnDomain_of_jetNet_and_supportRepair
         add_le_add (mul_le_mul_right hi 2) (mul_le_mul_right (hψapprox i) 2)
     _ = ENNReal.ofReal δ := by rw [h2a, hsum]
 
+/-- **The reduction of `rkLowFreqNet` to its two inputs.**  Composing the producer with the sound
+glue `rkLowFreqNet_of_domainSupportRepair` (`SupportRepair.lean`): `rkLowFreqNet` now rests on the
+jet net `BandLimitedProjectionNet` and the per-centre support repair `BandCentreSupportRepair`,
+rather than on the (false) `BandLimitedTestFnApprox`. -/
+theorem rkLowFreqNet_of_jetNet_and_supportRepair
+    (hnet : BandLimitedProjectionNet) (hrep : BandCentreSupportRepair) : rkLowFreqNet :=
+  rkLowFreqNet_of_domainSupportRepair
+    (bandLimitedTestFnApproxOnDomain_of_jetNet_and_supportRepair hnet hrep)
+
+/-- **The external, from the two inputs.**  Composing with
+`rellichKondrachovNegSobolev_of_lowfreqNet` (`RellichLowFreqNet.lean`). -/
+theorem rellichKondrachovNegSobolev_of_jetNet_and_supportRepair
+    (hnet : BandLimitedProjectionNet) (hrep : BandCentreSupportRepair) :
+    LatticeProb.External.RellichKondrachovNegSobolev :=
+  rellichKondrachovNegSobolev_of_lowfreqNet (rkLowFreqNet_of_jetNet_and_supportRepair hnet hrep)
+
 end LatticeProb.Sobolev
