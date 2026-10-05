@@ -358,6 +358,13 @@ library.
 #print axioms LatticeProb.Sobolev.isBandLimited_bandProj
 #print axioms LatticeProb.Sobolev.sobolevNormSqHigh_bandProj_eq_zero
 
+/-! ### The sharp band projection and its consumption -/
+
+#print axioms LatticeProb.Sobolev.bandProj_sobolevNormSqHigh_eq_zero_of_le
+#print axioms LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le
+#print axioms LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le_of_high
+#print axioms LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le_of_high_delta
+
 /-! ### Band-limited Bernstein bound -/
 
 #print axioms LatticeProb.Sobolev.fourierInv_eq_setIntegral
@@ -369,3 +376,14 @@ library.
 #print axioms LatticeProb.Sobolev.exists_iteratedFDeriv_bandTrunc_le_L2
 #print axioms LatticeProb.Sobolev.exists_iteratedFDeriv_bandTrunc_le_Hs
 #print axioms LatticeProb.Sobolev.bandLimitedCmBound_holds
+
+/-! ### Rellich C^m net supply -/
+
+#print axioms LatticeProb.Sobolev.exists_bandTrunc_Cm_jet_bound
+
+/-! ### Band-limited C^m and Lipschitz bounds -/
+
+#print axioms LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le
+#print axioms LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_apply_le
+#print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
+#print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc

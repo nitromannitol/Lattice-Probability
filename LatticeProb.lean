@@ -323,6 +323,11 @@ import LatticeProb.Analysis.Sobolev.FejerLimit
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
 import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 import LatticeProb.Analysis.Sobolev.TestFnApprox
+import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
+import LatticeProb.Analysis.Sobolev.FejerSideCondition
+import LatticeProb.Analysis.Sobolev.FejerIntegrable
+import LatticeProb.Analysis.Sobolev.FejerLimit
+import LatticeProb.Analysis.Sobolev.BandProjectionConsume
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.Scaling
 import LatticeProb.Analysis.Sobolev.TestFn
