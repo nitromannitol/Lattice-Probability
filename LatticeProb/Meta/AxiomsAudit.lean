@@ -341,6 +341,7 @@ library.
 /-! ### The sound low-frequency glue (domain-restricted) -/
 
 #print axioms LatticeProb.Sobolev.bandLimitedTestFnApproxOnDomain_of_approx
+#print axioms LatticeProb.Sobolev.bandLimitedTestFnApproxOnDomain_of_jetNet_and_supportRepair
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair
 #print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_domainSupportRepair
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
@@ -354,3 +355,4 @@ library.
 #print axioms LatticeProb.Sobolev.tendsto_fourier_mollifierDil
 #print axioms LatticeProb.Sobolev.mollifierFourierTendsto
 #print axioms LatticeProb.Sobolev.exists_isTestFn_eqOn_one
+#print axioms LatticeProb.Sobolev.exists_isTestFn_eqOn_one'

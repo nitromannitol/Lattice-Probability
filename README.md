@@ -76,7 +76,11 @@ support-repair input `BandLimitedTestFnApproxOnDomain` (the domain-restricted fo
 unrestricted `BandLimitedTestFnApprox` is false as stated), which
 `rellichKondrachovNegSobolev_of_domainSupportRepair`
 (`Analysis/Sobolev/RellichDomainDischarge.lean`) composes into the external discharge — the
-external stays conditional on `BandLimitedTestFnApproxOnDomain`.  The earlier unrestricted glue
+external stays conditional on `BandLimitedTestFnApproxOnDomain`.  The support-repair input is
+packaged in `Analysis/Sobolev/SupportProducer.lean`: the jet net `BandLimitedProjectionNet` and the
+per-centre support repair `BandCentreSupportRepair` combine via
+`LatticeProb.Sobolev.bandLimitedTestFnApproxOnDomain_of_jetNet_and_supportRepair`.  The earlier
+unrestricted glue
 `Analysis/Sobolev/RellichLowFreqGlue.lean` is quarantined: its premise `BandLimitedTestFnApprox` is
 refuted there and its implications have been removed.
 
