@@ -462,6 +462,7 @@ import LatticeProb.External.BallGreenBoundsProved
 import LatticeProb.Prob.Percolation.LSSThinComplement
 import LatticeProb.Prob.Percolation.LSSThinFinal
 import LatticeProb.Prob.Percolation.LSSThinKDependent
+import LatticeProb.Prob.Percolation.LSSThinRotorMatch
 import LatticeProb.Prob.Percolation.FiniteProductPivotal
 import LatticeProb.Prob.Percolation.BondPercolation
 import LatticeProb.Prob.Percolation.Crossing
