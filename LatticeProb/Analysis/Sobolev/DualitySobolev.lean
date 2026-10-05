@@ -5,11 +5,14 @@
 weight `w`.  This module instantiates it at the Fourier-side Sobolev weight
 `w_s ξ = (1 + (2π‖ξ‖)²)^s`, giving
 
-  `∫ ξ, ‖𝓕f ξ‖ ‖𝓕g ξ‖ ≤ (∫ ξ, w_s ξ ‖𝓕f ξ‖²)^{1/2} (∫ ξ, (w_s ξ)⁻¹ ‖𝓕g ξ‖²)^{1/2}`,
+  `∫ ξ, ‖𝓕f ξ‖ ‖𝓕g ξ‖
+      ≤ (∫ ξ, w_s ξ ‖𝓕f ξ‖²)^{1/2} (∫ ξ, (w_s ξ)⁻¹ ‖𝓕g ξ‖²)^{1/2}`,
 
-the `H^s`–`H^{−s}` pairing estimate.  Coupled with the `ofReal_integral_eq_lintegral_ofReal` bridge
+the `H^s`-`H^{−s}` pairing estimate.  Coupled with the
+`ofReal_integral_eq_lintegral_ofReal` bridge
 and Plancherel (`SobolevDualityBound`, `DualityBound.lean`), it gives the uniform `C^m` bound
-`‖f ⋆ ρ‖_∞ ≤ ‖f‖_{H^s} ‖ρ‖_{H^{−s}}` consumed by `FrechetKolmogorovMollifiedCompact`.
+`‖f ⋆ ρ‖_∞ ≤ ‖f‖_{H^s} ‖ρ‖_{H^{−s}}` consumed by
+`FrechetKolmogorovMollifiedCompact`.
 -/
 import LatticeProb.Analysis.Sobolev.DualityBound
 
@@ -31,7 +34,7 @@ theorem integral_abs_mul_le_sobolev {d : ℕ} (s : ℝ) {f g : Space d → ℝ}
             * ‖𝓕 (fun x => (g x : ℂ)) ξ‖ ^ 2) ^ ((1 : ℝ) / 2) := by
   have hw : ∀ ξ : Space d, 0 < (1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s := fun ξ =>
     Real.rpow_pos_of_pos (add_pos_of_pos_of_nonneg one_pos (sq_nonneg _)) s
-  exact integral_abs_mul_le_weighted
+  simpa only [abs_norm] using integral_abs_mul_le_weighted
     (f := fun ξ : Space d => ‖𝓕 (fun x => (f x : ℂ)) ξ‖)
     (g := fun ξ : Space d => ‖𝓕 (fun x => (g x : ℂ)) ξ‖)
     (w := fun ξ : Space d => (1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s) hw
