@@ -387,4 +387,5 @@ library.
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_truncation_and_supportRepair
 #print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_truncation_and_supportRepair
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
+#print axioms LatticeProb.Sobolev.exists_finite_supNet_of_uniformLip_of_proper
 #print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc
