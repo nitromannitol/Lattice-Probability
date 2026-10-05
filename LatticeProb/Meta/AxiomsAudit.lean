@@ -500,3 +500,11 @@ library.
 #print axioms LatticeProb.mvbe_thmR
 #print axioms LatticeProb.mvbe_thmR_of_keyLemma
 #print axioms LatticeProb.mvbe_main_step
+
+/-! ### Multivariate Berry–Esseen for orthants: the frozen shape -/
+
+#print axioms LatticeProb.mvbe_whitenedBound_of_thmR
+#print axioms LatticeProb.mvbe_frozenShape_linear
+#print axioms LatticeProb.mvbe_frozenShape_linear_unconditional
+#print axioms LatticeProb.mvbe_frozenQuarter
+#print axioms LatticeProb.mvbe_frozenQuarter_of_perimeter
