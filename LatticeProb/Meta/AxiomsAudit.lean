@@ -151,6 +151,9 @@ library.
 #print axioms LatticeProb.gaussianLogSobolevGrad_all_of_one_of_prodStep
 #print axioms LatticeProb.gaussianLogSobolev_all_of_one_of_prodStep
 #print axioms LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep
+#print axioms LatticeProb.gaussianLogSobolevOne_of_gradOne
+#print axioms LatticeProb.gaussianHerbstBound_of_gradOne
+#print axioms LatticeProb.gaussianLogSobolev_all_of_gradOne
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le

@@ -4,7 +4,7 @@
 `LatticeProb.GaussianLogSobolev n` is the frozen Gaussian log-Sobolev inequality
 in *Lipschitz* form: a positive `h` with `∫ h ∂γ_n = 1` and `C`-Lipschitz
 `log ∘ h` satisfies `∫ h log h ∂γ_n ≤ C² / 2`.  As recorded in
-`~/fleet/audit/lib-gaussianlogsobolev-tensor.md`, that form does not tensorize
+`GaussianLogSobolevTensor.lean`, that form does not tensorize
 sharply: splitting the entropy over a product and applying the Lipschitz form to
 the two factors loses a factor of two, because the sup of the sum of the two
 coordinate l¹-gradient norms can be smaller than the sum of the two suprema.
