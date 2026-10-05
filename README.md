@@ -595,9 +595,7 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   `det (√S) = (det S)^{1/2}`.
 * `LatticeProb.multivariateGaussian_eq_withDensity`: the density of `N(0, S)` for a
   positive definite `S`, `(2π)^{-n/2} (det S)^{-1/2} exp (-(x ⬝ᵥ S⁻¹ *ᵥ x)/2)`
-  (Li–Shao route item 1), with
-  `LatticeProb.multivariateGaussianDensityFormula_holds` recording it as the
-  discharged `multivariateGaussianDensityFormula`.
+  (Li–Shao route item 1).
 * `LatticeProb.normalComparisonSmartPath`, `LatticeProb.bivariateGaussDensity_le`,
   `LatticeProb.integral_one_div_sqrt_one_sub_sq_mul_le`,
   `LatticeProb.integral_bivariateGaussDensity_le`: the elementary half of the
