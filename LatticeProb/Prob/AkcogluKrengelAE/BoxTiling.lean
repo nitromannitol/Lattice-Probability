@@ -275,4 +275,45 @@ theorem ae_tendsto_bAvg_movingTarget_seq {μ : Measure Ω} [IsProbabilityMeasure
     _ < ε := by rw [Real.dist_eq]; linarith
 
 
+/-- For each coordinate set `s`, the box average `boxAvg σ h s (m N)` converges a.e., as `N → ∞`
+along any sequence of boxes all of whose sides over `s` tend to infinity, to a bounded measurable
+limit depending only on `s` (not on the sequence). -/
+theorem exists_ae_tendsto_boxAvg {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ]
+    (hσ : ∀ z, MeasurePreserving (σ z) μ μ) (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω))
+    {h : Ω → ℝ} (hh : Measurable h) {M : ℝ} (hM : 0 ≤ M) (hb : ∀ x, |h x| ≤ M)
+    (s : Finset (Fin d)) :
+    ∃ G : Ω → ℝ, Measurable G ∧ (∀ x, |G x| ≤ M) ∧
+      ∀ (m : ℕ → Fin d → ℕ), (∀ i ∈ s, Tendsto (fun N => m N i) atTop atTop) →
+        ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω)) := by
+  induction s using Finset.induction with
+  | empty =>
+    refine ⟨fun ω => h (σ (natToSite 0) ω), hh.comp (hσ _).measurable, fun x => hb _, ?_⟩
+    intro m _hm
+    filter_upwards with ω
+    have hconst : (fun N : ℕ => boxAvg σ h ∅ (m N) ω) = fun _ : ℕ => h (σ (natToSite 0) ω) := by
+      funext N; exact boxAvg_empty σ h (m N) ω
+    rw [hconst]; exact tendsto_const_nhds
+  | insert i s hi ih =>
+    obtain ⟨G, hGm, hGb, hGconv⟩ := ih
+    refine ⟨bLimsup (σ (unit i)) G, measurable_bLimsup (hσ _).measurable hGm,
+      fun x => abs_bLimsup_le_of_abs_le hM hGb x, ?_⟩
+    intro m hm
+    have hmi : Tendsto (fun N => m N i) atTop atTop := hm i (Finset.mem_insert_self i s)
+    have hms : ∀ j ∈ s, Tendsto (fun N => m N j) atTop atTop :=
+      fun j hj => hm j (Finset.mem_insert_of_mem hj)
+    have hconv : ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω)) :=
+      hGconv m hms
+    have hmeas : ∀ N, Measurable (boxAvg σ h s (m N)) :=
+      fun N => measurable_boxAvg hσ hh s (m N)
+    have hbdd : ∀ N x, |boxAvg σ h s (m N) x| ≤ M :=
+      fun N x => abs_boxAvg_le σ h hM hb s (m N) x
+    have hmt := ae_tendsto_bAvg_movingTarget_seq (hσ (unit i)) hM hmeas hGm hbdd hGb hmi hconv
+    filter_upwards [hmt] with ω hω
+    have heq : (fun N => boxAvg σ h (insert i s) (m N) ω)
+        = fun N => bAvg (σ (unit i)) (boxAvg σ h s (m N)) (m N i) ω := by
+      funext N; exact boxAvg_insert_eq_bAvg_boxAvg hσadd h s i hi (m N) ω
+    rw [heq]; exact hω
+
+
 end LatticeProb
