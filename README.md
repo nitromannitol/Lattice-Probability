@@ -374,6 +374,19 @@ the field with zero boundary values on a finite set `C` as
   `LatticeProb.gaussianLogSobolev_all_of_gradOne`: the one-dimensional Γ-form Gaussian
   log-Sobolev inequality named as the sole dimension-specific input of the general-`n` chain,
   with its Herbst and log-Sobolev consequences (`LatticeProb/Prob/GaussianLogSobolevOneInput.lean`).
+* `LatticeProb.gaussianLogSobolevGrad_zero`,
+  `LatticeProb.gaussianLogSobolevGradProdStep_of_tensorStep`,
+  `LatticeProb.gaussianLogSobolevGradProdStep_iff_tensorStep`: the product step
+  `GaussianLogSobolevGradProdStep` is not an independent input — given `Grad 1` it is equivalent
+  to the one-step tensorization `GaussianLogSobolevGradTensorStep`
+  (`LatticeProb/Prob/GaussianLogSobolevGradProd.lean`).
+* `LatticeProb.LipschitzLogApprox`,
+  `LatticeProb.gaussianLogSobolevGradToLipschitz_of_approx`,
+  `LatticeProb.gaussianLogSobolev_all_of_one_of_prodStep_of_approx`,
+  `LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep_of_approx`: the regularity
+  bridge from the `C¹` Γ-form predicate to the frozen Lipschitz form, reduced to
+  the single named mollification input `LipschitzLogApprox`
+  (`LatticeProb/Prob/GaussianLogSobolevRegularity.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
