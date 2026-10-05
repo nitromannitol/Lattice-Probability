@@ -172,6 +172,7 @@ import LatticeProb.Gauss.Isonormal
 import LatticeProb.Gauss.MultivariateDensity
 import LatticeProb.Prob.NormalComparison
 import LatticeProb.Prob.NormalComparisonOrthant
+import LatticeProb.Prob.NormalComparisonOrthantDeriv
 import LatticeProb.Gauss.Process
 import LatticeProb.Gauss.WhiteNoise
 import LatticeProb.Gauss.Brownian

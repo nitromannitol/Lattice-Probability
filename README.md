@@ -397,7 +397,10 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   Li–Shao normal-comparison bound for the multivariate Gaussian — the smart path
   from the product law to the covariance, the bivariate density comparison
   producing the exponential factor, the scale integral `≤ π/2`, and its
-  integrated (smart-path) form.
+  integrated (smart-path) form; `LatticeProb.lintegral_Iic_cons`,
+  `LatticeProb.integral_integral_mixed_deriv` and
+  `LatticeProb.integral_Iic_deriv_eq_of_tendsto` are the orthant box-Fubini and
+  two-coordinate integration-by-parts substrate (route item 4).
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.

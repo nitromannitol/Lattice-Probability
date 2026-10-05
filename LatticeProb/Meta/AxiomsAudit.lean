@@ -218,6 +218,9 @@ library.
 #print axioms LatticeProb.integral_one_div_sqrt_one_sub_sq_mul_le
 #print axioms LatticeProb.integral_one_sub_sq_rpow_neg_half_le
 #print axioms LatticeProb.integral_bivariateGaussDensity_le
+#print axioms LatticeProb.lintegral_Iic_cons
+#print axioms LatticeProb.integral_integral_mixed_deriv
+#print axioms LatticeProb.integral_Iic_deriv_eq_of_tendsto
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner
