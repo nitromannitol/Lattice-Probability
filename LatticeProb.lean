@@ -172,6 +172,7 @@ import LatticeProb.Prob.BernsteinMaximalLayerCake
 import LatticeProb.Prob.PinelisInductionStepFalse
 import LatticeProb.Prob.IsNormalConcentration
 import LatticeProb.Prob.AeFatouLimit
+import LatticeProb.Prob.ProdSubProd
 import LatticeProb.Prob.BrownianTail
 import LatticeProb.Prob.FukNagaev
 import LatticeProb.Prob.PoissonTail
@@ -343,6 +344,7 @@ import LatticeProb.Analysis.Sobolev.TestFnApprox
 import LatticeProb.Analysis.Sobolev.TestFnCutoff
 import LatticeProb.Analysis.Sobolev.TranslationContinuity
 import LatticeProb.Analysis.Sobolev.TranslationBound
+import LatticeProb.Analysis.Sobolev.FourierCharPhase
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
 import LatticeProb.Analysis.Sobolev.FejerSideCondition
 import LatticeProb.Analysis.Sobolev.FejerIntegrable
