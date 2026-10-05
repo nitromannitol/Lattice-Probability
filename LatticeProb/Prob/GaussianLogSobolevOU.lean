@@ -25,8 +25,8 @@ Nothing here is conditional on `sorry`; `OUHeatEquation` is a named `Prop`, neve
 import Mathlib
 import LatticeProb.External.GaussianLogSobolev
 
-open MeasureTheory ProbabilityTheory
-open scoped ENNReal NNReal
+open Filter MeasureTheory ProbabilityTheory
+open scoped ENNReal NNReal Topology
 
 namespace LatticeProb
 
@@ -351,6 +351,432 @@ theorem hasDerivAt_ouSemigroup (t : ℝ) (f g : ℝ → ℝ) (L : ℝ) (hL : 0 �
     ring
   rw [hval] at hmain
   exact hmain.2
+
+/-- **The time derivative of the Mehler semigroup.**  For `t > 0`, the derivative of
+`s ↦ P_s f x` at `t` is the integral of `g` against the Mehler kernel times the derivative of
+the kernel's argument, where `g` is the derivative of `f`.  This is the second half of the heat
+equation `∂_t P_t f = L P_t f`: combined with `hasDerivAt_ouSemigroup` and the Stein identity
+`∫ g dγ = ∫ z g z dγ` it gives `∂_t P_t f = P_t (f'' - · f') = L P_t f`. -/
+theorem hasDerivAt_ouSemigroup_time (t : ℝ) (ht : 0 < t) (f g : ℝ → ℝ) (L : ℝ)
+    (hL : 0 ≤ L)
+    (hf : LipschitzWith ⟨L, hL⟩ f) (hderiv : ∀ y, HasDerivAt f (g y) y)
+    (hg : ∀ y, |g y| ≤ L) (hgm : Measurable g) (x : ℝ) :
+    HasDerivAt (fun s => ouSemigroup s f x)
+      (∫ z, g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z)
+        * (-(Real.exp (-t)) * x
+          + (Real.exp (-2 * t) / Real.sqrt (1 - Real.exp (-2 * t))) * z)
+        ∂(gaussianReal 0 1)) t := by
+
+  have hbpos : 0 < Real.sqrt (1 - Real.exp (-2 * t)) := by
+    rw [Real.sqrt_pos, sub_pos, Real.exp_lt_one_iff]; linarith
+  have hmem : MemLp (fun z : ℝ => |z|) 2 (gaussianReal 0 1) :=
+    (memLp_id_gaussianReal (μ := 0) (v := 1) 2).norm
+  have hFint : Integrable (fun z : ℝ => f (Real.exp (-t) * x
+      + Real.sqrt (1 - Real.exp (-2 * t)) * z)) (gaussianReal 0 1) := by
+    refine Integrable.mono' ((integrable_const (|f 0| + L * |Real.exp (-t) * x|)).add
+      (hmem.integrable (by norm_num) |>.const_mul L))
+      (hf.continuous.aestronglyMeasurable.comp_aemeasurable (by fun_prop)) ?_
+    filter_upwards with z
+    have h1 : |f (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z) - f 0|
+        ≤ L * |Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z| := by
+      have h := hf.dist_le_mul (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z) 0
+      rw [Real.dist_eq, Real.dist_eq, sub_zero] at h
+      convert h using 2
+      exact (NNReal.coe_mk L hL).symm
+    have h2 : |Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z|
+        ≤ |Real.exp (-t) * x| + |z| := by
+      calc |Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z|
+          ≤ |Real.exp (-t) * x| + |Real.sqrt (1 - Real.exp (-2 * t)) * z| := abs_add_le _ _
+        _ = |Real.exp (-t) * x| + |Real.sqrt (1 - Real.exp (-2 * t))| * |z| := by
+            simp only [abs_mul]
+        _ ≤ |Real.exp (-t) * x| + 1 * |z| := by
+            refine add_le_add le_rfl (mul_le_mul_of_nonneg_right ?_ (abs_nonneg _))
+            rw [abs_of_nonneg (Real.sqrt_nonneg _), Real.sqrt_le_one, sub_le_iff_le_add]
+            exact le_add_of_nonneg_right (Real.exp_nonneg _)
+        _ = |Real.exp (-t) * x| + |z| := by ring
+    have h3 : |f (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z)|
+        ≤ |f 0| + L * |Real.exp (-t) * x| + L * |z| := by
+      have h4 : |f (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z)|
+          ≤ L * (|Real.exp (-t) * x| + |z|) + |f 0| := by
+        calc |f (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z)|
+            = |(f (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z) - f 0) + f 0| := by
+              ring_nf
+          _ ≤ |f (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z) - f 0| + |f 0| :=
+              abs_add_le _ _
+          _ ≤ L * (|Real.exp (-t) * x| + |z|) + |f 0| := by
+              have := h1.trans (mul_le_mul_of_nonneg_left h2 hL)
+              linarith
+      nlinarith [h4]
+    rw [Real.norm_eq_abs]
+    exact h3
+  have hderiv_sqrt : ∀ u : ℝ, 0 < u →
+      HasDerivAt (fun s : ℝ => Real.sqrt (1 - Real.exp (-2 * s)))
+        (Real.exp (-2 * u) / Real.sqrt (1 - Real.exp (-2 * u))) u := by
+    intro u hu
+    have h1 : HasDerivAt (fun s : ℝ => 1 - Real.exp (-2 * s)) (2 * Real.exp (-2 * u)) u := by
+      have h2 : HasDerivAt (fun s : ℝ => -2 * s) (-2) u := by
+        simpa using (hasDerivAt_id u).const_mul (-2)
+      have h3 : HasDerivAt (fun s : ℝ => Real.exp (-2 * s)) (Real.exp (-2 * u) * (-2)) u :=
+        (Real.hasDerivAt_exp (-2 * u)).comp u h2
+      have h4 : HasDerivAt (fun s : ℝ => 1 - Real.exp (-2 * s))
+          (0 - Real.exp (-2 * u) * (-2)) u :=
+        (hasDerivAt_const u (1 : ℝ)).sub h3
+      convert h4 using 1
+      ring
+    have hpos : 0 < 1 - Real.exp (-2 * u) := by
+      rw [sub_pos, Real.exp_lt_one_iff]; linarith
+    have h5 := h1.sqrt (ne_of_gt hpos)
+    convert h5 using 1
+    field_simp
+  have hderiv_exp : ∀ u : ℝ,
+      HasDerivAt (fun s : ℝ => Real.exp (-s)) (-(Real.exp (-u))) u := by
+    intro u
+    have h2 : HasDerivAt (fun s : ℝ => -s) (-1) u := by
+      simpa using (hasDerivAt_id u).const_mul (-1)
+    have h3 := (Real.hasDerivAt_exp (-u)).comp u h2
+    have h4 : (Real.exp ∘ Neg.neg) = fun s : ℝ => Real.exp (-s) := rfl
+    rw [h4] at h3
+    have h5 : Real.exp (-u) * -1 = -(Real.exp (-u)) := by ring
+    rw [h5] at h3
+    exact h3
+  have hcont : ContinuousAt
+      (fun s : ℝ => Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))) t := by
+    refine ContinuousAt.div ?_ ?_ ?_
+    · fun_prop
+    · fun_prop
+    · rw [Real.sqrt_ne_zero']
+      rw [sub_pos, Real.exp_lt_one_iff]; linarith
+  set K : ℝ := Real.exp (-t) / Real.sqrt (1 - Real.exp (-t)) with hK
+  have hK0 : 0 ≤ K := div_nonneg (Real.exp_nonneg _) (Real.sqrt_nonneg _)
+  have hset : Set.Icc (t / 2) (2 * t) ∈ 𝓝 t :=
+    Icc_mem_nhds (by linarith) (by linarith)
+  have hbound : ∀ᵐ z ∂(gaussianReal 0 1), ∀ s ∈ Set.Icc (t / 2) (2 * t),
+      ‖g (Real.exp (-s) * x + Real.sqrt (1 - Real.exp (-2 * s)) * z)
+        * (-(Real.exp (-s)) * x
+          + (Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))) * z)‖
+        ≤ L * (|x| + 1 + K) * (1 + |z|) := by
+    filter_upwards with z s hs
+    have hs1 : t / 2 ≤ s := hs.1
+    have hs2 : s ≤ 2 * t := hs.2
+    have hs0 : 0 < s := by linarith
+    have hexp_le : Real.exp (-s) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
+    have hratio : Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s)) ≤ K := by
+      rw [hK]
+      have h1 : Real.exp (-2 * s) ≤ Real.exp (-t) := Real.exp_le_exp.mpr (by linarith)
+      have h3 : 0 < 1 - Real.exp (-t) := by rw [sub_pos, Real.exp_lt_one_iff]; linarith
+      have h4 : 0 < 1 - Real.exp (-2 * s) := by rw [sub_pos, Real.exp_lt_one_iff]; linarith
+      have h5 : Real.sqrt (1 - Real.exp (-t)) ≤ Real.sqrt (1 - Real.exp (-2 * s)) :=
+        Real.sqrt_le_sqrt (by linarith)
+      have h6 : 0 < Real.sqrt (1 - Real.exp (-t)) := Real.sqrt_pos.mpr h3
+      calc Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))
+          ≤ Real.exp (-t) / Real.sqrt (1 - Real.exp (-2 * s)) :=
+            div_le_div_of_nonneg_right h1 (Real.sqrt_nonneg _)
+        _ ≤ Real.exp (-t) / Real.sqrt (1 - Real.exp (-t)) :=
+            div_le_div_of_nonneg_left (Real.exp_pos _).le h6 h5
+    have hratio0 : 0 ≤ Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s)) :=
+      div_nonneg (Real.exp_nonneg _) (Real.sqrt_nonneg _)
+    rw [Real.norm_eq_abs, abs_mul]
+    have hg' : |g (Real.exp (-s) * x + Real.sqrt (1 - Real.exp (-2 * s)) * z)| ≤ L := hg _
+    have hz : |-(Real.exp (-s)) * x
+        + (Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))) * z| ≤ |x| + K * |z| := by
+      calc |-(Real.exp (-s)) * x
+            + (Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))) * z|
+          ≤ |-(Real.exp (-s)) * x|
+            + |(Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))) * z| := abs_add_le _ _
+        _ = Real.exp (-s) * |x|
+            + |Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))| * |z| := by
+            rw [abs_mul, abs_mul, abs_neg, abs_of_pos (Real.exp_pos _)]
+        _ ≤ 1 * |x| + K * |z| := by
+            rw [abs_of_nonneg hratio0]
+            exact add_le_add (mul_le_mul_of_nonneg_right hexp_le (abs_nonneg _))
+              (mul_le_mul_of_nonneg_right hratio (abs_nonneg _))
+        _ = |x| + K * |z| := by ring
+    calc |g (Real.exp (-s) * x + Real.sqrt (1 - Real.exp (-2 * s)) * z)|
+          * |-(Real.exp (-s)) * x
+            + (Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))) * z|
+        ≤ L * (|x| + K * |z|) := mul_le_mul hg' hz (abs_nonneg _) hL
+      _ ≤ L * (|x| + 1 + K) * (1 + |z|) := by
+          have hx0 : 0 ≤ |x| := abs_nonneg x
+          have hz0 : 0 ≤ |z| := abs_nonneg z
+          have hkey : |x| + K * |z| ≤ (|x| + 1 + K) * (1 + |z|) := by
+            nlinarith [mul_nonneg hx0 hz0, mul_nonneg hz0 hK0, mul_nonneg hx0 hK0]
+          calc L * (|x| + K * |z|) ≤ L * ((|x| + 1 + K) * (1 + |z|)) :=
+                mul_le_mul_of_nonneg_left hkey hL
+            _ = L * (|x| + 1 + K) * (1 + |z|) := by ring
+  have hboundint : Integrable (fun z : ℝ => L * (|x| + 1 + K) * (1 + |z|)) (gaussianReal 0 1) :=
+    ((integrable_const (1 : ℝ)).add (hmem.integrable (by norm_num))).const_mul _
+  have hF'meas : AEStronglyMeasurable (fun z : ℝ =>
+      g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * z)
+        * (-(Real.exp (-t)) * x
+          + (Real.exp (-2 * t) / Real.sqrt (1 - Real.exp (-2 * t))) * z)) (gaussianReal 0 1) :=
+    (hgm.comp (by fun_prop)).aestronglyMeasurable.mul (by fun_prop)
+  have hmain := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (s := Set.Icc (t / 2) (2 * t)) (x₀ := t) (μ := gaussianReal 0 1)
+    (F := fun s z => f (Real.exp (-s) * x + Real.sqrt (1 - Real.exp (-2 * s)) * z))
+    (F' := fun s z => g (Real.exp (-s) * x + Real.sqrt (1 - Real.exp (-2 * s)) * z)
+        * (-(Real.exp (-s)) * x
+          + (Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))) * z))
+    (bound := fun z : ℝ => L * (|x| + 1 + K) * (1 + |z|))
+    hset
+    (by filter_upwards with s
+        exact (hf.continuous.aestronglyMeasurable.comp_aemeasurable (by fun_prop)))
+    hFint
+    hF'meas
+    hbound
+    hboundint
+    (by
+      filter_upwards with z s hs
+      have hs0 : 0 < s := by linarith [hs.1, ht]
+      have h1 : HasDerivAt (fun s : ℝ => Real.exp (-s) * x
+          + Real.sqrt (1 - Real.exp (-2 * s)) * z)
+          (-(Real.exp (-s)) * x
+            + (Real.exp (-2 * s) / Real.sqrt (1 - Real.exp (-2 * s))) * z) s := by
+        have h2 := ((hderiv_exp s).mul_const x).add ((hderiv_sqrt s hs0).mul_const z)
+        have h3 : (fun s : ℝ => Real.exp (-s) * x + Real.sqrt (1 - Real.exp (-2 * s)) * z)
+            = (fun s : ℝ => Real.exp (-s) * x)
+              + fun s : ℝ => Real.sqrt (1 - Real.exp (-2 * s)) * z := rfl
+        rw [h3]
+        convert h2 using 1
+      exact (hderiv (Real.exp (-s) * x + Real.sqrt (1 - Real.exp (-2 * s)) * z)).comp s h1)
+  exact hmain.2
+
+/-- **The derivative of the standard Gaussian density.**  `d/dx gaussianPDFReal 0 1 x
+= -(x * gaussianPDFReal 0 1 x)`, the identity that makes the Gaussian an invariant measure of
+the Ornstein–Uhlenbeck generator. -/
+theorem gaussianPDFReal_hasDerivAt (x : ℝ) :
+    HasDerivAt (fun y : ℝ => gaussianPDFReal 0 1 y) (-(x * gaussianPDFReal 0 1 x)) x := by
+  have h1 : HasDerivAt (fun y : ℝ => -(y ^ 2) / 2) (-x) x := by
+    have h2 : HasDerivAt (fun y : ℝ => y ^ 2) (2 * x) x := by
+      simpa using hasDerivAt_pow 2 x
+    have h3 := (h2.neg).div_const 2
+    have h4 : (fun x : ℝ => (-fun y => y ^ 2) x / 2) = fun y : ℝ => -(y ^ 2) / 2 := rfl
+    rw [h4] at h3
+    have h5 : -(2 * x) / 2 = -x := by ring
+    rw [h5] at h3
+    exact h3
+  have h4 := (Real.hasDerivAt_exp (-(x ^ 2) / 2)).comp x h1
+  have h4' : HasDerivAt (fun y : ℝ => Real.exp (-(y ^ 2) / 2))
+      (Real.exp (-(x ^ 2) / 2) * -x) x := by
+    have h6 : (Real.exp ∘ fun y : ℝ => -(y ^ 2) / 2)
+        = fun y : ℝ => Real.exp (-(y ^ 2) / 2) := rfl
+    rw [h6] at h4
+    exact h4
+  have h5 : HasDerivAt (fun y : ℝ => (Real.sqrt (2 * Real.pi))⁻¹
+      * Real.exp (-(y ^ 2) / 2)) ((Real.sqrt (2 * Real.pi))⁻¹
+        * (Real.exp (-(x ^ 2) / 2) * -x)) x := h4'.const_mul _
+  have hfun : gaussianPDFReal 0 1 = fun y : ℝ =>
+      (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp (-(y ^ 2) / 2) := by
+    funext y
+    rw [gaussianPDFReal_def]
+    norm_num
+  rw [hfun]
+  convert h5 using 1
+  simp only
+  ring
+
+theorem integral_deriv_gaussianReal (f : ℝ → ℝ) (hf : ContDiff ℝ 1 f)
+    (hint3 : Integrable (fun x => f x * gaussianPDFReal 0 1 x) volume)
+    (hint4 : Integrable (fun x => f x * -(x * gaussianPDFReal 0 1 x)) volume)
+    (hint5 : Integrable (fun x => deriv f x * gaussianPDFReal 0 1 x) volume) :
+    ∫ x, deriv f x ∂(gaussianReal 0 1) = ∫ x, x * f x ∂(gaussianReal 0 1) := by
+  have hgauss : gaussianReal 0 1 = volume.withDensity (gaussianPDF 0 1) :=
+    gaussianReal_of_var_ne_zero 0 (by norm_num : (1 : ℝ≥0) ≠ 0)
+  have hconv : ∀ g : ℝ → ℝ,
+      ∫ x, g x ∂(gaussianReal 0 1) = ∫ x, gaussianPDFReal 0 1 x * g x := by
+    intro g
+    rw [hgauss]
+    rw [integral_withDensity_eq_integral_toReal_smul (by fun_prop)
+      (Filter.Eventually.of_forall fun x => by
+        rw [gaussianPDF]; exact ENNReal.ofReal_lt_top) g]
+    refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
+    simp only [gaussianPDF, ENNReal.toReal_ofReal (gaussianPDFReal_nonneg _ _ _), smul_eq_mul]
+  have hderiv_pdf : ∀ x : ℝ, HasDerivAt (fun y : ℝ => gaussianPDFReal 0 1 y)
+      (-(x * gaussianPDFReal 0 1 x)) x := gaussianPDFReal_hasDerivAt
+  have hIBP := integral_mul_deriv_eq_deriv_mul_of_integrable
+    (u := fun x : ℝ => f x) (v := fun x : ℝ => gaussianPDFReal 0 1 x)
+    (u' := fun x : ℝ => deriv f x) (v' := fun x : ℝ => -(x * gaussianPDFReal 0 1 x))
+    (fun x _ => (hf.differentiable_one x).hasDerivAt)
+    (fun x _ => hderiv_pdf x)
+    hint4 hint5 hint3
+  · rw [hconv (fun x => deriv f x), hconv (fun x => x * f x)]
+    have h1 : ∫ x, gaussianPDFReal 0 1 x * (x * f x)
+        = ∫ x, deriv f x * gaussianPDFReal 0 1 x := by
+      have h3 : ∫ x, f x * -(x * gaussianPDFReal 0 1 x)
+          = -∫ x, gaussianPDFReal 0 1 x * (x * f x) := by
+        rw [← integral_neg]
+        refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
+        ring
+      rw [h3] at hIBP
+      linarith [hIBP]
+    have h2 : ∫ x, gaussianPDFReal 0 1 x * deriv f x
+        = ∫ x, deriv f x * gaussianPDFReal 0 1 x := by
+      refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
+      ring
+    rw [h1, h2]
+
+/-- **The shifted Stein identity.**  For `g` a `C¹` function and `c, b : ℝ`, the weighted
+integration by parts against `γ` reads `∫ y g (c + b y) dγ = b ∫ g' (c + b y) dγ`.  It is the
+Stein identity applied to the composition `y ↦ g (c + b y)`, whose derivative is
+`b · g' (c + b y)`. -/
+theorem integral_mul_comp_gaussianReal (c b : ℝ) (g : ℝ → ℝ) (hg : ContDiff ℝ 1 g)
+    (hint3 : Integrable (fun y => g (c + b * y) * gaussianPDFReal 0 1 y) volume)
+    (hint4 : Integrable (fun y => g (c + b * y) * -(y * gaussianPDFReal 0 1 y)) volume)
+    (hint5 : Integrable (fun y => deriv g (c + b * y) * gaussianPDFReal 0 1 y) volume) :
+    ∫ y, y * g (c + b * y) ∂(gaussianReal 0 1)
+      = b * ∫ y, deriv g (c + b * y) ∂(gaussianReal 0 1) := by
+  have hF : ContDiff ℝ 1 (fun y : ℝ => g (c + b * y)) := by fun_prop
+  have hderiv : ∀ y : ℝ, deriv (fun y : ℝ => g (c + b * y)) y = b * deriv g (c + b * y) := by
+    intro y
+    have h1 : HasDerivAt (fun y : ℝ => c + b * y) b y := by
+      simpa using ((hasDerivAt_id y).const_mul b).const_add c
+    have h2 := (hg.differentiable_one (c + b * y)).hasDerivAt.comp y h1
+    have h3 : (g ∘ fun y : ℝ => c + b * y) = fun y : ℝ => g (c + b * y) := rfl
+    rw [h3] at h2
+    rw [h2.deriv]
+    ring
+  have h5' : Integrable (fun y => deriv (fun y : ℝ => g (c + b * y)) y
+      * gaussianPDFReal 0 1 y) volume := by
+    refine (hint5.const_mul b).congr (Filter.Eventually.of_forall fun y => ?_)
+    show b * (deriv g (c + b * y) * gaussianPDFReal 0 1 y)
+      = deriv (fun y : ℝ => g (c + b * y)) y * gaussianPDFReal 0 1 y
+    rw [hderiv y]; ring
+  have hstein := integral_deriv_gaussianReal (fun y : ℝ => g (c + b * y)) hF hint3 hint4 h5'
+  have hfun : (fun y : ℝ => deriv (fun y : ℝ => g (c + b * y)) y)
+      = fun y => b * deriv g (c + b * y) := funext hderiv
+  rw [hfun, integral_const_mul] at hstein
+  exact hstein.symm
+
+/-- The carré du champ of the Ornstein–Uhlenbeck generator `L g = g'' - x g'`:
+`Γ(f) = (f')²`. -/
+def carreDuChamp (f : ℝ → ℝ) (x : ℝ) : ℝ := (deriv f x) ^ 2
+
+/-- The iterated carré du champ `Γ₂(f) = (f'')² + (f')²`. -/
+def carreDuChamp2 (f : ℝ → ℝ) (x : ℝ) : ℝ := (deriv (deriv f) x) ^ 2 + (deriv f x) ^ 2
+
+/-- **Bakry–Émery `Γ₂ = 1`.**  For the Ornstein–Uhlenbeck generator `L g = g'' - x g'` and
+`Γ(f) = (f')²`, the iterated carré du champ satisfies
+`Γ₂(f) = (1/2) L Γ(f) - Γ(f, L f)`, and with `Γ₂(f) = (f'')² + (f')²` this says
+exactly that the curvature of the standard Gaussian is `1`.  Written out with the derivative values
+`a = f'(x)`, `b = f''(x)`, `c = f'''(x)`, the identity is the algebraic cancellation
+`(b^2 + a^2) - (1/2) * (2 * b^2 + 2 * a * c - 2 * x * a * b) + a * (c - a - x * b) = 0`. -/
+theorem carreDuChamp2_bakryEmery (a b c x : ℝ) :
+    (b ^ 2 + a ^ 2) - (1 / 2) * (2 * b ^ 2 + 2 * a * c - 2 * x * a * b)
+      + a * (c - a - x * b) = 0 := by
+  ring
+
+/-- **The Ornstein–Uhlenbeck heat equation.**  The time derivative of the Mehler semigroup is
+the semigroup applied to the generator `L g = g'' - y g'`, here written in the divergence form
+`y ↦ gg y - y * g y` with `gg = g'`.  The proof combines `hasDerivAt_ouSemigroup_time` (the
+derivative of the kernel) with the shifted Stein identity `integral_mul_comp_gaussianReal`
+(which converts the `y`-weight into the derivative of `g`), and the identity
+`e^{-2t} / √(1 - e^{-2t}) · √(1 - e^{-2t}) = e^{-2t} = 1 - (1 - e^{-2t})`. -/
+theorem hasDerivAt_ouSemigroup_heat (t : ℝ) (ht : 0 < t) (f g gg : ℝ → ℝ)
+    (L : ℝ) (hL : 0 ≤ L)
+    (hf : LipschitzWith ⟨L, hL⟩ f) (hderiv : ∀ y, HasDerivAt f (g y) y)
+    (hg : ∀ y, |g y| ≤ L) (hgm : Measurable g) (hgc : ContDiff ℝ 1 g)
+    (hderiv2 : ∀ y, HasDerivAt g (gg y) y)
+    (x : ℝ)
+    (hint3 : Integrable (fun y => g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+      * gaussianPDFReal 0 1 y) volume)
+    (hint4 : Integrable (fun y => g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+      * -(y * gaussianPDFReal 0 1 y)) volume)
+    (hint5 : Integrable (fun y =>
+      deriv g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+      * gaussianPDFReal 0 1 y) volume)
+    (hint3' : Integrable (fun y => g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y))
+      (gaussianReal 0 1))
+    (hint4' : Integrable (fun y =>
+      y * g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y))
+      (gaussianReal 0 1))
+    (hint5' : Integrable (fun y => gg (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y))
+      (gaussianReal 0 1)) :
+    HasDerivAt (fun s => ouSemigroup s f x)
+      (ouSemigroup t (fun y => gg y - y * g y) x) t := by
+  have hbpos : 0 < Real.sqrt (1 - Real.exp (-2 * t)) := by
+    rw [Real.sqrt_pos, sub_pos, Real.exp_lt_one_iff]; linarith
+  have hb2 : (Real.sqrt (1 - Real.exp (-2 * t))) ^ 2 = 1 - Real.exp (-2 * t) := by
+    rw [Real.sq_sqrt]
+    rw [sub_nonneg, Real.exp_le_one_iff]; linarith
+  have htime := hasDerivAt_ouSemigroup_time t ht f g L hL hf hderiv hg hgm x
+  have hstein := integral_mul_comp_gaussianReal (Real.exp (-t) * x)
+    (Real.sqrt (1 - Real.exp (-2 * t))) g hgc hint3 hint4 hint5
+  have hgg' : ∀ y, gg y = deriv g y := fun y => (hderiv2 y).deriv.symm
+  have h1 : ∫ y, y * g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+        ∂(gaussianReal 0 1)
+      = Real.sqrt (1 - Real.exp (-2 * t))
+        * ∫ y, gg (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+          ∂(gaussianReal 0 1) := by
+    rw [hstein]
+    refine congrArg (fun z => Real.sqrt (1 - Real.exp (-2 * t)) * z) ?_
+    refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+    exact (hgg' (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)).symm
+  have hkey : ∫ y, g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+        * (-(Real.exp (-t)) * x
+          + (Real.exp (-2 * t) / Real.sqrt (1 - Real.exp (-2 * t))) * y)
+        ∂(gaussianReal 0 1)
+      = ∫ y, (gg (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+          - (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+            * g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y))
+        ∂(gaussianReal 0 1) := by
+    have hsplit : ∫ y, g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+          * (-(Real.exp (-t)) * x
+            + (Real.exp (-2 * t) / Real.sqrt (1 - Real.exp (-2 * t))) * y)
+          ∂(gaussianReal 0 1)
+        = -(Real.exp (-t) * x)
+            * ∫ y, g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+              ∂(gaussianReal 0 1)
+          + (Real.exp (-2 * t) / Real.sqrt (1 - Real.exp (-2 * t)))
+            * ∫ y, y * g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+              ∂(gaussianReal 0 1) := by
+      rw [← integral_const_mul, ← integral_const_mul, ← integral_add]
+      · refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+        ring
+      · exact hint3'.const_mul _
+      · exact hint4'.const_mul _
+    have hsplit2 : ∫ y, (gg (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+          - (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+            * g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y))
+          ∂(gaussianReal 0 1)
+        = ∫ y, gg (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+            ∂(gaussianReal 0 1)
+          - ∫ y, (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+            * g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+            ∂(gaussianReal 0 1) := by
+      rw [integral_sub]
+      · exact hint5'
+      · refine ((hint3'.const_mul (Real.exp (-t) * x)).add
+          (hint4'.const_mul (Real.sqrt (1 - Real.exp (-2 * t))))).congr ?_
+        filter_upwards with y
+        simp only [Pi.add_apply]
+        ring
+    have hsplit3 : ∫ y, (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+          * g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+          ∂(gaussianReal 0 1)
+        = (Real.exp (-t) * x)
+            * ∫ y, g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+              ∂(gaussianReal 0 1)
+          + Real.sqrt (1 - Real.exp (-2 * t))
+            * ∫ y, y * g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+              ∂(gaussianReal 0 1) := by
+      rw [← integral_const_mul, ← integral_const_mul, ← integral_add]
+      · refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+        ring
+      · exact hint3'.const_mul _
+      · exact hint4'.const_mul _
+    rw [hsplit, hsplit2, hsplit3, h1]
+    have hbne : Real.sqrt (1 - Real.exp (-2 * t)) ≠ 0 := ne_of_gt hbpos
+    set A := ∫ y, g (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+      ∂(gaussianReal 0 1) with hA
+    set B := ∫ y, gg (Real.exp (-t) * x + Real.sqrt (1 - Real.exp (-2 * t)) * y)
+      ∂(gaussianReal 0 1) with hB
+    set c := Real.sqrt (1 - Real.exp (-2 * t)) with hc
+    have hc2 : c ^ 2 = 1 - Real.exp (-2 * t) := hb2
+    have hcne : c ≠ 0 := hbne
+    field_simp
+    rw [hc2]
+    ring
+  rw [hkey] at htime
+  exact htime
 
 /-- **The generator/heat equation** `∂_t P_t f = L P_t f`, for smooth compactly supported `f`.
 This is the named open input: it packages the heat equation together with the two weighted

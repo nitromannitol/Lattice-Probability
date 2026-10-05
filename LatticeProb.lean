@@ -165,6 +165,7 @@ import LatticeProb.Prob.BernsteinLayerCake
 import LatticeProb.Prob.BernsteinFactorialClause
 import LatticeProb.Prob.BernsteinRosenthalBound
 import LatticeProb.Prob.BernsteinFactorialFinal
+import LatticeProb.Prob.BernsteinFactorialFull
 import LatticeProb.Prob.BernsteinFactorialBound
 import LatticeProb.Prob.BernsteinDoobMaximal
 import LatticeProb.Prob.BernsteinVariancePair
