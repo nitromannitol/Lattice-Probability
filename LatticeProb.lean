@@ -546,3 +546,11 @@ import LatticeProb.Prob.Kac
 import LatticeProb.Prob.InducedMap
 import LatticeProb.Prob.KingmanLinear
 import LatticeProb.Prob.Strassen
+import LatticeProb.Prob.MvbeRegularClass
+import LatticeProb.Prob.MvbePerimeter
+import LatticeProb.Prob.MehlerSmoothing
+import LatticeProb.Prob.MvbeKeyEstimate
+import LatticeProb.Prob.MvbeWhitening
+import LatticeProb.Prob.MvbeGaussConv
+import LatticeProb.Prob.MvbeOrthantPerimeter
+import LatticeProb.Prob.MvbeSteinExpectation

@@ -513,3 +513,44 @@ library.
 #print axioms LatticeProb.Sobolev.fourier_normalized_dilation
 #print axioms LatticeProb.Sobolev.tendsto_fourier_mollifierDil
 #print axioms LatticeProb.Sobolev.mollifierFourierTendsto
+
+/-! ### Multivariate Berry–Esseen, orthant route (Raič Thm 1.3), stage 1 -/
+
+#print axioms LatticeProb.mvbeRoundedRegularClass
+#print axioms LatticeProb.mvbeRho_lipschitz
+#print axioms LatticeProb.mvbeRho_convexOn
+#print axioms LatticeProb.mvbeRho_coordMono
+#print axioms LatticeProb.mvbeUnitGradAE_volume
+#print axioms LatticeProb.mvbe_perim_pi_layer_le
+#print axioms LatticeProb.mvbe_perim_stdGaussian_layer_le
+#print axioms LatticeProb.mvbe_perim_stdGaussian_layer_le_one
+#print axioms LatticeProb.mehlerSmooth_iteratedDeriv
+#print axioms LatticeProb.mehlerSmooth_contDiff
+#print axioms LatticeProb.mehlerSmooth_iteratedDeriv_bound
+#print axioms LatticeProb.mehlerSmooth_hasDerivAt_angle
+#print axioms LatticeProb.mehlerSmooth_iteratedDeriv_three_C2b
+#print axioms LatticeProb.ouHeatEquation_holds
+#print axioms LatticeProb.mvbe_integral_mul_tan_le
+#print axioms LatticeProb.mvbe_keyEstimate_optimised
+#print axioms LatticeProb.mvbe_gaussian_hermite_integral_le
+#print axioms LatticeProb.mvbe_iteratedFDeriv_gaussDensity
+#print axioms LatticeProb.mvbe_stdGaussian_eq_withDensity
+#print axioms LatticeProb.mvbe_lemma_2_5
+#print axioms LatticeProb.mvbe_frozenShape_of_whitenedBound
+#print axioms LatticeProb.mvbe_frozenShape_quarter_of_whitenedBound
+#print axioms LatticeProb.mvbe_frozenQuarter_of_whitenedBound
+#print axioms LatticeProb.mvbe_frozenShape_linear_of_whitenedBound
+#print axioms LatticeProb.mvbe_multivariateGaussian_add
+#print axioms LatticeProb.mvbe_gaussian_decomp
+#print axioms LatticeProb.mvbe_layer_of_conv
+#print axioms LatticeProb.mvbe_gaussian_layer
+#print axioms LatticeProb.mvbe_layer_stdGaussian
+#print axioms LatticeProb.mvbe_stdGaussian_ac
+#print axioms LatticeProb.mvbe_unitGradAE_stdGaussian
+#print axioms LatticeProb.mvbe_outer_layer_stdGaussian_le
+#print axioms LatticeProb.mvbe_inner_layer_stdGaussian_le
+#print axioms LatticeProb.mvbe_gammaStarOf_orthant_le
+#print axioms LatticeProb.mvbeRoundedRegularClass_gammaStar_le
+#print axioms LatticeProb.mvbe_polarization
+#print axioms LatticeProb.mvbe_polarization_iteratedFDeriv
+#print axioms LatticeProb.mvbe_stein_expectation
