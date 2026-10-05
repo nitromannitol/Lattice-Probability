@@ -1321,5 +1321,17 @@ theorem gaussian_lipschitz_concentration_l2_of_logSobolevL2 (n : ℕ)
           (mul_pos hL (Real.sqrt_pos.mpr (Nat.cast_pos.mpr h0))) hsup lam
     · exact herbstBound_l2_of_logSobolevL2 n h f L hL hf lam hlam
 
+/-- **The `HasSum` form of the `ℓ²`-Lipschitz hypothesis.**  The divisible-sandpile
+external states the Lipschitz condition with the squared `ℓ²` distance written as
+a `HasSum` over the index set; on a finite index type that is the same as the
+`Finset.sum` form the library's lemmas use. -/
+theorem l2_lipschitz_of_hasSum {n : ℕ} {f : (Fin n → ℝ) → ℝ} {L : ℝ}
+    (hf : ∀ (x y : Fin n → ℝ) (M : ℝ), HasSum (fun i => (x i - y i) ^ 2) M →
+      |f x - f y| ≤ L * Real.sqrt M) :
+    ∀ x y : Fin n → ℝ, |f x - f y| ≤ L * Real.sqrt (∑ i, (x i - y i) ^ 2) := by
+  intro x y
+  refine hf x y _ ?_
+  exact hasSum_fintype _
+
 end LatticeProb
 

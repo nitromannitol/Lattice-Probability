@@ -2,18 +2,23 @@
 # The Ornstein–Uhlenbeck (Mehler) semigroup for the Gaussian log-Sobolev route
 
 `LatticeProb.GaussianLogSobolev n` (`LatticeProb/External/GaussianLogSobolev.lean`) is the cited
-Gaussian log-Sobolev inequality; `Prob/GaussianLogSobolevOne.lean` records that the `n = 1`
-instance has no bounded proof from the current library and identifies the missing Ornstein–Uhlenbeck
-layer.  This file lands the first genuine piece of that layer for `n = 1`:
+Gaussian log-Sobolev inequality.  This module builds the Ornstein–Uhlenbeck layer that the
+entropy-dissipation proof of the `n = 1` instance runs on:
 
 * `LatticeProb.ouSemigroup` — the Mehler semigroup
   `P_t f x = ∫ z, f (e^{-t} x + √(1 - e^{-2t}) z) ∂γ(z)`, `γ = gaussianReal 0 1`;
 * `LatticeProb.ouGenerator` — the Ornstein–Uhlenbeck generator `L f = f'' - x f'`;
-* `ouSemigroup_zero`, `ouSemigroup_const`, `ouSemigroup_meas` — the structural identities
-  (`P_0 = id`, `P_t 1 = 1`, `∫ P_t f dγ = ∫ f dγ`);
+* `mehler_pushforward_general`, `mehler_pushforward_one` — the Mehler kernel
+  `(x, z) ↦ a x + b z` pushes `γ ⊗ γ` forward to the Gaussian of variance `a² + b²`,
+  and to `γ` when `a² + b² = 1`;
+* `mehler_double_integral_shift` — the iterated-integral form of that pushforward;
+* `ouSemigroup_zero`, `ouSemigroup_const`, `ouSemigroup_one`, `ouSemigroup_const_mul` — the
+  structural identities (`P_0 = id`, `P_t 1 = 1`, homogeneity);
+* `integral_ouSemigroup` — **measure preservation** `∫ P_t f dγ = ∫ f dγ` for `t ≥ 0`;
+* `ouSemigroup_add` — **the semigroup law** `P_s (P_t f) = P_{s+t} f` for `s, t ≥ 0`;
 * `OUHeatEquation` — **the named open input**: the generator/heat equation
-  `∂_t P_t f = L P_t f` (equivalently the intertwining and Stein/Γ₂ steps recorded in
-  `scratch/pk/glogsobolev-route.md`).
+  `∂_t P_t f = L P_t f`, which packages the two weighted integrations by parts and the `Γ₂`
+  identity of the entropy-dissipation argument.
 
 Nothing here is conditional on `sorry`; `OUHeatEquation` is a named `Prop`, never an axiom.
 -/
@@ -37,6 +42,72 @@ def ouSemigroup (t : ℝ) (f : ℝ → ℝ) : ℝ → ℝ :=
 def ouGenerator (f : ℝ → ℝ) : ℝ → ℝ :=
   fun x => deriv (deriv f) x - x * deriv f x
 
+/-- **The Mehler kernel pushes `γ ⊗ γ` forward to the Gaussian of variance `a² + b²`.**
+The kernel is `(x, z) ↦ a x + b z`; the two coordinates are independent standard Gaussians,
+so the image is centred Gaussian with variance `a² + b²`. -/
+theorem mehler_pushforward_general (a b : ℝ) :
+    Measure.map (fun p : ℝ × ℝ => a * p.1 + b * p.2)
+      ((gaussianReal 0 1).prod (gaussianReal 0 1))
+      = gaussianReal 0 (NNReal.mk (a ^ 2 + b ^ 2) (by positivity)) := by
+  have h1 : Measure.map (fun p : ℝ × ℝ => a * p.1 + b * p.2)
+        ((gaussianReal 0 1).prod (gaussianReal 0 1))
+      = Measure.map (fun p : ℝ × ℝ => p.1 + p.2)
+          (Measure.map (Prod.map (fun x : ℝ => a * x) (fun y : ℝ => b * y))
+            ((gaussianReal 0 1).prod (gaussianReal 0 1))) := by
+    rw [Measure.map_map (by fun_prop) (by fun_prop)]
+    rfl
+  rw [h1, ← Measure.map_prod_map (gaussianReal 0 1) (gaussianReal 0 1)
+    (by fun_prop) (by fun_prop)]
+  rw [gaussianReal_map_const_mul a, gaussianReal_map_const_mul b]
+  simp only [mul_zero, mul_one]
+  rw [show Measure.map (fun p : ℝ × ℝ => p.1 + p.2)
+      ((gaussianReal 0 (NNReal.mk (a ^ 2) (sq_nonneg a))).prod
+        (gaussianReal 0 (NNReal.mk (b ^ 2) (sq_nonneg b))))
+      = (gaussianReal 0 (NNReal.mk (a ^ 2) (sq_nonneg a)))
+        ∗ (gaussianReal 0 (NNReal.mk (b ^ 2) (sq_nonneg b))) from rfl]
+  rw [gaussianReal_conv_gaussianReal]
+  simp only [add_zero]
+  congr 1
+
+/-- **The Mehler kernel with `a² + b² = 1` pushes `γ ⊗ γ` forward to `γ`.** -/
+theorem mehler_pushforward_one (a b : ℝ) (hab : a ^ 2 + b ^ 2 = 1) :
+    Measure.map (fun p : ℝ × ℝ => a * p.1 + b * p.2)
+      ((gaussianReal 0 1).prod (gaussianReal 0 1)) = gaussianReal 0 1 := by
+  rw [mehler_pushforward_general a b]
+  congr 1
+  rw [← NNReal.coe_inj]
+  simp only [NNReal.coe_one]
+  exact hab
+
+/-- **The shifted Mehler integral.**  For `a, b, c : ℝ` with `v = a² + b²`, the iterated
+integral of `f (c + (a z + b z₁))` against `γ ⊗ γ` is the integral of `f` against the
+Gaussian of variance `v` and mean `c`. -/
+theorem mehler_double_integral_shift (a b c : ℝ) (v : ℝ≥0) (hv : (v : ℝ) = a ^ 2 + b ^ 2)
+    (f : ℝ → ℝ) (hf : Integrable f (gaussianReal c v)) :
+    ∫ z, ∫ z₁, f (c + (a * z + b * z₁)) ∂(gaussianReal 0 1) ∂(gaussianReal 0 1)
+      = ∫ y, f y ∂(gaussianReal c v) := by
+  have hmap := mehler_pushforward_general a b
+  have hphi : Measurable (fun p : ℝ × ℝ => a * p.1 + b * p.2) := by fun_prop
+  have hv' : NNReal.mk (a ^ 2 + b ^ 2) (by positivity) = v := by
+    rw [← NNReal.coe_inj]
+    simp only [NNReal.coe_mk]
+    exact hv.symm
+  have hshift : Measure.map (fun p : ℝ × ℝ => c + (a * p.1 + b * p.2))
+      ((gaussianReal 0 1).prod (gaussianReal 0 1)) = gaussianReal c v := by
+    rw [show (fun p : ℝ × ℝ => c + (a * p.1 + b * p.2))
+        = (fun y : ℝ => c + y) ∘ (fun p : ℝ × ℝ => a * p.1 + b * p.2) from rfl,
+      ← Measure.map_map (by fun_prop) hphi, hmap, gaussianReal_map_const_add, hv']
+    simp only [zero_add]
+  have hint : Integrable (fun p : ℝ × ℝ => f (c + (a * p.1 + b * p.2)))
+      ((gaussianReal 0 1).prod (gaussianReal 0 1)) := by
+    refine Integrable.comp_measurable ?_ (by fun_prop)
+    rw [hshift]
+    exact hf
+  rw [integral_integral hint, ← hshift]
+  refine (integral_map (by fun_prop) ?_).symm
+  rw [hshift]
+  exact hf.aestronglyMeasurable
+
 /-- **`P_0` is the identity.** -/
 theorem ouSemigroup_zero (f : ℝ → ℝ) : ouSemigroup 0 f = f := by
   funext x
@@ -53,6 +124,123 @@ theorem ouSemigroup_const (t : ℝ) (c : ℝ) : ouSemigroup t (fun _ => c) = fun
   rw [show (fun z => (fun _ => c) (Real.exp (-t) * x
         + Real.sqrt (1 - Real.exp (-2 * t)) * z)) = fun _ => c by rfl]
   simp
+
+/-- **The Mehler semigroup preserves the constant `1`** (probability-kernel normalisation). -/
+theorem ouSemigroup_one (t : ℝ) : ouSemigroup t (fun _ => (1 : ℝ)) = fun _ => 1 :=
+  ouSemigroup_const t 1
+
+/-- **The Mehler semigroup is homogeneous.**  `P_t (c · f) = c · P_t f` pointwise, directly from
+the linearity of the Bochner integral. -/
+theorem ouSemigroup_const_mul (t c : ℝ) (f : ℝ → ℝ) :
+    ouSemigroup t (fun x => c * f x) = fun x => c * ouSemigroup t f x := by
+  funext x
+  simp only [ouSemigroup]
+  rw [← integral_const_mul]
+
+/-- **The Mehler semigroup preserves the Gaussian measure**: `∫ P_t f dγ = ∫ f dγ` for
+`t ≥ 0`.  The Mehler kernel `(x, z) ↦ e^{-t} x + √(1 - e^{-2t}) z` pushes `γ ⊗ γ`
+forward to `γ` (`mehler_pushforward_one`), which gives both the integrability of the
+uncurried integrand and the identity through Fubini and the change-of-variables formula. -/
+theorem integral_ouSemigroup (t : ℝ) (ht : 0 ≤ t) (f : ℝ → ℝ)
+    (hf : Integrable f (gaussianReal 0 1)) :
+    ∫ x, ouSemigroup t f x ∂(gaussianReal 0 1) = ∫ z, f z ∂(gaussianReal 0 1) := by
+  have hab : Real.exp (-t) ^ 2 + Real.sqrt (1 - Real.exp (-2 * t)) ^ 2 = 1 := by
+    have h1 : Real.exp (-t) ^ 2 = Real.exp (-2 * t) := by
+      rw [sq, ← Real.exp_add]; ring_nf
+    have h2 : Real.sqrt (1 - Real.exp (-2 * t)) ^ 2 = 1 - Real.exp (-2 * t) := by
+      rw [Real.sq_sqrt]
+      rw [sub_nonneg, Real.exp_le_one_iff]; linarith
+    rw [h1, h2]; ring
+  have hmap := mehler_pushforward_one (Real.exp (-t)) (Real.sqrt (1 - Real.exp (-2 * t))) hab
+  have hphi : Measurable (fun p : ℝ × ℝ =>
+      Real.exp (-t) * p.1 + Real.sqrt (1 - Real.exp (-2 * t)) * p.2) := by fun_prop
+  have hint : Integrable (fun p : ℝ × ℝ =>
+      f (Real.exp (-t) * p.1 + Real.sqrt (1 - Real.exp (-2 * t)) * p.2))
+      ((gaussianReal 0 1).prod (gaussianReal 0 1)) := by
+    refine Integrable.comp_measurable ?_ (by fun_prop)
+    rw [hmap]
+    exact hf
+  have haesm : AEStronglyMeasurable f
+      (Measure.map (fun p : ℝ × ℝ =>
+        Real.exp (-t) * p.1 + Real.sqrt (1 - Real.exp (-2 * t)) * p.2)
+        ((gaussianReal 0 1).prod (gaussianReal 0 1))) := by
+    rw [hmap]
+    exact hf.aestronglyMeasurable
+  have h2 : ∫ x, ouSemigroup t f x ∂(gaussianReal 0 1)
+      = ∫ p : ℝ × ℝ,
+          f (Real.exp (-t) * p.1 + Real.sqrt (1 - Real.exp (-2 * t)) * p.2)
+          ∂((gaussianReal 0 1).prod (gaussianReal 0 1)) := by
+    simp only [ouSemigroup]
+    rw [integral_integral hint]
+  rw [h2]
+  conv_rhs => rw [← hmap]
+  exact (integral_map hphi.aemeasurable haesm).symm
+
+/-- **The Mehler semigroup is a semigroup**: `P_s (P_t f) = P_{s + t} f` for `s, t ≥ 0`.
+The composition of the two Mehler kernels is again a Mehler kernel, because
+`e^{-2t} (1 - e^{-2s}) + (1 - e^{-2t}) = 1 - e^{-2(s+t)}`; the identity is then the
+pushforward form `mehler_double_integral_shift` applied to that kernel. -/
+theorem ouSemigroup_add (s t : ℝ) (hs : 0 ≤ s) (ht : 0 ≤ t) (f : ℝ → ℝ)
+    (hf : ∀ (c : ℝ) (v : ℝ≥0), Integrable f (gaussianReal c v)) :
+    ouSemigroup s (ouSemigroup t f) = ouSemigroup (s + t) f := by
+  funext x
+  have hsq : (Real.exp (-t) * Real.sqrt (1 - Real.exp (-2 * s))) ^ 2
+      + Real.sqrt (1 - Real.exp (-2 * t)) ^ 2 = 1 - Real.exp (-2 * (s + t)) := by
+    have h1 : Real.sqrt (1 - Real.exp (-2 * s)) ^ 2 = 1 - Real.exp (-2 * s) := by
+      rw [Real.sq_sqrt]; rw [sub_nonneg, Real.exp_le_one_iff]; linarith
+    have h2 : Real.sqrt (1 - Real.exp (-2 * t)) ^ 2 = 1 - Real.exp (-2 * t) := by
+      rw [Real.sq_sqrt]; rw [sub_nonneg, Real.exp_le_one_iff]; linarith
+    have h3 : Real.exp (-t) ^ 2 = Real.exp (-2 * t) := by rw [sq, ← Real.exp_add]; ring_nf
+    have h4 : Real.exp (-2 * (s + t)) = Real.exp (-2 * s) * Real.exp (-2 * t) := by
+      rw [← Real.exp_add]; ring_nf
+    rw [mul_pow, h1, h2, h3, h4]; ring
+  have hexp : Real.exp (-t) * Real.exp (-s) = Real.exp (-(s + t)) := by
+    rw [← Real.exp_add]; ring_nf
+  have hshift : ∀ z z₁ : ℝ, Real.exp (-t) * (Real.exp (-s) * x
+        + Real.sqrt (1 - Real.exp (-2 * s)) * z)
+        + Real.sqrt (1 - Real.exp (-2 * t)) * z₁
+      = Real.exp (-(s + t)) * x
+        + ((Real.exp (-t) * Real.sqrt (1 - Real.exp (-2 * s))) * z
+          + Real.sqrt (1 - Real.exp (-2 * t)) * z₁) := by
+    intro z z₁; rw [← hexp]; ring
+  have hnn : (0 : ℝ) ≤ 1 - Real.exp (-2 * (s + t)) := by
+    rw [sub_nonneg, Real.exp_le_one_iff]; linarith
+  have hf' : Integrable f (gaussianReal (Real.exp (-(s + t)) * x)
+      (NNReal.mk (1 - Real.exp (-2 * (s + t))) hnn)) := hf _ _
+  simp only [ouSemigroup]
+  rw [show (∫ z, (∫ z₁, f (Real.exp (-t) * (Real.exp (-s) * x
+          + Real.sqrt (1 - Real.exp (-2 * s)) * z)
+          + Real.sqrt (1 - Real.exp (-2 * t)) * z₁)
+        ∂(gaussianReal 0 1)) ∂(gaussianReal 0 1))
+      = ∫ z, ∫ z₁, f (Real.exp (-(s + t)) * x
+          + ((Real.exp (-t) * Real.sqrt (1 - Real.exp (-2 * s))) * z
+            + Real.sqrt (1 - Real.exp (-2 * t)) * z₁))
+        ∂(gaussianReal 0 1) ∂(gaussianReal 0 1) from by
+    refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
+    refine integral_congr_ae (Filter.Eventually.of_forall fun z₁ => ?_)
+    simp only [hshift z z₁]]
+  rw [mehler_double_integral_shift (Real.exp (-t) * Real.sqrt (1 - Real.exp (-2 * s)))
+    (Real.sqrt (1 - Real.exp (-2 * t))) (Real.exp (-(s + t)) * x)
+    (NNReal.mk (1 - Real.exp (-2 * (s + t))) hnn) hsq.symm f hf']
+  have hmap2 : gaussianReal (Real.exp (-(s + t)) * x) (NNReal.mk (1 - Real.exp (-2 * (s + t))) hnn)
+      = Measure.map (fun z : ℝ => Real.exp (-(s + t)) * x
+          + Real.sqrt (NNReal.mk (1 - Real.exp (-2 * (s + t))) hnn : ℝ) * z)
+          (gaussianReal 0 1) := by
+    have hcomp : (fun z : ℝ => Real.exp (-(s + t)) * x
+        + Real.sqrt (NNReal.mk (1 - Real.exp (-2 * (s + t))) hnn : ℝ) * z)
+        = (fun y : ℝ => y + Real.exp (-(s + t)) * x)
+          ∘ (fun z : ℝ =>
+              Real.sqrt (NNReal.mk (1 - Real.exp (-2 * (s + t))) hnn : ℝ) * z) := by
+      funext z; simp [add_comm]
+    rw [hcomp, ← Measure.map_map (by fun_prop) (by fun_prop), gaussianReal_map_const_mul,
+      gaussianReal_map_add_const]
+    simp only [mul_zero, zero_add]
+    congr 1
+    rw [← NNReal.coe_inj]
+    simp only [NNReal.coe_mk, NNReal.coe_one, NNReal.coe_mul]
+    rw [Real.sq_sqrt hnn, mul_one]
+  rw [hmap2]
+  exact integral_map (by fun_prop) (hmap2 ▸ hf').aestronglyMeasurable
 
 /-- **The generator/heat equation** `∂_t P_t f = L P_t f`, for smooth compactly supported `f`.
 This is the named open input: it packages the heat equation together with the two weighted
