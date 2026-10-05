@@ -196,6 +196,8 @@ import LatticeProb.Prob.GaussCovDensityOrthantPairs
 import LatticeProb.Prob.GaussCovDensityPartial2Bounds
 import LatticeProb.Prob.NormalComparisonOrthantIcc
 import LatticeProb.Prob.NormalComparisonInterpolation
+import LatticeProb.Prob.NormalComparisonLimit
+import LatticeProb.Prob.NormalComparisonFinal
 import LatticeProb.Gauss.Process
 import LatticeProb.Gauss.WhiteNoise
 import LatticeProb.Gauss.Brownian

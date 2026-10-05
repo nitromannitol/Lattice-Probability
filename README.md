@@ -458,7 +458,12 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   (`LatticeProb.boundary_covDensity_path_le`), and integrating this bound gives the
   interpolation on `[0, T]` for every `T < 1`
   (`LatticeProb.integral_bivariateGaussDensity_Icc_le`,
-  `LatticeProb.orthant_path_interpolation`).
+  `LatticeProb.orthant_path_interpolation`).  Letting `T → 1` closes the argument:
+  `LatticeProb.normalComparison_bound` is the normal comparison inequality of Li and Shao for the
+  orthant, `|P(Y ≤ b) − ∏ᵢ P(Yᵢ ≤ bᵢ)| ≤ (1/4) ∑_{i<j} (S i j / v) exp (−(bᵢ² + bⱼ²) / (2 v (1 +
+  S i j / v)))` for a centred Gaussian vector with covariance `S`, common variance `v` and
+  nonnegative correlations, and `LatticeProb.normalComparison_exists` states it with an
+  existential constant in exactly the shape of the cited proposition.
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.

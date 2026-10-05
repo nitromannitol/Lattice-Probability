@@ -280,6 +280,10 @@ library.
 #print axioms LatticeProb.continuousOn_bivariateGaussDensity_path
 #print axioms LatticeProb.integral_bivariateGaussDensity_Icc_le
 #print axioms LatticeProb.orthant_path_interpolation
+#print axioms LatticeProb.tendsto_integral_orthant_smartPath
+#print axioms LatticeProb.normalComparison_bound_of_interpolation
+#print axioms LatticeProb.normalComparison_bound
+#print axioms LatticeProb.normalComparison_exists
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner
