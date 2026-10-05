@@ -402,6 +402,16 @@ not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` 
 * `LatticeProb.mvbeMollify_exists_euclidean`: mollification of a `C¹` function with `L`-Lipschitz
   gradient into a smooth `g` with `‖D²g‖ ≤ L`, `|g − f| ≤ L η²`, and `D²g = 0` where `f` is locally
   constant (replaces Rademacher's theorem in the proof of Lemma 2.7).
+* `LatticeProb.mvbe_frozenShape_linear_unconditional`: the multivariate Berry–Esseen comparison for
+  orthants, in the shape of the cited `Sandpile.External.MultivariateBerryEsseen` but with `C m` in place
+  of `C m^{1/4}`: for i.i.d. mean-zero summands with third moment `≤ M var^{3/2}` and coefficients whose
+  covariance matrix has quadratic form in `[1−δ, 1+δ]`, the law of the linear forms and the matching
+  centred Gaussian differ on every orthant by at most `C m var^{3/2} ∑_i |a(i)|³`.  It follows from
+  `mvbe_thmR`, the whitening reduction, the image-class lemma and the linear perimeter bound
+  `mvbeRoundedRegularClass_gammaStar_le`.  `LatticeProb.mvbe_frozenQuarter_of_perimeter` gives the
+  frozen `m^{1/4}` statement itself from one named proposition, `MvbeOrthantPerimeterQuarter`
+  (`γ*` of the rounded orthants is `O(m^{1/4})`, a consequence of Raič's Theorem 1.2, which needs
+  the coarea formula and is cited rather than proved).
 * `LatticeProb.mvbe_thmR`: **Raič's Theorem 1.3, form (1.4)**, unconditionally and with existential
   absolute constants: for every regular class `C` (assumptions (A1)–(A8), `{ρ_A < 0}` open) of finite
   Gaussian perimeter `γ*`, independent mean-zero summands in `ℝ^d` with identity total covariance and
