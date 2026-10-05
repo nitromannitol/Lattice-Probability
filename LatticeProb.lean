@@ -89,6 +89,7 @@ import LatticeProb.Prob.BracketProcess
 import LatticeProb.Prob.GaussianLogSobolevTensor
 import LatticeProb.Prob.GaussianLogSobolevGrad
 import LatticeProb.Prob.GaussianLogSobolevOU
+import LatticeProb.Prob.GaussianLogSobolevGradProd
 import LatticeProb.Prob.NormalComparison
 import LatticeProb.Prob.GaussianLogSobolevGradTensor
 import LatticeProb.Prob.FDerivIntegralMarginal
