@@ -368,6 +368,12 @@ library.
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_bandLimitedPrecompact
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
 #print axioms LatticeProb.Sobolev.exists_finite_supNet_of_uniformLip_of_proper
+
+/-! ### The analytic core of the unrestricted support-repair falsity -/
+
+#print axioms LatticeProb.Sobolev.sobolevNormSq_comp_sub
+#print axioms LatticeProb.Sobolev.sobolevNormSq_zero_eq_integral_sq
+#print axioms LatticeProb.Sobolev.ofReal_integral_sq_sub_lower
 #print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc
 
 /-! ### The mollifier Fourier normalisation (density repair) -/

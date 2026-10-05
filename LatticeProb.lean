@@ -318,6 +318,7 @@ import LatticeProb.Analysis.Sobolev.FejerLimit
 import LatticeProb.Analysis.Sobolev.BandProjectionConsume
 import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 import LatticeProb.Analysis.Sobolev.SupportRepair
+import LatticeProb.Analysis.Sobolev.SupportRepairFalsity
 import LatticeProb.Analysis.Sobolev.RellichDomainDischarge
 import LatticeProb.Analysis.Sobolev.JetArzelaAscoli
 import LatticeProb.Analysis.Sobolev.SupportDensity
