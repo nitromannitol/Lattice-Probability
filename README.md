@@ -69,6 +69,16 @@ that feed the net are proved for the low-frequency projections: the uniform
 Lipschitz (`k = 1`) form (`LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc`,
 `BandLimitedLip.lean`).
 
+The truncation identity `‖φ − P_Λφ‖_{H^s} ≤ ‖φ‖_{H^s,>Λ}` is proved
+(`LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le`), and the sound composition
+`LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair` reduces `rkLowFreqNet` to the single
+support-repair input `BandLimitedTestFnApproxOnDomain` (the domain-restricted form, since the
+unrestricted `BandLimitedTestFnApprox` is false as stated), which
+`rellichKondrachovNegSobolev_of_lowfreqNet` composes into the external discharge
+(`Analysis/Sobolev/SupportRepair.lean`).  The earlier unrestricted glue
+`Analysis/Sobolev/RellichLowFreqGlue.lean` is quarantined: its premise `BandLimitedTestFnApprox` is
+refuted there and its implications have been removed.
+
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
 asymptotics that formalizations cite from Lawler–Limic
