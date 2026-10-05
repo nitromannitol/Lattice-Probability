@@ -34,4 +34,37 @@ theorem abs_convReal_le {d : ℕ} {f ρ : Space d → ℝ} (hf : MemLp f 2 volum
   simp only [Real.rpow_two] at hholder
   exact hholder
 
+
+/-- **Weighted Cauchy–Schwarz.**  For a positive weight `w`,
+`∫ |f| |g| ≤ (∫ w f²)^{1/2} (∫ w⁻¹ g²)^{1/2}`, by Hölder with `a = √w|f|` and
+`b = |g|/√w`.  With `f = 𝓕f`, `g = 𝓕g` and `w = w_s` this is the `H^s`-`H^{−s}` duality
+step. -/
+theorem integral_abs_mul_le_weighted {d : ℕ} {f g w : Space d → ℝ} (hw : ∀ t, 0 < w t)
+    (hf : MemLp (fun t => Real.sqrt (w t) * |f t|) 2 volume)
+    (hg : MemLp (fun t => (Real.sqrt (w t))⁻¹ * |g t|) 2 volume) :
+    ∫ t, |f t| * |g t|
+      ≤ (∫ t, w t * f t ^ 2) ^ ((1 : ℝ) / 2)
+        * (∫ t, (w t)⁻¹ * g t ^ 2) ^ ((1 : ℝ) / 2) := by
+  have hholder := integral_mul_le_Lp_mul_Lq_of_nonneg (μ := volume) (p := 2) (q := 2)
+    Real.HolderConjugate.two_two
+    (Filter.Eventually.of_forall fun t => mul_nonneg (Real.sqrt_nonneg _) (abs_nonneg _))
+    (Filter.Eventually.of_forall fun t =>
+      mul_nonneg (inv_nonneg.mpr (Real.sqrt_nonneg _)) (abs_nonneg _))
+    (by simpa using hf) (by simpa using hg)
+  simp only [Real.rpow_two] at hholder
+  have h1 : (fun t : Space d => Real.sqrt (w t) * |f t| * ((Real.sqrt (w t))⁻¹ * |g t|))
+      = fun t => |f t| * |g t| := by
+    funext t
+    have hw' : Real.sqrt (w t) ≠ 0 := ne_of_gt (Real.sqrt_pos_of_pos (hw t))
+    field_simp
+  rw [h1] at hholder
+  refine hholder.trans (le_of_eq ?_)
+  have e2 : (∫ t, (Real.sqrt (w t) * |f t|) ^ 2) = ∫ t, w t * f t ^ 2 :=
+    integral_congr_ae (Filter.Eventually.of_forall fun t => by
+      simp only [mul_pow, Real.sq_sqrt (hw t).le, sq_abs])
+  have e3 : (∫ t, ((Real.sqrt (w t))⁻¹ * |g t|) ^ 2) = ∫ t, (w t)⁻¹ * g t ^ 2 :=
+    integral_congr_ae (Filter.Eventually.of_forall fun t => by
+      simp only [mul_pow, inv_pow, Real.sq_sqrt (hw t).le, sq_abs])
+  rw [e2, e3]
+
 end LatticeProb.Sobolev
