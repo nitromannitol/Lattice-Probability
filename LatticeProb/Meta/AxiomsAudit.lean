@@ -389,3 +389,10 @@ library.
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
 #print axioms LatticeProb.Sobolev.exists_finite_supNet_of_uniformLip_of_proper
 #print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc
+
+/-! ### The mollifier Fourier normalisation (density repair) -/
+
+#print axioms LatticeProb.Sobolev.fourier_comp_smul
+#print axioms LatticeProb.Sobolev.fourier_normalized_dilation
+#print axioms LatticeProb.Sobolev.tendsto_fourier_mollifierDil
+#print axioms LatticeProb.Sobolev.mollifierFourierTendsto
