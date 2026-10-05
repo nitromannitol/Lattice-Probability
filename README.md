@@ -119,7 +119,9 @@ the mollification step in the classical proof of `FrechetKolmogorovH`.  That pro
 `FrechetKolmogorovMollifiedCompact` (the mollified family is totally bounded).  The smoothness and
 compact support of the mollified family, the equicontinuity input of the Arzelà–Ascoli half, are
 `LatticeProb.Sobolev.contDiff_convReal` and `LatticeProb.Sobolev.hasCompactSupport_convReal` in
-`Analysis/Sobolev/ConvolutionStructure.lean`.
+`Analysis/Sobolev/ConvolutionStructure.lean`.  The remaining input to `FrechetKolmogorovMollifiedCompact`
+is the `C^m`-boundedness of `{f ⋆ ρ}`, via the `H^s`-`H^{-s}` duality bound
+(`LatticeProb.Sobolev.abs_apply_le_negSobolevNorm`, `Analysis/Sobolev/AbsApply.lean`).
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
