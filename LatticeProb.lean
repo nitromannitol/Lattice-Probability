@@ -89,6 +89,7 @@ import LatticeProb.Prob.BracketProcess
 import LatticeProb.Prob.GaussianLogSobolevTensor
 import LatticeProb.Prob.GaussianLogSobolevGrad
 import LatticeProb.Prob.GaussianLogSobolevOU
+import LatticeProb.Prob.GaussianLogSobolevGeneral
 import LatticeProb.Prob.GaussianLogSobolevGradProd
 import LatticeProb.Prob.NormalComparison
 import LatticeProb.Prob.GaussianLogSobolevGradTensor
@@ -167,6 +168,9 @@ import LatticeProb.Prob.BernsteinFactorialClause
 import LatticeProb.Prob.BernsteinRosenthalBound
 import LatticeProb.Prob.BernsteinFactorialFinal
 import LatticeProb.Prob.BernsteinFactorialFull
+import LatticeProb.Prob.BernsteinFactorial
+import LatticeProb.Prob.BernsteinFactorialAssemble
+import LatticeProb.Prob.BernsteinFactorialChain
 import LatticeProb.Prob.BernsteinFactorialBound
 import LatticeProb.Prob.BernsteinDoobMaximal
 import LatticeProb.Prob.BernsteinVariancePair
@@ -356,6 +360,9 @@ import LatticeProb.Analysis.Sobolev.TranslationBound
 import LatticeProb.Analysis.Sobolev.TranslationQuant
 import LatticeProb.Analysis.Sobolev.SobolevTranslate
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
+import LatticeProb.Analysis.Sobolev.BandProjectionConsume
+import LatticeProb.Analysis.Sobolev.ConvolutionStructure
+import LatticeProb.Analysis.Sobolev.SupportRepairFalsity
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorov
 import LatticeProb.Analysis.Sobolev.FourierCharPhase
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
@@ -486,6 +493,7 @@ import LatticeProb.Prob.Percolation.LSSThinComplement
 import LatticeProb.Prob.Percolation.LSSThinFinal
 import LatticeProb.Prob.Percolation.LSSThinKDependent
 import LatticeProb.Prob.Percolation.LSSThinRotorMatch
+import LatticeProb.Prob.Percolation.LSSThinCapstone
 import LatticeProb.Prob.Percolation.FiniteProductPivotal
 import LatticeProb.Prob.Percolation.BondPercolation
 import LatticeProb.Prob.Percolation.Crossing
