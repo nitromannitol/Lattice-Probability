@@ -468,7 +468,9 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   orthant, `|P(Y ≤ b) − ∏ᵢ P(Yᵢ ≤ bᵢ)| ≤ (1/4) ∑_{i<j} (S i j / v) exp (−(bᵢ² + bⱼ²) / (2 v (1 +
   S i j / v)))` for a centred Gaussian vector with covariance `S`, common variance `v` and
   nonnegative correlations, and `LatticeProb.normalComparison_exists` states it with an
-  existential constant in exactly the shape of the cited proposition.
+  existential constant in exactly the shape of the cited proposition.  Its large-threshold
+  corollary `LatticeProb.normalComparison_bound_large` makes the comparison error uniform over all
+  threshold vectors with `|bᵢ| ≥ R`, the regime of the intended application.
 * `LatticeProb.sup_cdf_sub_le_of_smoothed`, `LatticeProb.fejerKernel`,
   `LatticeProb.integral_cdf_sub_mul_exp`, `LatticeProb.charFun_norm_le_exp_of_sq_le`,
   `LatticeProb.norm_prod_charFun_sub_gaussian_le`: the building blocks of a one-dimensional

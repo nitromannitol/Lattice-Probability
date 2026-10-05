@@ -288,6 +288,7 @@ library.
 #print axioms LatticeProb.normalComparison_bound_of_interpolation
 #print axioms LatticeProb.normalComparison_bound
 #print axioms LatticeProb.normalComparison_exists
+#print axioms LatticeProb.normalComparison_bound_large
 #print axioms LatticeProb.integral_fejerKernel
 #print axioms LatticeProb.fejerKernel_tail
 #print axioms LatticeProb.fejerKernel_eq_integral_exp

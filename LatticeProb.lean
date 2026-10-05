@@ -198,6 +198,7 @@ import LatticeProb.Prob.NormalComparisonOrthantIcc
 import LatticeProb.Prob.NormalComparisonInterpolation
 import LatticeProb.Prob.NormalComparisonLimit
 import LatticeProb.Prob.NormalComparisonFinal
+import LatticeProb.Prob.NormalComparisonLargeB
 import LatticeProb.Prob.FejerKernel
 import LatticeProb.Prob.EsseenDeconvolution
 import LatticeProb.Prob.CdfDifferenceFourier
