@@ -28,6 +28,21 @@ open scoped ENNReal FourierTransform
 
 namespace LatticeProb.Sobolev
 
+/-- **The truncation identity (one-line alias).**  The `H^s` error of the real projection
+`P_Λ φ` is controlled by the high-frequency part of `φ`.  This is the registered lemma
+`sobolevNormSq_sub_bandProj_le` (`BandProjectionConsume.lean`); it is kept as a one-line alias for
+consumers and is deliberately **not** separately registered in the axioms audit. -/
+def BandProjHighFreq : Prop :=
+  ∀ (d : ℕ) (s : ℝ) (Λ : ℝ) (hΛ : 0 < Λ),
+    ∀ (φ : Space d → ℝ) (hcont : ContDiff ℝ (⊤ : ℕ∞) φ)
+      (hcs : HasCompactSupport φ),
+      sobolevNormSq d s (fun x => φ x - bandProj d Λ hΛ.ne' φ hcont hcs x)
+        ≤ sobolevNormSqHigh d s Λ φ
+
+/-- One-line alias of the registered `sobolevNormSq_sub_bandProj_le`. -/
+theorem bandProjHighFreq : BandProjHighFreq :=
+  fun d s Λ hΛ φ hcont hcs => sobolevNormSq_sub_bandProj_le d Λ hΛ φ hcont hcs s
+
 /-- **The support-repair input.**  The real projections of the `H^s` unit ball are
 `H^{s₀}`-approximated by test functions on `D`. -/
 def BandLimitedTestFnApprox : Prop :=
