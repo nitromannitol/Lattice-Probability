@@ -129,7 +129,9 @@ is the `C^m`-boundedness of `{f ⋆ ρ}`, via the `H^s`-`H^{-s}` duality bound
 first step is Cauchy–Schwarz on the convolution integral (`integral_mul_le_Lp_mul_Lq_of_nonneg`
 with `p = q = 2`), `|(f ⋆ ρ)(x)| ≤ ‖f‖_{L²} ‖ρ(x−·)‖_{L²}`, landed as
 `LatticeProb.Sobolev.abs_convReal_le` (`Analysis/Sobolev/DualityBound.lean`); the weighted
-`w_s`/`w_s^{-1}` (i.e. `H^s`-`H^{-s}`) generalisation is the next step.
+`w_s`/`w_s^{-1}` (i.e. `H^s`-`H^{-s}`) generalisation is landed as
+`LatticeProb.Sobolev.integral_abs_mul_le_weighted`, with the resulting duality bound named
+`LatticeProb.Sobolev.SobolevDualityBound`.
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
