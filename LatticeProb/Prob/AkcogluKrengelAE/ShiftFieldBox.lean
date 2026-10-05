@@ -56,7 +56,7 @@ theorem exists_ae_tendsto_shiftField_anchoredBox {ν : Measure (Site d → ℝ)}
       ∫ v, G v ∂ν = ∫ v, v 0 ∂ν ∧
       ∀ᵐ v ∂ν, Tendsto (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
           ∑ x ∈ anchoredBox c N, v x) atTop (𝓝 ((∏ i, c i) * G v)) := by
-  obtain ⟨G, hGm, hGb, hGint, hconv⟩ :=
+  obtain ⟨G, hGm, hGb, _hinvg, hGint, hconv⟩ :=
     exists_ae_tendsto_anchoredBox_with_integral (σ := shiftField) (μ := ν)
       (h := fun v : Site d → ℝ => v 0) hstat
       (fun x y v => shiftField_add x y v) (measurable_pi_apply 0) hM hb hc

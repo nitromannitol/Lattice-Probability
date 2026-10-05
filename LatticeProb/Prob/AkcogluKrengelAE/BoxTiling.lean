@@ -649,7 +649,8 @@ measurable and integrable, invariant under the whole action, and every invariant
 measure `0` or `1`, then `G = ∫ G` a.e. -/
 theorem ae_eq_const_of_forall_invariant {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ]
-    (herg : ∀ A : Set Ω, MeasurableSet A → (∀ z : Site d, σ z ⁻¹' A = A) → μ A = 0 ∨ μ A = 1)
+    (herg : ∀ A : Set Ω, MeasurableSet A → (∀ z : Site d, σ z ⁻¹' A = A) →
+      μ A = 0 ∨ μ A = 1)
     {G : Ω → ℝ} (hGm : Measurable G) (hGint : Integrable G μ)
     (hinv : ∀ z : Site d, G ∘ σ z = G) :
     G =ᵐ[μ] Function.const Ω (∫ ω, G ω ∂μ) := by
@@ -805,15 +806,18 @@ theorem exists_ae_tendsto_anchoredBox_with_integral {d : ℕ} {σ : Site d → �
 /-- **Ergodic anchored-box almost-everywhere ergodic theorem.**  Adding `σ 0 = id` and the
 triviality of the invariant sets to the anchored-box theorem upgrades the limit from the abstract
 box limit `G` to the constant `∫ h`. -/
-theorem exists_ae_tendsto_anchoredBox_ergodic {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω}
+theorem exists_ae_tendsto_anchoredBox_ergodic {d : ℕ} {σ : Site d → Ω → Ω}
+    {μ : Measure Ω}
     [IsProbabilityMeasure μ]
     (hσ : ∀ z, MeasurePreserving (σ z) μ μ)
     (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω)) (hσid : ∀ ω, σ 0 ω = ω)
-    (herg : ∀ A : Set Ω, MeasurableSet A → (∀ z : Site d, σ z ⁻¹' A = A) → μ A = 0 ∨ μ A = 1)
+    (herg : ∀ A : Set Ω, MeasurableSet A → (∀ z : Site d, σ z ⁻¹' A = A) →
+      μ A = 0 ∨ μ A = 1)
     {h : Ω → ℝ} (hh : Measurable h) {M : ℝ} (hM : 0 ≤ M) (hb : ∀ x, |h x| ≤ M)
     {c : Fin d → ℝ} (hc : ∀ i, 0 ≤ c i) :
     ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
-        ∑ x ∈ anchoredBox c N, h (σ x ω)) atTop (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ)) := by
+        ∑ x ∈ anchoredBox c N, h (σ x ω)) atTop
+        (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ)) := by
   obtain ⟨G, hGm, hGb, hinvg, hGint, hconv⟩ :=
     exists_ae_tendsto_anchoredBox_with_integral hσ hσadd hh hM hb hc
   have hinv : ∀ z : Site d, G ∘ σ z = G :=
