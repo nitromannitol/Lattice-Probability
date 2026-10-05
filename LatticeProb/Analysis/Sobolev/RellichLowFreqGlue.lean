@@ -7,21 +7,19 @@ does *not* go through the false `rkUniformCmNet` (`RellichCmNetReduction.lean`; 
 fields `φ` themselves to be `C^m`-close to test functions, which fails once `s < m`) runs through
 the **low-frequency projection** `P_Λ φ = bandProj d Λ …`.
 
-This module lands that route as two named inputs and their composition:
+This module lands that route.  The truncation identity `BandProjHighFreq` is **proved** here from
+the registered lemma `sobolevNormSq_sub_bandProj_le` (`BandProjectionConsume.lean`) as
+`bandProjHighFreq`, so it is a definition, not an input.  The remaining input is:
 
-* `BandProjHighFreq` — the truncation identity
-  `sobolevNormSq d s (φ - P_Λ φ) ≤ sobolevNormSqHigh d s Λ φ`, which follows from
-  `fourier_bandProj` (`FejerLimit.lean`) and the support of `1 - bandCut`; it is named because the
-  `L¹` Fourier linearity `𝓕 (φ - P_Λφ) = 𝓕φ - 𝓕 (P_Λφ)` is not packaged in this
-  file;
-* `BandLimitedTestFnApprox` — the support repair (cerw-ds1's packet): the real projections of the
-  `H^s` unit ball are `H^{s₀}`-approximated by test functions on `D`;
+* `BandLimitedTestFnApprox` — the support repair: the real projections of the `H^s` unit ball are
+  `H^{s₀}`-approximated by test functions on `D`;
 * `rkLowFreqNet_of_truncation_and_supportRepair` — the composition, splitting `φ - ψ_i` through
   the projection and summing the high-frequency part and the repaired projection error.
 
 No use is made of `rkUniformCmNet` / `BandLimitedCmNet`, which are false.
 -/
 import LatticeProb.Analysis.Sobolev.Additivity
+import LatticeProb.Analysis.Sobolev.BandProjectionConsume
 import LatticeProb.Analysis.Sobolev.FejerLimit
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
 
@@ -38,6 +36,12 @@ def BandProjHighFreq : Prop :=
       (hcs : HasCompactSupport φ),
       sobolevNormSq d s (fun x => φ x - bandProj d Λ hΛ.ne' φ hcont hcs x)
         ≤ sobolevNormSqHigh d s Λ φ
+
+/-- **The truncation identity, proved.**  It is the registered lemma
+`sobolevNormSq_sub_bandProj_le` (`BandProjectionConsume.lean`) with the arguments reordered, so
+the `Prop` `BandProjHighFreq` is not an input. -/
+theorem bandProjHighFreq : BandProjHighFreq :=
+  fun d s Λ hΛ φ hcont hcs => sobolevNormSq_sub_bandProj_le d Λ hΛ φ hcont hcs s
 
 /-- **The support-repair input.**  The real projections of the `H^s` unit ball are
 `H^{s₀}`-approximated by test functions on `D`. -/
@@ -83,7 +87,7 @@ private theorem sobolevNormSq_decomp_le {d : ℕ} (s : ℝ) {φ P ψ : Space d �
 `rkLowFreqNet`: choose the cutoff `Λ'` making the high-frequency part `≤ δ/4`, apply the support
 repair at `Λ'` with accuracy `δ/4`, and split `φ - ψ_i` through the projection. -/
 theorem rkLowFreqNet_of_truncation_and_supportRepair
-    (htrunc : BandProjHighFreq) (hrep : BandLimitedTestFnApprox) : rkLowFreqNet := by
+    (hrep : BandLimitedTestFnApprox) : rkLowFreqNet := by
   intro d D hD s₀ s hss Λ hΛ δ hδ
   obtain ⟨Λ₀, _hΛ₀nonneg, htail₀⟩ := exists_sobolevNormSqHigh_le_truncation
     (d := d) (s₀ := s₀) (s := s) hss (Real.sqrt (δ / 4))
@@ -95,7 +99,7 @@ theorem rkLowFreqNet_of_truncation_and_supportRepair
   refine ⟨N, ψ, hψ, fun φ hφ hLow _hφn => ?_⟩
   obtain ⟨i, hi⟩ := hnet φ hφ.1 hφ.2.1 hLow
   refine ⟨i, ?_⟩
-  have hP := htrunc d s₀ Λ' hΛ'pos φ hφ.1 hφ.2.1
+  have hP := bandProjHighFreq d s₀ Λ' hΛ'pos φ hφ.1 hφ.2.1
   have htail' : sobolevNormSqHigh d s₀ Λ' φ ≤ ENNReal.ofReal (δ / 4) :=
     (sobolevNormSqHigh_mono_radius s₀ hΛ'ge φ).trans
       ((htail₀ φ hLow).trans (le_of_eq (by
@@ -136,9 +140,9 @@ theorem rkLowFreqNet_of_truncation_and_supportRepair
 /-- **The external, from the two inputs.**  Composing the sound composition with the glue
 `rellichKondrachovNegSobolev_of_lowfreqNet` discharges `RellichKondrachovNegSobolev`. -/
 theorem rellichKondrachovNegSobolev_of_truncation_and_supportRepair
-    (htrunc : BandProjHighFreq) (hrep : BandLimitedTestFnApprox) :
+    (hrep : BandLimitedTestFnApprox) :
     LatticeProb.External.RellichKondrachovNegSobolev :=
   rellichKondrachovNegSobolev_of_lowfreqNet
-    (rkLowFreqNet_of_truncation_and_supportRepair htrunc hrep)
+    (rkLowFreqNet_of_truncation_and_supportRepair hrep)
 
 end LatticeProb.Sobolev
