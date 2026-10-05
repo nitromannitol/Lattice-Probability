@@ -3,8 +3,8 @@
 
 This module assembles the band-limited Bernstein bound of
 `BandLimitedBernstein.lean` — stated in the `L¹`-on-the-band form
-`‖D^k (𝓕⁻ ψ) x‖ ≤ (2π·2Λ)^k ∫_{‖ξ‖≤2Λ} ‖ψ ξ‖ dξ` — into the two forms the
-low-frequency net consumes:
+`‖D^k (𝓕⁻ ψ) x‖ ≤ (2π·2Λ)^k ∫_{‖ξ‖≤2Λ} ‖ψ ξ‖ dξ`
+— into the two forms that the low-frequency net consumes:
 
 * `exists_iteratedFDeriv_bandTrunc_le_L2`: the `L²` form, bounding the `k`-th
   derivative of the truncation `P_Λ F` by a constant times `‖F‖_{L²}`;
@@ -16,7 +16,8 @@ The passage from `L¹` to `L²` is Cauchy–Schwarz on the band
 (`MeasureTheory.integral_mul_le_Lp_mul_Lq_of_nonneg` with `p = q = 2`, on the
 restricted measure `volume.restrict (ball 0 (2Λ))`), and the passage from `L²` to
 `H^s` is the monotonicity of the Sobolev weight in `s ≥ 0`
-(`sobolevNormSq_mono`) together with `‖χ_Λ · 𝓕 φ‖ ≤ ‖𝓕 φ‖` (`0 ≤ χ_Λ ≤ 1`).
+(`sobolevNormSq_mono`) together with `‖χ_Λ · 𝓕 φ‖ ≤ ‖𝓕 φ‖`
+(`0 ≤ χ_Λ ≤ 1`).
 Neither step needs Plancherel: the `H^s` bound is obtained directly against the
 `H^s` integral.
 -/
@@ -54,7 +55,8 @@ private theorem integral_norm_le_sqrt_volume_mul_sqrt_sq {d : ℕ} {f : Space d 
     Real.HolderConjugate.two_two
     (Filter.Eventually.of_forall fun _ => norm_nonneg _)
     (Filter.Eventually.of_forall fun _ => zero_le_one) hf1 hg1
-  have hleft : ∫ a, ‖f a‖ * (1 : ℝ) ∂(volume.restrict (Metric.ball (0 : Space d) (2 * Λ)))
+  have hleft : ∫ a, ‖f a‖ * (1 : ℝ)
+        ∂(volume.restrict (Metric.ball (0 : Space d) (2 * Λ)))
       = ∫ a in Metric.ball (0 : Space d) (2 * Λ), ‖f a‖ := by
     simp only [mul_one]
   have hA : ∫ a, ‖f a‖ ^ (2 : ℝ) ∂(volume.restrict (Metric.ball (0 : Space d) (2 * Λ)))
@@ -135,11 +137,13 @@ theorem exists_iteratedFDeriv_bandTrunc_le_Hs {d : ℕ} (Λ : ℝ) (hΛ : 0 < Λ
           ≤ C := by
   obtain ⟨C, hC, hbound⟩ := exists_iteratedFDeriv_bandTrunc_le_L2 (d := d) Λ hΛ k
   refine ⟨C, hC, fun φ hcont hcs x hnorm => ?_⟩
-  have hint : Integrable (fun ξ : Space d => ‖𝓕 (fun x => (φ x : ℂ)) ξ‖ ^ 2) volume := by
-    have hmem : MemLp (fun ξ : Space d => 𝓕 (realToComplexSchwartz d φ hcont hcs) ξ) 2 volume :=
+  have hint : Integrable
+      (fun ξ : Space d => ‖𝓕 (fun x => (φ x : ℂ)) ξ‖ ^ 2) volume := by
+    have hmem : MemLp
+        (fun ξ : Space d => 𝓕 (realToComplexSchwartz d φ hcont hcs) ξ) 2 volume :=
       (𝓕 (realToComplexSchwartz d φ hcont hcs)).memLp 2 volume
-    have h2 : Integrable (fun ξ : Space d => ‖𝓕 (realToComplexSchwartz d φ hcont hcs) ξ‖ ^ 2)
-        volume :=
+    have h2 : Integrable
+        (fun ξ : Space d => ‖𝓕 (realToComplexSchwartz d φ hcont hcs) ξ‖ ^ 2) volume :=
       (memLp_two_iff_integrable_sq_norm hmem.aestronglyMeasurable).1 hmem
     refine h2.congr ?_
     filter_upwards with ξ
@@ -174,7 +178,8 @@ work in every order, though.  On the band `‖ξ‖ ≤ 2Λ` the Sobolev weight
 (`M^{|s|} = M^s` with both factors at least one for `s ≥ 0`; and
 `M^{|s|} w^s = (M/w)^{-s} ≥ 1` for `s < 0`).  Hence
 
-`∫_{‖ξ‖≤2Λ} ‖𝓕φ‖² ≤ M^{|s|} ∫_{‖ξ‖≤2Λ} w^s ‖𝓕φ‖² ≤ M^{|s|} ‖φ‖²_{H^s}`,
+`∫_{‖ξ‖≤2Λ} ‖𝓕φ‖² ≤ M^{|s|} ∫_{‖ξ‖≤2Λ} w^s ‖𝓕φ‖²`
+`≤ M^{|s|} ‖φ‖²_{H^s}`,
 
 and Cauchy–Schwarz on the band turns the `L¹` Bernstein bound into the
 `H^s → C^m` bound with constant `(2π·2Λ)^k · (vol(ball) · M^{|s|})^{1/2}`.
@@ -293,7 +298,8 @@ private theorem integral_norm_ball_le_sqrt_volume_mul_sqrt_ball_sq {d : ℕ} {f 
     Real.HolderConjugate.two_two
     (Filter.Eventually.of_forall fun _ => norm_nonneg _)
     (Filter.Eventually.of_forall fun _ => zero_le_one) hf1 hg1
-  have hleft : ∫ a, ‖f a‖ * (1 : ℝ) ∂(volume.restrict (Metric.ball (0 : Space d) (2 * Λ)))
+  have hleft : ∫ a, ‖f a‖ * (1 : ℝ)
+        ∂(volume.restrict (Metric.ball (0 : Space d) (2 * Λ)))
       = ∫ a in Metric.ball (0 : Space d) (2 * Λ), ‖f a‖ := by
     simp only [mul_one]
   have hA : ∫ a, ‖f a‖ ^ (2 : ℝ) ∂(volume.restrict (Metric.ball (0 : Space d) (2 * Λ)))
@@ -333,18 +339,21 @@ theorem exists_iteratedFDeriv_bandTrunc_le_Hs_all {d : ℕ} (Λ : ℝ) (hΛ : 0 
     ENNReal.toReal_nonneg
   refine ⟨C₀ * Real.sqrt ((volume (Metric.ball (0 : Space d) (2 * Λ))).toReal
     * bandWeightMax Λ ^ |s|) + 1, by positivity, fun φ hcont hcs x hnorm => ?_⟩
-  have hint : Integrable (fun ξ : Space d => ‖𝓕 (fun x => (φ x : ℂ)) ξ‖ ^ 2) volume := by
-    have hmem : MemLp (fun ξ : Space d => 𝓕 (realToComplexSchwartz d φ hcont hcs) ξ) 2 volume :=
+  have hint : Integrable
+      (fun ξ : Space d => ‖𝓕 (fun x => (φ x : ℂ)) ξ‖ ^ 2) volume := by
+    have hmem : MemLp
+        (fun ξ : Space d => 𝓕 (realToComplexSchwartz d φ hcont hcs) ξ) 2 volume :=
       (𝓕 (realToComplexSchwartz d φ hcont hcs)).memLp 2 volume
-    have h2 : Integrable (fun ξ : Space d => ‖𝓕 (realToComplexSchwartz d φ hcont hcs) ξ‖ ^ 2)
-        volume :=
+    have h2 : Integrable
+        (fun ξ : Space d => ‖𝓕 (realToComplexSchwartz d φ hcont hcs) ξ‖ ^ 2) volume :=
       (memLp_two_iff_integrable_sq_norm hmem.aestronglyMeasurable).1 hmem
     refine h2.congr ?_
     filter_upwards with ξ
     rw [fourier_realToComplexSchwartz d φ hcont hcs]
   have heq : (∫⁻ ξ in Metric.ball (0 : Space d) (2 * Λ),
         ENNReal.ofReal (‖𝓕 (fun x => (φ x : ℂ)) ξ‖ ^ 2)).toReal
-      = ∫ ξ in Metric.ball (0 : Space d) (2 * Λ), ‖𝓕 (fun x => (φ x : ℂ)) ξ‖ ^ 2 := by
+      = ∫ ξ in Metric.ball (0 : Space d) (2 * Λ),
+          ‖𝓕 (fun x => (φ x : ℂ)) ξ‖ ^ 2 := by
     rw [← MeasureTheory.ofReal_integral_eq_lintegral_ofReal
       (μ := volume.restrict (Metric.ball (0 : Space d) (2 * Λ)))
       (f := fun ξ : Space d => ‖𝓕 (fun x => (φ x : ℂ)) ξ‖ ^ 2)
