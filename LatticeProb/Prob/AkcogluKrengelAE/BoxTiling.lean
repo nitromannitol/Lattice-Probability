@@ -14,7 +14,7 @@ Birkhoff identity `boxAvg_insert_eq_bAvg_boxAvg` are the exact analogues of the 
 inequality is needed: the box limit is produced by the same moving-target Birkhoff argument, with
 the average length running over the coordinate function `m` rather than the index.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.BoundedErgodic
+import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
 
 set_option linter.unnecessarySeqFocus false
 set_option linter.unusedSimpArgs false
@@ -60,7 +60,8 @@ theorem boxGridSet_apply_eq_zero_of_notMem {d : ℕ} {s : Finset (Fin d)} {m : F
 /-- Updating coordinate `i` of a box point in `boxGridSet s m` to a value `j` lands in
 `boxGridSet (insert i s) m` iff `j < m i`. -/
 theorem update_mem_boxGridSet_insert_iff {d : ℕ} {s : Finset (Fin d)} {i : Fin d}
-    (_unused_hi : i ∉ s) (m : Fin d → ℕ) (w : Fin d → ℕ) (j : ℕ) (hw : w ∈ boxGridSet s m) :
+    (_unused_hi : i ∉ s) (m : Fin d → ℕ) (w : Fin d → ℕ) (j : ℕ)
+    (hw : w ∈ boxGridSet s m) :
     Function.update w i j ∈ boxGridSet (insert i s) m ↔ j ∈ Finset.range (m i) := by
   unfold boxGridSet at hw ⊢
   rw [Fintype.mem_piFinset] at hw ⊢
@@ -150,8 +151,8 @@ theorem sum_boxGridSet_insert {d : ℕ} {M : Type*} [AddCommMonoid M] (s : Finse
 of the action, into a sum over the range of the new coordinate of sums over `boxGridSet s m`. -/
 theorem sum_boxGridSet_insert_eq_sum_range_sum_iterate {d : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     {σ : Site d → Ω → Ω}
-    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω)) (h : Ω → ℝ) (s : Finset (Fin d)) (i : Fin d)
-    (hi : i ∉ s) (m : Fin d → ℕ) (ω : Ω) :
+    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω)) (h : Ω → ℝ) (s : Finset (Fin d))
+    (i : Fin d) (hi : i ∉ s) (m : Fin d → ℕ) (ω : Ω) :
     ∑ w ∈ boxGridSet (insert i s) m, h (σ (natToSite w) ω) =
       ∑ k ∈ Finset.range (m i), ∑ w ∈ boxGridSet s m,
         h (σ (natToSite w) ((σ (unit i))^[k] ω)) := by
@@ -167,8 +168,8 @@ theorem sum_boxGridSet_insert_eq_sum_range_sum_iterate {d : ℕ} {Ω : Type*} [M
 /-- The box average over `insert i s` equals the Birkhoff average, along the action of `unit i`,
 of the box average over `s`, with length `m i`. -/
 theorem boxAvg_insert_eq_bAvg_boxAvg {d : ℕ} {σ : Site d → Ω → Ω}
-    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω)) (h : Ω → ℝ) (s : Finset (Fin d)) (i : Fin d)
-    (hi : i ∉ s) (m : Fin d → ℕ) (ω : Ω) :
+    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω)) (h : Ω → ℝ) (s : Finset (Fin d))
+    (i : Fin d) (hi : i ∉ s) (m : Fin d → ℕ) (ω : Ω) :
     boxAvg σ h (insert i s) m ω = bAvg (σ (unit i)) (boxAvg σ h s m) (m i) ω := by
   simp only [boxAvg, bAvg, birkhoffSum]
   rw [Finset.prod_insert hi, sum_boxGridSet_insert_eq_sum_range_sum_iterate hσadd h s i hi m ω]
@@ -177,7 +178,8 @@ theorem boxAvg_insert_eq_bAvg_boxAvg {d : ℕ} {σ : Site d → Ω → Ω}
 
 omit [MeasurableSpace Ω] in
 /-- The box average over the empty set is the single value `h (σ (natToSite 0))`. -/
-theorem boxAvg_empty {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ) (m : Fin d → ℕ) (ω : Ω) :
+theorem boxAvg_empty {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ) (m : Fin d → ℕ)
+    (ω : Ω) :
     boxAvg σ h ∅ m ω = h (σ (natToSite 0) ω) := by
   simp only [boxAvg, boxGridSet, Finset.notMem_empty, if_false, Fintype.piFinset_singleton,
     Finset.sum_singleton, Finset.prod_empty, div_one]
@@ -192,8 +194,8 @@ theorem measurable_boxAvg {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω
 
 omit [MeasurableSpace Ω] in
 /-- The box average `boxAvg σ h s m` is bounded in absolute value by the bound `M` on `h`. -/
-theorem abs_boxAvg_le {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ) {M : ℝ} (hM : 0 ≤ M)
-    (hh : ∀ x, |h x| ≤ M) (s : Finset (Fin d)) (m : Fin d → ℕ) (ω : Ω) :
+theorem abs_boxAvg_le {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ) {M : ℝ}
+    (hM : 0 ≤ M) (hh : ∀ x, |h x| ≤ M) (s : Finset (Fin d)) (m : Fin d → ℕ) (ω : Ω) :
     |boxAvg σ h s m ω| ≤ M := by
   rw [boxAvg]
   have hDn : 0 ≤ ∏ i ∈ s, (m i : ℝ) := Finset.prod_nonneg fun i _ => Nat.cast_nonneg _
@@ -212,8 +214,8 @@ theorem abs_boxAvg_le {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ) {M 
 /-- Moving-target Birkhoff theorem along an arbitrary length sequence: if `g n → G` a.e. with a
 uniform bound and `L n → ∞`, then `bAvg T (g n) (L n) → bLimsup T G` a.e. -/
 theorem ae_tendsto_bAvg_movingTarget_seq {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Ω → Ω}
-    (hT : MeasurePreserving T μ μ) {g : ℕ → Ω → ℝ} {G : Ω → ℝ} {M : ℝ} (hM : 0 ≤ M)
-    (hgm : ∀ n, Measurable (g n)) (hGm : Measurable G)
+    (hT : MeasurePreserving T μ μ) {g : ℕ → Ω → ℝ} {G : Ω → ℝ} {M : ℝ}
+    (hM : 0 ≤ M) (hgm : ∀ n, Measurable (g n)) (hGm : Measurable G)
     (hg : ∀ n x, |g n x| ≤ M) (hG : ∀ x, |G x| ≤ M)
     {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
     (hconv : ∀ᵐ x ∂μ, Tendsto (fun n => g n x) atTop (𝓝 (G x))) :
@@ -275,45 +277,323 @@ theorem ae_tendsto_bAvg_movingTarget_seq {μ : Measure Ω} [IsProbabilityMeasure
     _ < ε := by rw [Real.dist_eq]; linarith
 
 
-/-- For each coordinate set `s`, the box average `boxAvg σ h s (m N)` converges a.e., as `N → ∞`
-along any sequence of boxes all of whose sides over `s` tend to infinity, to a bounded measurable
-limit depending only on `s` (not on the sequence). -/
+omit [MeasurableSpace Ω] in
+/-- Iterates of two commuting maps commute. -/
+theorem iterate_comm {T S : Ω → Ω} (hcomm : ∀ ω, T (S ω) = S (T ω)) (k : ℕ) (ω : Ω) :
+    (T^[k]) (S ω) = S ((T^[k]) ω) := by
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ih, hcomm]
+
+omit [MeasurableSpace Ω] in
+/-- `bLimsup T f` commutes with a map `S` that commutes with `T`. -/
+theorem bLimsup_comp_apply {T S : Ω → Ω} (hcomm : ∀ ω, T (S ω) = S (T ω))
+    (f : Ω → ℝ) :
+    bLimsup T f ∘ S = bLimsup T (f ∘ S) := by
+  funext ω
+  have h : (fun n => bAvg T f n (S ω)) = fun n => bAvg T (f ∘ S) n ω := by
+    funext n
+    unfold bAvg birkhoffSum
+    congr 1
+    apply Finset.sum_congr rfl
+    intro k _
+    rw [iterate_comm hcomm k ω]
+    rfl
+  simp only [bLimsup, Function.comp_apply]
+  rw [h]
+
+/-- For each coordinate set `s`, the box average `boxAvg σ h s (m N)` converges a.e., as
+`N → ∞` along any sequence of boxes all of whose sides over `s` tend to infinity, to a bounded
+measurable limit depending only on `s` (not on the sequence). -/
 theorem exists_ae_tendsto_boxAvg {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ]
-    (hσ : ∀ z, MeasurePreserving (σ z) μ μ) (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω))
+    (hσ : ∀ z, MeasurePreserving (σ z) μ μ)
+    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω))
     {h : Ω → ℝ} (hh : Measurable h) {M : ℝ} (hM : 0 ≤ M) (hb : ∀ x, |h x| ≤ M)
     (s : Finset (Fin d)) :
     ∃ G : Ω → ℝ, Measurable G ∧ (∀ x, |G x| ≤ M) ∧
-      ∀ (m : ℕ → Fin d → ℕ), (∀ i ∈ s, Tendsto (fun N => m N i) atTop atTop) →
-        ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω)) := by
+      (∀ (m : ℕ → Fin d → ℕ), (∀ i ∈ s, Tendsto (fun N => m N i) atTop atTop) →
+        ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω))) ∧
+      (∀ j ∈ s, G ∘ σ (unit j) = G) := by
   induction s using Finset.induction with
   | empty =>
-    refine ⟨fun ω => h (σ (natToSite 0) ω), hh.comp (hσ _).measurable, fun x => hb _, ?_⟩
-    intro m _hm
-    filter_upwards with ω
-    have hconst : (fun N : ℕ => boxAvg σ h ∅ (m N) ω) = fun _ : ℕ => h (σ (natToSite 0) ω) := by
-      funext N; exact boxAvg_empty σ h (m N) ω
-    rw [hconst]; exact tendsto_const_nhds
+    refine ⟨fun ω => h (σ (natToSite 0) ω), hh.comp (hσ _).measurable, fun x => hb _,
+      ?_, ?_⟩
+    · intro m _hm
+      filter_upwards with ω
+      have hconst : (fun N : ℕ => boxAvg σ h ∅ (m N) ω) =
+          fun _ : ℕ => h (σ (natToSite 0) ω) := by
+        funext N; exact boxAvg_empty σ h (m N) ω
+      rw [hconst]; exact tendsto_const_nhds
+    · intro j hj; exact absurd hj (Finset.notMem_empty j)
   | insert i s hi ih =>
-    obtain ⟨G, hGm, hGb, hGconv⟩ := ih
+    obtain ⟨G, hGm, hGb, hGconv, hinv⟩ := ih
     refine ⟨bLimsup (σ (unit i)) G, measurable_bLimsup (hσ _).measurable hGm,
-      fun x => abs_bLimsup_le_of_abs_le hM hGb x, ?_⟩
-    intro m hm
-    have hmi : Tendsto (fun N => m N i) atTop atTop := hm i (Finset.mem_insert_self i s)
-    have hms : ∀ j ∈ s, Tendsto (fun N => m N j) atTop atTop :=
-      fun j hj => hm j (Finset.mem_insert_of_mem hj)
-    have hconv : ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω)) :=
-      hGconv m hms
-    have hmeas : ∀ N, Measurable (boxAvg σ h s (m N)) :=
-      fun N => measurable_boxAvg hσ hh s (m N)
-    have hbdd : ∀ N x, |boxAvg σ h s (m N) x| ≤ M :=
-      fun N x => abs_boxAvg_le σ h hM hb s (m N) x
-    have hmt := ae_tendsto_bAvg_movingTarget_seq (hσ (unit i)) hM hmeas hGm hbdd hGb hmi hconv
-    filter_upwards [hmt] with ω hω
-    have heq : (fun N => boxAvg σ h (insert i s) (m N) ω)
-        = fun N => bAvg (σ (unit i)) (boxAvg σ h s (m N)) (m N i) ω := by
-      funext N; exact boxAvg_insert_eq_bAvg_boxAvg hσadd h s i hi (m N) ω
-    rw [heq]; exact hω
+      fun x => abs_bLimsup_le_of_abs_le hM hGb x, ?_, ?_⟩
+    · intro m hm
+      have hmi : Tendsto (fun N => m N i) atTop atTop := hm i (Finset.mem_insert_self i s)
+      have hms : ∀ j ∈ s, Tendsto (fun N => m N j) atTop atTop :=
+        fun j hj => hm j (Finset.mem_insert_of_mem hj)
+      have hconv : ∀ᵐ ω ∂μ, Tendsto (fun N => boxAvg σ h s (m N) ω) atTop (𝓝 (G ω)) :=
+        hGconv m hms
+      have hmeas : ∀ N, Measurable (boxAvg σ h s (m N)) :=
+        fun N => measurable_boxAvg hσ hh s (m N)
+      have hbdd : ∀ N x, |boxAvg σ h s (m N) x| ≤ M :=
+        fun N x => abs_boxAvg_le σ h hM hb s (m N) x
+      have hmt := ae_tendsto_bAvg_movingTarget_seq (hσ (unit i)) hM hmeas hGm hbdd hGb hmi hconv
+      filter_upwards [hmt] with ω hω
+      have heq : (fun N => boxAvg σ h (insert i s) (m N) ω)
+          = fun N => bAvg (σ (unit i)) (boxAvg σ h s (m N)) (m N i) ω := by
+        funext N; exact boxAvg_insert_eq_bAvg_boxAvg hσadd h s i hi (m N) ω
+      rw [heq]; exact hω
+    · intro j hj
+      rcases Finset.mem_insert.mp hj with rfl | hjs
+      · funext ω
+        exact bLimsup_comp hM hGb ω
+      · have hcomm : ∀ ω, σ (unit i) (σ (unit j) ω) = σ (unit j) (σ (unit i) ω) := by
+          intro ω
+          rw [← hσadd, ← hσadd, add_comm]
+        funext ω
+        rw [congrFun (bLimsup_comp_apply hcomm G) ω, hinv j hjs]
 
+
+/-- The box `∏_{i∈s} [0, mᵢ) ⊂ ℤ^d` with integer corners; `anchoredBox c N` is this with
+`mᵢ = ⌈N cᵢ⌉`. -/
+noncomputable def intBox {d : ℕ} (s : Finset (Fin d)) (m : Fin d → ℕ) : Finset (Site d) :=
+  Fintype.piFinset fun i => if i ∈ s then Finset.Ico (0 : ℤ) (m i : ℤ) else {0}
+
+/-- The `ℕ`-indexed box sum (`boxGridSet`) is the `ℤ`-indexed box sum (`intBox`) under
+`natToSite`. -/
+theorem sum_boxGridSet_eq_sum_intBox {d : ℕ} (s : Finset (Fin d)) (m : Fin d → ℕ)
+    (F : Site d → ℝ) :
+    ∑ w ∈ boxGridSet s m, F (natToSite w) = ∑ x ∈ intBox s m, F x := by
+  refine Finset.sum_nbij' (fun w => natToSite w) (fun x i => (x i).toNat) ?_ ?_ ?_ ?_ ?_
+  · intro w hw
+    rw [boxGridSet, Fintype.mem_piFinset] at hw
+    rw [intBox, Fintype.mem_piFinset]
+    intro i
+    have hwi := hw i
+    by_cases hi : i ∈ s
+    · rw [if_pos hi] at hwi ⊢
+      exact Finset.mem_Ico.mpr ⟨Int.natCast_nonneg _, by
+        simp only [natToSite]
+        exact_mod_cast (Finset.mem_range.mp hwi)⟩
+    · rw [if_neg hi] at hwi ⊢
+      rw [Finset.mem_singleton] at hwi ⊢
+      simp [natToSite, hwi]
+  · intro x hx
+    rw [intBox, Fintype.mem_piFinset] at hx
+    rw [boxGridSet, Fintype.mem_piFinset]
+    intro i
+    have hxi := hx i
+    by_cases hi : i ∈ s
+    · rw [if_pos hi] at hxi ⊢
+      rw [Finset.mem_range]
+      exact (Int.toNat_lt (Finset.mem_Ico.mp hxi).1).mpr (Finset.mem_Ico.mp hxi).2
+    · rw [if_neg hi] at hxi ⊢
+      rw [Finset.mem_singleton] at hxi ⊢
+      rw [hxi]; rfl
+  · intro w _hw
+    funext i
+    exact Int.toNat_natCast (w i)
+  · intro x hx
+    rw [intBox, Fintype.mem_piFinset] at hx
+    funext i
+    have hxi := hx i
+    by_cases hi : i ∈ s
+    · rw [if_pos hi] at hxi
+      exact Int.toNat_of_nonneg (Finset.mem_Ico.mp hxi).1
+    · rw [if_neg hi] at hxi
+      rw [Finset.mem_singleton] at hxi
+      simp [natToSite, hxi]
+  · intro w _hw; rfl
+
+
+/-- `anchoredBox c N` is the integer box `intBox univ (fun i => ⌈N cᵢ⌉.toNat)` when
+`c ≥ 0`. -/
+theorem anchoredBox_eq_intBox {d : ℕ} {c : Fin d → ℝ} (hc : ∀ i, 0 ≤ c i) (N : ℕ) :
+    anchoredBox c N = intBox Finset.univ (fun i => ⌈(N : ℝ) * c i⌉.toNat) := by
+  unfold anchoredBox intBox
+  congr 1
+  funext i
+  rw [if_pos (Finset.mem_univ i),
+    Int.toNat_of_nonneg (Int.ceil_nonneg (mul_nonneg (Nat.cast_nonneg N) (hc i)))]
+
+omit [MeasurableSpace Ω] in
+/-- The box sum is the box average times the box volume. -/
+theorem sum_boxGridSet_eq_boxAvg_mul {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ)
+    (s : Finset (Fin d)) (m : Fin d → ℕ) (ω : Ω) :
+    ∑ w ∈ boxGridSet s m, h (σ (natToSite w) ω) =
+      boxAvg σ h s m ω * ∏ i ∈ s, (m i : ℝ) := by
+  rw [boxAvg]
+  rcases eq_or_ne (∏ i ∈ s, (m i : ℝ)) 0 with hP | hP
+  · obtain ⟨i, hi, hmi⟩ := Finset.prod_eq_zero_iff.mp hP
+    have hmi0 : m i = 0 := by exact_mod_cast hmi
+    rw [hP, div_zero, zero_mul, Finset.sum_eq_zero]
+    intro w hw
+    have hmem : w i ∈ (if i ∈ s then Finset.range (m i) else {0}) :=
+      Fintype.mem_piFinset.mp hw i
+    rw [if_pos hi, Finset.mem_range] at hmem
+    omega
+  · rw [div_mul_cancel₀ _ hP]
+
+/-- `⌈N c⌉.toNat → ∞` for `c > 0`. -/
+theorem tendsto_ceil_toNat_atTop {c : ℝ} (hc : 0 < c) :
+    Tendsto (fun N : ℕ => ⌈(N : ℝ) * c⌉.toNat) atTop atTop := by
+  rw [Filter.tendsto_atTop]
+  intro b
+  have hx : Tendsto (fun N : ℕ => (N : ℝ) * c) atTop atTop :=
+    tendsto_natCast_atTop_atTop.atTop_mul_const hc
+  filter_upwards [Filter.tendsto_atTop.mp hx ((b : ℝ) + 1)] with N hN
+  have hxN : ((b + 1 : ℕ) : ℝ) ≤ (N : ℝ) * c := by
+    push_cast; linarith
+  have hb : (b : ℤ) ≤ ⌈(N : ℝ) * c⌉ := by
+    have h1 : ((b + 1 : ℕ) : ℝ) ≤ ((⌈(N : ℝ) * c⌉ : ℤ) : ℝ) :=
+      le_trans hxN (Int.le_ceil _)
+    have h2 : ((b + 1 : ℕ) : ℤ) ≤ ⌈(N : ℝ) * c⌉ := by exact_mod_cast h1
+    omega
+  have := Int.toNat_le_toNat hb
+  rwa [Int.toNat_natCast] at this
+
+/-- For `a ≥ 0`, the real value of `⌈a⌉.toNat` is `⌈a⌉`. -/
+theorem ceil_toNat_cast (a : ℝ) (ha : 0 ≤ a) :
+    (((⌈a⌉).toNat : ℕ) : ℝ) = ((⌈a⌉ : ℤ) : ℝ) := by
+  have h : (((⌈a⌉).toNat : ℕ) : ℤ) = ⌈a⌉ := Int.toNat_of_nonneg (Int.ceil_nonneg ha)
+  rw [← h]
+  exact_mod_cast rfl
+
+/-- `(⌈N c⌉.toNat)/N → c` for `c ≥ 0`. -/
+theorem tendsto_ceil_toNat_div {c : ℝ} (hc : 0 ≤ c) :
+    Tendsto (fun N : ℕ => (((⌈(N : ℝ) * c⌉).toNat : ℕ) : ℝ) / (N : ℝ)) atTop
+      (𝓝 c) := by
+  have hcN : ∀ N : ℕ, 0 ≤ (N : ℝ) * c := fun N => mul_nonneg (Nat.cast_nonneg N) hc
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
+    (by simpa using
+      tendsto_const_nhds.add (tendsto_one_div_atTop_nhds_zero_nat (𝕜 := ℝ))) ?_ ?_
+  · filter_upwards [eventually_ge_atTop 1] with N hN
+    have hNpos : (0 : ℝ) < (N : ℝ) := by exact_mod_cast hN
+    rw [le_div_iff₀ hNpos, ceil_toNat_cast _ (hcN N)]
+    have := Int.le_ceil ((N : ℝ) * c)
+    linarith
+  · filter_upwards [eventually_ge_atTop 1] with N hN
+    have hNpos : (0 : ℝ) < (N : ℝ) := by exact_mod_cast hN
+    rw [div_le_iff₀ hNpos, ceil_toNat_cast _ (hcN N)]
+    have hlt := Int.ceil_lt_add_one ((N : ℝ) * c)
+    have hexp : (c + (N : ℝ)⁻¹) * (N : ℝ) = (N : ℝ) * c + 1 := by
+      rw [add_mul, inv_mul_cancel₀ (ne_of_gt hNpos), mul_comm c (N : ℝ)]
+    rw [hexp]
+    linarith
+
+/-- The volume ratio `(∏ᵢ ⌈N cᵢ⌉.toNat) / N^d → ∏ᵢ cᵢ` for `c ≥ 0`. -/
+theorem tendsto_prod_ceil_toNat_div_pow {d : ℕ} {c : Fin d → ℝ} (hc : ∀ i, 0 ≤ c i) :
+    Tendsto (fun N : ℕ => (∏ i, (⌈(N : ℝ) * c i⌉.toNat : ℝ)) / (N : ℝ) ^ d) atTop
+      (𝓝 (∏ i, c i)) := by
+  have hfac : Tendsto (fun N : ℕ => ∏ i, (⌈(N : ℝ) * c i⌉.toNat : ℝ) / (N : ℝ)) atTop
+      (𝓝 (∏ i, c i)) :=
+    tendsto_finsetProd Finset.univ fun i _ => tendsto_ceil_toNat_div (hc i)
+  have heq : ∀ N : ℕ, (∏ i, (⌈(N : ℝ) * c i⌉.toNat : ℝ) / (N : ℝ)) =
+      (∏ i, (⌈(N : ℝ) * c i⌉.toNat : ℝ)) / (N : ℝ) ^ d := by
+    intro N
+    rw [Finset.prod_div_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  exact hfac.congr' (Filter.Eventually.of_forall heq)
+
+
+omit [MeasurableSpace Ω] in
+/-- The constant-length box average is the grid (cube) average. -/
+theorem boxAvg_univ_const_eq_gridAvg {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ)
+    (N : ℕ) :
+    boxAvg σ h Finset.univ (fun _ => N) = gridAvg σ h Finset.univ N := by
+  have hset : boxGridSet Finset.univ (fun _ : Fin d => N) = gridSet d Finset.univ N := rfl
+  have hprod : (∏ _i ∈ (Finset.univ : Finset (Fin d)), (N : ℝ)) = (N : ℝ) ^ d := by
+    rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  funext ω
+  rw [boxAvg, gridAvg, hset, hprod]
+  simp
+
+/-- **The anchored-box almost-everywhere ergodic theorem (bounded `h`).**  For a measure-preserving
+additive action of `ℤ^d` and a bounded measurable `h`, there is a bounded measurable limit `G`
+with `∫ G = ∫ h` such that, for every `c ≥ 0`, the normalized anchored-box average converges
+a.e.
+to `(∏ᵢ cᵢ) G`, where `G` is the (sequence-independent) box limit produced by the coordinate
+iteration.  This is the cube-to-box step of the multiparameter pointwise ergodic theorem, proved
+without a maximal inequality. -/
+theorem exists_ae_tendsto_anchoredBox_with_integral {d : ℕ} {σ : Site d → Ω → Ω}
+    {μ : Measure Ω}
+    [IsProbabilityMeasure μ]
+    (hσ : ∀ z, MeasurePreserving (σ z) μ μ)
+    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω))
+    {h : Ω → ℝ} (hh : Measurable h) {M : ℝ} (hM : 0 ≤ M) (hb : ∀ x, |h x| ≤ M)
+    {c : Fin d → ℝ} (hc : ∀ i, 0 ≤ c i) :
+    ∃ G : Ω → ℝ, Measurable G ∧ (∀ x, |G x| ≤ M) ∧
+      ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ ∧
+      ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
+          ∑ x ∈ anchoredBox c N, h (σ x ω)) atTop (𝓝 ((∏ i, c i) * G ω)) := by
+  obtain ⟨G, hGm, hGb, hGconv, _hinv⟩ :=
+    exists_ae_tendsto_boxAvg hσ hσadd hh hM hb Finset.univ
+  have hGint : ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ := by
+    have hconv : ∀ᵐ ω ∂μ, Tendsto (fun N => gridAvg σ h Finset.univ N ω) atTop
+        (𝓝 (G ω)) := by
+      have h := hGconv (fun N _ => N) (fun i _ => tendsto_id)
+      simpa only [boxAvg_univ_const_eq_gridAvg] using h
+    have h1 : Tendsto (fun N : ℕ => ∫ ω, gridAvg σ h Finset.univ N ω ∂μ) atTop
+        (𝓝 (∫ ω, G ω ∂μ)) :=
+      tendsto_integral_of_dominated_convergence (fun _ : Ω => M)
+        (fun N => (measurable_gridAvg hσ hh Finset.univ N).aestronglyMeasurable)
+        (integrable_const M)
+        (fun N => by
+          filter_upwards with ω
+          rw [Real.norm_eq_abs]
+          exact abs_gridAvg_le σ h hM hb Finset.univ N ω) hconv
+    have hEq : (fun N : ℕ => ∫ ω, gridAvg σ h Finset.univ N ω ∂μ) =ᶠ[atTop]
+        fun _ : ℕ => ∫ ω, h ω ∂μ :=
+      eventually_atTop.mpr ⟨1, fun n hn => integral_gridAvg_univ_eq_integral hσ hh hb hn⟩
+    exact (tendsto_nhds_unique tendsto_const_nhds (Tendsto.congr' hEq h1)).symm
+  refine ⟨G, hGm, hGb, hGint, ?_⟩
+  by_cases hpos : ∀ i, 0 < c i
+  · have hmi : ∀ i, Tendsto (fun N : ℕ => ⌈(N : ℝ) * c i⌉.toNat) atTop atTop :=
+      fun i => tendsto_ceil_toNat_atTop (hpos i)
+    have hconv := hGconv (fun N i => ⌈(N : ℝ) * c i⌉.toNat) (fun i _ => hmi i)
+    have hscale : Tendsto (fun N : ℕ => (∏ i, (⌈(N : ℝ) * c i⌉.toNat : ℝ)) *
+        ((N : ℝ) ^ (-(d : ℝ)))) atTop (𝓝 (∏ i, c i)) := by
+      have h := tendsto_prod_ceil_toNat_div_pow hc
+      have heq : (fun N : ℕ => (∏ i, (⌈(N : ℝ) * c i⌉.toNat : ℝ)) *
+          ((N : ℝ) ^ (-(d : ℝ)))) =
+          fun N : ℕ => (∏ i, (⌈(N : ℝ) * c i⌉.toNat : ℝ)) / (N : ℝ) ^ d := by
+        funext N
+        rw [Real.rpow_neg (Nat.cast_nonneg N) (d : ℝ), Real.rpow_natCast (N : ℝ) d,
+          div_eq_mul_inv]
+      rw [heq]; exact h
+    filter_upwards [hconv] with ω hω
+    have heq : (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) * ∑ x ∈ anchoredBox c N, h (σ x ω)) =
+        fun N : ℕ => (∏ i, (⌈(N : ℝ) * c i⌉.toNat : ℝ)) * ((N : ℝ) ^ (-(d : ℝ))) *
+            boxAvg σ h Finset.univ (fun i => ⌈(N : ℝ) * c i⌉.toNat) ω := by
+      funext N
+      rw [anchoredBox_eq_intBox hc N,
+        ← sum_boxGridSet_eq_sum_intBox Finset.univ (fun i => ⌈(N : ℝ) * c i⌉.toNat)
+            (fun x => h (σ x ω)),
+        sum_boxGridSet_eq_boxAvg_mul σ h Finset.univ (fun i => ⌈(N : ℝ) * c i⌉.toNat) ω]
+      ring
+    rw [heq]
+    exact hscale.mul hω
+  · simp only [not_forall, not_lt] at hpos
+    obtain ⟨i, hi⟩ := hpos
+    have hci : c i = 0 := le_antisymm hi (hc i)
+    filter_upwards with ω
+    have hemp : ∀ N : ℕ, anchoredBox c N = ∅ := by
+      intro N
+      rw [Finset.eq_empty_iff_forall_notMem]
+      intro x hx
+      rw [mem_anchoredBox] at hx
+      have := hx i
+      rw [hci, mul_zero, Int.ceil_zero, Finset.mem_Ico] at this
+      omega
+    have hprod : (∏ i, c i) = 0 := Finset.prod_eq_zero (Finset.mem_univ i) hci
+    have hconst : (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
+        ∑ x ∈ anchoredBox c N, h (σ x ω)) = fun _ : ℕ => 0 := by
+      funext N
+      rw [hemp N, Finset.sum_empty, mul_zero]
+    rw [hconst, hprod, zero_mul]
+    exact tendsto_const_nhds
 
 end LatticeProb

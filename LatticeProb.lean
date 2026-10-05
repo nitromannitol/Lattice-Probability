@@ -324,6 +324,7 @@ import LatticeProb.Analysis.Sobolev.BandLimitedLip
 import LatticeProb.Analysis.Sobolev.FejerSideCondition
 import LatticeProb.Analysis.Sobolev.FejerIntegrable
 import LatticeProb.Analysis.Sobolev.FejerLimit
+import LatticeProb.Analysis.Sobolev.MollifierFourier
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
 import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNetSteps
@@ -333,6 +334,7 @@ import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
 import LatticeProb.Analysis.Sobolev.FejerSideCondition
 import LatticeProb.Analysis.Sobolev.FejerIntegrable
 import LatticeProb.Analysis.Sobolev.FejerLimit
+import LatticeProb.Analysis.Sobolev.MollifierFourier
 import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 import LatticeProb.Analysis.Sobolev.JetArzelaAscoli
 import LatticeProb.Analysis.Sobolev.Truncation
