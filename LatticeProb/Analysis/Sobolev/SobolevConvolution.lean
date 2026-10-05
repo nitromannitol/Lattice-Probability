@@ -17,10 +17,10 @@ open scoped ENNReal FourierTransform Topology
 
 namespace LatticeProb.Sobolev
 
-/-- **The lift of the real convolution.**  For integrable `f, ρ : Space d → ℝ`,
-`lift (f ⋆_ℝ ρ) = lift f ⋆_ℂ lift ρ`. -/
-theorem lift_convReal {d : ℕ} {f ρ : Space d → ℝ}
-    (_hf : Integrable f) (_hρ : Integrable ρ) :
+/-- **The lift of the real convolution.**  For `f, ρ : Space d → ℝ`,
+`lift (f ⋆_ℝ ρ) = lift f ⋆_ℂ lift ρ` (no integrability needed:
+`integral_ofReal` is unconditional). -/
+theorem lift_convReal {d : ℕ} {f ρ : Space d → ℝ} :
     (fun x => (convReal f ρ x : ℂ))
       = convolution (fun x => (f x : ℂ)) (fun x => (ρ x : ℂ))
           (ContinuousLinearMap.mul ℂ ℂ) volume := by
@@ -41,7 +41,7 @@ theorem fourier_lift_convReal {d : ℕ} {f ρ : Space d → ℝ} (hf : Integrabl
     (hρ : Integrable ρ) :
     𝓕 (fun x => (convReal f ρ x : ℂ))
       = 𝓕 (fun x => (f x : ℂ)) * 𝓕 (fun x => (ρ x : ℂ)) := by
-  rw [lift_convReal hf hρ]
+  rw [lift_convReal]
   exact fourier_convolution_lift (fun x => (f x : ℂ)) (fun x => (ρ x : ℂ))
     hf.ofReal hρ.ofReal
 
