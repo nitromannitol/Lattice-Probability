@@ -258,6 +258,10 @@ the field with zero boundary values on a finite set `C` as
   For a family subadditive along a transformation that preserves a finite
   measure and bounded below by `c n`, `g_n / n` converges almost everywhere,
   and the means `(∫ g_n) / n` converge to their infimum.
+* `LatticeProb.kingman_array`: Kingman's theorem in array form: for a nonnegative integrable measurable
+  array `X m n` over a probability space, stationary under a measure-preserving `θ`
+  (`X m n ∘ θ = X (m+1) (n+1)`) and subadditive in the middle index, `X 0 n / n` converges almost
+  everywhere to a measurable, almost everywhere `θ`-invariant limit.
 * `LatticeProb.akcoglu_krengel_mean`: the mean half of the multiparameter
   subadditive ergodic theorem of Akcoglu and Krengel, along cubes. A set
   function on boxes of `ℤ^d`, stationary under a measure-preserving action of

@@ -74,6 +74,7 @@ import LatticeProb.Prob.Exposure
 import LatticeProb.Prob.CountableMeasurable
 import LatticeProb.Prob.MaximalErgodic
 import LatticeProb.Prob.Kingman
+import LatticeProb.Prob.KingmanArray
 import LatticeProb.Prob.SubGaussian
 import LatticeProb.Prob.EfronStein
 import LatticeProb.Prob.EfronSteinInequality
