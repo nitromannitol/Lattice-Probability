@@ -111,6 +111,8 @@ library.
 #print axioms LatticeProb.exists_ae_tendsto_shiftField_anchoredBox
 #print axioms LatticeProb.exists_ae_tendsto_anchoredBox_with_integral
 #print axioms LatticeProb.comp_sigma_eq_of_comp_unit_eq
+#print axioms LatticeProb.ae_eq_const_of_forall_invariant
+#print axioms LatticeProb.exists_ae_tendsto_anchoredBox_ergodic
 #print axioms LatticeProb.ergodic_decomposition
 #print axioms LatticeProb.ergodic_coordShift_infinitePi
 #print axioms LatticeProb.measure_zero_or_one_of_exchangeable

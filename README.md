@@ -255,7 +255,11 @@ the field with zero boundary values on a finite set `C` as
   ergodic theorem with coordinate-dependent side lengths, from the per-coordinate
   box-tiling iteration (`boxGridSet`, `boxAvg`), with the a.e. limit carrying the
   same integral; `LatticeProb.comp_sigma_eq_of_comp_unit_eq` extends the limit's
-  invariance from the generators `σ (unit j)` to the whole `ℤ^d`-action `σ z`.
+  invariance from the generators `σ (unit j)` to the whole `ℤ^d`-action `σ z`, and
+  `LatticeProb.ae_eq_const_of_forall_invariant`, together with
+  `LatticeProb.exists_ae_tendsto_anchoredBox_ergodic`, gives the ergodic
+  anchored-box theorem: under an ergodic action the invariant limit is a.e.
+  constant.
 * `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
   measure-preserving transformation of a standard Borel probability space.
 * `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;
