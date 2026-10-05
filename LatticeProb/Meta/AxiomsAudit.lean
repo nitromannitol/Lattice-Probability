@@ -494,3 +494,9 @@ library.
 #print axioms LatticeProb.mvbe_smooth_small_angle_outer
 #print axioms LatticeProb.mvbe_smooth_small_angle_inner
 #print axioms LatticeProb.mvbe_keyLemma_proved
+
+/-! ### Multivariate Berry–Esseen, orthant route: Raič's Theorem 1.3 -/
+
+#print axioms LatticeProb.mvbe_thmR
+#print axioms LatticeProb.mvbe_thmR_of_keyLemma
+#print axioms LatticeProb.mvbe_main_step
