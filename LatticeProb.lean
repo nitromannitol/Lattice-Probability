@@ -88,6 +88,7 @@ import LatticeProb.Prob.GaussianConcentrationL2
 import LatticeProb.Prob.BracketProcess
 import LatticeProb.Prob.GaussianLogSobolevTensor
 import LatticeProb.Prob.GaussianLogSobolevGrad
+import LatticeProb.Prob.GaussianLogSobolevOU
 import LatticeProb.Prob.GaussianLogSobolevGradTensor
 import LatticeProb.Prob.FDerivIntegralMarginal
 import LatticeProb.Prob.GaussianLogSobolevGradTensorProved
