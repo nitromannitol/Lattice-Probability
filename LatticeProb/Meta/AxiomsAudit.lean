@@ -272,6 +272,14 @@ library.
 #print axioms LatticeProb.multivariateGaussian_orthant_scalar
 #print axioms LatticeProb.multivariateGaussian_orthant_frontier_null
 #print axioms LatticeProb.tendsto_multivariateGaussian_orthant_path
+#print axioms LatticeProb.abs_apply_le_of_posSemidef_diag
+#print axioms LatticeProb.boundary_covDensity_path_le
+#print axioms LatticeProb.hasDerivAt_orthant_covDensity_path_pairs
+#print axioms LatticeProb.orthantPartial2_comm
+#print axioms LatticeProb.orthantPartial2_nonneg_le
+#print axioms LatticeProb.continuousOn_bivariateGaussDensity_path
+#print axioms LatticeProb.integral_bivariateGaussDensity_Icc_le
+#print axioms LatticeProb.orthant_path_interpolation
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner

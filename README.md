@@ -451,7 +451,14 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   probability at the possibly singular endpoint
   (`LatticeProb.tendsto_multivariateGaussian_orthant_path`), via the null frontier of the
   orthant (`LatticeProb.multivariateGaussian_orthant_frontier_null`) and Lévy's continuity
-  theorem.
+  theorem.  Combined: on the smart path the derivative of the orthant probability is the sum,
+  over pairs `i < j`, of `S i j` times a nonnegative boundary integral
+  (`LatticeProb.hasDerivAt_orthant_covDensity_path_pairs`,
+  `LatticeProb.orthantPartial2_nonneg_le`) that is at most the bivariate density
+  (`LatticeProb.boundary_covDensity_path_le`), and integrating this bound gives the
+  interpolation on `[0, T]` for every `T < 1`
+  (`LatticeProb.integral_bivariateGaussDensity_Icc_le`,
+  `LatticeProb.orthant_path_interpolation`).
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.

@@ -191,6 +191,11 @@ import LatticeProb.Prob.GaussCovDensityOrthantLink
 import LatticeProb.Prob.GaussCovDensityOrthantPath
 import LatticeProb.Prob.GaussCovDensityScalar
 import LatticeProb.Prob.NormalComparisonEndpoint
+import LatticeProb.Prob.GaussCovDensityBoundary
+import LatticeProb.Prob.GaussCovDensityOrthantPairs
+import LatticeProb.Prob.GaussCovDensityPartial2Bounds
+import LatticeProb.Prob.NormalComparisonOrthantIcc
+import LatticeProb.Prob.NormalComparisonInterpolation
 import LatticeProb.Gauss.Process
 import LatticeProb.Gauss.WhiteNoise
 import LatticeProb.Gauss.Brownian
