@@ -24,6 +24,7 @@ import LatticeProb.Prob.GaussCovDensityMarginal
 import LatticeProb.Prob.GaussCovDensityTwo
 import LatticeProb.Prob.GaussCovDensityOrthant
 import LatticeProb.Prob.NormalComparisonPath
+import LatticeProb.Prob.NormalComparisonBoundary
 
 open MeasureTheory Matrix
 
@@ -40,19 +41,6 @@ private theorem quad_pair_nonneg (hS : S.PosSemidef) {i j : Fin (m + 2)} (s : �
   have h := hS.dotProduct_mulVec_nonneg (Pi.single i 1 + Pi.single j s)
   simp [dotProduct_add, mulVec_add] at h
   linarith
-
-/-- A positive semidefinite matrix with constant diagonal `v` has entries bounded by `v`. -/
-theorem abs_apply_le_of_posSemidef_diag (hv : 0 < v) (hS : S.PosSemidef)
-    (hdiag : ∀ i, S i i = v) (i j : Fin (m + 2)) : |S i j| ≤ v := by
-  by_cases hij : i = j
-  · subst hij
-    rw [hdiag i, abs_of_pos hv]
-  · have hsym : S j i = S i j := by
-      simpa using hS.isHermitian.apply i j
-    have h1 := quad_pair_nonneg hS (i := i) (j := j) 1
-    have h2 := quad_pair_nonneg hS (i := i) (j := j) (-1)
-    rw [hdiag i, hdiag j, hsym] at h1 h2
-    exact abs_le.mpr ⟨by linarith, by linarith⟩
 
 /-- **Route item 5.**  At each point `t ∈ [0,1)` of the smart path, the boundary integral of the
 density is nonnegative and at most the bivariate density at correlation `t * S (σ 0) (σ 1) / v`. -/

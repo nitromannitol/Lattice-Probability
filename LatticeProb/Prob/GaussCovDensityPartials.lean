@@ -95,40 +95,6 @@ private lemma neg_inv_diag_div_two_lt (hS : S.PosDef) (j : Fin n) : -(S⁻¹ j j
   have := hS.inv.diag_pos (i := j)
   linarith
 
-/-- `∂_i p = -(S⁻¹ x)_i p` along the line through `x` in direction `e_i`. -/
-theorem hasDerivAt_covDensity_update (hS : S.PosDef) (x : Fin n → ℝ) (i : Fin n) (t : ℝ) :
-    HasDerivAt (fun s => covDensity S (Function.update x i s))
-      (-((S⁻¹ *ᵥ Function.update x i t) i) * covDensity S (Function.update x i t)) t := by
-  obtain ⟨K, hK⟩ := covDensity_update_eq hS x i
-  have hfun : (fun s => covDensity S (Function.update x i s))
-      = fun s => K * Real.exp (-(S⁻¹ i i / 2) * s ^ 2
-          + (-((S⁻¹ *ᵥ Function.update x i 0) i)) * s) := funext hK
-  rw [hfun, hK t, mulVec_update_apply S⁻¹ x i i t]
-  have hq : HasDerivAt (fun s : ℝ => -(S⁻¹ i i / 2) * s ^ 2
-      + (-((S⁻¹ *ᵥ Function.update x i 0) i)) * s)
-      (-(S⁻¹ i i / 2) * ((2 : ℕ) * t ^ (2 - 1)) + (-((S⁻¹ *ᵥ Function.update x i 0) i)) * 1) t :=
-    ((hasDerivAt_pow 2 t).const_mul _).add ((hasDerivAt_id' t).const_mul _)
-  refine (hq.exp.const_mul K).congr_deriv ?_
-  push_cast
-  ring
-
-/-- The second derivative: `∂_j(-(S⁻¹ x)_i p) = ((S⁻¹ x)_i (S⁻¹ x)_j - S⁻¹ i j) p`. -/
-theorem hasDerivAt_covDensity_partial_update (hS : S.PosDef) (x : Fin n → ℝ) (i j : Fin n)
-    (t : ℝ) :
-    HasDerivAt
-      (fun s => -((S⁻¹ *ᵥ Function.update x j s) i) * covDensity S (Function.update x j s))
-      ((((S⁻¹ *ᵥ Function.update x j t) i) * ((S⁻¹ *ᵥ Function.update x j t) j) - S⁻¹ i j)
-        * covDensity S (Function.update x j t)) t := by
-  have h1 : HasDerivAt (fun s => -((S⁻¹ *ᵥ Function.update x j s) i)) (-S⁻¹ i j) t := by
-    have hfun : (fun s : ℝ => -((S⁻¹ *ᵥ Function.update x j s) i))
-        = fun s => -((S⁻¹ *ᵥ Function.update x j 0) i + s * S⁻¹ i j) := by
-      funext s
-      rw [mulVec_update_apply]
-    rw [hfun]
-    exact ((((hasDerivAt_id' t).mul_const (S⁻¹ i j)).const_add _).neg).congr_deriv (by simp)
-  refine (h1.mul (hasDerivAt_covDensity_update hS x j t)).congr_deriv ?_
-  ring
-
 /-- `exp (a u² + b u) → 0` as `u → +∞` for `a < 0`. -/
 private lemma tendsto_exp_quad_atTop {a : ℝ} (ha : a < 0) (b : ℝ) :
     Tendsto (fun u : ℝ => Real.exp (a * u ^ 2 + b * u)) atTop (𝓝 0) := by
