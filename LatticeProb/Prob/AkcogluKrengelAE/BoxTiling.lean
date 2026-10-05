@@ -511,6 +511,139 @@ theorem boxAvg_univ_const_eq_gridAvg {d : ℕ} (σ : Site d → Ω → Ω) (h : 
   rw [boxAvg, gridAvg, hset, hprod]
   simp
 
+
+omit [MeasurableSpace Ω] in
+/-- `z + unit i` is `z` with coordinate `i` increased by one. -/
+theorem add_unit_eq_update {d : ℕ} (z : Site d) (i : Fin d) :
+    z + unit i = Function.update z i (z i + 1) := by
+  funext j
+  by_cases hj : j = i
+  · subst hj; simp [unit, Function.update_self]
+  · rw [Pi.add_apply, Function.update_of_ne hj]
+    have h0 : unit i j = 0 := by simp [unit, hj]
+    rw [h0, add_zero]
+
+omit [MeasurableSpace Ω] in
+/-- `z - unit i` is `z` with coordinate `i` decreased by one. -/
+theorem sub_unit_eq_update {d : ℕ} (z : Site d) (i : Fin d) :
+    z - unit i = Function.update z i (z i - 1) := by
+  funext j
+  by_cases hj : j = i
+  · subst hj; simp [unit, Function.update_self]
+  · rw [Pi.sub_apply, Function.update_of_ne hj]
+    have h0 : unit i j = 0 := by simp [unit, hj]
+    rw [h0, sub_zero]
+
+omit [MeasurableSpace Ω] in
+/-- Updating a coordinate of `z` and adding back `unit i` recovers `z`. -/
+theorem update_sub_one_add_unit {d : ℕ} (z : Site d) (i : Fin d) :
+    Function.update z i (z i - 1) + unit i = z := by
+  funext j
+  by_cases hj : j = i
+  · subst hj; simp [unit, Function.update_self]
+  · rw [Pi.add_apply, Function.update_of_ne hj]
+    have h0 : unit i j = 0 := by simp [unit, hj]
+    rw [h0, add_zero]
+
+omit [MeasurableSpace Ω] in
+/-- The `ℓ¹` norm of `Function.update z i c`. -/
+theorem sum_natAbs_update {d : ℕ} (z : Site d) (i : Fin d) (c : ℤ) :
+    (∑ j, (Function.update z i c j).natAbs)
+      = (∑ j ∈ Finset.univ.erase i, (z j).natAbs) + c.natAbs := by
+  rw [← Finset.sum_erase_add _ (fun j => (Function.update z i c j).natAbs) (Finset.mem_univ i)]
+  congr 1
+  · exact Finset.sum_congr rfl
+      (fun j hj => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)])
+  · rw [Function.update_self]
+
+omit [MeasurableSpace Ω] in
+/-- The `ℓ¹` norm of `z` itself, in the same shape. -/
+theorem sum_natAbs_eq_erase_add {d : ℕ} (z : Site d) (i : Fin d) :
+    (∑ j, (z j).natAbs) = (∑ j ∈ Finset.univ.erase i, (z j).natAbs) + (z i).natAbs := by
+  rw [← Finset.sum_erase_add _ (fun j => (z j).natAbs) (Finset.mem_univ i)]
+
+omit [MeasurableSpace Ω] in
+/-- **Invariance of a limit under the generators extends to the whole `ℤ^d`-action.**  If `σ` is
+additive, `σ 0 = id`, and a function `G` is invariant under every generator `σ (unit j)`, then it is
+invariant under `σ z` for every `z : ℤ^d`. -/
+theorem comp_sigma_eq_of_comp_unit_eq {d : ℕ} {G : Ω → ℝ} {σ : Site d → Ω → Ω}
+    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω)) (hσid : ∀ ω, σ 0 ω = ω)
+    (hinv : ∀ j : Fin d, G ∘ σ (unit j) = G) (z : Site d) : G ∘ σ z = G := by
+  have hzero : σ 0 = id := funext hσid
+  have hcomp : ∀ j : Fin d, σ (unit j) ∘ σ (-(unit j)) = σ 0 := by
+    intro j
+    funext ω
+    show σ (unit j) (σ (-(unit j)) ω) = σ 0 ω
+    rw [← hσadd (unit j) (-(unit j)) ω, add_neg_cancel]
+  have hneg : ∀ j : Fin d, G ∘ σ (-(unit j)) = G := by
+    intro j
+    exact (calc G = G ∘ id := (Function.comp_id G).symm
+      _ = G ∘ (σ (unit j) ∘ σ (-(unit j))) := by rw [hcomp j, hzero]
+      _ = (G ∘ σ (unit j)) ∘ σ (-(unit j)) := by rw [Function.comp_assoc]
+      _ = G ∘ σ (-(unit j)) := by rw [hinv j]).symm
+  suffices H : ∀ n : ℕ, ∀ z : Site d, (∑ i, (z i).natAbs) = n → G ∘ σ z = G by
+    exact H _ z rfl
+  intro n
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    intro z hz
+    by_cases h0 : z = 0
+    · rw [h0, hzero, Function.comp_id]
+    · obtain ⟨i, hi⟩ : ∃ i, z i ≠ 0 := by
+        by_contra h
+        simp only [not_exists, not_not] at h
+        exact h0 (funext fun i => h i)
+      have hnorm1 : (z i + 1).natAbs < (z i).natAbs ∨ (z i - 1).natAbs < (z i).natAbs := by
+        rcases lt_or_gt_of_ne hi with h | h
+        · left
+          have h1 : (z i + 1).natAbs = (-(z i) - 1).natAbs := by
+            rw [show -(z i) - 1 = -(z i + 1) by ring, Int.natAbs_neg]
+          have h2 : (z i).natAbs = (-(z i)).natAbs := (Int.natAbs_neg (z i)).symm
+          rw [h1, h2]
+          exact Int.natAbs_lt_natAbs_of_nonneg_of_lt (by omega) (by omega)
+        · right
+          exact Int.natAbs_lt_natAbs_of_nonneg_of_lt (by omega) (by omega)
+      rcases hnorm1 with hup | hdown
+      · -- z i < 0 : step down to w := z + unit i
+        have hnorm : (∑ j, (Function.update z i (z i + 1) j).natAbs) < n := by
+          have hsum : (∑ j, (z j).natAbs)
+              = (∑ j ∈ Finset.univ.erase i, (z j).natAbs) + (z i).natAbs :=
+            sum_natAbs_eq_erase_add z i
+          rw [sum_natAbs_update, ← hz, hsum]
+          exact add_lt_add_right hup _
+        set w : Site d := Function.update z i (z i + 1) with hwdef
+        have hw : G ∘ σ w = G := ih _ hnorm w rfl
+        have hsw : ∀ ω' : Ω, σ w ω' = σ z (σ (unit i) ω') := by
+          intro ω'
+          rw [hwdef, ← add_unit_eq_update z i]
+          exact hσadd z (unit i) ω'
+        have hid : ∀ ω' : Ω, σ (unit i) (σ (-(unit i)) ω') = ω' := by
+          intro ω'
+          rw [← hσadd (unit i) (-(unit i)) ω', add_neg_cancel, hzero]
+          rfl
+        funext ω
+        calc G (σ z ω) = G (σ z (σ (unit i) (σ (-(unit i)) ω))) := by rw [hid ω]
+          _ = G (σ w (σ (-(unit i)) ω)) := by rw [← hsw (σ (-(unit i)) ω)]
+          _ = G (σ (-(unit i)) ω) := congrFun hw (σ (-(unit i)) ω)
+          _ = G ω := congrFun (hneg i) ω
+      · -- z i > 0 : step down to w := z - unit i
+        have hnorm : (∑ j, (Function.update z i (z i - 1) j).natAbs) < n := by
+          have hsum : (∑ j, (z j).natAbs)
+              = (∑ j ∈ Finset.univ.erase i, (z j).natAbs) + (z i).natAbs :=
+            sum_natAbs_eq_erase_add z i
+          rw [sum_natAbs_update, ← hz, hsum]
+          exact add_lt_add_right hdown _
+        set w : Site d := Function.update z i (z i - 1) with hwdef
+        have hw : G ∘ σ w = G := ih _ hnorm w rfl
+        have hsz : ∀ ω' : Ω, σ z ω' = σ w (σ (unit i) ω') := by
+          intro ω'
+          rw [show z = w + unit i by rw [hwdef, update_sub_one_add_unit]]
+          exact hσadd w (unit i) ω'
+        funext ω
+        calc G (σ z ω) = G (σ w (σ (unit i) ω)) := by rw [hsz ω]
+          _ = G (σ (unit i) ω) := congrFun hw (σ (unit i) ω)
+          _ = G ω := congrFun (hinv i) ω
+
 /-- **The anchored-box almost-everywhere ergodic theorem (bounded `h`).**  For a measure-preserving
 additive action of `ℤ^d` and a bounded measurable `h`, there is a bounded measurable limit `G`
 with `∫ G = ∫ h` such that, for every `c ≥ 0`, the normalized anchored-box average converges
