@@ -3,9 +3,9 @@
 
 The `C^m`-boundedness of the mollified family `{f ⋆ ρ}` — the remaining input to
 `FrechetKolmogorovMollifiedCompact` — starts from the pointwise Cauchy–Schwarz bound
-`|(f ⋆ ρ)(x)| ≤ ‖f‖_{L²} ‖ρ(x−·)‖_{L²}`, which feeds the `H^s`–`H^{−s}` duality bound of
-`AbsApply.lean`.  It is `integral_mul_le_Lp_mul_Lq_of_nonneg` at `p = q = 2` applied to the
-convolution integral.
+`|(f ⋆ ρ)(x)| ≤ ‖f‖_{L²} ‖ρ(x−·)‖_{L²}`, which feeds the `H^s`-`H^{−s}` duality
+bound of `AbsApply.lean`.  It is `integral_mul_le_Lp_mul_Lq_of_nonneg` at `p = q = 2`
+applied to the convolution integral.
 -/
 import LatticeProb.Analysis.Sobolev.SobolevConvolution
 
