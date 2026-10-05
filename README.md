@@ -250,7 +250,9 @@ the field with zero boundary values on a finite set `C` as
 * `LatticeProb.exists_ae_tendsto_shiftField_anchoredBox`: the field-space shift
   instantiation of the anchored-box a.e. ergodic theorem: for a shift-invariant
   field law, the anchored-box averages of the shifted field `shiftField x v`
-  converge almost everywhere.
+  converge almost everywhere;
+  `LatticeProb.exists_ae_tendsto_shiftField_anchoredBox_ergodic` adds the ergodic
+  case, where the limit is a.e. constant.
 * `LatticeProb.exists_ae_tendsto_anchoredBox_with_integral`: the anchored-box a.e.
   ergodic theorem with coordinate-dependent side lengths, from the per-coordinate
   box-tiling iteration (`boxGridSet`, `boxAvg`), with the a.e. limit carrying the
