@@ -10,7 +10,7 @@ project:
     discrete Gaussian free field, the classical integer sandpile, ergodic
     theorems and zero-one laws, correlation, percolation, concentration and
     moment inequalities, Brownian motion, scaling-limit infrastructure, regular
-    variation and Jordan separation on the square lattice.  Three principal
+    variation and Jordan separation on the square lattice.  Seven principal
     theorems (Kingman's subadditive ergodic theorem, the discrete Gaussian
     free field with zero boundary values and the binomial local central limit
     theorem) are independently checked using the comparator pairs under
@@ -21,7 +21,7 @@ project:
 
 # A library, not the formalization of one source.  Its theorems are standard
 # results of probability and potential theory, each cited in its docstring.
-# The sources listed are those of the three comparator-audited theorems and
+# The sources listed are those of the seven comparator-audited theorems and
 # the three repositories from which modules were adapted (see NOTICE).
 sources:
   - title: "The ergodic theory of subadditive stochastic processes"
@@ -78,7 +78,7 @@ status:
     Paley-Zygmund, Ottaviani, Doob and Pinsker inequalities, the
     Kolmogorov-Chentsov theorem, Brownian motion on R^d and its strong Markov
     property, the isonormal process, regular variation, and Jordan separation
-    on the square lattice.  484 modules, about 111,000 lines, 5,112
+    on the square lattice.  654 modules, about 155,000 lines, 6,962
     declarations.  SCOPE BOUNDARY: five results from the literature are stated
     as propositions in LatticeProb/External/ and not proved (the Gaussian
     logarithmic Sobolev inequality and its Herbst bound, polygonal
@@ -366,7 +366,7 @@ review:
     - "Ahmed Bou-Rabee"
   notes: >-
     Correctness of every proof is guaranteed by the Lean kernel and Mathlib (no
-    sorry, no custom axiom).  The statements of the three audited theorems are
+    sorry, no custom axiom).  The statements of the seven audited theorems are
     additionally checked by the Lean comparator against the Mathlib-only
     restatements in LatticeProbAudit/.  This is not external peer review.
 
