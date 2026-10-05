@@ -18,7 +18,8 @@ absolute constants `c0, c1`: for a regular class `C` with `MvbeNegOpen` and fini
 perimeter, independent mean-zero summands with identity covariance and `A ∈ C`,
 `|P(∑ ω_i ∈ A) - γ(A)| ≤ max c0 (1 + c1 γ*(C) √(1 + κ)) ∑ E‖x‖³`.
 
-All theorems take Theorem R as a hypothesis `hR : MvbeThmR`.
+The first three theorems take Theorem R as a hypothesis `hR : MvbeThmR`; the last two apply them
+to the unconditional `mvbe_thmR` of `MvbeBootstrap.lean`.
 
 ## Contents
 
@@ -189,7 +190,7 @@ constant `c` with `γ*(rounded orthants in ℝ^m) ≤ c m^{1/4}` for the standar
 
 This follows from Raic, Bernoulli 25 (2019), Theorem 1.2 (arXiv:1802.06475, (1.3)): the Gaussian
 perimeter `γ_d = γ(𝒞_d) = γ*(𝒞_d)` of the class of all convex sets of `ℝ^d` satisfies
-`γ_d ≤ √(2/π) + 0.59 d^{1/4} - 1 < 0.59 d^{1/4} + 0.21` (Ball: `γ_d ≤ 4 d^{1/4}`; Nazarov: the
+`γ_d ≤ √(2/π) + 0.59 (d^{1/4} - 1) < 0.59 d^{1/4} + 0.21` (Ball: `γ_d ≤ 4 d^{1/4}`; Nazarov: the
 order `d^{1/4}` is sharp).  Raic proves it via the coarea formula, which Mathlib lacks.  It applies
 here because the rounded orthants `O_{h,s} = {ρ_h ≤ s}` are convex (`ρ_h` is convex) and the layers
 `A^{ε|ρ}` and `A_{-ε}` of `A = O_{h,s}` are again rounded orthants (`O_{h,s±ε}`), that is,
@@ -216,8 +217,8 @@ end Assembly
 
 /-- **The multivariate Berry-Esseen comparison for orthants with the factor `m`**, unconditionally:
 the frozen statement of `Sandpile.External.MultivariateBerryEsseen` with `C * m` in place of
-`C * m ^ (1/4)`, from Raič's Theorem 1.3 (`mvbe_thmR`) and the linear Gaussian perimeter bound of the
-rounded orthants (`mvbeRoundedRegularClass_gammaStar_le`). -/
+`C * m ^ (1/4)`, from Raič's Theorem 1.3 (`mvbe_thmR`) and the linear Gaussian perimeter bound of
+the rounded orthants (`mvbeRoundedRegularClass_gammaStar_le`). -/
 theorem mvbe_frozenShape_linear_unconditional :
     MvbeFrozenShape (fun m : ℕ => (m : ℝ)) :=
   mvbe_frozenShape_linear mvbe_thmR

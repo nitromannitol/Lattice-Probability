@@ -371,9 +371,13 @@ the field with zero boundary values on a finite set `C` as
   `mehlerSmooth_hasDerivAt_angle` the angle equation `∂_a U_a f = tan a (U_a f'' − w U_a f')`
   for `f ∈ C²_b`.  The log-Sobolev modules still carry `OUHeatEquation` as a hypothesis.
 
-**Multivariate Berry–Esseen, orthant route (Raič, *Bernoulli* 25 (2019), Thm 1.3), stage 1.**
-Building blocks only; the bootstrapping theorem and the `m^{1/4}` perimeter input are
-not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` is untouched.
+**Multivariate Berry–Esseen, orthant route (Raič, *Bernoulli* 25 (2019), Thm 1.3).**
+Raič's Theorem 1.3 is proved here (`mvbe_thmR`) for regular classes of rounded orthants and their linear
+images.  The comparison of the frozen `Sandpile.External.MultivariateBerryEsseen` is proved with the
+dimension factor `m` unconditionally (`mvbe_frozenShape_linear_unconditional`), and with the frozen factor
+`m^{1/4}` conditionally on one named proposition, the Gaussian perimeter bound `MvbeOrthantPerimeterQuarter`
+(Raič's Theorem 1.2, which needs the coarea formula and is cited, not proved); the frozen statement itself is
+untouched.
 
 * `LatticeProb.MvbeRegularClass`, `LatticeProb.mvbeRoundedRegularClass`: Raič's assumptions
   (A1)–(A8) as a structure, and the class of rounded orthants `{ρ_h ≤ s}` as a regular
@@ -406,17 +410,6 @@ not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` 
 * `LatticeProb.mvbeMollify_exists_euclidean`: mollification of a `C¹` function with `L`-Lipschitz
   gradient into a smooth `g` with `‖D²g‖ ≤ L`, `|g − f| ≤ L η²`, and `D²g = 0` where `f` is locally
   constant (replaces Rademacher's theorem in the proof of Lemma 2.7).
-**Pitt's Gaussian association theorem.**  `LatticeProb.pitt_gaussian_fkg`: a centred Gaussian family
-`X : T → Ω → ℝ` (any index set) with nonnegative integrable covariances is positively associated: for
-finitely many indices and bounded Borel coordinatewise nondecreasing `f`, `g`,
-`E f(Y) E g(Y) ≤ E f(Y) g(Y)` with `Y = (X (q i))_i`, including singular covariance matrices
-(Pitt, Ann. Probab. 10 (1982); the statement of `Sandpile.External.PittGaussianFKG`).  The proof runs
-`pitt_covRep` (covariance representation `Cov(F,G) = ∫_0^{π/2} sin a ∑_i E[∂_iF(Z) E_W ∂_iG(cos a Z + sin a W)] da`
-for the standard Gaussian, from the Mehler interpolation), `pitt_smooth` (smooth monotone functions,
-`A = √S`), `pitt_nondeg` (bounded Borel functions, positive definite `S`, by mollification) and `pitt_full`
-(singular `S`, by semicontinuous envelopes along `S·1` and the coupling `X + √ε Z'`); `pitt_fullStmt` is the
-vector form.
-
 * `LatticeProb.mvbe_frozenShape_linear_unconditional`: the multivariate Berry–Esseen comparison for
   orthants, in the shape of the cited `Sandpile.External.MultivariateBerryEsseen` but with `C m` in place
   of `C m^{1/4}`: for i.i.d. mean-zero summands with third moment `≤ M var^{3/2}` and coefficients whose
@@ -450,6 +443,18 @@ vector form.
 * `LatticeProb.mvbe_frozenShape_of_whitenedBound`: the frozen multivariate Berry–Esseen
   shape (and, as corollaries, its `m^{1/4}` form `mvbe_frozenQuarter_of_whitenedBound`)
   follows from the whitened identity-covariance bound `MvbeWhitenedBound`.
+
+**Pitt's Gaussian association theorem.**  `LatticeProb.pitt_gaussian_fkg`: a centred Gaussian family
+`X : T → Ω → ℝ` (any index set) with nonnegative integrable covariances is positively associated: for
+finitely many indices and bounded Borel coordinatewise nondecreasing `f`, `g`,
+`E f(Y) E g(Y) ≤ E f(Y) g(Y)` with `Y = (X (q i))_i`, including singular covariance matrices
+(Pitt, Ann. Probab. 10 (1982); the statement of `Sandpile.External.PittGaussianFKG`).  The proof runs
+`pitt_covRep` (covariance representation `Cov(F,G) = ∫_0^{π/2} sin a ∑_i E[∂_iF(Z) E_W ∂_iG(cos a Z + sin a W)] da`
+for the standard Gaussian, from the Mehler interpolation), `pitt_smooth` (smooth monotone functions,
+`A = √S`), `pitt_nondeg` (bounded Borel functions, positive definite `S`, by mollification) and `pitt_full`
+(singular `S`, by semicontinuous envelopes along `S·1` and the coupling `X + √ε Z'`); `pitt_fullStmt` is the
+vector form.
+
 * `LatticeProb.ae_subset_iUnion_iInter_of_tendsto_ae`,
   `LatticeProb.measure_le_of_tendsto_ae_of_isOpen`,
   `LatticeProb.measure_le_of_tendsto_ae_of_lt`: the a.e. Fatou limit: an almost
@@ -893,16 +898,14 @@ determined by finitely many coordinates of an infinite product.
 - **No custom `axiom`.**  Every declaration of the library reduces to
   `mathlib`'s three standard foundational axioms, `propext`,
   `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py` checks
-  this for all 5,112 declarations, and
+  this for all 6,962 declarations, and
   [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
   prints the axioms of the principal theorems.  The results cited from the
   literature are hypotheses, not axioms.
-- **Independent check of the statements.** Three principal theorems are
-  restated using only Mathlib, with no library definitions, in
-  [`LatticeProbAudit/Kingman/Challenge.lean`](LatticeProbAudit/Kingman/Challenge.lean),
-  [`LatticeProbAudit/GFF/Challenge.lean`](LatticeProbAudit/GFF/Challenge.lean)
-  and
-  [`LatticeProbAudit/BinomialLocalCLT/Challenge.lean`](LatticeProbAudit/BinomialLocalCLT/Challenge.lean).
+- **Independent check of the statements.** Seven principal theorems are
+  restated using only Mathlib, with no library definitions, in the `Challenge.lean` files of
+  [`LatticeProbAudit/`](LatticeProbAudit/): `Kingman`, `GFF`, `BinomialLocalCLT`, `NormalComparison`,
+  `BerryEsseen`, `PittGaussianFKG` and `MultivariateBerryEsseen`.
   The comparator workflow submits each challenge and its solution to
   [leanprover/comparator](https://github.com/leanprover/comparator), which
   checks that the two statements have identical elaborated types and that the
@@ -940,9 +943,9 @@ recorded in [`LatticeProbAudit/COMPARATOR_RUNS.md`](LatticeProbAudit/COMPARATOR_
 
 ## Size
 
-About 111,000 lines of Lean in 484 modules (the root `LatticeProb.lean` and 483
-modules under `LatticeProb/`), of which about 87,000 lines are code once
-comments and blank lines are removed, with 5,112 declarations, on top of
+About 155,000 lines of Lean in 654 modules (the root `LatticeProb.lean` and 653
+modules under `LatticeProb/`), of which about 120,000 lines are code once
+comments and blank lines are removed, with 6,962 declarations, on top of
 mathlib.  The count excludes the comparator surface in `LatticeProbAudit/`.
 
 ## Building
