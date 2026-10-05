@@ -315,6 +315,8 @@ import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 import LatticeProb.Analysis.Sobolev.SupportRepair
 import LatticeProb.Analysis.Sobolev.RellichDomainDischarge
 import LatticeProb.Analysis.Sobolev.JetArzelaAscoli
+import LatticeProb.Analysis.Sobolev.SupportDensity
+import LatticeProb.Analysis.Sobolev.MollifierFourier
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.Scaling
 import LatticeProb.Analysis.Sobolev.TestFn
