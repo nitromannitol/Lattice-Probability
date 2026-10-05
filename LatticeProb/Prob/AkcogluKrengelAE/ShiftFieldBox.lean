@@ -72,4 +72,35 @@ theorem exists_ae_tendsto_shiftField_anchoredBox {ν : Measure (Site d → ℝ)}
   rw [hsum] at hv
   exact hv
 
+/-- **Ergodic field-space anchored-box theorem (the `a = 0` slice of
+`VRW.External.PointwiseErgodicCubes`).**  If the law `ν` on fields is shift-stationary and
+shift-ergodic, and the coordinate `v ↦ v 0` is norm-bounded, the normalized anchored-box averages
+converge a.e. to the constant `(∏ᵢ cᵢ) · ∫ v, v 0 ∂ν`.  The ergodicity hypothesis is
+exactly `VRW.IsShiftErgodic ν` (up to the definitional identification of the two shifts). -/
+theorem exists_ae_tendsto_shiftField_anchoredBox_ergodic {d : ℕ}
+    {ν : Measure (Site d → ℝ)} [IsProbabilityMeasure ν]
+    (hstat : ∀ x : Site d, MeasurePreserving (shiftField x) ν ν)
+    (herg : ∀ A : Set (Site d → ℝ), MeasurableSet A →
+      (∀ x : Site d, shiftField x ⁻¹' A = A) → ν A = 0 ∨ ν A = 1)
+    {M : ℝ} (hb : ∀ v : Site d → ℝ, |v 0| ≤ M) {c : Fin d → ℝ}
+    (hc : ∀ i, 0 ≤ c i) :
+    ∀ᵐ v ∂ν, Tendsto (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
+        ∑ x ∈ anchoredBox c N, v x) atTop (𝓝 ((∏ i, c i) * ∫ v, v 0 ∂ν)) := by
+  have hM : 0 ≤ M := by simpa using hb (fun _ : Site d => 0)
+  have hσid : ∀ v : Site d → ℝ, shiftField 0 v = v := by
+    intro v; funext z; simp [shiftField]
+  have hmain := exists_ae_tendsto_anchoredBox_ergodic (σ := shiftField) (μ := ν)
+    (h := fun v : Site d → ℝ => v 0) hstat (fun x y v => shiftField_add x y v)
+    hσid herg (measurable_pi_apply 0) hM hb hc
+  filter_upwards [hmain] with v hv
+  have hsum : (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
+        ∑ x ∈ anchoredBox c N, (fun v : Site d → ℝ => v 0) (shiftField x v)) =
+      fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) * ∑ x ∈ anchoredBox c N, v x := by
+    funext N
+    rw [show (∑ x ∈ anchoredBox c N, (fun v : Site d → ℝ => v 0) (shiftField x v)) =
+        ∑ x ∈ anchoredBox c N, v x from
+      Finset.sum_congr rfl fun x _ => shiftField_apply_zero x v]
+  rwa [hsum] at hv
+
+
 end LatticeProb
