@@ -563,3 +563,9 @@ import LatticeProb.Prob.MvbeWhitening
 import LatticeProb.Prob.MvbeGaussConv
 import LatticeProb.Prob.MvbeOrthantPerimeter
 import LatticeProb.Prob.MvbeSteinExpectation
+import LatticeProb.Prob.MvbeClassLayer
+import LatticeProb.Prob.MvbeImageClass
+import LatticeProb.Prob.MehlerSmoothingN
+import LatticeProb.Prob.MehlerInterpolation
+import LatticeProb.Prob.MvbeSmoothing
+import LatticeProb.Prob.MvbeImageNegOpen
