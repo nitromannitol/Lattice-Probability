@@ -205,6 +205,11 @@ import LatticeProb.Prob.BerryEsseenCharFun
 import LatticeProb.Prob.ProdSubProd
 import LatticeProb.Prob.GaussianBerryEsseenFacts
 import LatticeProb.Prob.BerryEsseenSumCharFun
+import LatticeProb.Prob.EsseenFejerInversion
+import LatticeProb.Prob.EsseenSmoothing
+import LatticeProb.Prob.BerryEsseenNormalized
+import LatticeProb.Prob.BerryEsseenNormalizedProved
+import LatticeProb.Prob.BerryEsseenOneDim
 import LatticeProb.Gauss.Process
 import LatticeProb.Gauss.WhiteNoise
 import LatticeProb.Gauss.Brownian

@@ -303,6 +303,14 @@ library.
 #print axioms LatticeProb.charFun_gaussianReal_zero
 #print axioms LatticeProb.integral_sq_mul_exp_neg_third_le
 #print axioms LatticeProb.norm_prod_charFun_sub_gaussian_le
+#print axioms LatticeProb.abs_smoothed_cdf_sub_le
+#print axioms LatticeProb.esseen_smoothing_gaussian
+#print axioms LatticeProb.charFun_sumLaw
+#print axioms LatticeProb.berryEsseen_normalized_of_esseen
+#print axioms LatticeProb.esseenGaussianInequality_holds
+#print axioms LatticeProb.berryEsseen_normalized
+#print axioms LatticeProb.berryEsseen_oneDim
+#print axioms LatticeProb.berryEsseen_oneDim_of_pos
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner

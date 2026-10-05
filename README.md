@@ -479,7 +479,16 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   Fourier representation and unit mass, and the Fourier transform of a difference of distribution
   functions; the characteristic-function side gives, for a finite family of centred laws of total
   variance one and a window `|t| ρ ≤ 1/8`, the comparison of the product of characteristic
-  functions with the Gaussian one, with the Gaussian damping `exp (−t²/3)`.
+  functions with the Gaussian one, with the Gaussian damping `exp (−t²/3)`.  Esseen's smoothing
+  inequality for a Gaussian target is proved from these
+  (`LatticeProb.esseen_smoothing_gaussian`,
+  `|F_μ − G| ≤ (1/π) ∫_{−T}^{T} ‖φ_μ − φ_γ‖/|t| dt + 64/(π T √(2π v))`), and with it the
+  Berry–Esseen theorem for independent, centred, non-identically distributed summands of total
+  variance one (`LatticeProb.berryEsseen_normalized`: the distribution function of
+  `LatticeProb.sumLaw ν` differs from the standard normal one by at most `100 ∑ᵢ ∫ |z|³ dνᵢ`),
+  and by scaling for an arbitrary positive total variance `V`
+  (`LatticeProb.berryEsseen_oneDim`: the distance to `N(0, V)` is at most
+  `100 (∑ᵢ ∫ |z|³ dνᵢ) / V^{3/2}`).
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.
