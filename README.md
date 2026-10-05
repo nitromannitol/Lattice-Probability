@@ -74,8 +74,9 @@ The truncation identity `‖φ − P_Λφ‖_{H^s} ≤ ‖φ‖_{H^s,>Λ}` is pr
 `LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair` reduces `rkLowFreqNet` to the single
 support-repair input `BandLimitedTestFnApproxOnDomain` (the domain-restricted form, since the
 unrestricted `BandLimitedTestFnApprox` is false as stated), which
-`rellichKondrachovNegSobolev_of_lowfreqNet` composes into the external discharge
-(`Analysis/Sobolev/SupportRepair.lean`).  The earlier unrestricted glue
+`rellichKondrachovNegSobolev_of_domainSupportRepair`
+(`Analysis/Sobolev/RellichDomainDischarge.lean`) composes into the external discharge — the
+external stays conditional on `BandLimitedTestFnApproxOnDomain`.  The earlier unrestricted glue
 `Analysis/Sobolev/RellichLowFreqGlue.lean` is quarantined: its premise `BandLimitedTestFnApprox` is
 refuted there and its implications have been removed.
 

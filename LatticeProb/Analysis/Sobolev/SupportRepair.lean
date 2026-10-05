@@ -31,7 +31,7 @@ This module lands the **domain-restricted** residual that the composition actual
 
 so that `rkLowFreqNet` rests on the input the data supports.  The genuinely missing analytic
 content — the compactness of the projected family plus the support repair of each net
-centre — is unchanged and named in the audit report `lib-support-density.md`.
+centre — is unchanged and remains the open analytic obligation.
 -/
 import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 

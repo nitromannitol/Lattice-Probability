@@ -2,7 +2,7 @@
 # The support/mollification density repair and the `BoundedContinuousFunction` packaging
 
 Two gaps stood between the landed Rellich–Kondrachov glue
-(`RellichLowFreqGlue.lean`, `rkLowFreqNet_of_truncation_and_supportRepair`) and the external:
+(`SupportRepair.lean`, `rkLowFreqNet_of_domainSupportRepair`) and the external:
 
 1. **the density of test functions in `H^s(D)`** — the support repair `BandLimitedTestFnApprox`;
 2. **the `BoundedContinuousFunction` packaging** — Arzelà–Ascoli

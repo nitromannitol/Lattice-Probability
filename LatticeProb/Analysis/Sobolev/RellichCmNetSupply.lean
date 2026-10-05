@@ -19,7 +19,7 @@ concentrated at `‖ξ‖ ≈ N`, so
 Choosing `s < M < m` — possible exactly when `s < m`, and `m` is quantified over
 all of `ℕ` — gives an `H^s`-bounded family with small high-frequency part and
 unbounded `C^m` norm, which no finite `C^m`-net can cover.  The same obstruction
-killed `rkBandLimitedCmNet` (`lib-rellich-lowfreq.md`).
+killed `rkBandLimitedCmNet`.
 
 **What is landed here.**  The largest correct consequence of
 `bandLimitedCmBound_holds`: the uniform jet bound for the *low-frequency
