@@ -261,6 +261,17 @@ library.
 #print axioms LatticeProb.exists_det_inv_bounds
 #print axioms LatticeProb.exists_covDensity_path_majorant
 #print axioms LatticeProb.exists_partial2_path_majorant
+#print axioms LatticeProb.covDensityOn_fromBlocks
+#print axioms LatticeProb.integral_covDensityOn_fromBlocks
+#print axioms LatticeProb.integral_covDensity_pairCorner
+#print axioms LatticeProb.integrable_covDensity_pairCorner
+#print axioms LatticeProb.integral_Iic_pairCorner_covDensity_le
+#print axioms LatticeProb.multivariateGaussian_orthant_toReal_eq
+#print axioms LatticeProb.hasDerivAt_orthant_covDensity_path
+#print axioms LatticeProb.continuousOn_orthant_covDensity_path
+#print axioms LatticeProb.multivariateGaussian_orthant_scalar
+#print axioms LatticeProb.multivariateGaussian_orthant_frontier_null
+#print axioms LatticeProb.tendsto_multivariateGaussian_orthant_path
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner

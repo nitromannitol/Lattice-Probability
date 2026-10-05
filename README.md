@@ -435,7 +435,23 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   `LatticeProb.hasDerivAt_normalComparisonSmartPath`), and the orthant identity for the mixed
   second partial of the density
   (`LatticeProb.integral_Iic_partial2_covDensity`): route items 2, 3 (pointwise part) and 4 of
-  the Li--Shao normal comparison.
+  the Li--Shao normal comparison.  The remaining analytic steps of that comparison are also
+  proved: the Schur-complement factorisation of the density
+  (`LatticeProb.covDensityOn_fromBlocks`, `LatticeProb.integral_covDensityOn_fromBlocks`) and
+  the marginalisation of the boundary term to the pair density
+  (`LatticeProb.integral_covDensity_pairCorner`,
+  `LatticeProb.integral_Iic_pairCorner_covDensity_le`); the identification of the orthant
+  probability of `N(0, S)` with the density integral
+  (`LatticeProb.multivariateGaussian_orthant_toReal_eq`) and, for `N(0, v I)`, with the
+  product of the marginal probabilities
+  (`LatticeProb.multivariateGaussian_orthant_scalar`); the derivative and continuity of the
+  orthant probability along the smart path
+  (`LatticeProb.hasDerivAt_orthant_covDensity_path`,
+  `LatticeProb.continuousOn_orthant_covDensity_path`); and the left-continuity of the orthant
+  probability at the possibly singular endpoint
+  (`LatticeProb.tendsto_multivariateGaussian_orthant_path`), via the null frontier of the
+  orthant (`LatticeProb.multivariateGaussian_orthant_frontier_null`) and Lévy's continuity
+  theorem.
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.

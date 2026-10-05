@@ -185,6 +185,12 @@ import LatticeProb.Prob.GaussCovDensityIntegrable
 import LatticeProb.Prob.GaussCovDensityTwo
 import LatticeProb.Prob.GaussCovDensityOrthant
 import LatticeProb.Prob.GaussCovDensityMajorant
+import LatticeProb.Prob.GaussCovDensitySchur
+import LatticeProb.Prob.GaussCovDensityMarginal
+import LatticeProb.Prob.GaussCovDensityOrthantLink
+import LatticeProb.Prob.GaussCovDensityOrthantPath
+import LatticeProb.Prob.GaussCovDensityScalar
+import LatticeProb.Prob.NormalComparisonEndpoint
 import LatticeProb.Gauss.Process
 import LatticeProb.Gauss.WhiteNoise
 import LatticeProb.Gauss.Brownian
