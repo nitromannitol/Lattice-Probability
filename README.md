@@ -111,7 +111,12 @@ phase bound `LatticeProb.Sobolev.norm_fourierChar_sub_one_le_two` of
 smallness into `LatticeProb.Sobolev.bandLimitedTranslationContinuous`, leaving `FrechetKolmogorovH`
 as the only open input of the route.  `Analysis/Sobolev/SobolevTranslate.lean` adds the translation
 invariance `LatticeProb.Sobolev.sobolevNormSq_comp_add_right` of the Fourier-side norm, the input of
-the mollification step in the classical proof of `FrechetKolmogorovH`.
+the mollification step in the classical proof of `FrechetKolmogorovH`.  That proof is assembled in
+`Analysis/Sobolev/FrechetKolmogorovReduce.lean`: `FrechetKolmogorovH` in its integrable-family form
+`LatticeProb.Sobolev.FrechetKolmogorovHInt` follows, via
+`LatticeProb.Sobolev.frechetKolmogorovHInt_of_mollify_and_compact`, from the two classical halves
+`FrechetKolmogorovMollify` (translation-continuity yields a mollifier) and
+`FrechetKolmogorovMollifiedCompact` (the mollified family is totally bounded).
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
