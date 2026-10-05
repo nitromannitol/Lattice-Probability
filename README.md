@@ -247,6 +247,10 @@ the field with zero boundary values on a finite set `C` as
   Akcoglu–Krengel theorem: for a measure-preserving additive `ℤ^d` action and a
   bounded measurable `h`, the cube averages `gridAvg σ h univ n` converge in
   `L²` to a bounded measurable limit with the same integral.
+* `LatticeProb.exists_ae_tendsto_shiftField_anchoredBox`: the field-space shift
+  instantiation of the anchored-box a.e. ergodic theorem: for a shift-invariant
+  field law, the anchored-box averages of the shifted field `shiftField x v`
+  converge almost everywhere.
 * `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
   measure-preserving transformation of a standard Borel probability space.
 * `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;
@@ -284,6 +288,11 @@ the field with zero boundary values on a finite set `C` as
 * `LatticeProb.gaussian_lipschitz_concentration`: Gaussian concentration for a
   Lipschitz function of `n` independent standard Gaussians, from the cited
   Herbst bound.
+* `LatticeProb.ouSemigroupN`, `LatticeProb.ouGeneratorN`,
+  `LatticeProb.ouSemigroupN_comp_eval`, `LatticeProb.ouGeneratorN_comp_eval`,
+  `LatticeProb.ouHeatEquationN_comp_eval`: the general-`n` Ornstein–Uhlenbeck
+  (Mehler) semigroup and generator on `Fin n → ℝ`, with the coordinate
+  evaluation identities and the named heat-equation input `OUHeatEquationN`.
 * `LatticeProb.gaussian_lipschitz_concentration_l2_fin`: the same concentration
   on `Fin n → ℝ` from the l2 (Cameron–Martin) Lipschitz condition, with the
   constant `L √n` produced by `LatticeProb.lipschitzWith_pi_of_hasSum_sq` and
@@ -371,6 +380,11 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   pushforward of the standard Gaussian under `√S`, equivalently the standard
   Gaussian times the density with the determinant factor
   `det (√S) = (det S)^{1/2}`.
+* `LatticeProb.normalComparisonSmartPath`, `LatticeProb.bivariateGaussDensity_le`,
+  `LatticeProb.integral_one_div_sqrt_one_sub_sq_mul_le`: the elementary half of
+  the Li–Shao normal-comparison bound for the multivariate Gaussian — the smart
+  path from the product law to the covariance, the bivariate density comparison
+  producing the exponential factor, and the scale integral `≤ π/2`.
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.

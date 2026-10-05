@@ -85,6 +85,7 @@ import LatticeProb.External.GaussianLogSobolev
 import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Prob.GaussianConcentrationL2
 import LatticeProb.Prob.IsNormalConcentration
+import LatticeProb.Prob.GaussianLogSobolevGeneral
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev
@@ -169,6 +170,7 @@ import LatticeProb.Gauss.Limit
 import LatticeProb.Gauss.Coords
 import LatticeProb.Gauss.Isonormal
 import LatticeProb.Gauss.MultivariateDensity
+import LatticeProb.Prob.NormalComparison
 import LatticeProb.Gauss.Process
 import LatticeProb.Gauss.WhiteNoise
 import LatticeProb.Gauss.Brownian
@@ -414,6 +416,7 @@ import LatticeProb.Prob.AeFatouLimit
 import LatticeProb.Prob.AkcogluKrengel
 import LatticeProb.Prob.AkcogluKrengelAE
 import LatticeProb.Prob.AkcogluKrengelAE.BoxErgodicL2
+import LatticeProb.Prob.AkcogluKrengelAE.ShiftFieldBox
 import LatticeProb.Prob.Invariance
 import LatticeProb.Prob.ReturnTime
 import LatticeProb.Prob.Kac

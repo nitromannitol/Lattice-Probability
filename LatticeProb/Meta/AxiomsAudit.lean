@@ -108,6 +108,7 @@ library.
 #print axioms LatticeProb.ae_tendsto_div
 #print axioms LatticeProb.akcoglu_krengel_mean
 #print axioms LatticeProb.gridAvg_univ_l2_tendsto
+#print axioms LatticeProb.exists_ae_tendsto_shiftField_anchoredBox
 #print axioms LatticeProb.ergodic_decomposition
 #print axioms LatticeProb.ergodic_coordShift_infinitePi
 #print axioms LatticeProb.measure_zero_or_one_of_exchangeable
@@ -158,6 +159,13 @@ library.
 #print axioms LatticeProb.tendsto_measureReal_weighted
 #print axioms LatticeProb.weighted_iid_central_limit
 #print axioms LatticeProb.weighted_iid_central_limit_pick
+#print axioms LatticeProb.ouSemigroupN_zero
+#print axioms LatticeProb.ouSemigroupN_const
+#print axioms LatticeProb.ouSemigroupN_one
+#print axioms LatticeProb.ouSemigroupN_const_mul
+#print axioms LatticeProb.ouSemigroupN_comp_eval
+#print axioms LatticeProb.ouGeneratorN_comp_eval
+#print axioms LatticeProb.ouHeatEquationN_comp_eval
 
 /-! ### The bracket process and the Dambis–Dubins–Schwarz representation -/
 
@@ -198,6 +206,12 @@ library.
 #print axioms LatticeProb.Isonormal.ae_tendsto_partialSum
 #print axioms LatticeProb.multivariateGaussian_eq_map
 #print axioms LatticeProb.det_sqrt_mul_self
+#print axioms LatticeProb.normalComparisonSmartPath_zero
+#print axioms LatticeProb.normalComparisonSmartPath_one
+#print axioms LatticeProb.normalComparisonSmartPath_nonneg
+#print axioms LatticeProb.bivariateGaussDensity_le
+#print axioms LatticeProb.integral_one_div_sqrt_one_sub_sq_mul_le
+#print axioms LatticeProb.integral_one_sub_sq_rpow_neg_half_le
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner
