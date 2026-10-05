@@ -406,6 +406,9 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   integrated (smart-path) form; `LatticeProb.lintegral_Iic_cons`,
   `LatticeProb.lintegral_Iic_cons₂`, `LatticeProb.integral_Iic_cons`,
   `LatticeProb.integral_Iic_cons₂`,
+  `LatticeProb.lintegral_orthant_eq` and `LatticeProb.lintegral_orthant_cons`
+  (the same orthant box-Fubini transported along the volume-preserving
+  `WithLp.toLp 2` to `EuclideanSpace`, the route's setting),
   `LatticeProb.integral_integral_mixed_deriv` and
   `LatticeProb.integral_Iic_deriv_eq_of_tendsto` are the orthant box-Fubini and
   two-coordinate integration-by-parts substrate (route item 4).
