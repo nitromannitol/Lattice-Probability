@@ -398,6 +398,16 @@ not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` 
   `d` is `C^∞` with the Hermite derivative formulas; `LatticeProb.mehlerI_hasDerivAt`,
   `mehlerI_interpolation`: for `f ∈ C²_b`, `∂_a U_a f = tan a · (Δ − w·∇) U_a f` and
   `E f(W) − γ f = −∫_0^{π/2} tan a · E[(Δ − w·∇) U_a f (W)] da` (Raič (2.5)).
+* `LatticeProb.mvbe_lemma_2_6`: Raič's Lemma 2.6, `|N(μ,Σ)[∇^r U_α f](u^r)| ≤ c_r M cos^rα ‖u‖^r / σ^r`
+  for `r ≤ 3`, `0 < α ≤ π/2`, `σ ≤ 1`, `σ I ≤ Σ^{1/2}` (false for `σ > 1`).
+* `LatticeProb.mvbe_H_abs_le_large_angle`, `mvbe_small_angle_bound`, `mvbe_class_deviation`:
+  the two angle regimes of Raič's Lemma 2.7,
+  `|E⟨∇³U_a f(W), u^{⊗3}⟩| ≤ c₃cos³a/(2σ³) + c₃ D cot³a` when the level sets of `f` are class members
+  and `W` is `D`-close to `N(μ,Σ)` on the class, and
+  `≤ Λ c₁ (cos³a / sin a)(M₀ + 2D)` for `f ∈ C²_b` whose Hessian lives on a layer of mass `M₀`.
+* `LatticeProb.mvbeMollify_exists_euclidean`: mollification of a `C¹` function with `L`-Lipschitz
+  gradient into a smooth `g` with `‖D²g‖ ≤ L`, `|g − f| ≤ L η²`, and `D²g = 0` where `f` is locally
+  constant (replaces Rademacher's theorem in the proof of Lemma 2.7).
 * `LatticeProb.mvbe_polarization`, `LatticeProb.mvbe_stein_expectation`: polarisation of
   symmetric trilinear forms with constant `9/2`, and Götze's identity (Raič Lemma 2.4)
   for `E[Δg(W) − ⟨∇g(W), W⟩]` of a sum of independent mean-zero vectors with identity
