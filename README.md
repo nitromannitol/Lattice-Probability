@@ -402,6 +402,17 @@ not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` 
 * `LatticeProb.mvbeMollify_exists_euclidean`: mollification of a `C¹` function with `L`-Lipschitz
   gradient into a smooth `g` with `‖D²g‖ ≤ L`, `|g − f| ≤ L η²`, and `D²g = 0` where `f` is locally
   constant (replaces Rademacher's theorem in the proof of Lemma 2.7).
+**Pitt's Gaussian association theorem.**  `LatticeProb.pitt_gaussian_fkg`: a centred Gaussian family
+`X : T → Ω → ℝ` (any index set) with nonnegative integrable covariances is positively associated: for
+finitely many indices and bounded Borel coordinatewise nondecreasing `f`, `g`,
+`E f(Y) E g(Y) ≤ E f(Y) g(Y)` with `Y = (X (q i))_i`, including singular covariance matrices
+(Pitt, Ann. Probab. 10 (1982); the statement of `Sandpile.External.PittGaussianFKG`).  The proof runs
+`pitt_covRep` (covariance representation `Cov(F,G) = ∫_0^{π/2} sin a ∑_i E[∂_iF(Z) E_W ∂_iG(cos a Z + sin a W)] da`
+for the standard Gaussian, from the Mehler interpolation), `pitt_smooth` (smooth monotone functions,
+`A = √S`), `pitt_nondeg` (bounded Borel functions, positive definite `S`, by mollification) and `pitt_full`
+(singular `S`, by semicontinuous envelopes along `S·1` and the coupling `X + √ε Z'`); `pitt_fullStmt` is the
+vector form.
+
 * `LatticeProb.mvbe_frozenShape_linear_unconditional`: the multivariate Berry–Esseen comparison for
   orthants, in the shape of the cited `Sandpile.External.MultivariateBerryEsseen` but with `C m` in place
   of `C m^{1/4}`: for i.i.d. mean-zero summands with third moment `≤ M var^{3/2}` and coefficients whose
