@@ -1,10 +1,9 @@
 /-
 # The a.e. Fatou limit for the tails of a convergent sequence
 
-A general, reusable form of the limit step in the isonormal concentration bridge
-(`~/fleet/audit/lib-isonormal-concentration.md`, Part 2).  It is stated for an abstract measure
-space, a sequence `X : ℕ → α → ℝ` and a limit `Y : α → ℝ`, with no Gaussian
-development.
+A general, reusable form of the limit step in the isonormal concentration bridge.  It is stated
+for an abstract measure space, a sequence `X : ℕ → α → ℝ` and a limit `Y : α → ℝ`, with no
+Gaussian development.
 
 For an **open** set `A ⊆ ℝ`:
 
