@@ -223,6 +223,8 @@ library.
 #print axioms LatticeProb.integral_bivariateGaussDensity_le
 #print axioms LatticeProb.lintegral_Iic_cons
 #print axioms LatticeProb.lintegral_Iic_cons₂
+#print axioms LatticeProb.integral_Iic_cons
+#print axioms LatticeProb.integral_Iic_cons₂
 #print axioms LatticeProb.integral_integral_mixed_deriv
 #print axioms LatticeProb.integral_Iic_deriv_eq_of_tendsto
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
