@@ -90,6 +90,7 @@ import LatticeProb.Prob.GaussianLogSobolevTensor
 import LatticeProb.Prob.GaussianLogSobolevGrad
 import LatticeProb.Prob.GaussianLogSobolevGradTensor
 import LatticeProb.Prob.FDerivIntegralMarginal
+import LatticeProb.Prob.GaussianLogSobolevGradTensorProved
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev
