@@ -109,6 +109,8 @@ library.
 #print axioms LatticeProb.akcoglu_krengel_mean
 #print axioms LatticeProb.gridAvg_univ_l2_tendsto
 #print axioms LatticeProb.exists_ae_tendsto_shiftField_anchoredBox
+#print axioms LatticeProb.exists_ae_tendsto_anchoredBox_with_integral
+#print axioms LatticeProb.comp_sigma_eq_of_comp_unit_eq
 #print axioms LatticeProb.ergodic_decomposition
 #print axioms LatticeProb.ergodic_coordShift_infinitePi
 #print axioms LatticeProb.measure_zero_or_one_of_exchangeable
@@ -166,6 +168,7 @@ library.
 #print axioms LatticeProb.ouSemigroupN_comp_eval
 #print axioms LatticeProb.ouGeneratorN_comp_eval
 #print axioms LatticeProb.ouHeatEquationN_comp_eval
+#print axioms LatticeProb.ouSemigroupN_prod
 
 /-! ### The bracket process and the Dambis–Dubins–Schwarz representation -/
 
@@ -214,6 +217,7 @@ library.
 #print axioms LatticeProb.bivariateGaussDensity_le
 #print axioms LatticeProb.integral_one_div_sqrt_one_sub_sq_mul_le
 #print axioms LatticeProb.integral_one_sub_sq_rpow_neg_half_le
+#print axioms LatticeProb.integral_bivariateGaussDensity_le
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner
