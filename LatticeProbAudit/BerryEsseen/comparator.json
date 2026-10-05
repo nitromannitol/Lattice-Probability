@@ -1,0 +1,14 @@
+{
+  "challenge_module": "LatticeProbAudit.BerryEsseen.Challenge",
+  "solution_module": "LatticeProbAudit.BerryEsseen.Solution",
+  "theorem_names": [
+    "LatticeProbAudit.berry_esseen_one_dim"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": true
+}
