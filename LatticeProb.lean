@@ -155,6 +155,7 @@ import LatticeProb.Prob.BernsteinOneStep
 import LatticeProb.Prob.BernsteinInduction
 import LatticeProb.Prob.PinelisReduction
 import LatticeProb.Prob.BernsteinSteps
+import LatticeProb.Prob.PinelisInductionStepFalse
 import LatticeProb.Prob.IsNormalConcentration
 import LatticeProb.Prob.AeFatouLimit
 import LatticeProb.Prob.BrownianTail
@@ -314,6 +315,7 @@ import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
 import LatticeProb.Analysis.Sobolev.BandTruncReal
 import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
 import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
+import LatticeProb.Analysis.Sobolev.BandLimitedCmNet
 import LatticeProb.Analysis.Sobolev.FejerSideCondition
 import LatticeProb.Analysis.Sobolev.FejerIntegrable
 import LatticeProb.Analysis.Sobolev.FejerLimit
@@ -446,6 +448,7 @@ import LatticeProb.Graph.Konig
 import LatticeProb.Prob.McDiarmid
 import LatticeProb.Prob.AkcogluKrengel
 import LatticeProb.Prob.AkcogluKrengelAE
+import LatticeProb.Prob.AkcogluKrengelAE.BoxErgodicL2
 import LatticeProb.Prob.Invariance
 import LatticeProb.Prob.ReturnTime
 import LatticeProb.Prob.Kac
