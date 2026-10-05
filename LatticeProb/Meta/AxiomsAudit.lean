@@ -359,6 +359,8 @@ library.
 #print axioms LatticeProb.Sobolev.fourier_sub_lift
 #print axioms LatticeProb.Sobolev.norm_fourierChar_sub_one_le
 #print axioms LatticeProb.Sobolev.fourier_translate_sub_lift
+#print axioms LatticeProb.Sobolev.bandLimitedPrecompact_of_frechetKolmogorov
+#print axioms LatticeProb.Sobolev.rkLowFreqNet_of_bandLimitedPrecompact
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
 #print axioms LatticeProb.Sobolev.exists_finite_supNet_of_uniformLip_of_proper
 #print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc

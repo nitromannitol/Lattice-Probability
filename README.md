@@ -93,6 +93,18 @@ function whose projection is close to it: `LatticeProb.Sobolev.rkLowFreqNet_of_p
 and `LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_projectionNetWitness` discharge `rkLowFreqNet`
 and the external `RellichKondrachovNegSobolev` from it.
 
+The false residual is replaced by the sound one in `Analysis/Sobolev/FrechetKolmogorov.lean`:
+`LatticeProb.Sobolev.BandLimitedPrecompact` is the genuine Rellich–Kondrachov precompactness of the
+`H^s` unit ball of `C_c^∞(D)` (approximating the test function itself, not its projection),
+assembled by `LatticeProb.Sobolev.bandLimitedPrecompact_of_frechetKolmogorov` from the
+Fréchet–Kolmogorov compactness input `FrechetKolmogorovH`, tightness, boundedness and uniform
+translation-continuity, and consumed by
+`LatticeProb.Sobolev.rkLowFreqNet_of_bandLimitedPrecompact`.  The Fourier translation identity that
+feeds the translation-continuity half is `LatticeProb.Sobolev.fourier_comp_add_right_lift`
+(`Analysis/Sobolev/TranslationContinuity.lean`), with the algebraic ingredients
+`LatticeProb.Sobolev.fourier_translate_sub_lift` and the phase estimate
+`LatticeProb.Sobolev.norm_fourierChar_sub_one_le` in `Analysis/Sobolev/TranslationBound.lean`.
+
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
 asymptotics that formalizations cite from Lawler–Limic
