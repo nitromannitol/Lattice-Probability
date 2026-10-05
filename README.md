@@ -62,7 +62,12 @@ isolated as `LatticeProb.Sobolev.rkLowFreqNet`, whose consumer
 `rellichKondrachovNegSobolev_of_lowfreqNet` reduces the cited embedding to it
 (`Analysis/Sobolev/RellichLowFreqNet.lean`).  The earlier `C^m`-net formulation of
 that step (`rkBandLimitedCmNet`) is false as stated — the `H^s` unit ball is not
-`C^m`-bounded for `s < m` — and is not used.
+`C^m`-bounded for `s < m` — and is not used.  The band-limited Bernstein bounds
+that feed the net are proved for the low-frequency projections: the uniform
+`C^m` and multi-index bounds (`LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le`,
+`exists_uniform_iteratedFDeriv_apply_le`, `BandLimitedCmNet.lean`) and their
+Lipschitz (`k = 1`) form (`LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc`,
+`BandLimitedLip.lean`).
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
