@@ -478,6 +478,27 @@ theorem l1BallMax_eq_iSup_min (T : Site d → Ω → Ω) (f : Ω → ℝ≥0∞)
     exact le_iSup_of_le R (le_iSup_of_le hR (avg_mono (fun y => min_le_left _ _)))
 
 omit [MeasurableSpace Ω] in
+/-- **The orthant box is an anchored box with all side parameters `≤ 1`.**  With `N = R + 1` and
+`cᵢ = 1` on the positive coordinates and `cᵢ = R/(R+1)` on the negative ones, `anchoredBox c N`
+is (up to the reflection `flip s`) the orthant box of radius `R`.  Every `cᵢ ≤ 1`, so the only case
+of `MultiParameterMaximalErgodicRestricted` needed for the `ℓ¹`-ball cover is the `cᵢ ≤ 1` one, in
+which `⌈N cᵢ⌉` sweeps a tail of `ℕ`. -/
+theorem anchoredBox_smallC (s : Fin d → Bool) (R : ℕ) :
+    anchoredBox (fun i => if s i then (1:ℝ) else (R:ℝ)/(R+1)) (R+1) =
+      Fintype.piFinset (fun i => if s i then Finset.Ico (0:ℤ) (R+1) else Finset.Ico (0:ℤ) R) := by
+  ext x
+  rw [mem_anchoredBox, Fintype.mem_piFinset]
+  refine forall_congr' fun i => ?_
+  by_cases h : s i = true
+  · simp only [h, if_true, mul_one, Int.ceil_natCast]; norm_num
+  · have hf : s i = false := by cases hs : s i <;> simp_all
+    have hc : ((R + 1 : ℕ) : ℝ) * ((R : ℝ) / (R + 1)) = (R : ℝ) := by
+      push_cast
+      rw [mul_div_cancel₀]; positivity
+    simp only [hf]
+    split_ifs <;> simp_all
+
+omit [MeasurableSpace Ω] in
 /-- **`d = 1` anchored-box cardinality.**  For `Fin 1`, the anchored box is the interval
 `Ico 0 ⌈N c₀⌉`, so its cardinality is `(⌈N c₀⌉).toNat`; this matches `avg`'s `(card)⁻¹` with the
 Birkhoff weight. -/
@@ -602,6 +623,7 @@ theorem KrengelLpBall_of_centredBox (htransfer : L1BallCoverTransfer d)
 #print axioms ae_eq_of_measurePreserving_idempotent
 #print axioms tau_nsmul_one_eq_iterate
 #print axioms card_anchoredBox_fin1
+#print axioms anchoredBox_smallC
 
 end
 
