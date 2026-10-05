@@ -386,7 +386,6 @@ the field with zero boundary values on a finite set `C` as
   `LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep_of_approx`: the regularity
   bridge from the `C¹` Γ-form predicate to the frozen Lipschitz form, reduced to
   the single named mollification input `LipschitzLogApprox`
-  (`LatticeProb/Prob/GaussianLogSobolevRegularity.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
