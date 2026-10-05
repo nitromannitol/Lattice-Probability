@@ -469,6 +469,7 @@ import LatticeProb.Prob.AkcogluKrengelAE.BoxErgodicL2
 import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodicAll
 import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodicAllFlip
 import LatticeProb.Prob.AkcogluKrengelAE.BoxTiling
+import LatticeProb.Prob.AkcogluKrengelAE.AnchoredBoxErgodicProved
 import LatticeProb.Prob.Invariance
 import LatticeProb.Prob.ReturnTime
 import LatticeProb.Prob.Kac
