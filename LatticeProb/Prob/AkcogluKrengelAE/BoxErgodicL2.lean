@@ -1,13 +1,14 @@
 /-
 # The `L²` mean ergodic step for the multiparameter cube averages
 
-The library's anchored-cube theorem `LatticeProb.exists_ae_tendsto_gridAvg_univ_with_integral`
-(`BoundedErgodic.lean:561`) gives, for a measure-preserving additive `ℤ^d` action `σ` and a bounded
-measurable `h`, an a.e. limit `G` of the cube averages `gridAvg σ h univ n` with `∫G = ∫h`.
+The library's anchored-cube theorem
+`LatticeProb.exists_ae_tendsto_gridAvg_univ_with_integral` (`BoundedErgodic.lean:561`) gives, for
+a measure-preserving additive `ℤ^d` action `σ` and a bounded measurable `h`, an a.e. limit `G` of
+the cube averages `gridAvg σ h univ n` with `∫G = ∫h`.
 
-This file adds the **mean (`L²`) convergence** of those averages, the `L²` mean ergodic step of the
-multiparameter pointwise ergodic theorem: `∫ |gridAvg σ h univ n - G|² → 0`.  It is a dominated
-convergence corollary of the a.e. theorem, with dominating constant `(2M)²`.
+This file adds the **mean (`L²`) convergence** of those averages: the `L²` mean ergodic step of
+the multiparameter pointwise ergodic theorem, `∫ |gridAvg σ h univ n - G|² → 0`.  It is a
+dominated convergence corollary of the a.e. theorem, with dominating constant `(2M)²`.
 -/
 import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
 
@@ -24,9 +25,11 @@ probability space and a bounded measurable `h`, there is a bounded measurable li
 `∫ |gridAvg σ h univ n - G|² → 0`. -/
 theorem gridAvg_univ_l2_tendsto {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ]
-    (hσ : ∀ z, MeasurePreserving (σ z) μ μ) (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω))
+    (hσ : ∀ z, MeasurePreserving (σ z) μ μ)
+    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω))
     {h : Ω → ℝ} (hh : Measurable h) {M : ℝ} (hM : 0 ≤ M) (hb : ∀ x, |h x| ≤ M) :
-    ∃ G : Ω → ℝ, Measurable G ∧ (∀ x, |G x| ≤ M) ∧ ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ ∧
+    ∃ G : Ω → ℝ, Measurable G ∧ (∀ x, |G x| ≤ M) ∧
+      ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ ∧
       Tendsto (fun n : ℕ => ∫ ω, (gridAvg σ h Finset.univ n ω - G ω) ^ 2 ∂μ)
         atTop (𝓝 0) := by
   obtain ⟨G, hGm, hGb, hGint, hG⟩ :=
