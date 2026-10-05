@@ -304,6 +304,9 @@ the field with zero boundary values on a finite set `C` as
 * `LatticeProb.hasFDerivAt_integral_marginal`: differentiation under the integral
   for the marginal `x ↦ ∫ h(x,y) dν(y)`, the last input of the slicewise Jensen
   step of the Γ-form tensorization.
+* `LatticeProb.fderiv_log`, `LatticeProb.gaussianLogSobolevGradTensorStep_of_prodStep`: the
+  chain rule for `log` and the reduction of the Γ tensorization step to the
+  abstract product step.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal

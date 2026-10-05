@@ -146,6 +146,8 @@ library.
 #print axioms LatticeProb.norm_sq_integral_le_integral_norm_sq
 #print axioms LatticeProb.fderiv_slice
 #print axioms LatticeProb.hasFDerivAt_integral_marginal
+#print axioms LatticeProb.fderiv_log
+#print axioms LatticeProb.gaussianLogSobolevGradTensorStep_of_prodStep
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
