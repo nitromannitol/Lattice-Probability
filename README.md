@@ -350,6 +350,12 @@ the field with zero boundary values on a finite set `C` as
   bridge from the `C¹` Γ-form predicate to the frozen Lipschitz form, reduced to
   the single named mollification input `LipschitzLogApprox`
   (`LatticeProb/Prob/GaussianLogSobolevRegularity.lean`).
+* `LatticeProb.GaussianLogSobolevGradOneExp`,
+  `LatticeProb.gaussianLogSobolevGradOneExp_of_grad`,
+  `LatticeProb.gaussianLogSobolevGrad_of_oneExp`,
+  `LatticeProb.gaussianLogSobolevGrad_one_iff_exp`: the one-dimensional Γ-form Gaussian
+  log-Sobolev inequality reduced to its standard exponential form by the log/exp change of
+  variables (`LatticeProb/Prob/GaussianLogSobolevGradOneForm.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal

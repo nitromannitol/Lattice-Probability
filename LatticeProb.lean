@@ -93,6 +93,7 @@ import LatticeProb.Prob.GaussianLogSobolevGeneral
 import LatticeProb.Prob.GaussianLogSobolevOneInput
 import LatticeProb.Prob.GaussianLogSobolevGradProd
 import LatticeProb.Prob.GaussianLogSobolevRegularity
+import LatticeProb.Prob.GaussianLogSobolevGradOneForm
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Analysis.NegSobolev
