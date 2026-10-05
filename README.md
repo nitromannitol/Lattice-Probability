@@ -103,7 +103,13 @@ translation-continuity, and consumed by
 feeds the translation-continuity half is `LatticeProb.Sobolev.fourier_comp_add_right_lift`
 (`Analysis/Sobolev/TranslationContinuity.lean`), with the algebraic ingredients
 `LatticeProb.Sobolev.fourier_translate_sub_lift` and the phase estimate
-`LatticeProb.Sobolev.norm_fourierChar_sub_one_le` in `Analysis/Sobolev/TranslationBound.lean`.
+`LatticeProb.Sobolev.norm_fourierChar_sub_one_le` in `Analysis/Sobolev/TranslationBound.lean`.  The
+translation-continuity half itself is proved in `Analysis/Sobolev/TranslationQuant.lean`: the
+quantitative bound `LatticeProb.Sobolev.sobolevNormSq_translate_sub_le` (split at `R`, with the
+phase bound `LatticeProb.Sobolev.norm_fourierChar_sub_one_le_two` of
+`Analysis/Sobolev/FourierCharPhase.lean` above `R`) assembles with the uniform high-frequency
+smallness into `LatticeProb.Sobolev.bandLimitedTranslationContinuous`, leaving `FrechetKolmogorovH`
+as the only open input of the route.
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
