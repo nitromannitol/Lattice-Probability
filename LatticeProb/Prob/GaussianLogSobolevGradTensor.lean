@@ -1,8 +1,8 @@
 /-
 # The entropy chain rule for a product measure
 
-This is step (1) of the Γ-form tensorization recorded in
-`~/fleet/audit/lib-gaussianlogsobolev-grad.md` §4: the entropy of a function on
+This is step (1) of the Γ-form tensorization (see `GaussianLogSobolevGrad.lean`):
+the entropy of a function on
 a product `μ ⊗ ν` splits as the average of the slice entropies plus the entropy
 of the marginal,
 

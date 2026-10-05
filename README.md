@@ -364,6 +364,16 @@ the field with zero boundary values on a finite set `C` as
   `LatticeProb.measure_le_of_tendsto_ae_of_lt`: the a.e. Fatou limit: an almost
   sure limit `X n → Y` inherits the tail bound of the `X n` on open sets and on
   strict tails.
+* `LatticeProb.gaussianLogSobolevGrad_all_of_one_of_prodStep`,
+  `LatticeProb.gaussianLogSobolev_all_of_one_of_prodStep`,
+  `LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep`: the Γ-form chain composed to the
+  general-`n` log-Sobolev and Herbst bounds, conditional on the one-dimensional Γ-form, the
+  abstract product step and the named regularity bridge `GaussianLogSobolevGradToLipschitz`
+  (`LatticeProb/Prob/GaussianLogSobolevGeneral.lean`).
+* `LatticeProb.GaussianLogSobolevGradOne`, `LatticeProb.gaussianLogSobolevOne_of_gradOne`,
+  `LatticeProb.gaussianLogSobolev_all_of_gradOne`: the one-dimensional Γ-form Gaussian
+  log-Sobolev inequality named as the sole dimension-specific input of the general-`n` chain,
+  with its Herbst and log-Sobolev consequences (`LatticeProb/Prob/GaussianLogSobolevOneInput.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
