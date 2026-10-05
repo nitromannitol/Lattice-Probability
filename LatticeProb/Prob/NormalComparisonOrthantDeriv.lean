@@ -260,11 +260,80 @@ theorem integral_Iic_cons₂ {m : ℕ} (b : Fin (m + 2) → ℝ)
   filter_upwards with x''
   congr 2
 
+/-! ### Transport to `EuclideanSpace ℝ (Fin n)`
+
+The route's densities live on `EuclideanSpace ℝ (Fin m)`, where the orthant is
+`{y | ∀ i, y i ≤ b i}`.  `WithLp.toLp 2 : (Fin n → ℝ) ≃ᵐ EuclideanSpace ℝ (Fin n)` is
+volume preserving and carries that orthant to `Set.Iic b`, so the box-Fubini statements
+above apply verbatim in the route's setting. -/
+
+/-- **Orthant transport to `EuclideanSpace`.**  Pushing the orthant integral along the
+volume-preserving `WithLp.toLp 2` turns it into an integral over `Set.Iic b`. -/
+theorem lintegral_orthant_eq {n : ℕ} (b : Fin n → ℝ)
+    (f : EuclideanSpace ℝ (Fin n) → ℝ≥0∞) (hf : Measurable f) :
+    ∫⁻ y in {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i}, f y
+      = ∫⁻ x in Set.Iic b, f (WithLp.toLp 2 x) := by
+  have hmp : MeasurePreserving (⇑(MeasurableEquiv.toLp 2 (Fin n → ℝ)))
+      (volume : Measure (Fin n → ℝ)) (volume : Measure (EuclideanSpace ℝ (Fin n))) :=
+    PiLp.volume_preserving_toLp (Fin n)
+  have hS : MeasurableSet {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i} := by
+    rw [show {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i}
+        = ⋂ i, {y : EuclideanSpace ℝ (Fin n) | y i ≤ b i} by
+      ext y; simp]
+    exact MeasurableSet.iInter fun i =>
+      measurableSet_le (by fun_prop : Measurable fun y : EuclideanSpace ℝ (Fin n) => y i)
+        measurable_const
+  have hpre : (MeasurableEquiv.toLp 2 (Fin n → ℝ)) ⁻¹'
+      {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i} = Set.Iic b := by
+    ext x
+    simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_Iic, Pi.le_def,
+      MeasurableEquiv.coe_toLp]
+  have hcongr : ∀ x : Fin n → ℝ,
+      ({y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i}).indicator f
+          ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) x)
+        = ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) ⁻¹'
+            {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i}).indicator
+            (fun x => f ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) x)) x := by
+    intro x
+    by_cases hx : (MeasurableEquiv.toLp 2 (Fin n → ℝ)) x ∈
+        {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i}
+    · rw [Set.indicator_of_mem hx, Set.indicator_of_mem
+        (show x ∈ (MeasurableEquiv.toLp 2 (Fin n → ℝ)) ⁻¹'
+          {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i} from hx)]
+    · rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem
+        (show x ∉ (MeasurableEquiv.toLp 2 (Fin n → ℝ)) ⁻¹'
+          {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i} from hx)]
+  rw [← lintegral_indicator hS, ← hmp.lintegral_comp (hf.indicator hS)]
+  have h1 : (∫⁻ x : Fin n → ℝ,
+        ({y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i}).indicator f
+          ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) x))
+      = ∫⁻ x in (MeasurableEquiv.toLp 2 (Fin n → ℝ)) ⁻¹'
+          {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i},
+          f ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) x) := by
+    rw [lintegral_congr fun x => hcongr x,
+      lintegral_indicator (hS.preimage (MeasurableEquiv.toLp 2 (Fin n → ℝ)).measurable)]
+  rw [h1, hpre]
+  rfl
+
+/-- **The orthant box-Fubini on `EuclideanSpace`.**  The transport of `lintegral_Iic_cons` to
+`EuclideanSpace ℝ (Fin (m+1))`, which is the setting of the Li--Shao route. -/
+theorem lintegral_orthant_cons {m : ℕ} (b : Fin (m + 1) → ℝ)
+    (f : EuclideanSpace ℝ (Fin (m + 1)) → ℝ≥0∞) (hf : Measurable f) :
+    ∫⁻ y in {y : EuclideanSpace ℝ (Fin (m + 1)) | ∀ i, y i ≤ b i}, f y
+      = ∫⁻ x₀ in Set.Iic (b 0),
+          ∫⁻ x' in Set.Iic (fun j : Fin m => b j.succ),
+            f (WithLp.toLp 2 (Fin.cons x₀ x')) := by
+  rw [lintegral_orthant_eq b f hf,
+    lintegral_Iic_cons b (fun x => f (WithLp.toLp 2 x))
+      (hf.comp (by fun_prop : Measurable fun x : Fin (m + 1) → ℝ => WithLp.toLp 2 x))]
+
 end LatticeProb
 
 #print axioms LatticeProb.lintegral_Iic_cons
 #print axioms LatticeProb.lintegral_Iic_cons₂
 #print axioms LatticeProb.integral_Iic_cons
 #print axioms LatticeProb.integral_Iic_cons₂
+#print axioms LatticeProb.lintegral_orthant_eq
+#print axioms LatticeProb.lintegral_orthant_cons
 #print axioms LatticeProb.integral_integral_mixed_deriv
 #print axioms LatticeProb.integral_Iic_deriv_eq_of_tendsto
