@@ -367,6 +367,7 @@ library.
 #print axioms LatticeProb.Sobolev.lift_convReal
 #print axioms LatticeProb.Sobolev.fourier_lift_convReal
 #print axioms LatticeProb.Sobolev.abs_convReal_le
+#print axioms LatticeProb.Sobolev.mollifiedNet_centres_in_family
 #print axioms LatticeProb.Sobolev.integral_abs_mul_le_weighted
 #print axioms LatticeProb.Sobolev.integral_abs_mul_le_sobolev
 #print axioms LatticeProb.Sobolev.frechetKolmogorovHInt_of_mollify_and_compact
