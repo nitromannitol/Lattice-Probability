@@ -162,6 +162,7 @@ import LatticeProb.Prob.BernsteinSteps
 import LatticeProb.Prob.BernsteinCrossTerm
 import LatticeProb.Prob.BernsteinCrossTermBound
 import LatticeProb.Prob.BernsteinLayerCake
+import LatticeProb.Prob.BernsteinFactorialClause
 import LatticeProb.Prob.BernsteinMaximalLayerCake
 import LatticeProb.Prob.PinelisInductionStepFalse
 import LatticeProb.Prob.IsNormalConcentration
