@@ -13,7 +13,7 @@ lake build LatticeProbAudit   # the Mathlib-only comparator surface
 ```
 
 The production build is required to emit no Lean or linter warnings
-(`python3 tools/check_warnings.py`).  The three Mathlib-only files
+(`python3 tools/check_warnings.py`).  The seven Mathlib-only files
 `LatticeProbAudit/*/Challenge.lean` are the sole exception: each contains
 one documented statement-level `sorry`, checked against its completed solution
 by `leanprover/comparator`.
