@@ -328,6 +328,9 @@ library.
 #print axioms LatticeProb.Percolation.libraryThinShape_iff_frozen
 #print axioms LatticeProb.Percolation.rotorThin_discharge
 #print axioms LatticeProb.Percolation.rotorThin_discharge_witness
+#print axioms LatticeProb.Percolation.kDependentPlanar_bernoulliFieldPlanar
+#print axioms LatticeProb.Percolation.bernoulliFieldPlanar_oneSite
+#print axioms LatticeProb.Percolation.denseHypothesis_witness
 
 /-! ### Total variation distance -/
 

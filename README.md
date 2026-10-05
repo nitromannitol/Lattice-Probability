@@ -608,7 +608,10 @@ argument.
   `2`-dependent planar field with one-site probability at most `2ε` satisfies the thin
   domination bound on increasing events; `rotorThin_discharge_witness` makes the
   threshold `(1 - p) / 2` explicit (`Prob/Percolation/LSSThinDischarge.lean` and its
-  chain).
+  chain).  Non-vacuity of the dense hypothesis is
+  `LatticeProb.Percolation.denseHypothesis_witness`, which exhibits `p = 7/8` and the
+  product Bernoulli field as a legitimate `2`-dependent witness
+  (`Prob/Percolation/LSSThinVacuity.lean`).
 
 **Total variation distance.**  `LatticeProb.pi_one_coord_le`: changing the
 law of one coordinate of a finite product changes the probability of any
