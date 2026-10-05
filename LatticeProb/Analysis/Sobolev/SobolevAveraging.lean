@@ -4,7 +4,8 @@
 For a mollifier `ρ` of mass one, the residual `f − f ⋆ ρ` is an average of the
 translation
 differences of `f`.  Since `convReal f ρ = convolution f ρ (mul) volume` and, by
-`MeasureTheory.convolution_def`, `(f ⋆ ρ) x = ∫ t, f t * ρ (x - t)`, writing `f x = ∫ t, f x * ρ t`
+`MeasureTheory.convolution_def`, `(f ⋆ ρ) x = ∫ t, f t * ρ (x - t)`, writing
+`f x = ∫ t, f x * ρ t`
 and substituting `t = x - s`, then `s = x + y`, gives the identity with the **reflected**
 mollifier and the **backward** difference:
 
