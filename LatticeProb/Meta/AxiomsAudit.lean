@@ -624,3 +624,16 @@ library.
 #print axioms LatticeProb.pitt_associated_of_gaussianProcess
 #print axioms LatticeProb.pitt_fullStmt
 #print axioms LatticeProb.pitt_gaussian_fkg
+
+/-! ### The Gaussian perimeter of the rounded orthants and the frozen multivariate Berry–Esseen statement -/
+
+#print axioms LatticeProb.perim_stdGaussian_inner_layer_le
+#print axioms LatticeProb.perim_G3
+#print axioms LatticeProb.perim_G4
+#print axioms LatticeProb.perim_tilt_chain
+#print axioms LatticeProb.perimR1_rhs_le
+#print axioms LatticeProb.perimR2_rhs_le
+#print axioms LatticeProb.perimP_psi_bound
+#print axioms LatticeProb.perimB_quarter
+#print axioms LatticeProb.mvbe_orthantPerimeterQuarter_proved
+#print axioms LatticeProb.mvbe_frozenQuarter_unconditional
