@@ -1,11 +1,16 @@
 /-
 # The Cauchy–Schwarz (duality) bound for the convolution value
 
-The `C^m`-boundedness of the mollified family `{f ⋆ ρ}` — the remaining input to
-`FrechetKolmogorovMollifiedCompact` — starts from the pointwise Cauchy–Schwarz bound
-`|(f ⋆ ρ)(x)| ≤ ‖f‖_{L²} ‖ρ(x−·)‖_{L²}`, which feeds the `H^s`-`H^{−s}` duality
-bound of `AbsApply.lean`.  It is `integral_mul_le_Lp_mul_Lq_of_nonneg` at `p = q = 2`
-applied to the convolution integral.
+The `C^m`-boundedness of the mollified family `{f ⋆ ρ}` — an input to
+`FrechetKolmogorovMollifiedCompact` — starts from the Cauchy–Schwarz bounds on the convolution
+integral and on the weighted Fourier pairing.  This module lands both:
+`abs_convReal_le` (`|(f ⋆ ρ)(x)| ≤ ‖f‖_{L²} ‖ρ(x−·)‖_{L²}`) and
+`integral_abs_mul_le_weighted` (`∫ |f| |g| ≤ (∫ w f²)^{1/2} (∫ w⁻¹ g²)^{1/2}`).  Both are
+`integral_mul_le_Lp_mul_Lq_of_nonneg` at `p = q = 2`.
+
+`AbsApply.lean` states a different (scaling) inequality and does **not** consume these; the
+intended instantiation — `w := (1+(2π‖·‖)²)^s` with the `L²` Fourier forms of `𝓕φ` — is the
+missing assembly theorem `abs_convReal_le_sobolev_duality` named at the end of this file.
 -/
 import LatticeProb.Analysis.Sobolev.SobolevConvolution
 
@@ -66,5 +71,20 @@ theorem integral_abs_mul_le_weighted {d : ℕ} {f g w : Space d → ℝ} (hw : �
     integral_congr_ae (Filter.Eventually.of_forall fun t => by
       simp only [mul_pow, inv_pow, Real.sq_sqrt (hw t).le, sq_abs])
   rw [e2, e3]
+
+/-- **The `H^s`–`H^{−s}` duality bound (named assembly).**  For `f, g` with finite `sobolevNormSq` at
+orders `s` and `-s`, the squared pairing `(∫ f g)²` is bounded by the product of the two Sobolev
+norms.  This is the statement the `C^m`-boundedness of `{f ⋆ ρ}` (and hence
+`FrechetKolmogorovMollifiedCompact`) consumes.
+
+It is **not proved here**.  Its proof needs:
+* `integral_abs_mul_le_weighted` instantiated at `f := ‖𝓕f‖`, `g := ‖𝓕g‖`,
+  `w := fun ξ => (1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ s`;
+* the `ofReal_integral_eq_lintegral_ofReal` bridge
+  `∫ ξ, w ξ * ‖𝓕f ξ‖² = (sobolevNormSq d s f).toReal`, needing `Integrable (fun ξ => w ξ * ‖𝓕f ξ‖²)`;
+* Plancherel in `∫⁻`/`ofReal` form, `|∫ x, f x * g x| ≤ ∫⁻ ξ, ofReal (‖𝓕f ξ‖ ‖𝓕g ξ‖)`. -/
+def SobolevDualityBound : Prop :=
+  ∀ (d : ℕ) (s : ℝ) (f g : Space d → ℝ), sobolevNormSq d s f < ⊤ → sobolevNormSq d (-s) g < ⊤ →
+    ENNReal.ofReal (|∫ x, f x * g x| ^ 2) ≤ sobolevNormSq d s f * sobolevNormSq d (-s) g
 
 end LatticeProb.Sobolev
