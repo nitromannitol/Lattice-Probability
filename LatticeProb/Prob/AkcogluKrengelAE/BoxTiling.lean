@@ -564,8 +564,8 @@ theorem sum_natAbs_eq_erase_add {d : ℕ} (z : Site d) (i : Fin d) :
 
 omit [MeasurableSpace Ω] in
 /-- **Invariance of a limit under the generators extends to the whole `ℤ^d`-action.**  If `σ` is
-additive, `σ 0 = id`, and a function `G` is invariant under every generator `σ (unit j)`, then it is
-invariant under `σ z` for every `z : ℤ^d`. -/
+additive, `σ 0 = id`, and a function `G` is invariant under every generator `σ (unit j)`,
+then it is invariant under `σ z` for every `z : ℤ^d`. -/
 theorem comp_sigma_eq_of_comp_unit_eq {d : ℕ} {G : Ω → ℝ} {σ : Site d → Ω → Ω}
     (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω)) (hσid : ∀ ω, σ 0 ω = ω)
     (hinv : ∀ j : Fin d, G ∘ σ (unit j) = G) (z : Site d) : G ∘ σ z = G := by
@@ -644,6 +644,77 @@ theorem comp_sigma_eq_of_comp_unit_eq {d : ℕ} {G : Ω → ℝ} {σ : Site d �
           _ = G (σ (unit i) ω) := congrFun hw (σ (unit i) ω)
           _ = G ω := congrFun (hinv i) ω
 
+/-- **An invariant function is a.e. constant when the invariant sets are trivial.**  If `G` is
+measurable and integrable, invariant under the whole action, and every invariant measurable set has
+measure `0` or `1`, then `G = ∫ G` a.e. -/
+theorem ae_eq_const_of_forall_invariant {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ]
+    (herg : ∀ A : Set Ω, MeasurableSet A → (∀ z : Site d, σ z ⁻¹' A = A) → μ A = 0 ∨ μ A = 1)
+    {G : Ω → ℝ} (hGm : Measurable G) (hGint : Integrable G μ)
+    (hinv : ∀ z : Site d, G ∘ σ z = G) :
+    G =ᵐ[μ] Function.const Ω (∫ ω, G ω ∂μ) := by
+  set c : ℝ := ∫ ω, G ω ∂μ with hc
+  have hpre : ∀ (q : ℝ) (z : Site d), σ z ⁻¹' {ω | q < G ω} = {ω | q < G ω} := by
+    intro q z
+    ext ω
+    simp only [Set.mem_preimage, Set.mem_setOf_eq]
+    rw [show G (σ z ω) = G ω from congrFun (hinv z) ω]
+  have hpre' : ∀ (q : ℝ) (z : Site d), σ z ⁻¹' {ω | G ω < q} = {ω | G ω < q} := by
+    intro q z
+    ext ω
+    simp only [Set.mem_preimage, Set.mem_setOf_eq]
+    rw [show G (σ z ω) = G ω from congrFun (hinv z) ω]
+  have hpos : μ {ω | c < G ω} = 0 := by
+    rcases herg _ (measurableSet_lt measurable_const hGm) (fun z => hpre c z) with h0 | h1
+    · exact h0
+    · exfalso
+      have hnull : μ ({ω | c < G ω} : Set Ω)ᶜ = 0 := by
+        rw [measure_compl (measurableSet_lt measurable_const hGm) (measure_ne_top μ _), h1]
+        simp
+      have hfnn : 0 ≤ᵐ[μ] fun ω => G ω - c := by
+        filter_upwards [measure_eq_zero_iff_ae_notMem.1 hnull] with ω hω
+        simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_lt] at hω
+        show (0 : ℝ) ≤ G ω - c
+        linarith
+      have hf0 : ∫ ω, (G ω - c) ∂μ = 0 := by
+        rw [integral_sub hGint (integrable_const c), integral_const, hc]
+        simp
+      have hfae := (integral_eq_zero_iff_of_nonneg_ae hfnn (hGint.sub (integrable_const c))).1 hf0
+      have hzero : μ {ω | c < G ω} = 0 := by
+        rw [measure_eq_zero_iff_ae_notMem]
+        filter_upwards [hfae] with ω hω
+        simp only [Pi.zero_apply, sub_eq_zero] at hω
+        simp only [Set.mem_setOf_eq, not_lt, hω, le_refl]
+      rw [hzero] at h1
+      exact zero_ne_one h1
+  have hneg : μ {ω | G ω < c} = 0 := by
+    rcases herg _ (measurableSet_lt hGm measurable_const) (fun z => hpre' c z) with h0 | h1
+    · exact h0
+    · exfalso
+      have hnull : μ ({ω | G ω < c} : Set Ω)ᶜ = 0 := by
+        rw [measure_compl (measurableSet_lt hGm measurable_const) (measure_ne_top μ _), h1]
+        simp
+      have hfnn : 0 ≤ᵐ[μ] fun ω => c - G ω := by
+        filter_upwards [measure_eq_zero_iff_ae_notMem.1 hnull] with ω hω
+        simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_lt] at hω
+        show (0 : ℝ) ≤ c - G ω
+        linarith
+      have hf0 : ∫ ω, (c - G ω) ∂μ = 0 := by
+        rw [integral_sub (integrable_const c) hGint, integral_const, hc]
+        simp
+      have hfae := (integral_eq_zero_iff_of_nonneg_ae hfnn ((integrable_const c).sub hGint)).1 hf0
+      have hzero : μ {ω | G ω < c} = 0 := by
+        rw [measure_eq_zero_iff_ae_notMem]
+        filter_upwards [hfae] with ω hω
+        simp only [Pi.zero_apply, sub_eq_zero] at hω
+        simp only [Set.mem_setOf_eq, not_lt, hω, le_refl]
+      rw [hzero] at h1
+      exact zero_ne_one h1
+  filter_upwards [measure_eq_zero_iff_ae_notMem.1 hpos, measure_eq_zero_iff_ae_notMem.1 hneg]
+    with ω hp hn
+  simp only [Set.mem_setOf_eq, not_lt] at hp hn
+  exact le_antisymm hp hn
+
 /-- **The anchored-box almost-everywhere ergodic theorem (bounded `h`).**  For a measure-preserving
 additive action of `ℤ^d` and a bounded measurable `h`, there is a bounded measurable limit `G`
 with `∫ G = ∫ h` such that, for every `c ≥ 0`, the normalized anchored-box average converges
@@ -659,11 +730,13 @@ theorem exists_ae_tendsto_anchoredBox_with_integral {d : ℕ} {σ : Site d → �
     {h : Ω → ℝ} (hh : Measurable h) {M : ℝ} (hM : 0 ≤ M) (hb : ∀ x, |h x| ≤ M)
     {c : Fin d → ℝ} (hc : ∀ i, 0 ≤ c i) :
     ∃ G : Ω → ℝ, Measurable G ∧ (∀ x, |G x| ≤ M) ∧
+      (∀ j : Fin d, G ∘ σ (unit j) = G) ∧
       ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ ∧
       ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
           ∑ x ∈ anchoredBox c N, h (σ x ω)) atTop (𝓝 ((∏ i, c i) * G ω)) := by
-  obtain ⟨G, hGm, hGb, hGconv, _hinv⟩ :=
+  obtain ⟨G, hGm, hGb, hGconv, hinv_gen⟩ :=
     exists_ae_tendsto_boxAvg hσ hσadd hh hM hb Finset.univ
+  have hinvg : ∀ j : Fin d, G ∘ σ (unit j) = G := fun j => hinv_gen j (Finset.mem_univ j)
   have hGint : ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ := by
     have hconv : ∀ᵐ ω ∂μ, Tendsto (fun N => gridAvg σ h Finset.univ N ω) atTop
         (𝓝 (G ω)) := by
@@ -682,7 +755,7 @@ theorem exists_ae_tendsto_anchoredBox_with_integral {d : ℕ} {σ : Site d → �
         fun _ : ℕ => ∫ ω, h ω ∂μ :=
       eventually_atTop.mpr ⟨1, fun n hn => integral_gridAvg_univ_eq_integral hσ hh hb hn⟩
     exact (tendsto_nhds_unique tendsto_const_nhds (Tendsto.congr' hEq h1)).symm
-  refine ⟨G, hGm, hGb, hGint, ?_⟩
+  refine ⟨G, hGm, hGb, hinvg, hGint, ?_⟩
   by_cases hpos : ∀ i, 0 < c i
   · have hmi : ∀ i, Tendsto (fun N : ℕ => ⌈(N : ℝ) * c i⌉.toNat) atTop atTop :=
       fun i => tendsto_ceil_toNat_atTop (hpos i)
@@ -728,5 +801,29 @@ theorem exists_ae_tendsto_anchoredBox_with_integral {d : ℕ} {σ : Site d → �
       rw [hemp N, Finset.sum_empty, mul_zero]
     rw [hconst, hprod, zero_mul]
     exact tendsto_const_nhds
+
+/-- **Ergodic anchored-box almost-everywhere ergodic theorem.**  Adding `σ 0 = id` and the
+triviality of the invariant sets to the anchored-box theorem upgrades the limit from the abstract
+box limit `G` to the constant `∫ h`. -/
+theorem exists_ae_tendsto_anchoredBox_ergodic {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ]
+    (hσ : ∀ z, MeasurePreserving (σ z) μ μ)
+    (hσadd : ∀ z w ω, σ (z + w) ω = σ z (σ w ω)) (hσid : ∀ ω, σ 0 ω = ω)
+    (herg : ∀ A : Set Ω, MeasurableSet A → (∀ z : Site d, σ z ⁻¹' A = A) → μ A = 0 ∨ μ A = 1)
+    {h : Ω → ℝ} (hh : Measurable h) {M : ℝ} (hM : 0 ≤ M) (hb : ∀ x, |h x| ≤ M)
+    {c : Fin d → ℝ} (hc : ∀ i, 0 ≤ c i) :
+    ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
+        ∑ x ∈ anchoredBox c N, h (σ x ω)) atTop (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ)) := by
+  obtain ⟨G, hGm, hGb, hinvg, hGint, hconv⟩ :=
+    exists_ae_tendsto_anchoredBox_with_integral hσ hσadd hh hM hb hc
+  have hinv : ∀ z : Site d, G ∘ σ z = G :=
+    fun z => comp_sigma_eq_of_comp_unit_eq hσadd hσid (fun j => hinvg j) z
+  have hGint' : Integrable G μ := Integrable.of_bound hGm.aestronglyMeasurable M (by
+    filter_upwards with x; rw [Real.norm_eq_abs]; exact hGb x)
+  have hconst := ae_eq_const_of_forall_invariant herg hGm hGint' hinv
+  filter_upwards [hconv, hconst] with ω hω hcω
+  rw [hcω, hGint] at hω
+  exact hω
+
 
 end LatticeProb
