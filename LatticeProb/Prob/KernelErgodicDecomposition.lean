@@ -16,6 +16,13 @@ step, that conditioning a stationary law on a kernel-invariant event preserves
 the stationarity identity -- the paper's use of a rerooting-invariant event in
 `rwrs.tex:347`.
 
+One faithfulness caveat is recorded with the gap: `RWRS.IsStationaryNet`
+tests stationarity only against *isomorphism-invariant* observables, while
+`LatticeProb.KernelStationary` below is the stronger version tested against
+every measurable set.  The stronger hypothesis is the one the sub-lemma uses;
+the RWRS bridge must either restrict it to `invariantSigma 0` or show the two
+agree for a stationary law.
+
 **Exact remaining gap** (toward `RWRS.External.ErgodicDecomposition`).  The
 last clause of `LatticeProb.KernelErgodicDecomposition`: for `Q`-a.e. `N`, the
 conditional measure `condExpKernel Q (invariantSigma 0) N` is itself stationary
@@ -25,7 +32,8 @@ the *deterministic* analogue (`ergodic_decomposition`, fibre preservation in
 the event-restriction identity below is only its first step.  The RWRS
 instantiation additionally needs `X = RWRS.Net 0` (its `StandardBorelSpace`
 instance synthesizes), `κ N =` the uniform average of `dirac (netReroot N y)`
-over neighbours `y` of the root, `m = RWRS.invariantSigma 0`, and the fact that
+over neighbours `y` of the root, `m = RWRS.invariantSigma 0`, the invariant-
+observable restriction of the stationarity test, and the fact that
 `RWRS.NetGood`-a.e. network has every `m`-measurable event kernel-invariant.
 -/
 import LatticeProb.Prob.ErgodicDecomposition
