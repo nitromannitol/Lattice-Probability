@@ -7,9 +7,9 @@ does *not* go through the false `rkUniformCmNet` (`RellichCmNetReduction.lean`; 
 fields `φ` themselves to be `C^m`-close to test functions, which fails once `s < m`) runs through
 the **low-frequency projection** `P_Λ φ = bandProj d Λ …`.
 
-This module lands that route.  The truncation identity `BandProjHighFreq` is **proved** here from
-the registered lemma `sobolevNormSq_sub_bandProj_le` (`BandProjectionConsume.lean`) as
-`bandProjHighFreq`, so it is a definition, not an input.  The remaining input is:
+This module lands that route.  The truncation identity is the registered lemma
+`sobolevNormSq_sub_bandProj_le` (`BandProjectionConsume.lean`), applied directly in the
+composition below, so it is not a named input.  The only input is:
 
 * `BandLimitedTestFnApprox` — the support repair: the real projections of the `H^s` unit ball are
   `H^{s₀}`-approximated by test functions on `D`;
@@ -27,21 +27,6 @@ open MeasureTheory Set
 open scoped ENNReal FourierTransform
 
 namespace LatticeProb.Sobolev
-
-/-- **The truncation identity.**  The `H^s` error of the real projection `P_Λ φ` is controlled by
-the high-frequency part of `φ`. -/
-def BandProjHighFreq : Prop :=
-  ∀ (d : ℕ) (s : ℝ) (Λ : ℝ) (hΛ : 0 < Λ),
-    ∀ (φ : Space d → ℝ) (hcont : ContDiff ℝ (⊤ : ℕ∞) φ)
-      (hcs : HasCompactSupport φ),
-      sobolevNormSq d s (fun x => φ x - bandProj d Λ hΛ.ne' φ hcont hcs x)
-        ≤ sobolevNormSqHigh d s Λ φ
-
-/-- **The truncation identity, proved.**  It is the registered lemma
-`sobolevNormSq_sub_bandProj_le` (`BandProjectionConsume.lean`) with the arguments reordered, so
-the `Prop` `BandProjHighFreq` is not an input. -/
-theorem bandProjHighFreq : BandProjHighFreq :=
-  fun d s Λ hΛ φ hcont hcs => sobolevNormSq_sub_bandProj_le d Λ hΛ φ hcont hcs s
 
 /-- **The support-repair input.**  The real projections of the `H^s` unit ball are
 `H^{s₀}`-approximated by test functions on `D`. -/
@@ -99,7 +84,7 @@ theorem rkLowFreqNet_of_truncation_and_supportRepair
   refine ⟨N, ψ, hψ, fun φ hφ hLow _hφn => ?_⟩
   obtain ⟨i, hi⟩ := hnet φ hφ.1 hφ.2.1 hLow
   refine ⟨i, ?_⟩
-  have hP := bandProjHighFreq d s₀ Λ' hΛ'pos φ hφ.1 hφ.2.1
+  have hP := sobolevNormSq_sub_bandProj_le d Λ' hΛ'pos φ hφ.1 hφ.2.1 s₀
   have htail' : sobolevNormSqHigh d s₀ Λ' φ ≤ ENNReal.ofReal (δ / 4) :=
     (sobolevNormSqHigh_mono_radius s₀ hΛ'ge φ).trans
       ((htail₀ φ hLow).trans (le_of_eq (by
@@ -137,7 +122,7 @@ theorem rkLowFreqNet_of_truncation_and_supportRepair
         add_le_add (mul_le_mul_right h1 2) (mul_le_mul_right h2 2)
     _ = ENNReal.ofReal δ := by rw [h2a, hsum]
 
-/-- **The external, from the two inputs.**  Composing the sound composition with the glue
+/-- **The external, from the input.**  Composing the sound composition with the glue
 `rellichKondrachovNegSobolev_of_lowfreqNet` discharges `RellichKondrachovNegSobolev`. -/
 theorem rellichKondrachovNegSobolev_of_truncation_and_supportRepair
     (hrep : BandLimitedTestFnApprox) :
