@@ -175,4 +175,104 @@ theorem boxAvg_insert_eq_bAvg_boxAvg {d : ℕ} {σ : Site d → Ω → Ω}
   rw [← Finset.sum_div, div_div, mul_comm]
 
 
+omit [MeasurableSpace Ω] in
+/-- The box average over the empty set is the single value `h (σ (natToSite 0))`. -/
+theorem boxAvg_empty {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ) (m : Fin d → ℕ) (ω : Ω) :
+    boxAvg σ h ∅ m ω = h (σ (natToSite 0) ω) := by
+  simp only [boxAvg, boxGridSet, Finset.notMem_empty, if_false, Fintype.piFinset_singleton,
+    Finset.sum_singleton, Finset.prod_empty, div_one]
+  rfl
+
+/-- `boxAvg σ h s m` is measurable when `h` is measurable and each `σ z` is measurable. -/
+theorem measurable_boxAvg {d : ℕ} {σ : Site d → Ω → Ω} {μ : Measure Ω}
+    (hσ : ∀ z, MeasurePreserving (σ z) μ μ) {h : Ω → ℝ} (hh : Measurable h)
+    (s : Finset (Fin d)) (m : Fin d → ℕ) : Measurable (boxAvg σ h s m) := by
+  unfold boxAvg
+  exact (Finset.measurable_sum _ (fun w _ => hh.comp (hσ (natToSite w)).measurable)).div_const _
+
+omit [MeasurableSpace Ω] in
+/-- The box average `boxAvg σ h s m` is bounded in absolute value by the bound `M` on `h`. -/
+theorem abs_boxAvg_le {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ) {M : ℝ} (hM : 0 ≤ M)
+    (hh : ∀ x, |h x| ≤ M) (s : Finset (Fin d)) (m : Fin d → ℕ) (ω : Ω) :
+    |boxAvg σ h s m ω| ≤ M := by
+  rw [boxAvg]
+  have hDn : 0 ≤ ∏ i ∈ s, (m i : ℝ) := Finset.prod_nonneg fun i _ => Nat.cast_nonneg _
+  rw [abs_div, abs_of_nonneg hDn]
+  by_cases hD : (∏ i ∈ s, (m i : ℝ)) = 0
+  · rw [hD, div_zero]; exact hM
+  · have hDp : 0 < ∏ i ∈ s, (m i : ℝ) := lt_of_le_of_ne hDn (Ne.symm hD)
+    rw [div_le_iff₀ hDp, mul_comm M (∏ i ∈ s, (m i : ℝ))]
+    calc |∑ w ∈ boxGridSet s m, h (σ (natToSite w) ω)|
+        ≤ ∑ w ∈ boxGridSet s m, |h (σ (natToSite w) ω)| := Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ _w ∈ boxGridSet s m, M := Finset.sum_le_sum fun w _ => hh _
+      _ = (boxGridSet s m).card • M := Finset.sum_const M
+      _ = ((∏ i ∈ s, m i : ℕ) : ℝ) * M := by rw [card_boxGridSet, nsmul_eq_mul]
+      _ = (∏ i ∈ s, (m i : ℝ)) * M := by rw [Nat.cast_prod]
+
+/-- Moving-target Birkhoff theorem along an arbitrary length sequence: if `g n → G` a.e. with a
+uniform bound and `L n → ∞`, then `bAvg T (g n) (L n) → bLimsup T G` a.e. -/
+theorem ae_tendsto_bAvg_movingTarget_seq {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Ω → Ω}
+    (hT : MeasurePreserving T μ μ) {g : ℕ → Ω → ℝ} {G : Ω → ℝ} {M : ℝ} (hM : 0 ≤ M)
+    (hgm : ∀ n, Measurable (g n)) (hGm : Measurable G)
+    (hg : ∀ n x, |g n x| ≤ M) (hG : ∀ x, |G x| ≤ M)
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hconv : ∀ᵐ x ∂μ, Tendsto (fun n => g n x) atTop (𝓝 (G x))) :
+    ∀ᵐ x ∂μ, Tendsto (fun n => bAvg T (g n) (L n) x) atTop (𝓝 (bLimsup T G x)) := by
+  have hGint : Integrable G μ :=
+    Integrable.of_bound hGm.aestronglyMeasurable M (by
+      filter_upwards with x; rw [Real.norm_eq_abs]; exact hG x)
+  have hDmeas : ∀ N, Measurable (supDev g G N) :=
+    (measurable_supDev_and_tendsto_zero hM hgm hGm hg hG).1
+  have hDbound : ∀ N x, |supDev g G N x| ≤ 2 * M := fun N x => by
+    have h := supDev_nonneg_le_antitone_bound hM hg hG N x
+    rw [abs_of_nonneg h.1]; exact h.2.1
+  have hDint : ∀ N, Integrable (supDev g G N) μ := fun N =>
+    Integrable.of_bound (hDmeas N).aestronglyMeasurable (2 * M) (by
+      filter_upwards with x; rw [Real.norm_eq_abs]; exact hDbound N x)
+  have hae0 : ∀ᵐ x ∂μ, Tendsto (fun N => bLimsup T (supDev g G N) x) atTop (𝓝 0) :=
+    tendsto_bLimsup_supDev_zero hT hM hgm hGm hg hG hconv
+  have haeG : ∀ᵐ x ∂μ, Tendsto (fun n => bAvg T G (L n) x) atTop (𝓝 (bLimsup T G x)) := by
+    filter_upwards [ae_tendsto_bLimsup hT hGm hGint] with x hx
+    exact hx.comp hL
+  have haeD : ∀ᵐ x ∂μ, ∀ N, Tendsto (fun n => bAvg T (supDev g G N) (L n) x) atTop
+      (𝓝 (bLimsup T (supDev g G N) x)) := by
+    rw [ae_all_iff]
+    intro N
+    filter_upwards [ae_tendsto_bLimsup hT (hDmeas N) (hDint N)] with x hx
+    exact hx.comp hL
+  filter_upwards [hae0, haeG, haeD] with x hx0 hxG hxD
+  rw [Metric.tendsto_atTop]
+  intro ε hε
+  have hε2 : (0 : ℝ) < ε / 2 := by linarith
+  have hε4 : (0 : ℝ) < ε / 4 := by linarith
+  obtain ⟨N0, hN0⟩ := Metric.tendsto_atTop.mp hx0 (ε / 4) hε4
+  obtain ⟨N1, hN1⟩ := Metric.tendsto_atTop.mp hxG (ε / 2) hε2
+  obtain ⟨N2, hN2⟩ := Metric.tendsto_atTop.mp (hxD N0) (ε / 4) hε4
+  refine ⟨max N0 (max N1 N2), fun n hn => ?_⟩
+  have hn0 : N0 ≤ n := le_trans (le_max_left _ _) hn
+  have hn1 : N1 ≤ n := le_trans (le_max_left _ _) (le_trans (le_max_right _ _) hn)
+  have hn2 : N2 ≤ n := le_trans (le_max_right _ _) (le_trans (le_max_right _ _) hn)
+  have hN0lt : bLimsup T (supDev g G N0) x < ε / 4 := by
+    have h := hN0 N0 le_rfl
+    rw [Real.dist_eq, sub_zero] at h
+    exact lt_of_le_of_lt (le_abs_self _) h
+  have hBlt : bAvg T (supDev g G N0) (L n) x < ε / 2 := by
+    have hB : bAvg T (supDev g G N0) (L n) x ≤ bLimsup T (supDev g G N0) x +
+        |bAvg T (supDev g G N0) (L n) x - bLimsup T (supDev g G N0) x| := by
+      have hb := le_abs_self (bAvg T (supDev g G N0) (L n) x - bLimsup T (supDev g G N0) x)
+      linarith
+    have h2 := hN2 n hn2
+    rw [Real.dist_eq] at h2
+    linarith
+  have hX : |bAvg T (g n) (L n) x - bAvg T G (L n) x| < ε / 2 := by
+    have h1 := abs_bAvg_sub_le_bAvg_of_abs_sub_le (T := T) (g := g n) (G := G)
+      (fun y => (supDev_nonneg_le_antitone_bound hM hg hG N0 y).2.2.2 n hn0) (L n) x
+    linarith
+  have hY : dist (bAvg T G (L n) x) (bLimsup T G x) < ε / 2 := hN1 n hn1
+  calc dist (bAvg T (g n) (L n) x) (bLimsup T G x)
+      ≤ dist (bAvg T (g n) (L n) x) (bAvg T G (L n) x) +
+          dist (bAvg T G (L n) x) (bLimsup T G x) := dist_triangle _ _ _
+    _ < ε := by rw [Real.dist_eq]; linarith
+
+
 end LatticeProb
