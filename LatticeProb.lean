@@ -326,6 +326,7 @@ import LatticeProb.Analysis.Sobolev.TestFnCutoff
 import LatticeProb.Analysis.Sobolev.SupportProducer
 import LatticeProb.Analysis.Sobolev.SupportProducerWitness
 import LatticeProb.Analysis.Sobolev.TranslationBound
+import LatticeProb.Analysis.Sobolev.FourierCharPhase
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorov
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.Scaling
