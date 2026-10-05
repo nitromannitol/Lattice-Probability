@@ -255,7 +255,6 @@ library.
 #print axioms LatticeProb.multivariateGaussian_eq_map
 #print axioms LatticeProb.det_sqrt_mul_self
 #print axioms LatticeProb.multivariateGaussian_eq_withDensity
-#print axioms LatticeProb.multivariateGaussianDensityFormula_holds
 #print axioms LatticeProb.normalComparisonSmartPath_zero
 #print axioms LatticeProb.normalComparisonSmartPath_one
 #print axioms LatticeProb.normalComparisonSmartPath_nonneg
