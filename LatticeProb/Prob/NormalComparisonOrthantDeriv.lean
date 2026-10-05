@@ -10,9 +10,12 @@ coordinates (`route item 4`).  Getting there needs three measure-theory facts:
 * **`lintegral_Iic_cons`** — the box-Fubini splitting of the orthant
   `Set.Iic b ⊆ (Fin (m+1) → ℝ)` into the last-`Fin.cons` coordinate times the tail
   orthant.  This is the exact declaration the previous packet named as missing
-  ("no lemma of the form `∫ x in Set.univ.pi (fun i => Set.Iic (b i)), f x = …`"):
+  (“no lemma of the form `∫ x in Set.univ.pi (fun i => Set.Iic (b i)), f x = …`”):
   Mathlib only has Fubini for *product* functions, not for a general function on a
   box.  It is proved here from `MeasureTheory.volume_preserving_piFinSuccAbove`.
+* **`lintegral_Iic_cons₂`** — the two-coordinate iteration, peeling off coordinates
+  `0` and `1` and leaving the `(m-2)`-fold orthant integral; this is the reduction
+  route item 4 uses to isolate the two distinguished coordinates.
 * **`integral_Iic_deriv_eq_of_tendsto`** — the one-coordinate half-line FTC on
   `(-∞, b]`: `∫_{x ≤ b} deriv f = f b - lim_{-∞} f`.  This is
   `MeasureTheory.integral_Iic_of_hasDerivAt_of_tendsto'` in the shape the route
@@ -101,6 +104,33 @@ theorem lintegral_Iic_cons {m : ℕ} (b : Fin (m + 1) → ℝ)
         refine lintegral_congr fun x₀ => lintegral_congr fun x' => ?_
         rw [hsymm]
 
+/-- **Two-coordinate box-Fubini for the orthant.**  Iterating `lintegral_Iic_cons` peels off
+coordinates `0` and `1`, leaving the `(m-2)`-fold orthant integral.  This is the reduction route
+item 4 needs to isolate the two distinguished coordinates before applying the two-dimensional
+fundamental theorem of calculus of `integral_integral_mixed_deriv`. -/
+theorem lintegral_Iic_cons₂ {m : ℕ} (b : Fin (m + 2) → ℝ)
+    (f : (Fin (m + 2) → ℝ) → ℝ≥0∞) (hf : Measurable f) :
+    ∫⁻ x in Set.Iic b, f x
+      = ∫⁻ x₀ in Set.Iic (b 0), ∫⁻ x₁ in Set.Iic (b 1),
+          ∫⁻ x'' in Set.Iic (fun j : Fin m => b j.succ.succ),
+            f (Fin.cons x₀ (Fin.cons x₁ x'')) := by
+  rw [lintegral_Iic_cons b f hf]
+  refine lintegral_congr fun x₀ => ?_
+  have hfc : Measurable fun x' : Fin (m + 1) → ℝ =>
+      Fin.cons (α := fun _ : Fin (m + 2) => ℝ) x₀ x' := by
+    rw [measurable_pi_iff]
+    intro i
+    refine Fin.cases ?_ (fun j => ?_) i
+    · simpa only [Fin.cons_zero] using
+        (measurable_const : Measurable fun _ : Fin (m + 1) → ℝ => x₀)
+    · simpa only [Fin.cons_succ] using (measurable_pi_apply j)
+  have hf' : Measurable fun x' : Fin (m + 1) → ℝ =>
+      f (Fin.cons (α := fun _ : Fin (m + 2) => ℝ) x₀ x') := hf.comp hfc
+  rw [lintegral_Iic_cons (fun j : Fin (m + 1) => b j.succ)
+    (fun x' => f (Fin.cons (α := fun _ : Fin (m + 2) => ℝ) x₀ x')) hf']
+  refine lintegral_congr fun x₁ => lintegral_congr fun x'' => ?_
+  congr 2
+
 /-- **The mixed-derivative orthant integral, two coordinates** (route item 4 at `m = 2`).
 Integrating `∂_x ∂_y p` over the quadrant `{x ≤ a} × {y ≤ b}` leaves `p` at the corner
 `(a, b)`.  `px` is `∂_x p` and `pxy` is `∂_y ∂_x p`; the three limit hypotheses are the
@@ -138,5 +168,6 @@ theorem integral_Iic_deriv_eq_of_tendsto (f : ℝ → ℝ) (b m : ℝ)
 end LatticeProb
 
 #print axioms LatticeProb.lintegral_Iic_cons
+#print axioms LatticeProb.lintegral_Iic_cons₂
 #print axioms LatticeProb.integral_integral_mixed_deriv
 #print axioms LatticeProb.integral_Iic_deriv_eq_of_tendsto
