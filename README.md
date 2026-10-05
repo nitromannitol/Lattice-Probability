@@ -333,6 +333,37 @@ the field with zero boundary values on a finite set `C` as
 * `LatticeProb.fderiv_log`, `LatticeProb.gaussianLogSobolevGradTensorStep_of_prodStep`: the
   chain rule for `log` and the reduction of the Γ tensorization step to the
   abstract product step.
+* `LatticeProb.hasSum_sq_comb_sub`, `LatticeProb.abs_partialInt_sub_le`: the
+  partial integral on a finite coordinate set preserves the ℓ²-Lipschitz
+  constant, since splicing along a finite set leaves a difference supported on
+  that set.
+* `LatticeProb.ouSemigroup`, `LatticeProb.ouGenerator`: the one-dimensional
+  Ornstein–Uhlenbeck (Mehler) semigroup `P_t f x = ∫ f (e^{-t} x + √(1 - e^{-2t}) z) dγ(z)`
+  and its generator `L f = f'' - x f'`, the objects the entropy-dissipation proof
+  of the Gaussian log-Sobolev inequality runs on.
+* `LatticeProb.mehler_pushforward_general`, `LatticeProb.mehler_pushforward_one`:
+  the Mehler kernel `(x, z) ↦ a x + b z` pushes `γ ⊗ γ` forward to the Gaussian of
+  variance `a² + b²`, and to `γ` itself when `a² + b² = 1`.
+* `LatticeProb.mehler_double_integral_shift`: the iterated-integral form of that
+  pushforward, the change-of-variables step of the semigroup law.
+* `LatticeProb.gaussianReal_affine`, `LatticeProb.integrable_comp_affine`: the
+  pushforward of `γ` under `z ↦ c + a z` is the Gaussian of mean `c` and variance
+  `a²`, and integrability transfers along it.
+* `LatticeProb.ouSemigroup_sq_le`: the Mehler semigroup is an `L²` contraction,
+  `(P_t f x)² ≤ P_t (f²) x`, the pointwise positivity of the carré du champ.
+* `LatticeProb.integral_ouSemigroup`: the Mehler semigroup preserves the Gaussian
+  measure, `∫ P_t f dγ = ∫ f dγ` for `t ≥ 0`.
+* `LatticeProb.ouSemigroup_add`: the Mehler semigroup law `P_s (P_t f) = P_{s+t} f`
+  for `s, t ≥ 0`, from the composition of the two Mehler kernels.
+* `LatticeProb.OUHeatEquation`: the named open input of the Ornstein–Uhlenbeck
+  route, the generator/heat equation `∂_t P_t f = L P_t f`; it is a `Prop`, never
+  an axiom, and it is what remains of the `n = 1` Gaussian log-Sobolev
+  inequality beyond the semigroup layer built here.
+* `LatticeProb.ae_subset_iUnion_iInter_of_tendsto_ae`,
+  `LatticeProb.measure_le_of_tendsto_ae_of_isOpen`,
+  `LatticeProb.measure_le_of_tendsto_ae_of_lt`: the a.e. Fatou limit: an almost
+  sure limit `X n → Y` inherits the tail bound of the `X n` on open sets and on
+  strict tails.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal

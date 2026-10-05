@@ -108,6 +108,29 @@ theorem mehler_double_integral_shift (a b c : ℝ) (v : ℝ≥0) (hv : (v : ℝ)
   rw [hshift]
   exact hf.aestronglyMeasurable
 
+/-- **The affine image of the standard Gaussian.**  The pushforward of `γ` under
+`z ↦ c + a z` is the Gaussian of mean `c` and variance `a²`. -/
+theorem gaussianReal_affine (c a : ℝ) :
+    gaussianReal c (NNReal.mk (a ^ 2) (sq_nonneg a))
+      = Measure.map (fun z : ℝ => c + a * z) (gaussianReal 0 1) := by
+  have hcomp : (fun z : ℝ => c + a * z)
+      = (fun y : ℝ => y + c) ∘ (fun z : ℝ => a * z) := by
+    funext z; simp [add_comm]
+  rw [hcomp, ← Measure.map_map (by fun_prop) (by fun_prop), gaussianReal_map_const_mul,
+    gaussianReal_map_add_const]
+  simp only [mul_zero, zero_add]
+  congr 1
+  rw [← NNReal.coe_inj]
+  simp only [NNReal.coe_mk, NNReal.coe_one, NNReal.coe_mul]
+  rw [mul_one]
+
+/-- **Integrability transfers along an affine image of the standard Gaussian.** -/
+theorem integrable_comp_affine (c a : ℝ) (f : ℝ → ℝ)
+    (hf : Integrable f (gaussianReal c (NNReal.mk (a ^ 2) (sq_nonneg a)))) :
+    Integrable (fun z : ℝ => f (c + a * z)) (gaussianReal 0 1) := by
+  rw [gaussianReal_affine c a] at hf
+  exact (integrable_map_measure (by fun_prop) (by fun_prop)).mp hf
+
 /-- **`P_0` is the identity.** -/
 theorem ouSemigroup_zero (f : ℝ → ℝ) : ouSemigroup 0 f = f := by
   funext x
@@ -136,6 +159,21 @@ theorem ouSemigroup_const_mul (t c : ℝ) (f : ℝ → ℝ) :
   funext x
   simp only [ouSemigroup]
   rw [← integral_const_mul]
+
+/-- **The Mehler semigroup is an `L²` contraction.**  `(P_t f x)² ≤ P_t (f²) x`, by Jensen's
+inequality applied to the probability measure `γ` and the convex function `y ↦ y²`.  This is
+the positivity of the carré du champ `Γ(P_t f) = P_t (f²) - (P_t f)²` at a single point. -/
+theorem ouSemigroup_sq_le (t : ℝ) (f : ℝ → ℝ) (x : ℝ)
+    (hf : Integrable f (gaussianReal (Real.exp (-t) * x)
+      (NNReal.mk (Real.sqrt (1 - Real.exp (-2 * t)) ^ 2) (sq_nonneg _))))
+    (hf2 : Integrable (fun y => (f y) ^ 2) (gaussianReal (Real.exp (-t) * x)
+      (NNReal.mk (Real.sqrt (1 - Real.exp (-2 * t)) ^ 2) (sq_nonneg _)))) :
+    (ouSemigroup t f x) ^ 2 ≤ ouSemigroup t (fun y => (f y) ^ 2) x := by
+  simp only [ouSemigroup]
+  refine ConvexOn.map_integral_le (Even.convexOn_pow (by norm_num : Even 2))
+    (by fun_prop) isClosed_univ (Filter.Eventually.of_forall fun z => Set.mem_univ _) ?_ ?_
+  · exact integrable_comp_affine _ _ f hf
+  · exact integrable_comp_affine _ _ _ hf2
 
 /-- **The Mehler semigroup preserves the Gaussian measure**: `∫ P_t f dγ = ∫ f dγ` for
 `t ≥ 0`.  The Mehler kernel `(x, z) ↦ e^{-t} x + √(1 - e^{-2t}) z` pushes `γ ⊗ γ`

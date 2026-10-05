@@ -219,6 +219,14 @@ status:
           source: "Gross 1975 and Bakry-Emery 1985"
     - declaration: "LatticeProb.Sobolev.sobolevNormSq_add_le"
       file: "LatticeProb/Analysis/Sobolev/Additivity.lean"
+    - declaration: "LatticeProb.ouSemigroup_sq_le"
+      file: "LatticeProb/Prob/GaussianLogSobolevOU.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.ouSemigroup_add"
+      file: "LatticeProb/Prob/GaussianLogSobolevOU.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""

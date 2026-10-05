@@ -235,6 +235,18 @@ library.
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner
 #print axioms LatticeProb.ExtendedMapping.extended_continuous_mapping
+#print axioms LatticeProb.mehler_pushforward_general
+#print axioms LatticeProb.mehler_pushforward_one
+#print axioms LatticeProb.mehler_double_integral_shift
+#print axioms LatticeProb.gaussianReal_affine
+#print axioms LatticeProb.integrable_comp_affine
+#print axioms LatticeProb.ouSemigroup_sq_le
+#print axioms LatticeProb.ouSemigroup_zero
+#print axioms LatticeProb.ouSemigroup_const
+#print axioms LatticeProb.ouSemigroup_one
+#print axioms LatticeProb.ouSemigroup_const_mul
+#print axioms LatticeProb.integral_ouSemigroup
+#print axioms LatticeProb.ouSemigroup_add
 
 /-! ### Regular variation -/
 
