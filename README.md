@@ -380,6 +380,18 @@ not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` 
   `LatticeProb.mvbe_lemma_2_5`: the Gaussian tensor bounds `|∫ f ∇^r φ [u^r]| ≤ c_r M ‖u‖^r`.
 * `LatticeProb.mvbeRoundedRegularClass_gammaStar_le`: the generalised Gaussian perimeter of
   the rounded-orthant class is at most `m / √(2π)`.
+* `LatticeProb.mvbe_gaussian_layer_diff_le`, `mvbe_gaussian_diff_layer_le`: Raič's Lemma 2.2,
+  `N(μ,S)(A^{ε|ρ} ∖ A) ≤ γ*(C) ε/σ` for any regular class `C` when `S ⪰ σ² I`; and
+  `LatticeProb.MvbeRegularClass.image`, `image_gammaStar_le_max`: the image class `{L A}` is a
+  regular class with the same `κ` and perimeter at most `max(1,‖L‖) ‖L⁻¹‖ γ*(C)`.
+* `LatticeProb.MvbeRegularClass.raic_lemma_2_1`: the Bentkus smoothing `f = g(ρ_A/ε)`, `C¹` with
+  `4(1+κ)/ε²`-Lipschitz gradient, for regular classes in which `{ρ_A < 0}` is open
+  (`MvbeNegOpen`; Lemma 2.1 as printed needs this extra hypothesis, which holds for the
+  rounded orthants and is preserved by images); the second derivative vanishes a.e. off the layer.
+* `LatticeProb.mehlerN_contDiff`, `mehlerN_iteratedDeriv_line`: the Mehler smoothing in dimension
+  `d` is `C^∞` with the Hermite derivative formulas; `LatticeProb.mehlerI_hasDerivAt`,
+  `mehlerI_interpolation`: for `f ∈ C²_b`, `∂_a U_a f = tan a · (Δ − w·∇) U_a f` and
+  `E f(W) − γ f = −∫_0^{π/2} tan a · E[(Δ − w·∇) U_a f (W)] da` (Raič (2.5)).
 * `LatticeProb.mvbe_polarization`, `LatticeProb.mvbe_stein_expectation`: polarisation of
   symmetric trilinear forms with constant `9/2`, and Götze's identity (Raič Lemma 2.4)
   for `E[Δg(W) − ⟨∇g(W), W⟩]` of a sum of independent mean-zero vectors with identity
