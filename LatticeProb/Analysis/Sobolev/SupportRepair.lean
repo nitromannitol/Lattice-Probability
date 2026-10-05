@@ -8,14 +8,17 @@ which asks that the real projections `P_Λ φ = bandProj d Λ … φ` of the rou
 require `tsupport φ ⊆ D` — the datum the only consumer actually supplies.
 
 The mismatch matters.  The conclusion demands a *fixed* finite family `ψ i` of test functions on
-`D` with `sobolevNormSq d s₀ (P_Λ φ - ψ i) ≤ δ`.  Take `φ_R = c · ρ(· - R)` for a fixed bump `ρ`
-and the constant `c` normalising `sobolevNormSq d s φ_R = 1`.  Then `sobolevNormSq d s₀ (P_Λ φ_R)`
+`D` with `sobolevNormSq d s₀ (P_Λ φ - ψ i) ≤ δ`.  Take `φ_R = c · ρ(· - R)` for a fixed
+bump `ρ` and the constant `c` normalising `sobolevNormSq d s φ_R = 1`.  Then
+`sobolevNormSq d s₀ (P_Λ φ_R)`
 is translation-invariant, hence a fixed positive number, while for any fixed `D`-supported test
 function `ψ` the pairing tends to `0` as `R → ∞`:
 
-  `⟨P_Λ φ_R, ψ⟩_{H^{s₀}} = ∫ (1+‖ξ‖²)^{s₀} e^{-2πi R·ξ} ‖𝓕(P_Λ ρ)(ξ)‖ ‖𝓕ψ(ξ)‖ dξ → 0`,
+  `⟨P_Λ φ_R, ψ⟩_{H^{s₀}}
+    = ∫ (1+‖ξ‖²)^{s₀} e^{-2πi R·ξ} ‖𝓕(P_Λ ρ)(ξ)‖ ‖𝓕ψ(ξ)‖ dξ → 0`,
 
-so `sobolevNormSq d s₀ (P_Λ φ_R - ψ) → sobolevNormSq d s₀ (P_Λ ρ) · c² + sobolevNormSq d s₀ ψ`,
+so `sobolevNormSq d s₀ (P_Λ φ_R - ψ) → sobolevNormSq d s₀ (P_Λ ρ) · c² +
+  sobolevNormSq d s₀ ψ`,
 bounded below independently of `ψ`.  For `δ` below that bound no centre covers `φ_R`.  So
 `BandLimitedTestFnApprox` is too strong to be the residual, and the committed implication is from
 an unprovable premise.
@@ -26,9 +29,9 @@ This module lands the **domain-restricted** residual that the composition actual
 * `bandLimitedTestFnApproxOnDomain_of_approx` — the unrestricted residual implies it;
 * `rkLowFreqNet_of_domainSupportRepair` — the composition re-proved from the restricted input,
 
-so that `rkLowFreqNet` rests on the input the data supports.  The genuinely missing analytic content
-— the compactness of the projected family plus the support repair of each net centre — is unchanged
-and named in the audit report `lib-support-density.md`.
+so that `rkLowFreqNet` rests on the input the data supports.  The genuinely missing analytic
+content — the compactness of the projected family plus the support repair of each net
+centre — is unchanged and named in the audit report `lib-support-density.md`.
 -/
 import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 
@@ -87,7 +90,8 @@ private theorem sobolevNormSq_decomp_le' {d : ℕ} (s : ℝ) {φ P ψ : Space d 
 
 /-- **The sound composition.**  The truncation identity (`sobolevNormSq_sub_bandProj_le`) and the
 **domain-restricted** support repair together discharge `rkLowFreqNet`: choose the cutoff `Λ'`
-making the high-frequency part `≤ δ/4`, apply the support repair at `Λ'` with accuracy `δ/4`, and
+making the high-frequency part `≤ δ/4`, apply the support repair at `Λ'` with accuracy
+`δ/4`, and
 split `φ - ψ_i` through the projection.  Unlike `rkLowFreqNet_of_truncation_and_supportRepair`
 (`RellichLowFreqGlue.lean`), this consumes `BandLimitedTestFnApproxOnDomain`, which matches the
 `IsTestFn D φ` hypothesis of `rkLowFreqNet`. -/
@@ -121,7 +125,8 @@ theorem rkLowFreqNet_of_domainSupportRepair (hrep : BandLimitedTestFnApproxOnDom
       (fun x => φ x - bandProj d Λ' hΛ'pos.ne' φ hφ.1 hφ.2.1 x) ≤ ENNReal.ofReal (δ / 4) :=
     hP.trans htail'
   have h2 : sobolevNormSq d s₀
-      (fun x => bandProj d Λ' hΛ'pos.ne' φ hφ.1 hφ.2.1 x - ψ i x) ≤ ENNReal.ofReal (δ / 4) :=
+      (fun x => bandProj d Λ' hΛ'pos.ne' φ hφ.1 hφ.2.1 x - ψ i x)
+        ≤ ENNReal.ofReal (δ / 4) :=
     hi
   have h2a : (2 : ℝ≥0∞) * ENNReal.ofReal (δ / 4) = ENNReal.ofReal (δ / 2) := by
     rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 from (ENNReal.ofReal_natCast 2).symm,
