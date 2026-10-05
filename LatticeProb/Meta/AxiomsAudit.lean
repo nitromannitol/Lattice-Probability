@@ -360,10 +360,6 @@ library.
 
 /-! ### The sharp band projection and its consumption -/
 
-#print axioms LatticeProb.Sobolev.bandProj_sobolevNormSqHigh_eq_zero_of_le
-#print axioms LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le
-#print axioms LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le_of_high
-#print axioms LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le_of_high_delta
 
 /-! ### Band-limited Bernstein bound -/
 
