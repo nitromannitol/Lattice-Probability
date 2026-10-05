@@ -344,6 +344,7 @@ import LatticeProb.Analysis.Sobolev.TestFnApprox
 import LatticeProb.Analysis.Sobolev.TestFnCutoff
 import LatticeProb.Analysis.Sobolev.TranslationContinuity
 import LatticeProb.Analysis.Sobolev.TranslationBound
+import LatticeProb.Analysis.Sobolev.TranslationQuant
 import LatticeProb.Analysis.Sobolev.FourierCharPhase
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
 import LatticeProb.Analysis.Sobolev.FejerSideCondition
