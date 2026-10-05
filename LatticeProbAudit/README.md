@@ -1,6 +1,6 @@
 # LatticeProbAudit Comparator Surface
 
-This directory contains Mathlib-only comparator challenges for three principal
+This directory contains Mathlib-only comparator challenges for five principal
 theorems of the library.  The modules live under the root `LatticeProbAudit`
 (the Lake library of that name), so that they cannot collide with the audit
 modules of a repository that requires this library.  Each comparator lives in
@@ -11,6 +11,8 @@ its own subdirectory:
 | `Kingman/` | Kingman's subadditive ergodic theorem | `LatticeProbAudit.kingman` | `LatticeProb.ae_tendsto_div`, `LatticeProb.tendsto_integral_div` |
 | `GFF/` | the discrete Gaussian free field with zero boundary values | `LatticeProbAudit.gff` | `LatticeProb.Network.killedGreenMatrix_posSemidef`, `LatticeProb.Network.integral_gff`, `LatticeProb.Network.covariance_gff` |
 | `BinomialLocalCLT/` | the binomial local central limit theorem with a `1/m` error | `LatticeProbAudit.binomial_local_clt` | `LatticeProb.BinomialLCLT.exists_binomPMF_localCLT` |
+| `NormalComparison/` | the normal comparison inequality of Li and Shao for the orthant, nonnegative correlations | `LatticeProbAudit.normal_comparison` | `LatticeProb.normalComparison_exists` |
+| `BerryEsseen/` | the one-dimensional Berry-Esseen theorem for independent non-identical summands | `LatticeProbAudit.berry_esseen_one_dim` | `LatticeProb.berryEsseen_oneDim` |
 
 Each `Challenge.lean` imports only `Mathlib`, rebuilds from scratch every
 definition needed to read the theorem, states the theorem, and ends with one
@@ -19,7 +21,7 @@ of a pair and how the solutions are glued to the library.
 
 ## What Is Checked
 
-None of the three theorems rests on a cited result, so no challenge carries a
+None of the five theorems rests on a cited result, so no challenge carries a
 hypothesis beyond the mathematical ones.
 
 - **`Kingman`**: let `T` preserve a finite measure `μ`, and let `g n` be
@@ -36,6 +38,17 @@ hypothesis beyond the mathematical ones.
   integer `j` with `|j| ≤ m` and `j ≡ m (mod 2)`,
   `|√m · C(m, (m + j)/2) / 2^m − 2 φ(j/√m)| ≤ C/m`, with `φ` the standard
   normal density written out.  No definition is needed.
+- **`NormalComparison`**: there is `C > 0` such that for every dimension `m`, variance `v > 0`,
+  positive semidefinite `S` with constant diagonal `v` and nonnegative entries, and every `b`, the
+  centred Gaussian orthant probability `P(Y ≤ b)` differs from `∏ᵢ P(N(0, v) ≤ bᵢ)` by at most
+  `C ∑_{i<j} (S i j / v) exp (−(bᵢ² + bⱼ²) / (2 v (1 + S i j / v)))`.  No definition is needed:
+  the laws are Mathlib's `multivariateGaussian` and `gaussianReal`.  The statement is the body of
+  the cited proposition unchanged; the library proves it with `C = 1/4`.
+- **`BerryEsseen`**: there is an absolute `C > 0` such that for every finite family of probability
+  laws `νᵢ` on `ℝ` with mean `0`, finite third absolute moments and total variance `V > 0`, the
+  distribution function of the sum of independent variables with these laws (the image of
+  `Measure.pi ν` under `y ↦ ∑ᵢ yᵢ`) is within `C (∑ᵢ ∫ |z|³ dνᵢ) / V^{3/2}` of that of `N(0, V)`,
+  at every point.  No definition is needed: the law of the sum is written out.
 
 ## Definition Provenance
 
@@ -112,11 +125,11 @@ tool revisions are pinned in
 listed in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  A pass is the output
 `Your solution is okay!`.
 
-**Status.**  All three solutions build.  `leanprover/comparator` at commit
+**Status.**  All five solutions build.  `leanprover/comparator` at commit
 `575674928e239f5bc452aab72d1dd7b0f1326494`, with nanoda at
 `6ae1f0cd962f081f6c423454c5da729d841236a7` and landrun at
 `811cfff51ceaf3d9843708aa6d22e9b84ccac8b4`, printed `Your solution is okay!`
-on all three pairs with the nanoda kernel enabled.  Results and the
+on all five pairs with the nanoda kernel enabled.  Results and the
 reproduction command are in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  The
 workflow [`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml)
 runs the same check on request, since the builds are Mathlib-scale and Actions
