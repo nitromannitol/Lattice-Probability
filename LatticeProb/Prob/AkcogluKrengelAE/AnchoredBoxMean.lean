@@ -210,7 +210,7 @@ The telescoping/cardinality proof of this bound is the remaining formal step. -/
 def CoboundaryBound (d : ℕ) : Prop :=
   ∀ {Ω : Type} [MeasurableSpace Ω] (g : Ω → ℝ) {M : ℝ} (_hM : 0 ≤ M)
     (_hb : ∀ ω, |g ω| ≤ M) (τ : Site d → Ω → Ω)
-    (_hadd : ∀ z w ω, τ (z + w) ω = τ z (τ w ω)) (c : Fin d → ℝ) (hc : ∀ i, 0 ≤ c i)
+    (_hadd : ∀ z w ω, τ (z + w) ω = τ z (τ w ω)) (c : Fin d → ℝ) (_hc : ∀ i, 0 ≤ c i)
     (j : Fin d) (_hcj : 0 < c j) (ω : Ω) (N : ℕ),
     |∑ y ∈ anchoredBox c N, (g (τ y ω) - g (τ (unit j) (τ y ω)))| ≤
       2 * M * ∏ i ∈ Finset.univ.erase j, ((⌈(N : ℝ) * c i⌉).toNat : ℝ)
@@ -238,7 +238,7 @@ it is the remaining formal step: the proof is `box \ box' ⊆ {y ∈ box : y j =
 `box' \ box ⊆ {y ∈ box' : y j = m j}` by membership in `Fintype.piFinset`, then
 `Finset.card_le_card` with `Fintype.card_piFinset` on the slices. -/
 def SymmDiffFaceBound (d : ℕ) : Prop :=
-  ∀ (c : Fin d → ℝ) (hc : ∀ i, 0 ≤ c i) (j : Fin d) (N : ℕ),
+  ∀ (c : Fin d → ℝ) (_hc : ∀ i, 0 ≤ c i) (j : Fin d) (N : ℕ),
     (((anchoredBox c N) \ ((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding)) ∪
         (((anchoredBox c N).map (Equiv.addRight (unit j)).toEmbedding) \ (anchoredBox c N))).card ≤
       2 * ∏ i ∈ Finset.univ.erase j, (⌈(N : ℝ) * c i⌉).toNat
@@ -298,7 +298,6 @@ theorem sdiff_anchoredBox_shift_subset_eq_top {c : Fin d → ℝ} (N : ℕ) (j :
     apply hyB
     rw [mem_anchoredBox]
     intro i
-    change (x + unit j) i ∈ Finset.Ico 0 ⌈(N : ℝ) * c i⌉
     have hi := hx i
     simp only [Finset.mem_Ico] at hi
     by_cases hij : i = j
