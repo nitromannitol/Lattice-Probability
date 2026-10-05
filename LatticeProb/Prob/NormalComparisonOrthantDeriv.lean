@@ -7,15 +7,17 @@ orthant probability is a sum of boundary contributions `D_{ij}`, and each `D_{ij
 is the `(m-2)`-fold integral of the density over the orthant of the remaining
 coordinates (`route item 4`).  Getting there needs three measure-theory facts:
 
-* **`lintegral_Iic_cons`** — the box-Fubini splitting of the orthant
-  `Set.Iic b ⊆ (Fin (m+1) → ℝ)` into the last-`Fin.cons` coordinate times the tail
-  orthant.  This is the exact declaration the previous packet named as missing
-  (“no lemma of the form `∫ x in Set.univ.pi (fun i => Set.Iic (b i)), f x = …`”):
-  Mathlib only has Fubini for *product* functions, not for a general function on a
-  box.  It is proved here from `MeasureTheory.volume_preserving_piFinSuccAbove`.
-* **`lintegral_Iic_cons₂`** — the two-coordinate iteration, peeling off coordinates
-  `0` and `1` and leaving the `(m-2)`-fold orthant integral; this is the reduction
-  route item 4 uses to isolate the two distinguished coordinates.
+* **`lintegral_Iic_cons`, `lintegral_Iic_cons₂`** — the box-Fubini and its two-coordinate
+  iteration for `ℝ≥0∞`-valued integrands, splitting the orthant
+  `Set.Iic b ⊆ (Fin m → ℝ)` into the `Fin.cons` coordinate(s) times the tail orthant.
+  These are the exact declarations
+  the earlier packet named as missing (“no lemma of the form
+  `∫ x in Set.univ.pi (fun i => Set.Iic (b i)), f x = …`”): Mathlib only has Fubini for
+  *product* functions.  Proved from `MeasureTheory.volume_preserving_piFinSuccAbove`.
+* **`integral_Iic_cons`, `integral_Iic_cons₂`** — the signed (Bochner) forms, needed because
+  route item 4 integrates the signed mixed derivative `∂_i ∂_j p`.  The integrability is
+  transported with `MeasurePreserving.integrableOn_comp_preimage` (there is no
+  `MeasurePreserving.integrable_comp_iff`).
 * **`integral_Iic_deriv_eq_of_tendsto`** — the one-coordinate half-line FTC on
   `(-∞, b]`: `∫_{x ≤ b} deriv f = f b - lim_{-∞} f`.  This is
   `MeasureTheory.integral_Iic_of_hasDerivAt_of_tendsto'` in the shape the route
@@ -27,9 +29,10 @@ coordinates (`route item 4`).  Getting there needs three measure-theory facts:
 ## What is *not* here (the named gap)
 
 The *general-`m`* form of `integral_integral_mixed_deriv` — selecting the two
-distinguished coordinates `i`, `j` inside `Fin m`, applying `lintegral_Iic_cons`
-to peel them off, and restating the mixed partial derivative as an explicit
-`Fin m`-partial — is not landed; it is index bookkeeping over the two lemmas above.
+distinguished coordinates `i`, `j` inside `Fin m`, applying `integral_Iic_cons₂` to
+peel them off, and applying the two-dimensional FTC in those two coordinates for
+each tail — is not landed; it is now bookkeeping over the lemmas above (the signed
+box-Fubini is the tool that was missing).
 On top of it, route item 3 (`hasDerivAt_orthant_multivariateGaussian`, the
 covariance derivative) still needs `LatticeProb.multivariateGaussian_eq_withDensity`
 together with `hasDerivAt_integral_of_dominated_loc_of_deriv_le`, and route item 5
@@ -165,9 +168,103 @@ theorem integral_Iic_deriv_eq_of_tendsto (f : ℝ → ℝ) (b m : ℝ)
     ∫ x in Set.Iic b, deriv f x = f b - m :=
   integral_Iic_of_hasDerivAt_of_tendsto' hderiv hint hlim
 
+/-! ### Box-Fubini for signed (Bochner) integrands
+
+The `ℝ≥0∞` versions above need no integrability.  Route item 4 integrates the *signed* mixed
+derivative `∂_i ∂_j p`, so the iteration is redone for Bochner integrals, transporting the
+integrability across `volume_preserving_piFinSuccAbove` with
+`MeasurePreserving.integrableOn_comp_preimage` (there is no
+`MeasurePreserving.integrable_comp_iff`). -/
+
+/-- **Box-Fubini for the orthant, Bochner form.**  The signed analogue of `lintegral_Iic_cons`:
+`∫_{x ≤ b} f = ∫_{x₀ ≤ b 0} ∫_{x' ≤ b ∘ succ} f (Fin.cons x₀ x')`, for
+`IntegrableOn f (Set.Iic b)`.
+The proof is the same change of variables through `volume_preserving_piFinSuccAbove` followed by the
+Bochner `setIntegral_prod`; the integrability of the pushed integrand is transported back by
+`MeasurePreserving.integrableOn_comp_preimage`. -/
+theorem integral_Iic_cons {m : ℕ} (b : Fin (m + 1) → ℝ)
+    (f : (Fin (m + 1) → ℝ) → ℝ) (hf : IntegrableOn f (Set.Iic b) volume) :
+    ∫ x in Set.Iic b, f x
+      = ∫ x₀ in Set.Iic (b 0),
+          ∫ x' in Set.Iic (fun j : Fin m => b j.succ), f (Fin.cons x₀ x') := by
+  set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (m + 1) => ℝ) 0 with he
+  have hmp : MeasurePreserving (⇑e) (volume : Measure (Fin (m + 1) → ℝ))
+      ((volume : Measure ℝ).prod (volume : Measure (Fin m → ℝ))) :=
+    volume_preserving_piFinSuccAbove (fun _ : Fin (m + 1) => ℝ) 0
+  have hsymm : ∀ (x₀ : ℝ) (x' : Fin m → ℝ), e.symm (x₀, x') = Fin.cons x₀ x' := by
+    intro x₀ x'
+    funext j
+    rw [show ⇑(e.symm) = ⇑(Fin.insertNthEquiv (fun _ : Fin (m + 1) => ℝ) 0) from rfl]
+    rw [Fin.insertNthEquiv_apply, Fin.insertNth_zero]
+    exact Fin.cases rfl (fun i => rfl) j
+  have hmeas : MeasurableSet (Set.Iic b) := by
+    rw [show Set.Iic b = ⋂ i, {x : Fin (m + 1) → ℝ | x i ≤ b i} by
+      ext x; simp [Pi.le_def]]
+    exact MeasurableSet.iInter fun i => measurableSet_le (measurable_pi_apply i) measurable_const
+  have hpre : e.symm ⁻¹' (Set.Iic b)
+      = Set.Iic (b 0) ×ˢ Set.Iic (fun j : Fin m => b j.succ) := by
+    ext p
+    obtain ⟨x₀, x'⟩ := p
+    rw [Set.mem_preimage, hsymm, Set.mem_prod, Set.mem_Iic, Set.mem_Iic, Set.mem_Iic, Pi.le_def]
+    constructor
+    · intro h; exact ⟨h 0, fun j => h j.succ⟩
+    · rintro ⟨h0, h'⟩ i
+      refine Fin.cases h0 (fun j => h' j) i
+  have hcongr : ∀ p : ℝ × (Fin m → ℝ),
+      (Set.Iic b).indicator f (e.symm p)
+        = (e.symm ⁻¹' (Set.Iic b)).indicator (fun p => f (e.symm p)) p := by
+    intro p
+    by_cases hp : e.symm p ∈ Set.Iic b
+    · rw [Set.indicator_of_mem hp,
+        Set.indicator_of_mem (show p ∈ e.symm ⁻¹' Set.Iic b from hp)]
+    · rw [Set.indicator_of_notMem hp,
+        Set.indicator_of_notMem (show p ∉ e.symm ⁻¹' Set.Iic b from hp)]
+  have hint : IntegrableOn (fun p : ℝ × (Fin m → ℝ) => f (e.symm p))
+      (Set.Iic (b 0) ×ˢ Set.Iic (fun j : Fin m => b j.succ)) (volume.prod volume) := by
+    rw [← hpre]
+    exact (hmp.symm.integrableOn_comp_preimage e.symm.measurableEmbedding).mpr hf
+  rw [← integral_indicator hmeas, ← hmp.symm.integral_comp' ((Set.Iic b).indicator f)]
+  have h1 : (∫ p : ℝ × (Fin m → ℝ),
+        (Set.Iic b).indicator f (e.symm p) ∂(volume.prod volume))
+      = ∫ p in e.symm ⁻¹' (Set.Iic b), f (e.symm p) ∂(volume.prod volume) := by
+    rw [integral_congr_ae (Filter.Eventually.of_forall hcongr),
+      integral_indicator (hmeas.preimage e.symm.measurable)]
+  rw [h1, hpre]
+  rw [setIntegral_prod (fun p : ℝ × (Fin m → ℝ) => f (e.symm p)) hint]
+  refine integral_congr_ae ?_
+  filter_upwards with x₀
+  refine integral_congr_ae ?_
+  filter_upwards with x'
+  rw [hsymm]
+
+/-- **Two-coordinate box-Fubini for the orthant, Bochner form.**  Iterating `integral_Iic_cons`
+peels off coordinates `0` and `1` of the signed integrand, leaving the `(m-2)`-fold orthant
+integral; the slice integrability is the one extra hypothesis (`hf'`) beyond `IntegrableOn f`. -/
+theorem integral_Iic_cons₂ {m : ℕ} (b : Fin (m + 2) → ℝ)
+    (f : (Fin (m + 2) → ℝ) → ℝ) (hf : IntegrableOn f (Set.Iic b) volume)
+    (hf' : ∀ x₀ : ℝ, IntegrableOn
+      (fun x' : Fin (m + 1) → ℝ => f (Fin.cons (α := fun _ : Fin (m + 2) => ℝ) x₀ x'))
+      (Set.Iic (fun j : Fin (m + 1) => b j.succ)) volume) :
+    ∫ x in Set.Iic b, f x
+      = ∫ x₀ in Set.Iic (b 0), ∫ x₁ in Set.Iic (b 1),
+          ∫ x'' in Set.Iic (fun j : Fin m => b j.succ.succ),
+            f (Fin.cons x₀ (Fin.cons x₁ x'')) := by
+  rw [integral_Iic_cons b f hf]
+  refine integral_congr_ae ?_
+  filter_upwards with x₀
+  rw [integral_Iic_cons (fun j : Fin (m + 1) => b j.succ)
+    (fun x' => f (Fin.cons (α := fun _ : Fin (m + 2) => ℝ) x₀ x')) (hf' x₀)]
+  refine integral_congr_ae ?_
+  filter_upwards with x₁
+  refine integral_congr_ae ?_
+  filter_upwards with x''
+  congr 2
+
 end LatticeProb
 
 #print axioms LatticeProb.lintegral_Iic_cons
 #print axioms LatticeProb.lintegral_Iic_cons₂
+#print axioms LatticeProb.integral_Iic_cons
+#print axioms LatticeProb.integral_Iic_cons₂
 #print axioms LatticeProb.integral_integral_mixed_deriv
 #print axioms LatticeProb.integral_Iic_deriv_eq_of_tendsto
