@@ -485,3 +485,12 @@ library.
 #print axioms LatticeProb.mvbe_small_angle_corollary
 #print axioms LatticeProb.mvbeMollify_exists
 #print axioms LatticeProb.mvbeMollify_exists_euclidean
+
+/-! ### Multivariate Berry–Esseen, orthant route: Lemma 2.7 -/
+
+#print axioms LatticeProb.mvbe_smoothing_large_angle
+#print axioms LatticeProb.mvbe_keyLemma
+#print axioms LatticeProb.mvbe_keyLemma_gammaStar
+#print axioms LatticeProb.mvbe_smooth_small_angle_outer
+#print axioms LatticeProb.mvbe_smooth_small_angle_inner
+#print axioms LatticeProb.mvbe_keyLemma_proved

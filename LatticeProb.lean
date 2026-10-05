@@ -514,3 +514,6 @@ import LatticeProb.Prob.MvbeLemma26
 import LatticeProb.Prob.MvbeLargeAngle
 import LatticeProb.Prob.MvbeSmallAngle
 import LatticeProb.Prob.MvbeMollify
+import LatticeProb.Prob.MvbeKeyLemma
+import LatticeProb.Prob.MvbeSmoothSmallAngle
+import LatticeProb.Prob.MvbeKeyLemmaProved
