@@ -279,8 +279,8 @@ the field with zero boundary values on a finite set `C` as
   splits into two boxes, has a volume-normalised mean that converges along the
   cubes `[0, n)^d`.
 * **Erratum (anchored-box maximal/limsup).**  `LatticeProb.AnchoredBoxLimsupBound`
-  (`LatticeProb/Prob/AkcogluKrengelAE/AnchoredBoxMean.lean:230`) and
-  `LatticeProb.AnchoredBoxMaximal` (`same file`) are **false as stated**: the former carries only
+  and `LatticeProb.AnchoredBoxMaximal`, both declared in
+  `LatticeProb/Prob/AkcogluKrengelAE/AnchoredBoxMean.lean`, are **false as stated**: the former carries only
   mult-additivity, so the identity action qualifies while the box averages need not converge; the
   latter's box cardinality `∏ᵢ ⌈N cᵢ⌉` equals `N^d ∏ᵢ cᵢ` only asymptotically, so the box average
   of a constant is not `∏ᵢ cᵢ`, and restricting to `N ≥ 1` does not repair it.  All three are
