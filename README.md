@@ -278,6 +278,16 @@ the field with zero boundary values on a finite set `C` as
   the lattice, bounded by a multiple of the volume, and subadditive when a box
   splits into two boxes, has a volume-normalised mean that converges along the
   cubes `[0, n)^d`.
+* **Erratum (anchored-box maximal/limsup).**  `LatticeProb.AnchoredBoxLimsupBound`
+  (`LatticeProb/Prob/AkcogluKrengelAE/AnchoredBoxMean.lean:230`) and
+  `LatticeProb.AnchoredBoxMaximal` (`same file`) are **false as stated**: the former carries only
+  mult-additivity, so the identity action qualifies while the box averages need not converge; the
+  latter's box cardinality `∏ᵢ ⌈N cᵢ⌉` equals `N^d ∏ᵢ cᵢ` only asymptotically, so the box average
+  of a constant is not `∏ᵢ cᵢ`, and restricting to `N ≥ 1` does not repair it.  All three are
+  refuted by formalised counterexamples — `LatticeProb.not_anchoredBoxLimsupBound`,
+  `LatticeProb.not_anchoredBoxMaximal`, `LatticeProb.not_anchoredBoxMaximal_ge_one` — so the
+  conditional results that assume `AnchoredBoxMaximal` are vacuous.  The statement is declared
+  once (`AnchoredBoxMean.lean`); `AnchoredBoxMaximal.lean` imports it.
 * `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
   measure-preserving transformation of a standard Borel probability space.
 * `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;

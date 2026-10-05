@@ -371,3 +371,7 @@ library.
 #print axioms LatticeProb.Sobolev.mollifierFourierTendsto
 #print axioms LatticeProb.Sobolev.exists_isTestFn_eqOn_one
 #print axioms LatticeProb.Sobolev.exists_isTestFn_eqOn_one'
+
+#print axioms LatticeProb.not_anchoredBoxLimsupBound
+#print axioms LatticeProb.not_anchoredBoxMaximal
+#print axioms LatticeProb.not_anchoredBoxMaximal_ge_one

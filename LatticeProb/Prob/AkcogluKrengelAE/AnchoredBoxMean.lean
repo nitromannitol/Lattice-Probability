@@ -23,8 +23,16 @@ noncomputable def anchoredBoxAvgMean (h : Ω → ℝ) (τ : Site d → Ω → Ω
     (ω : Ω) : ℝ :=
   (N : ℝ) ^ (-(d : ℝ)) * ∑ x ∈ anchoredBox c N, h (τ x ω)
 
-/-- **The anchored-box `Lᵖ` maximal inequality.**  For `c ≥ 0` and `p > 1`, the sup over `N` of the
-deviation of the box average from the mean is controlled in `Lᵖ` by `‖h - ∫h‖_p`. -/
+/-- **The anchored-box `Lᵖ` maximal inequality — FALSE as stated.**  For `c ≥ 0` and `p > 1`,
+the sup over `N` of the deviation of the box average from the mean is controlled in `Lᵖ` by
+`‖h - ∫h‖_p`.
+
+**Erratum.**  This `Prop` is false: the box cardinality `∏ᵢ ⌈N cᵢ⌉` equals `N^d ∏ᵢ cᵢ` only
+asymptotically, so the box average of a constant is not `∏ᵢ cᵢ`; see `not_anchoredBoxMaximal`
+and, for the `N ≥ 1` repair, `not_anchoredBoxMaximal_ge_one` below.  Consequently every result
+below that takes `AnchoredBoxMaximal` as a hypothesis is vacuous.  This is the **single**
+declaration of the `Prop`: the former duplicate in `AnchoredBoxMaximal.lean` has been removed
+and that module now imports this one. -/
 def AnchoredBoxMaximal (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
   (∀ i, 0 ≤ c i) →
   ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
@@ -85,7 +93,10 @@ def AnchoredBoxDensityUpgrade (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
 /-- **The pair-to-anchored-box reduction.**  With the `Lᵖ` maximal inequality `AnchoredBoxMaximal`
 (the library's `KrengelLpBall` dominates it), the `Lᵖ` box mean theorem `AnchoredBoxMean` and the
 dense/`limsup` upgrade `AnchoredBoxDensityUpgrade`, the library's `AnchoredBoxErgodic` holds.  The
-upgrade is the only place the density/`limsup` argument is used. -/
+upgrade is the only place the density/`limsup` argument is used.
+
+Vacuous: the hypothesis `Hmax` is false as stated (see the erratum on `AnchoredBoxMaximal`),
+so this reduction cannot be instantiated. -/
 theorem AnchoredBoxErgodic_of_MaximalMean
     (Hmax : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMaximal d c p)
     (_Hmean : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMean d c p)
