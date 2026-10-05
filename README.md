@@ -379,11 +379,13 @@ the field with zero boundary values on a finite set `C` as
 
 **Multivariate Berry–Esseen, orthant route (Raič, *Bernoulli* 25 (2019), Thm 1.3).**
 Raič's Theorem 1.3 is proved here (`mvbe_thmR`) for regular classes of rounded orthants and their linear
-images.  The comparison of the frozen `Sandpile.External.MultivariateBerryEsseen` is proved with the
-dimension factor `m` unconditionally (`mvbe_frozenShape_linear_unconditional`), and with the frozen factor
-`m^{1/4}` conditionally on one named proposition, the Gaussian perimeter bound `MvbeOrthantPerimeterQuarter`
-(Raič's Theorem 1.2, which needs the coarea formula and is cited, not proved); the frozen statement itself is
-untouched.
+images, and so is the comparison of the frozen `Sandpile.External.MultivariateBerryEsseen`
+(`mvbe_frozenQuarter_unconditional`, with the frozen factor `m^{1/4}`; with the factor `m`:
+`mvbe_frozenShape_linear_unconditional`).  The one input that Raič takes from his Theorem 1.2, the Gaussian
+perimeter bound `MvbeOrthantPerimeterQuarter` for the rounded orthants, is proved too
+(`mvbe_orthantPerimeterQuarter_proved`), by an elementary argument that avoids the coarea formula:
+the exact Stein-type identity `s f_N(s) = E[V; N > s]` for the distance `N` to the orthant, a tilted
+Cauchy-Schwarz chain, and a two-regime estimate, giving the true order `O(1 + √log m)`.
 
 * `LatticeProb.MvbeRegularClass`, `LatticeProb.mvbeRoundedRegularClass`: Raič's assumptions
   (A1)–(A8) as a structure, and the class of rounded orthants `{ρ_h ≤ s}` as a regular
@@ -425,7 +427,14 @@ untouched.
   `mvbeRoundedRegularClass_gammaStar_le`.  `LatticeProb.mvbe_frozenQuarter_of_perimeter` gives the
   frozen `m^{1/4}` statement itself from one named proposition, `MvbeOrthantPerimeterQuarter`
   (`γ*` of the rounded orthants is `O(m^{1/4})`, a consequence of Raič's Theorem 1.2, which needs
-  the coarea formula and is cited rather than proved).
+  the coarea formula; it is now proved, see below).
+* `LatticeProb.mvbe_orthantPerimeterQuarter_proved`, `LatticeProb.mvbe_frozenQuarter_unconditional`:
+  the Gaussian perimeter of the rounded orthants is `O(m^{1/4})` (indeed `O(1 + √log m)`), hence the
+  multivariate Berry–Esseen comparison for orthants holds exactly as frozen, with the factor `m^{1/4}`.
+  The pieces: `perim_stdGaussian_inner_layer_le` (the max-coordinate layer, an exact product formula),
+  `perim_G1`, `perim_G2`, `perim_G3`, `perim_G4` (Stein-type identities on the product Gaussian and the band
+  corollary), `perim_tilt_chain` (tilted Cauchy-Schwarz), `perimR1_rhs_le`, `perimR2_rhs_le` (two regimes),
+  `perimP_psi_bound` and `perimB_quarter` (assembly).
 * `LatticeProb.mvbe_thmR`: **Raič's Theorem 1.3, form (1.4)**, unconditionally and with existential
   absolute constants: for every regular class `C` (assumptions (A1)–(A8), `{ρ_A < 0}` open) of finite
   Gaussian perimeter `γ*`, independent mean-zero summands in `ℝ^d` with identity total covariance and
@@ -894,7 +903,7 @@ determined by finitely many coordinates of an infinite product.
 
 ## Guarantees
 
-- **No `sorry`** in the library.  Each of the seven Mathlib-only comparator
+- **No `sorry`** in the library.  Each of the eight Mathlib-only comparator
   challenges under `LatticeProbAudit/` contains its single intentional
   statement-level `sorry`, which the corresponding solution file proves.
   `python3 tools/check_warnings.py` checks that the build of `LatticeProb`
@@ -906,10 +915,10 @@ determined by finitely many coordinates of an infinite product.
   [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
   prints the axioms of the principal theorems.  The results cited from the
   literature are hypotheses, not axioms.
-- **Independent check of the statements.** Seven principal theorems are
+- **Independent check of the statements.** Eight principal theorems are
   restated using only Mathlib, with no library definitions, in the `Challenge.lean` files of
   [`LatticeProbAudit/`](LatticeProbAudit/): `Kingman`, `GFF`, `BinomialLocalCLT`, `NormalComparison`,
-  `BerryEsseen`, `PittGaussianFKG` and `MultivariateBerryEsseen`.
+  `BerryEsseen`, `PittGaussianFKG`, `MultivariateBerryEsseen` and `MultivariateBerryEsseenQuarter`.
   The comparator workflow submits each challenge and its solution to
   [leanprover/comparator](https://github.com/leanprover/comparator), which
   checks that the two statements have identical elaborated types and that the
@@ -924,14 +933,14 @@ determined by finitely many coordinates of an infinite product.
   `023ce7d62a05` and Cli `88679d088c97`.  The dependent repositories use the
   same pin.
 
-The seven pairs are `Kingman` (the subadditive ergodic theorem, both halves),
+The eight pairs are `Kingman` (the subadditive ergodic theorem, both halves),
 `GFF` (the killed Green function is positive semidefinite and is the
 covariance of a centred Gaussian measure, with the killed Green function
 rebuilt from Mathlib primitives) and `BinomialLocalCLT` (the binomial local
 central limit theorem with its `1/m` error), `NormalComparison` (the Li-Shao normal comparison inequality for the
 orthant), `BerryEsseen` (the one-dimensional Berry-Esseen theorem for independent non-identical summands),
 `PittGaussianFKG` (Pitt's Gaussian association theorem for Gaussian families) and `MultivariateBerryEsseen`
-(the multivariate Berry-Esseen comparison for orthants with the factor `m`).  Each challenge contains one
+(the multivariate Berry-Esseen comparison for orthants with the factor `m`) and `MultivariateBerryEsseenQuarter` (the same with the frozen factor `m^{1/4}`).  Each challenge contains one
 intentional statement-level `sorry`, which the corresponding `Solution.lean`
 fills from the library.  The configurations
 `LatticeProbAudit/*/comparator.json` are for

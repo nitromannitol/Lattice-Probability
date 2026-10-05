@@ -184,8 +184,10 @@ theorem mvbe_frozenShape_linear (hR : MvbeThmR) :
 
 /-! ### T3: the frozen statement with `m ^ (1/4)`, conditional on the perimeter bound -/
 
-/-- **The `m^{1/4}` Gaussian perimeter bound for the rounded-orthant class (a cited analytic
-input: a `Prop` carried as a hypothesis, never a global assumption).**  There is an absolute
+/-- **The `m^{1/4}` Gaussian perimeter bound for the rounded-orthant class.**  (Originally a cited
+analytic input carried as a hypothesis; it is now PROVED, as `mvbe_orthantPerimeterQuarter_proved` in
+`MvbeOrthantPerimeterProved.lean`, by an elementary coarea-free argument, so the hypothesis of
+`mvbe_frozenQuarter_of_perimeter` is discharged there.)  There is an absolute
 constant `c` with `γ*(rounded orthants in ℝ^m) ≤ c m^{1/4}` for the standard Gaussian `γ`.
 
 This follows from Raic, Bernoulli 25 (2019), Theorem 1.2 (arXiv:1802.06475, (1.3)): the Gaussian

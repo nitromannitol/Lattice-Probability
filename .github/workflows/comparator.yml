@@ -1,6 +1,6 @@
 name: Comparator audit
 
-# Runs the official leanprover/comparator on the seven pairs under
+# Runs the official leanprover/comparator on the eight pairs under
 # LatticeProbAudit/: for each pair it checks that Solution proves a
 # statement whose full dependency closure matches Challenge's, uses only the
 # permitted axioms, and is accepted by BOTH the Lean kernel (replay) and the
@@ -102,7 +102,7 @@ jobs:
           git -C ~/tools/nanoda_lib checkout "$NANODA_REV"
           cd ~/tools/nanoda_lib && cargo +stable build --release
 
-      - name: Run the comparator on all seven pairs
+      - name: Run the comparator on all eight pairs
         env:
           COMPARATOR_LANDRUN: /home/runner/tools/bin/landrun
           COMPARATOR_LEAN4EXPORT: /home/runner/tools/lean4export/.lake/build/bin/lean4export
@@ -110,7 +110,7 @@ jobs:
         run: |
           set -euo pipefail
           fail=0
-          for X in Kingman GFF BinomialLocalCLT NormalComparison BerryEsseen PittGaussianFKG MultivariateBerryEsseen; do
+          for X in Kingman GFF BinomialLocalCLT NormalComparison BerryEsseen PittGaussianFKG MultivariateBerryEsseen MultivariateBerryEsseenQuarter; do
             echo "::group::$X"
             if lake env ~/tools/comparator/.lake/build/bin/comparator "LatticeProbAudit/$X/comparator.json" \
                  | tee "/tmp/comparator-$X.log" \

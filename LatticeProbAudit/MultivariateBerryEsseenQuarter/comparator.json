@@ -1,0 +1,14 @@
+{
+  "challenge_module": "LatticeProbAudit.MultivariateBerryEsseenQuarter.Challenge",
+  "solution_module": "LatticeProbAudit.MultivariateBerryEsseenQuarter.Solution",
+  "theorem_names": [
+    "LatticeProbAudit.multivariate_berry_esseen_quarter"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": true
+}

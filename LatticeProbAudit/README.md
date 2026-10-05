@@ -1,6 +1,6 @@
 # LatticeProbAudit Comparator Surface
 
-This directory contains Mathlib-only comparator challenges for seven principal
+This directory contains Mathlib-only comparator challenges for eight principal
 theorems of the library.  The modules live under the root `LatticeProbAudit`
 (the Lake library of that name), so that they cannot collide with the audit
 modules of a repository that requires this library.  Each comparator lives in
@@ -15,6 +15,7 @@ its own subdirectory:
 | `BerryEsseen/` | the one-dimensional Berry-Esseen theorem for independent non-identical summands | `LatticeProbAudit.berry_esseen_one_dim` | `LatticeProb.berryEsseen_oneDim` |
 | `PittGaussianFKG/` | Pitt's Gaussian association theorem: centred Gaussian families with nonnegative covariances are positively associated | `LatticeProbAudit.pitt_gaussian_fkg` | `LatticeProb.pitt_gaussian_fkg` |
 | `MultivariateBerryEsseen/` | the multivariate Berry-Esseen comparison for orthants, with the dimension factor `m` | `LatticeProbAudit.multivariate_berry_esseen_orthant` | `LatticeProb.mvbe_frozenShape_linear_unconditional` |
+| `MultivariateBerryEsseenQuarter/` | the same comparison with the frozen factor `m^{1/4}` (the frozen `Sandpile.External.MultivariateBerryEsseen`) | `LatticeProbAudit.multivariate_berry_esseen_quarter` | `LatticeProb.mvbe_frozenQuarter_unconditional` |
 
 Each `Challenge.lean` imports only `Mathlib`, rebuilds from scratch every
 definition needed to read the theorem, states the theorem, and ends with one
@@ -23,7 +24,7 @@ of a pair and how the solutions are glued to the library.
 
 ## What Is Checked
 
-None of the seven theorems rests on a cited result, so no challenge carries a
+None of the eight theorems rests on a cited result, so no challenge carries a
 hypothesis beyond the mathematical ones.
 
 - **`Kingman`**: let `T` preserve a finite measure `μ`, and let `g n` be
@@ -62,6 +63,8 @@ hypothesis beyond the mathematical ones.
   `[(1-δ)|v|², (1+δ)|v|²]`, the law of `(∑ᵢ aᵢⱼ ξᵢ)ⱼ` (i.i.d. `ξᵢ ~ ν`) and `N(0, Σ)` differ on every
   orthant `{y_j ≤ h_j}` by at most `C m Var(ν)^{3/2} ∑ᵢ |aᵢ|³`.  The covariance matrix, the
   quadratic form and the coefficient norm are written out; no definition is needed.
+- **`MultivariateBerryEsseenQuarter`**: the same statement with the factor `C m^{1/4}` in place of `C m`.  It is
+  the frozen multivariate Berry-Esseen comparison of the Sandpile development, proved without a cited input.
 
 ## Definition Provenance
 
@@ -138,11 +141,11 @@ tool revisions are pinned in
 listed in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  A pass is the output
 `Your solution is okay!`.
 
-**Status.**  All seven solutions build.  `leanprover/comparator` at commit
+**Status.**  All eight solutions build.  `leanprover/comparator` at commit
 `575674928e239f5bc452aab72d1dd7b0f1326494`, with nanoda at
 `6ae1f0cd962f081f6c423454c5da729d841236a7` and landrun at
 `811cfff51ceaf3d9843708aa6d22e9b84ccac8b4`, printed `Your solution is okay!`
-on all seven pairs with the nanoda kernel enabled.  Results and the
+on all eight pairs with the nanoda kernel enabled.  Results and the
 reproduction command are in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  The
 workflow [`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml)
 runs the same check on request, since the builds are Mathlib-scale and Actions

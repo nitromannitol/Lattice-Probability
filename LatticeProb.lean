@@ -579,3 +579,12 @@ import LatticeProb.Prob.PittNondegenerate
 import LatticeProb.Prob.PittDegenerate
 import LatticeProb.Prob.PittGlue
 import LatticeProb.Prob.PittFinal
+import LatticeProb.Prob.PerimInner
+import LatticeProb.Prob.PerimCoord
+import LatticeProb.Prob.PerimTilt
+import LatticeProb.Prob.PerimStein
+import LatticeProb.Prob.PerimRegimeI
+import LatticeProb.Prob.PerimRegimeII
+import LatticeProb.Prob.PerimPsi
+import LatticeProb.Prob.PerimBand
+import LatticeProb.Prob.MvbeOrthantPerimeterProved
