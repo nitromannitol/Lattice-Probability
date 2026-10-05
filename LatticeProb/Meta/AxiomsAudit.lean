@@ -359,6 +359,7 @@ library.
 #print axioms LatticeProb.Sobolev.fourier_sub_lift
 #print axioms LatticeProb.Sobolev.norm_fourierChar_sub_one_le
 #print axioms LatticeProb.Sobolev.norm_fourierChar_sub_one_le_two
+#print axioms LatticeProb.Sobolev.sobolevNormSq_translate_sub_le
 #print axioms LatticeProb.Sobolev.fourier_translate_sub_lift
 #print axioms LatticeProb.Sobolev.bandLimitedPrecompact_of_frechetKolmogorov
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_bandLimitedPrecompact
