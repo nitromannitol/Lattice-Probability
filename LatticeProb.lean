@@ -332,6 +332,7 @@ import LatticeProb.Analysis.Sobolev.TranslationQuant
 import LatticeProb.Analysis.Sobolev.SobolevTranslate
 import LatticeProb.Analysis.Sobolev.ConvolutionStructure
 import LatticeProb.Analysis.Sobolev.SobolevConvolution
+import LatticeProb.Analysis.Sobolev.DualityBound
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorov
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
 import LatticeProb.Analysis.Sobolev.Truncation
