@@ -280,8 +280,6 @@ library.
 
 #print axioms LatticeProb.Sobolev.rkLowFrequencyStatement_of_rkLowFreqNet
 #print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_lowfreqNet
-#print axioms LatticeProb.Sobolev.rkLowFreqNet_of_truncation_and_supportRepair
-#print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_truncation_and_supportRepair
 #print axioms LatticeProb.Sobolev.fourier_bandTrunc
 #print axioms LatticeProb.Sobolev.fourier_bandTrunc_eq_zero
 #print axioms LatticeProb.Sobolev.fourier_realToComplexSchwartz
@@ -335,5 +333,7 @@ library.
 
 #print axioms LatticeProb.Sobolev.rkLowFreqNet_of_truncation_and_supportRepair
 #print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_truncation_and_supportRepair
+#print axioms LatticeProb.Sobolev.bandLimitedTestFnApproxOnDomain_of_approx
+#print axioms LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
 #print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc

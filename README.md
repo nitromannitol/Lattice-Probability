@@ -60,11 +60,7 @@ band-limitedness of its output are built (`FrequencyTruncation.lean`), and the
 remaining low-frequency compactness step is
 isolated as `LatticeProb.Sobolev.rkLowFreqNet`, whose consumer
 `rellichKondrachovNegSobolev_of_lowfreqNet` reduces the cited embedding to it
-(`Analysis/Sobolev/RellichLowFreqNet.lean`).  The glue
-`rkLowFreqNet_of_truncation_and_supportRepair`
-(`Analysis/Sobolev/RellichLowFreqGlue.lean`) reduces `rkLowFreqNet` to the single input
-`BandLimitedTestFnApprox`, the truncation identity being the registered lemma
-`sobolevNormSq_sub_bandProj_le`.  The earlier `C^m`-net formulation of
+(`Analysis/Sobolev/RellichLowFreqNet.lean`).  The earlier `C^m`-net formulation of
 that step (`rkBandLimitedCmNet`) is false as stated — the `H^s` unit ball is not
 `C^m`-bounded for `s < m` — and is not used.  The band-limited Bernstein bounds
 that feed the net are proved for the low-frequency projections: the uniform
