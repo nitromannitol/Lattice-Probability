@@ -20,18 +20,18 @@ the library namespace.
 
 ## What is *not* landed (the named missing inputs of the route)
 
-* `multivariateGaussian_eq_withDensity` (route item 1): the density of `N(0, S)`
-  for a general positive definite `S`.  Mathlib has `multivariateGaussian` only
-  as the pushforward `(stdGaussian).map (√S ·)`; the change-of-variables
-  computation of the density is the remaining analytic input.
+* `multivariateGaussian_eq_withDensity` (route item 1): **landed** in
+  `LatticeProb/Gauss/MultivariateDensity.lean`; the obligation recorded below as
+  `multivariateGaussianDensityFormula` is now discharged by
+  `multivariateGaussianDensityFormula_holds`.
 * `hasDerivAt_orthant_multivariateGaussian` (item 3): differentiating the orthant
   probability in the covariance.
 * `orthant_deriv_eq_boundaryIntegral` / `boundaryIntegral_le_bivariateDensity`
   (items 4--5): the double integration by parts and the conditional factorisation.
 
-With items 1, 3, 4 and 5, the interpolation `∫_0^1 deriv F t dt`, the two real
+With items 3, 4 and 5, the interpolation `∫_0^1 deriv F t dt`, the two real
 inequalities proved here, and the scale integral `≤ π/2` also proved here, closes
-the Li--Shao bound.
+the Li--Shao bound; item 1 is no longer among the missing inputs.
 -/
 import LatticeProb.Gauss.MultivariateDensity
 import LatticeProb.Prob.GaussDensity
@@ -233,9 +233,10 @@ theorem integral_one_sub_sq_rpow_neg_half_le {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r 
 
 /-! ### The remaining quantitative input, recorded as a named `Prop`
 
-This is the declaration the Li--Shao route still needs (route item 1).  It is a
-statement, not a proof: a `def : Prop`, so the file stays sorry-free while making
-the remaining obligation precise. -/
+Route item 1, the density of a nondegenerate centred multivariate Gaussian.  It is
+proved in `LatticeProb/Gauss/MultivariateDensity.lean` as
+`multivariateGaussian_eq_withDensity`, and the recorded obligation is discharged by
+`multivariateGaussianDensityFormula_holds` below. -/
 
 /-- **Route item 1 (the density).**  The density of a nondegenerate centred
 multivariate Gaussian `N(0, S)` on `EuclideanSpace ℝ (Fin n)`. -/
@@ -246,4 +247,12 @@ def multivariateGaussianDensityFormula : Prop :=
           ((2 * Real.pi) ^ (-(n : ℝ) / 2) * (S.det) ^ (-(1 : ℝ) / 2) *
             Real.exp (-(x ⬝ᵥ (S⁻¹ *ᵥ x)) / 2))
 
+/-- **Route item 1 is proved.**  The density of `N(0, S)` for a positive definite `S`, from
+`LatticeProb.multivariateGaussian_eq_withDensity`. -/
+theorem multivariateGaussianDensityFormula_holds :
+    multivariateGaussianDensityFormula :=
+  fun _n _S hS => multivariateGaussian_eq_withDensity _S hS
+
 end LatticeProb
+
+#print axioms LatticeProb.multivariateGaussianDensityFormula_holds
