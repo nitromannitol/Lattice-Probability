@@ -320,6 +320,14 @@ library.
 #print axioms LatticeProb.Percolation.card_double_square_le_cube
 #print axioms LatticeProb.Percolation.walkBottleneck_append
 #print axioms LatticeProb.Percolation.finiteMaximum_mem
+#print axioms LatticeProb.Percolation.thinLSS_capstone
+#print axioms LatticeProb.Percolation.thinLSS_capstone_consumer
+#print axioms LatticeProb.Percolation.thinLSS_capstone_iff_consumer
+#print axioms LatticeProb.Percolation.exists_thinPlanar_of_dense
+#print axioms LatticeProb.Percolation.thinPlanar_of_dense
+#print axioms LatticeProb.Percolation.libraryThinShape_iff_frozen
+#print axioms LatticeProb.Percolation.rotorThin_discharge
+#print axioms LatticeProb.Percolation.rotorThin_discharge_witness
 
 /-! ### Total variation distance -/
 

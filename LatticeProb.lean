@@ -439,6 +439,7 @@ import LatticeProb.Prob.Percolation.FiniteProductPivotal
 import LatticeProb.Prob.Percolation.BondPercolation
 import LatticeProb.Prob.Percolation.Crossing
 import LatticeProb.Prob.Percolation.RSW
+import LatticeProb.Prob.Percolation.LSSThinDischarge
 import LatticeProb.Prob.TotalVariation
 import LatticeProb.Graph.EulerianPath
 import LatticeProb.Graph.CyclicRank

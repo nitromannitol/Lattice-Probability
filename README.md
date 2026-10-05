@@ -600,6 +600,15 @@ argument.
   the bottleneck of a concatenated walk is the minimum of the two pieces'
   bottlenecks; `LatticeProb.Percolation.finiteMaximum_mem`: a finite maximum
   over a nonempty index set is attained.
+* `LatticeProb.Percolation.thinLSS_capstone`,
+  `LatticeProb.Percolation.libraryThinShape_iff_frozen` and
+  `LatticeProb.Percolation.rotorThin_discharge`: the conditional discharge of the
+  frozen thin-domination statement for `2`-dependent planar percolation — from the
+  dense lower bound `DenseSevenEighths p` (`p < 1`) there is `ε > 0` such that every
+  `2`-dependent planar field with one-site probability at most `2ε` satisfies the thin
+  domination bound on increasing events; `rotorThin_discharge_witness` makes the
+  threshold `(1 - p) / 2` explicit (`Prob/Percolation/LSSThinDischarge.lean` and its
+  chain).
 
 **Total variation distance.**  `LatticeProb.pi_one_coord_le`: changing the
 law of one coordinate of a finite product changes the probability of any
