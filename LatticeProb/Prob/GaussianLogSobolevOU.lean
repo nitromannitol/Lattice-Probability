@@ -78,8 +78,6 @@ theorem ouSemigroup_const_mul (t c : ℝ) (f : ℝ → ℝ) :
   funext x
   simp only [ouSemigroup]
   rw [← integral_const_mul]
-  refine integral_congr_ae (Filter.Eventually.of_forall fun z => ?_)
-  ring
 
 /-- **The Mehler semigroup preserves the constant `1`** (probability-kernel normalisation). -/
 theorem ouSemigroup_one (t : ℝ) : ouSemigroup t (fun _ => (1 : ℝ)) = fun _ => 1 :=
