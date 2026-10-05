@@ -408,6 +408,13 @@ not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` 
 * `LatticeProb.mvbeMollify_exists_euclidean`: mollification of a `C¹` function with `L`-Lipschitz
   gradient into a smooth `g` with `‖D²g‖ ≤ L`, `|g − f| ≤ L η²`, and `D²g = 0` where `f` is locally
   constant (replaces Rademacher's theorem in the proof of Lemma 2.7).
+* `LatticeProb.mvbe_keyLemma_proved`: **Raič's Lemma 2.7.** For a regular class with `{ρ_A < 0}`
+  open and finite Gaussian perimeter `γ*`, a member `A`, `ε > 0`, `f ∈ {f_A^{ε}, f_A^{-ε}}`, and a
+  random vector `W` that is `D`-close to `N(μ, S)` on the class (`σ I ≤ S^{1/2}`, `σ ≤ 1`), there is
+  a measurable majorant `b` of `|E⟨∇³U_a f(W), u^{⊗3}⟩|` (uniformly in `‖u‖ ≤ 1`) with
+  `∫_0^{π/2} b(a) tan a da ≤ c₃/(6σ³) + √(2(1+κ)c₁c₃) (γ*/σ + 4D/ε)`.  Assembled from
+  `mvbe_smooth_small_angle_outer` / `_inner` (the small-angle estimate (2.17) for the Bentkus
+  smoothing, by mollification), `mvbe_smoothing_large_angle`, and `mvbe_keyEstimate_optimised`.
 * `LatticeProb.mvbe_polarization`, `LatticeProb.mvbe_stein_expectation`: polarisation of
   symmetric trilinear forms with constant `9/2`, and Götze's identity (Raič Lemma 2.4)
   for `E[Δg(W) − ⟨∇g(W), W⟩]` of a sum of independent mean-zero vectors with identity
