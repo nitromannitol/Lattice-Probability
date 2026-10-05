@@ -158,6 +158,7 @@ import LatticeProb.Prob.BernsteinInduction
 import LatticeProb.Prob.PinelisReduction
 import LatticeProb.Prob.BernsteinSteps
 import LatticeProb.Prob.BernsteinCrossTerm
+import LatticeProb.Prob.BernsteinCrossTermBound
 import LatticeProb.Prob.PinelisInductionStepFalse
 import LatticeProb.Prob.IsNormalConcentration
 import LatticeProb.Prob.AeFatouLimit
@@ -326,6 +327,7 @@ import LatticeProb.Analysis.Sobolev.FejerLimit
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
 import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNetSteps
+import LatticeProb.Analysis.Sobolev.RellichLowFreqNetProof
 import LatticeProb.Analysis.Sobolev.TestFnApprox
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
 import LatticeProb.Analysis.Sobolev.FejerSideCondition
