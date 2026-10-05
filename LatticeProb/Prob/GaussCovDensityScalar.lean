@@ -19,7 +19,7 @@ exponent `x ⬝ᵥ (v⁻¹ • 1 *ᵥ x) = v⁻¹ * ∑ (x i)^2`.  The orthant s
 -/
 import Mathlib
 import LatticeProb.Prob.GaussCovDensityOrthantLink
-import LatticeProb.Prob.GaussCovDensityIntegrable
+import LatticeProb.Prob.NormalComparisonBoundaryIntegral
 
 open MeasureTheory ProbabilityTheory Matrix
 open scoped NNReal

@@ -11,7 +11,7 @@ This file assembles the general-coordinate mixed-derivative orthant integral
 `LatticeProb.exists_perm_integral_Iic_mixed_deriv`
 (`LatticeProb/Prob/NormalComparisonOrthantPair.lean`) with the one-variable differentiation and
 decay lemmas of `LatticeProb/Prob/GaussCovDensityPartials.lean` and the global integrability of
-`LatticeProb/Prob/GaussCovDensityIntegrable.lean`.
+`LatticeProb/Prob/NormalComparisonBoundaryIntegral.lean`.
 
 ## Route
 
@@ -32,7 +32,7 @@ nonnegative because `covDensity S` is positive (`covDensity_pos`).
 import Mathlib
 import LatticeProb.Prob.GaussCovDensity
 import LatticeProb.Prob.GaussCovDensityPartials
-import LatticeProb.Prob.GaussCovDensityIntegrable
+import LatticeProb.Prob.NormalComparisonBoundaryIntegral
 import LatticeProb.Prob.NormalComparisonOrthantPair
 
 open MeasureTheory Matrix

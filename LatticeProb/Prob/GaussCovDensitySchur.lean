@@ -6,7 +6,7 @@ integral `D = ∫_{x'' ≤ b''} p(b_i, b_j, x'') dx''` of the Gaussian density `
 the density of the pair `(Y_i, Y_j)` at `(b_i, b_j)`.  Instead of marginal measures, this file
 proves the *conditional factorisation* of the density by a Schur complement, and then the
 marginalisation by the normalisation `∫ covDensity = 1`
-(`LatticeProb.integral_covDensity`, `LatticeProb/Prob/GaussCovDensityIntegrable.lean`).
+(`LatticeProb.integral_covDensity`, `LatticeProb/Prob/NormalComparisonBoundaryIntegral.lean`).
 
 Setting.  `covDensityOn S x = (2π)^{-|ι|/2} (det S)^{-1/2} exp (-(x ⬝ᵥ S⁻¹ *ᵥ x)/2)` is the density
 of `N(0, S)` on an arbitrary finite index type `ι` (for `ι = Fin n` it is `covDensity S`).
@@ -28,7 +28,7 @@ Route.
    type `κ` along `MeasurableEquiv.piCongrLeft` (volume preserving).
 -/
 import Mathlib
-import LatticeProb.Prob.GaussCovDensityIntegrable
+import LatticeProb.Prob.NormalComparisonBoundaryIntegral
 
 open MeasureTheory Matrix
 

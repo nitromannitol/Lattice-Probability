@@ -103,7 +103,7 @@ import LatticeProb.Prob.NormalComparisonPath
 import LatticeProb.Prob.GaussCovDensity
 import LatticeProb.Prob.GaussCovDensityPartials
 import LatticeProb.Prob.GaussCovDensityPath
-import LatticeProb.Prob.GaussCovDensityIntegrable
+import LatticeProb.Prob.NormalComparisonBoundaryIntegral
 import LatticeProb.Prob.GaussCovDensityTwo
 import LatticeProb.Prob.GaussCovDensityOrthant
 import LatticeProb.Prob.GaussCovDensityMajorant

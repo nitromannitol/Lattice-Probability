@@ -18,7 +18,7 @@ value on the (measurable) orthant is a set lintegral; `lintegral_orthant_eq` tra
 `integral_eq_lintegral_of_nonneg_ae` with `0 ≤ covDensity S` (`covDensity_pos`).
 -/
 import Mathlib
-import LatticeProb.Prob.GaussCovDensityIntegrable
+import LatticeProb.Prob.NormalComparisonBoundaryIntegral
 import LatticeProb.Prob.NormalComparisonOrthantSigned
 import LatticeProb.Prob.NormalComparisonOrthantDeriv
 

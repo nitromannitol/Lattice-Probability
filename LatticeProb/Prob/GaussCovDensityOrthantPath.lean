@@ -28,7 +28,7 @@ with `p_t = covDensity S_t`.
 import Mathlib
 import LatticeProb.Prob.GaussCovDensityPath
 import LatticeProb.Prob.GaussCovDensityMajorant
-import LatticeProb.Prob.GaussCovDensityIntegrable
+import LatticeProb.Prob.NormalComparisonBoundaryIntegral
 import LatticeProb.Prob.NormalComparisonPath
 
 open MeasureTheory Matrix Topology Filter
