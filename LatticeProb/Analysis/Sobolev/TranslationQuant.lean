@@ -22,7 +22,7 @@ open scoped ENNReal FourierTransform Topology
 namespace LatticeProb.Sobolev
 
 /-- **The quantitative translation bound.** -/
-theorem sobolevNormSq_translate_sub_le {d : ℕ} (s₀ : ℝ) {R : ℝ} (_hR : 0 ≤ R)
+theorem sobolevNormSq_translate_sub_le {d : ℕ} (s₀ : ℝ) {R : ℝ}
     (φ : Space d → ℝ) (hcont : ContDiff ℝ (⊤ : ℕ∞) φ) (hcs : HasCompactSupport φ)
     (h : Space d) (hh : 2 * Real.pi * R * ‖h‖ ≤ 1) :
     sobolevNormSq d s₀ (fun x => φ (x + h) - φ x)
@@ -163,8 +163,8 @@ theorem bandLimitedTranslationContinuous : BandLimitedTranslationContinuous := b
     have h1 : ‖h‖ < 1 / (2 * Real.pi * (R + 1)) := lt_of_lt_of_le hh (min_le_left _ _)
     have h2 : ‖h‖ < Real.sqrt (η / 2) / (4 * Real.pi * (R + 1)) :=
       lt_of_lt_of_le hh (min_le_right _ _)
-    rw [div_lt_iff₀ hden1] at h1
-    rw [div_lt_iff₀ hden2] at h2
+    rw [lt_div_iff₀ hden1] at h1
+    rw [lt_div_iff₀ hden2] at h2
     have hh1 : 2 * Real.pi * R * ‖h‖ ≤ 1 := by
       nlinarith [norm_nonneg h, Real.pi_pos, hR]
     have hh2 : (4 * Real.pi * R * ‖h‖) ^ 2 ≤ η / 2 := by
@@ -183,7 +183,7 @@ theorem bandLimitedTranslationContinuous : BandLimitedTranslationContinuous := b
           sobolevNormSq_translate_sub_le s₀ φ hφ.1 hφ.2.1 h hh1
       _ ≤ ENNReal.ofReal (η / 2) * 1 + 4 * ENNReal.ofReal (η / 8) := by
           refine add_le_add ?_ (mul_le_mul_right htail' 4)
-          exact mul_le_mul (ENNReal.ofReal_le_ofReal hh2) hφnorm (zero_le _) (zero_le _)
+          exact mul_le_mul (ENNReal.ofReal_le_ofReal hh2) hφnorm bot_le bot_le
       _ = ENNReal.ofReal η := by
           rw [mul_one,
             show (4 : ℝ≥0∞) = ENNReal.ofReal 4 from (ENNReal.ofReal_natCast 4).symm,
