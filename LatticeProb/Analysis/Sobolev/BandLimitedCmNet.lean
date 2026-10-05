@@ -57,6 +57,26 @@ theorem exists_uniform_iteratedFDeriv_le {d : ℕ} (Λ : ℝ) (hΛ : 0 < Λ) {s 
     _ ≤ S := hle
     _ ≤ S + 1 := le_add_of_nonneg_right zero_le_one
 
+/-- **The multi-index form.**  The order-`k` operator bound above controls every partial
+derivative of order `k ≤ m`; evaluated on a tuple `v : Fin k → Space d` it gives
+`‖D^k f x (v)‖ ≤ C ∏ i, ‖v i‖`.  This is the form in which a `C^m` bound is read off a family of
+multi-indices. -/
+theorem exists_uniform_iteratedFDeriv_apply_le {d : ℕ} (Λ : ℝ) (hΛ : 0 < Λ) {s : ℝ}
+    (hs : 0 ≤ s) (m : ℕ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ (φ : Space d → ℝ) (hcont : ContDiff ℝ (⊤ : ℕ∞) φ)
+      (hcs : HasCompactSupport φ) (x : Space d),
+      sobolevNormSq d s φ ≤ 1 →
+        ∀ (k : ℕ), k ≤ m → ∀ v : Fin k → Space d,
+          ‖iteratedFDeriv ℝ k
+              (fun y => bandTrunc d Λ hΛ.ne' (realToComplexSchwartz d φ hcont hcs) y)
+              x v‖ ≤ C * ∏ i, ‖v i‖ := by
+  obtain ⟨C, hCpos, hC⟩ := exists_uniform_iteratedFDeriv_le (d := d) Λ hΛ hs m
+  refine ⟨C, hCpos, fun φ hcont hcs x hφ k hk v => ?_⟩
+  exact (ContinuousMultilinearMap.le_opNorm _ v).trans
+    (mul_le_mul_of_nonneg_right (hC φ hcont hcs x hφ k hk)
+      (Finset.prod_nonneg fun i _ => norm_nonneg _))
+
 end LatticeProb.Sobolev
 
 #print axioms LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le
+#print axioms LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_apply_le
