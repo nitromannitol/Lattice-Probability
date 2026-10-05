@@ -42,4 +42,19 @@ theorem exists_isTestFn_eqOn_one {d : ℕ} {D K t : Set (Space d)} (hD : IsDomai
   refine ⟨f, ⟨hcont, hcs, htsupp⟩, hf, fun x hx => ?_⟩
   exact h1.self_of_nhdsSet x hx
 
+/-- **The support cut-off, unconditional.**  For a bounded domain `D` and a compact `K ⊆ D`
+there is a test function `η` on `D` with `η = 1` on `K` and `0 ≤ η ≤ 1` everywhere.  The
+inner open `t` is a thickening of `K` contained in `D`, which exists by
+`IsCompact.exists_cthickening_subset_open`. -/
+theorem exists_isTestFn_eqOn_one' {d : ℕ} {D K : Set (Space d)} (hD : IsDomain D)
+    (hK : IsCompact K) (hKD : K ⊆ D) :
+    ∃ η : Space d → ℝ, IsTestFn D η ∧ (∀ x, η x ∈ Set.Icc (0 : ℝ) 1) ∧
+      EqOn η 1 K := by
+  obtain ⟨δ, hδpos, hδ⟩ := hK.exists_cthickening_subset_open hD.1 hKD
+  refine exists_isTestFn_eqOn_one (t := Metric.thickening δ K) hD hK
+    Metric.isOpen_thickening ?_ ?_
+  · intro x hx
+    exact Metric.mem_thickening_iff.mpr ⟨x, hx, by rw [dist_self]; exact hδpos⟩
+  · exact (Metric.closure_thickening_subset_cthickening δ K).trans hδ
+
 end LatticeProb.Sobolev
