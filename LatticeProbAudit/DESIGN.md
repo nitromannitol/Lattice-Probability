@@ -1,7 +1,7 @@
 # Design of the comparator surface
 
 Each headline theorem has a directory here.  The `GFF` directory has four files and
-the other two have three, because only the `GFF` challenge defines anything beyond
+the others have three, because only the `GFF` challenge defines anything beyond
 Mathlib's.
 
 - `Challenge.lean` imports `Mathlib` and nothing else.  It rebuilds from Mathlib
