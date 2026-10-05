@@ -405,7 +405,8 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   producing the exponential factor, the scale integral `≤ π/2`, and its
   integrated (smart-path) form; `LatticeProb.lintegral_Iic_cons`,
   `LatticeProb.lintegral_Iic_cons₂`, `LatticeProb.integral_Iic_cons`,
-  `LatticeProb.integral_Iic_cons₂`,
+  `LatticeProb.integral_Iic_cons₂`, their tail-outermost mirrors
+  `LatticeProb.lintegral_Iic_cons_last` and `LatticeProb.integral_Iic_cons_last`,
   `LatticeProb.lintegral_orthant_eq` and `LatticeProb.lintegral_orthant_cons`
   (the same orthant box-Fubini transported along the volume-preserving
   `WithLp.toLp 2` to `EuclideanSpace`, the route's setting),
@@ -458,7 +459,11 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   (`LatticeProb.boundary_covDensity_path_le`), and integrating this bound gives the
   interpolation on `[0, T]` for every `T < 1`
   (`LatticeProb.integral_bivariateGaussDensity_Icc_le`,
-  `LatticeProb.orthant_path_interpolation`).  Letting `T → 1` closes the argument:
+  `LatticeProb.orthant_path_interpolation`).  The endpoint is controlled by the two limits
+  `LatticeProb.tendsto_integral_orthant_smartPath` (left-continuity of the orthant integral at
+  `t = 1`) and `LatticeProb.tendsto_normalComparison_remainder` (continuity of the pair-sum bound
+  at `T = 1`), starting from `LatticeProb.integral_orthant_smartPath_zero` (the product of the
+  marginals at `t = 0`).  Letting `T → 1` closes the argument:
   `LatticeProb.normalComparison_bound` is the normal comparison inequality of Li and Shao for the
   orthant, `|P(Y ≤ b) − ∏ᵢ P(Yᵢ ≤ bᵢ)| ≤ (1/4) ∑_{i<j} (S i j / v) exp (−(bᵢ² + bⱼ²) / (2 v (1 +
   S i j / v)))` for a centred Gaussian vector with covariance `S`, common variance `v` and

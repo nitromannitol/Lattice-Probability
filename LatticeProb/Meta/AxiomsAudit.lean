@@ -225,6 +225,8 @@ library.
 #print axioms LatticeProb.lintegral_Iic_cons₂
 #print axioms LatticeProb.integral_Iic_cons
 #print axioms LatticeProb.integral_Iic_cons₂
+#print axioms LatticeProb.lintegral_Iic_cons_last
+#print axioms LatticeProb.integral_Iic_cons_last
 #print axioms LatticeProb.lintegral_orthant_eq
 #print axioms LatticeProb.lintegral_orthant_cons
 #print axioms LatticeProb.integral_integral_mixed_deriv
@@ -281,6 +283,8 @@ library.
 #print axioms LatticeProb.integral_bivariateGaussDensity_Icc_le
 #print axioms LatticeProb.orthant_path_interpolation
 #print axioms LatticeProb.tendsto_integral_orthant_smartPath
+#print axioms LatticeProb.integral_orthant_smartPath_zero
+#print axioms LatticeProb.tendsto_normalComparison_remainder
 #print axioms LatticeProb.normalComparison_bound_of_interpolation
 #print axioms LatticeProb.normalComparison_bound
 #print axioms LatticeProb.normalComparison_exists
