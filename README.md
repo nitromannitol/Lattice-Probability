@@ -122,7 +122,13 @@ compact support of the mollified family, the equicontinuity input of the Arzelà
 `Analysis/Sobolev/ConvolutionStructure.lean`.  The real-lift convolution Fourier factor
 `𝓕 (lift (f ⋆ ρ)) = 𝓕 (lift f) · 𝓕 (lift ρ)` — the input of the `FrechetKolmogorovMollify`
 approximation `f ≈ f ⋆ ρ` — is `LatticeProb.Sobolev.fourier_lift_convReal` (from
-`LatticeProb.Sobolev.lift_convReal`) in `Analysis/Sobolev/SobolevConvolution.lean`.  The finite-net triangle assembly of the mollified family is `LatticeProb.Sobolev.mollifiedNet_centres_in_family` (`Analysis/Sobolev/FrechetKolmogorovMollifyGap.lean`).
+`LatticeProb.Sobolev.lift_convReal`) in `Analysis/Sobolev/SobolevConvolution.lean`.  The finite-net
+triangle assembly of the mollified family is
+`LatticeProb.Sobolev.mollifiedNet_centres_in_family`
+(`Analysis/Sobolev/FrechetKolmogorovMollifyGap.lean`), and the tightness-free mollification
+estimate `LatticeProb.Sobolev.SobolevMollificationEstimate` reduces the assembly step to
+`LatticeProb.Sobolev.frechetKolmogorovMollify_of_sobolevMollificationEstimate`
+(`Analysis/Sobolev/FrechetKolmogorovMollifyResidual.lean`).
 The remaining input to `FrechetKolmogorovMollifiedCompact`
 is the `C^m`-boundedness of `{f ⋆ ρ}`, via the `H^s`-`H^{-s}` duality bound
 (`LatticeProb.Sobolev.abs_apply_le_negSobolevNorm`, `Analysis/Sobolev/AbsApply.lean`); the elementary
@@ -131,7 +137,9 @@ with `p = q = 2`), `|(f ⋆ ρ)(x)| ≤ ‖f‖_{L²} ‖ρ(x−·)‖_{L²}`, l
 `LatticeProb.Sobolev.abs_convReal_le` (`Analysis/Sobolev/DualityBound.lean`); the weighted
 `w_s`/`w_s^{-1}` (i.e. `H^s`-`H^{-s}`) generalisation is landed as
 `LatticeProb.Sobolev.integral_abs_mul_le_weighted`, with the resulting duality bound named
-`LatticeProb.Sobolev.SobolevDualityBound`.
+`LatticeProb.Sobolev.SobolevDualityBound` and its `w_s`-instantiated Fourier form
+`LatticeProb.Sobolev.integral_abs_mul_le_sobolev`
+(`Analysis/Sobolev/DualitySobolev.lean`).
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel

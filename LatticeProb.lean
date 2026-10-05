@@ -335,6 +335,7 @@ import LatticeProb.Analysis.Sobolev.SobolevConvolution
 import LatticeProb.Analysis.Sobolev.DualityBound
 import LatticeProb.Analysis.Sobolev.DualitySobolev
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyGap
+import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyResidual
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorov
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
 import LatticeProb.Analysis.Sobolev.Truncation
