@@ -1,0 +1,14 @@
+{
+  "challenge_module": "LatticeProbAudit.MultivariateBerryEsseen.Challenge",
+  "solution_module": "LatticeProbAudit.MultivariateBerryEsseen.Solution",
+  "theorem_names": [
+    "LatticeProbAudit.multivariate_berry_esseen_orthant"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": true
+}

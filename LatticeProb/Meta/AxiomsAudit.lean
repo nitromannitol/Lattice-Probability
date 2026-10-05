@@ -105,6 +105,7 @@ library.
 #print axioms LatticeProb.ae_tendsto_bAvg
 #print axioms LatticeProb.tendsto_integral_div
 #print axioms LatticeProb.ae_tendsto_gLow
+#print axioms LatticeProb.kingman_array
 #print axioms LatticeProb.ae_tendsto_div
 #print axioms LatticeProb.akcoglu_krengel_mean
 #print axioms LatticeProb.ergodic_decomposition
@@ -254,6 +255,7 @@ library.
 #print axioms LatticeProb.ouSemigroup_const_mul
 #print axioms LatticeProb.integral_ouSemigroup
 #print axioms LatticeProb.ouSemigroup_add
+
 
 /-! ### Regular variation -/
 
@@ -415,3 +417,123 @@ library.
 #print axioms LatticeProb.Sobolev.fourier_normalized_dilation
 #print axioms LatticeProb.Sobolev.tendsto_fourier_mollifierDil
 #print axioms LatticeProb.Sobolev.mollifierFourierTendsto
+
+/-! ### Multivariate Berry–Esseen, orthant route (Raič Thm 1.3), stage 1 -/
+
+#print axioms LatticeProb.mvbeRoundedRegularClass
+#print axioms LatticeProb.mvbeRho_lipschitz
+#print axioms LatticeProb.mvbeRho_convexOn
+#print axioms LatticeProb.mvbeRho_coordMono
+#print axioms LatticeProb.mvbeUnitGradAE_volume
+#print axioms LatticeProb.mvbe_perim_pi_layer_le
+#print axioms LatticeProb.mvbe_perim_stdGaussian_layer_le
+#print axioms LatticeProb.mvbe_perim_stdGaussian_layer_le_one
+#print axioms LatticeProb.mehlerSmooth_iteratedDeriv
+#print axioms LatticeProb.mehlerSmooth_contDiff
+#print axioms LatticeProb.mehlerSmooth_iteratedDeriv_bound
+#print axioms LatticeProb.mehlerSmooth_hasDerivAt_angle
+#print axioms LatticeProb.mehlerSmooth_iteratedDeriv_three_C2b
+#print axioms LatticeProb.ouHeatEquation_holds
+#print axioms LatticeProb.mvbe_integral_mul_tan_le
+#print axioms LatticeProb.mvbe_keyEstimate_optimised
+#print axioms LatticeProb.mvbe_gaussian_hermite_integral_le
+#print axioms LatticeProb.mvbe_iteratedFDeriv_gaussDensity
+#print axioms LatticeProb.mvbe_stdGaussian_eq_withDensity
+#print axioms LatticeProb.mvbe_lemma_2_5
+#print axioms LatticeProb.mvbe_frozenShape_of_whitenedBound
+#print axioms LatticeProb.mvbe_frozenShape_quarter_of_whitenedBound
+#print axioms LatticeProb.mvbe_frozenQuarter_of_whitenedBound
+#print axioms LatticeProb.mvbe_frozenShape_linear_of_whitenedBound
+#print axioms LatticeProb.mvbe_multivariateGaussian_add
+#print axioms LatticeProb.mvbe_gaussian_decomp
+#print axioms LatticeProb.mvbe_layer_of_conv
+#print axioms LatticeProb.mvbe_gaussian_layer
+#print axioms LatticeProb.mvbe_layer_stdGaussian
+#print axioms LatticeProb.mvbe_stdGaussian_ac
+#print axioms LatticeProb.mvbe_unitGradAE_stdGaussian
+#print axioms LatticeProb.mvbe_outer_layer_stdGaussian_le
+#print axioms LatticeProb.mvbe_inner_layer_stdGaussian_le
+#print axioms LatticeProb.mvbe_gammaStarOf_orthant_le
+#print axioms LatticeProb.mvbeRoundedRegularClass_gammaStar_le
+#print axioms LatticeProb.mvbe_polarization
+#print axioms LatticeProb.mvbe_polarization_iteratedFDeriv
+#print axioms LatticeProb.mvbe_stein_expectation
+
+/-! ### Multivariate Berry–Esseen, orthant route, stage 1 (continued) -/
+
+#print axioms LatticeProb.mvbe_gaussian_layer_diff_le
+#print axioms LatticeProb.mvbe_gaussian_diff_layer_le
+#print axioms LatticeProb.mvbe_gaussian_layer_diff_le_of_le_sqrt
+#print axioms LatticeProb.mvbe_gaussian_diff_layer_le_of_le_sqrt
+#print axioms LatticeProb.MvbeRegularClass.image_gammaStar_le
+#print axioms LatticeProb.MvbeRegularClass.image_gammaStar_le_max
+#print axioms LatticeProb.MvbeRegularClass.image_negOpen
+#print axioms LatticeProb.mehlerN_contDiff
+#print axioms LatticeProb.mehlerN_iteratedDeriv_line
+#print axioms LatticeProb.mehlerN_iteratedDeriv_line_bound
+#print axioms LatticeProb.mehlerN_iteratedDeriv_three_C2b_unit
+#print axioms LatticeProb.mehlerN_iteratedFDeriv_diag_bound
+#print axioms LatticeProb.mehlerI_hasDerivAt
+#print axioms LatticeProb.mehlerI_interpolation
+#print axioms LatticeProb.mehlerI_interpolation_integrableOn
+#print axioms LatticeProb.MvbeRegularClass.raic_lemma_2_1
+#print axioms LatticeProb.mvbeRoundedRegularClass_negOpen
+
+/-! ### Multivariate Berry–Esseen, orthant route, stage 1 (Lemma 2.6, 2.7 pieces, mollification) -/
+
+#print axioms LatticeProb.mvbe_lemma_2_6
+#print axioms LatticeProb.mvbe_lemma_2_6_min
+#print axioms LatticeProb.mvbe_layerCake_diff_le
+#print axioms LatticeProb.mvbe_H_sub_eq
+#print axioms LatticeProb.mvbe_H_abs_le_large_angle
+#print axioms LatticeProb.mvbe_class_deviation
+#print axioms LatticeProb.mvbe_small_angle_bound
+#print axioms LatticeProb.mvbe_small_angle_corollary
+#print axioms LatticeProb.mvbeMollify_exists
+#print axioms LatticeProb.mvbeMollify_exists_euclidean
+
+/-! ### Multivariate Berry–Esseen, orthant route: Lemma 2.7 -/
+
+#print axioms LatticeProb.mvbe_smoothing_large_angle
+#print axioms LatticeProb.mvbe_keyLemma
+#print axioms LatticeProb.mvbe_keyLemma_gammaStar
+#print axioms LatticeProb.mvbe_smooth_small_angle_outer
+#print axioms LatticeProb.mvbe_smooth_small_angle_inner
+#print axioms LatticeProb.mvbe_keyLemma_proved
+
+/-! ### Multivariate Berry–Esseen, orthant route: Raič's Theorem 1.3 -/
+
+#print axioms LatticeProb.mvbe_thmR
+#print axioms LatticeProb.mvbe_thmR_of_keyLemma
+#print axioms LatticeProb.mvbe_main_step
+
+/-! ### Multivariate Berry–Esseen for orthants: the frozen shape -/
+
+#print axioms LatticeProb.mvbe_whitenedBound_of_thmR
+#print axioms LatticeProb.mvbe_frozenShape_linear
+#print axioms LatticeProb.mvbe_frozenShape_linear_unconditional
+#print axioms LatticeProb.mvbe_frozenQuarter
+#print axioms LatticeProb.mvbe_frozenQuarter_of_perimeter
+
+/-! ### Pitt's Gaussian association theorem -/
+
+#print axioms LatticeProb.pitt_covRep
+#print axioms LatticeProb.pitt_smooth
+#print axioms LatticeProb.pitt_nondeg
+#print axioms LatticeProb.pitt_full
+#print axioms LatticeProb.pitt_associated_of_gaussianProcess
+#print axioms LatticeProb.pitt_fullStmt
+#print axioms LatticeProb.pitt_gaussian_fkg
+
+/-! ### The Gaussian perimeter of the rounded orthants and the frozen multivariate Berry–Esseen statement -/
+
+#print axioms LatticeProb.perim_stdGaussian_inner_layer_le
+#print axioms LatticeProb.perim_G3
+#print axioms LatticeProb.perim_G4
+#print axioms LatticeProb.perim_tilt_chain
+#print axioms LatticeProb.perimR1_rhs_le
+#print axioms LatticeProb.perimR2_rhs_le
+#print axioms LatticeProb.perimP_psi_bound
+#print axioms LatticeProb.perimB_quarter
+#print axioms LatticeProb.mvbe_orthantPerimeterQuarter_proved
+#print axioms LatticeProb.mvbe_frozenQuarter_unconditional
