@@ -402,6 +402,13 @@ not yet proved here, and the frozen `Sandpile.External.MultivariateBerryEsseen` 
 * `LatticeProb.mvbeMollify_exists_euclidean`: mollification of a `C¹` function with `L`-Lipschitz
   gradient into a smooth `g` with `‖D²g‖ ≤ L`, `|g − f| ≤ L η²`, and `D²g = 0` where `f` is locally
   constant (replaces Rademacher's theorem in the proof of Lemma 2.7).
+* `LatticeProb.mvbe_thmR`: **Raič's Theorem 1.3, form (1.4)**, unconditionally and with existential
+  absolute constants: for every regular class `C` (assumptions (A1)–(A8), `{ρ_A < 0}` open) of finite
+  Gaussian perimeter `γ*`, independent mean-zero summands in `ℝ^d` with identity total covariance and
+  finite third moments, and every `A ∈ C`,
+  `|P(W ∈ A) − N(0,I){A}| ≤ max(c₀, 1 + c₁ γ* √(1+κ)) ∑ E‖X_i‖³`.  The proof is Götze's bootstrapping
+  (`mvbeK`, `mvbe_main_step`), using the Slepian interpolation, the Stein expectation, Lemma 2.7
+  and the image-class lemma.
 * `LatticeProb.mvbe_keyLemma_proved`: **Raič's Lemma 2.7.** For a regular class with `{ρ_A < 0}`
   open and finite Gaussian perimeter `γ*`, a member `A`, `ε > 0`, `f ∈ {f_A^{ε}, f_A^{-ε}}`, and a
   random vector `W` that is `D`-close to `N(μ, S)` on the class (`σ I ≤ S^{1/2}`, `σ ≤ 1`), there is
