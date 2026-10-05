@@ -243,6 +243,10 @@ the field with zero boundary values on a finite set `C` as
   the lattice, bounded by a multiple of the volume, and subadditive when a box
   splits into two boxes, has a volume-normalised mean that converges along the
   cubes `[0, n)^d`.
+* `LatticeProb.gridAvg_univ_l2_tendsto`: the `L²` mean ergodic step of the
+  Akcoglu–Krengel theorem: for a measure-preserving additive `ℤ^d` action and a
+  bounded measurable `h`, the cube averages `gridAvg σ h univ n` converge in
+  `L²` to a bounded measurable limit with the same integral.
 * `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
   measure-preserving transformation of a standard Borel probability space.
 * `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;
@@ -285,6 +289,15 @@ the field with zero boundary values on a finite set `C` as
   constant `L √n` produced by `LatticeProb.lipschitzWith_pi_of_hasSum_sq` and
   the l2-versus-sup comparison
   `LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist`.
+* `LatticeProb.hasSum_sq_comb_sub`, `LatticeProb.abs_partialInt_sub_le`: the
+  partial integral on a finite coordinate set preserves the ℓ²-Lipschitz
+  constant, since splicing along a finite set leaves a difference supported on
+  that set.
+* `LatticeProb.ae_subset_iUnion_iInter_of_tendsto_ae`,
+  `LatticeProb.measure_le_of_tendsto_ae_of_isOpen`,
+  `LatticeProb.measure_le_of_tendsto_ae_of_lt`: the a.e. Fatou limit: an almost
+  sure limit `X n → Y` inherits the tail bound of the `X n` on open sets and on
+  strict tails.
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
@@ -353,6 +366,11 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   `C exp(-c A² / T)`.
 * `LatticeProb.Isonormal.ae_tendsto_partialSum`: almost sure convergence of the
   partial sums of the isonormal process.
+* `LatticeProb.multivariateGaussian_eq_map`,
+  `LatticeProb.det_sqrt_mul_self`: the correlated multivariate Gaussian is the
+  pushforward of the standard Gaussian under `√S`, equivalently the standard
+  Gaussian times the density with the determinant factor
+  `det (√S) = (det S)^{1/2}`.
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.

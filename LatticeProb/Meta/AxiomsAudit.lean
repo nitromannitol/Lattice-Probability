@@ -107,6 +107,7 @@ library.
 #print axioms LatticeProb.ae_tendsto_gLow
 #print axioms LatticeProb.ae_tendsto_div
 #print axioms LatticeProb.akcoglu_krengel_mean
+#print axioms LatticeProb.gridAvg_univ_l2_tendsto
 #print axioms LatticeProb.ergodic_decomposition
 #print axioms LatticeProb.ergodic_coordShift_infinitePi
 #print axioms LatticeProb.measure_zero_or_one_of_exchangeable
@@ -141,6 +142,11 @@ library.
 #print axioms LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist
 #print axioms LatticeProb.lipschitzWith_pi_of_hasSum_sq
 #print axioms LatticeProb.gaussian_lipschitz_concentration_l2_fin
+#print axioms LatticeProb.hasSum_sq_comb_sub
+#print axioms LatticeProb.abs_partialInt_sub_le
+#print axioms LatticeProb.ae_subset_iUnion_iInter_of_tendsto_ae
+#print axioms LatticeProb.measure_le_of_tendsto_ae_of_isOpen
+#print axioms LatticeProb.measure_le_of_tendsto_ae_of_lt
 #print axioms LatticeProb.paley_zygmund_of_second_moment
 #print axioms LatticeProb.ottaviani
 #print axioms LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le
@@ -190,6 +196,8 @@ library.
 #print axioms LatticeProb.IsBrownianSpace.hasStrongMarkovRestart
 #print axioms LatticeProb.brownian_exit_tail
 #print axioms LatticeProb.Isonormal.ae_tendsto_partialSum
+#print axioms LatticeProb.multivariateGaussian_eq_map
+#print axioms LatticeProb.det_sqrt_mul_self
 #print axioms LatticeProb.GaussTail.gaussianReal_real_Ioi_le
 #print axioms LatticeProb.klDiv_gaussianReal_shift
 #print axioms LatticeProb.CramerWold.tendstoInDistribution_of_forall_inner
