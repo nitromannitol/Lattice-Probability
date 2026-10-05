@@ -486,6 +486,108 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   `C exp(-c A² / T)`.
 * `LatticeProb.Isonormal.ae_tendsto_partialSum`: almost sure convergence of the
   partial sums of the isonormal process.
+* `LatticeProb.multivariateGaussian_eq_map`,
+  `LatticeProb.det_sqrt_mul_self`: the correlated multivariate Gaussian is the
+  pushforward of the standard Gaussian under `√S`, equivalently the standard
+  Gaussian times the density with the determinant factor
+  `det (√S) = (det S)^{1/2}`.
+* `LatticeProb.multivariateGaussian_eq_withDensity`: the density of `N(0, S)` for a
+  positive definite `S`, `(2π)^{-n/2} (det S)^{-1/2} exp (-(x ⬝ᵥ S⁻¹ *ᵥ x)/2)`
+  (Li–Shao route item 1), with
+  `LatticeProb.multivariateGaussianDensityFormula_holds` recording it as the
+  discharged `multivariateGaussianDensityFormula`.
+* `LatticeProb.normalComparisonSmartPath`, `LatticeProb.bivariateGaussDensity_le`,
+  `LatticeProb.integral_one_div_sqrt_one_sub_sq_mul_le`,
+  `LatticeProb.integral_bivariateGaussDensity_le`: the elementary half of the
+  Li–Shao normal-comparison bound for the multivariate Gaussian — the smart path
+  from the product law to the covariance, the bivariate density comparison
+  producing the exponential factor, the scale integral `≤ π/2`, and its
+  integrated (smart-path) form; `LatticeProb.lintegral_Iic_cons`,
+  `LatticeProb.lintegral_Iic_cons₂`, `LatticeProb.integral_Iic_cons`,
+  `LatticeProb.integral_Iic_cons₂`, their tail-outermost mirrors
+  `LatticeProb.lintegral_Iic_cons_last` and `LatticeProb.integral_Iic_cons_last`,
+  `LatticeProb.lintegral_orthant_eq` and `LatticeProb.lintegral_orthant_cons`
+  (the same orthant box-Fubini transported along the volume-preserving
+  `WithLp.toLp 2` to `EuclideanSpace`, the route's setting),
+  `LatticeProb.integral_integral_mixed_deriv` and
+  `LatticeProb.integral_Iic_deriv_eq_of_tendsto` are the orthant box-Fubini and
+  two-coordinate integration-by-parts substrate (route item 4).  The signed orthant
+  transport to `EuclideanSpace` (`LatticeProb.integral_orthant_eq`,
+  `LatticeProb.integrableOn_orthant_iff`), the coordinate
+  permutation (`LatticeProb.integral_Iic_perm`, `LatticeProb.exists_perm_zero_one`) and the
+  mixed-derivative orthant integral in an arbitrary pair of distinct coordinates
+  (`LatticeProb.integral_Iic_mixed_deriv₂`, `LatticeProb.integral_Iic_mixed_deriv_pair`,
+  `LatticeProb.exists_perm_integral_Iic_mixed_deriv`) complete route item 4 for general
+  dimension.
+* `LatticeProb.covDensity`: the density of the centred Gaussian `N(0, S)` on `Fin n → ℝ`,
+  with its coordinate partials and Gaussian decay
+  (`LatticeProb.hasDerivAt_covDensity_update`,
+  `LatticeProb.hasDerivAt_covDensity_partial_update`,
+  `LatticeProb.tendsto_partial_covDensity_update_atBot`), its integrability and unit mass
+  (`LatticeProb.integrable_partial2_covDensity`, `LatticeProb.integral_covDensity`), the
+  covariance derivative along a line of matrices
+  (`LatticeProb.hasDerivAt_covDensity_add_smul`, with Jacobi's formula
+  `LatticeProb.hasDerivAt_det_add_smul`), the identification of the `2 × 2` case with the
+  bivariate density (`LatticeProb.covDensity_two_cov`), the uniform Gaussian majorants along
+  the smart path (`LatticeProb.exists_covDensity_path_majorant`,
+  `LatticeProb.exists_partial2_path_majorant`), positive definiteness and differentiability of
+  the smart path (`LatticeProb.normalComparisonSmartPath_posDef`,
+  `LatticeProb.hasDerivAt_normalComparisonSmartPath`), and the orthant identity for the mixed
+  second partial of the density
+  (`LatticeProb.integral_Iic_partial2_covDensity`): route items 2, 3 (pointwise part) and 4 of
+  the Li--Shao normal comparison.  The remaining analytic steps of that comparison are also
+  proved: the Schur-complement factorisation of the density
+  (`LatticeProb.covDensityOn_fromBlocks`, `LatticeProb.integral_covDensityOn_fromBlocks`) and
+  the marginalisation of the boundary term to the pair density
+  (`LatticeProb.integral_covDensity_pairCorner`,
+  `LatticeProb.integral_Iic_pairCorner_covDensity_le`); the identification of the orthant
+  probability of `N(0, S)` with the density integral
+  (`LatticeProb.multivariateGaussian_orthant_toReal_eq`) and, for `N(0, v I)`, with the
+  product of the marginal probabilities
+  (`LatticeProb.multivariateGaussian_orthant_scalar`); the derivative and continuity of the
+  orthant probability along the smart path
+  (`LatticeProb.hasDerivAt_orthant_covDensity_path`,
+  `LatticeProb.continuousOn_orthant_covDensity_path`); and the left-continuity of the orthant
+  probability at the possibly singular endpoint
+  (`LatticeProb.tendsto_multivariateGaussian_orthant_path`), via the null frontier of the
+  orthant (`LatticeProb.multivariateGaussian_orthant_frontier_null`) and Lévy's continuity
+  theorem.  Combined: on the smart path the derivative of the orthant probability is the sum,
+  over pairs `i < j`, of `S i j` times a nonnegative boundary integral
+  (`LatticeProb.hasDerivAt_orthant_covDensity_path_pairs`,
+  `LatticeProb.orthantPartial2_nonneg_le`) that is at most the bivariate density
+  (`LatticeProb.boundary_covDensity_path_le`), and integrating this bound gives the
+  interpolation on `[0, T]` for every `T < 1`
+  (`LatticeProb.integral_bivariateGaussDensity_Icc_le`,
+  `LatticeProb.orthant_path_interpolation`).  The endpoint is controlled by the two limits
+  `LatticeProb.tendsto_integral_orthant_smartPath` (left-continuity of the orthant integral at
+  `t = 1`) and `LatticeProb.tendsto_normalComparison_remainder` (continuity of the pair-sum bound
+  at `T = 1`), starting from `LatticeProb.integral_orthant_smartPath_zero` (the product of the
+  marginals at `t = 0`).  Letting `T → 1` closes the argument:
+  `LatticeProb.normalComparison_bound` is the normal comparison inequality of Li and Shao for the
+  orthant, `|P(Y ≤ b) − ∏ᵢ P(Yᵢ ≤ bᵢ)| ≤ (1/4) ∑_{i<j} (S i j / v) exp (−(bᵢ² + bⱼ²) / (2 v (1 +
+  S i j / v)))` for a centred Gaussian vector with covariance `S`, common variance `v` and
+  nonnegative correlations, and `LatticeProb.normalComparison_exists` states it with an
+  existential constant in exactly the shape of the cited proposition.
+* `LatticeProb.sup_cdf_sub_le_of_smoothed`, `LatticeProb.fejerKernel`,
+  `LatticeProb.integral_cdf_sub_mul_exp`, `LatticeProb.charFun_norm_le_exp_of_sq_le`,
+  `LatticeProb.norm_prod_charFun_sub_gaussian_le`: the building blocks of a one-dimensional
+  Berry–Esseen theorem for independent, non-identically distributed summands.  Esseen's smoothing
+  step is split into the deconvolution of a difference of distribution functions from a smoothed
+  one (needing only a tail bound on the kernel and a Lipschitz bound for the Gaussian
+  distribution function, `LatticeProb.gaussianReal_Iic_lipschitz`), the Fejér kernel with its
+  Fourier representation and unit mass, and the Fourier transform of a difference of distribution
+  functions; the characteristic-function side gives, for a finite family of centred laws of total
+  variance one and a window `|t| ρ ≤ 1/8`, the comparison of the product of characteristic
+  functions with the Gaussian one, with the Gaussian damping `exp (−t²/3)`.  Esseen's smoothing
+  inequality for a Gaussian target is proved from these
+  (`LatticeProb.esseen_smoothing_gaussian`,
+  `|F_μ − G| ≤ (1/π) ∫_{−T}^{T} ‖φ_μ − φ_γ‖/|t| dt + 64/(π T √(2π v))`), and with it the
+  Berry–Esseen theorem for independent, centred, non-identically distributed summands of total
+  variance one (`LatticeProb.berryEsseen_normalized`: the distribution function of
+  `LatticeProb.sumLaw ν` differs from the standard normal one by at most `100 ∑ᵢ ∫ |z|³ dνᵢ`),
+  and by scaling for an arbitrary positive total variance `V`
+  (`LatticeProb.berryEsseen_oneDim`: the distance to `N(0, V)` is at most
+  `100 (∑ᵢ ∫ |z|³ dνᵢ) / V^{3/2}`).
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.
