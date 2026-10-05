@@ -316,10 +316,12 @@ import LatticeProb.Analysis.Sobolev.BandTruncReal
 import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
 import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
 import LatticeProb.Analysis.Sobolev.BandLimitedCmNet
+import LatticeProb.Analysis.Sobolev.BandLimitedLip
 import LatticeProb.Analysis.Sobolev.FejerSideCondition
 import LatticeProb.Analysis.Sobolev.FejerIntegrable
 import LatticeProb.Analysis.Sobolev.FejerLimit
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
+import LatticeProb.Analysis.Sobolev.RellichLowFreqGlue
 import LatticeProb.Analysis.Sobolev.TestFnApprox
 import LatticeProb.Analysis.Sobolev.Truncation
 import LatticeProb.Analysis.Sobolev.Scaling
@@ -449,6 +451,7 @@ import LatticeProb.Prob.McDiarmid
 import LatticeProb.Prob.AkcogluKrengel
 import LatticeProb.Prob.AkcogluKrengelAE
 import LatticeProb.Prob.AkcogluKrengelAE.BoxErgodicL2
+import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodicAll
 import LatticeProb.Prob.Invariance
 import LatticeProb.Prob.ReturnTime
 import LatticeProb.Prob.Kac
