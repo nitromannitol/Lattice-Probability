@@ -251,6 +251,11 @@ the field with zero boundary values on a finite set `C` as
   instantiation of the anchored-box a.e. ergodic theorem: for a shift-invariant
   field law, the anchored-box averages of the shifted field `shiftField x v`
   converge almost everywhere.
+* `LatticeProb.exists_ae_tendsto_anchoredBox_with_integral`: the anchored-box a.e.
+  ergodic theorem with coordinate-dependent side lengths, from the per-coordinate
+  box-tiling iteration (`boxGridSet`, `boxAvg`), with the a.e. limit carrying the
+  same integral; `LatticeProb.comp_sigma_eq_of_comp_unit_eq` extends the limit's
+  invariance from the generators `σ (unit j)` to the whole `ℤ^d`-action `σ z`.
 * `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
   measure-preserving transformation of a standard Borel probability space.
 * `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;
@@ -290,9 +295,10 @@ the field with zero boundary values on a finite set `C` as
   Herbst bound.
 * `LatticeProb.ouSemigroupN`, `LatticeProb.ouGeneratorN`,
   `LatticeProb.ouSemigroupN_comp_eval`, `LatticeProb.ouGeneratorN_comp_eval`,
-  `LatticeProb.ouHeatEquationN_comp_eval`: the general-`n` Ornstein–Uhlenbeck
-  (Mehler) semigroup and generator on `Fin n → ℝ`, with the coordinate
-  evaluation identities and the named heat-equation input `OUHeatEquationN`.
+  `LatticeProb.ouHeatEquationN_comp_eval`, `LatticeProb.ouSemigroupN_prod`: the general-`n`
+  Ornstein–Uhlenbeck (Mehler) semigroup and generator on `Fin n → ℝ`, with the
+  coordinate evaluation identities, the factorisation on tensor products, and the
+  named heat-equation input `OUHeatEquationN`.
 * `LatticeProb.gaussian_lipschitz_concentration_l2_fin`: the same concentration
   on `Fin n → ℝ` from the l2 (Cameron–Martin) Lipschitz condition, with the
   constant `L √n` produced by `LatticeProb.lipschitzWith_pi_of_hasSum_sq` and
@@ -386,10 +392,12 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   `LatticeProb.multivariateGaussianDensityFormula_holds` recording it as the
   discharged `multivariateGaussianDensityFormula`.
 * `LatticeProb.normalComparisonSmartPath`, `LatticeProb.bivariateGaussDensity_le`,
-  `LatticeProb.integral_one_div_sqrt_one_sub_sq_mul_le`: the elementary half of
-  the Li–Shao normal-comparison bound for the multivariate Gaussian — the smart
-  path from the product law to the covariance, the bivariate density comparison
-  producing the exponential factor, and the scale integral `≤ π/2`.
+  `LatticeProb.integral_one_div_sqrt_one_sub_sq_mul_le`,
+  `LatticeProb.integral_bivariateGaussDensity_le`: the elementary half of the
+  Li–Shao normal-comparison bound for the multivariate Gaussian — the smart path
+  from the product law to the covariance, the bivariate density comparison
+  producing the exponential factor, the scale integral `≤ π/2`, and its
+  integrated (smart-path) form.
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
   `LatticeProb.klDiv_gaussianReal_shift`: the relative entropy of two
   Gaussians with a common variance.
