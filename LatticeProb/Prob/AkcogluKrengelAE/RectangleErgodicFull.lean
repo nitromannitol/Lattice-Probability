@@ -24,7 +24,7 @@ namespace LatticeProb
 variable {Ω : Type*} [MeasurableSpace Ω] {d : ℕ}
 
 /-- The normalised average of `h ∘ τ` over the rectangle `rectBox a b N`. -/
-noncomputable def boxAvg (h : Ω → ℝ) (τ : Site d → Ω → Ω) (a b : Fin d → ℝ) (N : ℕ)
+private noncomputable def boxAvg (h : Ω → ℝ) (τ : Site d → Ω → Ω) (a b : Fin d → ℝ) (N : ℕ)
     (ω : Ω) : ℝ :=
   (N : ℝ) ^ (-(d : ℝ)) * ∑ x ∈ rectBox a b N, h (τ x ω)
 

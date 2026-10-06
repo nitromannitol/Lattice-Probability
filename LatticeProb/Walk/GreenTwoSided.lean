@@ -24,6 +24,4 @@ Lower bound (`killedGreenReal_ge_box`, in `LowerBound`): for `m ≤ Kρ`, `box d
 lazy kernel's near-diagonal lower bound of `FreeLazyKernel`, and the chaining argument of
 `ChainingBound` (small `ρ` by a monotone lattice path).
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/

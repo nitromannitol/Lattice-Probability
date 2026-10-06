@@ -18,15 +18,12 @@ The composition is the standard three-step FK argument.
 -/
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorov
 import LatticeProb.Analysis.Sobolev.Additivity
+import LatticeProb.Analysis.Sobolev.Convolution
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology
 
 namespace LatticeProb.Sobolev
-
-/-- Convolution of real functions with a mollifier `ρ`. -/
-noncomputable def convReal {d : ℕ} (f ρ : Space d → ℝ) : Space d → ℝ :=
-  convolution f ρ (ContinuousLinearMap.mul ℝ ℝ) volume
 
 /-- **Mollification approximation.**  A family supported in a compact set and uniformly
 translation-continuous in `H^s` is approximated, uniformly, by convolution with a single smooth

@@ -415,3 +415,40 @@ library.
 #print axioms LatticeProb.Sobolev.fourier_normalized_dilation
 #print axioms LatticeProb.Sobolev.tendsto_fourier_mollifierDil
 #print axioms LatticeProb.Sobolev.mollifierFourierTendsto
+
+/-! ### Fourier convolution, averaging and test-function Sobolev duality -/
+
+#print axioms LatticeProb.Sobolev.fourier_toLp_ae_eq
+#print axioms LatticeProb.Sobolev.abs_integral_mul_le_lintegral_fourier
+#print axioms LatticeProb.Sobolev.sub_convReal_eq_integral_translate
+#print axioms LatticeProb.Sobolev.ae_sub_convReal_eq_integral_translate
+#print axioms LatticeProb.Sobolev.sobolevNormSq_congr_ae
+#print axioms LatticeProb.Sobolev.sobolevNormSq_sub_convReal_le
+#print axioms LatticeProb.Sobolev.sobolevNormSq_toReal_eq_integral
+#print axioms LatticeProb.Sobolev.sobolevWeight
+#print axioms LatticeProb.Sobolev.sobolevWeight_nonneg
+#print axioms LatticeProb.Sobolev.sobolevNormSq_eq_lintegral_weight
+#print axioms LatticeProb.Sobolev.norm_fourier_lift_convReal_le
+#print axioms LatticeProb.Sobolev.sobolevNormSq_convReal_le
+#print axioms LatticeProb.Sobolev.convReal
+#print axioms LatticeProb.Sobolev.fourier_convolution_lift
+#print axioms LatticeProb.Sobolev.lift_convReal
+#print axioms LatticeProb.Sobolev.fourier_lift_convReal
+#print axioms LatticeProb.Sobolev.continuous_sobolevWeight
+#print axioms LatticeProb.Sobolev.continuous_fourier_lift
+#print axioms LatticeProb.Sobolev.lintegral_fourier_pairing_le
+#print axioms LatticeProb.Sobolev.sobolevDualityBound_of_memLp
+#print axioms LatticeProb.Sobolev.integrable_sobolevWeight_mul_norm_sq
+#print axioms LatticeProb.Sobolev.sq_abs_integral_mul_le_integral_weight
+#print axioms LatticeProb.Sobolev.IsTestFn.integrable
+#print axioms LatticeProb.Sobolev.IsTestFn.memLp_two
+#print axioms LatticeProb.Sobolev.IsTestFn.comp_sub_left
+#print axioms LatticeProb.Sobolev.IsTestFn.fderiv_apply
+#print axioms LatticeProb.Sobolev.sobolevDualityBound_of_isTestFn
+#print axioms LatticeProb.Sobolev.sq_abs_integral_mul_le_integral_weight_of_isTestFn
+#print axioms LatticeProb.Sobolev.sobolevDualityBound_convReal
+#print axioms LatticeProb.Sobolev.sobolevDualityBound_fderiv
+#print axioms LatticeProb.Sobolev.isTestFn_contDiffBump
+#print axioms LatticeProb.Sobolev.sobolevNormSq_mul_pos_bump
+#print axioms LatticeProb.Sobolev.exists_fderiv_contDiffBump_ne_zero
+#print axioms LatticeProb.Sobolev.sobolevDualityBound_fderiv_bump

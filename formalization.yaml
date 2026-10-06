@@ -78,8 +78,9 @@ status:
     Paley-Zygmund, Ottaviani, Doob and Pinsker inequalities, the
     Kolmogorov-Chentsov theorem, Brownian motion on R^d and its strong Markov
     property, the isonormal process, regular variation, and Jordan separation
-    on the square lattice.  484 modules, about 111,000 lines, 5,112
-    declarations.  SCOPE BOUNDARY: five results from the literature are stated
+    on the square lattice. The required axiom gate produces the exact current
+    module and declaration inventory for each stable snapshot. SCOPE BOUNDARY:
+    five results from the literature are stated
     as propositions in LatticeProb/External/ and not proved (the Gaussian
     logarithmic Sobolev inequality and its Herbst bound, polygonal
     unicoherence, Janiszewski's theorem for polygonal sets, the
@@ -96,11 +97,21 @@ status:
     listed in the Contents subsection of "What is proved" in README.md and
     their axioms printed by
     LatticeProb/Meta/AxiomsAudit.lean; three of them are additionally restated
-    over a Mathlib-only vocabulary for the Lean comparator
-    (LatticeProbAudit/).
+    over a Mathlib-only vocabulary for the configured Lean comparator
+    pairs (LatticeProbAudit/). Cataloged results and conditional inputs are
+    preserved; current verification is bound to the evidence of each exact run.
   sorry_count: 0
-  sorry_count_scope: "LatticeProb library only"
+  sorry_count_scope: "existing catalog status; a fresh current production count requires the recorded full gates"
   comparator_challenge_sorry_count: 3
+  assurance_scope: >-
+    Existing named results and conditional input descriptions are preserved.
+    Whole-library coverage requires the exact stable all-module environment
+    census and successful child processes of the configured production gates.
+    Comparator closure additionally includes all non-Challenge Solution and
+    bridge modules. Python mutation tests alone provide no current Lean verdict.
+    The 34 convolution and test-function duality entries retain their completed
+    source-bound leaf receipts; combined verification of the current imports
+    and root remains required. These entries do not discharge Rellich compactness.
   sorry_in_definitions: 0
   axioms:
     - "propext"
@@ -328,28 +339,245 @@ status:
       comparator_config: "LatticeProbAudit/BinomialLocalCLT/comparator.json"
       literature_dependencies: []
 
-automation:
-  methods:
-    - method: "agent"
-      models:
-        - "Claude Opus 5.5"
-        - "Claude Sonnet 5"
-        - "Claude Opus 5"
-        - "DeepSeek v4.1 Flash"
-      framework: >-
-        Claude Code (Anthropic) and the Pi agent harness, directing the models above; the author
-        supervised the work and is responsible for the formalization.
-      tool_setup: >-
-        Lake builds under the pinned Lean toolchain and Mathlib revision. Every change is gated by
-        the axiom-closure and warning-free-build checks, and the public CI runs the Mathlib-only
-        comparator challenge/solution pairs against leanprover/comparator, lean4export and landrun
-        at the revisions recorded in .github/workflows/.
-      cost:
-        spend_usd: "not separately tracked (subscription and API accounts)"
-        hardware: "one Ubuntu workstation"
-      prompting_notes: >-
-        Human-directed agent work, closely supervised by the author. Statement differences from the
-        paper are disclosed under fidelity.
+    - declaration: "LatticeProb.Sobolev.fourier_toLp_ae_eq"
+      file: "LatticeProb/Analysis/Sobolev/PlancherelPackaging.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.abs_integral_mul_le_lintegral_fourier"
+      file: "LatticeProb/Analysis/Sobolev/PlancherelPackaging.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sub_convReal_eq_integral_translate"
+      file: "LatticeProb/Analysis/Sobolev/SobolevAveraging.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.ae_sub_convReal_eq_integral_translate"
+      file: "LatticeProb/Analysis/Sobolev/SobolevAveraging.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevNormSq_congr_ae"
+      file: "LatticeProb/Analysis/Sobolev/SobolevAveraging.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevNormSq_sub_convReal_le"
+      file: "LatticeProb/Analysis/Sobolev/SobolevAveraging.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevNormSq_toReal_eq_integral"
+      file: "LatticeProb/Analysis/Sobolev/SobolevToReal.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevWeight"
+      file: "LatticeProb/Analysis/Sobolev/SobolevYoungConvolution.lean"
+      kind: "def"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevWeight_nonneg"
+      file: "LatticeProb/Analysis/Sobolev/SobolevYoungConvolution.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevNormSq_eq_lintegral_weight"
+      file: "LatticeProb/Analysis/Sobolev/SobolevYoungConvolution.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.norm_fourier_lift_convReal_le"
+      file: "LatticeProb/Analysis/Sobolev/SobolevYoungConvolution.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevNormSq_convReal_le"
+      file: "LatticeProb/Analysis/Sobolev/SobolevYoungConvolution.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.convReal"
+      file: "LatticeProb/Analysis/Sobolev/Convolution.lean"
+      kind: "def"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.fourier_convolution_lift"
+      file: "LatticeProb/Analysis/Sobolev/Convolution.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.lift_convReal"
+      file: "LatticeProb/Analysis/Sobolev/Convolution.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.fourier_lift_convReal"
+      file: "LatticeProb/Analysis/Sobolev/Convolution.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.continuous_sobolevWeight"
+      file: "LatticeProb/Analysis/Sobolev/DualityAssembly.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.continuous_fourier_lift"
+      file: "LatticeProb/Analysis/Sobolev/DualityAssembly.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.lintegral_fourier_pairing_le"
+      file: "LatticeProb/Analysis/Sobolev/DualityAssembly.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevDualityBound_of_memLp"
+      file: "LatticeProb/Analysis/Sobolev/DualityAssembly.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.integrable_sobolevWeight_mul_norm_sq"
+      file: "LatticeProb/Analysis/Sobolev/DualityAssembly.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sq_abs_integral_mul_le_integral_weight"
+      file: "LatticeProb/Analysis/Sobolev/DualityAssembly.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.IsTestFn.integrable"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.IsTestFn.memLp_two"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.IsTestFn.comp_sub_left"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.IsTestFn.fderiv_apply"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevDualityBound_of_isTestFn"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sq_abs_integral_mul_le_integral_weight_of_isTestFn"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevDualityBound_convReal"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevDualityBound_fderiv"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.isTestFn_contDiffBump"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevNormSq_mul_pos_bump"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.exists_fderiv_contDiffBump_ne_zero"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevDualityBound_fderiv_bump"
+      file: "LatticeProb/Analysis/Sobolev/SobolevTestDuality.lean"
+      kind: "theorem"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+
 fidelity:
   divergences: >-
     A library states its own theorems, so there is no source text to diverge
@@ -365,10 +593,12 @@ review:
   reviewers:
     - "Ahmed Bou-Rabee"
   notes: >-
-    Correctness of every proof is guaranteed by the Lean kernel and Mathlib (no
-    sorry, no custom axiom).  The statements of the three audited theorems are
-    additionally checked by the Lean comparator against the Mathlib-only
-    restatements in LatticeProbAudit/.  This is not external peer review.
+    The named result catalog and author review are preserved. Fresh whole-library
+    assurance requires the recorded stable source inventory, actual successful
+    production build and complete axiom census. The configured comparator pairs
+    separately check their exact selected statements and dependency closures.
+    Neither gate proves an explicit literature hypothesis or source fidelity.
+    This is not external peer review or a report of a fresh current gate run.
 
 alignment:
   namespace: "LatticeProb"
@@ -421,8 +651,8 @@ alignment:
     - source: "The principal theorems listed in the Contents subsection of \"What is proved\" in README.md"
       lean: "LatticeProb.*"
       module: "LatticeProb.Meta.AxiomsAudit"
-      status: "proved"
-      note: "Axioms printed by LatticeProb/Meta/AxiomsAudit.lean."
+      status: "cataloged"
+      note: "The principal-name audit is additional evidence; the full environment census binds current all-public coverage."
     - source: "Cited results (Gaussian log-Sobolev and Herbst bound, polygonal unicoherence, Janiszewski, Rellich-Kondrachov in negative order)"
       lean: "LatticeProb.GaussianLogSobolev, LatticeProb.GaussianHerbstBound, LatticeProb.PolygonalUnicoherence, LatticeProb.PolygonalJaniszewski, LatticeProb.External.RellichKondrachovNegSobolev"
       module: "LatticeProb.External"

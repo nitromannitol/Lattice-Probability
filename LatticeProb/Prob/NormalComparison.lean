@@ -11,9 +11,7 @@ correlations `ρ_{ij} = S i j / v`,
 
 This file lands the elementary half of the smart-path proof: the path from the
 product law `v • 1` to `S` and the bivariate density comparison (the AM--GM bound
-that produces the exponential factor).  The pieces are adapted from the route's
-working scratch (`~/lean/Divisible-Sandpile-Percolation/scratch/normalcompare_step.lean`)
-into the library namespace.
+that produces the exponential factor).
 
 ## What is *not* landed (the named missing inputs of the route)
 

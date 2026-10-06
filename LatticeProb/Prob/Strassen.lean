@@ -48,6 +48,4 @@ closedness of finitely generated cones, so the finite stage goes through Hall in
   generating π-system (`generateFrom_measurableCylinders`, `isPiSystem_measurableCylinders`).
 * Converse (`Converse`): the easy direction, `domination_of_monotone_coupling`.
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/

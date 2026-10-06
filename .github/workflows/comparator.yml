@@ -1,132 +1,103 @@
 name: Comparator audit
-
-# Runs the official leanprover/comparator on the three pairs under
-# LatticeProbAudit/: for each pair it checks that Solution proves a
-# statement whose full dependency closure matches Challenge's, uses only the
-# permitted axioms, and is accepted by BOTH the Lean kernel (replay) and the
-# independent nanoda kernel (enable_nanoda is set in each comparator.json).
-#
-# Mathlib olean artifacts come from `lake exe cache get`.  The library's own
-# build is cached between runs; the first run on an empty cache builds the
-# whole LatticeProb library.
-
-# Manual trigger only: these builds are Mathlib-scale, so they run on request.
 on:
   workflow_dispatch:
-
+permissions:
+  contents: read
 concurrency:
   group: comparator-${{ github.ref }}
   cancel-in-progress: false
-
 env:
-  COMPARATOR_REV: "575674928e239f5bc452aab72d1dd7b0f1326494"  # leanprover/comparator commit
-  LEAN4EXPORT_REV: "v4.32.0"                                  # MUST match ./lean-toolchain
-  NANODA_REV: "6ae1f0cd962f081f6c423454c5da729d841236a7"      # ammkrn/nanoda_lib commit
-  LANDRUN_REV: "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4"     # Zouuup/landrun commit (v0.1.18)
-
+  COMPARATOR_REV: '575674928e239f5bc452aab72d1dd7b0f1326494'
+  LEAN4EXPORT_REV: '4e7915201d3f9f04470d9eae002fa695f7cdc589'
+  NANODA_REV: '6ae1f0cd962f081f6c423454c5da729d841236a7'
+  LANDRUN_REV: '811cfff51ceaf3d9843708aa6d22e9b84ccac8b4'
 jobs:
   comparator:
     runs-on: ubuntu-latest
     timeout-minutes: 350
+    env:
+      LAKE_LOCK: ${{ runner.temp }}/lean-build.lock
+      PYTHONDONTWRITEBYTECODE: '1'
+      RUSTUP_TOOLCHAIN: '1.85.0'
+      GOTOOLCHAIN: local
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cache elan toolchains
-        uses: actions/cache@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          path: ~/.elan
-          key: elan-${{ hashFiles('lean-toolchain') }}-cmp-${{ env.COMPARATOR_REV }}
-
-      - name: Install elan
-        run: |
-          curl https://elan.lean-lang.org/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
-          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-
-      - name: Cache project build artifacts
-        uses: actions/cache@v4
+          persist-credentials: false
+      - name: Install pinned project toolchain
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-mathlib-cache: false
+          use-github-cache: false
+          check-reservoir-eligibility: false
+      - name: Check required administration configuration and fixtures
+        run: python3 tools/verify.py --preflight-only
+      - name: Set exact Go build environment
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.24.0'
+          cache: false
+      - name: Set exact Rust build environment
+        run: rustup toolchain install 1.85.0 --profile minimal
+      - name: Restore exact project artifacts
+        id: project-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: .lake/build
-          key: lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
-          restore-keys: |
-            lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
-
-      - name: Get Mathlib cache
-        run: lake exe cache get
-
-      - name: Build the library and the audit surfaces
-        run: lake build LatticeProbAudit
-
-      - name: Cache verification tools
+          key: comparator-project-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json', 'LatticeProb.lean', 'LatticeProb/**/*.lean', 'LatticeProbAudit/**/*.lean', 'LatticeProbAudit/**/comparator.json', 'tools/**/*.py', '.github/workflows/*.yml', 'README.md', 'formalization.yaml') }}
+      - name: Restore exact verification tools
         id: tools-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ~/tools
-          key: cmp-tools-${{ env.COMPARATOR_REV }}-${{ env.LEAN4EXPORT_REV }}-${{ env.NANODA_REV }}-${{ env.LANDRUN_REV }}
-
-      - name: Build comparator
+          key: comparator-tools-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'tools/**/*.py', '.github/workflows/comparator.yml', 'LatticeProbAudit/**/comparator.json') }}-${{ env.COMPARATOR_REV }}-${{ env.LEAN4EXPORT_REV }}-${{ env.NANODA_REV }}-${{ env.LANDRUN_REV }}-go1.24.0-rust1.85.0
+      - name: Build exact verification tools
         if: steps.tools-cache.outputs.cache-hit != 'true'
-        run: |
-          git clone https://github.com/leanprover/comparator ~/tools/comparator
-          git -C ~/tools/comparator checkout "$COMPARATOR_REV"
-          cd ~/tools/comparator && lake build
-
-      - name: Build lean4export (toolchain-matched)
-        if: steps.tools-cache.outputs.cache-hit != 'true'
-        run: |
-          git clone https://github.com/leanprover/lean4export ~/tools/lean4export
-          git -C ~/tools/lean4export checkout "$LEAN4EXPORT_REV"
-          test "$(cat ~/tools/lean4export/lean-toolchain)" = "$(cat lean-toolchain)" \
-            || { echo "lean4export toolchain does not match project toolchain"; exit 1; }
-          cd ~/tools/lean4export && lake build
-
-      - name: Set up Go (for landrun)
-        if: steps.tools-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.24'
-
-      - name: Build landrun (static)
-        if: steps.tools-cache.outputs.cache-hit != 'true'
-        run: |
-          git clone https://github.com/Zouuup/landrun ~/tools/landrun-src
-          git -C ~/tools/landrun-src checkout "$LANDRUN_REV"
-          mkdir -p ~/tools/bin
-          cd ~/tools/landrun-src && CGO_ENABLED=0 go build -o ~/tools/bin/landrun ./cmd/landrun
-
-      - name: Build nanoda
-        if: steps.tools-cache.outputs.cache-hit != 'true'
-        run: |
-          rustup toolchain install stable --profile minimal
-          git clone https://github.com/ammkrn/nanoda_lib ~/tools/nanoda_lib
-          git -C ~/tools/nanoda_lib checkout "$NANODA_REV"
-          cd ~/tools/nanoda_lib && cargo +stable build --release
-
-      - name: Run the comparator on all three pairs
-        env:
-          COMPARATOR_LANDRUN: /home/runner/tools/bin/landrun
-          COMPARATOR_LEAN4EXPORT: /home/runner/tools/lean4export/.lake/build/bin/lean4export
-          COMPARATOR_NANODA: /home/runner/tools/nanoda_lib/target/release/nanoda_bin
+        shell: bash
         run: |
           set -euo pipefail
-          fail=0
-          for X in Kingman GFF BinomialLocalCLT; do
-            echo "::group::$X"
-            if lake env ~/tools/comparator/.lake/build/bin/comparator "LatticeProbAudit/$X/comparator.json" \
-                 | tee "/tmp/comparator-$X.log" \
-               && grep -q "Your solution is okay!" "/tmp/comparator-$X.log"; then
-              echo "$X: OK"
-            else
-              echo "$X: FAILED"
-              fail=1
-            fi
-            echo "::endgroup::"
-          done
-          exit "$fail"
-
-      - name: Upload comparator logs
-        if: always()
-        uses: actions/upload-artifact@v4
+          mkdir -p "$HOME/tools/bin"
+          git clone https://github.com/leanprover/comparator "$HOME/tools/comparator"
+          git -C "$HOME/tools/comparator" checkout --detach "$COMPARATOR_REV"
+          git clone https://github.com/leanprover/lean4export "$HOME/tools/lean4export"
+          git -C "$HOME/tools/lean4export" checkout --detach "$LEAN4EXPORT_REV"
+          test "$(cat "$HOME/tools/lean4export/lean-toolchain")" = "$(cat lean-toolchain)"
+          (cd "$HOME/tools/comparator" && /usr/bin/flock "$LAKE_LOCK" lake build)
+          (cd "$HOME/tools/lean4export" && /usr/bin/flock "$LAKE_LOCK" lake build)
+          git clone https://github.com/Zouuup/landrun "$HOME/tools/landrun-src"
+          git -C "$HOME/tools/landrun-src" checkout --detach "$LANDRUN_REV"
+          (cd "$HOME/tools/landrun-src" && CGO_ENABLED=0 go build -o "$HOME/tools/bin/landrun" ./cmd/landrun)
+          git clone https://github.com/ammkrn/nanoda_lib "$HOME/tools/nanoda_lib"
+          git -C "$HOME/tools/nanoda_lib" checkout --detach "$NANODA_REV"
+          (cd "$HOME/tools/nanoda_lib" && cargo +1.85.0 build --release --locked)
+          python3 tools/check_comparators.py --record-tool-build --tool-root "$HOME/tools"
+      - name: Verify exact tool identities on cache hit and miss
+        run: python3 tools/check_comparators.py --tools-only --tool-root "$HOME/tools"
+      - name: Get dependency cache
+        run: /usr/bin/flock "$LAKE_LOCK" lake exe cache get
+      - name: Run all production gates and every exact comparator pair
+        run: python3 tools/verify.py --comparator "$HOME/tools" --evidence-dir "$RUNNER_TEMP/library-comparator"
+      - name: Save only successfully verified project artifacts
+        if: success() && steps.project-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
-          name: comparator-logs
-          path: /tmp/comparator-*.log
+          path: .lake/build
+          key: comparator-project-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json', 'LatticeProb.lean', 'LatticeProb/**/*.lean', 'LatticeProbAudit/**/*.lean', 'LatticeProbAudit/**/comparator.json', 'tools/**/*.py', '.github/workflows/*.yml', 'README.md', 'formalization.yaml') }}
+      - name: Save only successfully verified tools
+        if: success() && steps.tools-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: ~/tools
+          key: comparator-tools-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'tools/**/*.py', '.github/workflows/comparator.yml', 'LatticeProbAudit/**/comparator.json') }}-${{ env.COMPARATOR_REV }}-${{ env.LEAN4EXPORT_REV }}-${{ env.NANODA_REV }}-${{ env.LANDRUN_REV }}-go1.24.0-rust1.85.0
+      - name: Upload comparator evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: comparator-evidence
+          path: ${{ runner.temp }}/library-comparator
+          if-no-files-found: error

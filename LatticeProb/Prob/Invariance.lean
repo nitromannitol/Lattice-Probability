@@ -15,8 +15,6 @@ many `q`: a.e. `x` has `q < f x ↔ q < f (T x)` for all rational `q ≥ 0`, whi
 
 No ergodicity and no integrability is needed for the invariance; the target `ℝ≥0∞` handles `∞`.
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/
 import Mathlib
 

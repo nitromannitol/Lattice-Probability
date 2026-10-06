@@ -7,8 +7,7 @@ is differentiable with derivative the integral of the slice derivatives,
 
   `fderiv ℝ F x = ∫ y, fderiv ℝ (fun x => h(x,y)) x dν(y)`.
 
-This is the missing declaration named in
-`~/fleet/audit/lib-gaussianlogsobolev-gradtensor.md` §3; it is the last input of
+This supplies the differentiation input of
 the slicewise Jensen step of the Γ-form Gaussian log-Sobolev tensorization.  The
 proof is Mathlib's parametric differentiation lemma
 `hasFDerivAt_integral_of_dominated_of_fderiv_le`
