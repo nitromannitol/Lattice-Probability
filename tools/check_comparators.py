@@ -77,7 +77,7 @@ def verify_tools(root,toolroot,execute=run):
 def accept_comparator(result, challenge_path):
     # Only the deliberately holed exact Challenge file may emit this exact warning.
     path=re.escape(challenge_path)
-    permitted=re.compile(rf"^{path}:\d+:\d+: warning: declaration uses ['`]sorry['`]\s*$")
+    permitted=re.compile(rf"^(?:{path}:\d+:\d+: warning:|warning: {path}:\d+:\d+:) declaration uses ['`]sorry['`]\s*$")
     stdout="\n".join(line for line in ANSI.sub("",result.stdout).splitlines() if not permitted.fullmatch(line))
     stderr="\n".join(line for line in ANSI.sub("",result.stderr).splitlines() if not permitted.fullmatch(line))
     require_clean(Result(result.command,result.returncode,stdout,stderr))
