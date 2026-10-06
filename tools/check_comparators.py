@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exact three-pair comparator configuration, tool identity and process gate."""
+"""Exact five-pair comparator configuration, tool identity and process gate."""
 import argparse
 import json
 import os
@@ -9,12 +9,11 @@ import sys
 import tempfile
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from check_axioms import ALLOWED, digest, regular_hash, strict_json
+from check_axioms import ALLOWED, COMPARATOR_PAIRS, comparator_baselines, digest, regular_hash, strict_json
 from assurance_diagnostics import ANSI, GateError, Result, require_clean, run, success_summary
 
 ROOT = Path(__file__).resolve().parent.parent
-PAIRS = {"Kingman":"LatticeProbAudit.kingman", "GFF":"LatticeProbAudit.gff",
-         "BinomialLocalCLT":"LatticeProbAudit.binomial_local_clt"}
+PAIRS = COMPARATOR_PAIRS
 REVISIONS = {"comparator":"575674928e239f5bc452aab72d1dd7b0f1326494",
              "lean4export":"4e7915201d3f9f04470d9eae002fa695f7cdc589",
              "nanoda_lib":"6ae1f0cd962f081f6c423454c5da729d841236a7",
@@ -27,20 +26,7 @@ BINARIES={"comparator":"comparator/.lake/build/bin/comparator",
 def configuration(root):
     actual=sorted(p.parent.name for p in (root/"LatticeProbAudit").rglob("comparator.json"))
     if actual != sorted(PAIRS): raise GateError("missing/duplicate/unexpected comparator pair")
-    rows=[]
-    for pair,name in PAIRS.items():
-        path=f"LatticeProbAudit/{pair}/comparator.json"
-        value=strict_json((root/path).read_text())
-        required={"challenge_module","solution_module","theorem_names","definition_names","permitted_axioms","enable_nanoda"}
-        if not isinstance(value,dict) or set(value)!=required: raise GateError("malformed comparator configuration")
-        expected_modules={"challenge_module":f"LatticeProbAudit.{pair}.Challenge", "solution_module":f"LatticeProbAudit.{pair}.Solution"}
-        if any(value[k]!=v for k,v in expected_modules.items()) or value["theorem_names"] != [name] or value["definition_names"] != [] or value["enable_nanoda"] is not True:
-            raise GateError("empty/duplicate/swapped comparator selection or module")
-        axioms=value["permitted_axioms"]
-        if not isinstance(axioms,list) or len(axioms)!=len(ALLOWED) or set(axioms)!=ALLOWED: raise GateError("changed comparator axiom policy")
-        sources={m.replace(".","/")+".lean":regular_hash(root,m.replace(".","/")+".lean") for m in expected_modules.values()}
-        rows.append({"pair":pair,"configuration":path,"sha256":regular_hash(root,path),"sources":sources,"selection":[name],"modules":expected_modules})
-    return rows
+    return comparator_baselines(root)
 
 
 def tool_identity(root, toolroot, execute=run):

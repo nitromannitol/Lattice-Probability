@@ -102,7 +102,7 @@ status:
     preserved; current verification is bound to the evidence of each exact run.
   sorry_count: 0
   sorry_count_scope: "existing catalog status; a fresh current production count requires the recorded full gates"
-  comparator_challenge_sorry_count: 3
+  comparator_challenge_sorry_count: 5
   assurance_scope: >-
     Existing named results and conditional input descriptions are preserved.
     Whole-library coverage requires the exact stable all-module environment

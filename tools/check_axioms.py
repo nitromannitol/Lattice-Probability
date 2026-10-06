@@ -23,6 +23,20 @@ from assurance_diagnostics import ANSI, GateError, POLICY, require_clean, run, s
 
 ROOT = Path(__file__).resolve().parent.parent
 ALLOWED = frozenset({"propext", "Classical.choice", "Quot.sound"})
+COMPARATOR_PAIRS = {
+    'Kingman': 'LatticeProbAudit.kingman',
+    'GFF': 'LatticeProbAudit.gff',
+    'BinomialLocalCLT': 'LatticeProbAudit.binomial_local_clt',
+    'BerryEsseen': 'LatticeProbAudit.berry_esseen_one_dim',
+    'NormalComparison': 'LatticeProbAudit.normal_comparison',
+}
+CHALLENGE_SHA256 = {
+    'Kingman': 'd1c5b13575bb018d604ad21b12879222da731e9367e7090565378ab2d185c5b0',
+    'GFF': 'a779f0aebe647da8d4eb6d9da91cb2f48bf38d5f42a4d51b68f26ea7c942a890',
+    'BinomialLocalCLT': '8250b241e51e507de7490a22fb3c53c73694be30535443dbf8a00f6abbce3a07',
+    'BerryEsseen': '2fb6bbf3a699b545beeb612ce48a428e52177ff4b98d266c619b012dd6efafd3',
+    'NormalComparison': 'dd9e99bce68d37a86155b2512cf7ab3104433556621fabef70d87c13678bef2e',
+}
 KINDS = {"definition", "theorem", "axiom", "opaque", "quotient", "inductive", "constructor", "recursor"}
 CONFIG = ("lean-toolchain", "lakefile.lean", "lake-manifest.json")
 
@@ -51,6 +65,33 @@ def strict_json(text):
     return json.loads(text,object_pairs_hook=unique)
 
 
+def comparator_baselines(root):
+    """Bind the complete intentional challenge sources and exact solution configurations."""
+    rows=[]
+    for pair,name in COMPARATOR_PAIRS.items():
+        path=f"LatticeProbAudit/{pair}/comparator.json"
+        value=strict_json((root/path).read_text())
+        required={"challenge_module","solution_module","theorem_names","definition_names",
+                  "permitted_axioms","enable_nanoda"}
+        if not isinstance(value,dict) or set(value)!=required:
+            raise GateError("malformed comparator configuration")
+        modules={"challenge_module":f"LatticeProbAudit.{pair}.Challenge",
+                 "solution_module":f"LatticeProbAudit.{pair}.Solution"}
+        if any(value[k]!=v for k,v in modules.items()) or value["theorem_names"] != [name] or value["definition_names"] != [] or value["enable_nanoda"] is not True:
+            raise GateError("empty/duplicate/swapped comparator selection or module")
+        axioms=value["permitted_axioms"]
+        if not isinstance(axioms,list) or len(axioms)!=len(ALLOWED) or set(axioms)!=ALLOWED:
+            raise GateError("changed comparator axiom policy")
+        sources={m.replace(".","/")+".lean":regular_hash(root,m.replace(".","/")+".lean")
+                 for m in modules.values()}
+        challenge=modules["challenge_module"].replace(".","/")+".lean"
+        if sources[challenge]!=CHALLENGE_SHA256[pair]:
+            raise GateError("modified exact comparator Challenge baseline: "+pair)
+        rows.append({"pair":pair,"configuration":path,"sha256":regular_hash(root,path),
+                     "sources":sources,"selection":[name],"modules":modules})
+    return rows
+
+
 def tracked_paths(root, runner=subprocess.run):
     r = run(["git", "ls-files", "-z"], root, runner=runner)
     require_clean(r)
@@ -76,13 +117,14 @@ def source_inventory(root, paths=None, *, include_comparator=False):
     if any(not re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*(?:/[A-Za-z_][A-Za-z_0-9]*)*\.lean",p) for p in selected):
         raise GateError("unsupported production module path; require an explicit safe module encoding")
     if include_comparator:
-        challenges={f"LatticeProbAudit/{p}/Challenge.lean" for p in ("Kingman","GFF","BinomialLocalCLT")}
+        comparator_baselines(root)  # Only exact complete configured baselines are separate.
+        challenges={f"LatticeProbAudit/{p}/Challenge.lean" for p in COMPARATOR_PAIRS}
         audit_paths={p for p in paths if p.startswith("LatticeProbAudit/") and p.endswith(".lean")}
         physical={p.relative_to(root).as_posix() for p in (root/"LatticeProbAudit").rglob("*.lean")}
         if audit_paths != physical or not challenges <= audit_paths:
             raise GateError("missing/untracked comparator surface")
         audit_selected=sorted(audit_paths-challenges)
-        if not audit_selected or not all(f"LatticeProbAudit/{p}/Solution.lean" in audit_selected for p in ("Kingman","GFF","BinomialLocalCLT")):
+        if not audit_selected or not all(f"LatticeProbAudit/{p}/Solution.lean" in audit_selected for p in COMPARATOR_PAIRS):
             raise GateError("missing configured comparator Solution scope")
         selected += audit_selected
     if any(not re.fullmatch(r"[A-Za-z_][A-Za-z_0-9]*(?:/[A-Za-z_][A-Za-z_0-9]*)*\.lean",p) for p in selected):
@@ -96,7 +138,7 @@ def source_inventory(root, paths=None, *, include_comparator=False):
 
 def input_identity(root, paths=None, *, include_comparator=False):
     source = source_inventory(root, paths,include_comparator=include_comparator)
-    configured=list(CONFIG)+[f"LatticeProbAudit/{p}/comparator.json" for p in ("Kingman","GFF","BinomialLocalCLT")]
+    configured=list(CONFIG)+[f"LatticeProbAudit/{p}/comparator.json" for p in COMPARATOR_PAIRS]
     configurations = {p: regular_hash(root, p) for p in configured}
     manifest = strict_json((root / "lake-manifest.json").read_text())
     packages = manifest.get("packages")
@@ -118,6 +160,7 @@ def input_identity(root, paths=None, *, include_comparator=False):
     if not re.fullmatch(r"[0-9a-f]{40}", head):
         raise GateError("invalid checkout identity")
     return {"policy":POLICY, "base_commit":head, "sources":source,
+            "comparator_baselines":comparator_baselines(root),
             "configurations":configurations, "dependencies":sorted(revisions,key=lambda p:p["name"]),
             "assurance_files":{p:regular_hash(root,p) for p in tools +
              ["README.md", "formalization.yaml", ".github/workflows/build.yml", ".github/workflows/comparator.yml"]}}

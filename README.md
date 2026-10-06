@@ -735,8 +735,11 @@ it. Comparator gates require `--tool-root` or `COMPARATOR_TOOL_ROOT`; the latter
 must be an absolute path. Evidence can be retained outside the checkout with
 `--evidence-dir`.
 
-Three separate comparator pairs cover Kingman's subadditive ergodic theorem,
-the discrete Gaussian free field and the binomial local central limit theorem.
+Five configured comparator pairs select Kingman's subadditive ergodic theorem,
+the discrete Gaussian free field, the binomial local central limit theorem,
+the one-dimensional Berry-Esseen theorem and the normal comparison inequality.
+Each selected theorem requires its own actual comparator result; configuration
+alone is not a proof verdict.
 The comparator production census additionally covers every tracked
 non-Challenge Solution and bridge module. The configured Challenge holes
 belong only to those artificial comparison surfaces. The comparator gate requires every exact pair, actual child exits,

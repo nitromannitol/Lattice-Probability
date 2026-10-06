@@ -189,11 +189,13 @@ class ConfigurationTests(unittest.TestCase):
     def fixture(self,root):
         for pair,name in cmp.PAIRS.items():
             p=root/"LatticeProbAudit"/pair;p.mkdir(parents=True)
-            for module in ("Challenge","Solution"):(p/f"{module}.lean").write_text("-- source hash fixture\n")
+            original=Path(__file__).resolve().parents[2]/"LatticeProbAudit"/pair/"Challenge.lean"
+            (p/"Challenge.lean").write_bytes(original.read_bytes())
+            (p/"Solution.lean").write_text("-- source hash fixture\n")
             config={"challenge_module":f"LatticeProbAudit.{pair}.Challenge","solution_module":f"LatticeProbAudit.{pair}.Solution","theorem_names":[name],"definition_names":[],"permitted_axioms":sorted(ax.ALLOWED),"enable_nanoda":True}
             (p/"comparator.json").write_text(json.dumps(config))
 
-    def test_three_pairs_and_exact_config_hashes(self):
+    def test_exact_pairs_and_exact_config_hashes(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);self.fixture(root);rows=cmp.configuration(root)
             self.assertEqual({r["pair"] for r in rows},set(cmp.PAIRS));self.assertTrue(all(len(r["sources"])==2 for r in rows))
@@ -235,7 +237,7 @@ class ConfigurationTests(unittest.TestCase):
                         with self.assertRaises(diag.GateError):cmp.compare(root,Path(d)/"tools",Path(d)/"evidence",execute)
                     else:
                         cmp.compare(root,Path(d)/"tools",Path(d)/"evidence",execute)
-                        self.assertEqual(len(calls),6);self.assertEqual(len([c for c in calls if c[-1].endswith("json")]),3)
+                        self.assertEqual(len(calls),2*len(cmp.PAIRS));self.assertEqual(len([c for c in calls if c[-1].endswith("json")]),len(cmp.PAIRS))
 
     def test_bad_tool_identity_on_cache_hit_never_skips(self):
         calls=[]
@@ -294,7 +296,7 @@ class AdditionalBoundaryTests(unittest.TestCase):
             rows=ax.source_inventory(root,paths,include_comparator=True)
             selected={r["path"] for r in rows}
             self.assertIn(bridge.relative_to(root).as_posix(),selected);self.assertIn(basic.relative_to(root).as_posix(),selected)
-            self.assertEqual(len(rows),7);self.assertFalse(any(p.endswith("/Challenge.lean") for p in selected))
+            self.assertEqual(len(rows),len(cmp.PAIRS)+4);self.assertFalse(any(p.endswith("/Challenge.lean") for p in selected))
             basic.unlink()
             with self.assertRaises(diag.GateError):ax.source_inventory(root,paths,include_comparator=True)
 
@@ -553,5 +555,51 @@ class NativeAdapterControls(unittest.TestCase):
                 self.assertEqual(child.returncode, 0, child.stdout + child.stderr)
                 self.assertEqual(child.stdout, "local startup imports resolved\n")
                 self.assertEqual(child.stderr, "")
+
+class ExactFivePairControls(unittest.TestCase):
+    def test_both_new_pairs_require_exact_full_baseline_configuration(self):
+        for pair in ("BerryEsseen","NormalComparison"):
+            for mutation in ("missing-config","missing-solution","wrong-theorem",
+                             "extra-premise-name","duplicate-name","custom-axiom",
+                             "disabled-nanoda","changed-challenge"):
+                with self.subTest(pair=pair,mutation=mutation),tempfile.TemporaryDirectory() as d:
+                    root=Path(d);paths=InventoryTests().fixture(root)
+                    ConfigurationTests().fixture(root);p=root/"LatticeProbAudit"/pair
+                    value=json.loads((p/"comparator.json").read_text())
+                    if mutation=="missing-config":(p/"comparator.json").unlink()
+                    elif mutation=="missing-solution":(p/"Solution.lean").unlink()
+                    elif mutation=="changed-challenge":
+                        with (p/"Challenge.lean").open("a") as f:f.write("\n-- changed baseline\n")
+                    else:
+                        if mutation=="wrong-theorem":value["theorem_names"]=["Other.theorem"]
+                        elif mutation=="extra-premise-name":value["theorem_names"]+=["Conditional.result"]
+                        elif mutation=="duplicate-name":value["theorem_names"]*=2
+                        elif mutation=="custom-axiom":value["permitted_axioms"]+=["sorryAx"]
+                        else:value["enable_nanoda"]=False
+                        (p/"comparator.json").write_text(json.dumps(value))
+                    paths+=[q.relative_to(root).as_posix() for q in (root/"LatticeProbAudit").rglob("*.lean")]
+                    with self.assertRaises((diag.GateError,OSError)):
+                        ax.source_inventory(root,paths,include_comparator=True)
+
+    def test_no_other_tracked_audit_module_is_a_baseline(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);paths=InventoryTests().fixture(root);ConfigurationTests().fixture(root)
+            extra=root/"LatticeProbAudit/Other/Challenge.lean";extra.parent.mkdir()
+            extra.write_text("-- a tracked input outside the exact baselines\n")
+            paths+=[q.relative_to(root).as_posix() for q in (root/"LatticeProbAudit").rglob("*.lean")]
+            selected={r["path"] for r in ax.source_inventory(root,paths,include_comparator=True)}
+            excluded={f"LatticeProbAudit/{p}/Challenge.lean" for p in cmp.PAIRS}
+            self.assertEqual(selected,set(paths)-excluded)
+            self.assertIn(extra.relative_to(root).as_posix(),selected)
+            for pair in cmp.PAIRS:self.assertIn(f"LatticeProbAudit/{pair}/Solution.lean",selected)
+
+    def test_every_baseline_hash_drift_is_rejected(self):
+        for pair in cmp.PAIRS:
+            with self.subTest(pair=pair),tempfile.TemporaryDirectory() as d:
+                root=Path(d);ConfigurationTests().fixture(root)
+                p=root/"LatticeProbAudit"/pair/"Challenge.lean"
+                p.write_bytes(p.read_bytes()+b"\n-- extra unapproved source bytes\n")
+                with self.assertRaises(diag.GateError):cmp.configuration(root)
+
 
 if __name__=="__main__":unittest.main()

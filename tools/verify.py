@@ -28,7 +28,7 @@ def verify(root, evidence, *, preflight_only=False, comparator=None, execute=run
     audit(root,evidence/"axioms",execute=execute,include_comparator=comparator is not None)
     if comparator is not None: compare(root,comparator,evidence/"comparator",execute=execute)
     if input_identity(root,include_comparator=comparator is not None)!=before: raise GateError("required-gate input drift")
-    print("OK (required production gates completed"+("; three comparator pairs" if comparator else "")+")")
+    print("OK (required production gates completed"+("; five comparator pairs" if comparator else "")+")")
 
 
 def main():
