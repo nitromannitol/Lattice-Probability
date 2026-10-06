@@ -380,6 +380,8 @@ import LatticeProb.Analysis.Sobolev.TranslationContinuity
 import LatticeProb.Analysis.Sobolev.TranslationBound
 import LatticeProb.Analysis.Sobolev.TranslationQuant
 import LatticeProb.Analysis.Sobolev.SobolevTranslate
+import LatticeProb.Analysis.Sobolev.SobolevBessel
+import LatticeProb.Analysis.Sobolev.PlancherelPackaging
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyResidual
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyGap
