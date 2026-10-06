@@ -98,7 +98,9 @@ class ReportTests(unittest.TestCase):
 
     def test_complete_expected_binding_probe_generation(self):
         p=ax.inspection_program(SOURCES,"closure","a"*64)
-        for module in SOURCES:self.assertIn("import all "+module["module"],p)
+        self.assertTrue(p.startswith("import Lean\n"))
+        self.assertNotRegex(p, r"(?m)^module\s*$|^import all ")
+        for module in SOURCES:self.assertIn("import "+module["module"]+"\n",p)
         self.assertIn("env.constants.toList",p);self.assertIn("env.getModuleIdxFor? n",p);self.assertIn("collectAxioms n",p)
         self.assertNotIn("n.isInternal",p);self.assertNotIn("isPrivateName",p)
         self.assertNotRegex(p,r"(?m)^\s*(?:theorem|example|def|axiom)\b")

@@ -131,7 +131,10 @@ def inspection_program(sources, phase, identity):
         raise GateError("invalid module selection")
     # JSON string literals are also Lean string literals for the module paths here.
     quoted = ", ".join(json.dumps(m, ensure_ascii=False) for m in modules)
-    imports = "module\nimport all Lean\n" + "".join(f"import all {m}\n" for m in modules)
+    # A non-module inspector loads the full private import environment in Lean
+    # 4.32, including legacy and module-system sources. It retains every kernel
+    # declaration; `import all` is forbidden without a `module` header.
+    imports = "import Lean\n" + "".join(f"import {m}\n" for m in modules)
     body = r'''open Lean Elab Command
 run_cmd liftCoreM do
   let env ← getEnv
