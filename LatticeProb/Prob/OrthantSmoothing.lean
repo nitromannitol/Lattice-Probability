@@ -234,7 +234,6 @@ theorem integral_gaussianPDFReal_smul_mul_exp (c : ℝ) (v : ℝ≥0) (hv : v �
       = charFun (gaussianReal c v) t := by
     rw [charFun_apply_real]
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-    congr 1
     ring
   rw [hcf, charFun_gaussianReal]
   congr 1

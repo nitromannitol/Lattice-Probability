@@ -24,6 +24,7 @@ import LatticeProb.Prob.GaussCovDensityMarginal
 import LatticeProb.Prob.GaussCovDensityTwo
 import LatticeProb.Prob.GaussCovDensityOrthant
 import LatticeProb.Prob.NormalComparisonPath
+import LatticeProb.Prob.NormalComparisonBoundary
 
 open MeasureTheory Matrix
 
@@ -42,7 +43,7 @@ private theorem quad_pair_nonneg (hS : S.PosSemidef) {i j : Fin (m + 2)} (s : �
   linarith
 
 /-- A positive semidefinite matrix with constant diagonal `v` has entries bounded by `v`. -/
-theorem abs_apply_le_of_posSemidef_diag (hv : 0 < v) (hS : S.PosSemidef)
+theorem abs_apply_le_of_posSemidef_diag_add_two (hv : 0 < v) (hS : S.PosSemidef)
     (hdiag : ∀ i, S i i = v) (i j : Fin (m + 2)) : |S i j| ≤ v := by
   by_cases hij : i = j
   · subst hij

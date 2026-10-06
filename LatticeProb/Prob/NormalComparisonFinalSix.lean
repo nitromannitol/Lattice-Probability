@@ -1,60 +1,16 @@
 /-
-# Li--Shao normal comparison: the boundary bound along the smart path (route item 5)
+Normal comparison: the boundary bound from a marginal estimate.
 
-Continuing `LatticeProb/Prob/NormalComparisonFinalFive.lean`.  The boundary integral of the density
-`covDensity S_t` along the corner `pairCorner σ b` is nonnegative and at most the bivariate
-Gaussian density at correlation `t * S (σ 0) (σ 1) / v`.  This file supplies the corner map
-`pairCorner`, its nonnegativity, and the reduction of the boundary bound to the marginal fact
-`∫_{x'' ≤ b} covDensity S_t (pairCorner σ b x'') ≤ covDensity M₂ ![b (σ 0), b (σ 1)]`:
-the `2 × 2` submatrix `M₂` with `c = t * S (σ 0) (σ 1)` equals `!![v, c; c, v]`, and
-`covDensity_two_cov` turns its density into `bivariateGaussDensity v (c / v)`.
-
-No `External` is touched, no `Prop` is frozen, and nothing is claimed about `Rotor.External.LSS`.
+The corner map and nonnegativity of its density integral are imported.
+The retained theorem derives the bivariate boundary bound from the explicit
+marginal-estimate hypothesis hmarg.
 -/
 import LatticeProb.Prob.NormalComparisonFinalFive
+import LatticeProb.Prob.GaussCovDensityOrthant
 
 open MeasureTheory Matrix
 
 namespace LatticeProb
-
-/-! ### The corner point -/
-
-/-- The point of `Fin (m+2) → ℝ` whose coordinates `σ 0`, `σ 1` equal `b (σ 0)`, `b (σ 1)`
-and whose remaining coordinates `σ (k+2)` are `x'' k`. -/
-def pairCorner {m : ℕ} (σ : Equiv.Perm (Fin (m + 2))) (b : Fin (m + 2) → ℝ)
-    (x'' : Fin m → ℝ) :
-    Fin (m + 2) → ℝ :=
-  fun l => (Fin.cons (α := fun _ : Fin (m + 2) => ℝ) (b (σ 0))
-    (Fin.cons (b (σ 1)) x'') : Fin (m + 2) → ℝ) (σ.symm l)
-
-/-- The coordinate `σ 0` of the corner point is `b (σ 0)`. -/
-theorem pairCorner_apply_zero {m : ℕ} (σ : Equiv.Perm (Fin (m + 2))) (b : Fin (m + 2) → ℝ)
-    (x'' : Fin m → ℝ) : pairCorner σ b x'' (σ 0) = b (σ 0) := by
-  simp [pairCorner]
-
-/-- The coordinate `σ 1` of the corner point is `b (σ 1)`. -/
-theorem pairCorner_apply_one {m : ℕ} (σ : Equiv.Perm (Fin (m + 2))) (b : Fin (m + 2) → ℝ)
-    (x'' : Fin m → ℝ) : pairCorner σ b x'' (σ 1) = b (σ 1) := by
-  simp [pairCorner]
-
-/-- The coordinate `σ (k + 2)` of the corner point is `x'' k`. -/
-theorem pairCorner_apply_succ_succ {m : ℕ} (σ : Equiv.Perm (Fin (m + 2)))
-    (b : Fin (m + 2) → ℝ) (x'' : Fin m → ℝ) (k : Fin m) :
-    pairCorner σ b x'' (σ k.succ.succ) = x'' k := by
-  simp [pairCorner]
-
-/-! ### Nonnegativity of the boundary integral -/
-
-/-- The boundary integral is nonnegative: it integrates the positive density `covDensity S` along
-the corner `pairCorner σ b`. -/
-theorem integral_Iic_pairCorner_covDensity_nonneg {m : ℕ}
-    {S : Matrix (Fin (m + 2)) (Fin (m + 2)) ℝ} (hS : S.PosDef)
-    (b : Fin (m + 2) → ℝ) (σ : Equiv.Perm (Fin (m + 2))) :
-    0 ≤ ∫ x'' in Set.Iic (fun k : Fin m => b (σ k.succ.succ)),
-      covDensity S (pairCorner σ b x'') :=
-  integral_nonneg fun x'' => (covDensity_pos hS (pairCorner σ b x'')).le
-
-/-! ### The boundary bound from the marginal fact -/
 
 /-- **Route item 5 from the marginal fact.**  Given the marginal bound `hmarg` for the `2 × 2`
 corner density, the boundary integral of `covDensity S_t` along `pairCorner σ b` is nonnegative

@@ -1,38 +1,16 @@
 /-
-# Li--Shao normal comparison: the density along the smart path (route item 3, pointwise)
+Normal comparison: the density derivative from an affine-matrix derivative.
 
-Continuing the route after `LatticeProb/Prob/NormalComparisonFinalSix.lean`.  The raw orthant
-derivative `hasDerivAt_orthant_covDensity_path` differentiates the integrand
-`covDensity (normalComparisonSmartPath v S t) x` in `t`.  This file supplies that pointwise density
-derivative: writing the smart path as the affine line `S_t = v • 1 + t • (S - v • 1)`, the
-density
-derivative is
-
-  `d/dt covDensity S_t x = (1/2) ∑ᵢⱼ (S - v • 1)ᵢⱼ
-      ((S_t⁻¹ x)ᵢ (S_t⁻¹ x)ⱼ - S_t⁻¹ᵢⱼ) covDensity S_t x`,
-
-reducing it to the matrix-direction derivative `hasDerivAt_covDensity_add_smul`, taken as the
-analytic input.
-
-No `External` is touched, no `Prop` is frozen, and nothing is claimed about `Rotor.External.LSS`.
+The affine smart-path identity is imported. The retained theorem applies
+the explicit matrix-direction derivative hypothesis hadd to the smart path.
 -/
 import LatticeProb.Prob.NormalComparisonBoundary
 import LatticeProb.Prob.NormalComparisonCovariance
+import LatticeProb.Prob.GaussCovDensityOrthantPath
 
 open MeasureTheory Matrix
 
 namespace LatticeProb
-
-/-- The smart path as an affine line of matrices: `S_t = v • 1 + t • (S - v • 1)`. -/
-theorem normalComparisonSmartPath_eq_add_smul {n : ℕ} (v : ℝ) (S : Matrix (Fin n) (Fin n) ℝ)
-    (t : ℝ) :
-    normalComparisonSmartPath v S t =
-      v • (1 : Matrix (Fin n) (Fin n) ℝ)
-        + t • (S - v • (1 : Matrix (Fin n) (Fin n) ℝ)) := by
-  ext i j
-  simp only [normalComparisonSmartPath, Matrix.add_apply, Matrix.smul_apply, Matrix.sub_apply,
-    smul_eq_mul]
-  ring
 
 /-- **Route item 3, pointwise density derivative, from the matrix-direction derivative.**  Given
 `hasDerivAt_covDensity_add_smul` (the derivative of `covDensity (A + t • B) x` in `t`), the
