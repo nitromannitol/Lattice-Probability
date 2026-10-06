@@ -372,6 +372,8 @@ import LatticeProb.Analysis.Sobolev.TranslationBound
 import LatticeProb.Analysis.Sobolev.TranslationQuant
 import LatticeProb.Analysis.Sobolev.SobolevTranslate
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
+import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyResidual
+import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyGap
 import LatticeProb.Analysis.Sobolev.BandProjectionConsume
 import LatticeProb.Analysis.Sobolev.ConvolutionStructure
 import LatticeProb.Analysis.Sobolev.SupportRepairFalsity
