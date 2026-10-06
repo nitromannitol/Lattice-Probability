@@ -110,6 +110,7 @@ import LatticeProb.Prob.GaussianLogSobolevOneInput
 import LatticeProb.Prob.GaussianLogSobolevOne
 import LatticeProb.Prob.GaussianLogSobolevChain
 import LatticeProb.Prob.GaussianLogSobolevRegularity
+import LatticeProb.Prob.GaussianLogSobolevAssembly
 import LatticeProb.Prob.MehlerSmoothing
 import LatticeProb.Prob.FDerivIntegralMarginal
 import LatticeProb.Prob.GaussianLogSobolevGradTensorProved
