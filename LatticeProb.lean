@@ -189,6 +189,9 @@ import LatticeProb.Prob.BernsteinFactorialFull
 import LatticeProb.Prob.BernsteinFactorial
 import LatticeProb.Prob.BernsteinFactorialAssemble
 import LatticeProb.Prob.BernsteinFactorialChain
+import LatticeProb.Prob.BernsteinFactorialProducer
+import LatticeProb.Prob.BernsteinFactorialProducerTwo
+import LatticeProb.Prob.BernsteinFactorialProducerThree
 import LatticeProb.Prob.BernsteinFactorialBound
 import LatticeProb.Prob.BernsteinDoobMaximal
 import LatticeProb.Prob.BernsteinVariancePair
