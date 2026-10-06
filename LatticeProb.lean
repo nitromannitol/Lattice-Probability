@@ -51,6 +51,17 @@ import LatticeProb.Walk.BoxAverage
 import LatticeProb.Walk.ExitTime
 import LatticeProb.Walk.ResistancePacking
 import LatticeProb.Walk.InsertionSum
+import LatticeProb.Prob.NormalComparisonOrthantPerm
+import LatticeProb.Prob.NormalComparisonEndpoint
+import LatticeProb.Prob.NormalComparisonPath
+import LatticeProb.Prob.MultivariateBerryEsseenTarget
+import LatticeProb.Prob.MultivariateEsseenDeconvolution
+import LatticeProb.Prob.MultivariateSmoothing
+import LatticeProb.Prob.BerryEsseenSumCharFun
+import LatticeProb.Prob.BerryEsseenNormalizedProved
+import LatticeProb.Prob.BerryEsseenNormalized
+import LatticeProb.Prob.BerryEsseenOneDimIndep
+import LatticeProb.Prob.BerryEsseenOneDim
 import LatticeProb.Prob.Harris
 import LatticeProb.Prob.ZeroOne
 import LatticeProb.Prob.Catalog
