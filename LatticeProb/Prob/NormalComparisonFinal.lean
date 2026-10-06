@@ -8,6 +8,7 @@ the normal-comparison bound with constant 1/4.
 import LatticeProb.Prob.NormalComparison
 import LatticeProb.Prob.NormalComparisonCovariance
 import LatticeProb.Prob.NormalComparisonLimit
+import LatticeProb.Prob.NormalComparisonExists
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal Matrix
