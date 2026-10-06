@@ -20,7 +20,7 @@ open scoped ENNReal FourierTransform Topology
 namespace LatticeProb.Sobolev
 
 /-- **The quantitative translation bound.** -/
-theorem sobolevNormSq_translate_sub_le {d : ℕ} (s₀ : ℝ) {R : ℝ} (hR : 0 ≤ R)
+theorem sobolevNormSq_translate_sub_le {d : ℕ} (s₀ : ℝ) {R : ℝ} (_hR : 0 ≤ R)
     (φ : Space d → ℝ) (hcont : ContDiff ℝ (⊤ : ℕ∞) φ) (hcs : HasCompactSupport φ)
     (h : Space d) (hh : 2 * Real.pi * R * ‖h‖ ≤ 1) :
     sobolevNormSq d s₀ (fun x => φ (x + h) - φ x)

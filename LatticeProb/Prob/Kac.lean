@@ -20,8 +20,6 @@ and `⋃ n, Y n = {x | ∃ n, T^[n] x ∈ A}` (first entrance, by `Nat.find`). T
 `T⁻¹ U ⊆ U` and `A ⊆ U`, so ergodicity (`Ergodic.ae_empty_or_univ_of_preimage_ae_le`) and
 `μ A ≠ 0` force `μ U = 1`.
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/
 import Mathlib
 import LatticeProb.Prob.ReturnTime

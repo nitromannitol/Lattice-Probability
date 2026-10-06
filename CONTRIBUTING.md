@@ -13,10 +13,11 @@ lake build LatticeProbAudit   # the Mathlib-only comparator surface
 ```
 
 The production build is required to emit no Lean or linter warnings
-(`python3 tools/check_warnings.py`).  The three Mathlib-only files
+(`python3 tools/check_warnings.py`).  The five Mathlib-only files
 `LatticeProbAudit/*/Challenge.lean` are the sole exception: each contains
-one documented statement-level `sorry`, checked against its completed solution
-by `leanprover/comparator`.
+one documented statement-level `sorry`. These exact artificial baselines carry
+no proof credit; every configured Solution must pass both the production axiom
+gate and `leanprover/comparator` at the complete matching type.
 
 A few practical notes for working with a development of this size:
 

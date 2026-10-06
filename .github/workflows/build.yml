@@ -1,51 +1,54 @@
 name: CI
-
-# Manual trigger only: these builds are Mathlib-scale, so they run on request.
 on:
   workflow_dispatch:
-
-# Cancel superseded runs on the same ref.
+permissions:
+  contents: read
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      LAKE_LOCK: ${{ runner.temp }}/lean-build.lock
+      PYTHONDONTWRITEBYTECODE: '1'
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Install elan
-        run: |
-          curl https://elan.lean-lang.org/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
-          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-
-      - name: Get the Mathlib cache
-        run: lake exe cache get
-
-      - name: Enforce warning-free production build
-        shell: bash
-        run: |
-          set -o pipefail
-          lake build 2>&1 | tee production-build.log
-          if grep -iE '^warning:|declaration uses .sorry' production-build.log; then
-            echo "Production build emitted a warning."
-            exit 1
-          fi
-
-      # Build the axiom audit and surface its `#print axioms` output in the log,
-      # confirming the principal theorems use only the standard Mathlib axioms.
-      - name: Axiom audit
-        shell: bash
-        run: |
-          set -o pipefail
-          lake build LatticeProb.Meta.AxiomsAudit 2>&1 | tee axioms-audit.log
-          if grep -iE '^warning:|declaration uses .sorry' axioms-audit.log; then
-            echo "Axiom audit build emitted a warning."
-            exit 1
-          fi
-
-      # `#print axioms` on every declaration of the library.
-      - name: Axiom closure of every declaration
-        run: python3 tools/check_axioms.py
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Install pinned project toolchain
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
+          use-mathlib-cache: false
+          use-github-cache: false
+          check-reservoir-eligibility: false
+      - name: Check required administration configuration and fixtures
+        run: python3 tools/verify.py --preflight-only
+      - name: Restore exact project artifacts
+        id: project-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: .lake/build
+          key: library-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json', 'LatticeProb.lean', 'LatticeProb/**/*.lean', 'LatticeProbAudit/**/*.lean', 'LatticeProbAudit/**/comparator.json', 'tools/**/*.py', '.github/workflows/*.yml', 'README.md', 'formalization.yaml') }}
+      - name: Get dependency cache
+        run: /usr/bin/flock "$LAKE_LOCK" lake exe cache get
+      - name: Run every required production gate on cache hit and miss
+        run: python3 tools/verify.py --evidence-dir "$RUNNER_TEMP/library-verification"
+      - name: Save only successfully verified project artifacts
+        if: success() && steps.project-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: .lake/build
+          key: library-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json', 'LatticeProb.lean', 'LatticeProb/**/*.lean', 'LatticeProbAudit/**/*.lean', 'LatticeProbAudit/**/comparator.json', 'tools/**/*.py', '.github/workflows/*.yml', 'README.md', 'formalization.yaml') }}
+      - name: Upload inspection evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: production-verification
+          path: ${{ runner.temp }}/library-verification
+          if-no-files-found: error

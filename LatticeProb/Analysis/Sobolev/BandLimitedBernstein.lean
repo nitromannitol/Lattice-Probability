@@ -27,8 +27,7 @@ power.
 The remaining step to the consumed `L²` form is the Cauchy–Schwarz comparison
 `∫_{‖ξ‖≤2Λ} ‖ψ ξ‖ dξ ≤ (volume (ball 0 (2Λ)))^{1/2} (∫ ‖ψ‖²)^{1/2}` together with
 Plancherel; the statements below are therefore in the `L¹`-on-the-band form, and
-the `L²` upgrade is the named remaining gap (see
-`~/fleet/audit/lib-bandlimited-bernstein.md`).
+the `L²` upgrade remains a separate step.
 -/
 import LatticeProb.Analysis.Sobolev.FrequencyTruncation
 

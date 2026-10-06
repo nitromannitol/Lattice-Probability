@@ -42,6 +42,4 @@ This file only imports its children, one per proof stage, under `LatticeProb/Pro
   `g (n+1) x ≤ g 1 x + g n (T x)`), so by `ae_eq_const_of_ae_le_comp_real` it is a.e. constant.
 * Main theorem (`MainTheorem`): assembles the five stages into `ae_tendsto_div_of_linear`.
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/

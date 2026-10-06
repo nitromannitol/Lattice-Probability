@@ -1,6 +1,6 @@
 # Comparator runs
 
-The official `leanprover/comparator` was run on every pair in this directory on a local machine (Linux 6.17), with the Lean kernel and the independent `nanoda` kernel both enabled (every committed `comparator.json` sets `"enable_nanoda": true`).
+The recorded runs below cover exactly `Kingman`, `GFF` and `BinomialLocalCLT`. The official `leanprover/comparator` ran with the Lean kernel and independent `nanoda` kernel enabled. The newly configured `BerryEsseen` and `NormalComparison` pairs have no completed run asserted by this historical table; each requires its own actual recorded result. Every committed configuration enables nanoda.
 
 | Tool | Revision |
 |---|---|

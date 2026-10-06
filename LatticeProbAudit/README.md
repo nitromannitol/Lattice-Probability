@@ -1,6 +1,6 @@
 # LatticeProbAudit Comparator Surface
 
-This directory contains Mathlib-only comparator challenges for three principal
+This directory contains Mathlib-only comparator challenges for five principal
 theorems of the library.  The modules live under the root `LatticeProbAudit`
 (the Lake library of that name), so that they cannot collide with the audit
 modules of a repository that requires this library.  Each comparator lives in
@@ -11,6 +11,8 @@ its own subdirectory:
 | `Kingman/` | Kingman's subadditive ergodic theorem | `LatticeProbAudit.kingman` | `LatticeProb.ae_tendsto_div`, `LatticeProb.tendsto_integral_div` |
 | `GFF/` | the discrete Gaussian free field with zero boundary values | `LatticeProbAudit.gff` | `LatticeProb.Network.killedGreenMatrix_posSemidef`, `LatticeProb.Network.integral_gff`, `LatticeProb.Network.covariance_gff` |
 | `BinomialLocalCLT/` | the binomial local central limit theorem with a `1/m` error | `LatticeProbAudit.binomial_local_clt` | `LatticeProb.BinomialLCLT.exists_binomPMF_localCLT` |
+| `BerryEsseen/` | one-dimensional Berry-Esseen for independent non-identical summands | `LatticeProbAudit.berry_esseen_one_dim` | `LatticeProb.berryEsseen_oneDim` |
+| `NormalComparison/` | Gaussian orthant comparison with nonnegative correlations | `LatticeProbAudit.normal_comparison` | `LatticeProb.normalComparison_exists` |
 
 Each `Challenge.lean` imports only `Mathlib`, rebuilds from scratch every
 definition needed to read the theorem, states the theorem, and ends with one
@@ -19,7 +21,7 @@ of a pair and how the solutions are glued to the library.
 
 ## What Is Checked
 
-None of the three theorems rests on a cited result, so no challenge carries a
+None of the five comparator statements rests on a cited result, so no challenge carries a
 hypothesis beyond the mathematical ones.
 
 - **`Kingman`**: let `T` preserve a finite measure `μ`, and let `g n` be
@@ -36,6 +38,15 @@ hypothesis beyond the mathematical ones.
   integer `j` with `|j| ≤ m` and `j ≡ m (mod 2)`,
   `|√m · C(m, (m + j)/2) / 2^m − 2 φ(j/√m)| ≤ C/m`, with `φ` the standard
   normal density written out.  No definition is needed.
+
+- **`BerryEsseen`**: an absolute positive constant bounds the distribution-function
+  error for every finite family of centred probability laws, integrable third
+  absolute moments and positive total variance. The sum law is the image of
+  the product measure under the coordinate sum.
+- **`NormalComparison`**: an absolute positive constant bounds the orthant error
+  for every dimension, every positive common variance, positive-semidefinite
+  covariance with nonnegative entries, and every real threshold vector.
+  Singular covariances are included.
 
 ## Definition Provenance
 
@@ -106,13 +117,17 @@ COMPARATOR_LANDRUN=<landrun> COMPARATOR_LEAN4EXPORT=<lean4export> COMPARATOR_NAN
   lake env <comparator>/.lake/build/bin/comparator LatticeProbAudit/Kingman/comparator.json
 ```
 
-with `GFF` or `BinomialLocalCLT` in place of `Kingman` for the other pairs; the
+with `GFF` or `BinomialLocalCLT` in place of `Kingman` for any of the five configured pairs; the
 tool revisions are pinned in
 [`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml) and
 listed in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  A pass is the output
 `Your solution is okay!`.
 
-**Status.**  All three solutions build.  `leanprover/comparator` at commit
+**Recorded status.** The historical results below concern Kingman, GFF and
+BinomialLocalCLT. No completed run for BerryEsseen or NormalComparison is
+asserted here; their newly selected configurations require actual successful
+Solution builds and full Lean/nanoda comparator evidence before a pass claim.
+All three historical solutions build.  `leanprover/comparator` at commit
 `575674928e239f5bc452aab72d1dd7b0f1326494`, with nanoda at
 `6ae1f0cd962f081f6c423454c5da729d841236a7` and landrun at
 `811cfff51ceaf3d9843708aa6d22e9b84ccac8b4`, printed `Your solution is okay!`

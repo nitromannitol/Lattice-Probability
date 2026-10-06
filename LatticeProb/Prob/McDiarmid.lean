@@ -14,8 +14,6 @@ The route tensorizes by marginals instead of building a martingale. `rmarg μ s 
 `rmarg μ (insert i s) f x`. At `s = univ` this is the subgaussian MGF bound, and
 `HasSubgaussianMGF.measure_ge_le` finishes.
 
-The proof was written by the library's proof fleet (deepseek-v4.1-flash and Mistral leanstral)
-from a statement-owned decomposition and verified by the library gates.
 -/
 import Mathlib
 

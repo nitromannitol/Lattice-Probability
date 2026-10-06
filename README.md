@@ -34,10 +34,10 @@ and by the formalizations in progress of *Dynamic dimensional reduction*,
 *Exploding sandpiles*, the random abelian sandpile, discrete elliptic
 regularity, and `manhattan-formalization`.
 
-Every theorem of the library is proved.  A theorem that rests on a result
-cited from the literature and not proved here is conditional on it and takes
-it as an explicit hypothesis; those results are listed next.  The library has
-no single source text: each principal theorem states its result in its
+The contents below identify the existing theorem APIs and their cited inputs.
+A theorem that takes a literature result as an explicit hypothesis proves the
+conditional implication; it does not prove that input. Those inputs are listed
+next. The library has no single source text: each principal theorem states its result in its
 docstring with the citation, and the `alignment` section of
 [`formalization.yaml`](formalization.yaml) matches the theorems that formalize
 a cited result with their sources.
@@ -426,6 +426,23 @@ the field with zero boundary values on a finite set `C` as
 norms and the frequency-truncation and finite-net steps behind the
 Rellich–Kondrachov compact embedding in negative Sobolev order.
 
+* `LatticeProb.Sobolev.fourier_toLp_ae_eq`,
+  `abs_integral_mul_le_lintegral_fourier`, `sobolevNormSq_toReal_eq_integral`
+  and `sobolevNormSq_convReal_le`: the Fourier representative, Plancherel pairing
+  bound for spatial `L¹ ∩ L²` inputs, finite Sobolev norm as a real integral,
+  and the weighted convolution bound.
+* `LatticeProb.Sobolev.ae_sub_convReal_eq_integral_translate` and
+  `sobolevNormSq_sub_convReal_le`: for integrable inputs and a kernel of mass
+  one, `f(x) − (f * ρ)(x) = ∫ (f(x) − f(x + y)) ρ(−y) dy` almost everywhere.
+  The mollification residual has the same Fourier Sobolev norm as that average.
+  This equality does not assert a bound by the average of translation norms.
+* `LatticeProb.Sobolev.sobolevDualityBound_of_isTestFn`,
+  `sobolevDualityBound_convReal` and `sobolevDualityBound_fderiv`: the Fourier
+  Sobolev pairing bound for smooth compactly supported tests, mollified values
+  and derivative kernels. Smooth compact support supplies the spatial `L¹`
+  and `L²` premises. The bump consumers prove a positive Sobolev norm and a
+  nonzero derivative kernel. These results retain their stated hypotheses;
+  the remaining Rellich compactness input stays explicit.
 * `LatticeProb.Sobolev.sobolevNormSqHigh_le` and
   `LatticeProb.Sobolev.exists_sobolevNormSqHigh_le`: the high-frequency part of
   the `H^{s₀}` norm is at most `(1 + (2πΛ)²)^{s₀-s}` times the `H^s` norm, and
@@ -696,64 +713,52 @@ determined by finitely many coordinates of an infinite product.
   point, how often one fixed point precedes another in the induced cyclic
   order.
 
-## Guarantees
+## Verification scope
 
-- **No `sorry`** in the library.  Each of the three Mathlib-only comparator
-  challenges under `LatticeProbAudit/` contains its single intentional
-  statement-level `sorry`, which the corresponding solution file proves.
-  `python3 tools/check_warnings.py` checks that the build of `LatticeProb`
-  emits no error, no warning and no `sorry`.
-- **No custom `axiom`.**  Every declaration of the library reduces to
-  `mathlib`'s three standard foundational axioms, `propext`,
-  `Classical.choice` and `Quot.sound`.  `python3 tools/check_axioms.py` checks
-  this for all 5,112 declarations, and
-  [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean)
-  prints the axioms of the principal theorems.  The results cited from the
-  literature are hypotheses, not axioms.
-- **Independent check of the statements.** Three principal theorems are
-  restated using only Mathlib, with no library definitions, in
-  [`LatticeProbAudit/Kingman/Challenge.lean`](LatticeProbAudit/Kingman/Challenge.lean),
-  [`LatticeProbAudit/GFF/Challenge.lean`](LatticeProbAudit/GFF/Challenge.lean)
-  and
-  [`LatticeProbAudit/BinomialLocalCLT/Challenge.lean`](LatticeProbAudit/BinomialLocalCLT/Challenge.lean).
-  The comparator workflow submits each challenge and its solution to
-  [leanprover/comparator](https://github.com/leanprover/comparator), which
-  checks that the two statements have identical elaborated types and that the
-  proof reduces to the three standard axioms, through the Lean kernel and the
-  independent nanoda kernel.  See [`LatticeProbAudit/README.md`](LatticeProbAudit/README.md).
-- **Pinned toolchain.** Lean `v4.32.0` and `mathlib` at revision
-  `81a5d257c8e410db227a6665ed08f64fea08e997`, the only git dependency of the
-  library; the dependencies of mathlib are pinned in
-  [`lake-manifest.json`](lake-manifest.json) at plausible `e12c1910fe85`,
-  LeanSearchClient `c5d5b8fe6e51`, importGraph `7e9612bf0b9e`, proofwidgets
-  `6e311e2a844d`, aesop `a7dbf0c63b69`, Qq `38d591e778f1`, batteries
-  `023ce7d62a05` and Cli `88679d088c97`.  The dependent repositories use the
-  same pin.
+The required production gates build the root and every tracked module under
+`LatticeProb/`, reject warning/error diagnostics and nonzero child exits, and
+inspect every constant whose defining module belongs to that inventory.
+The axiom inspection includes generated and private constants, imports every
+selected module and requires two matching environment censuses with exactly
+one closure report per name. Only subsets of `propext`, `Classical.choice` and
+`Quot.sound` are accepted; a genuine empty closure is valid. Explicit hypotheses
+are binders, not additional axioms.
 
-The three pairs are `Kingman` (the subadditive ergodic theorem, both halves),
-`GFF` (the killed Green function is positive semidefinite and is the
-covariance of a centred Gaussian measure, with the killed Green function
-rebuilt from Mathlib primitives) and `BinomialLocalCLT` (the binomial local
-central limit theorem with its `1/m` error).  Each challenge contains one
-intentional statement-level `sorry`, which the corresponding `Solution.lean`
-fills from the library.  The configurations
-`LatticeProbAudit/*/comparator.json` are for
-[`leanprover/comparator`](https://github.com/leanprover/comparator).  All three
-solutions build and depend only on `propext`, `Classical.choice` and
-`Quot.sound`, and the comparator checks that each solution statement is
-exactly the challenge statement.  Both
-[`.github/workflows/build.yml`](.github/workflows/build.yml) and
-[`.github/workflows/comparator.yml`](.github/workflows/comparator.yml) trigger
-on request only (`workflow_dispatch`), since the builds are Mathlib-scale; the
-comparator is also run locally before each release, and its results are
-recorded in [`LatticeProbAudit/COMPARATOR_RUNS.md`](LatticeProbAudit/COMPARATOR_RUNS.md).
+`python3 tools/verify.py --preflight-only` checks the administration fixtures,
+public hygiene and comparator configuration. It runs no Lean inspection and
+provides no proof or comparator verdict. `python3 tools/verify.py` requires the
+production build and full axiom gate. Set `LAKE_LOCK` to an absolute build-lock
+path for direct gate execution. Under an outer exclusive lock, `LAKE_GATE_LOCK`
+identifies that same expected file; the gate verifies its device/inode, kernel
+lock and live ancestor ownership before and after each child without reacquiring
+it. Comparator gates require `--tool-root` or `COMPARATOR_TOOL_ROOT`; the latter
+must be an absolute path. Evidence can be retained outside the checkout with
+`--evidence-dir`.
+
+Five configured comparator pairs select Kingman's subadditive ergodic theorem,
+the discrete Gaussian free field, the binomial local central limit theorem,
+the one-dimensional Berry-Esseen theorem and the normal comparison inequality.
+Each selected theorem requires its own actual comparator result; configuration
+alone is not a proof verdict.
+The comparator production census additionally covers every tracked
+non-Challenge Solution and bridge module. The configured Challenge holes
+belong only to those artificial comparison surfaces. The comparator gate requires every exact pair, actual child exits,
+matching tool identities, Lean replay and the configured nanoda replay.
+`LatticeProb/Meta/AxiomsAudit.lean` remains an additional principal-theorem
+inspection; its selected names are not the complete public inventory.
+
+These are verification requirements, not a report of a fresh run on the
+current checkout. A successful run applies to its recorded source, checker,
+toolchain and dependency identities. Kernel and comparator checks do not
+establish correspondence to a mathematical source, discharge explicit
+hypotheses or resolve the conditional-input descriptions above.
 
 ## Size
 
-About 111,000 lines of Lean in 484 modules (the root `LatticeProb.lean` and 483
-modules under `LatticeProb/`), of which about 87,000 lines are code once
-comments and blank lines are removed, with 5,112 declarations, on top of
-mathlib.  The count excludes the comparator surface in `LatticeProbAudit/`.
+The full axiom gate records its exact module/source inventory, expected names
+and closure rows. Earlier undated module, line and declaration totals are not
+used as a current coverage claim. Comparator surfaces are inventoried
+separately from production.
 
 ## Building
 
@@ -867,13 +872,9 @@ tools/                   check_axioms.py, check_warnings.py and check_names.py, 
                          under Building
 .github/workflows/       build.yml and comparator.yml, run on request
 lakefile.lean, lake-manifest.json, lean-toolchain   the Lake project and its pins
-CITATION.cff, CONTRIBUTING.md, formalization.yaml   citation, contribution notes, disclosure
+CITATION.cff, CONTRIBUTING.md, formalization.yaml   citation, contribution notes, result metadata
 LICENSE, NOTICE          the license, and the files adapted from other repositories
 ```
-
-## How this was built
-
-The Lean code was written by AI coding agents under the close supervision of the author; the models, tooling and cost are disclosed in [`formalization.yaml`](formalization.yaml).
 
 ## Authors, citation, acknowledgements
 

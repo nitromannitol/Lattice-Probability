@@ -22,14 +22,11 @@ anchored box `∏ᵢ [0, ⌈N cᵢ⌉)` has cardinality `∏ᵢ ⌈N cᵢ⌉`, w
 asymptotically; the `N = 1` witness refutes it.  The centred form normalises by the *actual* box
 cardinality and subtracts the true mean `∫ h`, which removes the defect.
 
-`KrengelMaximalInputCentred` is deliberately NOT called `AnchoredBoxMaximalCentred`: ds3 has
-landed `LatticeProb.AnchoredBoxMaximalCentred` on branch `ds-errata` (tip
-`b651026229c65fc4f734f697f045e457a9cd503d`), but on a separate worktree/branch that this branch
-cannot import, and duplicating the name in the same namespace would recreate exactly the defect
-the fleet is repairing (`AnchoredBoxMaximal` is declared twice, at `AnchoredBoxMean.lean:28` and
-`AnchoredBoxMaximal.lean:37`).  This statement is to be identified with, and later replaced by,
-`AnchoredBoxMaximalCentred` once both branches reach `main`; there must be exactly one such
-declaration in `namespace LatticeProb`.
+`KrengelMaximalInputCentred` and `AnchoredBoxMaximalCentred` are distinct centred
+maximal-inequality interfaces. Their identification requires a single declaration of the
+input in `namespace LatticeProb`. The duplicate `AnchoredBoxMaximal` declarations at
+`AnchoredBoxMean.lean:28` and `AnchoredBoxMaximal.lean:37` require separate interface
+reconciliation; this conditional reduction does not resolve it.
 
 Note also that `AnchoredBoxMaximalCentred` is *named but not proved*: it is the open
 multiparameter strong-`Lᵖ` maximal theorem.  The reduction here names it (in the shape of its

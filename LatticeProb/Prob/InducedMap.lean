@@ -41,6 +41,4 @@ This file only imports its children, one per proof stage, under `LatticeProb/Pro
   sums of the return time (`inducedMap_iterate`), which `LatticeProb.Prob.KingmanLinear` uses.
 * Main theorem (`MainTheorem`): assembles the three parts into `induced_map`.
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/
