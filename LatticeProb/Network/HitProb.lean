@@ -14,8 +14,6 @@ one-step recursion `∑_{y ∼ x} p_k(y) = deg(x) p_{k+1}(x)` summed over `k`.
 This is the hitting-probability construction of the voltage function, which survives recurrence
 (unlike the Green-function construction of `LatticeProb/Network/Voltage.lean`).
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/
 
 open Finset

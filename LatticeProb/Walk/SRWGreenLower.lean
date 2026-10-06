@@ -19,8 +19,6 @@ on-diagonal heat lower bound `exists_srwHeat_diag_lower` at the even times `j = 
 `srwGreen d N 0 ≥ c ∑_{s < N/2} s^{-d/2}`, and the two elementary sums
 `∑_{s < m} s^{-1/2} ≥ √m / 2` and `∑_{s < m} s^{-1} ≥ log m / 2` finish.
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/
 
 open Finset

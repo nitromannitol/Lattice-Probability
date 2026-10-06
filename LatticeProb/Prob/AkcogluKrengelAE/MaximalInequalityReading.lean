@@ -7,10 +7,9 @@ import LatticeProb.Prob.AkcogluKrengel
 /-!
 # Reading of the multiparameter maximal-inequality machinery
 
-Source revision read: `~/lean/Lattice-Probability` main `01de1d0` (rebased onto this branch), files
+The modules considered are
 `LatticeProb/Prob/AkcogluKrengelAE/{MaximalInequalityCore,MaximalInequalityCovering,
-MaximalInequalityDyadic,MaximalInequalityPartition,UpperBound}.lean`, mtimes 2026-09-30 / checkout
-2026-10-04.
+MaximalInequalityDyadic,MaximalInequalityPartition,UpperBound}.lean`.
 
 ## What the directory does prove
 

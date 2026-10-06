@@ -329,6 +329,8 @@ import LatticeProb.Lattice.Planar
 import LatticeProb.Analysis.Sobolev.Defs
 import LatticeProb.Analysis.Sobolev.Basic
 import LatticeProb.Analysis.Sobolev.Additivity
+import LatticeProb.Analysis.Sobolev.SobolevAveraging
+import LatticeProb.Analysis.Sobolev.SobolevTestDuality
 import LatticeProb.Analysis.Sobolev.Weight
 import LatticeProb.Analysis.Sobolev.HighFrequency
 import LatticeProb.Analysis.Sobolev.RellichEstimate

@@ -6,7 +6,7 @@ import LatticeProb.Prob.AkcogluKrengel
 /-!
 # The missing anchored-box maximal inequality, as a formal statement
 
-Source revision read: `~/lean/Lattice-Probability` main `01de1d0`.  The maximal-inequality directory
+The maximal-inequality directory
 proves a maximal inequality only for the **anchored-cube** set function
 (`LatticeProb.measureReal_exists_heavy_le_akMaxConst_mul_div`,
 `MaximalInequalityCore.lean:443`) and a cube tiling bound

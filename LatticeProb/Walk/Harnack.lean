@@ -20,6 +20,4 @@ two-sided bound `g_B(x,y) ≍ R^{2-d}` uniformly for `x ∈ box R`, `y ∈ shell
 `LatticeProb.GreenTwoSided.killedGreenReal_{le,ge}_box`. For small `R < 4` the neighbour chain
 `u(x ± e_i) ≤ 2d·u(x)` gives `u x ≤ (2d)^{2Rd} u y` (`SmallR`).
 
-The proof was written by the library's proof fleet from a statement-owned decomposition and
-verified by the library gates.
 -/

@@ -17,8 +17,6 @@ subadditivity `G (k[i:=a+b]) ≤ G (k[i:=a]) + G (k[i:=b])`, and iterates that b
 coordinate in turn to squeeze `G(n·1)/n^d` between `G(m·1)/m^d + d C m / n` for every `1 ≤ m ≤ n`;
 a Fekete-type lemma on this bound gives the limit.
 
-The proof was written by the library's proof fleet (deepseek-v4.1-flash and Mistral leanstral)
-from a statement-owned decomposition and verified by the library gates.
 -/
 import LatticeProb.Prob.Kingman
 import LatticeProb.Site
