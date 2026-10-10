@@ -140,6 +140,17 @@ general locally finite graph is `LatticeProb.Graph.heat`.
   Walks*, proof of Theorem 3.3.2).
 * `LatticeProb.srwHitProb_eq_green_ratio`: for `d ≥ 3` the probability that
   the walk from `x` ever hits the origin is `G(x) / G(0)`.
+* `LatticeProb.srwHitProb_two_dim_eq_one`: in two dimensions, simple random
+  walk hits every fixed site almost surely. `siteWalkLaw_two_dim_hit_site`
+  states this for position paths; `pathLaw_two_dim_hit_site` states it for iid
+  direction drivers. The proof uses finite first-passage decomposition,
+  logarithmic Green divergence and the potential-kernel limit
+  ([`Walk/RecurrenceHitting.lean`](LatticeProb/Walk/RecurrenceHitting.lean)).
+* `LatticeProb.DrivenWalk.measure_hitBefore_eq_lintegral` and
+  `measure_hitBefore_eq_sum`: first-step decomposition for measurable walks
+  driven by iid instructions, with arbitrary instruction weights. Hitting
+  includes time zero and excludes visits to the forbidden set through the
+  target time ([`Walk/HitBeforeFirstStep.lean`](LatticeProb/Walk/HitBeforeFirstStep.lean)).
 * `LatticeProb.exists_abs_srwGreenInf_sub_le`: the Green function asymptotics
   `|G(x) - 2/((d - 2) ω_d) |x|^{2-d}| ≤ C |x|^{-d}` for `d ≥ 3` and `|x| ≥ 1`,
   with `ω_d` the volume of the unit ball (Lawler–Limic, Theorem 4.3.1).

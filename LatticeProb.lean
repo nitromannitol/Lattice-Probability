@@ -254,6 +254,7 @@ import LatticeProb.Walk.ShiftGrad
 import LatticeProb.Walk.GenGrad
 import LatticeProb.Walk.HitProb
 import LatticeProb.Walk.ExteriorDirichlet
+import LatticeProb.Walk.HitBeforeFirstStep
 import LatticeProb.Walk.Range
 import LatticeProb.Walk.RangeSecond
 import LatticeProb.Walk.BinomRatio
@@ -277,6 +278,7 @@ import LatticeProb.Walk.LogTimeIntegral
 import LatticeProb.Walk.GreenAsymptotic
 import LatticeProb.Walk.PotentialKernelFourier
 import LatticeProb.Walk.PotentialKernel
+import LatticeProb.Walk.RecurrenceHitting
 import LatticeProb.Walk.PairedFourier
 import LatticeProb.Walk.PairedMultiplier
 import LatticeProb.Walk.PairedMultiplierOff
