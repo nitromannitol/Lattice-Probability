@@ -1,0 +1,129 @@
+{
+  "schema": 2,
+  "result": "Finite nested projection determinantal-process domination and monotone coupling",
+  "declaration": "LatticeProb.DPP.nested_projection_domination",
+  "mathematical_reference": "Lyons (2003), Determinantal probability measures, Theorem 6.2; finite monotone coupling obtained by finite Strassen theory.",
+  "base_commit": "d4d2c0823e9207350be683169beb75c4a903fcbc",
+  "modules": {
+    "LatticeProb.LinearAlgebra.DeterminantAnnihilation": {
+      "source": "LatticeProb/LinearAlgebra/DeterminantAnnihilation.lean",
+      "sha256": "5439598ebd6580566b092d12d46cce7e71c1533717a62b906a2d79aacd8ecf4d"
+    },
+    "LatticeProb.LinearAlgebra.DeterminantBoundaries": {
+      "source": "LatticeProb/LinearAlgebra/DeterminantBoundaries.lean",
+      "sha256": "9b38c1d8fcd3f16aaf52af5e4fb7f2a4da5469404d8b6e6a261a7e2ef3c0991a"
+    },
+    "LatticeProb.LinearAlgebra.DeterminantContraction": {
+      "source": "LatticeProb/LinearAlgebra/DeterminantContraction.lean",
+      "sha256": "b4d1ba14f65d2b3e4aff497f606207bed2c0f278d87463866d93aa7db3c346df"
+    },
+    "LatticeProb.LinearAlgebra.DeterminantCreation": {
+      "source": "LatticeProb/LinearAlgebra/DeterminantCreation.lean",
+      "sha256": "98abdc1206efc9b15e46f2bee4bf98fb4f3a17ae9ef65be3ed2dd46de3414a25"
+    },
+    "LatticeProb.LinearAlgebra.DeterminantEndpointComparison": {
+      "source": "LatticeProb/LinearAlgebra/DeterminantEndpointComparison.lean",
+      "sha256": "8aa91209d40efcfd32a20b6e98e80e78c6ea43592e60677089c5016ea671f83f"
+    },
+    "LatticeProb.LinearAlgebra.DeterminantEvent": {
+      "source": "LatticeProb/LinearAlgebra/DeterminantEvent.lean",
+      "sha256": "bafcb023af8976d7f6e6d895f42aa8f50bf8c531aa643a71ce8942e0b8d33197"
+    },
+    "LatticeProb.LinearAlgebra.FiniteSubsetContraction": {
+      "source": "LatticeProb/LinearAlgebra/FiniteSubsetContraction.lean",
+      "sha256": "bef47fbb8570829401e2c82a3463bc037b7a27c4eae7f60d98b3d4aadd09ef9e"
+    },
+    "LatticeProb.LinearAlgebra.FinsetCAR": {
+      "source": "LatticeProb/LinearAlgebra/FinsetCAR.lean",
+      "sha256": "939f54c58131cd74e0845572c8853a879b0525ed4305e487c07ab60a7a2331a7"
+    },
+    "LatticeProb.LinearAlgebra.NestedProjectionBasis": {
+      "source": "LatticeProb/LinearAlgebra/NestedProjectionBasis.lean",
+      "sha256": "cd46225690dff2e5629e8c4d0ea80f3e85be248a351ae0440436065d13b14d47"
+    },
+    "LatticeProb.LinearAlgebra.NestedProjectionFrame": {
+      "source": "LatticeProb/LinearAlgebra/NestedProjectionFrame.lean",
+      "sha256": "0bf9bd67d50d18fe9d8a2a4b628239c85d6b720a451c96c32944f08bd0607e74"
+    },
+    "LatticeProb.LinearAlgebra.OrderedMinorInsertion": {
+      "source": "LatticeProb/LinearAlgebra/OrderedMinorInsertion.lean",
+      "sha256": "a14299263a548198dfba911928c3d5f444992959377b7a8a6bb05aa576db9913"
+    },
+    "LatticeProb.LinearAlgebra.OrthogonalFrame": {
+      "source": "LatticeProb/LinearAlgebra/OrthogonalFrame.lean",
+      "sha256": "9c3b74805b62d80b77979ffcb6a8a4054e6ac9c6557e197a006828b0a3ad532f"
+    },
+    "LatticeProb.LinearAlgebra.OrthonormalProjectionSum": {
+      "source": "LatticeProb/LinearAlgebra/OrthonormalProjectionSum.lean",
+      "sha256": "7bb871485498127afbd9d3bbe18fbc2b1437f98646bdbe9ad2311adebff02cfa"
+    },
+    "LatticeProb.LinearAlgebra.ProjectionFiltration": {
+      "source": "LatticeProb/LinearAlgebra/ProjectionFiltration.lean",
+      "sha256": "395cd69e970595d0aadf40c9e1018fee2e305e978dd10438d7449edce139d070"
+    },
+    "LatticeProb.LinearAlgebra.SubsetContraction": {
+      "source": "LatticeProb/LinearAlgebra/SubsetContraction.lean",
+      "sha256": "1d54ec9a1fd48e8083bbf3e7cd7b6847c9de3620227854a0656eee5a77a33783"
+    },
+    "LatticeProb.Prob.DPP.EndpointDomination": {
+      "source": "LatticeProb/Prob/DPP/EndpointDomination.lean",
+      "sha256": "782d3b12f650eff4fc9beac42a0ef82e7c1371369df1189cae7d43937cce6c82"
+    },
+    "LatticeProb.Prob.DPP.EventTransport": {
+      "source": "LatticeProb/Prob/DPP/EventTransport.lean",
+      "sha256": "b72176641091fbe1703fc32b7cb3a976c38e3be32c4f3ede383cfb5e4c3231f9"
+    },
+    "LatticeProb.Prob.DPP.FrameAtoms": {
+      "source": "LatticeProb/Prob/DPP/FrameAtoms.lean",
+      "sha256": "47602d9198846b57d15e53d1e0aa4dc84be9ad04026944c4b68af79536d94e33"
+    },
+    "LatticeProb.Prob.DPP.FrameCarrier": {
+      "source": "LatticeProb/Prob/DPP/FrameCarrier.lean",
+      "sha256": "a047e420cc647b939800b1ca6ca026d595d7b55c8f44fbcbf6bfbf898ba3d676"
+    },
+    "LatticeProb.Prob.DPP.NestedProjectionDomination": {
+      "source": "LatticeProb/Prob/DPP/NestedProjectionDomination.lean",
+      "sha256": "5f4bfd85ea6c7a50b0e097e844e919315cbb87ae5ada1f2a5877a11087302d05"
+    },
+    "LatticeProb.Prob.DPP.OrderedAtoms": {
+      "source": "LatticeProb/Prob/DPP/OrderedAtoms.lean",
+      "sha256": "b9c93de2df69610d3424480892e733bd3ce52711c9699023273905459f788a26"
+    },
+    "LatticeProb.Prob.Determinantal.InclusionNormalization": {
+      "source": "LatticeProb/Prob/Determinantal/InclusionNormalization.lean",
+      "sha256": "944c8ec7a9df3dbf639d033ac72fa548e383ad4648cfd2b11be22f53c2a05ad1"
+    },
+    "LatticeProb.Prob.Strassen.FiniteAtoms": {
+      "source": "LatticeProb/Prob/Strassen/FiniteAtoms.lean",
+      "sha256": "67ecfa333cc9b4d56a706ef2768a4cf36cd9f1cf54c9d2750f8ca258369e2bf5"
+    },
+    "LatticeProb.Prob.Strassen.FiniteLaw": {
+      "source": "LatticeProb/Prob/Strassen/FiniteLaw.lean",
+      "sha256": "06136c93f3f464830817d216f7d0b8f19f1cd1a0a480bf2c95f77036edbf1cf6"
+    },
+    "LatticeProb.Prob.Strassen.FiniteOrder": {
+      "source": "LatticeProb/Prob/Strassen/FiniteOrder.lean",
+      "sha256": "1805e06f855ac94efd09698bbf72d8f17fea6935f86603f65631573fcdef583e"
+    },
+    "LatticeProb.Prob.Strassen.FiniteSet": {
+      "source": "LatticeProb/Prob/Strassen/FiniteSet.lean",
+      "sha256": "7f57af416dd387a16260f8ffdc53f447d27c6ceb8401502910832f23f4df8347"
+    }
+  },
+  "verification": {
+    "scope": "Strict compilation coverage and complete two-pass kernel-constant axiom census for the 735-module library, including the new result.",
+    "modules": 735,
+    "fresh_strict_compilations": 29,
+    "unchanged_approved_compilations": 706,
+    "kernel_constants": 12928,
+    "allowed_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "independent_execution_receipt_sha256": "84b787796be1ab97e8c7f2b016412e1942cf12f5f31db124f99e133d5249167e",
+    "separate_scope": "This records the completed proof and compilation audit. Downstream dependency updates, external-input retirement and hosted CI are separate checks."
+  },
+  "license": "Apache-2.0",
+  "attribution": "Original additions to this library; no new third-party source is copied. Existing NOTICE and LICENSE are unchanged."
+}

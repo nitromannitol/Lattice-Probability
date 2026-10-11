@@ -1,0 +1,39 @@
+/-
+# Axiom reports for finite projection determinantal laws
+
+The principal coefficient, orthogonal-frame, atom and monotone-coupling
+identities culminate in domination for nested projections. These reports
+complement the library-wide declaration and generated-constant census.
+-/
+
+import LatticeProb.Prob.DPP.NestedProjectionDomination
+
+#print axioms LatticeProb.SubsetContraction.finsetContract_prependColumn
+#print axioms LatticeProb.SubsetContraction.recovery_event_of_prependColumn_orthonormal
+#print axioms LatticeProb.LinearAlgebra.sum_mul_det_bordered_matrix
+#print axioms LatticeProb.SubsetContraction.determinantCoeff_prependColumn
+#print axioms LatticeProb.SubsetContraction.sum_indicator_determinantCoeff_sq_dropLeadingColumns_le
+#print axioms LatticeProb.SubsetContraction.sum_sq_indicator_determinantCoeff_le_prependColumn
+#print axioms LatticeProb.SubsetContraction.sum_sq_finset_contraction_le
+#print axioms LatticeProb.SubsetContraction.sum_sq_finset_creation_le
+#print axioms LatticeProb.SubsetContraction.finsetContract_create_add_create_contract
+#print axioms LatticeProb.ProjectionFiltration.exists_orthonormal_increment
+#print axioms LatticeProb.ProjectionFiltration.exists_nested_projection_frame
+#print axioms LatticeProb.SubsetContraction.det_cons_rows_eq_insertionSign
+#print axioms LatticeProb.ProjectionFiltration.projectionSum_append
+#print axioms LatticeProb.ProjectionFiltration.projectionSum_isSymmetricProjection
+#print axioms LatticeProb.ProjectionFiltration.exists_rank_filtration
+#print axioms LatticeProb.SubsetContraction.annihilation_car
+#print axioms LatticeProb.SubsetContraction.sum_sq_contract_le
+#print axioms LatticeProb.DPP.event_domination_of_endpoint_frames
+#print axioms LatticeProb.DPP.domination_coupling_of_endpoint_frames
+#print axioms LatticeProb.DPP.atom_finsetCongr_eq_determinantCoeff_sq
+#print axioms LatticeProb.DPP.atom_formula_of_orthonormal_frame
+#print axioms LatticeProb.DPP.original_carrier_atom_formula_of_frame
+#print axioms LatticeProb.DPP.nested_projection_domination
+#print axioms LatticeProb.DPP.atom_eq_determinantCoeff_sq
+#print axioms LatticeProb.DPP.sum_eq_one_of_inclusion_minors
+#print axioms LatticeProb.StrassenAux.finite_atom_row
+#print axioms LatticeProb.StrassenAux.isProbabilityMeasure_finiteLaw
+#print axioms LatticeProb.StrassenAux.exists_monotone_matrix_of_upper_set_domination
+#print axioms LatticeProb.StrassenAux.exists_subset_matrix_of_event_domination
