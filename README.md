@@ -836,6 +836,37 @@ complete electrical resistance-minor formula.
 * `LatticeProb.LinearAlgebra.inv_updateRow_single_of_row_sum_zero`: inverse of a zero-row-sum border when its grounded determinant is a unit.
 * `LatticeProb.LinearAlgebra.det_groundInverseExtension_differences_mul_det`: signed complementary minors of a zero-row-sum matrix with unit grounded determinant.
 
+**Finite stacks, loop erasure and independent-cell laws.**
+
+These generic modules prove finite legal cycle popping, arrow-preserving loop
+erasure and independent-cell/partition identities. A concrete Wilson output law
+must still derive its termination, partition and equal-mass facts.
+
+* `LatticeProb.Graph.adj_eq_snd_or_eq_snd`: rootward edge orientation from unique simple paths.
+* `LatticeProb.Prob.FiniteCellFactorization.measure_event_inter_values`: independent-cell factorization over disjoint finite sets.
+* `LatticeProb.Graph.CyclePopping.pop_step_confluent`, `LatticeProb.Graph.CyclePopping.terminal_top_eq`: confluence of finite legal pop runs and equality of terminal selected instructions.
+* `LatticeProb.Prob.AdaptiveReads.measure_finite_reads_of_injective`: product masses for finite distinct-cell reads.
+* `LatticeProb.Combinatorics.LoopErasure.loopErase_length_le`: chronological loop erasure retaining original quiver arrows.
+* `LatticeProb.Combinatorics.LoopErasure.loopErase_comp_loop_comp`: erasing a closed excursion before an arbitrary suffix.
+* `LatticeProb.Graph.CyclePopping.closed_excursion_pop`: closed chronological excursions as legal cycle pops.
+* `LatticeProb.Graph.CyclePopping.loop_erase_pop_run`, `LatticeProb.Graph.CyclePopping.loop_erase_cursor_spec`: legal-pop realization with exact raw-versus-retained cursor accounting.
+* `LatticeProb.Prob.CellTranscripts.measure_cylinder`: exact masses of dependent-cell transcripts with distinct indices.
+* `LatticeProb.Prob.CountablePartition.measure_eq_of_partition`: event-mass transfer through a common countable measurable partition.
+* `LatticeProb.Prob.IidBlocks.measure_eq_zero_of_subset_avoidsConstantBlocks`: nullity of events avoiding all repeated positive-mass constant blocks.
+* `LatticeProb.Prob.event_mass_eq_inv_card`: inverse-cardinality masses for a finite measurable disjoint output partition.
+
+**Local plane topology.**
+
+These helpers retain explicit regular-axis and local-label hypotheses and
+introduce no arc-straightening axiom or drawing-specific conclusion.
+
+* `LatticeProb.PlaneTopology.interior_subset_component_incidence_of_regular_axis`: propagation of complement-component incidence along a regular horizontal arc.
+* `LatticeProb.PlaneTopology.axis_mem_closure_compl`: complement accumulation at every interior regular-axis point.
+* `LatticeProb.Topology.eq_of_dense_local_labels`: constancy of local labels on a relatively dense subset.
+* `LatticeProb.PlaneTopology.isPathConnected_compl_of_finite`: path connectivity after finite point removal from the real plane.
+* `LatticeProb.PlaneTopology.axis_mem_closure_component_iff`: actual upper/lower complementary-component incidence, allowing coincident sides.
+* `LatticeProb.Topology.exists_interior_subintervalParameter`: affine closed-subinterval parametrization and strict interior preimages.
+
 ## Verification scope
 
 The required production gates build the root and every tracked module under

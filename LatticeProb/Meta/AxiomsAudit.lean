@@ -4,6 +4,8 @@ import LatticeProb
 import LatticeProb.Meta.CopiedGraphAxioms
 import LatticeProb.Meta.DiskAlternationAxioms
 import LatticeProb.Meta.PairingMinorAxioms
+import LatticeProb.Meta.WilsonGenericAxioms
+import LatticeProb.Meta.PlaneIncidenceAxioms
 
 /-!
 # Axioms audit

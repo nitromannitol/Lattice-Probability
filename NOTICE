@@ -108,3 +108,17 @@ complement-order proof uses the existing root-column expansion API.
 Exact source hashes and prior proof-review commitments are recorded in
 LatticeProb/PORT-PROVENANCE.json. These additions retain the library's supplied
 Apache-2.0 license; this notice does not create an additional license grant.
+
+Generic finite stacks, loop erasure and local plane topology
+
+The twelve finite-stack, loop-erasure and independent-cell modules listed in
+LatticeProb/WILSON-PLANE-PROVENANCE.json are extracted from Scott Armstrong's
+finite-avalanches formalization. The original loop-erasure attribution is
+retained in its source header. The six local-plane topology modules have the
+same source project. Exact source-byte hashes and independent source-port review
+commitments are recorded in that file; no source commit is asserted to contain
+previously uncommitted mathematical files. Copying and adaptation were
+explicitly authorized by the source author. The source checkout supplied no
+separate LICENSE; this notice asserts no additional historical license grant.
+The destination library's existing LICENSE is unchanged. No new third-party
+source payload or package dependency is introduced.
