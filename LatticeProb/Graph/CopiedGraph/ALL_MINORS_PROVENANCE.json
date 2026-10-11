@@ -1,0 +1,85 @@
+{
+  "scope": "All-minors matrix-tree and finite rooted-forest proofs; original code except the attributed Mathlib finite dependent-sum adaptation.",
+  "mathematical_sources": [
+    {
+      "title": "A combinatorial proof of the all minors matrix tree theorem",
+      "author": "Seth Chaiken",
+      "year": 1982,
+      "url": "https://doi.org/10.1137/0603033"
+    },
+    {
+      "title": "Taylor Expansion Proof of the Matrix Tree Theorem - Part II",
+      "author": "Amitai Zernik",
+      "year": 2013,
+      "url": "https://arxiv.org/abs/1308.2160v1"
+    }
+  ],
+  "adapted_code": [
+    {
+      "destination": "LatticeProb/Graph/CopiedGraph/RootedForestCounting.lean",
+      "source_repository": "https://github.com/leanprover-community/mathlib4",
+      "source_revision": "81a5d257c8e410db227a6665ed08f64fea08e997",
+      "source_path": "Mathlib/Data/Fintype/BigOperators.lean",
+      "source_sha256": "bfa35992c02f47d7c78a5425ea3c4eecba0ad54de1b5752db565b37de11148c0",
+      "source_declaration": "Fintype.prod_dite",
+      "adaptation": "The private finite dependent-sum reduction is the additive analogue.",
+      "copyright": "Copyright (c) 2017 Mario Carneiro. All rights reserved.",
+      "license": "Apache-2.0"
+    }
+  ],
+  "modules": [
+    {
+      "path": "LatticeProb/Data/Finset/SuccAbove.lean",
+      "sha256": "77339bfd326627e4f20e96a94678b4406e1d6cf53ec18459c91188209563d8b2"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/AllMinorsMatrixTree.lean",
+      "sha256": "cb5122b6e4ddfa6bfbbb1667e0b758216e3ceebb63a064399283f134fe1b85fa"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/ComponentKernel.lean",
+      "sha256": "c29b790f4f42056d1afcb54521403e83bb874d47d0d11a0ebf08787aaf42d2ee"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/IncidenceConverse.lean",
+      "sha256": "4457f104ba190cf009af9b657d8976e1008496a0ad36f38efd07b908b2c58079"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/IncidenceSpan.lean",
+      "sha256": "a84016a6a3147d1d7a753f89ba39c154ec4ac70865b287375f9bc812a23b4f23"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/PairedIncidenceSign.lean",
+      "sha256": "fafa1549d5cc899e8d6f0c24402a78774347db0e008ac0f67069c6f0c8073031"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/RootMatching.lean",
+      "sha256": "49a8d374a8f36bbce4dd7110243ce2c5d0d708e82c14ad3a7fb2eda259a066f3"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/RootedForest.lean",
+      "sha256": "ca55d12d8dd82fb6481fe346038d9eff5d586335aa8755cba85f6335454816ed"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/RootedForestCounting.lean",
+      "sha256": "a4c5a2e2f3fa334bf7c670d34c1325b8c1b4237e1bbe6461237df518288346e3"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/Matrix/CauchyBinet.lean",
+      "sha256": "3e0466318b1959b58305ec355643da0c5b0fe8304e8d33e9cd6beaa279b0442c"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/Matrix/ColumnSpanDeterminant.lean",
+      "sha256": "2c710d90ffbe2e9940c67d2be7dffda1c45f95e8f8b944a1d12de072aa56fe7e"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/Matrix/RectangularDeterminant.lean",
+      "sha256": "7710be848bc50f98fce447db30e6b77f427bb1c255a7935e5c0ab21444733fd9"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/Matrix/RootColumnExpansion.lean",
+      "sha256": "4e4ed082874e750817a832f7bebf81167df190ac125425761daebea39e67ada2"
+    }
+  ],
+  "dependencies": "Mathlib and the existing copied-graph API only; no additional dependency."
+}

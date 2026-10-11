@@ -724,6 +724,32 @@ determined by finitely many coordinates of an infinite product.
   point, how often one fixed point precedes another in the induced cyclic
   order.
 
+* `LatticeProb.Graph.CopiedGraph.det_laplacian_minor`: every complementary
+  minor of the copied-graph Laplacian equals its signed rooted-forest count,
+  over any commutative ring. Root sets may overlap; original parallel copies,
+  disconnected graphs and empty minors are retained. The proof uses
+  Cauchy–Binet, rooted incidence determinants and unique component matchings.
+* `LatticeProb.Graph.CopiedGraph.det_laplacian_minor_int` gives the same
+  signed forest formula over the integers.
+* `LatticeProb.Graph.CopiedGraph.sum_rootMatchingPerm_eq` and
+  `LatticeProb.Graph.CopiedGraph.sum_rootMatchingPerm_of_card_eq`: rooted
+  forest sums partition by their unique root matching, with exact finite counts.
+* `Matrix.det_mul_eq_sum_injective` and `Matrix.det_mul_eq_sum_subsets`
+  prove rectangular determinant expansion and Cauchy–Binet.
+  `Finset.sum_val_preimageSuccAbove` reindexes the complementary finite sums.
+* `Matrix.det_appendRootColumns` expands a determinant after appending
+  coordinate root columns. `Matrix.det_appendRootColumns_of_matched_span`
+  compares two such determinants through their ordered root matching.
+* `LatticeProb.Graph.CopiedGraph.IsRootedForest.card_add_card_roots` counts
+  edges and roots; `LatticeProb.Graph.CopiedGraph.IsRootedForest.iff_existsUnique_perm`
+  identifies the unique matching of two root lists.
+* `LatticeProb.Graph.CopiedGraph.isUnit_det_nonrootIncidence` proves that a
+  rooted forest has a unit incidence minor.
+  `LatticeProb.Graph.CopiedGraph.det_augmented_incidence_eq_zero_of_missing_root`
+  and `LatticeProb.Graph.CopiedGraph.det_map_augmentedIncidence_eq_zero_of_not_isRootedForest`
+  prove vanishing in the remaining cases.
+  `LatticeProb.Graph.CopiedGraph.paired_incidence_minor_sign` gives the exact
+  sign for two ordered root lists.
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
 * `LatticeProb.Graph.CopiedGraph.signedPathTraversal_divergence`: signed

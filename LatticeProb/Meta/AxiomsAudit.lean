@@ -1,3 +1,4 @@
+import LatticeProb.Meta.AllMinorsAxioms
 import LatticeProb
 import LatticeProb.Meta.CopiedGraphAxioms
 

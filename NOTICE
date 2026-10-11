@@ -74,3 +74,10 @@ the original file hashes and declaration adaptations. No dependency on that
 repository is included.
 
 Files not named above are original to this repository.
+
+LatticeProb/Graph/CopiedGraph/RootedForestCounting.lean adapts the finite
+conditional-sum decomposition in Mathlib.Data.Fintype.BigOperators
+(Fintype.prod_dite) to additive sums. Mathlib is Apache-2.0 licensed; the
+source revision is 81a5d257c8e410db227a6665ed08f64fea08e997. This proof keeps
+Mathlib's copyright attribution in its source. The remaining new all-minors,
+incidence, root-matching and Cauchy–Binet proofs are original to this library.
