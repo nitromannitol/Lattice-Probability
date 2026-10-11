@@ -724,6 +724,17 @@ determined by finitely many coordinates of an infinite product.
   point, how often one fixed point precedes another in the induced cyclic
   order.
 
+* `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
+  edge gives a two-root forest, and inserting that same copy recovers the tree.
+* `LatticeProb.Graph.CopiedGraph.signedPathTraversal_divergence`: signed
+  traversal along a tree path has divergence one at its start, minus one at
+  its end and zero elsewhere.
+* `LatticeProb.Graph.CopiedGraph.mean_signedPathTraversal_eq_potential_drop`:
+  the uniform mean signed tree-path traversal equals the drop of the explicit
+  forest-count potential. Its denominator is the number of spanning trees;
+  `forestCountPotential_poisson` proves its grounded Poisson equation.
+  These results retain loops and distinct parallel edge copies.
+
 ## Verification scope
 
 The required production gates build the root and every tracked module under

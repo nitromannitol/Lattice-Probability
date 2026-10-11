@@ -1,4 +1,5 @@
 import LatticeProb
+import LatticeProb.Meta.CopiedGraphAxioms
 
 /-!
 # Axioms audit

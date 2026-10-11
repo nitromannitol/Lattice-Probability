@@ -63,4 +63,14 @@ use subject namespaces under LatticeProb, and their imports and documentation
 are adapted to this library. ZHolder takes the heat kernel and its explicit
 formula as parameters.
 
+The modules under LatticeProb/Graph/CopiedGraph/ adapt copied-graph definitions
+and elementary walk, tree and forest proofs from Ahmed Bou-Rabee's
+https://github.com/nitromannitol/finite-avalanche,
+commit 6696f7cde7e1676c0f34095f2378dc8a39f1dbc1.
+They retain original edge-copy IDs, use the LatticeProb namespace and
+universe-polymorphic carriers, and add tree-cut counting, path divergence and
+Poisson-potential proofs. LatticeProb/Graph/CopiedGraph/EXTRACTION.json records
+the original file hashes and declaration adaptations. No dependency on that
+repository is included.
+
 Files not named above are original to this repository.
