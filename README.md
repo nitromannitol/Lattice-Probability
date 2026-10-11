@@ -773,6 +773,69 @@ determined by finitely many coordinates of an infinite product.
   `forestCountPotential_poisson` proves its grounded Poisson equation.
   These results retain loops and distinct parallel edge copies.
 
+**Disk alternation and polygonal separation.**
+
+The disk is the coordinate Euclidean disk `{z : ℝ × ℝ | z.1 ^ 2 + z.2 ^ 2 ≤ 1}`.
+The final alternation theorem allows arbitrary compact connected sets, not just
+simple arcs or path-connected sets; disjoint polygonal arcs are constructed in
+the proof. Strict cyclic order is retained at the four boundary points.
+
+* `LatticeProb.Topology.exists_injective_polygonal_outside_completion`: injective polygonal completion outside the disk.
+* `LatticeProb.Topology.exists_polygonal_outside_completion`: polygonal outside completion.
+* `LatticeProb.Topology.exists_injective_polygonal_arc`: simple polygonal arcs in connected open sets.
+* `LatticeProb.Topology.exists_polygonal_chain_of_isPreconnected`: finite polygonal chains in real normed spaces.
+* `LatticeProb.Topology.polygonal_chain_add_endpoints`: endpoint insertion in polygonal chains.
+* `LatticeProb.Topology.exists_last_contact_segment`, `LatticeProb.Topology.exists_polygonal_chain_last_contact_splice`: last-contact selection and splicing.
+* `LatticeProb.Topology.exists_simple_polygonal_chain`: erasure of repetitions in polygonal chains.
+* `LatticeProb.Topology.PolygonalParity.exists_original_circle_interval_parity_internal`: constancy of parity on complementary circle intervals.
+* `LatticeProb.Topology.PolygonalParity.exists_original_endpoint_parity_chain_internal`: endpoint crosscut parity.
+* `LatticeProb.Topology.PolygonalParity.IsClosedChain`, `LatticeProb.Topology.PolygonalParity.parity_eq_of_isPreconnected`, `LatticeProb.Topology.PolygonalParity.parity_flip`: closed-chain predicates, connected-set constancy and parity flips.
+* `LatticeProb.Topology.PolygonalParity.isClosedChain_coordinateEdges_append`: closed coordinate chains.
+* `LatticeProb.Topology.PolygonalParity.exists_coordinate_local_separation`: coordinate local separation.
+* `LatticeProb.Topology.PolygonalParity.Plane.exists_isDirection_det_ne_zero`: generic Euclidean directions.
+* `LatticeProb.Topology.PolygonalParity.exists_halfBall_separation`: local half-ball separation.
+* `LatticeProb.Topology.PolygonalParity.exists_local_separation`: local polygonal separation.
+* `LatticeProb.Topology.PolygonalParity.fwd_meet_sub_eq_det_div`, `LatticeProb.Topology.PolygonalParity.exists_circle_endpoint_jump_internal`: endpoint determinant formulas and circle parity jumps.
+* `LatticeProb.Topology.coordinateRadial_neg_of_mem_disk`: radial endpoint signs.
+* `LatticeProb.Topology.PolygonalParity.disk_polygonal_alternation_impossible_internal`: polygonal disk alternation.
+* `LatticeProb.Topology.exists_radial_polygonal_outside_completion`: literal radial outside completion.
+* `LatticeProb.Topology.PolygonalParity.exists_generic_endpoint_direction`: generic endpoint directions.
+* `LatticeProb.Topology.PolygonalParity.exists_generic_direction_radial`: generic directions for radial chains.
+* `LatticeProb.Topology.PolygonalParity.exists_transverse_endpoint_jump`: transverse endpoint jumps.
+* `LatticeProb.Topology.circle_points_pairwise_ne_of_cyclic_order`: distinct circle points from strict cyclic order.
+* `LatticeProb.Topology.exists_disjoint_connected_open_thickenings`: disjoint connected open thickenings.
+* `LatticeProb.Topology.exists_scaling_in_original_thickenings`: scaling inside the original thickenings.
+* `LatticeProb.Topology.exists_disjoint_polygonal_chains_with_original_endpoints`: restoration of original chain endpoints.
+* `LatticeProb.Topology.exists_disjoint_polygonal_chains_in_disk`: disjoint polygonal chains in the disk.
+* `LatticeProb.Topology.segment_self_smul_subset_coordinate_disk`: radial segments in the coordinate disk.
+* `LatticeProb.Topology.exists_disjoint_polygonal_chains`: disjoint polygonal approximation.
+* `LatticeProb.Topology.isPolygonal_polygonal_chain`: polygonal carriers in the plane.
+* `LatticeProb.Topology.disk_continua_have_disjoint_restored_endpoint_chains`: restored chains between original continuum endpoints.
+* `LatticeProb.Topology.DiskArcPair.disjoint_disk_chain_pair_consumer`: disjoint disk chains with prescribed endpoints.
+* `LatticeProb.Topology.disk_continua_have_disjoint_injective_polygonal_arcs`: disjoint injective polygonal arcs from compact connected continua.
+* `LatticeProb.Topology.disk_alternation_impossible`: impossibility of disjoint compact connected sets with alternating boundary points.
+
+**Terminal pairings and complementary minors.**
+
+These are ordinary algebra and copied-graph APIs. They keep the full original
+edge-copy carrier, including loops and distinct parallel edges. The matrix
+inverse identities state their unit-determinant hypotheses explicitly; they do
+not require invertibility of every proper minor. This section does not assert a
+complete electrical resistance-minor formula.
+
+* `LatticeProb.Combinatorics.pairing_reindex_iff`: independent terminal reindexing with the exact pairing permutation and signs.
+* `LatticeProb.Combinatorics.exists_terminal_sorting_perm`: sorting an injective finite terminal list, including the empty list.
+* `LatticeProb.Graph.CopiedGraph.isRootedForest_range_and_matching_iff`: equivalence between pairing connectivity and rooted copied forests.
+* `LatticeProb.Graph.CopiedGraph.rootedMatchingReindexEquiv`, `LatticeProb.Graph.CopiedGraph.signed_rootedMatchingForest_count_relabelVertices`: rooted matching fibers and signed counts under reindexing and vertex equivalences.
+* `LatticeProb.Graph.CopiedGraph.rootedForestRelabelEquiv`: vertex relabeling with every original edge ID retained.
+* `LatticeProb.LinearAlgebra.det_X_add_C_coeff_one`, `LatticeProb.LinearAlgebra.det_X_add_C_coeff_one_add_row_add_column`: linear determinant coefficients and invariance under row and column potentials.
+* `LatticeProb.LinearAlgebra.det_submatrix_perms_coeff`: the two permutation signs in determinant coefficients.
+* `LatticeProb.LinearAlgebra.det_inverse_toBlocks₂₂_mul_det`, `LatticeProb.LinearAlgebra.det_inverse_submatrix_complement_mul_det_eq_sign`: Jacobi complementary minors, without assuming proper-block invertibility.
+* `LatticeProb.LinearAlgebra.sign_increasingComplementRootEquiv_trans_symm`: the parity of increasing complementary orders.
+* `LatticeProb.LinearAlgebra.det_updateRow_single_of_row_sum_zero`: grounded determinant identity for a coordinate-unit row border.
+* `LatticeProb.LinearAlgebra.inv_updateRow_single_of_row_sum_zero`: inverse of a zero-row-sum border when its grounded determinant is a unit.
+* `LatticeProb.LinearAlgebra.det_groundInverseExtension_differences_mul_det`: signed complementary minors of a zero-row-sum matrix with unit grounded determinant.
+
 ## Verification scope
 
 The required production gates build the root and every tracked module under

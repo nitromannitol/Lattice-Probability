@@ -1,0 +1,79 @@
+/-
+# Disk alternation and polygonal parity axiom reports
+
+Print the foundational dependencies of the principal results on compact connected
+sets in the coordinate round disk and the polygonal separation lemmas.
+-/
+import LatticeProb.Topology.CircleAngleWindow
+import LatticeProb.Topology.ConnectedThickening
+import LatticeProb.Topology.DiskEndpointNeighborhoods
+import LatticeProb.Topology.PolygonalChain
+import LatticeProb.Topology.PolygonalParityGeometry
+import LatticeProb.Topology.PolygonalApproximation
+import LatticeProb.Topology.PolygonalChainEndpoints
+import LatticeProb.Topology.PolygonalChainPlane
+import LatticeProb.Topology.PolygonalLastContact
+import LatticeProb.Topology.PolygonalParity
+import LatticeProb.Topology.DiskOutsideCompletion
+import LatticeProb.Topology.DiskPolygonalApproximation
+import LatticeProb.Topology.PolygonalParitySeparation
+import LatticeProb.Topology.SimplePolygonalChain
+import LatticeProb.Topology.DiskRadialGeometry
+import LatticeProb.Topology.PolygonalArc
+import LatticeProb.Topology.PolygonalParityLocalSides
+import LatticeProb.Topology.DiskArcPair
+import LatticeProb.Topology.DiskEndpointRestoration
+import LatticeProb.Topology.DiskOutsideArc
+import LatticeProb.Topology.PolygonalParityCoordinates
+import LatticeProb.Topology.DiskRestoredEndpoints
+import LatticeProb.Topology.PolygonalParityChain
+import LatticeProb.Topology.DiskContinuaArcs
+import LatticeProb.Topology.DiskCrosscutParityInternal
+import LatticeProb.Topology.DiskCircleParityInternal
+import LatticeProb.Topology.DiskEndpointGeometry
+import LatticeProb.Topology.DiskRadialCompletion
+import LatticeProb.Topology.PolygonalEndpointDirection
+import LatticeProb.Topology.PolygonalEndpointJump
+import LatticeProb.Topology.DiskCircleEndpointJump
+import LatticeProb.Topology.DiskRadialCrosscut
+import LatticeProb.Topology.DiskPolygonalAlternation
+import LatticeProb.Topology.DiskAlternation
+
+#print axioms LatticeProb.Topology.exists_injective_polygonal_outside_completion
+#print axioms LatticeProb.Topology.exists_polygonal_outside_completion
+#print axioms LatticeProb.Topology.exists_injective_polygonal_arc
+#print axioms LatticeProb.Topology.exists_polygonal_chain_of_isPreconnected
+#print axioms LatticeProb.Topology.polygonal_chain_add_endpoints
+#print axioms LatticeProb.Topology.exists_last_contact_segment
+#print axioms LatticeProb.Topology.exists_polygonal_chain_last_contact_splice
+#print axioms LatticeProb.Topology.exists_simple_polygonal_chain
+#print axioms LatticeProb.Topology.PolygonalParity.exists_original_circle_interval_parity_internal
+#print axioms LatticeProb.Topology.PolygonalParity.exists_original_endpoint_parity_chain_internal
+#print axioms LatticeProb.Topology.PolygonalParity.IsClosedChain
+#print axioms LatticeProb.Topology.PolygonalParity.parity_eq_of_isPreconnected
+#print axioms LatticeProb.Topology.PolygonalParity.parity_flip
+#print axioms LatticeProb.Topology.PolygonalParity.isClosedChain_coordinateEdges_append
+#print axioms LatticeProb.Topology.PolygonalParity.exists_coordinate_local_separation
+#print axioms LatticeProb.Topology.PolygonalParity.Plane.exists_isDirection_det_ne_zero
+#print axioms LatticeProb.Topology.PolygonalParity.exists_halfBall_separation
+#print axioms LatticeProb.Topology.PolygonalParity.exists_local_separation
+#print axioms LatticeProb.Topology.PolygonalParity.fwd_meet_sub_eq_det_div
+#print axioms LatticeProb.Topology.PolygonalParity.exists_circle_endpoint_jump_internal
+#print axioms LatticeProb.Topology.coordinateRadial_neg_of_mem_disk
+#print axioms LatticeProb.Topology.PolygonalParity.disk_polygonal_alternation_impossible_internal
+#print axioms LatticeProb.Topology.exists_radial_polygonal_outside_completion
+#print axioms LatticeProb.Topology.PolygonalParity.exists_generic_endpoint_direction
+#print axioms LatticeProb.Topology.PolygonalParity.exists_generic_direction_radial
+#print axioms LatticeProb.Topology.PolygonalParity.exists_transverse_endpoint_jump
+#print axioms LatticeProb.Topology.circle_points_pairwise_ne_of_cyclic_order
+#print axioms LatticeProb.Topology.exists_disjoint_connected_open_thickenings
+#print axioms LatticeProb.Topology.exists_scaling_in_original_thickenings
+#print axioms LatticeProb.Topology.exists_disjoint_polygonal_chains_with_original_endpoints
+#print axioms LatticeProb.Topology.exists_disjoint_polygonal_chains_in_disk
+#print axioms LatticeProb.Topology.segment_self_smul_subset_coordinate_disk
+#print axioms LatticeProb.Topology.exists_disjoint_polygonal_chains
+#print axioms LatticeProb.Topology.isPolygonal_polygonal_chain
+#print axioms LatticeProb.Topology.disk_continua_have_disjoint_restored_endpoint_chains
+#print axioms LatticeProb.Topology.DiskArcPair.disjoint_disk_chain_pair_consumer
+#print axioms LatticeProb.Topology.disk_continua_have_disjoint_injective_polygonal_arcs
+#print axioms LatticeProb.Topology.disk_alternation_impossible

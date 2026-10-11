@@ -1,0 +1,355 @@
+{
+  "schema": 1,
+  "scope": "Ordinary disk topology, copied-forest transport and matrix-minor source extraction",
+  "source_commit_note": "The source hashes below bind extracted files directly; no Git context revision is asserted to contain formerly uncommitted source bytes. The destination integration commit is not yet known.",
+  "new_dependencies": [],
+  "prior_reviews": [
+    {
+      "scope": "disk ordinary source port",
+      "receipt_sha256": "4bf2b4fa87040fba42a64ba8fb394bf5b577a3c8b17ac4edfb78e9f5d1d9ce88",
+      "status": "previous independent isolated ordinary-port review; not a whole-library landing gate"
+    },
+    {
+      "scope": "pairing-minor ordinary source port",
+      "receipt_sha256": "247f5017afe7844e349838961c33b95314589f67568a8a3a74a0777408220772",
+      "status": "previous independent isolated ordinary-port review; not a whole-library landing gate"
+    }
+  ],
+  "license": {
+    "identifier": "Apache-2.0",
+    "library_license_sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "retained_third_party_license": "licenses/Schoenflies-Apache-2.0.txt",
+    "retained_third_party_license_sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "upstream": "https://github.com/alonamaloh/schoenflies-lean",
+    "upstream_commit": "05a43d29cde026618777db3d4e4316204ccca237",
+    "attributed_files": [
+      "LatticeProb/Topology/PolygonalChain.lean",
+      "LatticeProb/Topology/PolygonalParityGeometry.lean",
+      "LatticeProb/Topology/PolygonalParity.lean"
+    ]
+  },
+  "modules": [
+    {
+      "path": "LatticeProb/Topology/DiskOutsideArc.lean",
+      "sha256": "2ac08951dac9fffa979d3c56be6bea3ac9bfa372e2b1af46b5ca3c30b0576f81",
+      "original_source_sha256": "bb8db6a3917ea11badc2d9fc8ce06e23b2136b0ce52b882a24ffe0dbe5e3f6f3",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskOutsideCompletion.lean",
+      "sha256": "7ff6881ac09ec8ac682dba3c1a01b2bb9ccbe8dfba5f6324c468993df062aa21",
+      "original_source_sha256": "02bdecaef26d6266f829c74b3c591b482826169fe189b866ff538f8d81d884b2",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalArc.lean",
+      "sha256": "2d718c107e93903dbb292ca6919124abfd67a67cb857e2f0a7e6ab6bef8a29c7",
+      "original_source_sha256": "8fbf70aaefbcf99155f877c6c5fae48897dfef68a7540cf1e5c8f6f5e550ea0c",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalChain.lean",
+      "sha256": "73750da05e3738f6e2b517f637414a44fcff417f73cea8d5612ef6388e14b1c5",
+      "original_source_sha256": "7557f8eac14696634d3a757b92a401c588549095f6dcafaaa766a1fd9bbc2392",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalChainEndpoints.lean",
+      "sha256": "90353e697efd460436b4069c525c6499d85a5a00a62b0aedeb835e73e1fb96a2",
+      "original_source_sha256": "1406d4d942e9ffdb53df2b029098dbd537794d13e79f5a19dc4ac19a71baad33",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalLastContact.lean",
+      "sha256": "25dd087347aff2ecb2c72b50a502abbf3f9e5ae04a246602f607c37e0d0d3563",
+      "original_source_sha256": "526e5deaa41708ddb2f0568f5351d8f0542a674d353ee391cf5419e11bc0addb",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/SimplePolygonalChain.lean",
+      "sha256": "61554cccf18f28c8dc514d838ac24a23459cd26e6c387d2b14d14c423c916117",
+      "original_source_sha256": "2f12e7719fd9e582d0abac7105723d864e3f4b14231d5a9d543c1d19316321fd",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskCircleParityInternal.lean",
+      "sha256": "83eabb60ccf1751a9c7d83c72c292b70d762dd5dddd57038bc4368ec8061f8a4",
+      "original_source_sha256": "8b01184fd5643eeaaa732f85c9d48f8ace057c08aea691da81efff6e7a4d5996",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskCrosscutParityInternal.lean",
+      "sha256": "925b43de60f036ab12f97ea94272d84ef524b1fc18ac6f0657ccdc0d7d32936a",
+      "original_source_sha256": "526392e9c08cda86af9ad8c1f1147b88679009b9fb1645e10630708d376443b1",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalParity.lean",
+      "sha256": "e5d1f09b064e18851f691f9141234bc0f68f18837fc07bc955d1ef1d3ffa3785",
+      "original_source_sha256": "ba1a9622d609b865a52ae2523c47a061f6744b29d7766328555ada545b65c7dd",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalParityChain.lean",
+      "sha256": "38085e6c6c619c81c16dda91a6f3cf04e8784cbe91fe66ce3e01fd5150bb2410",
+      "original_source_sha256": "70077e3031777b3d98f0e3e9ee86f9fda70cb34b515be5a429c5e735b58bc9c0",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalParityCoordinates.lean",
+      "sha256": "2599892c2b14a21680f568ba161a7eb726c5a4124b17d2d903afabee680f1a8d",
+      "original_source_sha256": "5a458f4eff45cc074f74822b2ae3a0a4f98b8fda287cc8be968684fad3671343",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalParityGeometry.lean",
+      "sha256": "48ad1f7181b8c6eccc8d2969e119bfb69df6c132d2fdf5df3c68c924d41a9307",
+      "original_source_sha256": "5f4c209a9609bcb72a9925ff5d00adb0b88d418e654cace9b45f45a77164177b",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalParityLocalSides.lean",
+      "sha256": "b8accba14435f43aa19dc5babbdedcb6f218d926137aad6906f0ba4fb6cd60d3",
+      "original_source_sha256": "ac2c613bd8633ee2b3fc6c1274999ac2a0b92fd765d8e8c03313245ae9b853e0",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalParitySeparation.lean",
+      "sha256": "4207816a27d334b28128c32d5f1b794307f083fa074cb95be291c8eb1156aaaa",
+      "original_source_sha256": "8699391aceddab7cf8c14a2acff68a96b296676622001825885dde0f47b61ffe",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskCircleEndpointJump.lean",
+      "sha256": "e9710d8bd46ce5cd2fdbc12946e318f5d7ab91cc28c61bf04c8f0b9ef6124ddf",
+      "original_source_sha256": "f01bc00d1044eb3cc895a20a9eb2533a3efa2c95fb1e485c357756bda7e7598b",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskEndpointGeometry.lean",
+      "sha256": "19c33a4c09d64363fb9d7651e9d13b6ae586944a1b238479500542bbc1e7ab7b",
+      "original_source_sha256": "19d23fe84dfd07116cc0d0dc85a40fcafc88fd1c6aea9c0847aa5cfb7f1c99ba",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskPolygonalAlternation.lean",
+      "sha256": "a26d172f60b85b7dfefffe7fd54f1bbe69695a868ee306a8e0ff15c805ab480e",
+      "original_source_sha256": "32a0b7ff392001baafa8e58a6a4e73753ff5f814de36647ecb8ea4156a879f57",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskRadialCompletion.lean",
+      "sha256": "a4df2b6120852ec688ea25033b3dbbfe9ce540e19162166d77b7afaa73a9188c",
+      "original_source_sha256": "26831d6ba96f2dc3bebf298b9efd6e0d089cfe46c8726972a3d5d8d804711147",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskRadialCrosscut.lean",
+      "sha256": "a29536d235530ae69c86ec1b131e6c8ac25c65018e9a64c6998ec43566d4e7bc",
+      "original_source_sha256": "c342754af984f1f1db698be008a8021dd4f1a31461e7d5964ef1d305b38e9f0b",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalEndpointDirection.lean",
+      "sha256": "e780ef4ca9796bacc17c0c18e5ee57882b9596934211206493084fc1b2071804",
+      "original_source_sha256": "c2860667d80e6a2974fb569c7d6ab8c04e7221511a3e62c371f0abaad1d81ce3",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalEndpointJump.lean",
+      "sha256": "4dfe012605ecf859753229e632d329417ef573ffdf4499d1a9f82c9285d86a94",
+      "original_source_sha256": "0264216f202644576bf53db8ee6884c834ef804501ca23cec56ee3910199ad42",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/CircleAngleWindow.lean",
+      "sha256": "9efb4fa3a9054f98b8e7afb29c97820b4757cbc00f8f204d86b5906634befdef",
+      "original_source_sha256": "4c5d1b2a63ade94fb6a381e83b48ab4f8b1861a39e22b4dc9009bcf184527209",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/ConnectedThickening.lean",
+      "sha256": "7accae2de8761dd6a96d3dee83d777e57e4f340c8f992f6a4f8f7020c29fe63a",
+      "original_source_sha256": "651cebd774c34abe55aec99631b0f2a4437c4a91d66665a4f717ae1d579dfd8a",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskEndpointNeighborhoods.lean",
+      "sha256": "d7440c3adc884336fd462ff042096545792882c69729074184eba8e3e8afe51e",
+      "original_source_sha256": "c9020f0d1e0734f74b4274f23577b66a1b8a02fa50bfc89aa248d03dfee748dd",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskEndpointRestoration.lean",
+      "sha256": "2b2c02e7356e50e9dd4b2a49b32419cebcbb2cca52661d12353fb16e61c84f8f",
+      "original_source_sha256": "ff159ee3004a0f86775fba4888f68acb85f13ce95284dee4a22dbe0c23e0b860",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskPolygonalApproximation.lean",
+      "sha256": "9a2c2729e07abeb4e62798041a098fe6db706d6fa09b9e91a3c4251dc3a50127",
+      "original_source_sha256": "b1eaee171e95d0b685840d4bf7901ea62f9d21be363daee351e877d3175d086e",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskRadialGeometry.lean",
+      "sha256": "771649bd1a8d500261be4a509adea424e6ff89596e0c072b05bcc89353a34936",
+      "original_source_sha256": "2809a178ab6e0e41680a5c91f56844f5c3c8bfdebc14c9fc16775f4eba7d30d1",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalApproximation.lean",
+      "sha256": "18a8e7341294380fafeff38b26609b00a84704ff2c1db951c3e766889680816f",
+      "original_source_sha256": "ddba5a65e34f48b01716df298430bf0c394738a3ef198816e4e73bf0e56f7d19",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/PolygonalChainPlane.lean",
+      "sha256": "9a31bc02137eda2cdc17f16a268427637b15d8f652aaab98473a3fe20597808f",
+      "original_source_sha256": "3c281c308857c927f3e27dd5aee909074ee8a0e580263a5fcd06b13e9088041a",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskRestoredEndpoints.lean",
+      "sha256": "0c3abf50c3e1b033ce7c340bb0db7b5a2eae14c391254bf0956a17891bdc84e1",
+      "original_source_sha256": "471245d267950759fd63c63982f09bc45a5f1416d82a0653b8e17d3f84fa6af8",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskArcPair.lean",
+      "sha256": "7da6249f34a74376c113d6b608376567ad19981d338d1a6af25d3113bb95fb2d",
+      "original_source_sha256": "9753288852b400d520b185012f9ada27ae117a0ea8534f123d68d7fc9f5ded76",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskContinuaArcs.lean",
+      "sha256": "7779d71207434f2c8de81237118677b3135f85958f6c8f07cf7d3f707c1a4a7b",
+      "original_source_sha256": "957139f4c041c6c6c597d65f37b197c5cefc3a1ed011c04daf70e1c9d3dc3dc9",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Topology/DiskAlternation.lean",
+      "sha256": "e62b71bec7f4eea26495f27928c9efe8d4920218f364a01ba84f46d99009d682",
+      "original_source_sha256": "e17d99e59977c203fc6d39b404c729a6ee58d0bc1beddf19f33d2becb8bca414",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Combinatorics/PairingTransport.lean",
+      "sha256": "1f48bb0fed655c03a0364adaed187a27e050cb86cb188be11c93d09ae8f44e5d",
+      "original_source_sha256": "ef11aaa175177725a2e58b5ca10c52f7c73dc9b568ee17aafc0e559a42d35fcb",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Combinatorics/TerminalOrder.lean",
+      "sha256": "ae5c014fc53fdd6f16b8958ca9a2b3911760e24a4dfe92af361f6874b56f8b6f",
+      "original_source_sha256": "2a4647a9c7818e864b50f76742b22a507495ef4aba39ac23ee2b6ae0cd1d4d74",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/PairingForest.lean",
+      "sha256": "a9947dda031976e1bfc2b15499e743be7be083ae745f2ec90d42dbdc6f3195af",
+      "original_source_sha256": "e729a447476d62fcb593dee4ef2365fed2a242d243ad28418c011e01c6cf7c8b",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/RootedMatchingTransport.lean",
+      "sha256": "e515a14a11d12b10b38b976c063502696f5aad063977fef99a2319f91ab9e0c6",
+      "original_source_sha256": "14974727aaad8c1e20354b683e25dc12f6d3317e50fc6012fcc8f600d727ba11",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/VertexTransport.lean",
+      "sha256": "da5f809d615973ed027eb99126101829957b3d59fe2e762b869f1c5157c5e3ee",
+      "original_source_sha256": "3b22900d8cf6d2ddb78b900ac98c59cdd8200446c11479ab94ed35eb6b7a7716",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/DeterminantCoefficient.lean",
+      "sha256": "d866c8363ddb706a679a17e8b3edb39fc89554176ce5655846d198f02ee1e3eb",
+      "original_source_sha256": "3aa3c56ce2b1af6b699db03b869af0337d6c2c8afbf0d8c6fcc1ce3154d2a8a5",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/DeterminantCoefficientOrder.lean",
+      "sha256": "51b36e94bd2a159cca7a0f9ce6d3661a9e6bb9fffc62c6278a85ca7fec884ecb",
+      "original_source_sha256": "975eb2a0e826d1e3cdaeaec97afbae076a9d8897786cfebb7b57ef2e359f7761",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/InverseComplementaryMinor.lean",
+      "sha256": "a971c6d7397da0ef7223045b1dcbcf11e9b2dbdd61a109ba3f6e07785d5f3554",
+      "original_source_sha256": "e315ce9433bcb3434b46c55ec357060f6233b63ddb2e719afdedb072c5c38a39",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/OrderedComplementSign.lean",
+      "sha256": "328f4197059d9b671af01893d873d77e2765b86bd4f59f869d28292ea2cc2f41",
+      "original_source_sha256": "5f0784aa5797dcd64863ffeaf4ad83bd9ad1da70cbeeacea2e104e72b9672d56",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/ZeroSumBorder.lean",
+      "sha256": "2ac25f7891a2b711ad75a87b43f3ed77770457d32e24202e2737d9f728abb839",
+      "original_source_sha256": "ee01d845a3c6ec69d203860fd9322335d92ed658ad5b76a0bee867660bd2f8fb",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/ZeroSumBorderInverse.lean",
+      "sha256": "265965555a74b6317bad2163c86458c1396da0014bfeac01dc4416c579ad93d0",
+      "original_source_sha256": "9ff97e03fd39d147867f5c7f2e726ff27823ba8264f01bbbe663e75e32bad03c",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    },
+    {
+      "path": "LatticeProb/LinearAlgebra/ZeroSumComplementaryMinor.lean",
+      "sha256": "e601ff080f2df31928da25905c2c7e84ae50744e176e6c37312372290a177b43",
+      "original_source_sha256": "f51d5f4c2efbc0f326df3e8ec45ea2a98fee59441a9ac9a3e1dba8e99c1c7174",
+      "symbol_map": "identity",
+      "copy": "byte-identical to independently reviewed ordinary port"
+    }
+  ]
+}

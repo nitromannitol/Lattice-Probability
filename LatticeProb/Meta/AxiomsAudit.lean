@@ -2,6 +2,8 @@ import LatticeProb.Meta.LyonsAxioms
 import LatticeProb.Meta.AllMinorsAxioms
 import LatticeProb
 import LatticeProb.Meta.CopiedGraphAxioms
+import LatticeProb.Meta.DiskAlternationAxioms
+import LatticeProb.Meta.PairingMinorAxioms
 
 /-!
 # Axioms audit
