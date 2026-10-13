@@ -714,6 +714,31 @@ determined by finitely many coordinates of an infinite product.
   order.
 
 ## Verification scope
+**Euclidean lattice sums.**  The Euclidean radius `radius v = √(∑ v_k²)` on
+`Fin d → ℝ`, the integer lattice `Site d = Fin d → ℤ`, and the physical scaling
+`physical ε z` are the carriers of these results
+(`LatticeProb/Euclidean/Lattice.lean`).  The unit-ball volume is
+`unitBallVolume d = √π^d / Γ(d/2 + 1)`.
+
+* `LatticeProb.Euclidean.Asymptotic.shell_sum_asymp`: for `d ≥ 1` one constant
+  `K ≥ 0` bounds `|∑ |z|^{-d} - d · unitBallVolume d · log R|` for every real
+  `R ≥ 2`, the sum being over the nonzero integer points with `|z| ≤ R`
+  (`unitBallIndices d (1/R)`).
+* `LatticeProb.Euclidean.Estimates.rpow_sum_upper_bound`: for `d ≥ 1` and
+  `α ≥ 0`, the scaled sum `ε^d ∑ |εz|^{-α}` over the nonzero points of `εℤ^d`
+  in the closed unit ball is bounded uniformly in `ε ∈ (0,1)`, in the regimes
+  `α < d`, `α = d` and `α > d`.
+* `LatticeProb.Euclidean.Estimates.exterior_rpow_sum_bound`: for `α > d` the
+  indicator series over the points outside the unit ball is summable, and
+  `ε^d` times its sum is bounded uniformly in `ε ∈ (0,1)`.
+* `LatticeProb.Euclidean.Integral.annulus_rpow_integral`: for `d ≥ 1` and
+  `0 < a ≤ b`, the integral of `|x|^{-d}` over `a ≤ |x| ≤ b` is
+  `d · unitBallVolume d · log (b/a)`.
+* `LatticeProb.Euclidean.Shell.volume_unit_ball`: for `d ≥ 1`, the Lebesgue
+  volume of the Euclidean unit ball of `EuclideanSpace ℝ (Fin d)` is
+  `unitBallVolume d`.
+
+## Guarantees
 
 The required production gates build the root and every tracked module under
 `LatticeProb/`, reject warning/error diagnostics and nonzero child exits, and

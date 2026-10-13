@@ -452,3 +452,17 @@ library.
 #print axioms LatticeProb.Sobolev.sobolevNormSq_mul_pos_bump
 #print axioms LatticeProb.Sobolev.exists_fderiv_contDiffBump_ne_zero
 #print axioms LatticeProb.Sobolev.sobolevDualityBound_fderiv_bump
+/-! ### Euclidean lattice sums: the critical asymptotic and its estimates -/
+
+#print axioms LatticeProb.Euclidean.Asymptotic.shell_sum_asymp
+#print axioms LatticeProb.Euclidean.Integral.disjoint_cube_integral_inequality
+#print axioms LatticeProb.Euclidean.Integral.annulus_rpow_integral
+#print axioms LatticeProb.Euclidean.Shell.volume_unit_ball
+#print axioms LatticeProb.Euclidean.Shell.unitBallVolume_eq_pi_div_gamma
+#print axioms LatticeProb.Euclidean.Summability.nonzero_radial_error_summable_real
+#print axioms LatticeProb.Euclidean.Estimates.rpow_sum_upper_bound
+#print axioms LatticeProb.Euclidean.Estimates.exterior_rpow_sum_bound
+#print axioms LatticeProb.Euclidean.Examples.critical_sum_asymp_dim_one
+#print axioms LatticeProb.Euclidean.Examples.critical_sum_asymp_dim_two
+#print axioms LatticeProb.Euclidean.Examples.exterior_summable_dim_one
+#print axioms LatticeProb.Euclidean.Examples.upper_bound_dim_two

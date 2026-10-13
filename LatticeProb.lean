@@ -545,3 +545,12 @@ import LatticeProb.Prob.Kac
 import LatticeProb.Prob.InducedMap
 import LatticeProb.Prob.KingmanLinear
 import LatticeProb.Prob.Strassen
+import LatticeProb.Euclidean.Lattice
+import LatticeProb.Euclidean.Cube
+import LatticeProb.Euclidean.Shell
+import LatticeProb.Euclidean.Summability
+import LatticeProb.Euclidean.Series
+import LatticeProb.Euclidean.Integral
+import LatticeProb.Euclidean.Estimates
+import LatticeProb.Euclidean.Asymptotic
+import LatticeProb.Euclidean.Examples
