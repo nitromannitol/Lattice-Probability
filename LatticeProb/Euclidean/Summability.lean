@@ -18,7 +18,8 @@ open LatticeProb.Euclidean.Lattice LatticeProb.Euclidean.Cube LatticeProb.Euclid
 
 namespace LatticeProb.Euclidean.Summability
 
-/-- The contribution of one radial shell to the radial error series is at most `shellConstant d / n²`. -/
+/-- The contribution of one radial shell to the radial error series is at most
+`shellConstant d / n²`. -/
 lemma shell_error_sum_bound (d : ℕ) (hd : 1 ≤ d) (n : ℕ) (s : Finset (Site d))
     (hs : ∀ w ∈ s, Nat.floor (radius (physical 1 w)) = n) :
     ∑ w ∈ s, radius (physical 1 w)^(-((d+1:ℕ):ℤ)) ≤
@@ -98,7 +99,8 @@ theorem nonzero_radial_error_summable (d : ℕ) (hd : 1 ≤ d) :
       radius (physical 1 w.val)^(-((d+1:ℕ):ℤ))) :=
   (euclidean_radial_error_summable d hd).subtype (fun w => w ≠ 0)
 
-/-- The real-exponent radial error series over the nonzero integer points is summable for `d ≥ 1`. -/
+/-- **Summability of the radial error series.** The real-exponent radial error series over the
+nonzero integer points is summable for `d ≥ 1`. -/
 theorem nonzero_radial_error_summable_real (d : ℕ) (hd : 1 ≤ d) :
     Summable (fun w : {w : Site d // w ≠ 0} =>
       Real.rpow (radius (physical 1 w.val)) (-(d:ℝ)-1)) := by
@@ -107,7 +109,9 @@ theorem nonzero_radial_error_summable_real (d : ℕ) (hd : 1 ≤ d) :
   exact (nonzero_radial_error_summable d hd).congr
     (fun w => (Real.rpow_neg_natCast (radius (physical 1 w.val)) (d+1)).symm)
 
-/-- The global radial error constant `∑_{w ≠ 0} |w|^{-(d+1)}`; it depends only on `d`. -/
+/-- The global radial error constant `∑_{w ≠ 0} |w|^{-(d+1)}`; it depends only on `d`.
+The series is summable (`nonzero_radial_error_summable_real`), so the `tsum` is the genuine sum,
+not the junk value `0` that `tsum` takes on a non-summable family. -/
 def radialErrorConstant (d : ℕ) : ℝ :=
   ∑' w : {w : Site d // w ≠ 0},
     Real.rpow (radius (physical 1 w.val)) (-(d : ℝ)-1)

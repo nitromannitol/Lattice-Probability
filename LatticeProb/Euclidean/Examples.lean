@@ -97,8 +97,9 @@ theorem critical_sum_asymp_dim_one :
   obtain ⟨K, hK0, hK⟩ := shell_sum_asymp (d := 1) le_rfl
   exact ⟨K, hK0, fun R hR => by simpa [unitBallVolume_one] using hK R hR⟩
 
-/-- The critical lattice sum in dimension two: for every `R ≥ 2` the sum over the nonzero integer
-points with `|z| ≤ R` of `|z|^{-2}` is within `K` of `2π log R`, with `2π = 2 · unitBallVolume 2`. -/
+/-- **The planar critical lattice sum.** For every `R ≥ 2` the sum over the nonzero integer
+points with `|z| ≤ R` of `|z|^{-2}` is within `K` of `2π log R`, with
+`2π = 2 · unitBallVolume 2`. -/
 theorem critical_sum_asymp_dim_two :
     ∃ K : ℝ, 0 ≤ K ∧ ∀ R : ℝ, 2 ≤ R →
       |(∑ z ∈ unitBallIndices 2 (1 / R), Real.rpow (radius (physical 1 z)) (-((2 : ℕ) : ℝ)))

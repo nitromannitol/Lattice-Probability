@@ -59,7 +59,21 @@ lemma comparisonConstant_nonneg (d : ℕ) : 0 ≤ comparisonConstant d := by
   unfold comparisonConstant
   positivity
 
-/-- On the unit cube centered at `w`, the radius differs from the radius of `w` by at most `√d / 2`. -/
+/-- For `c - 1/2 ≤ x < c + 1/2`, the square `(x - c)²` is at most `1/4`. -/
+private lemma sq_sub_le_quarter {x c : ℝ} (h1 : c - 1 / 2 ≤ x) (h2 : x < c + 1 / 2) :
+    (x - c) ^ 2 ≤ 1 / 4 := by
+  calc (x - c) ^ 2 ≤ (1 / 2) ^ 2 := sq_le_sq' (by linarith) (by linarith)
+    _ = 1 / 4 := by norm_num
+
+/-- A nonnegative `r` with `r ^ 2 ≤ s ^ 2 / 4` satisfies `r ≤ s / 2`, for `s ≥ 0`. -/
+private lemma le_half_of_sq_le_quarter {r s : ℝ} (hr : 0 ≤ r) (hs : 0 ≤ s)
+    (h : r ^ 2 ≤ s ^ 2 / 4) : r ≤ s / 2 := by
+  refine (sq_le_sq₀ hr (div_nonneg hs (by norm_num))).mp ?_
+  calc r ^ 2 ≤ s ^ 2 / 4 := h
+    _ = (s / 2) ^ 2 := by ring
+
+/-- On the unit cube centered at `w`, the radius differs from the radius of `w` by at most
+`√d / 2`. -/
 lemma cube_radius_error {d : ℕ} (w : Site d) {x : Fin d → ℝ}
     (hx : x ∈ cube w) :
     |radius x - radius (physical 1 w)| ≤ Real.sqrt d / 2 := by
@@ -69,14 +83,16 @@ lemma cube_radius_error {d : ℕ} (w : Site d) {x : Fin d → ℝ}
       _ ≤ ∑ _k : Fin d, (1/4 : ℝ) := by
         apply Finset.sum_le_sum
         intro k _
-        have hk := hx k
-        nlinarith
+        exact sq_sub_le_quarter (hx k).1 (hx k).2
       _ = _ := by simp [div_eq_mul_inv]
   have hn := radius_nonneg (x - physical 1 w)
   have he := radius_sq (x - physical 1 w)
   have hd := Real.sq_sqrt (Nat.cast_nonneg d : (0:ℝ) ≤ d)
   simp only [Pi.sub_apply, physical, one_mul] at he
-  nlinarith [Real.sqrt_nonneg (d : ℝ)]
+  have hsq : radius (x - physical 1 w) ^ 2 ≤ Real.sqrt d ^ 2 / 4 := by
+    rw [hd]
+    linarith
+  exact le_half_of_sq_le_quarter hn (Real.sqrt_nonneg _) hsq
 
 /-- On the unit cube centered at `w` with `2√d ≤ |w|`, the radius is at least `3|w|/4`. -/
 lemma cube_radius_lower {d : ℕ} (w : Site d) {x : Fin d → ℝ}
@@ -115,7 +131,9 @@ lemma radial_power_difference (d : ℕ) {a b : ℝ} (hb : 0 < b)
     (convex_Ici (3*b/4)) (show b ∈ Set.Ici (3*b/4) by change 3*b/4 ≤ b; linarith) ha
   simpa only [f, Real.norm_eq_abs] using hm
 
-/-- Pointwise comparison of `|x|^{-d}` with its value at the center `w` of a unit cube, for `2√d ≤ |w|`, with the constant `comparisonConstant d`. -/
+/-- **Pointwise comparison on a unit cube.** For `2√d ≤ |w|`, the value of `|x|^{-d}` at a point
+`x` of the unit cube centered at `w` differs from its value at `w` by at most
+`comparisonConstant d · |w|^{-(d+1)}`. -/
 theorem cube_radius_power_comparison (d : ℕ) (hd : 1 ≤ d) (w : Site d)
     (hw : 2 * Real.sqrt d ≤ radius (physical 1 w)) (x : Fin d → ℝ)
     (hx : x ∈ cube w) :

@@ -725,9 +725,10 @@ determined by finitely many coordinates of an infinite product.
   `R ≥ 2`, the sum being over the nonzero integer points with `|z| ≤ R`
   (`unitBallIndices d (1/R)`).
 * `LatticeProb.Euclidean.Estimates.rpow_sum_upper_bound`: for `d ≥ 1` and
-  `α ≥ 0`, the scaled sum `ε^d ∑ |εz|^{-α}` over the nonzero points of `εℤ^d`
-  in the closed unit ball is bounded uniformly in `ε ∈ (0,1)`, in the regimes
-  `α < d`, `α = d` and `α > d`.
+  `α ≥ 0`, the scaled sum `ε^d ∑ |εz|^{-α}` over the nonzero integer points `z`
+  with `εz` in the closed unit ball is bounded uniformly in `ε ∈ (0,1)` when
+  `α < d`; at `α = d` it is at most `C (1 + |log ε|)`, and for `α > d` it is at
+  most `C ε^{d-α}`.
 * `LatticeProb.Euclidean.Estimates.exterior_rpow_sum_bound`: for `α > d` the
   indicator series over the points outside the unit ball is summable, and
   `ε^d` times its sum is bounded uniformly in `ε ∈ (0,1)`.

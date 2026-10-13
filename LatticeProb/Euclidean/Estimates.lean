@@ -5,10 +5,12 @@ import LatticeProb.Euclidean.Series
 /-!
 # Upper and exterior bounds for scaled radial sums
 
-For `d ≥ 1` and `ε ∈ (0,1)`, the sums of `|ε z|^{-α}` over the nonzero points of `ε ℤ^d` in the
-closed unit ball, `unitBallIndices d ε`, are bounded uniformly in `ε`.  The upper bound has the
-three regimes `α < d`, `α = d` and `α > d`.  The exterior bound, for `α > d`, asserts
-summability of the indicator sum and bounds it.  Each constant depends only on `α` and `d`.
+For `d ≥ 1`, `α ≥ 0` and `ε ∈ (0,1)`, the scaled sums `ε^d ∑ |ε z|^{-α}` over the nonzero integer
+points `z` with `ε z` in the closed unit ball, `unitBallIndices d ε`, are bounded uniformly in `ε`
+when `α < d`.  The upper bound has three regimes: at `α = d` it is at most `C (1 + |log ε|)`, and
+at `α > d` it is at most `C ε^{d-α}`.  The exterior bound, for `α > d`, asserts summability of the
+indicator sum and bounds `ε^d` times it uniformly in `ε`.  Each constant depends only on `α` and
+`d`.
 -/
 
 noncomputable section
@@ -72,7 +74,8 @@ lemma shell_rpow_sum_le_fiber {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα : 0 ≤ �
     exact hmem w hw
   exact shell_rpow_sum_le hd hα hn1 _ (fun w hw => (Finset.mem_filter.mp hw).2)
 
-/-- The cutoff sum over `unitBallIndices d ε` is at most `shellConstant d` times the shell sums up to `⌊1/ε⌋₊`, reduced to the integer part of the radius. -/
+/-- The cutoff sum over `unitBallIndices d ε` is at most `shellConstant d` times the shell sums up
+to `⌊1/ε⌋₊`, reduced to the integer part of the radius. -/
 lemma unitBallIndices_rpow_sum_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα : 0 ≤ α) {ε : ℝ} (hε : 0 < ε) :
     ∑ z ∈ unitBallIndices d ε, (radius (physical 1 z)) ^ (-α) ≤
       shellConstant d * ∑ n ∈ Finset.Icc 1 ⌊1 / ε⌋₊, (n : ℝ) ^ ((d : ℝ) - 1 - α) := by
@@ -100,12 +103,14 @@ lemma unitBallIndices_rpow_sum_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα : 0 �
     · intro n _ _
       exact Real.rpow_nonneg (Nat.cast_nonneg n) _
   calc
-    _ ≤ shellConstant d * ∑ n ∈ (unitBallIndices d ε).image (fun w => Nat.floor (radius (physical 1 w))),
+    _ ≤ shellConstant d *
+          ∑ n ∈ (unitBallIndices d ε).image (fun w => Nat.floor (radius (physical 1 w))),
           (n : ℝ) ^ ((d : ℝ) - 1 - α) := shell_rpow_sum_le_fiber hd hα (unitBallIndices d ε) hnz
     _ ≤ shellConstant d * ∑ n ∈ Finset.Icc 1 ⌊1 / ε⌋₊, (n : ℝ) ^ ((d : ℝ) - 1 - α) :=
         mul_le_mul_of_nonneg_left h2 (shellConstant_pos hd).le
 
-/-- Scaling identity: `ε^d ∑ |ε z|^{-α} = ε^(d-α) ∑ |z|^{-α}`, summing over `unitBallIndices d ε`. -/
+/-- Scaling identity: `ε^d ∑ |ε z|^{-α} = ε^(d-α) ∑ |z|^{-α}`, summing over
+`unitBallIndices d ε`. -/
 lemma scaled_sum_eq {d : ℕ} {α ε : ℝ} (hε : 0 < ε) :
     ε ^ d * (∑ z ∈ unitBallIndices d ε, (radius (physical ε z)) ^ (-α)) =
       ε ^ ((d : ℝ) - α) * ∑ z ∈ unitBallIndices d ε, (radius (physical 1 z)) ^ (-α) := by
@@ -117,7 +122,10 @@ lemma scaled_sum_eq {d : ℕ} {α ε : ℝ} (hε : 0 < ε) :
   intro z _
   rw [radius_physical_eq_mul hε.le z, Real.mul_rpow hε.le (radius_nonneg (physical 1 z))]
 
-/-- Upper bound for the scaled radial sum over `unitBallIndices d ε`, for `d ≥ 1` and `α ≥ 0`: the constant `C` depends only on `α` and `d`, and the bound is uniform over `ε ∈ (0,1)`. -/
+/-- **Upper bound for scaled radial sums.** For `d ≥ 1` and `α ≥ 0`, the sum `ε^d ∑ |ε z|^{-α}`
+over `unitBallIndices d ε` is bounded uniformly in `ε ∈ (0,1)` when `α < d`; at `α = d` it is at
+most `C (1 + |log ε|)`, and for `α > d` it is at most `C ε^{d-α}`.  The constant `C` depends only on
+`α` and `d`. -/
 theorem rpow_sum_upper_bound (d : ℕ) (hd : 1 ≤ d) :
     ∀ α : ℝ, 0 ≤ α → ∃ C : ℝ, 0 < C ∧ ∀ ε : ℝ, ε ∈ Set.Ioo (0 : ℝ) 1 →
       ε ^ d * (∑ z ∈ unitBallIndices d ε, (radius (physical ε z)) ^ (-α)) ≤
@@ -203,7 +211,8 @@ theorem rpow_sum_upper_bound (d : ℕ) (hd : 1 ≤ d) :
     have hsum := unitBallIndices_rpow_sum_le hd hα hε.1
     have hT := sum_rpow_Icc_le_tsum hβ ⌊1 / ε⌋₊
     rw [← hMdef] at hT
-    have hS': ∑ z ∈ unitBallIndices d ε, (radius (physical 1 z)) ^ (-α) ≤ shellConstant d * M + 1 := by
+    have hS': ∑ z ∈ unitBallIndices d ε, (radius (physical 1 z)) ^ (-α) ≤
+        shellConstant d * M + 1 := by
       have h1 := mul_le_mul_of_nonneg_left hT hS.le
       linarith
     calc ε ^ ((d : ℝ) - α) * ∑ z ∈ unitBallIndices d ε, (radius (physical 1 z)) ^ (-α)
@@ -235,9 +244,11 @@ lemma exterior_finset_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hαd : (d : ℝ) <
     have : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg d
     linarith
   set m : ℝ := α - (d : ℝ) with hm_def
-  rw [← Finset.sum_filter (fun z => 1 ≤ radius (physical ε z)) (fun z => (radius (physical ε z)) ^ (-α))]
+  rw [← Finset.sum_filter (fun z => 1 ≤ radius (physical ε z))
+      (fun z => (radius (physical ε z)) ^ (-α))]
   have hterm : ∑ z ∈ u.filter (fun z => 1 ≤ radius (physical ε z)), (radius (physical ε z)) ^ (-α)
-      = ε ^ (-α) * ∑ z ∈ u.filter (fun z => 1 ≤ radius (physical ε z)), (radius (physical 1 z)) ^ (-α) := by
+      = ε ^ (-α) * ∑ z ∈ u.filter (fun z => 1 ≤ radius (physical ε z)),
+          (radius (physical 1 z)) ^ (-α) := by
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro z _
@@ -265,14 +276,17 @@ lemma exterior_finset_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hαd : (d : ℝ) <
       (fun w => Nat.floor (radius (physical 1 w)))) hfloor
   rw [hterm]
   have hpos : 0 ≤ ε ^ (-α) := Real.rpow_nonneg hε.le _
-  calc ε ^ (-α) * ∑ z ∈ u.filter (fun z => 1 ≤ radius (physical ε z)), (radius (physical 1 z)) ^ (-α)
+  calc ε ^ (-α) * ∑ z ∈ u.filter (fun z => 1 ≤ radius (physical ε z)),
+      (radius (physical 1 z)) ^ (-α)
       ≤ ε ^ (-α) * (shellConstant d * ∑ n ∈ (u.filter (fun z => 1 ≤ radius (physical ε z))).image
           (fun w => Nat.floor (radius (physical 1 w))), (n : ℝ) ^ (-m - 1)) :=
         mul_le_mul_of_nonneg_left hfiber hpos
     _ ≤ ε ^ (-α) * (shellConstant d * ((1 + 1 / m) * ((4 : ℝ) ^ m * (1 / ε) ^ (-m)))) :=
         mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left htail (shellConstant_pos hd).le) hpos
 
-/-- Exterior bound for the scaled radial sum over the points outside the unit ball, for `d ≥ 1` and `α > d`: for each `ε ∈ (0,1)` the indicator sum is summable and `ε^d` times its total is at most a constant `C(α, d)`. -/
+/-- **Exterior bound for scaled radial sums.** For `d ≥ 1` and `α > d`, and for each `ε ∈ (0,1)`,
+the indicator sum over the points outside the unit ball is summable, and `ε^d` times its total is
+at most a constant `C(α, d)`. -/
 theorem exterior_rpow_sum_bound (d : ℕ) (hd : 1 ≤ d) :
     ∀ α : ℝ, (d : ℝ) < α → ∃ C : ℝ, 0 < C ∧ ∀ ε : ℝ, ε ∈ Set.Ioo (0 : ℝ) 1 →
       Summable (fun z : Site d =>

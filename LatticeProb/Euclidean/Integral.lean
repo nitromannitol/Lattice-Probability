@@ -18,7 +18,8 @@ noncomputable section
 
 open scoped BigOperators
 open scoped ENNReal
-open LatticeProb.Euclidean.Lattice LatticeProb.Euclidean.Cube LatticeProb.Euclidean.Shell LatticeProb.Euclidean.Summability MeasureTheory Set
+open LatticeProb.Euclidean.Lattice LatticeProb.Euclidean.Cube LatticeProb.Euclidean.Shell
+open LatticeProb.Euclidean.Summability MeasureTheory Set
 
 namespace LatticeProb.Euclidean.Integral
 
@@ -65,7 +66,8 @@ lemma cube_closure_compact {d : ℕ} (w : Site d) : IsCompact (closure (cube w))
   exact isCompact_Icc.of_isClosed_subset isClosed_closure
     (isClosed_Icc.closure_subset_iff.mpr hs)
 
-/-- On the closure of a unit cube centered at `w` with `2√d ≤ |w|`, the radius is at least `3|w|/4`. -/
+/-- On the closure of a unit cube centered at `w` with `2√d ≤ |w|`, the radius is at least
+`3|w|/4`. -/
 lemma cube_closure_radius_lower {d : ℕ} (w : Site d)
     (hw : 2 * Real.sqrt d ≤ radius (physical 1 w)) :
     ∀ x ∈ closure (cube w), 3 * radius (physical 1 w) / 4 ≤ radius x := by
@@ -79,7 +81,8 @@ lemma cube_center_radius_pos {d : ℕ} (hd : 1 ≤ d) (w : Site d)
   have hs : 0 < Real.sqrt (d : ℝ) := Real.sqrt_pos.mpr (Nat.cast_pos.mpr (by omega))
   exact lt_of_lt_of_le (mul_pos (by norm_num) hs) hw
 
-/-- The critical integrand is integrable on the closure of a unit cube centered at `w` with `2√d ≤ |w|`. -/
+/-- The critical integrand is integrable on the closure of a unit cube centered at `w` with
+`2√d ≤ |w|`. -/
 theorem criticalIntegrand_integrableOn_cube_closure (d : ℕ) (hd : 1 ≤ d)
     (w : Site d) (hw : 2 * Real.sqrt d ≤ radius (physical 1 w)) :
     IntegrableOn (criticalIntegrand d) (closure (cube w)) volume := by
@@ -101,7 +104,8 @@ theorem criticalIntegrand_integrableOn_cube (d : ℕ) (hd : 1 ≤ d)
 lemma cube_real_volume {d : ℕ} (w : Site d) : volume.real (cube w) = 1 := by
   rw [Measure.real, cube_volume, ENNReal.toReal_one]
 
-/-- Integrating the pointwise comparison over a unit cube of volume one bounds the integral error by `comparisonConstant d · |w|^(-(d+1))`. -/
+/-- Integrating the pointwise comparison over a unit cube of volume one bounds the integral error
+by `comparisonConstant d · |w|^(-(d+1))`. -/
 theorem cube_integral_error (d : ℕ) (hd : 1 ≤ d) (w : Site d)
     (hw : 2 * Real.sqrt d ≤ radius (physical 1 w)) :
     |criticalIntegrand d (physical 1 w) - ∫ x in cube w, criticalIntegrand d x| ≤
@@ -125,7 +129,8 @@ theorem cube_integral_error (d : ℕ) (hd : 1 ≤ d) (w : Site d)
 lemma cubeUnion_measurable (d : ℕ) (R : ℝ) : MeasurableSet (cubeUnion d R) :=
   Finset.measurableSet_biUnion _ (fun w _ => cube_measurable w)
 
-/-- The critical integrand is integrable on the union of the unit cubes over `latticeAnnulus d R`. -/
+/-- The critical integrand is integrable on the union of the unit cubes over
+`latticeAnnulus d R`. -/
 theorem criticalIntegrand_integrableOn_cubeUnion (d : ℕ) (hd : 1 ≤ d) (R : ℝ) :
     IntegrableOn (criticalIntegrand d) (cubeUnion d R) volume := by
   apply integrableOn_finset_iUnion.mpr
@@ -192,7 +197,8 @@ lemma finite_radial_error_le_global (d : ℕ) (hd : 1 ≤ d) (R : ℝ) :
   exact (nonzero_radial_error_summable_real d hd).sum_le_tsum s
     (fun w _ => Real.rpow_nonneg (radius_nonneg _) _)
 
-/-- The finite cube-sum error bound, and its uniform bound by `comparisonConstant d * radialErrorConstant d`; the only hypothesis is `1 ≤ d`. -/
+/-- **Disjoint-cube integral inequality.** The finite cube-sum error bound, and its uniform bound
+by `comparisonConstant d * radialErrorConstant d`; the only hypothesis is `1 ≤ d`. -/
 theorem disjoint_cube_integral_inequality (d : ℕ) (hd : 1 ≤ d) (R : ℝ) :
     (|(∑ w ∈ latticeAnnulus d R, Real.rpow (radius (physical 1 w)) (-(d : ℝ))) -
       ∫ x in cubeUnion d R, Real.rpow (radius x) (-(d : ℝ))| ≤
@@ -210,7 +216,8 @@ theorem disjoint_cube_integral_inequality (d : ℕ) (hd : 1 ≤ d) (R : ℝ) :
 def profile (d : ℕ) (a b : ℝ) : ℝ → ℝ :=
   Set.indicator (Set.Icc a b) (fun r => Real.rpow r (-(d : ℝ)))
 
-/-- The polar integral of `|x|^{-d}` over the Euclidean annulus `a ≤ |x| ≤ b` is `d · unitBallVolume d · log (b/a)`. -/
+/-- **Polar integral over an annulus.** The polar integral of `|x|^{-d}` over the Euclidean annulus
+`a ≤ |x| ≤ b` is `d · unitBallVolume d · log (b/a)`. -/
 lemma annulus_rpow_integral {d : ℕ} (hd : 1 ≤ d) {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) :
     ∫ x in {x : Fin d → ℝ | a ≤ radius x ∧ radius x ≤ b}, Real.rpow (radius x) (-(d : ℝ))
       = (d : ℝ) * unitBallVolume d * Real.log (b / a) := by
@@ -218,7 +225,8 @@ lemma annulus_rpow_integral {d : ℕ} (hd : 1 ≤ d) {a b : ℝ} (ha : 0 < a) (h
     have hr : Measurable (fun x : Fin d → ℝ => radius x) := by
       unfold radius
       fun_prop
-    exact (measurableSet_Icc.preimage hr : MeasurableSet ((fun x : Fin d → ℝ => radius x) ⁻¹' Icc a b))
+    exact (measurableSet_Icc.preimage hr :
+        MeasurableSet ((fun x : Fin d → ℝ => radius x) ⁻¹' Icc a b))
   have h1 : ∫ x in {x : Fin d → ℝ | a ≤ radius x ∧ radius x ≤ b}, Real.rpow (radius x) (-(d : ℝ))
       = ∫ x : Fin d → ℝ,
           profile d a b ‖(WithLp.toLp 2 x : EuclideanSpace ℝ (Fin d))‖ := by
@@ -235,7 +243,8 @@ lemma annulus_rpow_integral {d : ℕ} (hd : 1 ≤ d) {a b : ℝ} (ha : 0 < a) (h
         Set.indicator_of_notMem hx]
   have h2 : ∫ x : Fin d → ℝ, profile d a b ‖(WithLp.toLp 2 x : EuclideanSpace ℝ (Fin d))‖
       = ∫ y : EuclideanSpace ℝ (Fin d), profile d a b ‖y‖ :=
-    (PiLp.volume_preserving_toLp (Fin d)).integral_comp (MeasurableEquiv.toLp 2 _).measurableEmbedding
+    (PiLp.volume_preserving_toLp (Fin d)).integral_comp
+      (MeasurableEquiv.toLp 2 _).measurableEmbedding
       (fun y : EuclideanSpace ℝ (Fin d) => profile d a b ‖y‖)
   rw [h1, h2]
   haveI : Nontrivial (EuclideanSpace ℝ (Fin d)) :=
@@ -265,8 +274,8 @@ lemma annulus_rpow_integral {d : ℕ} (hd : 1 ≤ d) {a b : ℝ} (ha : 0 < a) (h
       · rw [Set.indicator_of_notMem hyI, smul_eq_mul, profile, Set.indicator_of_notMem hyI,
           mul_zero]
     rw [setIntegral_congr_fun measurableSet_Ioi hc, setIntegral_indicator measurableSet_Icc,
-      Set.inter_eq_right.mpr hsub, integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le hab,
-      integral_inv_of_pos ha (ha.trans_le hab)]
+      Set.inter_eq_right.mpr hsub, integral_Icc_eq_integral_Ioc,
+      ← intervalIntegral.integral_of_le hab, integral_inv_of_pos ha (ha.trans_le hab)]
   rw [hint]
   ring
 

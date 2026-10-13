@@ -27,11 +27,14 @@ def physical {d : ℕ} (ε : ℝ) (z : Site d) : Fin d → ℝ :=
 def radius {d : ℕ} (v : Fin d → ℝ) : ℝ :=
   Real.sqrt (∑ k, (v k) ^ 2)
 
-/-- The finite box of integer indices with `|z_k| ≤ ⌈1/ε⌉` in every coordinate. -/
+/-- The finite box of integer indices with `|z_k| ≤ ⌈1/ε⌉` in every coordinate.  At `ε = 0` the
+junk value `1/ε = 0` of Lean makes the box `{0}`, so `unitBallIndices` is empty there; every result
+that uses the box carries `0 < ε` (or `1/R` with `R > 0`). -/
 def cutoffBox (d : ℕ) (ε : ℝ) : Finset (Site d) :=
   Fintype.piFinset (fun _ => Finset.Icc (-⌈1 / ε⌉) ⌈1 / ε⌉)
 
-/-- The nonzero integer indices of `cutoffBox d ε` whose physical point `ε z` lies in the closed Euclidean unit ball. -/
+/-- The nonzero integer indices of `cutoffBox d ε` whose physical point `ε z` lies in the closed
+Euclidean unit ball. -/
 def unitBallIndices (d : ℕ) (ε : ℝ) : Finset (Site d) :=
   (cutoffBox d ε).filter (fun z => z ≠ 0 ∧ radius (physical ε z) ≤ 1)
 
@@ -100,7 +103,8 @@ lemma cutoff_mem_box {d : ℕ} {ε : ℝ} (hε : 0 < ε) {z : Site d}
     exact_mod_cast hr
   exact Finset.mem_Icc.mpr (abs_le.mp hi)
 
-/-- Membership in `unitBallIndices d ε`: a nonzero integer point with physical radius at most one. -/
+/-- **Membership in `unitBallIndices`.**  For `ε > 0`, `z` lies in `unitBallIndices d ε` exactly
+when `z ≠ 0` and the physical radius `|ε z|` is at most one. -/
 lemma mem_unitBallIndices {d : ℕ} {ε : ℝ} (hε : 0 < ε) (z : Site d) :
     z ∈ unitBallIndices d ε ↔ z ≠ 0 ∧ radius (physical ε z) ≤ 1 := by
   rw [unitBallIndices, Finset.mem_filter]

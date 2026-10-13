@@ -53,7 +53,8 @@ lemma radialBall_measurable (d : ℕ) (r : ℝ) : MeasurableSet (radialBall d r)
   rw [radialBall_preimage]
   exact measurableSet_ball.preimage (PiLp.volume_preserving_toLp (Fin d)).measurable
 
-/-- The Lebesgue volume of the Euclidean unit ball of `ℝ^d` is `unitBallVolume d`. -/
+/-- **Volume of the unit ball.** The Lebesgue volume of the Euclidean unit ball of `ℝ^d` is
+`unitBallVolume d`. -/
 lemma volume_unit_ball (d : ℕ) (hd : 1 ≤ d) :
     volume (Metric.ball (0 : EuclideanSpace ℝ (Fin d)) 1) = ENNReal.ofReal (unitBallVolume d) := by
   letI : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
@@ -71,7 +72,8 @@ lemma radialBall_volume (d : ℕ) (hd : 1 ≤ d) (r : ℝ) (hr : 0 ≤ r) :
   rw [← ENNReal.ofReal_pow hr, ← ENNReal.ofReal_mul (pow_nonneg hr d)]
   rfl
 
-/-- The number of lattice points in a shell is at most the volume of the Euclidean annulus around it. -/
+/-- The number of lattice points in a shell is at most the volume of the Euclidean annulus
+around it. -/
 theorem shell_card_annulus (d : ℕ) (hd : 1 ≤ d) (n : ℝ) (hn : 1 ≤ n)
     (s : Finset (Site d))
     (hs : ∀ w ∈ s, n ≤ radius (physical 1 w) ∧ radius (physical 1 w) < n+1) :
@@ -122,6 +124,13 @@ theorem shell_card_annulus (d : ℕ) (hd : 1 ≤ d) (n : ℝ) (hn : 1 ≤ n)
           (max_le (by linarith) (by dsimp [a]; linarith [Real.sqrt_nonneg (d:ℝ)])) d) hvnon)
   · exact mul_nonneg (pow_nonneg hi _) hvnon
 
+/-- For `n ≥ 1` and `a ≥ 0`, `n + 1 + a ≤ (2 + a) n`, since the difference is
+`(n - 1)(1 + a) ≥ 0`. -/
+private lemma scale_le_of_one_le {n a : ℝ} (hn : 1 ≤ n) (ha : 0 ≤ a) :
+    n + 1 + a ≤ (2 + a) * n := by
+  calc n + 1 + a = (2 + a) * n - (n - 1) * (1 + a) := by ring
+    _ ≤ (2 + a) * n := sub_le_self _ (mul_nonneg (by linarith) (by linarith))
+
 /-- A polynomial bound for the difference of the outer and inner annulus powers. -/
 lemma annulus_power_bound (d : ℕ) (n : ℝ) (hn : 1 ≤ n) :
     (n+1+Real.sqrt d/2)^d - (max 0 (n-Real.sqrt d/2))^d ≤
@@ -136,7 +145,7 @@ lemma annulus_power_bound (d : ℕ) (n : ℝ) (hn : 1 ≤ n) :
   rw [abs_of_nonneg (sub_nonneg.mpr hp), abs_of_nonneg (sub_nonneg.mpr hlu),
     abs_of_nonneg hu, abs_of_nonneg hl, max_eq_left hlu] at he
   have hwidth : n+1+a-max 0 (n-a) ≤ 1+2*a := by linarith [le_max_right 0 (n-a)]
-  have hscale : n+1+a ≤ (2+a)*n := by nlinarith
+  have hscale : n+1+a ≤ (2+a)*n := scale_le_of_one_le hn ha
   have hpow := pow_le_pow_left₀ hu hscale (d-1)
   have h := he.trans (mul_le_mul (mul_le_mul_of_nonneg_right hwidth (Nat.cast_nonneg d)) hpow
     (pow_nonneg hu _) (by positivity))
@@ -144,7 +153,8 @@ lemma annulus_power_bound (d : ℕ) (n : ℝ) (hn : 1 ≤ n) :
   dsimp [a] at h
   exact h.trans_eq (by ring)
 
-/-- A finite set of integer points with physical radii in `[n, n+1)` has at most `shellConstant d · n^(d-1)` points. -/
+/-- A finite set of integer points with physical radii in `[n, n+1)` has at most
+`shellConstant d · n^(d-1)` points. -/
 theorem shell_card (d : ℕ) (hd : 1 ≤ d) (n : ℝ) (hn : 1 ≤ n)
     (s : Finset (Site d))
     (hs : ∀ w ∈ s, n ≤ radius (physical 1 w) ∧ radius (physical 1 w) < n+1) :
@@ -189,7 +199,8 @@ theorem latticeShell_card (d : ℕ) (hd : 1 ≤ d) (n : ℕ) (hn : 1 ≤ n) :
   exact shell_card d hd n (by exact_mod_cast hn) (latticeShell d n)
     (fun w hw => (mem_latticeShell d n w).mp hw)
 
-/-- The unit-ball volume has the Gamma form `π^(d/2) / Γ(d/2 + 1)`. -/
+/-- **Gamma form of the unit-ball volume.** The unit-ball volume has the Gamma form
+`π^(d/2) / Γ(d/2 + 1)`. -/
 theorem unitBallVolume_eq_pi_div_gamma (d : ℕ) :
     unitBallVolume d = Real.pi ^ ((d : ℝ) / 2) / Real.Gamma ((d : ℝ) / 2 + 1) := by
   unfold unitBallVolume

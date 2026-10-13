@@ -66,12 +66,14 @@ lemma sum_rpow_Icc_le_of_gt_neg_one {β : ℝ} (hβ : -1 < β) (hβ0 : β ≤ 0)
       have hbeta : ((N + 1 : ℕ) : ℝ) ^ (β + 1 - 1) = ((N + 1 : ℕ) : ℝ) ^ β := by
         rw [add_sub_cancel_right]
       rw [hbeta] at hk
-      have hdiv : ((N + 1 : ℕ) : ℝ) ^ β ≤ (((N + 1 : ℕ) : ℝ) ^ (β + 1) - (N : ℝ) ^ (β + 1)) / (β + 1) := by
+      have hdiv : ((N + 1 : ℕ) : ℝ) ^ β ≤
+          (((N + 1 : ℕ) : ℝ) ^ (β + 1) - (N : ℝ) ^ (β + 1)) / (β + 1) := by
         rw [le_div_iff₀ hγ0]
         linarith
       have hstep : (N : ℝ) ^ (β + 1) / (β + 1) + ((N + 1 : ℕ) : ℝ) ^ β
           ≤ ((N + 1 : ℕ) : ℝ) ^ (β + 1) / (β + 1) := by
-        have : (N : ℝ) ^ (β + 1) / (β + 1) + (((N + 1 : ℕ) : ℝ) ^ (β + 1) - (N : ℝ) ^ (β + 1)) / (β + 1)
+        have : (N : ℝ) ^ (β + 1) / (β + 1) +
+            (((N + 1 : ℕ) : ℝ) ^ (β + 1) - (N : ℝ) ^ (β + 1)) / (β + 1)
             = ((N + 1 : ℕ) : ℝ) ^ (β + 1) / (β + 1) := by ring
         linarith
       linarith
@@ -102,6 +104,22 @@ lemma sum_rpow_Icc_le_tsum {β : ℝ} (hβ : β < -1) (N : ℕ) :
       exact Real.rpow_nonneg (Nat.cast_nonneg n) _
   exact hsub.trans (Summable.sum_le_tsum _ (fun n _ => Real.rpow_nonneg (Nat.cast_nonneg n) _) hs)
 
+/-- For `p > 0`, `1 - p ≤ p⁻¹ - 1`: the difference `p⁻¹ - 1 - (1 - p)` equals `(1 - p)² p⁻¹ ≥ 0`. -/
+private lemma one_sub_le_inv_sub_one {p : ℝ} (hp : 0 < p) : 1 - p ≤ p⁻¹ - 1 := by
+  have hpinv : p * p⁻¹ = 1 := mul_inv_cancel₀ hp.ne'
+  have hid : p⁻¹ - 1 - (1 - p) = (1 - p) ^ 2 * p⁻¹ := by
+    linear_combination (2 - p) * hpinv
+  have hnn : 0 ≤ (1 - p) ^ 2 * p⁻¹ := mul_nonneg (sq_nonneg _) (inv_nonneg.mpr hp.le)
+  calc 1 - p ≤ 1 - p + (1 - p) ^ 2 * p⁻¹ := le_add_of_nonneg_right hnn
+    _ = p⁻¹ - 1 := by rw [← hid]; ring
+
+/-- For `0 ≤ x` and `q ≤ 1 - x`, `(1 + x) q ≤ 1`, since `(1 + x)(1 - x) = 1 - x ^ 2`. -/
+private lemma one_add_mul_le_one_of_le_sub {x q : ℝ} (hx : 0 ≤ x) (hq : q ≤ 1 - x) :
+    (1 + x) * q ≤ 1 := by
+  calc (1 + x) * q ≤ (1 + x) * (1 - x) := mul_le_mul_of_nonneg_left hq (by linarith)
+    _ = 1 - x ^ 2 := by ring
+    _ ≤ 1 := sub_le_self 1 (sq_nonneg x)
+
 /-- Bernoulli inequality for negative powers: `1 + m(1-p) ≤ p^{-m}` for `p ∈ (0,1]`, `m > 0`. -/
 lemma one_add_mul_le_rpow_neg {p m : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) (hm : 0 < m) :
     1 + m * (1 - p) ≤ p ^ (-m) := by
@@ -111,8 +129,7 @@ lemma one_add_mul_le_rpow_neg {p m : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) (hm : 0 
   rcases le_total 1 m with hm1 | hm1
   · -- `m ≥ 1`: Bernoulli for `u = p⁻¹ ≥ 1`, where `(p^m)⁻¹ = u^m`.
     have hv : 0 < p⁻¹ := inv_pos.mpr hp0
-    have hpinv : p * p⁻¹ = 1 := mul_inv_cancel₀ hp0.ne'
-    have hinv1 : 1 - p ≤ p⁻¹ - 1 := by nlinarith [sq_nonneg (1 - p)]
+    have hinv1 : 1 - p ≤ p⁻¹ - 1 := one_sub_le_inv_sub_one hp0
     have hbern := one_add_mul_self_le_rpow_one_add (s := p⁻¹ - 1) (by linarith) hm1
     rw [add_sub_cancel] at hbern
     have h2 : m * (1 - p) ≤ m * (p⁻¹ - 1) := mul_le_mul_of_nonneg_left hinv1 hm.le
@@ -122,10 +139,7 @@ lemma one_add_mul_le_rpow_neg {p m : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) (hm : 0 
     have hb := rpow_one_add_le_one_add_mul_self (s := p - 1) (by linarith) hm.le hm1
     rw [add_sub_cancel] at hb
     have hb' : p ^ m ≤ 1 - m * (1 - p) := by linarith
-    have key : (1 + m * (1 - p)) * p ^ m ≤ 1 := by
-      have h1 : (1 + m * (1 - p)) * p ^ m ≤ (1 + m * (1 - p)) * (1 - m * (1 - p)) :=
-        mul_le_mul_of_nonneg_left hb' (by linarith)
-      nlinarith [sq_nonneg (m * (1 - p))]
+    have key : (1 + m * (1 - p)) * p ^ m ≤ 1 := one_add_mul_le_one_of_le_sub hx hb'
     calc 1 + m * (1 - p) = (1 + m * (1 - p)) * p ^ m * (p ^ m)⁻¹ :=
           (mul_inv_cancel_right₀ hpm.ne' _).symm
       _ ≤ 1 * (p ^ m)⁻¹ := mul_le_mul_of_nonneg_right key (inv_nonneg.mpr hpm.le)
@@ -206,11 +220,13 @@ lemma tail_finset_le {m : ℝ} (hm : 0 < m) {N : ℕ} (hN : 2 ≤ N) (S : Finset
         Finset.sum_le_sum_of_subset_of_nonneg hsub (fun n hn _ => hnn n hn)
     _ ≤ ((N : ℝ) - 1) ^ (-m) / m := by linarith [hpart, hMnn]
 
-/-- Tail sums over any finite set of positive integers: the threshold `N = 1` costs at most `1 + 1/m`. -/
+/-- Tail sums over any finite set of positive integers: the threshold `N = 1` costs at most
+`1 + 1/m`. -/
 lemma tail_finset_le_one {m : ℝ} (hm : 0 < m) (S : Finset ℕ) (hS : ∀ n ∈ S, 1 ≤ n) :
     ∑ n ∈ S, (n : ℝ) ^ (-m - 1) ≤ 1 + 1 / m := by
   classical
-  have hsplit := Finset.sum_filter_add_sum_filter_not S (fun n => 2 ≤ n) (fun n : ℕ => (n : ℝ) ^ (-m - 1))
+  have hsplit := Finset.sum_filter_add_sum_filter_not S (fun n => 2 ≤ n)
+      (fun n : ℕ => (n : ℝ) ^ (-m - 1))
   have hA : ∑ n ∈ S.filter (fun n => 2 ≤ n), (n : ℝ) ^ (-m - 1) ≤ 1 / m := by
     have h := tail_finset_le hm (N := 2) le_rfl (S.filter (fun n => 2 ≤ n))
       (fun n hn => (Finset.mem_filter.mp hn).2)
@@ -235,7 +251,19 @@ lemma tail_finset_le_one {m : ℝ} (hm : 0 < m) (S : Finset ℕ) (hS : ∀ n ∈
   rw [← hsplit]
   linarith [hA, hB]
 
-/-- Finite-set tail bound: if every `n ∈ S` satisfies `⌊R⌋₊ ≤ n` with `R ≥ 1`, then `∑_{n∈S} n^(-m-1) ≤ (1 + 1/m) · (4^m · R^(-m))`. -/
+/-- If `s ≤ t`, `0 ≤ t` and `1 ≤ X`, then `s ≤ t * X`. -/
+private lemma le_mul_of_le_of_one_le_factor {s t X : ℝ} (hs : s ≤ t) (ht : 0 ≤ t)
+    (hX : 1 ≤ X) : s ≤ t * X :=
+  hs.trans (le_mul_of_one_le_right ht hX)
+
+/-- For `X ≥ 0`, `X / m ≤ (1 + 1/m) * X`, because `(1 + 1/m) * X - X / m = X`. -/
+private lemma div_le_one_add_inv_mul {X m : ℝ} (hX : 0 ≤ X) : X / m ≤ (1 + 1 / m) * X := by
+  calc X / m = X * (1 / m) := div_eq_mul_one_div X m
+    _ ≤ X + X * (1 / m) := le_add_of_nonneg_left hX
+    _ = (1 + 1 / m) * X := by ring
+
+/-- Finite-set tail bound: if every `n ∈ S` satisfies `⌊R⌋₊ ≤ n` with `R ≥ 1`, then
+`∑_{n∈S} n^(-m-1) ≤ (1 + 1/m) · (4^m · R^(-m))`. -/
 lemma tail_finset_bound {m R : ℝ} (hm : 0 < m) (hR : 1 ≤ R) (S : Finset ℕ)
     (hS : ∀ n ∈ S, Nat.floor R ≤ n) :
     ∑ n ∈ S, (n : ℝ) ^ (-m - 1) ≤ (1 + 1 / m) * ((4 : ℝ) ^ m * R ^ (-m)) := by
@@ -263,7 +291,7 @@ lemma tail_finset_bound {m R : ℝ} (hm : 0 < m) (hR : 1 ≤ R) (S : Finset ℕ)
       rw [Real.rpow_neg hR0.le, ← div_eq_mul_inv]
       exact hq
     have h := tail_finset_le_one hm S hS1
-    nlinarith [h, hge1, hR4]
+    exact le_mul_of_le_of_one_le_factor h hR4 hge1
   · -- `⌊R⌋ ≥ 2`: then `⌊R⌋ - 1 ≥ R/4`, and the telescoped bound applies.
     have hT := tail_finset_le hm hge S hS
     have hNR : R < (Nat.floor R : ℝ) + 1 := Nat.lt_floor_add_one R
@@ -275,19 +303,18 @@ lemma tail_finset_bound {m R : ℝ} (hm : 0 < m) (hR : 1 ≤ R) (S : Finset ℕ)
     have hpow : ((Nat.floor R : ℝ) - 1) ^ (-m) ≤ (R / 4) ^ (-m) :=
       Real.rpow_le_rpow_of_nonpos (by linarith) hquarter (by linarith)
     have hdiv : (R / 4) ^ (-m) = (4 : ℝ) ^ m * R ^ (-m) := by
-      rw [Real.div_rpow hR0.le (by norm_num), Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 4), div_inv_eq_mul,
-        mul_comm]
+      rw [Real.div_rpow hR0.le (by norm_num), Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 4),
+        div_inv_eq_mul, mul_comm]
     have hfin : ((Nat.floor R : ℝ) - 1) ^ (-m) / m ≤ (1 + 1 / m) * ((4 : ℝ) ^ m * R ^ (-m)) := by
       have h1 : ((Nat.floor R : ℝ) - 1) ^ (-m) / m ≤ ((4 : ℝ) ^ m * R ^ (-m)) / m := by
         rw [div_le_div_iff_of_pos_right hm]
         linarith [hpow, hdiv]
-      have h2 : ((4 : ℝ) ^ m * R ^ (-m)) / m ≤ (1 + 1 / m) * ((4 : ℝ) ^ m * R ^ (-m)) := by
-        rw [div_eq_mul_one_div]
-        nlinarith [hpow_nonneg, hinvm]
+      have h2 : ((4 : ℝ) ^ m * R ^ (-m)) / m ≤ (1 + 1 / m) * ((4 : ℝ) ^ m * R ^ (-m)) :=
+        div_le_one_add_inv_mul hpow_nonneg
       linarith [h1, h2]
     linarith [hT, hfin]
 
-/-- Unified partial-sum bound: for `β > -1`, `∑_{n=1}^N n^β ≤ (1 + 1/(β+1)) N^{β+1}`. -/
+/-- **Unified partial-sum bound.** For `β > -1`, `∑_{n=1}^N n^β ≤ (1 + 1/(β+1)) N^{β+1}`. -/
 lemma sum_rpow_Icc_le_unified {β : ℝ} (hβ : -1 < β) (N : ℕ) :
     ∑ n ∈ Finset.Icc 1 N, (n : ℝ) ^ β ≤ (1 + 1 / (β + 1)) * (N : ℝ) ^ (β + 1) := by
   have hγ : 0 < β + 1 := by linarith

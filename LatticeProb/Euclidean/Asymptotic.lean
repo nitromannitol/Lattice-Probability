@@ -16,7 +16,8 @@ Euclidean annuli, and it bounds the points of radius below `3√d` by a box coun
 noncomputable section
 
 open scoped BigOperators
-open LatticeProb.Euclidean.Lattice LatticeProb.Euclidean.Cube LatticeProb.Euclidean.Shell LatticeProb.Euclidean.Summability LatticeProb.Euclidean.Integral MeasureTheory Set
+open LatticeProb.Euclidean.Lattice LatticeProb.Euclidean.Cube LatticeProb.Euclidean.Shell
+open LatticeProb.Euclidean.Summability LatticeProb.Euclidean.Integral MeasureTheory Set
 
 namespace LatticeProb.Euclidean.Asymptotic
 
@@ -24,7 +25,8 @@ namespace LatticeProb.Euclidean.Asymptotic
 lemma one_div_mul_le_one_iff {R r : ℝ} (hR : 0 < R) : 1 / R * r ≤ 1 ↔ r ≤ R := by
   rw [one_div, inv_mul_le_iff₀ hR, mul_one]
 
-/-- The points of `unitBallIndices d (1/R)` of physical radius at least `2√d` are exactly the points of `latticeAnnulus d R`. -/
+/-- The points of `unitBallIndices d (1/R)` of physical radius at least `2√d` are exactly the points
+of `latticeAnnulus d R`. -/
 lemma unitBallIndices_filter_eq_latticeAnnulus {d : ℕ} (hd : 1 ≤ d) {R : ℝ} (hR : 0 < R) :
     (unitBallIndices d (1 / R)).filter (fun z => 2 * Real.sqrt d ≤ radius (physical 1 z)) =
       latticeAnnulus d R := by
@@ -91,6 +93,14 @@ lemma log_outer_le {d : ℕ} (hd : 1 ≤ d) {R : ℝ} (hR : 3 * Real.sqrt d ≤ 
       ≤ Real.log (R * (4 / (3 * Real.sqrt d))) := Real.log_le_log hpos hle
     _ = Real.log R + Real.log (4 / (3 * Real.sqrt d)) := Real.log_mul hRpos.ne' hc
 
+/-- For `0 ≤ s ≤ R`, `R · (5s/2) ≤ (R - s/2) · (5s)`, since the difference is
+`(5/2) s (R - s) ≥ 0`. -/
+private lemma cross_mul_le_inner {R s : ℝ} (hs : 0 ≤ s) (hsR : s ≤ R) :
+    R * (5 * s / 2) ≤ (R - s / 2) * (5 * s) := by
+  calc R * (5 * s / 2) = (R - s / 2) * (5 * s) - 5 / 2 * (s * (R - s)) := by ring
+    _ ≤ (R - s / 2) * (5 * s) :=
+      sub_le_self _ (mul_nonneg (by norm_num) (mul_nonneg hs (by linarith)))
+
 /-- The inner radius ratio is at least `R/(5√d)` once `R ≥ 3√d`, so its log is `log R` minus a
 constant. -/
 lemma log_inner_ge {d : ℕ} (hd : 1 ≤ d) {R : ℝ} (hR : 3 * Real.sqrt d ≤ R) :
@@ -102,17 +112,20 @@ lemma log_inner_ge {d : ℕ} (hd : 1 ≤ d) {R : ℝ} (hR : 3 * Real.sqrt d ≤ 
   have h52 : 0 < 5 * Real.sqrt d / 2 := by linarith
   have hle : R / (5 * Real.sqrt d) ≤ (R - Real.sqrt d / 2) / (5 * Real.sqrt d / 2) := by
     rw [div_le_div_iff₀ h5 h52]
-    nlinarith [mul_nonneg hs.le (show (0 : ℝ) ≤ R - Real.sqrt d by linarith)]
+    exact cross_mul_le_inner hs.le (by linarith)
   rw [← Real.log_div hRpos.ne' h5.ne']
   exact Real.log_le_log (div_pos hRpos h5) hle
 
-/-- The discrete asymptotic `∑_{z ∈ unitBallIndices d (1/R)} |z|^{-d} = d · unitBallVolume d · log R + O(1)`, uniformly for `R ≥ 2`: one constant `K(d)` bounds the error for every such `R`. -/
+/-- **Uniform critical asymptotic.** The discrete asymptotic
+`∑_{z ∈ unitBallIndices d (1/R)} |z|^{-d} = d · unitBallVolume d · log R + O(1)`
+holds uniformly for `R ≥ 2`: one constant `K(d)` bounds the error for every such `R`. -/
 theorem shell_sum_asymp {d : ℕ} (hd : 1 ≤ d) :
     ∃ K : ℝ, 0 ≤ K ∧ ∀ R : ℝ, 2 ≤ R →
       |(∑ z ∈ unitBallIndices d (1 / R), Real.rpow (radius (physical 1 z)) (-(d : ℝ)))
         - (d : ℝ) * unitBallVolume d * Real.log R| ≤ K := by
   have hs : 0 < Real.sqrt d := Real.sqrt_pos.mpr (Nat.cast_pos.mpr (by omega))
-  have hD : 0 ≤ (d : ℝ) * unitBallVolume d := mul_nonneg (Nat.cast_nonneg d) (unitBallVolume_pos d).le
+  have hD : 0 ≤ (d : ℝ) * unitBallVolume d :=
+    mul_nonneg (Nat.cast_nonneg d) (unitBallVolume_pos d).le
   have hC1 : 0 ≤ comparisonConstant d * radialErrorConstant d :=
     mul_nonneg (comparisonConstant_nonneg d) (radialErrorConstant_nonneg d)
   have hK3 : (0 : ℝ) ≤ ((Fintype.piFinset
@@ -141,13 +154,15 @@ theorem shell_sum_asymp {d : ℕ} (hd : 1 ≤ d) :
     le_trans hdisj.1 hdisj.2
   rcases lt_or_ge R (3 * Real.sqrt d) with hRlt | hR3
   · -- Case `2 ≤ R < 3√d`: every point of `unitBallIndices d (1/R)` has radius below `3√d`.
-    have hT : ∀ z ∈ unitBallIndices d (1 / R), z ≠ 0 ∧ radius (physical 1 z) < 3 * Real.sqrt d := by
+    have hT : ∀ z ∈ unitBallIndices d (1 / R),
+        z ≠ 0 ∧ radius (physical 1 z) < 3 * Real.sqrt d := by
       intro z hz
       obtain ⟨hz0, hz1⟩ := (mem_unitBallIndices (one_div_pos.mpr hRpos) z).mp hz
       rw [radius_physical_eq_mul (one_div_pos.mpr hRpos).le z] at hz1
       exact ⟨hz0, lt_of_le_of_lt ((one_div_mul_le_one_iff hRpos).mp hz1) hRlt⟩
     have hsum := sum_rpow_le_box_card (d := d) (M := 3 * Real.sqrt d) _ hT
-    have hsum0 : 0 ≤ ∑ z ∈ unitBallIndices d (1 / R), Real.rpow (radius (physical 1 z)) (-(d : ℝ)) :=
+    have hsum0 : 0 ≤ ∑ z ∈ unitBallIndices d (1 / R),
+        Real.rpow (radius (physical 1 z)) (-(d : ℝ)) :=
       Finset.sum_nonneg (fun z _ => Real.rpow_nonneg (radius_nonneg _) _)
     have hlogle : Real.log R ≤ Real.log (3 * Real.sqrt d) := Real.log_le_log hRpos hRlt.le
     have hlogle' : (d : ℝ) * unitBallVolume d * Real.log R
