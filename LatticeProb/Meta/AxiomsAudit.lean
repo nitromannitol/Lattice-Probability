@@ -1,4 +1,11 @@
+import LatticeProb.Meta.LyonsAxioms
+import LatticeProb.Meta.AllMinorsAxioms
 import LatticeProb
+import LatticeProb.Meta.CopiedGraphAxioms
+import LatticeProb.Meta.DiskAlternationAxioms
+import LatticeProb.Meta.PairingMinorAxioms
+import LatticeProb.Meta.WilsonGenericAxioms
+import LatticeProb.Meta.PlaneIncidenceAxioms
 
 /-!
 # Axioms audit
@@ -36,6 +43,31 @@ library.
 #print axioms LatticeProb.exists_tsum_srwGreenInf_sq_tail_le
 #print axioms LatticeProb.Intersection.exists_lintegral_interCount_sq_le
 #print axioms LatticeProb.srwHitProb_eq_green_ratio
+#print axioms LatticeProb.DrivenWalk.position
+#print axioms LatticeProb.DrivenWalk.position_zero
+#print axioms LatticeProb.DrivenWalk.position_succ
+#print axioms LatticeProb.DrivenWalk.position_consNat_succ
+#print axioms LatticeProb.DrivenWalk.hitBefore
+#print axioms LatticeProb.DrivenWalk.hitBefore_eq_empty
+#print axioms LatticeProb.DrivenWalk.hitBefore_eq_univ
+#print axioms LatticeProb.DrivenWalk.consNat_mem_hitBefore_iff
+#print axioms LatticeProb.DrivenWalk.measurable_position
+#print axioms LatticeProb.DrivenWalk.measurableSet_hitBefore
+#print axioms LatticeProb.DrivenWalk.measure_hitBefore_eq_lintegral
+#print axioms LatticeProb.DrivenWalk.measure_hitBefore_eq_sum
+#print axioms LatticeProb.stepLaw_map_dirVec
+#print axioms LatticeProb.pathLaw_map_dirVec
+#print axioms LatticeProb.pathLaw_map_sitePath
+#print axioms LatticeProb.srwGreen_eq_sum_srwFirstHit
+#print axioms LatticeProb.srwGreen_mono
+#print axioms LatticeProb.srwGreen_le_srwHitProb_mul
+#print axioms LatticeProb.tendsto_srwGreen_two_dim_origin
+#print axioms LatticeProb.srwHitProb_two_dim_eq_one
+#print axioms LatticeProb.siteWalkLaw_two_dim_hitOrigin
+#print axioms LatticeProb.measurableSet_hit_site
+#print axioms LatticeProb.siteWalkLaw_hit_site
+#print axioms LatticeProb.siteWalkLaw_two_dim_hit_site
+#print axioms LatticeProb.pathLaw_two_dim_hit_site
 #print axioms LatticeProb.exists_abs_srwGreenInf_sub_le
 #print axioms LatticeProb.tendsto_potentialKernel
 #print axioms LatticeProb.potentialKernel_zero

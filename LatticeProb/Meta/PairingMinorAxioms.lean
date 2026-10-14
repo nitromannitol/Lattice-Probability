@@ -1,0 +1,34 @@
+/-
+# Terminal pairings and complementary matrix minors axiom reports
+
+Print the foundational dependencies of the principal results on copied-forest
+transport, determinant coefficients and grounded complementary minors.
+-/
+import LatticeProb.Combinatorics.PairingTransport
+import LatticeProb.Combinatorics.TerminalOrder
+import LatticeProb.Graph.CopiedGraph.PairingForest
+import LatticeProb.Graph.CopiedGraph.VertexTransport
+import LatticeProb.LinearAlgebra.DeterminantCoefficient
+import LatticeProb.LinearAlgebra.InverseComplementaryMinor
+import LatticeProb.Graph.CopiedGraph.RootedMatchingTransport
+import LatticeProb.LinearAlgebra.DeterminantCoefficientOrder
+import LatticeProb.LinearAlgebra.OrderedComplementSign
+import LatticeProb.LinearAlgebra.ZeroSumBorder
+import LatticeProb.LinearAlgebra.ZeroSumBorderInverse
+import LatticeProb.LinearAlgebra.ZeroSumComplementaryMinor
+
+#print axioms LatticeProb.Combinatorics.pairing_reindex_iff
+#print axioms LatticeProb.Combinatorics.exists_terminal_sorting_perm
+#print axioms LatticeProb.Graph.CopiedGraph.isRootedForest_range_and_matching_iff
+#print axioms LatticeProb.Graph.CopiedGraph.rootedMatchingReindexEquiv
+#print axioms LatticeProb.Graph.CopiedGraph.signed_rootedMatchingForest_count_relabelVertices
+#print axioms LatticeProb.Graph.CopiedGraph.rootedForestRelabelEquiv
+#print axioms LatticeProb.LinearAlgebra.det_X_add_C_coeff_one
+#print axioms LatticeProb.LinearAlgebra.det_X_add_C_coeff_one_add_row_add_column
+#print axioms LatticeProb.LinearAlgebra.det_submatrix_perms_coeff
+#print axioms LatticeProb.LinearAlgebra.det_inverse_toBlocks₂₂_mul_det
+#print axioms LatticeProb.LinearAlgebra.det_inverse_submatrix_complement_mul_det_eq_sign
+#print axioms LatticeProb.LinearAlgebra.sign_increasingComplementRootEquiv_trans_symm
+#print axioms LatticeProb.LinearAlgebra.det_updateRow_single_of_row_sum_zero
+#print axioms LatticeProb.LinearAlgebra.inv_updateRow_single_of_row_sum_zero
+#print axioms LatticeProb.LinearAlgebra.det_groundInverseExtension_differences_mul_det

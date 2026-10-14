@@ -140,6 +140,17 @@ general locally finite graph is `LatticeProb.Graph.heat`.
   Walks*, proof of Theorem 3.3.2).
 * `LatticeProb.srwHitProb_eq_green_ratio`: for `d ≥ 3` the probability that
   the walk from `x` ever hits the origin is `G(x) / G(0)`.
+* `LatticeProb.srwHitProb_two_dim_eq_one`: in two dimensions, simple random
+  walk hits every fixed site almost surely. `siteWalkLaw_two_dim_hit_site`
+  states this for position paths; `pathLaw_two_dim_hit_site` states it for iid
+  direction drivers. The proof uses finite first-passage decomposition,
+  logarithmic Green divergence and the potential-kernel limit
+  ([`Walk/RecurrenceHitting.lean`](LatticeProb/Walk/RecurrenceHitting.lean)).
+* `LatticeProb.DrivenWalk.measure_hitBefore_eq_lintegral` and
+  `measure_hitBefore_eq_sum`: first-step decomposition for measurable walks
+  driven by iid instructions, with arbitrary instruction weights. Hitting
+  includes time zero and excludes visits to the forbidden set through the
+  target time ([`Walk/HitBeforeFirstStep.lean`](LatticeProb/Walk/HitBeforeFirstStep.lean)).
 * `LatticeProb.exists_abs_srwGreenInf_sub_le`: the Green function asymptotics
   `|G(x) - 2/((d - 2) ω_d) |x|^{2-d}| ≤ C |x|^{-d}` for `d ≥ 3` and `|x| ≥ 1`,
   with `ω_d` the volume of the unit ball (Lawler–Limic, Theorem 4.3.1).
@@ -712,6 +723,149 @@ determined by finitely many coordinates of an infinite product.
   cyclic rank of a transitively acting permutation, summed over the starting
   point, how often one fixed point precedes another in the induced cyclic
   order.
+
+* `LatticeProb.Graph.CopiedGraph.det_laplacian_minor`: every complementary
+  minor of the copied-graph Laplacian equals its signed rooted-forest count,
+  over any commutative ring. Root sets may overlap; original parallel copies,
+  disconnected graphs and empty minors are retained. The proof uses
+  Cauchy–Binet, rooted incidence determinants and unique component matchings.
+* `LatticeProb.Graph.CopiedGraph.det_laplacian_minor_int` gives the same
+  signed forest formula over the integers.
+* `LatticeProb.Graph.CopiedGraph.sum_rootMatchingPerm_eq` and
+  `LatticeProb.Graph.CopiedGraph.sum_rootMatchingPerm_of_card_eq`: rooted
+  forest sums partition by their unique root matching, with exact finite counts.
+* `Matrix.det_mul_eq_sum_injective` and `Matrix.det_mul_eq_sum_subsets`
+  prove rectangular determinant expansion and Cauchy–Binet.
+  `Finset.sum_val_preimageSuccAbove` reindexes the complementary finite sums.
+* `Matrix.det_appendRootColumns` expands a determinant after appending
+  coordinate root columns. `Matrix.det_appendRootColumns_of_matched_span`
+  compares two such determinants through their ordered root matching.
+* `LatticeProb.Graph.CopiedGraph.IsRootedForest.card_add_card_roots` counts
+  edges and roots; `LatticeProb.Graph.CopiedGraph.IsRootedForest.iff_existsUnique_perm`
+  identifies the unique matching of two root lists.
+* `LatticeProb.Graph.CopiedGraph.isUnit_det_nonrootIncidence` proves that a
+  rooted forest has a unit incidence minor.
+  `LatticeProb.Graph.CopiedGraph.det_augmented_incidence_eq_zero_of_missing_root`
+  and `LatticeProb.Graph.CopiedGraph.det_map_augmentedIncidence_eq_zero_of_not_isRootedForest`
+  prove vanishing in the remaining cases.
+  `LatticeProb.Graph.CopiedGraph.paired_incidence_minor_sign` gives the exact
+  sign for two ordered root lists.
+**Finite determinantal laws and monotone couplings**
+
+- `LatticeProb.DPP.nested_projection_domination`: for real symmetric idempotent kernels with nested ranges on any finite carrier, the nonnegative weights specified by their inclusion determinants satisfy domination on every increasing family. A single nonnegative coupling has both original marginals, total mass one, and support on pairs `S ⊆ T`; normalization and compatible frames are derived.
+- `LatticeProb.ProjectionFiltration.exists_orthonormal_increment`, `LatticeProb.ProjectionFiltration.exists_nested_projection_frame` and `LatticeProb.ProjectionFiltration.exists_rank_filtration`: orthonormal difference-range bases, compatible endpoint frames and finite rank-one filtrations are constructed from nested projections, including the empty carrier. `LatticeProb.ProjectionFiltration.projectionSum_append` and `LatticeProb.ProjectionFiltration.projectionSum_isSymmetricProjection` describe concatenation and orthonormal projection sums.
+- `LatticeProb.SubsetContraction.annihilation_car` and `LatticeProb.SubsetContraction.finsetContract_create_add_create_contract`: canonical anticommutation on subset coordinates and finite sets, with the signed insertion convention. `LatticeProb.SubsetContraction.sum_sq_contract_le`, `LatticeProb.SubsetContraction.sum_sq_finset_contraction_le` and `LatticeProb.SubsetContraction.sum_sq_finset_creation_le` bound squared coefficient energy by squared vector length times input energy.
+- `LatticeProb.SubsetContraction.det_cons_rows_eq_insertionSign`, `LatticeProb.LinearAlgebra.sum_mul_det_bordered_matrix` and `LatticeProb.SubsetContraction.determinantCoeff_prependColumn`: ordered minor insertion signs, bordered determinant contraction and the determinant formula for prepending a column.
+- `LatticeProb.SubsetContraction.finsetContract_prependColumn` and `LatticeProb.SubsetContraction.recovery_event_of_prependColumn_orthonormal`: exact recovery under contraction by an orthogonal unit vector and its orthonormal endpoint cases. `LatticeProb.SubsetContraction.sum_sq_indicator_determinantCoeff_le_prependColumn` and `LatticeProb.SubsetContraction.sum_indicator_determinantCoeff_sq_dropLeadingColumns_le` give increasing-event comparison for one column and for any number of leading columns.
+- `LatticeProb.DPP.atom_eq_determinantCoeff_sq` and `LatticeProb.DPP.atom_formula_of_orthonormal_frame`: inclusion identities identify every atom as a squared ordered determinant, with zero weight off the frame degree. `LatticeProb.DPP.atom_finsetCongr_eq_determinantCoeff_sq` and `LatticeProb.DPP.original_carrier_atom_formula_of_frame` transport this formula to the original finite carrier. `LatticeProb.DPP.sum_eq_one_of_inclusion_minors` derives normalization from the empty minor.
+- `LatticeProb.DPP.event_domination_of_endpoint_frames` and `LatticeProb.DPP.domination_coupling_of_endpoint_frames`: event domination and a single subset-supported coupling when the two kernels are explicitly represented by an orthonormal frame and its trailing columns. These intermediate results retain their frame hypotheses; the full nested-projection theorem constructs those frames.
+- `LatticeProb.StrassenAux.isProbabilityMeasure_finiteLaw`: nonnegative normalized finite weights define a probability measure. `LatticeProb.StrassenAux.finite_atom_row` recovers exact real row sums from a finite coupling with the stated marginal laws.
+- `LatticeProb.StrassenAux.exists_monotone_matrix_of_upper_set_domination` and `LatticeProb.StrassenAux.exists_subset_matrix_of_event_domination`: normalized nonnegative finite weights and upper-set domination yield a coupling matrix supported on the order relation, specialized in the latter result to insertion-closed families of finite sets.
+
+* `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
+  edge gives a two-root forest, and inserting that same copy recovers the tree.
+* `LatticeProb.Graph.CopiedGraph.signedPathTraversal_divergence`: signed
+  traversal along a tree path has divergence one at its start, minus one at
+  its end and zero elsewhere.
+* `LatticeProb.Graph.CopiedGraph.mean_signedPathTraversal_eq_potential_drop`:
+  the uniform mean signed tree-path traversal equals the drop of the explicit
+  forest-count potential. Its denominator is the number of spanning trees;
+  `forestCountPotential_poisson` proves its grounded Poisson equation.
+  These results retain loops and distinct parallel edge copies.
+
+**Disk alternation and polygonal separation.**
+
+The disk is the coordinate Euclidean disk `{z : ℝ × ℝ | z.1 ^ 2 + z.2 ^ 2 ≤ 1}`.
+The final alternation theorem allows arbitrary compact connected sets, not just
+simple arcs or path-connected sets; disjoint polygonal arcs are constructed in
+the proof. Strict cyclic order is retained at the four boundary points.
+
+* `LatticeProb.Topology.exists_injective_polygonal_outside_completion`: injective polygonal completion outside the disk.
+* `LatticeProb.Topology.exists_polygonal_outside_completion`: polygonal outside completion.
+* `LatticeProb.Topology.exists_injective_polygonal_arc`: simple polygonal arcs in connected open sets.
+* `LatticeProb.Topology.exists_polygonal_chain_of_isPreconnected`: finite polygonal chains in real normed spaces.
+* `LatticeProb.Topology.polygonal_chain_add_endpoints`: endpoint insertion in polygonal chains.
+* `LatticeProb.Topology.exists_last_contact_segment`, `LatticeProb.Topology.exists_polygonal_chain_last_contact_splice`: last-contact selection and splicing.
+* `LatticeProb.Topology.exists_simple_polygonal_chain`: erasure of repetitions in polygonal chains.
+* `LatticeProb.Topology.PolygonalParity.exists_original_circle_interval_parity_internal`: constancy of parity on complementary circle intervals.
+* `LatticeProb.Topology.PolygonalParity.exists_original_endpoint_parity_chain_internal`: endpoint crosscut parity.
+* `LatticeProb.Topology.PolygonalParity.IsClosedChain`, `LatticeProb.Topology.PolygonalParity.parity_eq_of_isPreconnected`, `LatticeProb.Topology.PolygonalParity.parity_flip`: closed-chain predicates, connected-set constancy and parity flips.
+* `LatticeProb.Topology.PolygonalParity.isClosedChain_coordinateEdges_append`: closed coordinate chains.
+* `LatticeProb.Topology.PolygonalParity.exists_coordinate_local_separation`: coordinate local separation.
+* `LatticeProb.Topology.PolygonalParity.Plane.exists_isDirection_det_ne_zero`: generic Euclidean directions.
+* `LatticeProb.Topology.PolygonalParity.exists_halfBall_separation`: local half-ball separation.
+* `LatticeProb.Topology.PolygonalParity.exists_local_separation`: local polygonal separation.
+* `LatticeProb.Topology.PolygonalParity.fwd_meet_sub_eq_det_div`, `LatticeProb.Topology.PolygonalParity.exists_circle_endpoint_jump_internal`: endpoint determinant formulas and circle parity jumps.
+* `LatticeProb.Topology.coordinateRadial_neg_of_mem_disk`: radial endpoint signs.
+* `LatticeProb.Topology.PolygonalParity.disk_polygonal_alternation_impossible_internal`: polygonal disk alternation.
+* `LatticeProb.Topology.exists_radial_polygonal_outside_completion`: literal radial outside completion.
+* `LatticeProb.Topology.PolygonalParity.exists_generic_endpoint_direction`: generic endpoint directions.
+* `LatticeProb.Topology.PolygonalParity.exists_generic_direction_radial`: generic directions for radial chains.
+* `LatticeProb.Topology.PolygonalParity.exists_transverse_endpoint_jump`: transverse endpoint jumps.
+* `LatticeProb.Topology.circle_points_pairwise_ne_of_cyclic_order`: distinct circle points from strict cyclic order.
+* `LatticeProb.Topology.exists_disjoint_connected_open_thickenings`: disjoint connected open thickenings.
+* `LatticeProb.Topology.exists_scaling_in_original_thickenings`: scaling inside the original thickenings.
+* `LatticeProb.Topology.exists_disjoint_polygonal_chains_with_original_endpoints`: restoration of original chain endpoints.
+* `LatticeProb.Topology.exists_disjoint_polygonal_chains_in_disk`: disjoint polygonal chains in the disk.
+* `LatticeProb.Topology.segment_self_smul_subset_coordinate_disk`: radial segments in the coordinate disk.
+* `LatticeProb.Topology.exists_disjoint_polygonal_chains`: disjoint polygonal approximation.
+* `LatticeProb.Topology.isPolygonal_polygonal_chain`: polygonal carriers in the plane.
+* `LatticeProb.Topology.disk_continua_have_disjoint_restored_endpoint_chains`: restored chains between original continuum endpoints.
+* `LatticeProb.Topology.DiskArcPair.disjoint_disk_chain_pair_consumer`: disjoint disk chains with prescribed endpoints.
+* `LatticeProb.Topology.disk_continua_have_disjoint_injective_polygonal_arcs`: disjoint injective polygonal arcs from compact connected continua.
+* `LatticeProb.Topology.disk_alternation_impossible`: impossibility of disjoint compact connected sets with alternating boundary points.
+
+**Terminal pairings and complementary minors.**
+
+These are ordinary algebra and copied-graph APIs. They keep the full original
+edge-copy carrier, including loops and distinct parallel edges. The matrix
+inverse identities state their unit-determinant hypotheses explicitly; they do
+not require invertibility of every proper minor. This section does not assert a
+complete electrical resistance-minor formula.
+
+* `LatticeProb.Combinatorics.pairing_reindex_iff`: independent terminal reindexing with the exact pairing permutation and signs.
+* `LatticeProb.Combinatorics.exists_terminal_sorting_perm`: sorting an injective finite terminal list, including the empty list.
+* `LatticeProb.Graph.CopiedGraph.isRootedForest_range_and_matching_iff`: equivalence between pairing connectivity and rooted copied forests.
+* `LatticeProb.Graph.CopiedGraph.rootedMatchingReindexEquiv`, `LatticeProb.Graph.CopiedGraph.signed_rootedMatchingForest_count_relabelVertices`: rooted matching fibers and signed counts under reindexing and vertex equivalences.
+* `LatticeProb.Graph.CopiedGraph.rootedForestRelabelEquiv`: vertex relabeling with every original edge ID retained.
+* `LatticeProb.LinearAlgebra.det_X_add_C_coeff_one`, `LatticeProb.LinearAlgebra.det_X_add_C_coeff_one_add_row_add_column`: linear determinant coefficients and invariance under row and column potentials.
+* `LatticeProb.LinearAlgebra.det_submatrix_perms_coeff`: the two permutation signs in determinant coefficients.
+* `LatticeProb.LinearAlgebra.det_inverse_toBlocks₂₂_mul_det`, `LatticeProb.LinearAlgebra.det_inverse_submatrix_complement_mul_det_eq_sign`: Jacobi complementary minors, without assuming proper-block invertibility.
+* `LatticeProb.LinearAlgebra.sign_increasingComplementRootEquiv_trans_symm`: the parity of increasing complementary orders.
+* `LatticeProb.LinearAlgebra.det_updateRow_single_of_row_sum_zero`: grounded determinant identity for a coordinate-unit row border.
+* `LatticeProb.LinearAlgebra.inv_updateRow_single_of_row_sum_zero`: inverse of a zero-row-sum border when its grounded determinant is a unit.
+* `LatticeProb.LinearAlgebra.det_groundInverseExtension_differences_mul_det`: signed complementary minors of a zero-row-sum matrix with unit grounded determinant.
+
+**Finite stacks, loop erasure and independent-cell laws.**
+
+These generic modules prove finite legal cycle popping, arrow-preserving loop
+erasure and independent-cell/partition identities. A concrete Wilson output law
+must still derive its termination, partition and equal-mass facts.
+
+* `LatticeProb.Graph.adj_eq_snd_or_eq_snd`: rootward edge orientation from unique simple paths.
+* `LatticeProb.Prob.FiniteCellFactorization.measure_event_inter_values`: independent-cell factorization over disjoint finite sets.
+* `LatticeProb.Graph.CyclePopping.pop_step_confluent`, `LatticeProb.Graph.CyclePopping.terminal_top_eq`: confluence of finite legal pop runs and equality of terminal selected instructions.
+* `LatticeProb.Prob.AdaptiveReads.measure_finite_reads_of_injective`: product masses for finite distinct-cell reads.
+* `LatticeProb.Combinatorics.LoopErasure.loopErase_length_le`: chronological loop erasure retaining original quiver arrows.
+* `LatticeProb.Combinatorics.LoopErasure.loopErase_comp_loop_comp`: erasing a closed excursion before an arbitrary suffix.
+* `LatticeProb.Graph.CyclePopping.closed_excursion_pop`: closed chronological excursions as legal cycle pops.
+* `LatticeProb.Graph.CyclePopping.loop_erase_pop_run`, `LatticeProb.Graph.CyclePopping.loop_erase_cursor_spec`: legal-pop realization with exact raw-versus-retained cursor accounting.
+* `LatticeProb.Prob.CellTranscripts.measure_cylinder`: exact masses of dependent-cell transcripts with distinct indices.
+* `LatticeProb.Prob.CountablePartition.measure_eq_of_partition`: event-mass transfer through a common countable measurable partition.
+* `LatticeProb.Prob.IidBlocks.measure_eq_zero_of_subset_avoidsConstantBlocks`: nullity of events avoiding all repeated positive-mass constant blocks.
+* `LatticeProb.Prob.event_mass_eq_inv_card`: inverse-cardinality masses for a finite measurable disjoint output partition.
+
+**Local plane topology.**
+
+These helpers retain explicit regular-axis and local-label hypotheses and
+introduce no arc-straightening axiom or drawing-specific conclusion.
+
+* `LatticeProb.PlaneTopology.interior_subset_component_incidence_of_regular_axis`: propagation of complement-component incidence along a regular horizontal arc.
+* `LatticeProb.PlaneTopology.axis_mem_closure_compl`: complement accumulation at every interior regular-axis point.
+* `LatticeProb.Topology.eq_of_dense_local_labels`: constancy of local labels on a relatively dense subset.
+* `LatticeProb.PlaneTopology.isPathConnected_compl_of_finite`: path connectivity after finite point removal from the real plane.
+* `LatticeProb.PlaneTopology.axis_mem_closure_component_iff`: actual upper/lower complementary-component incidence, allowing coincident sides.
+* `LatticeProb.Topology.exists_interior_subintervalParameter`: affine closed-subinterval parametrization and strict interior preimages.
 
 ## Verification scope
 **Euclidean lattice sums.**  The Euclidean radius `radius v = √(∑ v_k²)` on

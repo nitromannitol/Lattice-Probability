@@ -1,0 +1,329 @@
+{
+  "source_repository": "https://github.com/nitromannitol/finite-avalanche",
+  "source_revision": "6696f7cde7e1676c0f34095f2378dc8a39f1dbc1",
+  "source_author": "Ahmed Bou-Rabee",
+  "attribution": "Definitions and elementary copied-walk, tree and forest lemmas adapted from the same author’s finite-avalanche formalization; new counting, divergence and Poisson-potential proofs developed in this library.",
+  "adaptations": [
+    "Namespace moved to LatticeProb.Graph.CopiedGraph; original endpoint and edge-copy predicates retained.",
+    "Universe-polymorphic carriers and focused imports; redundant finite-vertex assumptions removed where unused.",
+    "New same-copy erase/insert equivalence, finite forest counting and normalized Poisson-potential argument."
+  ],
+  "original_files": [
+    {
+      "path": "FiniteAvalanches/Electrical/Energy.lean",
+      "sha256": "ad812be30911f8ac969d788ff4faf9b424289478ebb65c5951b8809936a60512",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Energy.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Geometry/CopiedGraphConnectivity.lean",
+      "sha256": "6edf3ae7061b1e9e54bb8458f888786f87ca36d054887b3413151da5df44bfcc",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Geometry/CopiedGraphConnectivity.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Geometry/DiskDrawing.lean",
+      "sha256": "07b1c6153681c28b67bad0d96efec950dfec8af52512e4d7c259ba88bc15edb6",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Geometry/DiskDrawing.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Trees/CopiedTreeExistence.lean",
+      "sha256": "71a6dbb1751e153182d248fe22afd809168bf48f6084cba5240da7a83fa86e06",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Trees/CopiedTreeExistence.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Trees/ForestComponents.lean",
+      "sha256": "708119cbc91559a75ad8bf3f287542c5d1be9464fb4b2f0fe14b6c28763cf11e",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Trees/ForestComponents.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Trees/ForestEdgeDeletion.lean",
+      "sha256": "b258ec79bdbc146d381edee70d33e279ce789d60bfd6fe6ce276968ef7168de4",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Trees/ForestEdgeDeletion.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Trees/IncidentPathUniqueness.lean",
+      "sha256": "82c4b66727aebf381ee4bef6937840460fec45ccb4c68c4db24c625962c0f488",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Trees/IncidentPathUniqueness.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Trees/SeparatingForestCompletion.lean",
+      "sha256": "2543562b20a519c0232576dd390039d96baffeacb52914b3a17c97ba697ea136",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Trees/SeparatingForestCompletion.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Trees/SignedPathTraversal.lean",
+      "sha256": "ab20ad395d36d652aeeedfd1d379e69c6134226183ab9579b94af37244929539",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Trees/SignedPathTraversal.lean"
+    },
+    {
+      "path": "FiniteAvalanches/Electrical/Trees/TwoCopyGroves.lean",
+      "sha256": "5e71d881062e532c6217e7e75fca29720a7610e279ebde3e2df47ba403a6a689",
+      "url": "https://github.com/nitromannitol/finite-avalanche/blob/6696f7cde7e1676c0f34095f2378dc8a39f1dbc1/FiniteAvalanches/Electrical/Trees/TwoCopyGroves.lean"
+    }
+  ],
+  "adapted_declarations": [
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry",
+      "original_name": "CopiedGraph",
+      "original_path": "FiniteAvalanches/Electrical/Geometry/DiskDrawing.lean",
+      "original_lines_inclusive": [
+        15,
+        17
+      ],
+      "original_file_sha256": "07b1c6153681c28b67bad0d96efec950dfec8af52512e4d7c259ba88bc15edb6",
+      "original_range_sha256": "baa3f0eacfec818f1a8638421e061bbd32fc3f1032845eada2f6c4c2afacdfec",
+      "new_namespace": "LatticeProb.Graph",
+      "new_name": "CopiedGraph",
+      "new_path": "LatticeProb/Graph/CopiedGraph/Basic.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "reaches",
+      "original_path": "FiniteAvalanches/Electrical/Geometry/DiskDrawing.lean",
+      "original_lines_inclusive": [
+        23,
+        25
+      ],
+      "original_file_sha256": "07b1c6153681c28b67bad0d96efec950dfec8af52512e4d7c259ba88bc15edb6",
+      "original_range_sha256": "4dc00cb0803c8212f867e695308ef2e0315b3f705be65c2daaa82ef7d8f34d34",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "reaches",
+      "new_path": "LatticeProb/Graph/CopiedGraph/Basic.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "SpanningTree",
+      "original_path": "FiniteAvalanches/Electrical/Geometry/DiskDrawing.lean",
+      "original_lines_inclusive": [
+        28,
+        30
+      ],
+      "original_file_sha256": "07b1c6153681c28b67bad0d96efec950dfec8af52512e4d7c259ba88bc15edb6",
+      "original_range_sha256": "d8bd197e5bd6be53cf78da332a7c9e2ca17bcd27df61cdaeeee291ae6e41507b",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "SpanningTree",
+      "new_path": "LatticeProb/Graph/CopiedGraph/Basic.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "loop_not_mem",
+      "original_path": "FiniteAvalanches/Electrical/Geometry/DiskDrawing.lean",
+      "original_lines_inclusive": [
+        39,
+        44
+      ],
+      "original_file_sha256": "07b1c6153681c28b67bad0d96efec950dfec8af52512e4d7c259ba88bc15edb6",
+      "original_range_sha256": "b73e13563fea3c020a012ff8ccb65c09e90f24cb3f1afee39b903b24a2bcafb1",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "loop_not_mem",
+      "new_path": "LatticeProb/Graph/CopiedGraph/Basic.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "TwoCopy.reaches_symm",
+      "original_path": "FiniteAvalanches/Electrical/Trees/TwoCopyGroves.lean",
+      "original_lines_inclusive": [
+        32,
+        39
+      ],
+      "original_file_sha256": "5e71d881062e532c6217e7e75fca29720a7610e279ebde3e2df47ba403a6a689",
+      "original_range_sha256": "f32b2b257613bcfc9e3ff999ea00e4e99440549455042ae95801967a67397bd3",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "reaches_symm",
+      "new_path": "LatticeProb/Graph/CopiedGraph/Basic.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "TwoCopy.reaches_mono",
+      "original_path": "FiniteAvalanches/Electrical/Trees/TwoCopyGroves.lean",
+      "original_lines_inclusive": [
+        42,
+        46
+      ],
+      "original_file_sha256": "5e71d881062e532c6217e7e75fca29720a7610e279ebde3e2df47ba403a6a689",
+      "original_range_sha256": "7118ef90b19f21ec7bbf651323d84f1a49d7c32c08d9bb532bc6f3cc2e767b8f",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "reaches_mono",
+      "new_path": "LatticeProb/Graph/CopiedGraph/Basic.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "TwoCopy.reaches_insert_iff",
+      "original_path": "FiniteAvalanches/Electrical/Trees/TwoCopyGroves.lean",
+      "original_lines_inclusive": [
+        49,
+        84
+      ],
+      "original_file_sha256": "5e71d881062e532c6217e7e75fca29720a7610e279ebde3e2df47ba403a6a689",
+      "original_range_sha256": "a08864e7e9540407a007da13d50911dc0448832b731cf6d8ab716d6117d4b98d",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "reaches_insert_iff",
+      "new_path": "LatticeProb/Graph/CopiedGraph/Basic.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "TwoCopy.forest_insert",
+      "original_path": "FiniteAvalanches/Electrical/Trees/TwoCopyGroves.lean",
+      "original_lines_inclusive": [
+        87,
+        107
+      ],
+      "original_file_sha256": "5e71d881062e532c6217e7e75fca29720a7610e279ebde3e2df47ba403a6a689",
+      "original_range_sha256": "13fb7a02c98527575d8a5254bcc545fe6460fdaadf39ca707cfe8f91827908ea",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "forest_insert",
+      "new_path": "LatticeProb/Graph/CopiedGraph/Basic.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "TwoRootForest",
+      "original_path": "FiniteAvalanches/Electrical/Trees/SeparatingForestCompletion.lean",
+      "original_lines_inclusive": [
+        11,
+        14
+      ],
+      "original_file_sha256": "2543562b20a519c0232576dd390039d96baffeacb52914b3a17c97ba697ea136",
+      "original_range_sha256": "1f141baa4993d5e2d5d4eeeb26370197ab476109255d51b6c2584da480feb11a",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "TwoRootForest",
+      "new_path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "twoRootForest_roots_separated",
+      "original_path": "FiniteAvalanches/Electrical/Trees/SeparatingForestCompletion.lean",
+      "original_lines_inclusive": [
+        17,
+        21
+      ],
+      "original_file_sha256": "2543562b20a519c0232576dd390039d96baffeacb52914b3a17c97ba697ea136",
+      "original_range_sha256": "bdde3e3039355e4504618db9593f11dac66e8f784db6222238bc24b7b91e39b5",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "twoRootForest_roots_separated",
+      "new_path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "twoRootForest_insert_tree",
+      "original_path": "FiniteAvalanches/Electrical/Trees/SeparatingForestCompletion.lean",
+      "original_lines_inclusive": [
+        25,
+        53
+      ],
+      "original_file_sha256": "2543562b20a519c0232576dd390039d96baffeacb52914b3a17c97ba697ea136",
+      "original_range_sha256": "58685b9a664a7d8e2b545dc10590d8210ab07519cd92e661e0a7b41240e9dc4e",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "twoRootForest_insert_tree",
+      "new_path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "twoRootForest_cover",
+      "original_path": "FiniteAvalanches/Electrical/Trees/ForestComponents.lean",
+      "original_lines_inclusive": [
+        10,
+        15
+      ],
+      "original_file_sha256": "708119cbc91559a75ad8bf3f287542c5d1be9464fb4b2f0fe14b6c28763cf11e",
+      "original_range_sha256": "c46ee5c1511d02128e7fef121a25763cef57083e421b4ed17ccc8b9274359d6f",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "twoRootForest_cover",
+      "new_path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "twoRootForest_reaches_iff",
+      "original_path": "FiniteAvalanches/Electrical/Trees/ForestComponents.lean",
+      "original_lines_inclusive": [
+        18,
+        29
+      ],
+      "original_file_sha256": "708119cbc91559a75ad8bf3f287542c5d1be9464fb4b2f0fe14b6c28763cf11e",
+      "original_range_sha256": "400c026a7bc205a48ae75a4e14a8141b764207e459d136825beb5fb1c40a1826",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "twoRootForest_reaches_iff",
+      "new_path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "twoRootForest_of_cover",
+      "original_path": "FiniteAvalanches/Electrical/Trees/ForestEdgeDeletion.lean",
+      "original_lines_inclusive": [
+        12,
+        31
+      ],
+      "original_file_sha256": "b258ec79bdbc146d381edee70d33e279ce789d60bfd6fe6ce276968ef7168de4",
+      "original_range_sha256": "d4a04b96a469d958d697d4c0780c248f7c6cd23ffe1d00d6cfbfc2514a8d3e51",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "twoRootForest_of_cover",
+      "new_path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "tree_erase_twoRootForest",
+      "original_path": "FiniteAvalanches/Electrical/Trees/ForestEdgeDeletion.lean",
+      "original_lines_inclusive": [
+        34,
+        54
+      ],
+      "original_file_sha256": "b258ec79bdbc146d381edee70d33e279ce789d60bfd6fe6ce276968ef7168de4",
+      "original_range_sha256": "b36564e97789c94bb1c4125fff6d24dfa583e944dc1de725c3f56e23d18dd24e",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "tree_erase_twoRootForest",
+      "new_path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean"
+    },
+    {
+      "original_namespace": "FiniteAvalanches.Electrical.StatementGeometry.CopiedGraph",
+      "original_name": "twoRootForest_reroot",
+      "original_path": "FiniteAvalanches/Electrical/Trees/ForestEdgeDeletion.lean",
+      "original_lines_inclusive": [
+        57,
+        73
+      ],
+      "original_file_sha256": "b258ec79bdbc146d381edee70d33e279ce789d60bfd6fe6ce276968ef7168de4",
+      "original_range_sha256": "a3a79df3043ea62857d5f9d60701d250633fd857d46ba1bbb8fd7d19ebe04827",
+      "new_namespace": "LatticeProb.Graph.CopiedGraph",
+      "new_name": "twoRootForest_reroot",
+      "new_path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean"
+    }
+  ],
+  "modules": [
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/Basic.lean",
+      "sha256": "c3ea0587fd5e1ab79fe1412395ffced72ceaf4c2acaf69d4104cacca3c993b96"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/TwoRootForest.lean",
+      "sha256": "4b67ce8b2f1d201a42e133f71dd6bd934e985dc1b09af0345cb792b5c7943866"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/TreeCut.lean",
+      "sha256": "78b58df26446d2bb7ba3a7b9d8910ef356b534da7770f431adcfaf4a29277c0e"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/SignedPathTraversal.lean",
+      "sha256": "2fe289cf613d3df8655eb0f37f976bb3b50a9d3789ed0838ff5b797400798465"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/TreeCutCount.lean",
+      "sha256": "ce4ea1671976d4d3fee774de4a82e4c87421fc0e8fcf43d31ef49d355b7a5898"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/TreeExistence.lean",
+      "sha256": "ad10e98c17d3fe64e1d684d172093a79fc4210ae586db1172e43df1c3086b13a"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/IncidentPath.lean",
+      "sha256": "7c05a1b69528cf6b6462727c442faa3a03493ba7e161959e931affb6f8f2e83c"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/PathDivergence.lean",
+      "sha256": "7315462dab46ddf41718b93d4c864dbbbb933126b3d38d47b12433369ed4a50f"
+    },
+    {
+      "path": "LatticeProb/Graph/CopiedGraph/ForestCountPotential.lean",
+      "sha256": "957f537c90e70fa1591c8f9b012952ef7665aa1c0e3ce55cf7c694a659263d6c"
+    }
+  ],
+  "license_note": "Existing source notices are retained. This record supplies provenance and does not assert an additional license grant for the source repository.",
+  "dependencies": "Mathlib only; no dependency on the source repository."
+}

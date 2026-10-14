@@ -1,0 +1,53 @@
+import LatticeProb.Graph.CopiedGraph.ForestCountPotential
+
+/-! Axiom dependencies of copied-graph counting and path-current theorems. -/
+
+#print axioms LatticeProb.Graph.CopiedGraph
+#print axioms LatticeProb.Graph.CopiedGraph.reaches
+#print axioms LatticeProb.Graph.CopiedGraph.SpanningTree
+#print axioms LatticeProb.Graph.CopiedGraph.loop_not_mem
+#print axioms LatticeProb.Graph.CopiedGraph.reaches_symm
+#print axioms LatticeProb.Graph.CopiedGraph.reaches_mono
+#print axioms LatticeProb.Graph.CopiedGraph.reaches_insert_iff
+#print axioms LatticeProb.Graph.CopiedGraph.forest_insert
+#print axioms LatticeProb.Graph.CopiedGraph.TwoRootForest
+#print axioms LatticeProb.Graph.CopiedGraph.twoRootForest_roots_separated
+#print axioms LatticeProb.Graph.CopiedGraph.twoRootForest_insert_tree
+#print axioms LatticeProb.Graph.CopiedGraph.twoRootForest_cover
+#print axioms LatticeProb.Graph.CopiedGraph.twoRootForest_reaches_iff
+#print axioms LatticeProb.Graph.CopiedGraph.twoRootForest_of_cover
+#print axioms LatticeProb.Graph.CopiedGraph.tree_erase_twoRootForest
+#print axioms LatticeProb.Graph.CopiedGraph.twoRootForest_reroot
+#print axioms LatticeProb.Graph.CopiedGraph.treeCutEquiv
+#print axioms LatticeProb.Graph.CopiedGraph.treeCutEquiv_apply_val
+#print axioms LatticeProb.Graph.CopiedGraph.treeCutEquiv_symm_apply_val
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_self
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_loop
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_eq_of_separates
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_eq_cut_difference
+#print axioms LatticeProb.Graph.CopiedGraph.forestColorCount
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_treeCutEquiv
+#print axioms LatticeProb.Graph.CopiedGraph.forestColorCount_eq_sum
+#print axioms LatticeProb.Graph.CopiedGraph.sum_signedPathTraversal_eq_count_sub
+#print axioms LatticeProb.Graph.CopiedGraph.reaches_erase_of_alternative
+#print axioms LatticeProb.Graph.CopiedGraph.nonempty_spanningTree_of_reaches
+#print axioms LatticeProb.Graph.CopiedGraph.card_spanningTree_pos
+#print axioms LatticeProb.Graph.CopiedGraph.reaches_erase_incident_of_not_reaches
+#print axioms LatticeProb.Graph.CopiedGraph.tree_path_incident_unique
+#print axioms LatticeProb.Graph.CopiedGraph.forest_path_incident_exists
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_add
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_root_incidence
+#print axioms LatticeProb.Graph.CopiedGraph.existsUnique_incident_path_copy
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_root_divergence
+#print axioms LatticeProb.Graph.CopiedGraph.signedPathTraversal_divergence
+#print axioms LatticeProb.Graph.CopiedGraph.forestColorCount_ground
+#print axioms LatticeProb.Graph.CopiedGraph.positiveLaplacian
+#print axioms LatticeProb.Graph.CopiedGraph.positiveLaplacian_eq_incidence
+#print axioms LatticeProb.Graph.CopiedGraph.positiveLaplacian_div
+#print axioms LatticeProb.Graph.CopiedGraph.positiveLaplacian_forestColorCount
+#print axioms LatticeProb.Graph.CopiedGraph.forestCountPotential
+#print axioms LatticeProb.Graph.CopiedGraph.forestCountPotential_ground
+#print axioms LatticeProb.Graph.CopiedGraph.positiveLaplacian_forestCountPotential
+#print axioms LatticeProb.Graph.CopiedGraph.forestCountPotential_poisson
+#print axioms LatticeProb.Graph.CopiedGraph.mean_signedPathTraversal_eq_potential_drop

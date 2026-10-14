@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "scope": "Generic finite stacks, arrow-preserving loop erasure, probability factorization and local plane topology",
+  "source_author": "Scott Armstrong",
+  "source_project": "finite-avalanches formalization",
+  "source_revision_policy": "exact file hashes identify previously uncommitted source; no invented containing source commit",
+  "copy_authorization": "explicit source-author authorization; no additional historical license grant asserted",
+  "destination_license_sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+  "prior_reviews": [
+    {
+      "scope": "Wilson generic source port within a larger independently reviewed port",
+      "receipt_sha256": "0dfa04f4a3b2eb32694d56167e58521e5f006db792fb35f5683a004facada44a",
+      "selected_modules": 12
+    },
+    {
+      "scope": "six primitive-only generic plane helpers; relative arc-dependent assembly excluded",
+      "receipt_sha256": "d5ea70a370121df4cac10bb42d4cdc20955e09355a84b0ddf9aed01585d761f2",
+      "selected_modules": 6
+    }
+  ],
+  "status": "source proposal; fresh combined library execution and different independent integration review pending",
+  "new_dependencies": [],
+  "modules": [
+    {
+      "path": "LatticeProb/Graph/TreeOrientation.lean",
+      "original_source_sha256": "b5e303cb9b1006c4729184c9ca8791a6e89d3a3b0ed90fad007bb3510713ba00",
+      "sha256": "b5e303cb9b1006c4729184c9ca8791a6e89d3a3b0ed90fad007bb3510713ba00",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Prob/FiniteCellFactorization.lean",
+      "original_source_sha256": "f160aadc94f4a15fc6d6f8ea3e54466c61c732ca468a3097648a500e007ccced",
+      "sha256": "f160aadc94f4a15fc6d6f8ea3e54466c61c732ca468a3097648a500e007ccced",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Graph/CyclePopping/Basic.lean",
+      "original_source_sha256": "2babeb162073859bb37f4867f94023411c560bbc55c243690afe9538c7385c07",
+      "sha256": "2babeb162073859bb37f4867f94023411c560bbc55c243690afe9538c7385c07",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Prob/AdaptiveReads.lean",
+      "original_source_sha256": "717db76e0d6e34aa1ecb5b4692aa8e93032d9cda1a3528c5a6dbcf942678dfc6",
+      "sha256": "1f7043d5debe2bae46c73f41995f595fd5ebcd1faa92cb5e965f8f26f3b26a10",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": true
+    },
+    {
+      "path": "LatticeProb/Combinatorics/LoopErasure/Basic.lean",
+      "original_source_sha256": "3976e7b4d59241f4b3a7bc4d4b852a485bc0090e1154a51e273043e2d440a4e7",
+      "sha256": "3976e7b4d59241f4b3a7bc4d4b852a485bc0090e1154a51e273043e2d440a4e7",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Combinatorics/LoopErasure/Composition.lean",
+      "original_source_sha256": "2bdb2f69e09ea40ae0f2fbb022fdb999502dadb039b728810e69fb689a538470",
+      "sha256": "2bdb2f69e09ea40ae0f2fbb022fdb999502dadb039b728810e69fb689a538470",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Graph/CyclePopping/Trace.lean",
+      "original_source_sha256": "58c06f11cca38c8e68cea3f8f5310f175a53dd216e8b084a4a5415b36841e599",
+      "sha256": "58c06f11cca38c8e68cea3f8f5310f175a53dd216e8b084a4a5415b36841e599",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Graph/CyclePopping/Erasure.lean",
+      "original_source_sha256": "ad92503372cdc46d90ad3e765058efa4eb0fad7644c0ec55538c74699f3c7877",
+      "sha256": "ad92503372cdc46d90ad3e765058efa4eb0fad7644c0ec55538c74699f3c7877",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Prob/CellTranscripts.lean",
+      "original_source_sha256": "9140de1c88a04ed82e14ae4fa4f40cb0b52cbb859df1f1ec763fb8fa305b7a1d",
+      "sha256": "16d347730771648b3e6cb63f9ea4d8be67f32ea65b74b8c3e08e93e6e1e48fcc",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": true
+    },
+    {
+      "path": "LatticeProb/Prob/CountablePartition.lean",
+      "original_source_sha256": "edacfc4e219191a5c2bab57569ed692ad5fc6e36738d059ce57864404af8971f",
+      "sha256": "edacfc4e219191a5c2bab57569ed692ad5fc6e36738d059ce57864404af8971f",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Prob/IidBlocks.lean",
+      "original_source_sha256": "f144f80070da15c193827f48fc840a2580cba634dc5fd26edfde4191f8090bef",
+      "sha256": "f144f80070da15c193827f48fc840a2580cba634dc5fd26edfde4191f8090bef",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Prob/FiniteOutputNormalization.lean",
+      "original_source_sha256": "5eda3d70f3bd8682d819b69afe0a8df081bf5cf58a1a31997c75e723753b3838",
+      "sha256": "5eda3d70f3bd8682d819b69afe0a8df081bf5cf58a1a31997c75e723753b3838",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": false
+    },
+    {
+      "path": "LatticeProb/Topology/ArcFaceIncidence.lean",
+      "original_source_sha256": "f2454233950735a286fbf5f927e9ddee55317a4e50bef3f938131c143fad526c",
+      "sha256": "526d73d7d2048fcdbaf8c0f5064b77996934287ff18e53cfd7d55fbc47665540",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": true
+    },
+    {
+      "path": "LatticeProb/Topology/AxisNeighborhood.lean",
+      "original_source_sha256": "cbc3c86ed0bad53a00a34094301ab0d3d924e8c0e76840bf5d3129887753785e",
+      "sha256": "6857f01441bc0315e1d84712fef20de7b1cf9e105c902f1925aa1411d13ce01f",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": true
+    },
+    {
+      "path": "LatticeProb/Topology/DenseLocalLabels.lean",
+      "original_source_sha256": "7681795735eb44086529d78f693d41f0f9c8e128f1b86d4b8a250623060ba94d",
+      "sha256": "0c775086155993f622b5dce15fcceb03647295ab4bdf7efe5253a067b11cfc47",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": true
+    },
+    {
+      "path": "LatticeProb/Topology/FinitePointComplement.lean",
+      "original_source_sha256": "5eac5613d69f25323428460b3607f9230d5c0f7673183d792b2194c2234c1140",
+      "sha256": "bba859adaa486d902da89325ef6d69b81393f8356932fd3405355a8a119fd5a9",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": true
+    },
+    {
+      "path": "LatticeProb/Topology/LocalFaceIncidence.lean",
+      "original_source_sha256": "9a55e9319dd3cfc02937b80abbab08825a35094446401936af9ebfde56af737d",
+      "sha256": "22abb28bbd8fb28308cced07b562d6d5a6c77cee0ee88b37215fdca27fa736e2",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": true
+    },
+    {
+      "path": "LatticeProb/Topology/SubintervalParameter.lean",
+      "original_source_sha256": "fb836e3c26066d456eab9b5a275cfb20ea427dd33ec7d123f04df4d44c83dc60",
+      "sha256": "96c6993b57bdd4c03b640d65ea6e48063ab84543e7f026db6d577f6471f5ea27",
+      "symbol_import_and_executable_token_map": "identity",
+      "comment_only_changed": true
+    }
+  ]
+}
