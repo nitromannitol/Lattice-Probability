@@ -317,6 +317,7 @@ import LatticeProb.Prob.BrownianExit
 import LatticeProb.Prob.BrownianMarkov
 import LatticeProb.Prob.IndepPi
 import LatticeProb.Prob.StoppingDyadic
+import LatticeProb.Prob.BoundedStopping
 import LatticeProb.Prob.BrownianPathLaw
 import LatticeProb.Prob.BrownianStrongMarkov
 import LatticeProb.Prob.BrownianExitTime
@@ -625,6 +626,7 @@ import LatticeProb.LinearAlgebra.ZeroSumBorder
 import LatticeProb.Topology.PolygonalApproximation
 import LatticeProb.Topology.PolygonalChainEndpoints
 import LatticeProb.Topology.PolygonalChainPlane
+import LatticeProb.Topology.CurveSpace
 import LatticeProb.Topology.PolygonalLastContact
 import LatticeProb.Topology.PolygonalParity
 import LatticeProb.LinearAlgebra.ZeroSumBorderInverse
