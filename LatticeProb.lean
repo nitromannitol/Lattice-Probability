@@ -672,3 +672,4 @@ import LatticeProb.Topology.AxisNeighborhood
 import LatticeProb.Graph.CyclePopping.Trace
 import LatticeProb.Prob.CellTranscripts
 import LatticeProb.Graph.CyclePopping.Erasure
+import LatticeProb.Analysis.StretchedExponentialSummability

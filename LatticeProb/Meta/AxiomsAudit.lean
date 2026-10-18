@@ -498,3 +498,9 @@ library.
 #print axioms LatticeProb.Euclidean.Examples.critical_sum_asymp_dim_two
 #print axioms LatticeProb.Euclidean.Examples.exterior_summable_dim_one
 #print axioms LatticeProb.Euclidean.Examples.upper_bound_dim_two
+
+/-! ### Stretched-exponential summability -/
+
+#print axioms LatticeProb.pow_mul_exp_neg_mul_le_factorial_div
+#print axioms LatticeProb.pow_mul_exp_neg_sqrt_le_factorial_div_mul_inv_sq
+#print axioms LatticeProb.summable_pow_mul_exp_neg_sqrt
