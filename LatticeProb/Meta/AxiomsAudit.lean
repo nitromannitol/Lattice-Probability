@@ -532,3 +532,6 @@ library.
 #print axioms LatticeProb.Sandpile.podo_succ_le_floor
 #print axioms LatticeProb.Sandpile.podo_mono
 #print axioms LatticeProb.Sandpile.podo_eq_zero
+
+import LatticeProb.Walk.KilledGreenPlanarLower
+#print axioms LatticeProb.planar_killedGreen_zero_zero_log_lower
