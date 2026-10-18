@@ -717,6 +717,12 @@ most the sum of the coordinates' total variation distances.
 `LatticeProb.infinitePi_restrict_tv_le`: the same bound for an event
 determined by finitely many coordinates of an infinite product.
 
+**Long lattice detours.**
+[`Detour.lean`](LatticeProb/Lattice/Detour.lean) constructs arbitrarily long injective
+nearest-neighbour paths in `ℤ^d`, `d ≥ 2`, that avoid a specified site while their
+bounding rectangle contains it. `LatticeProb.exists_long_lattice_path_avoiding_site`
+includes box bounds and any prescribed logarithmic-power length threshold.
+
 **Graph combinatorics.**
 
 * `LatticeProb.Graph.exists_epath`: if every vertex outside `S ∪ {y}` is
