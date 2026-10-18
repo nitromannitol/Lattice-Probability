@@ -6,6 +6,7 @@ import LatticeProb.Meta.DiskAlternationAxioms
 import LatticeProb.Meta.PairingMinorAxioms
 import LatticeProb.Meta.WilsonGenericAxioms
 import LatticeProb.Meta.PlaneIncidenceAxioms
+import LatticeProb.Walk.KilledGreenPlanarLower
 
 /-!
 # Axioms audit
@@ -533,5 +534,4 @@ library.
 #print axioms LatticeProb.Sandpile.podo_mono
 #print axioms LatticeProb.Sandpile.podo_eq_zero
 
-import LatticeProb.Walk.KilledGreenPlanarLower
 #print axioms LatticeProb.planar_killedGreen_zero_zero_log_lower
