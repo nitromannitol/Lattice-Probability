@@ -527,6 +527,12 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   Cramér-Wold device; `LatticeProb.ExtendedMapping.extended_continuous_mapping`:
   the extended continuous mapping theorem.
 
+**Stretched-exponential summability.**
+[`LatticeProb/Analysis/StretchedExponentialSummability.lean`](LatticeProb/Analysis/StretchedExponentialSummability.lean)
+proves `LatticeProb.summable_pow_mul_exp_neg_sqrt`: for every `c > 0` and natural `r`,
+`∑ s^r exp(-c √s)` converges. The proof gives an explicit factorial bound and compares
+the tail with a multiple of `∑ s⁻²`.
+
 **Regular variation.**  `LatticeProb.potter_bounds`: Potter's bounds for a
 monotone regularly varying function; `LatticeProb.karamata_integrated_tail`
 and `LatticeProb.karamata_origin_integral`: Karamata's theorem for the
@@ -710,6 +716,12 @@ event by at most the total variation distance of that coordinate.
 most the sum of the coordinates' total variation distances.
 `LatticeProb.infinitePi_restrict_tv_le`: the same bound for an event
 determined by finitely many coordinates of an infinite product.
+
+**Long lattice detours.**
+[`Detour.lean`](LatticeProb/Lattice/Detour.lean) constructs arbitrarily long injective
+nearest-neighbour paths in `ℤ^d`, `d ≥ 2`, that avoid a specified site while their
+bounding rectangle contains it. `LatticeProb.exists_long_lattice_path_avoiding_site`
+includes box bounds and any prescribed logarithmic-power length threshold.
 
 **Graph combinatorics.**
 
