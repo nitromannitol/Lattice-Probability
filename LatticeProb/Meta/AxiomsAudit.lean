@@ -7,6 +7,8 @@ import LatticeProb.Meta.PairingMinorAxioms
 import LatticeProb.Meta.WilsonGenericAxioms
 import LatticeProb.Meta.PlaneIncidenceAxioms
 import LatticeProb.Walk.KilledGreenPlanarLower
+import LatticeProb.Topology.CurveSpace
+import LatticeProb.Prob.BoundedStopping
 
 /-!
 # Axioms audit
@@ -535,3 +537,9 @@ library.
 #print axioms LatticeProb.Sandpile.podo_eq_zero
 
 #print axioms LatticeProb.planar_killedGreen_zero_zero_log_lower
+
+#print axioms LatticeProb.curveSpace_project_comp_monotone
+#print axioms LatticeProb.curveSpace_project_terminalPause
+#print axioms LatticeProb.finite_stopping_integral_eq_terminal
+#print axioms LatticeProb.finite_stopping_second_moment_le
+#print axioms LatticeProb.bounded_stopping_integrable_and_integral_eq_terminal

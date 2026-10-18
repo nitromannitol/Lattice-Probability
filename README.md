@@ -1115,7 +1115,10 @@ modules of `LatticeProb/Lattice/Planar/` from
 [`rotor-23`](https://github.com/nitromannitol/rotor-23), and sixteen continuum
 modules from
 [`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness);
-[`NOTICE`](NOTICE) lists the files and the commits.  The comparator audit in
+[`NOTICE`](NOTICE) lists the files and the commits.  The curve-space and bounded
+optional-stopping modules (`LatticeProb/Topology/CurveSpace.lean`,
+`LatticeProb/Prob/BoundedStopping.lean`) are adapted from Leonardo Bonanno's
+[`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
 [`leanprover/comparator`](https://github.com/leanprover/comparator).
 
