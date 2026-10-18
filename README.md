@@ -105,6 +105,11 @@ ball-killed Green estimates in dimension four
 
 ### Contents
 
+* `LatticeProb.planar_killedGreen_zero_zero_log_lower`: the killed Green function at the
+  origin of a planar box of radius `L` is at least `c log(L + 2)` for all sufficiently
+  large `L`, for some `c > 0`. The normalization is expected visits divided by four.
+  The proof uses the potential kernel and the finite maximum principle.
+
 The principal theorems, by area.  Each name is a Lean declaration.  Every
 theorem named appears in
 [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean); the

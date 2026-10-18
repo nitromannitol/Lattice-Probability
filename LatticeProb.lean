@@ -684,3 +684,4 @@ import LatticeProb.Sandpile.RadiusConsequences
 import LatticeProb.Sandpile.Nonnegative
 import LatticeProb.Analysis.SandpileScale
 import LatticeProb.Sandpile.Parallel
+import LatticeProb.Walk.KilledGreenPlanarLower
