@@ -85,7 +85,7 @@ theorem laplacian_potentialKernel (x : Site 2) :
   have h2 := walkOp_potentialKernel_sub x
   have h3 : nbrSum potentialKernel x = 4 * walkOp potentialKernel x := by
     simp only [walkOp, Nat.cast_ofNat]
-    ring
+    ring_nf
   rw [h1]
   push_cast
   linear_combination 4 * h2 + h3
@@ -98,7 +98,7 @@ theorem laplacian_neg_combo (u v : Site 2 → ℝ) (x : Site 2) :
       = -((∑ y ∈ (lattice 2).neighborFinset x, (u y - u x)) / 4
           + ∑ y ∈ (lattice 2).neighborFinset x, (v y - v x)) := by
     rw [Finset.sum_div, ← Finset.sum_add_distrib, ← Finset.sum_neg_distrib]
-    exact Finset.sum_congr rfl fun y _ => by ring
+    exact Finset.sum_congr rfl fun y _ => by ring_nf
   exact h1
 
 /-- Maximum principle comparison: if `m ≤ a / 4` off the box `D` of radius `L`, where `a` is the
@@ -121,7 +121,7 @@ theorem killedGreen_zero_zero_ge_of_outside (L : ℕ) (m : ℝ)
       laplacian_potentialKernel,
       Network.laplacian_killedGreenReal hG (originBox 2 L) (zero_mem_originBox L) hq
         (Finset.mem_coe.mpr hx)]
-    ring
+    ring_nf
   have hout : ∀ x : Site 2, x ∉ originBox 2 L →
       (fun y => -(potentialKernel y / 4
         + Graph.killedGreenReal (lattice 2) (originBox 2 L : Set (Site 2)) 0 y)) x ≤ -m := by
@@ -175,10 +175,10 @@ theorem planar_killedGreen_zero_zero_log_lower :
     rw [← hsq]
     have hpoly : (L : ℝ) + 2 ≤ ((L : ℝ) + 1) ^ 2 := by
       calc
-        (L : ℝ) + 2 = ((L : ℝ) + 1) + 1 := by ring
+        (L : ℝ) + 2 = ((L : ℝ) + 1) + 1 := by ring_nf
         _ ≤ ((L : ℝ) + 1) + ((L : ℝ) + 1) :=
           add_le_add le_rfl (hL1.trans (le_add_of_nonneg_right zero_le_one))
-        _ = (1 + 1) * ((L : ℝ) + 1) := by ring
+        _ = (1 + 1) * ((L : ℝ) + 1) := by ring_nf
         _ ≤ ((L : ℝ) + 1) * ((L : ℝ) + 1) :=
           mul_le_mul_of_nonneg_right (add_le_add hL1 le_rfl) (by positivity)
         _ = ((L : ℝ) + 1) ^ 2 := (pow_two _).symm
@@ -192,7 +192,7 @@ theorem planar_killedGreen_zero_zero_log_lower :
       - 1 / (8 * Real.pi) * (2 * Real.log ((L : ℝ) + 1))
       = (Real.log ((L : ℝ) + 1) + Real.pi * K) / (4 * Real.pi) := by
     field_simp
-    ring
+    ring_nf
   have hnn : 0 ≤ (Real.log ((L : ℝ) + 1) + Real.pi * K) / (4 * Real.pi) :=
     div_nonneg (by linarith) (by positivity)
   linarith
