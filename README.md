@@ -44,13 +44,13 @@ a cited result with their sources.
 
 ### Cited results taken as hypotheses
 
-Five results from the literature are stated as propositions in
-`LatticeProb/External/` and never proved here: the Gaussian logarithmic Sobolev
+The following results from the literature are stated as propositions in
+`LatticeProb/External/` and are not proved here: the Gaussian logarithmic Sobolev
 inequality and its Herbst bound, polygonal unicoherence, Janiszewski's theorem
 for polygonal sets, and the Rellich-Kondrachov compact embedding in negative
 Sobolev order.  A theorem that uses one of them takes it as an explicit
-hypothesis, so its statement shows what it rests on.  Only the Herbst bound and
-the Rellich-Kondrachov embedding are used, by
+hypothesis, so its statement shows what it rests on.  Among these five inputs,
+the Herbst bound and the Rellich-Kondrachov embedding are used by
 `LatticeProb.gaussian_lipschitz_concentration` and by the compactness results
 of `LatticeProb/Analysis/Sobolev/`.
 
@@ -78,6 +78,16 @@ unrestricted `BandLimitedTestFnApprox` is false as stated), which
 (`Analysis/Sobolev/SupportRepair.lean`).  The earlier unrestricted glue
 `Analysis/Sobolev/RellichLowFreqGlue.lean` is quarantined: its premise `BandLimitedTestFnApprox` is
 refuted there and its implications have been removed.
+
+Two further sandpile inputs are literal proposition definitions:
+[`FeyDenBoerRedigCubicalCluster`](LatticeProb/External/FeyDenBoerRedigCubicalCluster.lean)
+states the cubical toppled-support and lower-radius conclusion on the background `2d − 2`;
+[`FeyLevinePeresRadius`](LatticeProb/External/FeyLevinePeresRadius.lean)
+states the eventual outer-radius bound. Their cited sources and chip-count conventions are
+specified in the files. Their conditional consequences in
+[`RadiusConsequences.lean`](LatticeProb/Sandpile/RadiusConsequences.lean) identify the global
+parallel stabilization and specialize the radius bound. These proofs take the two propositions
+as explicit hypotheses; the propositions remain unproved inputs.
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
@@ -722,6 +732,25 @@ determined by finitely many coordinates of an infinite product.
 nearest-neighbour paths in `ℤ^d`, `d ≥ 2`, that avoid a specified site while their
 bounding rectangle contains it. `LatticeProb.exists_long_lattice_path_avoiding_site`
 includes box bounds and any prescribed logarithmic-power length threshold.
+
+**Coordinate bounds and translations.**
+[`PathBoundingRectangle.lean`](LatticeProb/Lattice/PathBoundingRectangle.lean)
+bounds the coordinate-sum distance from a walk's first site to any site in its bounding
+rectangle by `d (m − 1)` for a nearest-neighbour walk of `m` vertices.
+[`Translation.lean`](LatticeProb/Lattice/Translation.lean) proves that adding the same lattice
+vector to both endpoints preserves adjacency.
+
+**Killed Green bounds.**
+[`KilledGreenDiagonal.lean`](LatticeProb/Walk/KilledGreenDiagonal.lean) proves a constant
+diagonal bound in dimensions at least three, a logarithmic diagonal bound in dimension two,
+and a row-sum bound `C_d (L + 1)^2` for finite subsets of a radius-`L` box. Constants precede
+the box, set and starting point. The Green function is expected visits divided by `2d`.
+
+**Ordinary toppling heights and graph pairings.**
+[`Nonnegative.lean`](LatticeProb/Sandpile/Nonnegative.lean) proves that nonnegative initial
+sandpile heights remain nonnegative under the parallel toppling procedure.
+[`LaplacianSymmetry.lean`](LatticeProb/Network/LaplacianSymmetry.lean) derives finite-support
+pairing symmetry for the graph Laplacian from the existing Dirichlet-form identities.
 
 **Graph combinatorics.**
 

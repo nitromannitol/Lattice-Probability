@@ -151,7 +151,7 @@ private theorem exists_nat_survival_bound_le_half (hd : 1 ≤ d) (C : ℝ) (hC :
 -- mul_le_mul_of_nonneg_right.
 /-- There is `K ≥ 1` such that the survival probability at time `K(L+1)^2` is at most `1/2` for
 every box radius `L` and every set `B ⊆ box d L`. -/
-private theorem exists_nat_survival_le_half (hd : 1 ≤ d) :
+theorem exists_nat_survival_le_half (hd : 1 ≤ d) :
     ∃ K : ℕ, 1 ≤ K ∧ ∀ (L : ℕ) (B : Finset (Site d)), (∀ z ∈ B, z ∈ box d L) → ∀ x : Site d,
       Network.survival (lattice d) B (K * (L + 1) ^ 2) x ≤ 1 / 2 := by
   obtain ⟨C, hCpos, hC⟩ := srwHeat_le_mul_rpow_neg_half hd
@@ -176,7 +176,7 @@ private theorem exists_nat_survival_le_half (hd : 1 ≤ d) :
 -- Network.sum_range_survival_le (hN : 0 < N) (θ := 1/2): N / (1 - 1/2) = 2N (norm_num).
 /-- If the survival probability at time `N > 0` is uniformly at most `1/2`, then the partial sums
 of survival over any range are at most `2N`, by `Network.sum_range_survival_le`. -/
-private theorem sum_range_survival_le_two_mul (B : Finset (Site d)) (N : ℕ) (hN : 0 < N)
+theorem sum_range_survival_le_two_mul (B : Finset (Site d)) (N : ℕ) (hN : 0 < N)
     (h : ∀ x : Site d, Network.survival (lattice d) B N x ≤ 1 / 2) (x : Site d) (n : ℕ) :
     ∑ k ∈ Finset.range n, Network.survival (lattice d) B k x ≤ 2 * (N : ℝ) := by
   have h1 := Network.sum_range_survival_le (G := lattice d) (C := B) (N := N)
@@ -191,7 +191,7 @@ private theorem sum_range_survival_le_two_mul (B : Finset (Site d)) (N : ℕ) (h
 -- Real.rpow_nonneg).
 /-- The tail sum `∑_{k<n} killedHeat (k+N) x y` is at most `2N * (C * N ^ (-d/2))`, given the
 on-diagonal bound and the survival bound at time `N`. -/
-private theorem sum_range_killedHeat_add_le_two_mul_rpow_neg_half (_unused_hd : 1 ≤ d) (C : ℝ)
+theorem sum_range_killedHeat_add_le_two_mul_rpow_neg_half (_unused_hd : 1 ≤ d) (C : ℝ)
     (hC : ∀ (k : ℕ), 1 ≤ k → ∀ w : Site d, srwHeat d k w ≤ C * (k : ℝ) ^ (-(d : ℝ) / 2))
     (B : Finset (Site d)) (N : ℕ) (hN : 0 < N)
     (h : ∀ x : Site d, Network.survival (lattice d) B N x ≤ 1 / 2) (x y : Site d) (n : ℕ) :
@@ -253,7 +253,7 @@ theorem killedGreenReal_eq_tsum_killedHeat_div (hd : 1 ≤ d) (B : Finset (Site 
 -- Finset.sum_range_add splits it into head + ∑_{k<n} killedHeat (N + k) (add_comm to k + N).
 /-- If the head sum up to `N` is at most `H` and every tail sum from `N` is at most `T`, the full
 series `∑' k, killedHeat k x y` is at most `H + T`. -/
-private theorem tsum_killedHeat_le_add_of_sum_range_le (B : Finset (Site d)) (N : ℕ) (x y : Site d)
+theorem tsum_killedHeat_le_add_of_sum_range_le (B : Finset (Site d)) (N : ℕ) (x y : Site d)
     (H T : ℝ)
     (hH : ∑ k ∈ Finset.range N, Graph.killedHeat (lattice d) (B : Set (Site d)) k x y ≤ H)
     (hT : ∀ n, ∑ k ∈ Finset.range n, Graph.killedHeat (lattice d) (B : Set (Site d)) (k + N) x y ≤
