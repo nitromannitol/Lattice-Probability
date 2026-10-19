@@ -436,6 +436,19 @@ class NativeAdapterControls(unittest.TestCase):
                 (proc/"locks").write_text(line+line.replace("1:","2:").replace("FLOCK","-> FLOCK").replace(str(owner)+" ","999 ",1))
                 self.assertEqual(diag.verify_inherited_lock(str(lock),proc_root=proc,self_pid=200)["owner"],owner)
 
+    def test_duplicate_record_with_device_8_1_is_rejected(self):
+        # Regression: a global replace of "1:" also rewrote the device "8:1:" in the
+        # copied record, so the duplicate named another device and went undetected.
+        real_major,real_minor=os.major,os.minor
+        with tempfile.TemporaryDirectory() as d:
+            device=os.stat(d).st_dev
+            with patch("os.major",side_effect=lambda dev:8 if dev==device else real_major(dev)),patch("os.minor",side_effect=lambda dev:1 if dev==device else real_minor(dev)):
+                lock,proc,line=self.lock_fixture(d)
+                self.assertTrue(line.startswith("1: FLOCK ADVISORY WRITE 100 8:1:"))
+                self.assertEqual(diag.verify_inherited_lock(str(lock),proc_root=proc,self_pid=200)["owner"],100)
+                (proc/"locks").write_text(line+line.replace("1:","2:",1))
+                with self.assertRaises(diag.GateError):diag.verify_inherited_lock(str(lock),proc_root=proc,self_pid=200)
+
     def test_kernel_absent_unrelated_partial_shared_duplicate_and_wrong_inode_rejected(self):
         for mutation in ["absent","unrelated","partial","read","posix","range","duplicate","wrong-inode","wrong-device","waiter-only","malformed"]:
             with self.subTest(mutation=mutation),tempfile.TemporaryDirectory() as d:
@@ -447,7 +460,7 @@ class NativeAdapterControls(unittest.TestCase):
                 elif mutation=="posix":text=line.replace("FLOCK","POSIX")
                 elif mutation=="range":text=line.replace("0 EOF","0 7")
                 elif mutation=="duplicate":text=line+line.replace("1:","2:",1)
-                elif mutation=="wrong-inode":text=line.replace(str(lock.stat().st_ino),str(lock.stat().st_ino+1))
+                elif mutation=="wrong-inode":fields=line.split();major,minor,inode=fields[5].split(":");fields[5]=f"{major}:{minor}:{int(inode)+1}";text=" ".join(fields)+"\n"
                 elif mutation=="wrong-device":text=line.replace(f"{os.major(lock.stat().st_dev):x}:{os.minor(lock.stat().st_dev):x}:","ffff:ffff:")
                 elif mutation=="waiter-only":text=line.replace("FLOCK","-> FLOCK")
                 else:text=line+"2: FLOCK partial\n"
