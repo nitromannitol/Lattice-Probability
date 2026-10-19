@@ -337,6 +337,7 @@ import LatticeProb.Prob.McLeish.CharFunLimit
 import LatticeProb.Prob.McLeish.TruncProduct
 import LatticeProb.Prob.McLeish.RatioLimit
 import LatticeProb.Prob.McLeish.MartingaleCLT
+import LatticeProb.Prob.McLeish.Example
 import LatticeProb.Prob.GaussProductRotation
 import LatticeProb.Prob.GaussSteinIBP
 import LatticeProb.Prob.GaussEuclideanPushforward
@@ -355,6 +356,10 @@ import LatticeProb.Prob.BrownianMomentsCore
 import LatticeProb.Analysis.HessianTaylorRemainder
 import LatticeProb.Prob.DyadicExitApprox
 import LatticeProb.Prob.BrownianPathSpace
+import LatticeProb.Prob.BrownianPredictableTaylor
+import LatticeProb.Prob.BrownianStoppedSum
+import LatticeProb.Prob.BrownianStoppedLimit
+import LatticeProb.Prob.BrownianPathHarmonicExit
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords

@@ -170,7 +170,8 @@ namespace CurveSpace
 noncomputable def mk {d : ℕ} (f : NormalizedCurve d) : CurveSpace d :=
   SeparationQuotient.mk f
 
-/-- The quotient metric is exactly the paper's infimum of supremal errors. -/
+/-- The extended distance between two curve classes is the infimum, over time changes, of the
+supremal distance between the reparametrized curves. -/
 theorem edist_mk {d : ℕ} (f g : NormalizedCurve d) :
     edist (mk f) (mk g) =
       ⨅ e : NormalizedCurve.TimeChange,

@@ -28,6 +28,7 @@ import LatticeProb.Prob.McLeish.CharFunLimit
 import LatticeProb.Prob.McLeish.TruncProduct
 import LatticeProb.Prob.McLeish.RatioLimit
 import LatticeProb.Prob.McLeish.MartingaleCLT
+import LatticeProb.Prob.McLeish.Example
 import LatticeProb.Prob.GaussProductRotation
 import LatticeProb.Prob.GaussSteinIBP
 import LatticeProb.Prob.GaussEuclideanPushforward
@@ -46,6 +47,10 @@ import LatticeProb.Prob.BrownianMomentsCore
 import LatticeProb.Analysis.HessianTaylorRemainder
 import LatticeProb.Prob.DyadicExitApprox
 import LatticeProb.Prob.BrownianPathSpace
+import LatticeProb.Prob.BrownianPredictableTaylor
+import LatticeProb.Prob.BrownianStoppedSum
+import LatticeProb.Prob.BrownianStoppedLimit
+import LatticeProb.Prob.BrownianPathHarmonicExit
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -658,3 +663,9 @@ library.
 #print axioms LatticeProb.standardBrownianLaw_map_shift
 #print axioms LatticeProb.standardBrownianLaw_finiteStopping_inter
 #print axioms LatticeProb.standardBrownianLaw_taylor_expectation_bound
+#print axioms LatticeProb.standardBrownianLaw_predictable_taylor_bound
+#print axioms LatticeProb.standardBrownianLaw_dyadic_stopped_harmonic_bound
+#print axioms LatticeProb.standardBrownianLaw_bounded_stopped_harmonic_difference
+#print axioms LatticeProb.standardBrownianLaw_integral_exit_harmonic_compactSupport
+#print axioms LatticeProb.standardBrownianLaw_integral_exit_harmonicNearClosure
+#print axioms LatticeProb.McLeish.Example.rademacherRows_clt
