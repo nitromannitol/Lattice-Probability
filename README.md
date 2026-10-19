@@ -270,6 +270,16 @@ killed on leaving `C`.
   `LatticeProb.Network.moser_l2_step`, the first Moser-iteration step
   bounding a harmonic function on a finite set by the conductance-weighted
   mean square of its neighbours.
+* `LatticeProb.Network.existsUnique_dirichlet`: on a locally finite network,
+  the Dirichlet problem on a finite set `A` from which every vertex reaches the
+  complement has exactly one solution for all boundary data; it rests on
+  `LatticeProb.Network.subharmonic_maximum_principle`, which needs neither
+  connectivity nor a finite vertex type, and
+  `LatticeProb.Network.dirichlet_stability` bounds the change of the solution
+  by the uniform change of the data.
+* `LatticeProb.Network.green_netLaplacian` and
+  `LatticeProb.Network.discrete_integration_by_parts`: the Green identity and
+  summation by parts for antisymmetric edge fields on a finite vertex type.
 
 **The discrete Gaussian free field.**  `LatticeProb/Network/GFF.lean` defines
 the field with zero boundary values on a finite set `C` as
@@ -1115,9 +1125,11 @@ modules of `LatticeProb/Lattice/Planar/` from
 [`rotor-23`](https://github.com/nitromannitol/rotor-23), and sixteen continuum
 modules from
 [`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness);
-[`NOTICE`](NOTICE) lists the files and the commits.  The curve-space and bounded
-optional-stopping modules (`LatticeProb/Topology/CurveSpace.lean`,
-`LatticeProb/Prob/BoundedStopping.lean`) are adapted from Leonardo Bonanno's
+[`NOTICE`](NOTICE) lists the files and the commits.  The curve-space, bounded
+optional-stopping, finite Dirichlet-problem and finite discrete-calculus modules
+(`LatticeProb/Topology/CurveSpace.lean`, `LatticeProb/Prob/BoundedStopping.lean`,
+`LatticeProb/Network/Dirichlet.lean`, `LatticeProb/Network/FiniteCalculus.lean`)
+are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
 [`leanprover/comparator`](https://github.com/leanprover/comparator).
