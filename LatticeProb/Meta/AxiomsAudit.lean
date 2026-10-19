@@ -15,6 +15,7 @@ import LatticeProb.Prob.SupportedLaw
 import LatticeProb.Prob.LevyProkhorovMaps
 import LatticeProb.Prob.DependentKernelMap
 import LatticeProb.Prob.SubcouplingCompletion
+import LatticeProb.Prob.MatchedCellCoupling
 
 /-!
 # Axioms audit
@@ -568,3 +569,7 @@ library.
 #print axioms LatticeProb.completeSubcoupling_fst
 #print axioms LatticeProb.completeSubcoupling_snd
 #print axioms LatticeProb.completeSubcoupling_bad_event_le
+#print axioms LatticeProb.matchedCellCoupling_fst
+#print axioms LatticeProb.matchedCellCoupling_snd
+#print axioms LatticeProb.matchedCellCoupling_univ
+#print axioms LatticeProb.matchedCellCoupling_compl_prod_eq_zero

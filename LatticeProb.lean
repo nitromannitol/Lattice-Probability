@@ -324,6 +324,7 @@ import LatticeProb.Prob.SupportedLaw
 import LatticeProb.Prob.LevyProkhorovMaps
 import LatticeProb.Prob.DependentKernelMap
 import LatticeProb.Prob.SubcouplingCompletion
+import LatticeProb.Prob.MatchedCellCoupling
 import LatticeProb.Prob.BrownianPathLaw
 import LatticeProb.Prob.BrownianStrongMarkov
 import LatticeProb.Prob.BrownianExitTime
