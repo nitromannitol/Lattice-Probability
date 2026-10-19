@@ -17,6 +17,7 @@ import LatticeProb.Prob.DependentKernelMap
 import LatticeProb.Prob.SubcouplingCompletion
 import LatticeProb.Prob.MatchedCellCoupling
 import LatticeProb.Prob.FinitePartitionCoupling
+import LatticeProb.Prob.FinitePartitionCouplingKernel
 
 /-!
 # Axioms audit
@@ -576,3 +577,4 @@ library.
 #print axioms LatticeProb.matchedCellCoupling_compl_prod_eq_zero
 #print axioms LatticeProb.finitePartitionCoupling_spec
 #print axioms LatticeProb.levyProkhorovEDist_le_of_finite_cells
+#print axioms LatticeProb.finitePartitionCouplingKernel_spec
