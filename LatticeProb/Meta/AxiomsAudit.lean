@@ -11,6 +11,10 @@ import LatticeProb.Topology.CurveSpace
 import LatticeProb.Prob.BoundedStopping
 import LatticeProb.Network.Dirichlet
 import LatticeProb.Network.FiniteCalculus
+import LatticeProb.Prob.SupportedLaw
+import LatticeProb.Prob.LevyProkhorovMaps
+import LatticeProb.Prob.DependentKernelMap
+import LatticeProb.Prob.SubcouplingCompletion
 
 /-!
 # Axioms audit
@@ -552,3 +556,15 @@ library.
 #print axioms LatticeProb.Network.boundaryAccessible_of_strict_subharmonic
 #print axioms LatticeProb.Network.green_netLaplacian
 #print axioms LatticeProb.Network.discrete_integration_by_parts
+
+#print axioms LatticeProb.ae_iff_exists_measurable_null_set
+#print axioms LatticeProb.map_supportedLaw
+#print axioms LatticeProb.supportedLaw_unique
+#print axioms LatticeProb.levyProkhorovEDist_map_le_of_lipschitz_one
+#print axioms LatticeProb.levyProkhorovEDist_map_endPoint_le
+#print axioms LatticeProb.levyProkhorovEDist_le_of_coupling
+#print axioms LatticeProb.compProd_map_dependent_of_kernel_map
+#print axioms LatticeProb.compProd_map_dependent_of_kernel_map_ae
+#print axioms LatticeProb.completeSubcoupling_fst
+#print axioms LatticeProb.completeSubcoupling_snd
+#print axioms LatticeProb.completeSubcoupling_bad_event_le

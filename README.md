@@ -817,6 +817,10 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.DPP.event_domination_of_endpoint_frames` and `LatticeProb.DPP.domination_coupling_of_endpoint_frames`: event domination and a single subset-supported coupling when the two kernels are explicitly represented by an orthonormal frame and its trailing columns. These intermediate results retain their frame hypotheses; the full nested-projection theorem constructs those frames.
 - `LatticeProb.StrassenAux.isProbabilityMeasure_finiteLaw`: nonnegative normalized finite weights define a probability measure. `LatticeProb.StrassenAux.finite_atom_row` recovers exact real row sums from a finite coupling with the stated marginal laws.
 - `LatticeProb.StrassenAux.exists_monotone_matrix_of_upper_set_domination` and `LatticeProb.StrassenAux.exists_subset_matrix_of_event_domination`: normalized nonnegative finite weights and upper-set domination yield a coupling matrix supported on the order relation, specialized in the latter result to insertion-closed families of finite sets.
+- `LatticeProb.completeSubcoupling_fst`, `LatticeProb.completeSubcoupling_snd` and `LatticeProb.completeSubcoupling_bad_event_le`: a partial coupling of two probability measures with dominated marginals is completed by the normalized product of its residual marginals; the completion has the exact marginals, and an event the partial coupling does not charge has mass at most the unmatched mass.
+- `LatticeProb.levyProkhorovEDist_le_of_coupling` and `LatticeProb.levyProkhorovEDist_map_le_of_lipschitz_one`: a coupling whose mass on pairs at distance at least `r` is at most `r` bounds the Lévy–Prokhorov distance by `r`, and measurable 1-Lipschitz maps contract that distance (in particular the curve endpoint map, `LatticeProb.levyProkhorovEDist_map_endPoint_le`).
+- `LatticeProb.supportedLaw_unique` and `LatticeProb.map_supportedLaw`: a probability measure that charges a possibly non-measurable set fully has exactly one law on that subtype whose inclusion pushforward is the measure; `LatticeProb.ae_iff_exists_measurable_null_set` gives the measurable exceptional set.
+- `LatticeProb.compProd_map_dependent_of_kernel_map` and its almost-everywhere variant: if `g a` pushes each kernel row `κ a` to `η (f a)`, the image of `μ ⊗ₘ κ` under `p ↦ (f p.1, g p.1 p.2)` is `μ.map f ⊗ₘ η`.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1126,9 +1130,12 @@ modules of `LatticeProb/Lattice/Planar/` from
 modules from
 [`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness);
 [`NOTICE`](NOTICE) lists the files and the commits.  The curve-space, bounded
-optional-stopping, finite Dirichlet-problem and finite discrete-calculus modules
+optional-stopping, finite Dirichlet-problem, finite discrete-calculus, supported-law,
+Lévy–Prokhorov map and coupling, dependent kernel-map and subcoupling-completion modules
 (`LatticeProb/Topology/CurveSpace.lean`, `LatticeProb/Prob/BoundedStopping.lean`,
-`LatticeProb/Network/Dirichlet.lean`, `LatticeProb/Network/FiniteCalculus.lean`)
+`LatticeProb/Network/Dirichlet.lean`, `LatticeProb/Network/FiniteCalculus.lean`,
+`LatticeProb/Prob/SupportedLaw.lean`, `LatticeProb/Prob/LevyProkhorovMaps.lean`,
+`LatticeProb/Prob/DependentKernelMap.lean`, `LatticeProb/Prob/SubcouplingCompletion.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
