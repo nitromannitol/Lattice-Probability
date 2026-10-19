@@ -43,7 +43,11 @@ def diagnostic_lines(output):
 
 def require_clean(result, *, warnings=True):
     if result.returncode != 0:
-        raise GateError(f"child exit {result.returncode}: {list(result.command)}")
+        # Report the end of the child's own output, so that a failure is diagnosable
+        # from the gate log alone (for example on a hosted runner).
+        tail = ANSI.sub("", (result.stdout or "") + "\n" + (result.stderr or "")).strip().splitlines()[-40:]
+        detail = ("\n" + "\n".join(tail)) if tail else ""
+        raise GateError(f"child exit {result.returncode}: {list(result.command)}{detail}")
     bad = diagnostic_lines(result.stdout + "\n" + result.stderr)
     if not warnings:
         bad = [line for line in bad if not SEVERITY.match(line) or "error:" in line.lower()]
