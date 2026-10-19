@@ -821,6 +821,7 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.matchedCellCoupling_fst`, `LatticeProb.matchedCellCoupling_snd` and `LatticeProb.matchedCellCoupling_compl_prod_eq_zero`: two measurable cells of probability measures are coupled on their common mass `min (μ E) (ν F)` by the normalized product of the rescaled restrictions, which puts no mass outside `E ×ˢ F`.
 - `LatticeProb.finitePartitionCoupling_spec` and `LatticeProb.levyProkhorovEDist_le_of_finite_cells`: for finitely many disjoint measurable cells `E i`, `F i` of two probability measures there is a coupling with the exact marginals that gives every event disjoint from all `E i ×ˢ F i` mass at most `1 - ∑ i, min (μ (E i)) (ν (F i))` (no covering or topology assumed); if paired cells are within distance `r` and that unmatched mass is at most `r`, the Lévy–Prokhorov distance is at most `r`.
 - `LatticeProb.finitePartitionCouplingKernel_spec`: the same coupling as a Markov kernel in a parameter, for two Markov kernels and fixed disjoint measurable cells, with the exact marginals and the unmatched-mass bound at every parameter.
+- `LatticeProb.CameronMartin.map_tiltMeasure_path` and `LatticeProb.CameronMartin.abs_measureReal_shift_sub_le`: for a centred Gaussian process with measurable coordinates and a finitely supported `σ`, the exponential tilt `exp(⟨σ, X⟩ - ½ Var⟨σ, X⟩)` turns the law of the path into the law of the path shifted by its covariance against `σ`, and the shifted and unshifted probabilities of any measurable path event differ by at most `√(exp(Var⟨σ, X⟩) - 1)`.
 - `LatticeProb.levyProkhorovEDist_le_of_coupling` and `LatticeProb.levyProkhorovEDist_map_le_of_lipschitz_one`: a coupling whose mass on pairs at distance at least `r` is at most `r` bounds the Lévy–Prokhorov distance by `r`, and measurable 1-Lipschitz maps contract that distance (in particular the curve endpoint map, `LatticeProb.levyProkhorovEDist_map_endPoint_le`).
 - `LatticeProb.supportedLaw_unique` and `LatticeProb.map_supportedLaw`: a probability measure that charges a possibly non-measurable set fully has exactly one law on that subtype whose inclusion pushforward is the measure; `LatticeProb.ae_iff_exists_measurable_null_set` gives the measurable exceptional set.
 - `LatticeProb.compProd_map_dependent_of_kernel_map` and its almost-everywhere variant: if `g a` pushes each kernel row `κ a` to `η (f a)`, the image of `μ ⊗ₘ κ` under `p ↦ (f p.1, g p.1 p.2)` is `μ.map f ⊗ₘ η`.
@@ -1134,13 +1135,13 @@ modules from
 [`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness);
 [`NOTICE`](NOTICE) lists the files and the commits.  The curve-space, bounded
 optional-stopping, finite Dirichlet-problem, finite discrete-calculus, supported-law,
-Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion, matched-cell coupling, finite partition coupling and partition-coupling kernel modules
+Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion, matched-cell coupling, finite partition coupling, partition-coupling kernel and finite-span Cameron–Martin modules
 (`LatticeProb/Topology/CurveSpace.lean`, `LatticeProb/Prob/BoundedStopping.lean`,
 `LatticeProb/Network/Dirichlet.lean`, `LatticeProb/Network/FiniteCalculus.lean`,
 `LatticeProb/Prob/SupportedLaw.lean`, `LatticeProb/Prob/LevyProkhorovMaps.lean`,
 `LatticeProb/Prob/DependentKernelMap.lean`, `LatticeProb/Prob/SubcouplingCompletion.lean`,
 `LatticeProb/Prob/MatchedCellCoupling.lean`, `LatticeProb/Prob/FinitePartitionCoupling.lean`,
-`LatticeProb/Prob/FinitePartitionCouplingKernel.lean`)
+`LatticeProb/Prob/FinitePartitionCouplingKernel.lean`, `LatticeProb/Prob/CameronMartin.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
