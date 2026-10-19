@@ -156,6 +156,8 @@ import LatticeProb.Network.FirstPassage
 import LatticeProb.Network.Voltage
 import LatticeProb.Network.VoltageConnected
 import LatticeProb.Network.MaximumPrinciple
+import LatticeProb.Network.Dirichlet
+import LatticeProb.Network.FiniteCalculus
 import LatticeProb.Network.Variational
 import LatticeProb.Network.Flow
 import LatticeProb.Network.NashWilliams

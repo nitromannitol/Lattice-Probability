@@ -9,6 +9,8 @@ import LatticeProb.Meta.PlaneIncidenceAxioms
 import LatticeProb.Walk.KilledGreenPlanarLower
 import LatticeProb.Topology.CurveSpace
 import LatticeProb.Prob.BoundedStopping
+import LatticeProb.Network.Dirichlet
+import LatticeProb.Network.FiniteCalculus
 
 /-!
 # Axioms audit
@@ -543,3 +545,10 @@ library.
 #print axioms LatticeProb.finite_stopping_integral_eq_terminal
 #print axioms LatticeProb.finite_stopping_second_moment_le
 #print axioms LatticeProb.bounded_stopping_integrable_and_integral_eq_terminal
+
+#print axioms LatticeProb.Network.subharmonic_maximum_principle
+#print axioms LatticeProb.Network.existsUnique_dirichlet
+#print axioms LatticeProb.Network.dirichlet_stability
+#print axioms LatticeProb.Network.boundaryAccessible_of_strict_subharmonic
+#print axioms LatticeProb.Network.green_netLaplacian
+#print axioms LatticeProb.Network.discrete_integration_by_parts
