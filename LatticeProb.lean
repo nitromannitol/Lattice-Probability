@@ -355,6 +355,10 @@ import LatticeProb.Prob.BrownianMomentsCore
 import LatticeProb.Analysis.HessianTaylorRemainder
 import LatticeProb.Prob.DyadicExitApprox
 import LatticeProb.Prob.BrownianPathSpace
+import LatticeProb.Prob.BrownianPredictableTaylor
+import LatticeProb.Prob.BrownianStoppedSum
+import LatticeProb.Prob.BrownianStoppedLimit
+import LatticeProb.Prob.BrownianPathHarmonicExit
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
