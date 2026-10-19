@@ -446,7 +446,7 @@ class NativeAdapterControls(unittest.TestCase):
                 elif mutation=="read":text=line.replace("WRITE","READ")
                 elif mutation=="posix":text=line.replace("FLOCK","POSIX")
                 elif mutation=="range":text=line.replace("0 EOF","0 7")
-                elif mutation=="duplicate":text=line+line.replace("1:","2:")
+                elif mutation=="duplicate":text=line+line.replace("1:","2:",1)
                 elif mutation=="wrong-inode":text=line.replace(str(lock.stat().st_ino),str(lock.stat().st_ino+1))
                 elif mutation=="wrong-device":text=line.replace(f"{os.major(lock.stat().st_dev):x}:{os.minor(lock.stat().st_dev):x}:","ffff:ffff:")
                 elif mutation=="waiter-only":text=line.replace("FLOCK","-> FLOCK")
