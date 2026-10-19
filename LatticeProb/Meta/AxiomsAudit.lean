@@ -28,6 +28,7 @@ import LatticeProb.Prob.McLeish.CharFunLimit
 import LatticeProb.Prob.McLeish.TruncProduct
 import LatticeProb.Prob.McLeish.RatioLimit
 import LatticeProb.Prob.McLeish.MartingaleCLT
+import LatticeProb.Prob.McLeish.Example
 import LatticeProb.Prob.GaussProductRotation
 import LatticeProb.Prob.GaussSteinIBP
 import LatticeProb.Prob.GaussEuclideanPushforward
@@ -667,3 +668,4 @@ library.
 #print axioms LatticeProb.standardBrownianLaw_bounded_stopped_harmonic_difference
 #print axioms LatticeProb.standardBrownianLaw_integral_exit_harmonic_compactSupport
 #print axioms LatticeProb.standardBrownianLaw_integral_exit_harmonicNearClosure
+#print axioms LatticeProb.McLeish.Example.rademacherRows_clt

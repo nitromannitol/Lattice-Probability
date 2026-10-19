@@ -337,6 +337,7 @@ import LatticeProb.Prob.McLeish.CharFunLimit
 import LatticeProb.Prob.McLeish.TruncProduct
 import LatticeProb.Prob.McLeish.RatioLimit
 import LatticeProb.Prob.McLeish.MartingaleCLT
+import LatticeProb.Prob.McLeish.Example
 import LatticeProb.Prob.GaussProductRotation
 import LatticeProb.Prob.GaussSteinIBP
 import LatticeProb.Prob.GaussEuclideanPushforward
