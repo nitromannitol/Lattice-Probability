@@ -19,6 +19,25 @@ import LatticeProb.Prob.MatchedCellCoupling
 import LatticeProb.Prob.FinitePartitionCoupling
 import LatticeProb.Prob.FinitePartitionCouplingKernel
 import LatticeProb.Prob.CameronMartin
+import LatticeProb.Prob.McLeish.ExpRemainder
+import LatticeProb.Prob.McLeish.Truncation
+import LatticeProb.Prob.McLeish.ProductLimit
+import LatticeProb.Prob.McLeish.ProductMoment
+import LatticeProb.Prob.McLeish.Remainder
+import LatticeProb.Prob.McLeish.CharFunLimit
+import LatticeProb.Prob.McLeish.TruncProduct
+import LatticeProb.Prob.McLeish.RatioLimit
+import LatticeProb.Prob.McLeish.MartingaleCLT
+import LatticeProb.Prob.GaussProductRotation
+import LatticeProb.Prob.GaussSteinIBP
+import LatticeProb.Prob.GaussEuclideanPushforward
+import LatticeProb.Prob.GaussSmoothBdd
+import LatticeProb.Prob.GaussSmoothMGF
+import LatticeProb.Prob.GaussMollify
+import LatticeProb.Prob.BrownianOpenExit
+import LatticeProb.Prob.BrownianOpenExitStopping
+import LatticeProb.Prob.BrownianOpenExitFinite
+import LatticeProb.Analysis.HarmonicBridge
 
 /-!
 # Axioms audit
@@ -582,3 +601,18 @@ library.
 #print axioms LatticeProb.CameronMartin.map_tiltMeasure_path
 #print axioms LatticeProb.CameronMartin.integral_mul_tiltDensity
 #print axioms LatticeProb.CameronMartin.abs_measureReal_shift_sub_le
+#print axioms LatticeProb.McLeish.tendstoInDistribution_martingale_clt
+#print axioms LatticeProb.GaussConc.measurePreserving_rotPair
+#print axioms LatticeProb.GaussConc.integral_inner_mul_stdGaussian
+#print axioms LatticeProb.GaussConc.gaussEuclid_map_ofLp
+#print axioms LatticeProb.GaussConc.integral_mul_sub_eq_cov
+#print axioms LatticeProb.GaussConc.mgf_le_of_smoothBdd
+#print axioms LatticeProb.GaussConc.mgf_le_of_lipschitz_bdd
+#print axioms LatticeProb.openExitTime_mem_frontier
+#print axioms LatticeProb.isStoppingTime_openExitTime
+#print axioms LatticeProb.measurable_openExitTime
+#print axioms LatticeProb.ae_openExitTime_ne_top
+#print axioms LatticeProb.openExitTime_uniform_tail
+#print axioms LatticeProb.isHarmonicOn_iff_harmonicOnNhd
+#print axioms LatticeProb.harmonicNearClosure_iff
+#print axioms LatticeProb.IsHarmonicOn.exists_compactSupport_eq_near_compact
