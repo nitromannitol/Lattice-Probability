@@ -16,11 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 350
     env:
-      LAKE_LOCK: ${{ runner.temp }}/lean-build.lock
       PYTHONDONTWRITEBYTECODE: '1'
       RUSTUP_TOOLCHAIN: '1.85.0'
       GOTOOLCHAIN: local
     steps:
+      - name: Set the Lake lock path
+        run: echo "LAKE_LOCK=$RUNNER_TEMP/lean-build.lock" >> "$GITHUB_ENV"
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
