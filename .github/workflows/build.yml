@@ -10,9 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      LAKE_LOCK: ${{ runner.temp }}/lean-build.lock
       PYTHONDONTWRITEBYTECODE: '1'
     steps:
+      - name: Set the Lake lock path
+        run: echo "LAKE_LOCK=$RUNNER_TEMP/lean-build.lock" >> "$GITHUB_ENV"
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
