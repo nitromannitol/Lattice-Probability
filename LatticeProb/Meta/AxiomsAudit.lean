@@ -46,6 +46,15 @@ import LatticeProb.Prob.BrownianMomentsCore
 import LatticeProb.Analysis.HessianTaylorRemainder
 import LatticeProb.Prob.DyadicExitApprox
 import LatticeProb.Prob.BrownianPathSpace
+import LatticeProb.Prob.FiniteChainPairTV
+import LatticeProb.Prob.SubGaussianMaximal
+import LatticeProb.Prob.BrownianPathCoords
+import LatticeProb.Prob.BrownianExitPosition
+import LatticeProb.Analysis.HarmonicScaling
+import LatticeProb.Prob.BrownianIncrementMoments
+import LatticeProb.Prob.BrownianWeakMarkovPath
+import LatticeProb.Prob.BrownianFiniteStopping
+import LatticeProb.Prob.BrownianHessianTaylor
 
 /-!
 # Axioms audit
@@ -635,3 +644,17 @@ library.
 #print axioms LatticeProb.nnrealApproxSeq_isStoppingTime
 #print axioms LatticeProb.isStoppingTime_continuousExitTime
 #print axioms LatticeProb.standardBrownianLaw_ae_finiteExit
+#print axioms LatticeProb.FiniteChain.pairTV_add_le
+#print axioms LatticeProb.FiniteChain.pairTV_mul_le
+#print axioms LatticeProb.measure_exists_partialSum_ge_le
+#print axioms LatticeProb.measure_sum_bernoulli_le
+#print axioms LatticeProb.IsBrownianSpace.exists_continuousVersion
+#print axioms LatticeProb.isStandardBrownianLaw_map_pathMap
+#print axioms LatticeProb.integral_exitPosition_eq_pathMap
+#print axioms LatticeProb.laplacian_affine_comp
+#print axioms LatticeProb.IsHarmonicOn.comp_affine
+#print axioms LatticeProb.standardBrownianLaw_integral_quadratic
+#print axioms LatticeProb.standardBrownianLaw_unique
+#print axioms LatticeProb.standardBrownianLaw_map_shift
+#print axioms LatticeProb.standardBrownianLaw_finiteStopping_inter
+#print axioms LatticeProb.standardBrownianLaw_taylor_expectation_bound
