@@ -18,11 +18,14 @@ bound `‖∇ log h‖ ≤ C`.
 the Chernoff step consumes: for an `L`-Lipschitz `f`, the moment generating
 function of `f - ∫ f` is at most `exp (λ² L² / 2)` for every `λ > 0`.  The
 library proves the passage from this bound to the concentration inequality of
-Tsirelson–Ibragimov–Sudakov (`LatticeProb.gaussian_lipschitz_concentration`);
-the bound itself is cited.
+Tsirelson–Ibragimov–Sudakov (`LatticeProb.gaussian_lipschitz_concentration`).
+The bound itself holds for every `n`: `LatticeProb.gaussianHerbstBound_all`
+(`LatticeProb/Prob/GaussianHerbstDischarge.lean`) derives it from the Gaussian
+concentration inequality for Lipschitz functions, so
+`LatticeProb.gaussian_lipschitz_concentration_unconditional` uses no cited input.
 
-These are cited results, carried as explicit hypotheses of the theorems that use
-them, never as axioms.
+`GaussianLogSobolev` remains a cited result, carried as an explicit hypothesis of
+the theorems that use it, never as an axiom.
 -/
 
 noncomputable section

@@ -38,6 +38,14 @@ import LatticeProb.Prob.BrownianOpenExit
 import LatticeProb.Prob.BrownianOpenExitStopping
 import LatticeProb.Prob.BrownianOpenExitFinite
 import LatticeProb.Analysis.HarmonicBridge
+import LatticeProb.Prob.GaussianHerbstDischarge
+import LatticeProb.Topology.ContinuousMapBorel
+import LatticeProb.Prob.BrownianPathMap
+import LatticeProb.Prob.GaussLipConcentration
+import LatticeProb.Prob.BrownianMomentsCore
+import LatticeProb.Analysis.HessianTaylorRemainder
+import LatticeProb.Prob.DyadicExitApprox
+import LatticeProb.Prob.BrownianPathSpace
 
 /-!
 # Axioms audit
@@ -616,3 +624,14 @@ library.
 #print axioms LatticeProb.isHarmonicOn_iff_harmonicOnNhd
 #print axioms LatticeProb.harmonicNearClosure_iff
 #print axioms LatticeProb.IsHarmonicOn.exists_compactSupport_eq_near_compact
+#print axioms LatticeProb.gaussianHerbstBound_all
+#print axioms LatticeProb.gaussian_lipschitz_concentration_unconditional
+#print axioms LatticeProb.ContinuousMapBorel.ContinuousMap.borel_eq_iSup_comap_eval
+#print axioms LatticeProb.measurable_pathMap
+#print axioms LatticeProb.GaussConc.mgf_le_of_lipschitz
+#print axioms LatticeProb.GaussConc.tail_le_of_lipschitz
+#print axioms LatticeProb.preBrownian_increment_fourth_moment
+#print axioms LatticeProb.uniform_taylor_remainder_of_contDiff_compactSupport
+#print axioms LatticeProb.nnrealApproxSeq_isStoppingTime
+#print axioms LatticeProb.isStoppingTime_continuousExitTime
+#print axioms LatticeProb.standardBrownianLaw_ae_finiteExit

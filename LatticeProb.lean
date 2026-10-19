@@ -347,6 +347,14 @@ import LatticeProb.Prob.BrownianOpenExit
 import LatticeProb.Prob.BrownianOpenExitStopping
 import LatticeProb.Prob.BrownianOpenExitFinite
 import LatticeProb.Analysis.HarmonicBridge
+import LatticeProb.Prob.GaussianHerbstDischarge
+import LatticeProb.Topology.ContinuousMapBorel
+import LatticeProb.Prob.BrownianPathMap
+import LatticeProb.Prob.GaussLipConcentration
+import LatticeProb.Prob.BrownianMomentsCore
+import LatticeProb.Analysis.HessianTaylorRemainder
+import LatticeProb.Prob.DyadicExitApprox
+import LatticeProb.Prob.BrownianPathSpace
 import LatticeProb.Prob.BrownianPathLaw
 import LatticeProb.Prob.BrownianStrongMarkov
 import LatticeProb.Prob.BrownianExitTime
