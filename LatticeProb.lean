@@ -320,6 +320,7 @@ import LatticeProb.Prob.BrownianMarkov
 import LatticeProb.Prob.IndepPi
 import LatticeProb.Prob.StoppingDyadic
 import LatticeProb.Prob.BoundedStopping
+import LatticeProb.Prob.CameronMartin
 import LatticeProb.Prob.SupportedLaw
 import LatticeProb.Prob.LevyProkhorovMaps
 import LatticeProb.Prob.DependentKernelMap
