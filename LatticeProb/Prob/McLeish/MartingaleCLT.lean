@@ -131,7 +131,7 @@ theorem memLp_bound_prodOneAddI_trunc {P : Measure Ω} [IsProbabilityMeasure P]
 *Dependent central limit theorems and invariance principles*, Ann. Probab. 2 (1974),
 Theorem 2.3). The row sums of a triangular array whose row partial sums are martingales converge
 in distribution to the centred Gaussian law with variance `σsq` when the maximal squared
-increments are integrable with means bounded uniformly in the row, the maximal absolute
+increments are integrable with means bounded uniformly in the row index `n`, the maximal absolute
 increments tend to zero in probability, and the sums of squared increments tend to `σsq` in
 probability. The case `σsq = 0` is included. -/
 theorem tendstoInDistribution_martingale_clt {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)

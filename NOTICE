@@ -73,7 +73,7 @@ Poisson-potential proofs. LatticeProb/Graph/CopiedGraph/EXTRACTION.json records
 the original file hashes and declaration adaptations. No dependency on that
 repository is included.
 
-Files not named above are original to this repository.
+Files not named in this notice are original to this repository unless their header names another source.
 
 LatticeProb/Graph/CopiedGraph/RootedForestCounting.lean adapts the finite
 conditional-sum decomposition in Mathlib.Data.Fintype.BigOperators

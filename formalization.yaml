@@ -662,4 +662,6 @@ alignment:
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are
   adapted from the percolation library of anthropics/formal-math, from
-  rotor-23 and from Parking-Sharpness (see NOTICE).
+  rotor-23 and from Parking-Sharpness (see NOTICE), and from Leonardo
+  Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations;
+  see README.md).

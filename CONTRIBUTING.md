@@ -63,8 +63,9 @@ A few practical notes for working with a development of this size:
 5. **Index it.**  Add the module to `LatticeProb.lean`; a principal theorem
    also goes into the "Contents" subsection of "What is proved" in `README.md`
    and into `LatticeProb/Meta/AxiomsAudit.lean`.
-6. **Adapted code.**  A file adapted from another repository keeps its license
-   and is listed in `NOTICE` with the source commit.
+6. **Adapted code.**  A file adapted from another repository names its source in
+   a header comment and is credited in README.md; a file adapted under a license
+   that requires a notice is also listed in `NOTICE` with the source commit.
 7. **Downstream pins.**  The dependent repositories require this library at a
    fixed commit.  Renaming or restating a declaration they use breaks them at
    their next bump, so add a new declaration rather than changing one in use.

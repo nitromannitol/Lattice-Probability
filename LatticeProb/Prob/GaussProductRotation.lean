@@ -14,7 +14,7 @@ import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# Rotations of a product of two standard Gaussian measures
+# An orthogonal involution preserving a product of two standard Gaussian measures
 
 For a finite-dimensional real inner product space `E`, the map
 `(x, y) ↦ (sin θ • x + cos θ • y, cos θ • x - sin θ • y)` of `E × E` preserves the product
