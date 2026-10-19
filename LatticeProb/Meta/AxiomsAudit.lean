@@ -51,6 +51,7 @@ import LatticeProb.Prob.BrownianPredictableTaylor
 import LatticeProb.Prob.BrownianStoppedSum
 import LatticeProb.Prob.BrownianStoppedLimit
 import LatticeProb.Prob.BrownianPathHarmonicExit
+import LatticeProb.Prob.BrownianOpenHarmonicExit
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -669,3 +670,5 @@ library.
 #print axioms LatticeProb.standardBrownianLaw_integral_exit_harmonic_compactSupport
 #print axioms LatticeProb.standardBrownianLaw_integral_exit_harmonicNearClosure
 #print axioms LatticeProb.McLeish.Example.rademacherRows_clt
+#print axioms LatticeProb.integral_openExit_harmonic_compactSupport
+#print axioms LatticeProb.integral_openExit_harmonicNearClosure

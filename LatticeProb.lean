@@ -360,6 +360,7 @@ import LatticeProb.Prob.BrownianPredictableTaylor
 import LatticeProb.Prob.BrownianStoppedSum
 import LatticeProb.Prob.BrownianStoppedLimit
 import LatticeProb.Prob.BrownianPathHarmonicExit
+import LatticeProb.Prob.BrownianOpenHarmonicExit
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
