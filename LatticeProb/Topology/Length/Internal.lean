@@ -15,7 +15,7 @@ of the lengths of paths that stay in `Y`) is studied as a metric in its own righ
 
 * `curveLength_eq_iSup_internalEDist`: for a continuous curve in `Y`, its length equals the
   supremum over partitions of the sums of the internal distances between consecutive points
-  (Burago–Burago–Ivanov, Prop. 2.3.12(1)). The proof follows BBI: `d ≤ d(·,·;Y)` termwise, and
+  (Burago–Burago–Ivanov, Prop. 2.3.12(1)). The proof follows Burago–Burago–Ivanov: `d ≤ d(·,·;Y)` termwise, and
   `d(P(t_i), P(t_{i+1}); Y) ≤ length(P|[t_i, t_{i+1}])`, with additivity of length.
 * `internalEDist_eq_top_of_notMem_right` and `internalEDist_eq_top_of_notMem_left`: no path in `Y`
   reaches a point outside `Y`, so the internal distance to such a point is `∞`.

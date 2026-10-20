@@ -31,7 +31,7 @@ section Defs
 
 variable {X : Type*} [PseudoMetricSpace X]
 
-/-- `z` is an `ε`-midpoint between `x` and `y` (Petrunin, *Pure metric geometry*; BBI Lemma 2.4.10
+/-- `z` is an `ε`-midpoint between `x` and `y` (Petrunin, *Pure metric geometry*; Burago–Burago–Ivanov Lemma 2.4.10
 uses the equivalent two-sided form). -/
 def IsApproxMidpoint (ε : ℝ) (x y z : X) : Prop :=
   dist x z ≤ dist x y / 2 + ε ∧ dist y z ≤ dist x y / 2 + ε
@@ -40,7 +40,7 @@ def IsApproxMidpoint (ε : ℝ) (x y z : X) : Prop :=
 def HasApproxMidpoints (X : Type*) [PseudoMetricSpace X] : Prop :=
   ∀ x y : X, ∀ ε : ℝ, 0 < ε → ∃ z, IsApproxMidpoint ε x y z
 
-/-- **BBI Lemma 2.4.10**: a length space has `ε`-midpoints. -/
+/-- **Burago–Burago–Ivanov Lemma 2.4.10**: a length space has `ε`-midpoints. -/
 theorem hasApproxMidpoints_of_isLengthSpace (hX : IsLengthSpace X) : HasApproxMidpoints X := by
   intro x y ε hε
   obtain ⟨γ, hγ⟩ := hX x y ε hε

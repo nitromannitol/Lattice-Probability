@@ -869,6 +869,10 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.Kahane.integral_kW_zero_le` (Kahane's convexity inequality, Gram form): `E F(W₀) ≤ E F(W_{π/2})` for admissible convex `F` when the two families of vectors are orthogonal to each other and the Gram matrix of the first is dominated entrywise by that of the second.
 - `LatticeProb.GaussConc.SupTail.seqMax`: running maxima of a sequence and their convergence to the supremum, with measurability and integrability for Gaussian sequences.
 - `LatticeProb.MetricGeometry.lengthParam`, `LatticeProb.MetricGeometry.exists_lipschitz_path`, `LatticeProb.MetricGeometry.hasApproxMidpoints_of_isLengthSpace` and `LatticeProb.MetricGeometry.internalEDist`: the arc-length parametrization of a curve of finite length (unit speed, 1-Lipschitz), approximate midpoints in length spaces, and the internal metric of a subset, its locality in a length space and the space `InternalSpace Y`.
+- `LatticeProb.Pitt.measureReal_mul_le_inter` and `LatticeProb.Pitt.prod_prob_le_biInter` (association of Gaussian vectors): for a Gaussian vector with nonnegative covariances, measurable upper events are positively correlated, `P(X ∈ U) P(X ∈ V) ≤ P(X ∈ U ∩ V)`, and the same holds for finitely many events.
+- `LatticeProb.GaussConc.SupTail.borellTIS_iSup_seq` (Borell–TIS for suprema): for a centred Gaussian sequence with `Var ≤ σ²`, bounded paths and uniformly bounded expected running maxima, `P(sup − E sup ≥ t) ≤ exp(−t²/(2σ²))`.
+- `LatticeProb.Kahane.kahane_convexity` (Kahane's convexity inequality): for centred Gaussian vectors `X, Y` with `cov(Xᵢ, Xⱼ) ≤ cov(Yᵢ, Yⱼ)`, weights `pᵢ > 0` and convex admissible `F`, `E F(∑ pᵢ e^{Xᵢ − Var Xᵢ/2}) ≤ E F(∑ pᵢ e^{Yᵢ − Var Yᵢ/2})`.
+- `LatticeProb.MetricGeometry.exists_shortest_path` and `LatticeProb.MetricGeometry.isLengthSpace_of_hasApproxMidpoints`: proper length spaces have shortest paths, and a complete space with approximate midpoints is a length space (Menger).
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1195,7 +1199,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/SkorokhodLaw.lean`, `LatticeProb/Prob/BrownianGermZeroOne.lean`, `LatticeProb/Prob/BrownianAbsMomentsFubini.lean`, `LatticeProb/Prob/GaussPittSmooth.lean`, `LatticeProb/Topology/Length/CurveLength.lean`,
 `LatticeProb/Prob/GaussBorellFinite.lean`, `LatticeProb/Prob/GaussKahaneStein.lean`, `LatticeProb/Prob/GaussKahaneCore.lean`, `LatticeProb/Topology/PolishContinuousMap.lean`,
 `LatticeProb/Prob/BrownianTailZeroOne.lean`, `LatticeProb/Prob/GaussPittLipschitz.lean`, `LatticeProb/Prob/GaussBorellVector.lean`, `LatticeProb/Prob/GaussKahaneBound.lean`, `LatticeProb/Topology/Length/LengthSpace.lean`,
-`LatticeProb/Prob/Skorokhod.lean`, `LatticeProb/Prob/GaussKahaneInterp.lean`, `LatticeProb/Prob/GaussSupTailBorell.lean`, `LatticeProb/Topology/Length/CurveNatural.lean`, `LatticeProb/Topology/Length/Midpoint.lean`, `LatticeProb/Topology/Length/Internal.lean`)
+`LatticeProb/Prob/Skorokhod.lean`, `LatticeProb/Prob/GaussKahaneInterp.lean`, `LatticeProb/Prob/GaussSupTailBorell.lean`, `LatticeProb/Topology/Length/CurveNatural.lean`, `LatticeProb/Topology/Length/Midpoint.lean`, `LatticeProb/Topology/Length/Internal.lean`,
+`LatticeProb/Prob/GaussAssociationEvents.lean`, `LatticeProb/Prob/GaussBorellSeq.lean`, `LatticeProb/Prob/GaussKahaneVector.lean`, `LatticeProb/Topology/Length/LengthGeodesic.lean`, `LatticeProb/Topology/Length/Menger.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
