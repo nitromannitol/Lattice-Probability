@@ -361,6 +361,11 @@ import LatticeProb.Prob.BrownianStoppedSum
 import LatticeProb.Prob.BrownianStoppedLimit
 import LatticeProb.Prob.BrownianPathHarmonicExit
 import LatticeProb.Prob.BrownianOpenHarmonicExit
+import LatticeProb.Prob.Quantile
+import LatticeProb.Prob.BinomialTail
+import LatticeProb.Prob.SkorokhodPartition
+import LatticeProb.Prob.SkorokhodMix
+import LatticeProb.Prob.TrivialSigma
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
