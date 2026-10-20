@@ -421,6 +421,11 @@ import LatticeProb.Network.KilledHeat
 import LatticeProb.Network.DirichletSpace
 import LatticeProb.Network.WeightedGradient
 import LatticeProb.Network.AnchoredEnergy
+import LatticeProb.Analysis.Polynomial.BallVanishing
+import LatticeProb.Analysis.Polynomial.Analytic
+import LatticeProb.Prob.CondIndepDetermined
+import LatticeProb.Network.ConductanceHarmonic
+import LatticeProb.Network.EnergyENN
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords

@@ -112,6 +112,11 @@ import LatticeProb.Network.KilledHeat
 import LatticeProb.Network.DirichletSpace
 import LatticeProb.Network.WeightedGradient
 import LatticeProb.Network.AnchoredEnergy
+import LatticeProb.Analysis.Polynomial.BallVanishing
+import LatticeProb.Analysis.Polynomial.Analytic
+import LatticeProb.Prob.CondIndepDetermined
+import LatticeProb.Network.ConductanceHarmonic
+import LatticeProb.Network.EnergyENN
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -810,3 +815,10 @@ library.
 #print axioms LatticeProb.Network.ConductanceGraph.weightedGradient_norm_sq
 #print axioms LatticeProb.Network.ConductanceGraph.weightedGradientCoord_mem_iff
 #print axioms LatticeProb.Network.ConductanceGraph.eq_of_eqOn_energy_sub_zero
+#print axioms LatticeProb.polynomial_eq_zero_of_eval_zero_on_ball
+#print axioms LatticeProb.laplacian_polynomialEval
+#print axioms LatticeProb.isHarmonicOn_polynomialEval_of_laplacian_eq_zero
+#print axioms LatticeProb.aeDeterminedSigma_of_condIndepEv_of_ae_eq
+#print axioms LatticeProb.Network.ConductanceGraph.IsHarmonicAt.tsum_eq_zero
+#print axioms LatticeProb.Network.ConductanceGraph.energyENN_eq_top_iff_not_hasFiniteEnergy
+#print axioms LatticeProb.Network.ConductanceGraph.energyENN_eq_ofReal_Energy
