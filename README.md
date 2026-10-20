@@ -892,6 +892,11 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.Network.ConductanceGraph.DirichletSpace`: for a connected conductance graph, the finite-energy functions vanishing at a base point form a real inner product space under the Dirichlet form, with norm the square root of the energy.
 - `LatticeProb.Network.ConductanceGraph.weightedGradient`: the gradient `(√(c(x, y)/2) (f(y) − f(x)))` over ordered pairs, an `ℓ²` vector exactly when `f` has finite energy, with squared norm the energy.
 - `LatticeProb.Network.ConductanceGraph.zeroTraceSubmodule` and `LatticeProb.Network.ConductanceGraph.eq_zero_of_zeroTrace_energy_zero`: finite-energy functions vanishing on a set `A` that every vertex can reach; vertex values are bounded by the energy, so zero energy forces zero.
+- `LatticeProb.polynomial_eq_zero_of_eval_zero_on_ball`: a real polynomial in `d` variables that vanishes on a Euclidean ball of positive radius is zero.
+- `LatticeProb.laplacian_polynomialEval` and `LatticeProb.isHarmonicOn_polynomialEval_of_laplacian_eq_zero`: the evaluation of a real polynomial on `ℝ^d` is smooth, its Laplacian is the evaluation of the formal Laplacian, and a polynomial with zero formal Laplacian is harmonic.
+- `LatticeProb.aeDeterminedSigma_of_condIndepEv_of_ae_eq`: if `X` and `Y` are conditionally independent given `G` and `X = Y` almost surely, then every event of `σ(X)` agrees almost surely with an event of `G`.
+- `LatticeProb.Network.ConductanceGraph.IsHarmonicAt`: harmonicity at a vertex of a conductance graph of possibly infinite degree, with the neighbour sum required to converge absolutely.
+- `LatticeProb.Network.ConductanceGraph.energyENN`: the energy computed in `ℝ≥0∞`, which is `∞` exactly for functions without finite energy and equals the real energy otherwise.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1223,7 +1228,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/GaussAssociationFun.lean`, `LatticeProb/Prob/GaussKahaneRpow.lean`, `LatticeProb/Topology/Length/Geodesic.lean`, `LatticeProb/Topology/Length/LengthLimit.lean`,
 `LatticeProb/Prob/CondIndepEv.lean`, `LatticeProb/Analysis/ReciprocalPowerDecay.lean`, `LatticeProb/Analysis/MatrixHeat.lean`, `LatticeProb/Network/Conductance.lean`, `LatticeProb/Analysis/Polynomial/Degree.lean`,
 `LatticeProb/Prob/EfronSteinSigma.lean`, `LatticeProb/Network/HeatGenerator.lean`, `LatticeProb/Network/DirichletForm.lean`, `LatticeProb/Analysis/Polynomial/Laplacian.lean`, `LatticeProb/Prob/GaussKahane2Const.lean`,
-`LatticeProb/Network/HeatUniformization.lean`, `LatticeProb/Network/KilledHeat.lean`, `LatticeProb/Network/DirichletSpace.lean`, `LatticeProb/Network/WeightedGradient.lean`, `LatticeProb/Network/AnchoredEnergy.lean`)
+`LatticeProb/Network/HeatUniformization.lean`, `LatticeProb/Network/KilledHeat.lean`, `LatticeProb/Network/DirichletSpace.lean`, `LatticeProb/Network/WeightedGradient.lean`, `LatticeProb/Network/AnchoredEnergy.lean`,
+`LatticeProb/Analysis/Polynomial/BallVanishing.lean`, `LatticeProb/Analysis/Polynomial/Analytic.lean`, `LatticeProb/Prob/CondIndepDetermined.lean`, `LatticeProb/Network/ConductanceHarmonic.lean`, `LatticeProb/Network/EnergyENN.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
