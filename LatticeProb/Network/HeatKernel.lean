@@ -12,11 +12,13 @@ import Mathlib.Analysis.Calculus.MeanValue
 
 For a finite network with conductance `c` and vertex masses `m`, the killed heat flow of a datum
 `f` on a vertex set `S` solves the killed heat equation. The killed heat density at `x` is the
-killed heat flow with datum `δ_x / m x`. The file shows that the density is symmetric on `S` and
-nonnegative, that `m y` times the density is the killed heat matrix entry, that the weighted `L¹`
-norm of the density is at most one, and that its weighted `L²` norm is the diagonal density at
-twice the time. It also shows that the weighted square norm has derivative `-2` times the
-Dirichlet energy of the density.
+killed heat flow with datum `δ_x / m x`. For nonzero masses, the file shows that the density is
+symmetric on `S`, that for `x ∈ S`, `m y` times the density is the killed heat matrix entry, and
+that for `x ∈ S`, its weighted quadratic sum `∑ y, m y * (killedHeatDensity c m S x t y)^2` is the
+diagonal density at twice the time. For `x ∈ S`, positive masses and nonnegative time, the density
+is nonnegative and its weighted `L¹` norm is at most one. The quadratic sum is the squared
+weighted `L²` norm when the masses are positive; for nonzero masses, it has derivative `-2` times
+the Dirichlet energy of the density.
 -/
 
 open Matrix
@@ -63,8 +65,9 @@ theorem indicator_killedHeatFlow (c : V → V → ℝ) (m : V → ℝ) (S : Set 
   · simp [hv, killedHeatFlow_eq_zero_of_not_mem c m S f t hv]
 
 /-- The killed heat density at `x` with respect to the masses `m`: the killed heat flow of the
-datum `δ_x / m x`. Multiplying its value at `y` by `m y` gives the killed heat matrix entry
-`killedHeatMatrix c m S t x y`, by `mass_mul_killedHeatDensity`. -/
+datum `δ_x / m x`. For a conductance `c`, nonzero masses and `x ∈ S`, multiplying its value at
+`y` by `m y` gives the killed heat matrix entry `killedHeatMatrix c m S t x y`, by
+`mass_mul_killedHeatDensity`. -/
 noncomputable def killedHeatDensity (c : V → V → ℝ) (m : V → ℝ) (S : Set V) (x : V) (t : ℝ) :
     V → ℝ :=
   killedHeatFlow c m S (Pi.single x (m x)⁻¹) t
@@ -92,8 +95,9 @@ theorem hasDerivAt_killedHeatFlow_apply {c : V → V → ℝ} (hc : IsCond G c) 
       (killedMassGenerator G c m S (killedHeatFlow c m S f t) v) t :=
   hasDerivAt_pi.1 (hasDerivAt_killedHeatFlow G hc m S f t) v
 
-/-- Along the killed heat density at `x`, the weighted square norm `∑ m v * u v ^ 2` has derivative
-`-2` times the Dirichlet energy of the density. -/
+/-- Along the killed heat density at `x`, the weighted quadratic form `∑ m v * u v ^ 2` has
+derivative `-2` times the Dirichlet energy of the density. This form is a squared norm when the
+masses are positive. -/
 theorem hasDerivAt_killedHeatDensity_weighted_sq {c : V → V → ℝ} (hc : IsCond G c)
     (m : V → ℝ) (hm : ∀ v, m v ≠ 0) (S : Set V) (x : V) (t : ℝ) :
     HasDerivAt (fun s => ∑ v, m v * (killedHeatDensity c m S x s v)^2)
@@ -166,8 +170,8 @@ theorem killedHeatDensity_weighted_L1_le_one {c : V → V → ℝ} (hc : IsCond 
     mass_mul_killedHeatDensity G hc m (fun v => (hm v).ne') S hx]
   exact (killedHeatMatrix_isSubstochastic G hc m hm S ht).2 x
 
-/-- Self-adjointness and the semigroup law identify the squared L2 norm with exactly the diagonal
-density at twice the time. -/
+/-- Reversibility and the semigroup law identify the weighted quadratic sum with the diagonal
+density at twice the time. For positive masses, this sum is the squared weighted L2 norm. -/
 theorem killedHeatDensity_weighted_sq_eq_double {c : V → V → ℝ} (hc : IsCond G c) (m : V → ℝ)
     (hm : ∀ v, m v ≠ 0) (S : Set V) {x : V} (hx : x ∈ S) (t : ℝ) :
     (∑ y, m y * (killedHeatDensity c m S x t y)^2) =

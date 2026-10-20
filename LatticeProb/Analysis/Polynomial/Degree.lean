@@ -10,9 +10,10 @@ import Mathlib.Data.Real.Basic
 /-!
 # Degree bounds for formal partial derivatives and quadratic multipliers
 
-A formal partial derivative lowers the total degree by at most one. Consequently, multiplying a
-polynomial of total degree at most `m` by a polynomial `A` of total degree at most `2` and applying
-the formal Laplacian gives a polynomial of total degree at most `m`. Hence `q ↦ Δ(A q)` restricts
+A formal partial derivative lowers a supplied positive degree bound by one. Consequently,
+multiplying a polynomial of total degree at most `m` by a polynomial `A` of total degree at most
+`2` and applying the formal Laplacian gives a polynomial of total degree at most `m`.
+Hence `q ↦ Δ(A q)` restricts
 to a linear endomorphism of the finite-dimensional space of polynomials of total degree at most `m`.
 -/
 

@@ -911,6 +911,8 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.Network.ConductanceGraph.existsUnique_anchored_trace_minimizer`: when every vertex can reach `A`, for every finite-energy `u` there is exactly one energy minimizer among finite-energy functions equal to `u` on `A`.
 - `LatticeProb.MetricGeometry.infEDist_compl_eq_infEDist_frontier` and `LatticeProb.MetricGeometry.internalEDist_eq_edist_of_le_infEDist`: in a length space the distance to the complement of an open set is the distance to its frontier, and in a proper length space the internal distance of `V` equals the distance for points closer to each other than to `∂V`.
 - `LatticeProb.es_resample_identity` and `LatticeProb.es_half_sq_eq_posPart_sq`: the conditional-variance terms of the σ-algebra Efron–Stein inequality written with a resampled copy, and their positive-part form.
+- `LatticeProb.condIndepEv_condCopy` and `LatticeProb.aeDeterminedBy_of_condCopy_ae_eq`: a copy of `Y` that is conditionally independent of `Y` given `X`, built from the conditional distribution; if it equals `Y` almost surely, then `Y` is almost surely a measurable function of `X`.
+- `LatticeProb.MetricGeometry.internalEDist_eq_of_isLocalIsometryOn`: local isometries preserve curve lengths and internal distances.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1246,7 +1248,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Analysis/Polynomial/BallVanishing.lean`, `LatticeProb/Analysis/Polynomial/Analytic.lean`, `LatticeProb/Prob/CondIndepDetermined.lean`, `LatticeProb/Network/ConductanceHarmonic.lean`, `LatticeProb/Network/EnergyENN.lean`,
 `LatticeProb/Network/HeatPositivity.lean`, `LatticeProb/Network/DirichletSpaceComplete.lean`, `LatticeProb/Network/AnchoredTraceMinimizer.lean`, `LatticeProb/Topology/Length/SetDist.lean`, `LatticeProb/Prob/GaussSupTailField.lean`,
 `LatticeProb/Network/ConductanceBridge.lean`, `LatticeProb/Analysis/Polynomial/BoundaryApproximation.lean`, `LatticeProb/Analysis/Polynomial/Dirichlet.lean`, `LatticeProb/Prob/AEDetermined.lean`, `LatticeProb/Prob/CondIndepEvJoin.lean`,
-`LatticeProb/Network/HeatKernel.lean`, `LatticeProb/Network/AnchoredMinimizer.lean`, `LatticeProb/Topology/Length/InternalOps.lean`, `LatticeProb/Prob/EfronSteinSigmaResample.lean`)
+`LatticeProb/Network/HeatKernel.lean`, `LatticeProb/Network/AnchoredMinimizer.lean`, `LatticeProb/Topology/Length/InternalOps.lean`, `LatticeProb/Prob/EfronSteinSigmaResample.lean`,
+`LatticeProb/Prob/CondCopies.lean`, `LatticeProb/Topology/Length/InternalLimit.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for

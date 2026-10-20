@@ -440,6 +440,8 @@ import LatticeProb.Network.HeatKernel
 import LatticeProb.Network.AnchoredMinimizer
 import LatticeProb.Topology.Length.InternalOps
 import LatticeProb.Prob.EfronSteinSigmaResample
+import LatticeProb.Prob.CondCopies
+import LatticeProb.Topology.Length.InternalLimit
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords

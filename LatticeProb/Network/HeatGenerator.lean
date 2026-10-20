@@ -12,13 +12,15 @@ import Mathlib.Analysis.Calculus.Deriv.Pow
 # Mass generators on a finite network
 
 For a conductance `c` of a locally finite graph `G` and a vertex mass `m` with no zero entry, the
-mass generator `f ↦ Δ_c f / m` has jump rates `c(v, w) / m(v)`, where `Δ_c` is the network
-Laplacian `netLaplacian`. This file defines the mass generator and its killed restriction to a
+mass generator `f ↦ Δ_c f / m` has coefficients `c(v, w) / m(v)`, which are jump rates when
+the masses are positive. Here `Δ_c` is the network Laplacian `netLaplacian`.
+This file defines the mass generator and its killed restriction to a
 vertex set `S` (extend by zero, apply the generator, keep the values on `S`).
 
 It proves, for both generators, the weighted Green identity, the symmetry of the weighted pairing
 and the energy identity, all with the Dirichlet energy `dirichletEnergy`. It also differentiates
-the weighted square norm `∑ m v * (u s v) ^ 2` along a family `u` that solves the killed generator
+the weighted quadratic form `∑ m v * (u s v) ^ 2` (a squared norm when the masses are positive)
+along a family `u` that solves the killed generator
 equation. The identities follow from the Green identity `green_netLaplacian`. The bridge lemma
 `netLaplacian_eq_sum_univ` rewrites the neighbour sum defining `netLaplacian` as a sum over all
 vertices.
@@ -28,7 +30,8 @@ namespace LatticeProb.Network
 
 variable {V : Type*} [Fintype V]
 
-/-- The mass generator `f ↦ Δ_c f / m`, with jump rates `c(v, w) / m(v)`. -/
+/-- The mass generator `f ↦ Δ_c f / m`. For a conductance `c` and positive masses, its jump
+rates are `c(v, w) / m(v)`. -/
 noncomputable def massGenerator (G : SimpleGraph V) [G.LocallyFinite] (c : V → V → ℝ)
     (m : V → ℝ) (f : V → ℝ) (v : V) : ℝ :=
   netLaplacian G c f v / m v
@@ -132,8 +135,9 @@ theorem killedMassGenerator_energy {c : V → V → ℝ} (hc : IsCond G c) (m : 
   simp only [dirichletEnergy, neg_mul, mul_assoc, pow_two]
 
 /-- Along a family `u` that solves the killed generator equation `hu` at time `t`, the weighted
-square norm `∑ m v * (u s v) ^ 2` has derivative `-2 * dirichletEnergy c (S.indicator (u t))` at
-`t`. The generator equation is an explicit premise of this calculus lemma. -/
+quadratic form `∑ m v * (u s v) ^ 2` has derivative
+`-2 * dirichletEnergy c (S.indicator (u t))` at `t`. This form is a squared norm when the masses
+are positive. The generator equation is an explicit premise of this calculus lemma. -/
 theorem hasDerivAt_weighted_sq_of_killed_heat {c : V → V → ℝ} (hc : IsCond G c) (m : V → ℝ)
     (hm : ∀ v, m v ≠ 0) (S : Set V) (u : ℝ → V → ℝ) (t : ℝ)
     (hu : ∀ v, HasDerivAt (fun s => u s v) (killedMassGenerator G c m S (u t) v) t) :

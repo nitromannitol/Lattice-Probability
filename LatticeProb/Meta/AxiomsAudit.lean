@@ -131,6 +131,8 @@ import LatticeProb.Network.HeatKernel
 import LatticeProb.Network.AnchoredMinimizer
 import LatticeProb.Topology.Length.InternalOps
 import LatticeProb.Prob.EfronSteinSigmaResample
+import LatticeProb.Prob.CondCopies
+import LatticeProb.Topology.Length.InternalLimit
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -861,3 +863,6 @@ library.
 #print axioms LatticeProb.MetricGeometry.internalEDist_eq_edist_of_le_infEDist
 #print axioms LatticeProb.es_resample_identity
 #print axioms LatticeProb.es_half_sq_eq_posPart_sq
+#print axioms LatticeProb.condIndepEv_condCopy
+#print axioms LatticeProb.aeDeterminedBy_of_condCopy_ae_eq
+#print axioms LatticeProb.MetricGeometry.internalEDist_eq_of_isLocalIsometryOn
