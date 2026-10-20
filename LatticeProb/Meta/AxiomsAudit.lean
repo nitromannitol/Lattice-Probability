@@ -127,6 +127,10 @@ import LatticeProb.Analysis.Polynomial.BoundaryApproximation
 import LatticeProb.Analysis.Polynomial.Dirichlet
 import LatticeProb.Prob.AEDetermined
 import LatticeProb.Prob.CondIndepEvJoin
+import LatticeProb.Network.HeatKernel
+import LatticeProb.Network.AnchoredMinimizer
+import LatticeProb.Topology.Length.InternalOps
+import LatticeProb.Prob.EfronSteinSigmaResample
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -849,3 +853,11 @@ library.
 #print axioms LatticeProb.exists_harmonic_polynomial_on_sphere_of_brownianLaw
 #print axioms LatticeProb.aeDeterminedBy_of_condIndepEv_of_ae_eq
 #print axioms LatticeProb.condIndepEv_sup_of_condIndepEv
+#print axioms LatticeProb.Network.killedHeatDensity_symmetric
+#print axioms LatticeProb.Network.killedHeatDensity_weighted_L1_le_one
+#print axioms LatticeProb.Network.killedHeatDensity_weighted_sq_eq_double
+#print axioms LatticeProb.Network.ConductanceGraph.existsUnique_anchored_trace_minimizer
+#print axioms LatticeProb.MetricGeometry.infEDist_compl_eq_infEDist_frontier
+#print axioms LatticeProb.MetricGeometry.internalEDist_eq_edist_of_le_infEDist
+#print axioms LatticeProb.es_resample_identity
+#print axioms LatticeProb.es_half_sq_eq_posPart_sq

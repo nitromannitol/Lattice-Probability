@@ -907,6 +907,10 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.exists_harmonic_polynomial_on_sphere_of_brownianLaw`: given a standard Brownian law in dimension `d`, every real polynomial agrees on a sphere with a polynomial of zero Laplacian.
 - `LatticeProb.AEDeterminedBy` and `LatticeProb.aeDeterminedBy_of_condIndepEv_of_ae_eq`: a random variable with values in a standard Borel space whose two conditionally independent copies given `X` agree almost surely is almost surely a measurable function of `X`.
 - `LatticeProb.condIndepEv_sup_of_condIndepEv`: if `A ⟂ B | G`, `A ⟂ C | G` and `B ⟂ C | A ⊔ G`, then `A ⟂ B ⊔ C | G`.
+- `LatticeProb.Network.killedHeatDensity` and `LatticeProb.Network.killedHeatDensity_weighted_sq_eq_double`: the killed heat density of a finite network is symmetric and nonnegative, has weighted `L¹` norm at most one, and its weighted `L²` norm is the diagonal density at twice the time.
+- `LatticeProb.Network.ConductanceGraph.existsUnique_anchored_trace_minimizer`: when every vertex can reach `A`, for every finite-energy `u` there is exactly one energy minimizer among finite-energy functions equal to `u` on `A`.
+- `LatticeProb.MetricGeometry.infEDist_compl_eq_infEDist_frontier` and `LatticeProb.MetricGeometry.internalEDist_eq_edist_of_le_infEDist`: in a length space the distance to the complement of an open set is the distance to its frontier, and in a proper length space the internal distance of `V` equals the distance for points closer to each other than to `∂V`.
+- `LatticeProb.es_resample_identity` and `LatticeProb.es_half_sq_eq_posPart_sq`: the conditional-variance terms of the σ-algebra Efron–Stein inequality written with a resampled copy, and their positive-part form.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1241,7 +1245,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Network/HeatUniformization.lean`, `LatticeProb/Network/KilledHeat.lean`, `LatticeProb/Network/DirichletSpace.lean`, `LatticeProb/Network/WeightedGradient.lean`, `LatticeProb/Network/AnchoredEnergy.lean`,
 `LatticeProb/Analysis/Polynomial/BallVanishing.lean`, `LatticeProb/Analysis/Polynomial/Analytic.lean`, `LatticeProb/Prob/CondIndepDetermined.lean`, `LatticeProb/Network/ConductanceHarmonic.lean`, `LatticeProb/Network/EnergyENN.lean`,
 `LatticeProb/Network/HeatPositivity.lean`, `LatticeProb/Network/DirichletSpaceComplete.lean`, `LatticeProb/Network/AnchoredTraceMinimizer.lean`, `LatticeProb/Topology/Length/SetDist.lean`, `LatticeProb/Prob/GaussSupTailField.lean`,
-`LatticeProb/Network/ConductanceBridge.lean`, `LatticeProb/Analysis/Polynomial/BoundaryApproximation.lean`, `LatticeProb/Analysis/Polynomial/Dirichlet.lean`, `LatticeProb/Prob/AEDetermined.lean`, `LatticeProb/Prob/CondIndepEvJoin.lean`)
+`LatticeProb/Network/ConductanceBridge.lean`, `LatticeProb/Analysis/Polynomial/BoundaryApproximation.lean`, `LatticeProb/Analysis/Polynomial/Dirichlet.lean`, `LatticeProb/Prob/AEDetermined.lean`, `LatticeProb/Prob/CondIndepEvJoin.lean`,
+`LatticeProb/Network/HeatKernel.lean`, `LatticeProb/Network/AnchoredMinimizer.lean`, `LatticeProb/Topology/Length/InternalOps.lean`, `LatticeProb/Prob/EfronSteinSigmaResample.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
