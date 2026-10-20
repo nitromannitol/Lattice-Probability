@@ -25,7 +25,7 @@ This is the statement that a proper length space is geodesic, in the sense of mi
 as in Burago–Burago–Ivanov, *A course in metric geometry*, Cor. 2.5.20, and Petrunin, *Pure metric
 geometry* (arXiv:2007.09846), Prop. 1.28 ("any proper length space is geodesic").
 
-Proof (BBI's route, Prop. 2.5.19 via Arzelà–Ascoli Thm 2.5.14 and lower semicontinuity of
+Proof (Burago–Burago–Ivanov's route, Prop. 2.5.19 via Arzelà–Ascoli Thm 2.5.14 and lower semicontinuity of
 length Prop. 2.3.4(iv)): take paths `γₙ` of length `≤ d(x, y) + 1/(n+1)`, reparametrize them at
 constant speed (so they are uniformly `(d(x,y)+1)`-Lipschitz on `[0,1]`, `exists_lipschitz_path`),
 extract a uniformly convergent subsequence by mathlib's Arzelà–Ascoli

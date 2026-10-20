@@ -11,7 +11,7 @@ import LatticeProb.Topology.Length.VariationCompat
 # Menger's lemma: length spaces from approximate midpoints
 
 A complete metric space in which any two points have an `ε`-midpoint for every `ε > 0` is a length
-space (BBI Thm 2.4.16(2)). The proof builds, for each pair of points, a curve on `[0, 1]` from the
+space (Burago–Burago–Ivanov, Thm. 2.4.16(2)). The proof builds, for each pair of points, a curve on `[0, 1]` from the
 dyadic midpoint construction of `LatticeProb.Topology.Length.Midpoint`: the dyadic points at level
 `n` are `(d(x, y) + ε) / 2ⁿ`-close consecutively, the limit along each `t` exists by completeness,
 and the resulting curve is `(d(x, y) + ε)`-Lipschitz on `[0, 1]`, so its length is at most
@@ -129,7 +129,7 @@ theorem curveLength_le_of_dist_le_mul {P : ℝ → X} {C : ℝ} (hC : 0 ≤ C)
     _ ≤ C.toNNReal * eVariationOn id (Icc (0 : ℝ) 1) := hL.comp_eVariationOn_le (mapsTo_id _)
     _ = ENNReal.ofReal C := by rw [eVariationOn_id_Icc]; simp [ENNReal.ofReal]
 
-/-- **Menger's lemma, approximate form** (BBI Thm 2.4.16(2)): a complete metric space with
+/-- **Menger's lemma, approximate form** (Burago–Burago–Ivanov, Thm. 2.4.16(2)): a complete metric space with
 `ε`-midpoints for all `ε > 0` is a length space. The hypotheses are `[CompleteSpace X]` and
 `h : HasApproxMidpoints X`, i.e. any two points `x, y` have an `ε`-midpoint for every `ε > 0`. -/
 theorem isLengthSpace_of_hasApproxMidpoints [CompleteSpace X] (h : HasApproxMidpoints X) :
