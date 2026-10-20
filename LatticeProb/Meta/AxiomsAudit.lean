@@ -57,6 +57,16 @@ import LatticeProb.Prob.BinomialTail
 import LatticeProb.Prob.SkorokhodPartition
 import LatticeProb.Prob.SkorokhodMix
 import LatticeProb.Prob.TrivialSigma
+import LatticeProb.Prob.QuantileMap
+import LatticeProb.Prob.QuantileLimit
+import LatticeProb.Prob.BinomialDomination
+import LatticeProb.Prob.SkorokhodSpace
+import LatticeProb.Prob.TrivialSigmaJoin
+import LatticeProb.Prob.GaussPittCore
+import LatticeProb.Prob.GaussPittVector
+import LatticeProb.Prob.GaussAssociationSets
+import LatticeProb.Prob.BrownianAbsMoments
+import LatticeProb.Topology.Length.VariationCompat
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -685,3 +695,16 @@ library.
 #print axioms LatticeProb.Skorokhod.skMix_isProbabilityMeasure
 #print axioms LatticeProb.isTrivialSigma_of_indep_self
 #print axioms LatticeProb.tendsto_integral_abs_condExp_sub
+#print axioms LatticeProb.isQuantile_map_affine_iff
+#print axioms LatticeProb.isQuantile_iff_eq_lowerQuantile
+#print axioms LatticeProb.IsQuantile.of_tendsto
+#print axioms LatticeProb.IsQuantile.of_tendstoInDistribution
+#print axioms LatticeProb.measureReal_binomDom_hoeffding
+#print axioms LatticeProb.Skorokhod.exists_skData
+#print axioms LatticeProb.isTrivialSigma_iInf_sup
+#print axioms LatticeProb.Pitt.integral_mul_le_integral_mul_stdGaussian
+#print axioms LatticeProb.Pitt.exists_gram_map_eq
+#print axioms LatticeProb.Pitt.tendsto_closedApprox
+#print axioms LatticeProb.brownian_integral_abs_pow_eq
+#print axioms LatticeProb.eVariationOn_image_range_of_monotone
+#print axioms LatticeProb.eVariationOn_id_Icc

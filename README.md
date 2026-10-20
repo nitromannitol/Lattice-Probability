@@ -844,6 +844,13 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.bernoulli_hoeffding`: for `0 ≤ q ≤ 1` and real `l`, `1 - q + q e^{-l} ≤ exp(-l q + l²/8)`.
 - `LatticeProb.Skorokhod.exists_skorokhodPartition`, `LatticeProb.Skorokhod.skMix_key` and `LatticeProb.Skorokhod.skMix_isProbabilityMeasure`: a Borel probability measure on a separable pseudometric space has, for each `ε > 0`, a finite measurable partition with null frontiers, a remainder of mass `< ε` and other pieces of diameter `< ε`; and the mixture of conditional measures used in the Skorokhod construction recovers the law and is a probability measure.
 - `LatticeProb.IsTrivialSigma`, `LatticeProb.isTrivialSigma_of_indep_self` and `LatticeProb.tendsto_integral_abs_condExp_sub`: a σ-algebra on which a probability measure takes only the values 0 and 1, the triviality of a σ-algebra independent of itself, and `E[f | 𝒜 n] → E f` in `L¹` along a decreasing sequence of σ-algebras with trivial intersection.
+- `LatticeProb.isQuantile_map_affine_iff`, `LatticeProb.isQuantile_iff_eq_lowerQuantile` and `LatticeProb.IsQuantile.of_tendsto`: quantiles move with monotone and affine maps, are unique when the law has no gap at the quantile, and limits of quantiles are quantiles of the weak limit (also under convergence in distribution and in measure).
+- `LatticeProb.measureReal_binomDom_hoeffding`: for selections `G k` adapted to a filtration and successes `A k` whose conditional probability given the past is at least `q` on `G k`, `P[#{k<n : G k} ≥ j and #{k<n : G k ∩ A k} ≤ (q - δ) j] ≤ e^{-2δ²j}`.
+- `LatticeProb.Skorokhod.exists_skData`: for `μₙ → μ` weakly on a separable pseudometric space, nested finite partitions with null frontiers, small remainders and small cells, with `(1 - ε) μ (B) ≤ μₙ (B)` along a subsequence (the data of the Skorokhod construction).
+- `LatticeProb.isTrivialSigma_iInf_sup`: if `𝒜 n` and `ℬ n` decrease, are independent, and have trivial intersections, then so does the join `𝒜 n ⊔ ℬ n`.
+- `LatticeProb.Pitt.integral_mul_le_integral_mul_stdGaussian` and `LatticeProb.Pitt.exists_gram_map_eq`: under the standard Gaussian measure, `E[F] E[G] ≤ E[F G]` for bounded `C¹` functions with bounded continuous gradients and `⟪∇F(x), ∇G(y)⟫ ≥ 0` for all `x, y`; and every Gaussian vector in `ι → ℝ` is the image of a standard Gaussian under a Gram map. `LatticeProb.Pitt.tendsto_closedApprox` approximates the indicator of a closed upper set by monotone Lipschitz functions.
+- `LatticeProb.brownian_integral_abs_pow_eq`: `E|B t|ⁿ = E|N(0,1)|ⁿ · t^{n/2}` for a Brownian motion `B` (`IsPreBrownianReal`).
+- `LatticeProb.eVariationOn_id_Icc` and `LatticeProb.eVariationOn_image_range_of_monotone`: the variation of the identity on `[a, b]` is `b - a`, and the variation of `f` on the image of `{0, …, n}` under a monotone sequence is the sum of the consecutive distances (backported from a newer Mathlib).
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1165,7 +1172,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/GaussLipConcentration.lean`, `LatticeProb/Prob/BrownianMomentsCore.lean`, `LatticeProb/Analysis/HessianTaylorRemainder.lean`, `LatticeProb/Prob/DyadicExitApprox.lean`, `LatticeProb/Prob/BrownianPathSpace.lean`,
 `LatticeProb/Prob/BrownianIncrementMoments.lean`, `LatticeProb/Prob/BrownianWeakMarkovPath.lean`, `LatticeProb/Prob/BrownianFiniteStopping.lean`, `LatticeProb/Prob/BrownianHessianTaylor.lean`,
 `LatticeProb/Prob/BrownianPredictableTaylor.lean`, `LatticeProb/Prob/BrownianStoppedSum.lean`, `LatticeProb/Prob/BrownianStoppedLimit.lean`, `LatticeProb/Prob/BrownianPathHarmonicExit.lean`,
-`LatticeProb/Prob/Quantile.lean`, `LatticeProb/Prob/BinomialTail.lean`, `LatticeProb/Prob/SkorokhodPartition.lean`, `LatticeProb/Prob/SkorokhodMix.lean`, `LatticeProb/Prob/TrivialSigma.lean`)
+`LatticeProb/Prob/Quantile.lean`, `LatticeProb/Prob/BinomialTail.lean`, `LatticeProb/Prob/SkorokhodPartition.lean`, `LatticeProb/Prob/SkorokhodMix.lean`, `LatticeProb/Prob/TrivialSigma.lean`,
+`LatticeProb/Prob/QuantileMap.lean`, `LatticeProb/Prob/QuantileLimit.lean`, `LatticeProb/Prob/BinomialDomination.lean`, `LatticeProb/Prob/SkorokhodSpace.lean`, `LatticeProb/Prob/TrivialSigmaJoin.lean`, `LatticeProb/Prob/GaussPittCore.lean`, `LatticeProb/Prob/GaussPittVector.lean`, `LatticeProb/Prob/GaussAssociationSets.lean`, `LatticeProb/Prob/BrownianAbsMoments.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for

@@ -366,6 +366,16 @@ import LatticeProb.Prob.BinomialTail
 import LatticeProb.Prob.SkorokhodPartition
 import LatticeProb.Prob.SkorokhodMix
 import LatticeProb.Prob.TrivialSigma
+import LatticeProb.Prob.QuantileMap
+import LatticeProb.Prob.QuantileLimit
+import LatticeProb.Prob.BinomialDomination
+import LatticeProb.Prob.SkorokhodSpace
+import LatticeProb.Prob.TrivialSigmaJoin
+import LatticeProb.Prob.GaussPittCore
+import LatticeProb.Prob.GaussPittVector
+import LatticeProb.Prob.GaussAssociationSets
+import LatticeProb.Prob.BrownianAbsMoments
+import LatticeProb.Topology.Length.VariationCompat
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
