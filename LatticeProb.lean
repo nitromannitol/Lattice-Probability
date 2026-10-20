@@ -376,6 +376,11 @@ import LatticeProb.Prob.GaussPittVector
 import LatticeProb.Prob.GaussAssociationSets
 import LatticeProb.Prob.BrownianAbsMoments
 import LatticeProb.Topology.Length.VariationCompat
+import LatticeProb.Prob.SkorokhodLaw
+import LatticeProb.Prob.BrownianGermZeroOne
+import LatticeProb.Prob.BrownianAbsMomentsFubini
+import LatticeProb.Prob.GaussPittSmooth
+import LatticeProb.Topology.Length.CurveLength
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords

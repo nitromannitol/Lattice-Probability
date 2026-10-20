@@ -851,6 +851,11 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.Pitt.integral_mul_le_integral_mul_stdGaussian` and `LatticeProb.Pitt.exists_gram_map_eq`: under the standard Gaussian measure, `E[F] E[G] ≤ E[F G]` for bounded `C¹` functions with bounded continuous gradients and `⟪∇F(x), ∇G(y)⟫ ≥ 0` for all `x, y`; and every Gaussian vector in `ι → ℝ` is the image of a standard Gaussian under a Gram map. `LatticeProb.Pitt.tendsto_closedApprox` approximates the indicator of a closed upper set by monotone Lipschitz functions.
 - `LatticeProb.brownian_integral_abs_pow_eq`: `E|B t|ⁿ = E|N(0,1)|ⁿ · t^{n/2}` for a Brownian motion `B` (`IsPreBrownianReal`).
 - `LatticeProb.eVariationOn_id_Icc` and `LatticeProb.eVariationOn_image_range_of_monotone`: the variation of the identity on `[a, b]` is `b - a`, and the variation of `f` on the image of `{0, …, n}` under a monotone sequence is the sum of the consecutive distances (backported from a newer Mathlib).
+- `LatticeProb.Skorokhod.SkData.map_X'`: the random elements of the Skorokhod construction on a product of unit intervals have the prescribed laws `Pₙ`.
+- `LatticeProb.isTrivialSigma_iInf_bmPast` (Blumenthal's zero-one law): the germ σ-algebra `⋂_{t>0} σ(B_s : s ≤ t)` of a Brownian motion is trivial; `LatticeProb.isTrivialSigma_iInf_bmPast_of` gives the same for a pre-Brownian motion that is a.s. continuous at `0`.
+- `LatticeProb.brownian_integral_integral_abs_pow_le`: for a Brownian motion with continuous paths, `E ∫₀ˢ |B_r|ⁿ dr ≤ E|N(0,1)|ⁿ · s^{1+n/2}`.
+- `LatticeProb.Pitt.integral_mul_le_of_contDiff` (Pitt's inequality): for a Gaussian vector with nonnegative covariances and bounded, Lipschitz, monotone `C¹` functions `f, g`, `E[f(X)] E[g(X)] ≤ E[f(X) g(X)]`.
+- `LatticeProb.MetricGeometry.curveLength` and `LatticeProb.MetricGeometry.curveLength_eq_partitionLengthSup`: the length of a curve `ℝ → X` on `[a, b]` in an extended metric space, its agreement with the supremum over partitions, additivity, invariance under monotone reparametrization and lower semicontinuity.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1173,7 +1178,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/BrownianIncrementMoments.lean`, `LatticeProb/Prob/BrownianWeakMarkovPath.lean`, `LatticeProb/Prob/BrownianFiniteStopping.lean`, `LatticeProb/Prob/BrownianHessianTaylor.lean`,
 `LatticeProb/Prob/BrownianPredictableTaylor.lean`, `LatticeProb/Prob/BrownianStoppedSum.lean`, `LatticeProb/Prob/BrownianStoppedLimit.lean`, `LatticeProb/Prob/BrownianPathHarmonicExit.lean`,
 `LatticeProb/Prob/Quantile.lean`, `LatticeProb/Prob/BinomialTail.lean`, `LatticeProb/Prob/SkorokhodPartition.lean`, `LatticeProb/Prob/SkorokhodMix.lean`, `LatticeProb/Prob/TrivialSigma.lean`,
-`LatticeProb/Prob/QuantileMap.lean`, `LatticeProb/Prob/QuantileLimit.lean`, `LatticeProb/Prob/BinomialDomination.lean`, `LatticeProb/Prob/SkorokhodSpace.lean`, `LatticeProb/Prob/TrivialSigmaJoin.lean`, `LatticeProb/Prob/GaussPittCore.lean`, `LatticeProb/Prob/GaussPittVector.lean`, `LatticeProb/Prob/GaussAssociationSets.lean`, `LatticeProb/Prob/BrownianAbsMoments.lean`)
+`LatticeProb/Prob/QuantileMap.lean`, `LatticeProb/Prob/QuantileLimit.lean`, `LatticeProb/Prob/BinomialDomination.lean`, `LatticeProb/Prob/SkorokhodSpace.lean`, `LatticeProb/Prob/TrivialSigmaJoin.lean`, `LatticeProb/Prob/GaussPittCore.lean`, `LatticeProb/Prob/GaussPittVector.lean`, `LatticeProb/Prob/GaussAssociationSets.lean`, `LatticeProb/Prob/BrownianAbsMoments.lean`,
+`LatticeProb/Prob/SkorokhodLaw.lean`, `LatticeProb/Prob/BrownianGermZeroOne.lean`, `LatticeProb/Prob/BrownianAbsMomentsFubini.lean`, `LatticeProb/Prob/GaussPittSmooth.lean`, `LatticeProb/Topology/Length/CurveLength.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
