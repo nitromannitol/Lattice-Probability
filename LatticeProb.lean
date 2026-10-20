@@ -431,6 +431,11 @@ import LatticeProb.Network.DirichletSpaceComplete
 import LatticeProb.Network.AnchoredTraceMinimizer
 import LatticeProb.Topology.Length.SetDist
 import LatticeProb.Prob.GaussSupTailField
+import LatticeProb.Network.ConductanceBridge
+import LatticeProb.Analysis.Polynomial.BoundaryApproximation
+import LatticeProb.Analysis.Polynomial.Dirichlet
+import LatticeProb.Prob.AEDetermined
+import LatticeProb.Prob.CondIndepEvJoin
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
