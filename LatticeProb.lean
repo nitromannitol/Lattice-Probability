@@ -426,6 +426,11 @@ import LatticeProb.Analysis.Polynomial.Analytic
 import LatticeProb.Prob.CondIndepDetermined
 import LatticeProb.Network.ConductanceHarmonic
 import LatticeProb.Network.EnergyENN
+import LatticeProb.Network.HeatPositivity
+import LatticeProb.Network.DirichletSpaceComplete
+import LatticeProb.Network.AnchoredTraceMinimizer
+import LatticeProb.Topology.Length.SetDist
+import LatticeProb.Prob.GaussSupTailField
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords

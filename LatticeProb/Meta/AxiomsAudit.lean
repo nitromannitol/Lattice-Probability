@@ -117,6 +117,11 @@ import LatticeProb.Analysis.Polynomial.Analytic
 import LatticeProb.Prob.CondIndepDetermined
 import LatticeProb.Network.ConductanceHarmonic
 import LatticeProb.Network.EnergyENN
+import LatticeProb.Network.HeatPositivity
+import LatticeProb.Network.DirichletSpaceComplete
+import LatticeProb.Network.AnchoredTraceMinimizer
+import LatticeProb.Topology.Length.SetDist
+import LatticeProb.Prob.GaussSupTailField
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -822,3 +827,12 @@ library.
 #print axioms LatticeProb.Network.ConductanceGraph.IsHarmonicAt.tsum_eq_zero
 #print axioms LatticeProb.Network.ConductanceGraph.energyENN_eq_top_iff_not_hasFiniteEnergy
 #print axioms LatticeProb.Network.ConductanceGraph.energyENN_eq_ofReal_Energy
+#print axioms LatticeProb.Network.killedHeatMatrix_isSubstochastic
+#print axioms LatticeProb.Network.killedHeatMatrix_diagonal_pos
+#print axioms LatticeProb.Network.ConductanceGraph.DirichletSpace.instCompleteSpace
+#print axioms LatticeProb.Network.ConductanceGraph.isClosed_zeroOn
+#print axioms LatticeProb.Network.ConductanceGraph.isClosed_zeroTraceGradient
+#print axioms LatticeProb.MetricGeometry.IsCompact.exists_setEDist_eq_edist
+#print axioms LatticeProb.MetricGeometry.IsGeodesicCurveBetween.isGeodesicCurve
+#print axioms LatticeProb.GaussConc.SupTail.borellTIS_iSup_continuous
+#print axioms LatticeProb.GaussConc.SupTail.tail_iSup_abs_le_gaussian
