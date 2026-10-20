@@ -390,6 +390,12 @@ import LatticeProb.Prob.GaussPittLipschitz
 import LatticeProb.Prob.GaussBorellVector
 import LatticeProb.Prob.GaussKahaneBound
 import LatticeProb.Topology.Length.LengthSpace
+import LatticeProb.Prob.Skorokhod
+import LatticeProb.Prob.GaussKahaneInterp
+import LatticeProb.Prob.GaussSupTailBorell
+import LatticeProb.Topology.Length.CurveNatural
+import LatticeProb.Topology.Length.Midpoint
+import LatticeProb.Topology.Length.Internal
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
