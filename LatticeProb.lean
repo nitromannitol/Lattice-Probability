@@ -401,6 +401,11 @@ import LatticeProb.Prob.GaussBorellSeq
 import LatticeProb.Prob.GaussKahaneVector
 import LatticeProb.Topology.Length.LengthGeodesic
 import LatticeProb.Topology.Length.Menger
+import LatticeProb.Prob.GaussAssociationFun
+import LatticeProb.Prob.GaussKahaneRpow
+import LatticeProb.Topology.Length.Geodesic
+import LatticeProb.Topology.Length.LengthLimit
+import LatticeProb.Prob.SkorokhodRepresentation
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
