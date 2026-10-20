@@ -436,6 +436,10 @@ import LatticeProb.Analysis.Polynomial.BoundaryApproximation
 import LatticeProb.Analysis.Polynomial.Dirichlet
 import LatticeProb.Prob.AEDetermined
 import LatticeProb.Prob.CondIndepEvJoin
+import LatticeProb.Network.HeatKernel
+import LatticeProb.Network.AnchoredMinimizer
+import LatticeProb.Topology.Length.InternalOps
+import LatticeProb.Prob.EfronSteinSigmaResample
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
