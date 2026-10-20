@@ -416,6 +416,11 @@ import LatticeProb.Network.HeatGenerator
 import LatticeProb.Network.DirichletForm
 import LatticeProb.Analysis.Polynomial.Laplacian
 import LatticeProb.Prob.GaussKahane2Const
+import LatticeProb.Network.HeatUniformization
+import LatticeProb.Network.KilledHeat
+import LatticeProb.Network.DirichletSpace
+import LatticeProb.Network.WeightedGradient
+import LatticeProb.Network.AnchoredEnergy
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
