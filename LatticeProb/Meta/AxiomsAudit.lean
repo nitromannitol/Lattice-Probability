@@ -87,6 +87,11 @@ import LatticeProb.Prob.GaussSupTailBorell
 import LatticeProb.Topology.Length.CurveNatural
 import LatticeProb.Topology.Length.Midpoint
 import LatticeProb.Topology.Length.Internal
+import LatticeProb.Prob.GaussAssociationEvents
+import LatticeProb.Prob.GaussBorellSeq
+import LatticeProb.Prob.GaussKahaneVector
+import LatticeProb.Topology.Length.LengthGeodesic
+import LatticeProb.Topology.Length.Menger
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -755,3 +760,10 @@ library.
 #print axioms LatticeProb.MetricGeometry.hasApproxMidpoints_of_isLengthSpace
 #print axioms LatticeProb.MetricGeometry.curveLength_eq_iSup_internalEDist
 #print axioms LatticeProb.MetricGeometry.internalEDist_eq_edist_of_ball_subset
+#print axioms LatticeProb.Pitt.measureReal_mul_le_inter
+#print axioms LatticeProb.Pitt.prod_prob_le_biInter
+#print axioms LatticeProb.Pitt.exists_measure_compl_ge_of_prod_le
+#print axioms LatticeProb.GaussConc.SupTail.borellTIS_iSup_seq
+#print axioms LatticeProb.Kahane.kahane_convexity
+#print axioms LatticeProb.MetricGeometry.exists_shortest_path
+#print axioms LatticeProb.MetricGeometry.isLengthSpace_of_hasApproxMidpoints

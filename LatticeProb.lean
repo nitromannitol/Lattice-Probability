@@ -396,6 +396,11 @@ import LatticeProb.Prob.GaussSupTailBorell
 import LatticeProb.Topology.Length.CurveNatural
 import LatticeProb.Topology.Length.Midpoint
 import LatticeProb.Topology.Length.Internal
+import LatticeProb.Prob.GaussAssociationEvents
+import LatticeProb.Prob.GaussBorellSeq
+import LatticeProb.Prob.GaussKahaneVector
+import LatticeProb.Topology.Length.LengthGeodesic
+import LatticeProb.Topology.Length.Menger
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
