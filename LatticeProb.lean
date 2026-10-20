@@ -385,6 +385,11 @@ import LatticeProb.Prob.GaussBorellFinite
 import LatticeProb.Prob.GaussKahaneStein
 import LatticeProb.Prob.GaussKahaneCore
 import LatticeProb.Topology.PolishContinuousMap
+import LatticeProb.Prob.BrownianTailZeroOne
+import LatticeProb.Prob.GaussPittLipschitz
+import LatticeProb.Prob.GaussBorellVector
+import LatticeProb.Prob.GaussKahaneBound
+import LatticeProb.Topology.Length.LengthSpace
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
