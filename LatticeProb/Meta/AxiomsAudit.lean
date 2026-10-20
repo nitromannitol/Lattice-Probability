@@ -97,6 +97,11 @@ import LatticeProb.Prob.GaussKahaneRpow
 import LatticeProb.Topology.Length.Geodesic
 import LatticeProb.Topology.Length.LengthLimit
 import LatticeProb.Prob.SkorokhodRepresentation
+import LatticeProb.Prob.CondIndepEv
+import LatticeProb.Analysis.ReciprocalPowerDecay
+import LatticeProb.Analysis.MatrixHeat
+import LatticeProb.Network.Conductance
+import LatticeProb.Analysis.Polynomial.Degree
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -776,3 +781,6 @@ library.
 #print axioms LatticeProb.Kahane.kahane_convexity_rpow
 #print axioms LatticeProb.MetricGeometry.compactSpace_metricFunSpace
 #print axioms LatticeProb.Skorokhod.exists_skorokhod_representation
+#print axioms LatticeProb.condIndep_iff_condIndepEv
+#print axioms LatticeProb.reciprocal_power_bound_of_power_decay
+#print axioms LatticeProb.Network.ConductanceGraph.tsum_gradSq_eq
