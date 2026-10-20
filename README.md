@@ -887,6 +887,11 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.Network.ConductanceGraph.dirichletForm` and `LatticeProb.Network.ConductanceGraph.dirichletSubmodule`: finite-energy functions on a conductance graph form a vector space, the Dirichlet form `½ ∑ c(x, y)(f(y) − f(x))(g(y) − g(x))` is symmetric and linear in each argument with diagonal the energy, and the finite-energy functions vanishing at a point form a submodule.
 - `LatticeProb.polynomialLaplacian_squaredNorm_mul`: for real polynomials in `d` variables, `Δ(|x|² p) = 2d·p + 4 ∑ᵢ Xᵢ ∂ᵢ p + |x|² Δp`.
 - `LatticeProb.Kahane.kahane_rpow_le_add_const` (Kahane's inequality up to a constant): for centred Gaussian vectors `X, Y` with `cov(Xᵢ, Xⱼ) ≤ cov(Yᵢ, Yⱼ) + c`, `c ≥ 0`, and weights `pᵢ > 0`, `q ≤ 0` or `q ≥ 1`, `E(∑ pᵢ e^{Xᵢ − Var Xᵢ/2})^q ≤ e^{q(q−1)c/2} E(∑ pᵢ e^{Yᵢ − Var Yᵢ/2})^q`.
+- `LatticeProb.Network.uniformizedTransition` and `LatticeProb.Network.uniformizedTransition_generator`: uniformized transition probabilities of a finite network with positive vertex masses, absorbing outside a set `W`; they are nonnegative with row sums one, and on `W` the uniformization rate times their expected increment is the mass generator.
+- `LatticeProb.Network.killedHeatMatrix` and `LatticeProb.Network.killedHeatFlow`: the matrix exponential of the killed mass generator, with the semigroup law, the value at time `0` and the killed heat equation `d/dt u = killedMassGenerator u`.
+- `LatticeProb.Network.ConductanceGraph.DirichletSpace`: for a connected conductance graph, the finite-energy functions vanishing at a base point form a real inner product space under the Dirichlet form, with norm the square root of the energy.
+- `LatticeProb.Network.ConductanceGraph.weightedGradient`: the gradient `(√(c(x, y)/2) (f(y) − f(x)))` over ordered pairs, an `ℓ²` vector exactly when `f` has finite energy, with squared norm the energy.
+- `LatticeProb.Network.ConductanceGraph.zeroTraceSubmodule` and `LatticeProb.Network.ConductanceGraph.eq_zero_of_zeroTrace_energy_zero`: finite-energy functions vanishing on a set `A` that every vertex can reach; vertex values are bounded by the energy, so zero energy forces zero.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1217,7 +1222,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/GaussAssociationEvents.lean`, `LatticeProb/Prob/GaussBorellSeq.lean`, `LatticeProb/Prob/GaussKahaneVector.lean`, `LatticeProb/Topology/Length/LengthGeodesic.lean`, `LatticeProb/Topology/Length/Menger.lean`,
 `LatticeProb/Prob/GaussAssociationFun.lean`, `LatticeProb/Prob/GaussKahaneRpow.lean`, `LatticeProb/Topology/Length/Geodesic.lean`, `LatticeProb/Topology/Length/LengthLimit.lean`,
 `LatticeProb/Prob/CondIndepEv.lean`, `LatticeProb/Analysis/ReciprocalPowerDecay.lean`, `LatticeProb/Analysis/MatrixHeat.lean`, `LatticeProb/Network/Conductance.lean`, `LatticeProb/Analysis/Polynomial/Degree.lean`,
-`LatticeProb/Prob/EfronSteinSigma.lean`, `LatticeProb/Network/HeatGenerator.lean`, `LatticeProb/Network/DirichletForm.lean`, `LatticeProb/Analysis/Polynomial/Laplacian.lean`, `LatticeProb/Prob/GaussKahane2Const.lean`)
+`LatticeProb/Prob/EfronSteinSigma.lean`, `LatticeProb/Network/HeatGenerator.lean`, `LatticeProb/Network/DirichletForm.lean`, `LatticeProb/Analysis/Polynomial/Laplacian.lean`, `LatticeProb/Prob/GaussKahane2Const.lean`,
+`LatticeProb/Network/HeatUniformization.lean`, `LatticeProb/Network/KilledHeat.lean`, `LatticeProb/Network/DirichletSpace.lean`, `LatticeProb/Network/WeightedGradient.lean`, `LatticeProb/Network/AnchoredEnergy.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for

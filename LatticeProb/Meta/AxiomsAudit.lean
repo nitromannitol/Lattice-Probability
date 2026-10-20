@@ -107,6 +107,11 @@ import LatticeProb.Network.HeatGenerator
 import LatticeProb.Network.DirichletForm
 import LatticeProb.Analysis.Polynomial.Laplacian
 import LatticeProb.Prob.GaussKahane2Const
+import LatticeProb.Network.HeatUniformization
+import LatticeProb.Network.KilledHeat
+import LatticeProb.Network.DirichletSpace
+import LatticeProb.Network.WeightedGradient
+import LatticeProb.Network.AnchoredEnergy
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -797,3 +802,11 @@ library.
 #print axioms LatticeProb.Network.ConductanceGraph.dirichletForm_self
 #print axioms LatticeProb.polynomialLaplacian_squaredNorm_mul
 #print axioms LatticeProb.Kahane.kahane_rpow_le_add_const
+#print axioms LatticeProb.Network.uniformizedTransition_generator
+#print axioms LatticeProb.Network.sum_uniformizedTransition
+#print axioms LatticeProb.Network.killedHeatMatrix_add
+#print axioms LatticeProb.Network.hasDerivAt_killedHeatFlow
+#print axioms LatticeProb.Network.ConductanceGraph.DirichletSpace.norm_sq_eq_energy
+#print axioms LatticeProb.Network.ConductanceGraph.weightedGradient_norm_sq
+#print axioms LatticeProb.Network.ConductanceGraph.weightedGradientCoord_mem_iff
+#print axioms LatticeProb.Network.ConductanceGraph.eq_of_eqOn_energy_sub_zero
