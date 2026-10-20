@@ -102,6 +102,11 @@ import LatticeProb.Analysis.ReciprocalPowerDecay
 import LatticeProb.Analysis.MatrixHeat
 import LatticeProb.Network.Conductance
 import LatticeProb.Analysis.Polynomial.Degree
+import LatticeProb.Prob.EfronSteinSigma
+import LatticeProb.Network.HeatGenerator
+import LatticeProb.Network.DirichletForm
+import LatticeProb.Analysis.Polynomial.Laplacian
+import LatticeProb.Prob.GaussKahane2Const
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -784,3 +789,11 @@ library.
 #print axioms LatticeProb.condIndep_iff_condIndepEv
 #print axioms LatticeProb.reciprocal_power_bound_of_power_decay
 #print axioms LatticeProb.Network.ConductanceGraph.tsum_gradSq_eq
+#print axioms LatticeProb.efronStein_sigma
+#print axioms LatticeProb.condExp_sup_indep_eq
+#print axioms LatticeProb.Network.killedMassGenerator_energy
+#print axioms LatticeProb.Network.hasDerivAt_weighted_sq_of_killed_heat
+#print axioms LatticeProb.Network.ConductanceGraph.dirichletForm_add_left
+#print axioms LatticeProb.Network.ConductanceGraph.dirichletForm_self
+#print axioms LatticeProb.polynomialLaplacian_squaredNorm_mul
+#print axioms LatticeProb.Kahane.kahane_rpow_le_add_const

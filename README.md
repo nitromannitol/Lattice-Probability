@@ -882,6 +882,11 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.IsSubstochastic`: matrices with nonnegative entries and row sums at most one, closed under products, powers and Poisson exponentials.
 - `LatticeProb.Network.ConductanceGraph`: conductances on a countable vertex type with summable rows (possibly infinite degree), with adjacency, total conductance and the energy `½ ∑ c(x, y)(f(y) − f(x))²`.
 - `LatticeProb.totalDegree_laplacian_mul_le` and related lemmas: degree bounds for partial derivatives and Laplacians of multivariate polynomials.
+- `LatticeProb.efronStein_sigma` (Efron–Stein inequality, σ-algebra form): for independent sub-σ-algebras `G i` and `F ∈ L²` measurable for `⨆ i ∈ s, G i`, `Var F ≤ ∑ i ∈ s, E[(F − E[F | ⨆ j ∈ s \ {i}, G j])²]`.
+- `LatticeProb.Network.massGenerator` and `LatticeProb.Network.killedMassGenerator`: the generator `f ↦ Δ_c f / m` of a finite network with vertex masses and its restriction killed outside a set, with the weighted Green identity, symmetry, the energy identity and the derivative of `∑ m(v) u(v)²` along the killed equation.
+- `LatticeProb.Network.ConductanceGraph.dirichletForm` and `LatticeProb.Network.ConductanceGraph.dirichletSubmodule`: finite-energy functions on a conductance graph form a vector space, the Dirichlet form `½ ∑ c(x, y)(f(y) − f(x))(g(y) − g(x))` is symmetric and linear in each argument with diagonal the energy, and the finite-energy functions vanishing at a point form a submodule.
+- `LatticeProb.polynomialLaplacian_squaredNorm_mul`: for real polynomials in `d` variables, `Δ(|x|² p) = 2d·p + 4 ∑ᵢ Xᵢ ∂ᵢ p + |x|² Δp`.
+- `LatticeProb.Kahane.kahane_rpow_le_add_const` (Kahane's inequality up to a constant): for centred Gaussian vectors `X, Y` with `cov(Xᵢ, Xⱼ) ≤ cov(Yᵢ, Yⱼ) + c`, `c ≥ 0`, and weights `pᵢ > 0`, `q ≤ 0` or `q ≥ 1`, `E(∑ pᵢ e^{Xᵢ − Var Xᵢ/2})^q ≤ e^{q(q−1)c/2} E(∑ pᵢ e^{Yᵢ − Var Yᵢ/2})^q`.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1211,7 +1216,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/Skorokhod.lean`, `LatticeProb/Prob/GaussKahaneInterp.lean`, `LatticeProb/Prob/GaussSupTailBorell.lean`, `LatticeProb/Topology/Length/CurveNatural.lean`, `LatticeProb/Topology/Length/Midpoint.lean`, `LatticeProb/Topology/Length/Internal.lean`,
 `LatticeProb/Prob/GaussAssociationEvents.lean`, `LatticeProb/Prob/GaussBorellSeq.lean`, `LatticeProb/Prob/GaussKahaneVector.lean`, `LatticeProb/Topology/Length/LengthGeodesic.lean`, `LatticeProb/Topology/Length/Menger.lean`,
 `LatticeProb/Prob/GaussAssociationFun.lean`, `LatticeProb/Prob/GaussKahaneRpow.lean`, `LatticeProb/Topology/Length/Geodesic.lean`, `LatticeProb/Topology/Length/LengthLimit.lean`,
-`LatticeProb/Prob/CondIndepEv.lean`, `LatticeProb/Analysis/ReciprocalPowerDecay.lean`, `LatticeProb/Analysis/MatrixHeat.lean`, `LatticeProb/Network/Conductance.lean`, `LatticeProb/Analysis/Polynomial/Degree.lean`)
+`LatticeProb/Prob/CondIndepEv.lean`, `LatticeProb/Analysis/ReciprocalPowerDecay.lean`, `LatticeProb/Analysis/MatrixHeat.lean`, `LatticeProb/Network/Conductance.lean`, `LatticeProb/Analysis/Polynomial/Degree.lean`,
+`LatticeProb/Prob/EfronSteinSigma.lean`, `LatticeProb/Network/HeatGenerator.lean`, `LatticeProb/Network/DirichletForm.lean`, `LatticeProb/Analysis/Polynomial/Laplacian.lean`, `LatticeProb/Prob/GaussKahane2Const.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for

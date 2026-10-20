@@ -411,6 +411,11 @@ import LatticeProb.Analysis.ReciprocalPowerDecay
 import LatticeProb.Analysis.MatrixHeat
 import LatticeProb.Network.Conductance
 import LatticeProb.Analysis.Polynomial.Degree
+import LatticeProb.Prob.EfronSteinSigma
+import LatticeProb.Network.HeatGenerator
+import LatticeProb.Network.DirichletForm
+import LatticeProb.Analysis.Polynomial.Laplacian
+import LatticeProb.Prob.GaussKahane2Const
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
