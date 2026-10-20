@@ -877,6 +877,11 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.Kahane.kahane_convexity_rpow`: Kahane's convexity inequality for the moments of order `q ≤ 0` or `q ≥ 1` of `∑ pᵢ e^{Xᵢ − Var Xᵢ/2}`.
 - `LatticeProb.MetricGeometry.IsGeodesicCurve`, `LatticeProb.MetricGeometry.MetricFunSpace` and `LatticeProb.MetricGeometry.compactSpace_metricFunSpace`: geodesic curves and paths, metrics given as functions `X × X → ℝ`, and compactness of a compact space under a continuous metric.
 - `LatticeProb.Skorokhod.exists_skorokhod_representation` (Skorokhod representation): if Borel probability measures `μₙ → μ` weakly on a separable pseudometric space, there are random elements `Yₙ, Y₀` on one probability space with laws `μₙ, μ` and `Yₙ → Y₀` almost surely.
+- `LatticeProb.CondIndepEv`: conditional independence of two σ-algebras given a third, written as `P[a ∩ b | G] = P[a | G] P[b | G]` almost surely; it agrees with Mathlib's `CondIndep` on standard Borel spaces.
+- `LatticeProb.reciprocal_power_bound_of_power_decay`: if `X > 0` and `k X^{1+q} ≤ −X'` on `[a, b]`, then `X(b) ≤ (k q (b − a))^{−1/q}`.
+- `LatticeProb.IsSubstochastic`: matrices with nonnegative entries and row sums at most one, closed under products, powers and Poisson exponentials.
+- `LatticeProb.Network.ConductanceGraph`: conductances on a countable vertex type with summable rows (possibly infinite degree), with adjacency, total conductance and the energy `½ ∑ c(x, y)(f(y) − f(x))²`.
+- `LatticeProb.totalDegree_laplacian_mul_le` and related lemmas: degree bounds for partial derivatives and Laplacians of multivariate polynomials.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1205,7 +1210,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/BrownianTailZeroOne.lean`, `LatticeProb/Prob/GaussPittLipschitz.lean`, `LatticeProb/Prob/GaussBorellVector.lean`, `LatticeProb/Prob/GaussKahaneBound.lean`, `LatticeProb/Topology/Length/LengthSpace.lean`,
 `LatticeProb/Prob/Skorokhod.lean`, `LatticeProb/Prob/GaussKahaneInterp.lean`, `LatticeProb/Prob/GaussSupTailBorell.lean`, `LatticeProb/Topology/Length/CurveNatural.lean`, `LatticeProb/Topology/Length/Midpoint.lean`, `LatticeProb/Topology/Length/Internal.lean`,
 `LatticeProb/Prob/GaussAssociationEvents.lean`, `LatticeProb/Prob/GaussBorellSeq.lean`, `LatticeProb/Prob/GaussKahaneVector.lean`, `LatticeProb/Topology/Length/LengthGeodesic.lean`, `LatticeProb/Topology/Length/Menger.lean`,
-`LatticeProb/Prob/GaussAssociationFun.lean`, `LatticeProb/Prob/GaussKahaneRpow.lean`, `LatticeProb/Topology/Length/Geodesic.lean`, `LatticeProb/Topology/Length/LengthLimit.lean`)
+`LatticeProb/Prob/GaussAssociationFun.lean`, `LatticeProb/Prob/GaussKahaneRpow.lean`, `LatticeProb/Topology/Length/Geodesic.lean`, `LatticeProb/Topology/Length/LengthLimit.lean`,
+`LatticeProb/Prob/CondIndepEv.lean`, `LatticeProb/Analysis/ReciprocalPowerDecay.lean`, `LatticeProb/Analysis/MatrixHeat.lean`, `LatticeProb/Network/Conductance.lean`, `LatticeProb/Analysis/Polynomial/Degree.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for

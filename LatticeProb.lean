@@ -406,6 +406,11 @@ import LatticeProb.Prob.GaussKahaneRpow
 import LatticeProb.Topology.Length.Geodesic
 import LatticeProb.Topology.Length.LengthLimit
 import LatticeProb.Prob.SkorokhodRepresentation
+import LatticeProb.Prob.CondIndepEv
+import LatticeProb.Analysis.ReciprocalPowerDecay
+import LatticeProb.Analysis.MatrixHeat
+import LatticeProb.Network.Conductance
+import LatticeProb.Analysis.Polynomial.Degree
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
