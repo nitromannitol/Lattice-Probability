@@ -873,6 +873,10 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.GaussConc.SupTail.borellTIS_iSup_seq` (Borell–TIS for suprema): for a centred Gaussian sequence with `Var ≤ σ²`, bounded paths and uniformly bounded expected running maxima, `P(sup − E sup ≥ t) ≤ exp(−t²/(2σ²))`.
 - `LatticeProb.Kahane.kahane_convexity` (Kahane's convexity inequality): for centred Gaussian vectors `X, Y` with `cov(Xᵢ, Xⱼ) ≤ cov(Yᵢ, Yⱼ)`, weights `pᵢ > 0` and convex admissible `F`, `E F(∑ pᵢ e^{Xᵢ − Var Xᵢ/2}) ≤ E F(∑ pᵢ e^{Yᵢ − Var Yᵢ/2})`.
 - `LatticeProb.MetricGeometry.exists_shortest_path` and `LatticeProb.MetricGeometry.isLengthSpace_of_hasApproxMidpoints`: proper length spaces have shortest paths, and a complete space with approximate midpoints is a length space (Menger).
+- `LatticeProb.Pitt.integral_mul_le_of_monotone` (Pitt's theorem): a Gaussian vector with nonnegative covariances is associated, `E f(X) E g(X) ≤ E f(X) g(X)` for bounded, measurable, monotone `f, g`.
+- `LatticeProb.Kahane.kahane_convexity_rpow`: Kahane's convexity inequality for the moments of order `q ≤ 0` or `q ≥ 1` of `∑ pᵢ e^{Xᵢ − Var Xᵢ/2}`.
+- `LatticeProb.MetricGeometry.IsGeodesicCurve`, `LatticeProb.MetricGeometry.MetricFunSpace` and `LatticeProb.MetricGeometry.compactSpace_metricFunSpace`: geodesic curves and paths, metrics given as functions `X × X → ℝ`, and compactness of a compact space under a continuous metric.
+- `LatticeProb.Skorokhod.exists_skorokhod_representation` (Skorokhod representation): if Borel probability measures `μₙ → μ` weakly on a separable pseudometric space, there are random elements `Yₙ, Y₀` on one probability space with laws `μₙ, μ` and `Yₙ → Y₀` almost surely.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1200,7 +1204,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/GaussBorellFinite.lean`, `LatticeProb/Prob/GaussKahaneStein.lean`, `LatticeProb/Prob/GaussKahaneCore.lean`, `LatticeProb/Topology/PolishContinuousMap.lean`,
 `LatticeProb/Prob/BrownianTailZeroOne.lean`, `LatticeProb/Prob/GaussPittLipschitz.lean`, `LatticeProb/Prob/GaussBorellVector.lean`, `LatticeProb/Prob/GaussKahaneBound.lean`, `LatticeProb/Topology/Length/LengthSpace.lean`,
 `LatticeProb/Prob/Skorokhod.lean`, `LatticeProb/Prob/GaussKahaneInterp.lean`, `LatticeProb/Prob/GaussSupTailBorell.lean`, `LatticeProb/Topology/Length/CurveNatural.lean`, `LatticeProb/Topology/Length/Midpoint.lean`, `LatticeProb/Topology/Length/Internal.lean`,
-`LatticeProb/Prob/GaussAssociationEvents.lean`, `LatticeProb/Prob/GaussBorellSeq.lean`, `LatticeProb/Prob/GaussKahaneVector.lean`, `LatticeProb/Topology/Length/LengthGeodesic.lean`, `LatticeProb/Topology/Length/Menger.lean`)
+`LatticeProb/Prob/GaussAssociationEvents.lean`, `LatticeProb/Prob/GaussBorellSeq.lean`, `LatticeProb/Prob/GaussKahaneVector.lean`, `LatticeProb/Topology/Length/LengthGeodesic.lean`, `LatticeProb/Topology/Length/Menger.lean`,
+`LatticeProb/Prob/GaussAssociationFun.lean`, `LatticeProb/Prob/GaussKahaneRpow.lean`, `LatticeProb/Topology/Length/Geodesic.lean`, `LatticeProb/Topology/Length/LengthLimit.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for

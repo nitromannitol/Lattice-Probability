@@ -92,6 +92,11 @@ import LatticeProb.Prob.GaussBorellSeq
 import LatticeProb.Prob.GaussKahaneVector
 import LatticeProb.Topology.Length.LengthGeodesic
 import LatticeProb.Topology.Length.Menger
+import LatticeProb.Prob.GaussAssociationFun
+import LatticeProb.Prob.GaussKahaneRpow
+import LatticeProb.Topology.Length.Geodesic
+import LatticeProb.Topology.Length.LengthLimit
+import LatticeProb.Prob.SkorokhodRepresentation
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -767,3 +772,7 @@ library.
 #print axioms LatticeProb.Kahane.kahane_convexity
 #print axioms LatticeProb.MetricGeometry.exists_shortest_path
 #print axioms LatticeProb.MetricGeometry.isLengthSpace_of_hasApproxMidpoints
+#print axioms LatticeProb.Pitt.integral_mul_le_of_monotone
+#print axioms LatticeProb.Kahane.kahane_convexity_rpow
+#print axioms LatticeProb.MetricGeometry.compactSpace_metricFunSpace
+#print axioms LatticeProb.Skorokhod.exists_skorokhod_representation
