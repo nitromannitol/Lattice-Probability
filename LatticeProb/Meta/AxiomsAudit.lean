@@ -72,6 +72,10 @@ import LatticeProb.Prob.BrownianGermZeroOne
 import LatticeProb.Prob.BrownianAbsMomentsFubini
 import LatticeProb.Prob.GaussPittSmooth
 import LatticeProb.Topology.Length.CurveLength
+import LatticeProb.Prob.GaussBorellFinite
+import LatticeProb.Prob.GaussKahaneStein
+import LatticeProb.Prob.GaussKahaneCore
+import LatticeProb.Topology.PolishContinuousMap
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -720,3 +724,6 @@ library.
 #print axioms LatticeProb.Pitt.integral_mul_le_of_contDiff
 #print axioms LatticeProb.MetricGeometry.curveLength_eq_partitionLengthSup
 #print axioms LatticeProb.MetricGeometry.curveLength_add
+#print axioms LatticeProb.GaussConc.borellTIS_finiteMax
+#print axioms LatticeProb.Kahane.integral_inner_mul_stdGaussian_of_le
+#print axioms LatticeProb.polishSpace_continuousMap

@@ -856,6 +856,9 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.brownian_integral_integral_abs_pow_le`: for a Brownian motion with continuous paths, `E ∫₀ˢ |B_r|ⁿ dr ≤ E|N(0,1)|ⁿ · s^{1+n/2}`.
 - `LatticeProb.Pitt.integral_mul_le_of_contDiff` (Pitt's inequality): for a Gaussian vector with nonnegative covariances and bounded, Lipschitz, monotone `C¹` functions `f, g`, `E[f(X)] E[g(X)] ≤ E[f(X) g(X)]`.
 - `LatticeProb.MetricGeometry.curveLength` and `LatticeProb.MetricGeometry.curveLength_eq_partitionLengthSup`: the length of a curve `ℝ → X` on `[a, b]` in an extended metric space, its agreement with the supremum over partitions, additivity, invariance under monotone reparametrization and lower semicontinuity.
+- `LatticeProb.GaussConc.borellTIS_finiteMax` (Borell–TIS for finite maxima): for `Xᵢ = ⟪vᵢ, Z⟫` with `‖vᵢ‖ ≤ σ` and `Z` standard Gaussian, `P(maxᵢ Xᵢ − E maxᵢ Xᵢ ≥ u) ≤ exp(−u²/(2σ²))`.
+- `LatticeProb.Kahane.integral_inner_mul_stdGaussian_of_le`: Gaussian integration by parts `E[⟪a, Z⟫ G(Z)] = E[⟪G'(Z), a⟫]` for continuous `G` with a continuous gradient `G'` along lines, when `|G|` and `‖G'‖` grow at most exponentially; `LatticeProb.Kahane.kU`, `kW` and the related functions prepare Kahane's convexity inequality.
+- `LatticeProb.polishSpace_continuousMap`: `C(X, Y)` with the compact-open topology is Polish when `X` is locally compact and second countable and `Y` is Polish.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1179,7 +1182,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/BrownianPredictableTaylor.lean`, `LatticeProb/Prob/BrownianStoppedSum.lean`, `LatticeProb/Prob/BrownianStoppedLimit.lean`, `LatticeProb/Prob/BrownianPathHarmonicExit.lean`,
 `LatticeProb/Prob/Quantile.lean`, `LatticeProb/Prob/BinomialTail.lean`, `LatticeProb/Prob/SkorokhodPartition.lean`, `LatticeProb/Prob/SkorokhodMix.lean`, `LatticeProb/Prob/TrivialSigma.lean`,
 `LatticeProb/Prob/QuantileMap.lean`, `LatticeProb/Prob/QuantileLimit.lean`, `LatticeProb/Prob/BinomialDomination.lean`, `LatticeProb/Prob/SkorokhodSpace.lean`, `LatticeProb/Prob/TrivialSigmaJoin.lean`, `LatticeProb/Prob/GaussPittCore.lean`, `LatticeProb/Prob/GaussPittVector.lean`, `LatticeProb/Prob/GaussAssociationSets.lean`, `LatticeProb/Prob/BrownianAbsMoments.lean`,
-`LatticeProb/Prob/SkorokhodLaw.lean`, `LatticeProb/Prob/BrownianGermZeroOne.lean`, `LatticeProb/Prob/BrownianAbsMomentsFubini.lean`, `LatticeProb/Prob/GaussPittSmooth.lean`, `LatticeProb/Topology/Length/CurveLength.lean`)
+`LatticeProb/Prob/SkorokhodLaw.lean`, `LatticeProb/Prob/BrownianGermZeroOne.lean`, `LatticeProb/Prob/BrownianAbsMomentsFubini.lean`, `LatticeProb/Prob/GaussPittSmooth.lean`, `LatticeProb/Topology/Length/CurveLength.lean`,
+`LatticeProb/Prob/GaussBorellFinite.lean`, `LatticeProb/Prob/GaussKahaneStein.lean`, `LatticeProb/Prob/GaussKahaneCore.lean`, `LatticeProb/Topology/PolishContinuousMap.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
