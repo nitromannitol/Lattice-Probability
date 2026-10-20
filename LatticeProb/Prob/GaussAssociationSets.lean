@@ -3,6 +3,7 @@ Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: LQGMetric/Gaussian/AssociationSets.lean.
 -/
+import LatticeProb.Prob.GaussPittLipschitz
 import Mathlib.Algebra.Order.Archimedean.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 import Mathlib.Topology.MetricSpace.HausdorffDistance
@@ -17,8 +18,8 @@ value, `(k + 1)`-Lipschitz, and converge pointwise to the indicator `1_U` as `k 
 (`tendsto_closedApprox`). Finally, the integral of `1_U ∘ X` is the probability of `X ∈ U`
 (`integral_indicator_comp`).
 
-The product inequality for closed upper events is not in this file: its proof uses the
-Lipschitz product inequality, which is ported separately.
+The product inequality for closed upper events, `measureReal_mul_le_inter_of_isClosed`, is proved
+at the end of the file from the Lipschitz product inequality `integral_mul_le_of_lipschitz`.
 -/
 
 noncomputable section
@@ -126,6 +127,77 @@ example (y : Fin 1 → ℝ) :
   tendsto_closedApprox (isClosed_Ici.preimage (continuous_apply 0)) ⟨0, by simp⟩ y
 
 end Example
+
+variable [DecidableEq ι]
+
+/-- **Pitt's inequality for closed upper sets.** For a Gaussian vector `X` with nonnegative
+covariances and closed upper sets `U` and `V` of `ι → ℝ`,
+`P(X ∈ U) * P(X ∈ V) ≤ P(X ∈ U ∩ V)`. -/
+theorem measureReal_mul_le_inter_of_isClosed {X : Ω → ι → ℝ} (hX : HasGaussianLaw X P)
+    (hcov : ∀ i j, 0 ≤ cov[fun ω => X ω i, fun ω => X ω j; P])
+    {U V : Set (ι → ℝ)} (hUc : IsClosed U) (hVc : IsClosed V) (hU : IsUpperSet U)
+    (hV : IsUpperSet V) :
+    (P.map X).real U * (P.map X).real V ≤ (P.map X).real (U ∩ V) := by
+  have := hX.isProbabilityMeasure
+  rcases U.eq_empty_or_nonempty with rfl | hUne
+  · simp
+  rcases V.eq_empty_or_nonempty with rfl | hVne
+  · simp
+  have hmeas := hX.aemeasurable
+  have hn : ∀ k, (∫ ω, closedApprox U k (X ω) ∂P) * (∫ ω, closedApprox V k (X ω) ∂P) ≤
+      ∫ ω, closedApprox U k (X ω) * closedApprox V k (X ω) ∂P := fun k =>
+    integral_mul_le_of_lipschitz hX hcov (closedApprox_monotone hU hUne k)
+      (closedApprox_monotone hV hVne k) (abs_closedApprox_le U k) (abs_closedApprox_le V k)
+      (closedApprox_lipschitz U k) (closedApprox_lipschitz V k)
+  have hF := tendsto_integral_comp_of_bdd hmeas
+    (fun k => (closedApprox_lipschitz U k).continuous.measurable)
+    (abs_closedApprox_le U) (tendsto_closedApprox hUc hUne)
+  have hG := tendsto_integral_comp_of_bdd hmeas
+    (fun k => (closedApprox_lipschitz V k).continuous.measurable)
+    (abs_closedApprox_le V) (tendsto_closedApprox hVc hVne)
+  have hFG := tendsto_integral_comp_of_bdd hmeas
+    (h := fun k y => closedApprox U k y * closedApprox V k y)
+    (h₀ := fun y => U.indicator 1 y * V.indicator 1 y) (C := 1 * 1)
+    (fun k => ((closedApprox_lipschitz U k).continuous.mul
+      (closedApprox_lipschitz V k).continuous).measurable)
+    (fun k y => by
+      rw [abs_mul]
+      exact mul_le_mul (abs_closedApprox_le U k y) (abs_closedApprox_le V k y) (abs_nonneg _)
+        zero_le_one)
+    (fun y => (tendsto_closedApprox hUc hUne y).mul (tendsto_closedApprox hVc hVne y))
+  have hlim := le_of_tendsto_of_tendsto' (hF.mul hG) hFG hn
+  have hprod : ∀ y, U.indicator (1 : (ι → ℝ) → ℝ) y * V.indicator 1 y =
+      (U ∩ V).indicator 1 y := fun y => by
+    rw [inter_indicator_one]; rfl
+  simp only [hprod] at hlim
+  rw [integral_indicator_comp hmeas hUc.measurableSet,
+    integral_indicator_comp hmeas hVc.measurableSet,
+    integral_indicator_comp hmeas (hUc.inter hVc).measurableSet] at hlim
+  exact hlim
+
+/-! ### Nonvacuity: the hypotheses of `measureReal_mul_le_inter_of_isClosed` are satisfied by the
+Gaussian vector on `ℝ` whose coordinates all equal the standard Gaussian variable, with `U = V`
+the closed upper half-line. -/
+
+namespace ClosedExample
+
+example :
+    ((stdGaussian ℝ).map (fun ω : ℝ => fun _ : Fin 1 => ω)).real {z : Fin 1 → ℝ | 0 ≤ z 0} *
+      ((stdGaussian ℝ).map (fun ω : ℝ => fun _ : Fin 1 => ω)).real {z : Fin 1 → ℝ | 0 ≤ z 0} ≤
+    ((stdGaussian ℝ).map (fun ω : ℝ => fun _ : Fin 1 => ω)).real
+      ({z : Fin 1 → ℝ | 0 ≤ z 0} ∩ {z : Fin 1 → ℝ | 0 ≤ z 0}) := by
+  have hX : HasGaussianLaw (fun ω : ℝ => fun _ : Fin 1 => ω) (stdGaussian ℝ) :=
+    (IsGaussian.hasGaussianLaw_id (μ := stdGaussian ℝ)).map_fun
+      (ContinuousLinearMap.pi fun _ : Fin 1 => ContinuousLinearMap.id ℝ ℝ)
+  have hcov : ∀ _ _ : Fin 1, 0 ≤ cov[fun ω : ℝ => ω, fun ω : ℝ => ω; stdGaussian ℝ] :=
+    fun _ _ => by
+      rw [covariance_self measurable_id'.aemeasurable]
+      exact variance_nonneg _ _
+  have hc : IsClosed {z : Fin 1 → ℝ | 0 ≤ z 0} := isClosed_Ici.preimage (continuous_apply 0)
+  have hup : IsUpperSet {z : Fin 1 → ℝ | 0 ≤ z 0} := fun _ _ hab ha => le_trans ha (hab 0)
+  exact measureReal_mul_le_inter_of_isClosed hX hcov hc hc hup hup
+
+end ClosedExample
 
 end Pitt
 

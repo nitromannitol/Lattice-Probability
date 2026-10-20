@@ -81,6 +81,12 @@ import LatticeProb.Prob.GaussPittLipschitz
 import LatticeProb.Prob.GaussBorellVector
 import LatticeProb.Prob.GaussKahaneBound
 import LatticeProb.Topology.Length.LengthSpace
+import LatticeProb.Prob.Skorokhod
+import LatticeProb.Prob.GaussKahaneInterp
+import LatticeProb.Prob.GaussSupTailBorell
+import LatticeProb.Topology.Length.CurveNatural
+import LatticeProb.Topology.Length.Midpoint
+import LatticeProb.Topology.Length.Internal
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -738,3 +744,14 @@ library.
 #print axioms LatticeProb.GaussConc.borellTIS_gaussianVector
 #print axioms LatticeProb.Kahane.norm_kGrad_le
 #print axioms LatticeProb.MetricGeometry.isLengthSpace_iff_curves
+#print axioms LatticeProb.Skorokhod.SkData.prob_good_compl
+#print axioms LatticeProb.Skorokhod.SkData.prob_bad
+#print axioms LatticeProb.Skorokhod.SkData.tendsto_X'
+#print axioms LatticeProb.Pitt.measureReal_mul_le_inter_of_isClosed
+#print axioms LatticeProb.Kahane.integral_kW_zero_le
+#print axioms LatticeProb.GaussConc.SupTail.tendsto_seqMax
+#print axioms LatticeProb.MetricGeometry.hasUnitSpeedOn_lengthParam
+#print axioms LatticeProb.MetricGeometry.exists_lipschitz_path
+#print axioms LatticeProb.MetricGeometry.hasApproxMidpoints_of_isLengthSpace
+#print axioms LatticeProb.MetricGeometry.curveLength_eq_iSup_internalEDist
+#print axioms LatticeProb.MetricGeometry.internalEDist_eq_edist_of_ball_subset

@@ -864,6 +864,11 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.GaussConc.borellTIS_gaussianVector` (Borell–TIS): for a centred Gaussian vector `X` with `σ² = maxᵢ Var Xᵢ`, `P(maxᵢ Xᵢ − E maxᵢ Xᵢ ≥ u) ≤ exp(−u²/(2σ²))`.
 - `LatticeProb.Kahane.KahaneFun` and the bounds `LatticeProb.Kahane.abs_kG_le_kUB`, `LatticeProb.Kahane.norm_kGrad_le`: the admissible functions for Kahane's convexity inequality and the growth bounds used to differentiate under the integral.
 - `LatticeProb.MetricGeometry.pathLength`, `LatticeProb.MetricGeometry.IsLengthSpace` and `LatticeProb.MetricGeometry.internalEDist`: the length of paths, length spaces (every two points are joined by paths of length arbitrarily close to their distance; every real normed space is one) and the internal distance of a subset.
+- `LatticeProb.Skorokhod.SkData.tendsto_X'`, `LatticeProb.Skorokhod.SkData.prob_good_compl` and `LatticeProb.Skorokhod.SkData.prob_bad`: in the Skorokhod construction for weakly converging laws on a separable pseudometric space, the random elements `X'ₙ` converge to `X` on an event of full measure.
+- `LatticeProb.Pitt.measureReal_mul_le_inter_of_isClosed` (Pitt's inequality for events): for a Gaussian vector with nonnegative covariances and closed upper sets `U, V`, `P(X ∈ U) P(X ∈ V) ≤ P(X ∈ U ∩ V)`.
+- `LatticeProb.Kahane.integral_kW_zero_le` (Kahane's convexity inequality, Gram form): `E F(W₀) ≤ E F(W_{π/2})` for admissible convex `F` when the two families of vectors are orthogonal to each other and the Gram matrix of the first is dominated entrywise by that of the second.
+- `LatticeProb.GaussConc.SupTail.seqMax`: running maxima of a sequence and their convergence to the supremum, with measurability and integrability for Gaussian sequences.
+- `LatticeProb.MetricGeometry.lengthParam`, `LatticeProb.MetricGeometry.exists_lipschitz_path`, `LatticeProb.MetricGeometry.hasApproxMidpoints_of_isLengthSpace` and `LatticeProb.MetricGeometry.internalEDist`: the arc-length parametrization of a curve of finite length (unit speed, 1-Lipschitz), approximate midpoints in length spaces, and the internal metric of a subset, its locality in a length space and the space `InternalSpace Y`.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1189,7 +1194,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/QuantileMap.lean`, `LatticeProb/Prob/QuantileLimit.lean`, `LatticeProb/Prob/BinomialDomination.lean`, `LatticeProb/Prob/SkorokhodSpace.lean`, `LatticeProb/Prob/TrivialSigmaJoin.lean`, `LatticeProb/Prob/GaussPittCore.lean`, `LatticeProb/Prob/GaussPittVector.lean`, `LatticeProb/Prob/GaussAssociationSets.lean`, `LatticeProb/Prob/BrownianAbsMoments.lean`,
 `LatticeProb/Prob/SkorokhodLaw.lean`, `LatticeProb/Prob/BrownianGermZeroOne.lean`, `LatticeProb/Prob/BrownianAbsMomentsFubini.lean`, `LatticeProb/Prob/GaussPittSmooth.lean`, `LatticeProb/Topology/Length/CurveLength.lean`,
 `LatticeProb/Prob/GaussBorellFinite.lean`, `LatticeProb/Prob/GaussKahaneStein.lean`, `LatticeProb/Prob/GaussKahaneCore.lean`, `LatticeProb/Topology/PolishContinuousMap.lean`,
-`LatticeProb/Prob/BrownianTailZeroOne.lean`, `LatticeProb/Prob/GaussPittLipschitz.lean`, `LatticeProb/Prob/GaussBorellVector.lean`, `LatticeProb/Prob/GaussKahaneBound.lean`, `LatticeProb/Topology/Length/LengthSpace.lean`)
+`LatticeProb/Prob/BrownianTailZeroOne.lean`, `LatticeProb/Prob/GaussPittLipschitz.lean`, `LatticeProb/Prob/GaussBorellVector.lean`, `LatticeProb/Prob/GaussKahaneBound.lean`, `LatticeProb/Topology/Length/LengthSpace.lean`,
+`LatticeProb/Prob/Skorokhod.lean`, `LatticeProb/Prob/GaussKahaneInterp.lean`, `LatticeProb/Prob/GaussSupTailBorell.lean`, `LatticeProb/Topology/Length/CurveNatural.lean`, `LatticeProb/Topology/Length/Midpoint.lean`, `LatticeProb/Topology/Length/Internal.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
