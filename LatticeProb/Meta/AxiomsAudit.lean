@@ -122,6 +122,11 @@ import LatticeProb.Network.DirichletSpaceComplete
 import LatticeProb.Network.AnchoredTraceMinimizer
 import LatticeProb.Topology.Length.SetDist
 import LatticeProb.Prob.GaussSupTailField
+import LatticeProb.Network.ConductanceBridge
+import LatticeProb.Analysis.Polynomial.BoundaryApproximation
+import LatticeProb.Analysis.Polynomial.Dirichlet
+import LatticeProb.Prob.AEDetermined
+import LatticeProb.Prob.CondIndepEvJoin
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -836,3 +841,11 @@ library.
 #print axioms LatticeProb.MetricGeometry.IsGeodesicCurveBetween.isGeodesicCurve
 #print axioms LatticeProb.GaussConc.SupTail.borellTIS_iSup_continuous
 #print axioms LatticeProb.GaussConc.SupTail.tail_iSup_abs_le_gaussian
+#print axioms LatticeProb.Network.ConductanceGraph.isCond_toSimpleGraph
+#print axioms LatticeProb.Network.ConductanceGraph.isHarmonicAt_iff_netLaplacian
+#print axioms LatticeProb.Network.ConductanceGraph.energy_eq_energyOn_half
+#print axioms LatticeProb.exists_polynomial_near_continuous_on_compact
+#print axioms LatticeProb.ballDirichletOperator_injective
+#print axioms LatticeProb.exists_harmonic_polynomial_on_sphere_of_brownianLaw
+#print axioms LatticeProb.aeDeterminedBy_of_condIndepEv_of_ae_eq
+#print axioms LatticeProb.condIndepEv_sup_of_condIndepEv

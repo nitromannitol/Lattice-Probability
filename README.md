@@ -902,6 +902,11 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.Network.ConductanceGraph.isClosed_zeroTraceGradient`: when every vertex can reach `A`, the gradients of finite-energy functions vanishing on `A` form a closed, complete subspace of `ℓ²` over ordered pairs.
 - `LatticeProb.MetricGeometry.setEDist` and `LatticeProb.MetricGeometry.IsCompact.exists_setEDist_eq_edist`: the distance `inf {d(x, y) : x ∈ A, y ∈ B}` between two sets, attained for nonempty compact sets, and geodesics between sets.
 - `LatticeProb.GaussConc.SupTail.borellTIS_iSup_continuous` and `LatticeProb.GaussConc.SupTail.tail_iSup_abs_le_gaussian`: Borell–TIS for a centred Gaussian process with continuous paths on a compact separable index space, and Gaussian tails of `sup |X|` given a bound on the expected suprema.
+- `LatticeProb.Network.ConductanceGraph.isHarmonicAt_iff_netLaplacian` and `LatticeProb.Network.ConductanceGraph.energy_eq_energyOn_half`: a conductance graph is a network in LP's sense; for locally finite graphs its harmonicity is the vanishing of `netLaplacian`, and on finite vertex sets its energy and Dirichlet form are half of `energyOn` and `formOn`.
+- `LatticeProb.exists_polynomial_near_continuous_on_compact`: real polynomials are uniformly dense in the continuous functions on a compact subset of `ℝ^d` (Stone–Weierstrass).
+- `LatticeProb.exists_harmonic_polynomial_on_sphere_of_brownianLaw`: given a standard Brownian law in dimension `d`, every real polynomial agrees on a sphere with a polynomial of zero Laplacian.
+- `LatticeProb.AEDeterminedBy` and `LatticeProb.aeDeterminedBy_of_condIndepEv_of_ae_eq`: a random variable with values in a standard Borel space whose two conditionally independent copies given `X` agree almost surely is almost surely a measurable function of `X`.
+- `LatticeProb.condIndepEv_sup_of_condIndepEv`: if `A ⟂ B | G`, `A ⟂ C | G` and `B ⟂ C | A ⊔ G`, then `A ⟂ B ⊔ C | G`.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1235,7 +1240,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/EfronSteinSigma.lean`, `LatticeProb/Network/HeatGenerator.lean`, `LatticeProb/Network/DirichletForm.lean`, `LatticeProb/Analysis/Polynomial/Laplacian.lean`, `LatticeProb/Prob/GaussKahane2Const.lean`,
 `LatticeProb/Network/HeatUniformization.lean`, `LatticeProb/Network/KilledHeat.lean`, `LatticeProb/Network/DirichletSpace.lean`, `LatticeProb/Network/WeightedGradient.lean`, `LatticeProb/Network/AnchoredEnergy.lean`,
 `LatticeProb/Analysis/Polynomial/BallVanishing.lean`, `LatticeProb/Analysis/Polynomial/Analytic.lean`, `LatticeProb/Prob/CondIndepDetermined.lean`, `LatticeProb/Network/ConductanceHarmonic.lean`, `LatticeProb/Network/EnergyENN.lean`,
-`LatticeProb/Network/HeatPositivity.lean`, `LatticeProb/Network/DirichletSpaceComplete.lean`, `LatticeProb/Network/AnchoredTraceMinimizer.lean`, `LatticeProb/Topology/Length/SetDist.lean`, `LatticeProb/Prob/GaussSupTailField.lean`)
+`LatticeProb/Network/HeatPositivity.lean`, `LatticeProb/Network/DirichletSpaceComplete.lean`, `LatticeProb/Network/AnchoredTraceMinimizer.lean`, `LatticeProb/Topology/Length/SetDist.lean`, `LatticeProb/Prob/GaussSupTailField.lean`,
+`LatticeProb/Network/ConductanceBridge.lean`, `LatticeProb/Analysis/Polynomial/BoundaryApproximation.lean`, `LatticeProb/Analysis/Polynomial/Dirichlet.lean`, `LatticeProb/Prob/AEDetermined.lean`, `LatticeProb/Prob/CondIndepEvJoin.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
