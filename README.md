@@ -840,6 +840,10 @@ pairing symmetry for the graph Laplacian from the existing Dirichlet-form identi
 - `LatticeProb.levyProkhorovEDist_le_of_coupling` and `LatticeProb.levyProkhorovEDist_map_le_of_lipschitz_one`: a coupling whose mass on pairs at distance at least `r` is at most `r` bounds the Lévy–Prokhorov distance by `r`, and measurable 1-Lipschitz maps contract that distance (in particular the curve endpoint map, `LatticeProb.levyProkhorovEDist_map_endPoint_le`).
 - `LatticeProb.supportedLaw_unique` and `LatticeProb.map_supportedLaw`: a probability measure that charges a possibly non-measurable set fully has exactly one law on that subtype whose inclusion pushforward is the measure; `LatticeProb.ae_iff_exists_measurable_null_set` gives the measurable exceptional set.
 - `LatticeProb.compProd_map_dependent_of_kernel_map` and its almost-everywhere variant: if `g a` pushes each kernel row `κ a` to `η (f a)`, the image of `μ ⊗ₘ κ` under `p ↦ (f p.1, g p.1 p.2)` is `μ.map f ⊗ₘ η`.
+- `LatticeProb.IsQuantile`, `LatticeProb.lowerQuantile` and `LatticeProb.upperQuantile`: for a probability measure `μ` on `ℝ` and `0 < p < 1`, the `p`-quantiles are the `q` with `p ≤ μ (-∞, q]` and `1 - p ≤ μ [q, ∞)`; `LatticeProb.isQuantile_iff_mem_Icc` shows that they form the interval between the lower and the upper quantile.
+- `LatticeProb.bernoulli_hoeffding`: for `0 ≤ q ≤ 1` and real `l`, `1 - q + q e^{-l} ≤ exp(-l q + l²/8)`.
+- `LatticeProb.Skorokhod.exists_skorokhodPartition`, `LatticeProb.Skorokhod.skMix_key` and `LatticeProb.Skorokhod.skMix_isProbabilityMeasure`: a Borel probability measure on a separable pseudometric space has, for each `ε > 0`, a finite measurable partition with null frontiers, a remainder of mass `< ε` and other pieces of diameter `< ε`; and the mixture of conditional measures used in the Skorokhod construction recovers the law and is a probability measure.
+- `LatticeProb.IsTrivialSigma`, `LatticeProb.isTrivialSigma_of_indep_self` and `LatticeProb.tendsto_integral_abs_condExp_sub`: a σ-algebra on which a probability measure takes only the values 0 and 1, the triviality of a σ-algebra independent of itself, and `E[f | 𝒜 n] → E f` in `L¹` along a decreasing sequence of σ-algebras with trivial intersection.
 
 * `LatticeProb.Graph.CopiedGraph.treeCutEquiv`: deleting a specified tree-path
   edge gives a two-root forest, and inserting that same copy recovers the tree.
@@ -1160,7 +1164,8 @@ Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion
 `LatticeProb/Prob/GaussProductRotation.lean`, `LatticeProb/Prob/GaussSteinIBP.lean`, `LatticeProb/Prob/GaussSmoothBdd.lean`, `LatticeProb/Prob/GaussSmoothMGF.lean`, `LatticeProb/Prob/GaussMollify.lean`, `LatticeProb/Prob/BrownianOpenExit.lean`, `LatticeProb/Prob/BrownianOpenExitStopping.lean`, `LatticeProb/Prob/BrownianOpenExitFinite.lean`, `LatticeProb/Analysis/HarmonicBridge.lean`,
 `LatticeProb/Prob/GaussLipConcentration.lean`, `LatticeProb/Prob/BrownianMomentsCore.lean`, `LatticeProb/Analysis/HessianTaylorRemainder.lean`, `LatticeProb/Prob/DyadicExitApprox.lean`, `LatticeProb/Prob/BrownianPathSpace.lean`,
 `LatticeProb/Prob/BrownianIncrementMoments.lean`, `LatticeProb/Prob/BrownianWeakMarkovPath.lean`, `LatticeProb/Prob/BrownianFiniteStopping.lean`, `LatticeProb/Prob/BrownianHessianTaylor.lean`,
-`LatticeProb/Prob/BrownianPredictableTaylor.lean`, `LatticeProb/Prob/BrownianStoppedSum.lean`, `LatticeProb/Prob/BrownianStoppedLimit.lean`, `LatticeProb/Prob/BrownianPathHarmonicExit.lean`)
+`LatticeProb/Prob/BrownianPredictableTaylor.lean`, `LatticeProb/Prob/BrownianStoppedSum.lean`, `LatticeProb/Prob/BrownianStoppedLimit.lean`, `LatticeProb/Prob/BrownianPathHarmonicExit.lean`,
+`LatticeProb/Prob/Quantile.lean`, `LatticeProb/Prob/BinomialTail.lean`, `LatticeProb/Prob/SkorokhodPartition.lean`, `LatticeProb/Prob/SkorokhodMix.lean`, `LatticeProb/Prob/TrivialSigma.lean`)
 are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for

@@ -52,6 +52,11 @@ import LatticeProb.Prob.BrownianStoppedSum
 import LatticeProb.Prob.BrownianStoppedLimit
 import LatticeProb.Prob.BrownianPathHarmonicExit
 import LatticeProb.Prob.BrownianOpenHarmonicExit
+import LatticeProb.Prob.Quantile
+import LatticeProb.Prob.BinomialTail
+import LatticeProb.Prob.SkorokhodPartition
+import LatticeProb.Prob.SkorokhodMix
+import LatticeProb.Prob.TrivialSigma
 import LatticeProb.Prob.FiniteChainPairTV
 import LatticeProb.Prob.SubGaussianMaximal
 import LatticeProb.Prob.BrownianPathCoords
@@ -672,3 +677,11 @@ library.
 #print axioms LatticeProb.McLeish.Example.rademacherRows_clt
 #print axioms LatticeProb.integral_openExit_harmonic_compactSupport
 #print axioms LatticeProb.integral_openExit_harmonicNearClosure
+#print axioms LatticeProb.isQuantile_iff_mem_Icc
+#print axioms LatticeProb.isQuantile_lowerQuantile
+#print axioms LatticeProb.bernoulli_hoeffding
+#print axioms LatticeProb.Skorokhod.exists_skorokhodPartition
+#print axioms LatticeProb.Skorokhod.skMix_key
+#print axioms LatticeProb.Skorokhod.skMix_isProbabilityMeasure
+#print axioms LatticeProb.isTrivialSigma_of_indep_self
+#print axioms LatticeProb.tendsto_integral_abs_condExp_sub
