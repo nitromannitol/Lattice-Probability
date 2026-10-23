@@ -822,3 +822,4 @@ import LatticeProb.Sandpile.Parallel
 import LatticeProb.Walk.KilledGreenPlanarLower
 import LatticeProb.Prob.StochasticO
 import LatticeProb.Prob.StochasticO.Sums
+import LatticeProb.Prob.HoeffdingSeries
