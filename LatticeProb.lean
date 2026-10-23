@@ -823,3 +823,5 @@ import LatticeProb.Walk.KilledGreenPlanarLower
 import LatticeProb.Prob.StochasticO
 import LatticeProb.Prob.StochasticO.Sums
 import LatticeProb.Prob.HoeffdingSeries
+import LatticeProb.Prob.HoeffdingSeries.OsForm
+import LatticeProb.Prob.HoeffdingSeries.Countable
