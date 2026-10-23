@@ -826,3 +826,4 @@ import LatticeProb.Prob.HoeffdingSeries
 import LatticeProb.Prob.HoeffdingSeries.OsForm
 import LatticeProb.Prob.HoeffdingSeries.Countable
 import LatticeProb.Prob.McDiarmidIndep
+import LatticeProb.Analysis.TaylorHolder
