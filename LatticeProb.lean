@@ -839,6 +839,10 @@ import LatticeProb.Graph.LongRangeKernel.CriticalAsymptotics
 import LatticeProb.Graph.LongRangeKernel.Lattice
 import LatticeProb.External.MuruganSaloffCoste
 import LatticeProb.Analysis.Elliptic.GTCheck
+import LatticeProb.Analysis.Elliptic.OneDimODE
+import LatticeProb.Analysis.Elliptic.OneDim
+import LatticeProb.Analysis.Elliptic.OneDimExtension
+import LatticeProb.Analysis.Elliptic.OneDimCutoff
 import LatticeProb.Prob.Cadlag.Basic
 import LatticeProb.Prob.Cadlag.Metric
 import LatticeProb.Prob.Cadlag.Measurable
