@@ -584,3 +584,177 @@ theorem one_dim_holder_extension_univ {α β σ : ℝ}
 end
 
 end LatticeProb.Elliptic
+
+namespace LatticeProb.Elliptic
+
+open Set
+open scoped ContDiff
+
+noncomputable section
+
+/-- Every finite interior `C^{2,σ}` norm admits a global extension vanishing outside
+the twice enlarged interval, with a norm bound uniform in the datum. -/
+theorem one_dim_holder_extension_support {α β σ : ℝ}
+    (hαβ : α < β) (hσ : 0 < σ) (hσ1 : σ < 1) :
+    ∃ C : ℝ, 0 < C ∧ ∀ u : (Fin 1 → ℝ) → ℝ,
+      ContDiffOn ℝ 2 u {x | α < x 0 ∧ x 0 < β} →
+      c2HolderNorm σ {x | α < x 0 ∧ x 0 < β} u < ⊤ →
+      ∃ v : (Fin 1 → ℝ) → ℝ, ContDiff ℝ 2 v ∧
+        (∀ x : Fin 1 → ℝ, (x 0 ≤ α - 2 ∨ β + 2 ≤ x 0) → v x = 0) ∧
+        Set.EqOn v u {x | α < x 0 ∧ x 0 < β} ∧
+        c2HolderNorm σ Set.univ v ≤ ENNReal.ofReal C *
+          c2HolderNorm σ {x | α < x 0 ∧ x 0 < β} u := by
+  obtain ⟨χ, hχ, hs, _, hplateau, hsupp, hb⟩ := exists_smooth_interval_cutoff hαβ
+  obtain ⟨D, hD, hext⟩ := one_dim_C2_extension_local_bounds hαβ hσ
+  obtain ⟨A₀, hA₀, hb₀⟩ := hb 0
+  obtain ⟨A₁, hA₁, hb₁⟩ := hb 1
+  obtain ⟨A₂, hA₂, hb₂⟩ := hb 2
+  obtain ⟨H₀, hH₀, hh₀⟩ := smooth_compact_iteratedDeriv_holder hχ hs hσ.le hσ1.le 0
+  obtain ⟨H₁, hH₁, hh₁⟩ := smooth_compact_iteratedDeriv_holder hχ hs hσ.le hσ1.le 1
+  obtain ⟨H₂, hH₂, hh₂⟩ := smooth_compact_iteratedDeriv_holder hχ hs hσ.le hσ1.le 2
+  simp only [iteratedDeriv_zero, iteratedDeriv_succ] at hb₀ hb₁ hb₂ hh₀ hh₁ hh₂
+  let M := 1 + A₀ + A₁ + A₂ + H₀ + H₁ + H₂
+  have hM : 0 < M := by dsimp [M]; linarith
+  have hAM : A₀ ≤ M ∧ A₁ ≤ M ∧ A₂ ≤ M := by
+    dsimp [M]
+    constructor <;> first | constructor <;> linarith | linarith
+  have hHM : H₀ ≤ M ∧ H₁ ≤ M ∧ H₂ ≤ M := by
+    dsimp [M]
+    constructor <;> first | constructor <;> linarith | linarith
+  have hχ₂ : ContDiff ℝ 2 χ := hχ.of_le
+    (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
+  let K := Icc (α - 2) (β + 2)
+  have hK : α - 2 ≤ β + 2 := by linarith
+  have hs₀ : Function.support χ ⊆ K := fun t ht =>
+    ⟨(hsupp ht).1.le, (hsupp ht).2.le⟩
+  have hts : tsupport χ ⊆ K := closure_minimal hs₀ isClosed_Icc
+  have hs₁ : Function.support (deriv χ) ⊆ K := support_deriv_subset.trans hts
+  have hs₂ : Function.support (deriv (deriv χ)) ⊆ K :=
+    support_deriv_subset.trans (tsupport_deriv_subset.trans hts)
+  have hbχ₀ (t : ℝ) : |χ t| ≤ M := (hb₀ t).trans hAM.1
+  have hbχ₁ (t : ℝ) : |deriv χ t| ≤ M := (hb₁ t).trans hAM.2.1
+  have hbχ₂ (t : ℝ) : |deriv (deriv χ) t| ≤ M := (hb₂ t).trans hAM.2.2
+  have hhχ₀ (s t : ℝ) : |χ s - χ t| ≤ M * |s - t| ^ σ :=
+    (hh₀ s t).trans (mul_le_mul_of_nonneg_right hHM.1 (Real.rpow_nonneg (abs_nonneg _) _))
+  have hhχ₁ (s t : ℝ) : |deriv χ s - deriv χ t| ≤ M * |s - t| ^ σ :=
+    (hh₁ s t).trans (mul_le_mul_of_nonneg_right hHM.2.1
+      (Real.rpow_nonneg (abs_nonneg _) _))
+  have hhχ₂ (s t : ℝ) : |deriv (deriv χ) s - deriv (deriv χ) t| ≤ M * |s - t| ^ σ :=
+    (hh₂ s t).trans (mul_le_mul_of_nonneg_right hHM.2.2
+      (Real.rpow_nonneg (abs_nonneg _) _))
+  let E := D + 1
+  have hE : 0 < E := by dsimp [E]; linarith
+  have hDE : D ≤ E := by dsimp [E]; linarith
+  have h1E : 1 ≤ E := by dsimp [E]; linarith
+  refine ⟨23 * M * E, by positivity, fun u hu hn => ?_⟩
+  obtain ⟨v₀, hv₀, heq, hsecond, hholder, hfirst, hvalue⟩ := hext u hu hn
+  let N := (c2HolderNorm σ {x | α < x 0 ∧ x 0 < β} u).toReal
+  have hN : 0 ≤ N := ENNReal.toReal_nonneg
+  let W : ℝ → ℝ := fun t => v₀ (fun _ => t)
+  have hW : ContDiff ℝ 2 W := hv₀.comp (by fun_prop)
+  have hp (t : ℝ) : deriv W t = partialDeriv 0 v₀ (fun _ => t) :=
+    (partialDeriv_one_dim (hv₀.differentiable (by norm_num) _)).symm
+  have hpp (t : ℝ) : deriv (deriv W) t = secondPartial 0 0 v₀ (fun _ => t) := by
+    simpa only [laplacian, Fin.sum_univ_one, W] using (laplacian_one_dim v₀ t).symm
+  have hw₀ (t : ℝ) (ht : t ∈ K) : |W t| ≤ E * N :=
+    (hvalue _ ht).trans (mul_le_mul_of_nonneg_right hDE hN)
+  have hw₁ (t : ℝ) (ht : t ∈ K) : |deriv W t| ≤ E * N := by
+    rw [hp]
+    exact (hfirst _ ht).trans (mul_le_mul_of_nonneg_right hDE hN)
+  have hw₂ (t : ℝ) (ht : t ∈ K) : |deriv (deriv W) t| ≤ E * N := by
+    rw [hpp]
+    exact (hsecond _).trans (le_mul_of_one_le_left hN h1E)
+  have hconv : Convex ℝ K := convex_Icc _ _
+  have hW' : ContDiff ℝ 1 (deriv W) := hW.deriv'
+  have hLip₀ (s : ℝ) (hs : s ∈ K) (t : ℝ) (ht : t ∈ K) :
+      |W s - W t| ≤ (E * N) * |s - t| := by
+    have h := hconv.norm_image_sub_le_of_norm_deriv_le
+      (fun x _ => hW.differentiable (by norm_num) x)
+      (fun x hx => show ‖deriv W x‖ ≤ E * N from by
+        simpa only [Real.norm_eq_abs] using hw₁ x hx) ht hs
+    simpa only [Real.norm_eq_abs] using h
+  have hLip₁ (s : ℝ) (hs : s ∈ K) (t : ℝ) (ht : t ∈ K) :
+      |deriv W s - deriv W t| ≤ (E * N) * |s - t| := by
+    have h := hconv.norm_image_sub_le_of_norm_deriv_le
+      (fun x _ => hW'.differentiable (by norm_num) x)
+      (fun x hx => show ‖deriv (deriv W) x‖ ≤ E * N from by
+        simpa only [Real.norm_eq_abs] using hw₂ x hx) ht hs
+    simpa only [Real.norm_eq_abs] using h
+  have hk₀ : ∀ s ∈ K, ∀ t ∈ K, |W s - W t| ≤ (3 * E * N) * |s - t| ^ σ := by
+    intro s hs t ht
+    convert holder_bound_on_Icc_of_bounded_lipschitz hK
+      (mul_nonneg hE.le hN) (mul_nonneg hE.le hN) hσ.le hσ1.le hw₀ hLip₀ s hs t ht
+      using 1
+    ring
+  have hk₁ : ∀ s ∈ K, ∀ t ∈ K,
+      |deriv W s - deriv W t| ≤ (3 * E * N) * |s - t| ^ σ := by
+    intro s hs t ht
+    convert holder_bound_on_Icc_of_bounded_lipschitz hK
+      (mul_nonneg hE.le hN) (mul_nonneg hE.le hN) hσ.le hσ1.le hw₁ hLip₁ s hs t ht
+      using 1
+    ring
+  have hk₂ (s : ℝ) (_hs : s ∈ K) (t : ℝ) (_ht : t ∈ K) :
+      |deriv (deriv W) s - deriv (deriv W) t| ≤ (3 * E * N) * |s - t| ^ σ := by
+    rw [hpp, hpp]
+    apply (hholder (fun _ => s) (fun _ => t)).trans
+    apply mul_le_mul_of_nonneg_right _ (Real.rpow_nonneg (abs_nonneg _) _)
+    have hNE : N ≤ E * N := le_mul_of_one_le_left hN h1E
+    nlinarith
+  let V : ℝ → ℝ := fun t => χ t * W t
+  let v : (Fin 1 → ℝ) → ℝ := fun x => V (x 0)
+  have hv : ContDiff ℝ 2 v := (hχ₂.mul hW).comp (by fun_prop)
+  have hsv (x : Fin 1 → ℝ) (hx : x 0 ≤ α - 2 ∨ β + 2 ≤ x 0) : v x = 0 := by
+    have hzero : χ (x 0) = 0 := by
+      by_contra hne
+      have hin := hsupp hne
+      rcases hx with hleft | hright
+      · exact (not_lt_of_ge hleft) hin.1
+      · exact (not_lt_of_ge hright) hin.2
+    simp only [v, V, hzero, zero_mul]
+  have heqv : EqOn v u {x | α < x 0 ∧ x 0 < β} := by
+    intro x hx
+    have hcoord : (fun _ : Fin 1 => x 0) = x := by ext i; fin_cases i; rfl
+    have hplate : χ (x 0) = 1 := hplateau _ ⟨by linarith [hx.1], by linarith [hx.2]⟩
+    simpa only [v, V, W, hplate, one_mul, hcoord] using heq hx
+  have hbV₀ (t : ℝ) : |V t| ≤ M * E * N := by
+    simpa only [mul_assoc, V] using
+      abs_mul_le_of_support_subset hM.le (mul_nonneg hE.le hN) hs₀ hbχ₀ hw₀ t
+  have hbV₁ (t : ℝ) : |deriv V t| ≤ 2 * M * E * N := by
+    have h := abs_mul_le_of_support_subset hM.le (mul_nonneg hE.le hN) hs₁ hbχ₁ hw₀ t
+    have h' := abs_mul_le_of_support_subset hM.le (mul_nonneg hE.le hN) hs₀ hbχ₀ hw₁ t
+    rw [show deriv V t = deriv χ t * W t + χ t * deriv W t from
+      deriv_mul (hχ₂.differentiable (by norm_num) t) (hW.differentiable (by norm_num) t)]
+    exact (abs_add_le _ _).trans (by nlinarith only [h, h'])
+  have hbV₂ (t : ℝ) : |deriv (deriv V) t| ≤ 4 * M * E * N := by
+    have h := abs_mul_le_of_support_subset hM.le (mul_nonneg hE.le hN) hs₂ hbχ₂ hw₀ t
+    have h' := abs_mul_le_of_support_subset hM.le (mul_nonneg hE.le hN) hs₁ hbχ₁ hw₁ t
+    have h'' := abs_mul_le_of_support_subset hM.le (mul_nonneg hE.le hN) hs₀ hbχ₀ hw₂ t
+    rw [second_deriv_mul hχ₂ hW]
+    have hmid : |2 * deriv χ t * deriv W t| ≤ 2 * (M * (E * N)) := by
+      rw [mul_assoc, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 2)]
+      exact mul_le_mul_of_nonneg_left h' (by norm_num)
+    exact (abs_add_le _ _).trans
+      ((add_le_add (abs_add_le _ _) le_rfl).trans (by nlinarith only [h, hmid, h'']))
+  have hhV (s t : ℝ) : |deriv (deriv V) s - deriv (deriv V) t| ≤
+      (16 * M * E * N) * |s - t| ^ σ := by
+    have h := second_deriv_mul_holder_of_local_bounds hχ₂ hW hK hσ.le
+      hM.le hM.le hM.le (mul_nonneg hE.le hN) (mul_nonneg hE.le hN)
+      (mul_nonneg hE.le hN) (by positivity) (by positivity) (by positivity)
+      hs₀ hs₁ hs₂ hbχ₀ hbχ₁ hbχ₂ hhχ₀ hhχ₁ hhχ₂
+      hw₀ hw₁ hw₂ hk₀ hk₁ hk₂ s t
+    convert h using 1
+    ring
+  have hnorm : c2HolderNorm σ univ v ≤ ENNReal.ofReal (23 * M * E * N) := by
+    have h := c2HolderNorm_le_of_scalar_bounds hv (by positivity) (by positivity)
+      (by positivity) (by positivity) hbV₀ hbV₁ hbV₂ hhV
+    convert h using 1
+    congr 1
+    ring
+  refine ⟨v, hv, hsv, heqv, hnorm.trans_eq ?_⟩
+  rw [ENNReal.ofReal_mul (by positivity : 0 ≤ 23 * M * E),
+    ENNReal.ofReal_toReal hn.ne]
+
+
+end
+
+end LatticeProb.Elliptic
