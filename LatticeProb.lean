@@ -834,3 +834,6 @@ import LatticeProb.Analysis.Elliptic.Examples
 import LatticeProb.Prob.Cadlag.Basic
 import LatticeProb.Prob.Cadlag.Metric
 import LatticeProb.Prob.Cadlag.Measurable
+import LatticeProb.Prob.JumpChain.Rates
+import LatticeProb.Prob.JumpChain.History
+import LatticeProb.Prob.JumpChain.Position
