@@ -133,4 +133,48 @@ noncomputable def jump (T a : ℝ) (u v : E) : D T E :=
 @[simp] theorem jump_apply (a : ℝ) (u v : E) (t : Icc (0 : ℝ) T) :
     (jump T a u v).1 t = if (t : ℝ) < a then u else v := rfl
 
+/-- Values on a dense time set containing the terminal time determine a càdlàg path. -/
+theorem eq_of_eval_eq_on_dense {S : Set (Icc (0 : ℝ) T)} (hS : Dense S)
+    (hterminal : ∀ t : Icc (0 : ℝ) T, (t : ℝ) = T → t ∈ S)
+    {x y : D T E} (hxy : ∀ t ∈ S, x.1 t = y.1 t) : x = y := by
+  apply Subtype.ext
+  funext t
+  by_cases ht : (t : ℝ) < T
+  · apply eq_of_forall_dist_le
+    intro ε hε
+    obtain ⟨δx, hδx, hx⟩ := (Metric.continuousWithinAt_iff.mp (x.2.1 t ht))
+      (ε / 2) (half_pos hε)
+    obtain ⟨δy, hδy, hy⟩ := (Metric.continuousWithinAt_iff.mp (y.2.1 t ht))
+      (ε / 2) (half_pos hε)
+    have hgap : 0 < T - (t : ℝ) := sub_pos.mpr ht
+    let δ := min δx (min δy (T - t)) / 2
+    have hδ : 0 < δ := by dsimp [δ]; positivity
+    have hδx' : δ < δx := by
+      have := min_le_left δx (min δy (T - t))
+      dsimp [δ] at *
+      linarith
+    have hδy' : δ < δy := by
+      have := (min_le_right δx (min δy (T - t))).trans (min_le_left _ _)
+      dsimp [δ] at *
+      linarith
+    have hδT : δ < T - t := by
+      have := (min_le_right δx (min δy (T - t))).trans (min_le_right _ _)
+      dsimp [δ] at *
+      linarith
+    let u : Icc (0 : ℝ) T := ⟨t + δ, by constructor <;> linarith [t.property.1]⟩
+    have htu : t < u := by change (t : ℝ) < t + δ; linarith
+    obtain ⟨s, hs, hts, hsu⟩ := hS.exists_between htu
+    have hdist : dist s t < δ := by
+      rw [Subtype.dist_eq, Real.dist_eq, abs_of_pos (sub_pos.mpr (show (t : ℝ) < (s : ℝ) from hts))]
+      change (s : ℝ) < (u : ℝ) at hsu
+      dsimp [u] at hsu
+      linarith
+    have hxs := hx hts.le (hdist.trans hδx')
+    have hys := hy hts.le (hdist.trans hδy')
+    rw [← hxy s hs] at hys
+    have htriangle := dist_triangle (x.1 t) (x.1 s) (y.1 t)
+    rw [dist_comm (x.1 s) (x.1 t)] at hxs
+    linarith
+  · exact hxy t (hterminal t (le_antisymm t.property.2 (le_of_not_gt ht)))
+
 end LatticeProb.Cadlag

@@ -363,6 +363,12 @@ theorem midpoint_jump_at_jump (hT : 0 < T) (u v : E) :
     (jump T (T / 2) u v).1 ⟨T / 2, by constructor <;> linarith⟩ = v := by
   simp only [jump_apply, lt_self_iff_false, if_false]
 
+/-- A nontrivial range admits a midpoint jump at positive distance from a constant path. -/
+theorem exists_midpoint_jump_pos [Nontrivial E] (hT : 0 < T) :
+    ∃ u v : E, 0 < skorokhodDist (jump T (T / 2) u v) (const T u) := by
+  obtain ⟨u, v, huv⟩ := exists_pair_ne E
+  exact ⟨u, v, skorokhodDist_midpoint_jump_pos hT huv⟩
+
 end
 
 end LatticeProb.Cadlag
