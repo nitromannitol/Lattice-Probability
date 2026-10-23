@@ -301,7 +301,7 @@ theorem char_neg_unit (d : ℕ) (θ : Fin d → ℝ) (i : Fin d) :
 theorem exp_pair_eq_cos (z : ℂ) :
     Complex.exp (z * Complex.I) + Complex.exp (-(z * Complex.I)) = 2 * Complex.cos z := by
   rw [Complex.cos]
-  ring
+  ring_nf
 /-- The Fourier multiplier of the simple random walk: the average of the
 character over the `2d` neighbours of `x` equals the character at `x` times
 the average of the cosines. -/
@@ -595,7 +595,7 @@ theorem cos_le_one_sub_half_sq_add_quartic (t : ℝ) (ht : |t| ≤ Real.pi) :
   have hpi : |t| ≤ Real.pi := ht
   have key : Real.cos |t| = 1 - 2 * Real.sin (|t| / 2) ^ 2 := by
     rw [show |t| = 2 * (|t| / 2) from by ring, Real.cos_two_mul, Real.sin_sq]
-    ring
+    ring_nf
   rw [key]
   have hnn : 0 ≤ Real.sin (|t| / 2) :=
     Real.sin_nonneg_of_nonneg_of_le_pi (by linarith) (by linarith [Real.pi_pos])
