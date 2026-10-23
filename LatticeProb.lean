@@ -827,3 +827,7 @@ import LatticeProb.Prob.HoeffdingSeries.OsForm
 import LatticeProb.Prob.HoeffdingSeries.Countable
 import LatticeProb.Prob.McDiarmidIndep
 import LatticeProb.Analysis.TaylorHolder
+import LatticeProb.Analysis.Elliptic.Holder
+import LatticeProb.Analysis.Elliptic.Domain
+import LatticeProb.Analysis.Elliptic.Dirichlet
+import LatticeProb.Analysis.Elliptic.Examples
