@@ -832,6 +832,12 @@ import LatticeProb.Analysis.Elliptic.Domain
 import LatticeProb.Analysis.Elliptic.Dirichlet
 import LatticeProb.Analysis.Elliptic.Examples
 import LatticeProb.External.GilbargTrudinger
+import LatticeProb.Graph.LongRangeKernel.WeightedGraph
+import LatticeProb.Graph.LongRangeKernel.Scale
+import LatticeProb.Graph.LongRangeKernel.CriticalScale
+import LatticeProb.Graph.LongRangeKernel.CriticalAsymptotics
+import LatticeProb.Graph.LongRangeKernel.Lattice
+import LatticeProb.External.MuruganSaloffCoste
 import LatticeProb.Analysis.Elliptic.GTCheck
 import LatticeProb.Prob.Cadlag.Basic
 import LatticeProb.Prob.Cadlag.Metric
