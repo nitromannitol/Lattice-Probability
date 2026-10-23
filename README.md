@@ -47,7 +47,9 @@ a cited result with their sources.
 The following results from the literature are stated as propositions in
 `LatticeProb/External/` and are not proved here: the Gaussian logarithmic Sobolev
 inequality, polygonal unicoherence, Janiszewski's theorem for polygonal sets,
-and the Rellich-Kondrachov compact embedding in negative Sobolev order.  A
+the Rellich-Kondrachov compact embedding in negative Sobolev order, and four
+constant-coefficient specializations of Gilbarg–Trudinger (Theorems 6.19, 6.6 and 3.7 and
+Lemma 6.37, in dimension at least two; `LatticeProb/External/GilbargTrudinger.lean`).  A
 theorem that uses one of them takes it as an explicit hypothesis, so its
 statement shows what it rests on.  The Rellich-Kondrachov embedding is used by
 the compactness results of `LatticeProb/Analysis/Sobolev/`.  The Herbst bound
