@@ -826,6 +826,7 @@ import LatticeProb.Analysis.KernelPowersCS
 import LatticeProb.Analysis.KernelPowerBridge
 import LatticeProb.Analysis.CriticalProfile
 import LatticeProb.Analysis.NashProfile
+import LatticeProb.Analysis.NashProduct
 import LatticeProb.Walk.SRWMultinomial
 import LatticeProb.Prob.StochasticO
 import LatticeProb.Prob.StochasticO.Sums
@@ -862,6 +863,7 @@ import LatticeProb.Prob.Cadlag.Measurable
 import LatticeProb.Prob.Cadlag.HalfLine.Defs
 import LatticeProb.Prob.Cadlag.HalfLine.TimeChange
 import LatticeProb.Prob.Cadlag.HalfLine.Paths
+import LatticeProb.Prob.Cadlag.HalfLine.Discrepancy
 import LatticeProb.Prob.JumpChain.Rates
 import LatticeProb.Prob.JumpChain.History
 import LatticeProb.Prob.JumpChain.Position
@@ -883,3 +885,4 @@ import LatticeProb.Prob.JumpChain.Duhamel
 import LatticeProb.Prob.JumpChain.Memoryless
 import LatticeProb.Prob.JumpChain.ClockLaw
 import LatticeProb.Prob.JumpChain.StateFdd
+import LatticeProb.Prob.JumpChain.PoissonFdd
