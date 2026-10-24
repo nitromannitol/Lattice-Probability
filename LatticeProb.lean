@@ -824,6 +824,8 @@ import LatticeProb.Walk.BinomialLower
 import LatticeProb.Analysis.PoissonProfile
 import LatticeProb.Analysis.KernelPowersCS
 import LatticeProb.Analysis.KernelPowerBridge
+import LatticeProb.Analysis.CriticalProfile
+import LatticeProb.Analysis.NashProfile
 import LatticeProb.Walk.SRWMultinomial
 import LatticeProb.Prob.StochasticO
 import LatticeProb.Prob.StochasticO.Sums
@@ -875,3 +877,4 @@ import LatticeProb.Prob.JumpChain.PositionLaw
 import LatticeProb.Prob.JumpChain.Truncation
 import LatticeProb.Prob.JumpChain.TimeScale
 import LatticeProb.Prob.JumpChain.Duhamel
+import LatticeProb.Prob.JumpChain.Memoryless
