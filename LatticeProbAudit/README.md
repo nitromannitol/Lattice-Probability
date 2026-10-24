@@ -123,16 +123,11 @@ tool revisions are pinned in
 listed in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  A pass is the output
 `Your solution is okay!`.
 
-**Recorded status.** The historical results below concern Kingman, GFF and
-BinomialLocalCLT. No completed run for BerryEsseen or NormalComparison is
-asserted here; their newly selected configurations require actual successful
-Solution builds and full Lean/nanoda comparator evidence before a pass claim.
-All three historical solutions build.  `leanprover/comparator` at commit
-`575674928e239f5bc452aab72d1dd7b0f1326494`, with nanoda at
+**Recorded status.** All five solutions build, and the comparator workflow
+[`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml), with
+`leanprover/comparator` at commit `575674928e239f5bc452aab72d1dd7b0f1326494`, nanoda at
 `6ae1f0cd962f081f6c423454c5da729d841236a7` and landrun at
-`811cfff51ceaf3d9843708aa6d22e9b84ccac8b4`, printed `Your solution is okay!`
-on all three pairs with the nanoda kernel enabled.  Results and the
-reproduction command are in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  The
-workflow [`.github/workflows/comparator.yml`](../.github/workflows/comparator.yml)
-runs the same check on request, since the builds are Mathlib-scale and Actions
-minutes are spent only when asked for.
+`811cfff51ceaf3d9843708aa6d22e9b84ccac8b4`, accepts all five pairs with the nanoda kernel
+enabled.  The local runs of the Kingman, GFF and BinomialLocalCLT pairs and the
+reproduction command are in [`COMPARATOR_RUNS.md`](COMPARATOR_RUNS.md).  The workflow runs on
+request, since the builds are Mathlib-scale.

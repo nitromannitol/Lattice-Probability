@@ -245,9 +245,9 @@ class ConfigurationTests(unittest.TestCase):
         with self.assertRaises(diag.GateError):cmp.verify_tools(Path.cwd(),Path("fixture-tools"),execute)
         self.assertEqual(calls[0],["git","rev-parse","HEAD"])
 
-    def test_hygiene_source_credit_and_attribution(self):
+    def test_hygiene_source_credit_and_local_paths(self):
         self.assertEqual(hygiene.prose_findings("Adapted from Anthropic, PBC software; see NOTICE."),[])
-        for text in ["mo"+"dels: example", "hard"+"ware: workstation", "AI "+"coding "+"agents", "Co-"+"Authored-"+"By: example", "auto"+"mation:\n  methods: []"]:
+        for text in ["~"+"/lean/Lattice-Probability", "~"+"/fleet/runs/x", "/"+"home/user/x", "/"+"Users/user/x"]:
             with self.subTest(text=text):self.assertTrue(hygiene.prose_findings(text))
 
     def test_actual_workflows_and_mutable_pin_missing_gate_bad_cache(self):
@@ -310,7 +310,7 @@ class AdditionalBoundaryTests(unittest.TestCase):
                 target.write_text((Path(__file__).resolve().parents[2]/target.relative_to(root)).read_text())
             with patch.object(hygiene,"tracked_paths",return_value=paths):hygiene.check(root)
             for rel in paths:
-                (root/rel).write_text("mo"+"dels: fixture attribution\n")
+                (root/rel).write_text("built in ~"+"/lean/fixture\n")
                 with patch.object(hygiene,"tracked_paths",return_value=paths),self.assertRaises(diag.GateError):hygiene.check(root)
                 (root/rel).write_text("Licensed software credit.\n")
 
@@ -384,11 +384,12 @@ class CrossStreamTextControls(unittest.TestCase):
             with self.subTest(rc=rc,stderr=stderr),self.assertRaises(diag.GateError):ax.accept_print_axioms(result(good,rc,stderr),["A.f"])
 
 class CurrentAdministrationControls(unittest.TestCase):
-    def test_operational_names_rejected_and_licensed_human_credit_preserved(self):
-        for token in ["f"+"leet", "Cl"+"aude", "Deep"+"Seek", "GL"+"M", "Open"+"AI", "So"+"nnet", "Op"+"us", "co"+"dex"]:
-            with self.subTest(token=token):
-                self.assertTrue(hygiene.prose_findings("The proof was written by " + token + "."))
+    def test_local_paths_rejected_and_credit_preserved(self):
+        for path in ["~"+"/fleet/runs/x", "~"+"/work/x", "/"+"home/user/x", "/"+"Users/user/x"]:
+            with self.subTest(path=path):
+                self.assertTrue(hygiene.prose_findings("The file was read from " + path + "."))
         self.assertEqual(hygiene.prose_findings("Copyright Ahmed Bou-Rabee. Licensed source: Anthropic, PBC; see NOTICE."), [])
+        self.assertEqual(hygiene.prose_findings("The Lean code was written with AI assistance, using models from Anthropic (Claude) and DeepSeek."), [])
 
     def test_tracked_mathematical_comment_cannot_escape_operational_matcher(self):
         with tempfile.TemporaryDirectory() as d:
@@ -400,7 +401,7 @@ class CurrentAdministrationControls(unittest.TestCase):
                 dst=root/f".github/workflows/{name}.yml";dst.parent.mkdir(parents=True,exist_ok=True)
                 dst.write_text((Path(__file__).resolve().parents[2]/dst.relative_to(root)).read_text())
             with patch.object(hygiene,"tracked_paths",return_value=paths):hygiene.check(root)
-            (root/paths[0]).write_text("/- The proof was written by the proof " + "f"+"leet" + ". -/\n")
+            (root/paths[0]).write_text("/- The proof was checked in " + "/"+"home/user/" + ". -/\n")
             with patch.object(hygiene,"tracked_paths",return_value=paths),self.assertRaises(diag.GateError):hygiene.check(root)
 
     def test_real_system_lock_command_even_when_path_contains_wrapper(self):

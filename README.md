@@ -25,14 +25,18 @@ repositories import the shared proof.
 
 The library is required, at a pinned commit, by the formalization
 repositories
+[`Centrally-Excited-Random-Walk`](https://github.com/nitromannitol/Centrally-Excited-Random-Walk),
 [`Divisible-Sandpile-Percolation`](https://github.com/nitromannitol/Divisible-Sandpile-Percolation),
 [`Divisible-Sandpile-RWRS`](https://github.com/nitromannitol/Divisible-Sandpile-RWRS),
+[`Dynamic-Dimensional-Reduction`](https://github.com/nitromannitol/Dynamic-Dimensional-Reduction),
+[`Exploding-Sandpiles`](https://github.com/nitromannitol/Exploding-Sandpiles),
+[`finite-avalanche`](https://github.com/nitromannitol/finite-avalanche),
+[`IDLA-Cylinder-GFF`](https://github.com/nitromannitol/IDLA-Cylinder-GFF),
+[`Manhattan-Transience`](https://github.com/nitromannitol/Manhattan-Transience),
+[`ORRW-Lower-Bound`](https://github.com/nitromannitol/ORRW-Lower-Bound),
 [`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness),
-[`Unique-Continuation-Planar`](https://github.com/nitromannitol/Unique-Continuation-Planar)
-and [`ORRW-Lower-Bound`](https://github.com/nitromannitol/ORRW-Lower-Bound),
-and by the formalizations in progress of *Dynamic dimensional reduction*,
-*Exploding sandpiles*, the random abelian sandpile, discrete elliptic
-regularity, and `manhattan-formalization`.
+[`rotor-23`](https://github.com/nitromannitol/rotor-23)
+and [`Unique-Continuation-Planar`](https://github.com/nitromannitol/Unique-Continuation-Planar).
 
 The contents below identify the existing theorem APIs and their cited inputs.
 A theorem that takes a literature result as an explicit hypothesis proves the
@@ -62,8 +66,8 @@ band-limitedness of its output are built (`FrequencyTruncation.lean`), and the
 remaining low-frequency compactness step is
 isolated as `LatticeProb.Sobolev.rkLowFreqNet`, whose consumer
 `rellichKondrachovNegSobolev_of_lowfreqNet` reduces the cited embedding to it
-(`Analysis/Sobolev/RellichLowFreqNet.lean`).  The earlier `C^m`-net formulation of
-that step (`rkBandLimitedCmNet`) is false as stated — the `H^s` unit ball is not
+(`Analysis/Sobolev/RellichLowFreqNet.lean`).  The `C^m`-net formulation of
+that step, `rkBandLimitedCmNet` (`Analysis/Sobolev/RellichBandLimited.lean`), is false as stated — the `H^s` unit ball is not
 `C^m`-bounded for `s < m` — and is not used.  The band-limited Bernstein bounds
 that feed the net are proved for the low-frequency projections: the uniform
 `C^m` and multi-index bounds (`LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le`,
@@ -77,9 +81,10 @@ The truncation identity `‖φ − P_Λφ‖_{H^s} ≤ ‖φ‖_{H^s,>Λ}` is pr
 support-repair input `BandLimitedTestFnApproxOnDomain` (the domain-restricted form, since the
 unrestricted `BandLimitedTestFnApprox` is false as stated), which
 `rellichKondrachovNegSobolev_of_lowfreqNet` composes into the external discharge
-(`Analysis/Sobolev/SupportRepair.lean`).  The earlier unrestricted glue
-`Analysis/Sobolev/RellichLowFreqGlue.lean` is quarantined: its premise `BandLimitedTestFnApprox` is
-refuted there and its implications have been removed.
+(`Analysis/Sobolev/SupportRepair.lean`).  The unrestricted premise `BandLimitedTestFnApprox` of
+`Analysis/Sobolev/RellichLowFreqGlue.lean` ranges over every compactly supported function and is
+not used; `Analysis/Sobolev/SupportRepairFalsity.lean` proves the analytic facts behind its
+failure.
 
 Two further sandpile inputs are literal proposition definitions:
 [`FeyDenBoerRedigCubicalCluster`](LatticeProb/External/FeyDenBoerRedigCubicalCluster.lean)
@@ -107,17 +112,16 @@ ball-killed Green estimates in dimension four
 
 ### Contents
 
-* `LatticeProb.planar_killedGreen_zero_zero_log_lower`: the killed Green function at the
-  origin of a planar box of radius `L` is at least `c log(L + 2)` for all sufficiently
-  large `L`, for some `c > 0`. The normalization is expected visits divided by four.
-  The proof uses the potential kernel and the finite maximum principle.
-
 The principal theorems, by area.  Each name is a Lean declaration.  Every
 theorem named appears in
 [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean); the
 propositions of `LatticeProb/External/` are definitions, and the `…_holds`
 theorems that prove them appear there.
 
+* `LatticeProb.planar_killedGreen_zero_zero_log_lower`: the killed Green function at the
+  origin of a planar box of radius `L` is at least `c log(L + 2)` for all sufficiently
+  large `L`, for some `c > 0`. The normalization is expected visits divided by four.
+  The proof uses the potential kernel and the finite maximum principle.
 **Walks and Green functions.**  Simple random walk on `ℤ^d` is the kernel
 `srwHeat d j x = P_0(X_j = x)`, the lazy walk is `Q`, and the walk on a
 general locally finite graph is `LatticeProb.Graph.heat`.
@@ -1019,7 +1023,6 @@ introduce no arc-straightening axiom or drawing-specific conclusion.
 * `LatticeProb.PlaneTopology.axis_mem_closure_component_iff`: actual upper/lower complementary-component incidence, allowing coincident sides.
 * `LatticeProb.Topology.exists_interior_subintervalParameter`: affine closed-subinterval parametrization and strict interior preimages.
 
-## Verification scope
 **Euclidean lattice sums.**  The Euclidean radius `radius v = √(∑ v_k²)` on
 `Fin d → ℝ`, the integer lattice `Site d = Fin d → ℤ`, and the physical scaling
 `physical ε z` are the carriers of these results
@@ -1047,50 +1050,36 @@ introduce no arc-straightening axiom or drawing-specific conclusion.
 
 ## Guarantees
 
-The required production gates build the root and every tracked module under
-`LatticeProb/`, reject warning/error diagnostics and nonzero child exits, and
-inspect every constant whose defining module belongs to that inventory.
-The axiom inspection includes generated and private constants, imports every
-selected module and requires two matching environment censuses with exactly
-one closure report per name. Only subsets of `propext`, `Classical.choice` and
-`Quot.sound` are accepted; a genuine empty closure is valid. Explicit hypotheses
-are binders, not additional axioms.
+- **No `sorry`.** The library has none. The five comparator challenges under
+  [`LatticeProbAudit/`](LatticeProbAudit/) each contain one intentional statement-level
+  `sorry`, which the corresponding solution proves.
+- **Standard axioms only.** `python3 tools/check_axioms.py` runs `#print axioms` on every
+  declaration of the library, generated and private ones included, and fails on any axiom
+  other than `propext`, `Classical.choice` and `Quot.sound`.
+  [`LatticeProb/Meta/AxiomsAudit.lean`](LatticeProb/Meta/AxiomsAudit.lean) prints the axioms
+  of the principal theorems.  The cited results of `LatticeProb/External/` are propositions
+  taken as explicit hypotheses, not axioms.
+- **Warning-free build.** The continuous-integration build compiles the root and every module
+  of `LatticeProb/` and rejects any warning or error.
+- **Independent check of the statements.** Kingman's subadditive ergodic theorem, the discrete
+  Gaussian free field, the binomial local central limit theorem, the one-dimensional
+  Berry–Esseen theorem and the normal comparison inequality are restated in
+  [`LatticeProbAudit/`](LatticeProbAudit/) using mathlib alone, one challenge file per
+  theorem.  The solution file proves each restatement from the library, and
+  [leanprover/comparator](https://github.com/leanprover/comparator) checks it through the Lean
+  kernel and the independent nanoda kernel.  See
+  [`LatticeProbAudit/README.md`](LatticeProbAudit/README.md).
+- **Pinned toolchain.** Lean `v4.32.0` and mathlib at the revision recorded in
+  [`lake-manifest.json`](lake-manifest.json).
 
-`python3 tools/verify.py --preflight-only` checks the administration fixtures,
-public hygiene and comparator configuration. It runs no Lean inspection and
-provides no proof or comparator verdict. `python3 tools/verify.py` requires the
-production build and full axiom gate. Set `LAKE_LOCK` to an absolute build-lock
-path for direct gate execution. Under an outer exclusive lock, `LAKE_GATE_LOCK`
-identifies that same expected file; the gate verifies its device/inode, kernel
-lock and live ancestor ownership before and after each child without reacquiring
-it. Comparator gates require `--tool-root` or `COMPARATOR_TOOL_ROOT`; the latter
-must be an absolute path. Evidence can be retained outside the checkout with
-`--evidence-dir`.
-
-Five configured comparator pairs select Kingman's subadditive ergodic theorem,
-the discrete Gaussian free field, the binomial local central limit theorem,
-the one-dimensional Berry-Esseen theorem and the normal comparison inequality.
-Each selected theorem requires its own actual comparator result; configuration
-alone is not a proof verdict.
-The comparator production census additionally covers every tracked
-non-Challenge Solution and bridge module. The configured Challenge holes
-belong only to those artificial comparison surfaces. The comparator gate requires every exact pair, actual child exits,
-matching tool identities, Lean replay and the configured nanoda replay.
-`LatticeProb/Meta/AxiomsAudit.lean` remains an additional principal-theorem
-inspection; its selected names are not the complete public inventory.
-
-These are verification requirements, not a report of a fresh run on the
-current checkout. A successful run applies to its recorded source, checker,
-toolchain and dependency identities. Kernel and comparator checks do not
-establish correspondence to a mathematical source, discharge explicit
-hypotheses or resolve the conditional-input descriptions above.
+The checks do not establish that a docstring's citation renders the cited source faithfully;
+that is a reading.
 
 ## Size
 
-The full axiom gate records its exact module/source inventory, expected names
-and closure rows. Earlier undated module, line and declaration totals are not
-used as a current coverage claim. Comparator surfaces are inventoried
-separately from production.
+About 189,000 lines of Lean in 960 modules (`LatticeProb.lean` and `LatticeProb/`), of which
+about 142,000 lines are code once comments and blank lines are removed, on top of mathlib.  The
+comparator surface under `LatticeProbAudit/` is not counted.
 
 ## Building
 
@@ -1143,6 +1132,7 @@ imported alone.
 | `python3 tools/check_axioms.py` | runs Lean's `#print axioms` on every declaration of the library and fails if any closure contains `sorryAx` or an axiom other than `propext`, `Classical.choice`, `Quot.sound` |
 | `python3 tools/check_warnings.py` | the build of `LatticeProb` emits no error, no warning and no `sorry` |
 | `python3 tools/check_names.py FILE` | every `LatticeProb.*` name mentioned in a text file exists |
+| `python3 tools/verify.py` | runs the tests of the tools, the workflow and comparator configuration checks, `check_warnings` and `check_axioms`, as the continuous integration does |
 
 ## Repository layout
 
@@ -1208,6 +1198,14 @@ CITATION.cff, CONTRIBUTING.md, formalization.yaml   citation, contribution notes
 LICENSE, NOTICE          the license and the third-party notices
 ```
 
+## How this was built
+
+The Lean code was written with AI assistance, using models from Anthropic (Claude) and
+DeepSeek, under the direction of the author. Every proof is checked by the Lean kernel. The
+models, tooling, cost and review status are disclosed in [`formalization.yaml`](formalization.yaml),
+following the [mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml)
+standard.
+
 ## Authors, citation, acknowledgements
 
 The Lean development is by **Ahmed Bou-Rabee**.  To cite it, use
@@ -1221,37 +1219,131 @@ modules of `LatticeProb/Lattice/Planar/` from
 [`rotor-23`](https://github.com/nitromannitol/rotor-23), and sixteen continuum
 modules from
 [`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness);
-[`NOTICE`](NOTICE) lists the files and the commits.  The curve-space, bounded
-optional-stopping, finite Dirichlet-problem, finite discrete-calculus, supported-law,
-Lévy–Prokhorov map and coupling, dependent kernel-map, subcoupling-completion, matched-cell coupling, finite partition coupling, partition-coupling kernel, finite-span Cameron–Martin, Gaussian concentration, open-set Brownian exit, harmonic-cutoff, Brownian moment, Taylor-remainder, dyadic stopping-time and Brownian path-space modules
-(`LatticeProb/Topology/CurveSpace.lean`, `LatticeProb/Prob/BoundedStopping.lean`,
-`LatticeProb/Network/Dirichlet.lean`, `LatticeProb/Network/FiniteCalculus.lean`,
-`LatticeProb/Prob/SupportedLaw.lean`, `LatticeProb/Prob/LevyProkhorovMaps.lean`,
-`LatticeProb/Prob/DependentKernelMap.lean`, `LatticeProb/Prob/SubcouplingCompletion.lean`,
-`LatticeProb/Prob/MatchedCellCoupling.lean`, `LatticeProb/Prob/FinitePartitionCoupling.lean`,
-`LatticeProb/Prob/FinitePartitionCouplingKernel.lean`, `LatticeProb/Prob/CameronMartin.lean`,
-`LatticeProb/Prob/GaussProductRotation.lean`, `LatticeProb/Prob/GaussSteinIBP.lean`, `LatticeProb/Prob/GaussSmoothBdd.lean`, `LatticeProb/Prob/GaussSmoothMGF.lean`, `LatticeProb/Prob/GaussMollify.lean`, `LatticeProb/Prob/BrownianOpenExit.lean`, `LatticeProb/Prob/BrownianOpenExitStopping.lean`, `LatticeProb/Prob/BrownianOpenExitFinite.lean`, `LatticeProb/Analysis/HarmonicBridge.lean`,
-`LatticeProb/Prob/GaussLipConcentration.lean`, `LatticeProb/Prob/BrownianMomentsCore.lean`, `LatticeProb/Analysis/HessianTaylorRemainder.lean`, `LatticeProb/Prob/DyadicExitApprox.lean`, `LatticeProb/Prob/BrownianPathSpace.lean`,
-`LatticeProb/Prob/BrownianIncrementMoments.lean`, `LatticeProb/Prob/BrownianWeakMarkovPath.lean`, `LatticeProb/Prob/BrownianFiniteStopping.lean`, `LatticeProb/Prob/BrownianHessianTaylor.lean`,
-`LatticeProb/Prob/BrownianPredictableTaylor.lean`, `LatticeProb/Prob/BrownianStoppedSum.lean`, `LatticeProb/Prob/BrownianStoppedLimit.lean`, `LatticeProb/Prob/BrownianPathHarmonicExit.lean`,
-`LatticeProb/Prob/Quantile.lean`, `LatticeProb/Prob/BinomialTail.lean`, `LatticeProb/Prob/SkorokhodPartition.lean`, `LatticeProb/Prob/SkorokhodMix.lean`, `LatticeProb/Prob/TrivialSigma.lean`,
-`LatticeProb/Prob/QuantileMap.lean`, `LatticeProb/Prob/QuantileLimit.lean`, `LatticeProb/Prob/BinomialDomination.lean`, `LatticeProb/Prob/SkorokhodSpace.lean`, `LatticeProb/Prob/TrivialSigmaJoin.lean`, `LatticeProb/Prob/GaussPittCore.lean`, `LatticeProb/Prob/GaussPittVector.lean`, `LatticeProb/Prob/GaussAssociationSets.lean`, `LatticeProb/Prob/BrownianAbsMoments.lean`,
-`LatticeProb/Prob/SkorokhodLaw.lean`, `LatticeProb/Prob/BrownianGermZeroOne.lean`, `LatticeProb/Prob/BrownianAbsMomentsFubini.lean`, `LatticeProb/Prob/GaussPittSmooth.lean`, `LatticeProb/Topology/Length/CurveLength.lean`,
-`LatticeProb/Prob/GaussBorellFinite.lean`, `LatticeProb/Prob/GaussKahaneStein.lean`, `LatticeProb/Prob/GaussKahaneCore.lean`, `LatticeProb/Topology/PolishContinuousMap.lean`,
-`LatticeProb/Prob/BrownianTailZeroOne.lean`, `LatticeProb/Prob/GaussPittLipschitz.lean`, `LatticeProb/Prob/GaussBorellVector.lean`, `LatticeProb/Prob/GaussKahaneBound.lean`, `LatticeProb/Topology/Length/LengthSpace.lean`,
-`LatticeProb/Prob/Skorokhod.lean`, `LatticeProb/Prob/GaussKahaneInterp.lean`, `LatticeProb/Prob/GaussSupTailBorell.lean`, `LatticeProb/Topology/Length/CurveNatural.lean`, `LatticeProb/Topology/Length/Midpoint.lean`, `LatticeProb/Topology/Length/Internal.lean`,
-`LatticeProb/Prob/GaussAssociationEvents.lean`, `LatticeProb/Prob/GaussBorellSeq.lean`, `LatticeProb/Prob/GaussKahaneVector.lean`, `LatticeProb/Topology/Length/LengthGeodesic.lean`, `LatticeProb/Topology/Length/Menger.lean`,
-`LatticeProb/Prob/GaussAssociationFun.lean`, `LatticeProb/Prob/GaussKahaneRpow.lean`, `LatticeProb/Topology/Length/Geodesic.lean`, `LatticeProb/Topology/Length/LengthLimit.lean`,
-`LatticeProb/Prob/CondIndepEv.lean`, `LatticeProb/Analysis/ReciprocalPowerDecay.lean`, `LatticeProb/Analysis/MatrixHeat.lean`, `LatticeProb/Network/Conductance.lean`, `LatticeProb/Analysis/Polynomial/Degree.lean`,
-`LatticeProb/Prob/EfronSteinSigma.lean`, `LatticeProb/Network/HeatGenerator.lean`, `LatticeProb/Network/DirichletForm.lean`, `LatticeProb/Analysis/Polynomial/Laplacian.lean`, `LatticeProb/Prob/GaussKahane2Const.lean`,
-`LatticeProb/Network/HeatUniformization.lean`, `LatticeProb/Network/KilledHeat.lean`, `LatticeProb/Network/DirichletSpace.lean`, `LatticeProb/Network/WeightedGradient.lean`, `LatticeProb/Network/AnchoredEnergy.lean`,
-`LatticeProb/Analysis/Polynomial/BallVanishing.lean`, `LatticeProb/Analysis/Polynomial/Analytic.lean`, `LatticeProb/Prob/CondIndepDetermined.lean`, `LatticeProb/Network/ConductanceHarmonic.lean`, `LatticeProb/Network/EnergyENN.lean`,
-`LatticeProb/Network/HeatPositivity.lean`, `LatticeProb/Network/DirichletSpaceComplete.lean`, `LatticeProb/Network/AnchoredTraceMinimizer.lean`, `LatticeProb/Topology/Length/SetDist.lean`, `LatticeProb/Prob/GaussSupTailField.lean`,
-`LatticeProb/Network/ConductanceBridge.lean`, `LatticeProb/Analysis/Polynomial/BoundaryApproximation.lean`, `LatticeProb/Analysis/Polynomial/Dirichlet.lean`, `LatticeProb/Prob/AEDetermined.lean`, `LatticeProb/Prob/CondIndepEvJoin.lean`,
-`LatticeProb/Network/HeatKernel.lean`, `LatticeProb/Network/AnchoredMinimizer.lean`, `LatticeProb/Topology/Length/InternalOps.lean`, `LatticeProb/Prob/EfronSteinSigmaResample.lean`,
-`LatticeProb/Prob/CondCopies.lean`, `LatticeProb/Topology/Length/InternalLimit.lean`)
-are adapted from Leonardo Bonanno's
-[`lean-formalizations`](https://github.com/leobon12/lean-formalizations).  The comparator audit in
+[`NOTICE`](NOTICE) lists the files and the commits.  113 modules, among them those on curve spaces and curve length, optional stopping,
+finite Dirichlet problems, couplings, Gaussian concentration and comparison, and Brownian
+motion, are adapted from Leonardo Bonanno's
+[`lean-formalizations`](https://github.com/leobon12/lean-formalizations); they are listed below.
+
+<details>
+<summary>The modules adapted from Leonardo Bonanno's <code>lean-formalizations</code></summary>
+
+- `LatticeProb/Topology/CurveSpace.lean`
+- `LatticeProb/Prob/BoundedStopping.lean`
+- `LatticeProb/Network/Dirichlet.lean`
+- `LatticeProb/Network/FiniteCalculus.lean`
+- `LatticeProb/Prob/SupportedLaw.lean`
+- `LatticeProb/Prob/LevyProkhorovMaps.lean`
+- `LatticeProb/Prob/DependentKernelMap.lean`
+- `LatticeProb/Prob/SubcouplingCompletion.lean`
+- `LatticeProb/Prob/MatchedCellCoupling.lean`
+- `LatticeProb/Prob/FinitePartitionCoupling.lean`
+- `LatticeProb/Prob/FinitePartitionCouplingKernel.lean`
+- `LatticeProb/Prob/CameronMartin.lean`
+- `LatticeProb/Prob/GaussProductRotation.lean`
+- `LatticeProb/Prob/GaussSteinIBP.lean`
+- `LatticeProb/Prob/GaussSmoothBdd.lean`
+- `LatticeProb/Prob/GaussSmoothMGF.lean`
+- `LatticeProb/Prob/GaussMollify.lean`
+- `LatticeProb/Prob/BrownianOpenExit.lean`
+- `LatticeProb/Prob/BrownianOpenExitStopping.lean`
+- `LatticeProb/Prob/BrownianOpenExitFinite.lean`
+- `LatticeProb/Analysis/HarmonicBridge.lean`
+- `LatticeProb/Prob/GaussLipConcentration.lean`
+- `LatticeProb/Prob/BrownianMomentsCore.lean`
+- `LatticeProb/Analysis/HessianTaylorRemainder.lean`
+- `LatticeProb/Prob/DyadicExitApprox.lean`
+- `LatticeProb/Prob/BrownianPathSpace.lean`
+- `LatticeProb/Prob/BrownianIncrementMoments.lean`
+- `LatticeProb/Prob/BrownianWeakMarkovPath.lean`
+- `LatticeProb/Prob/BrownianFiniteStopping.lean`
+- `LatticeProb/Prob/BrownianHessianTaylor.lean`
+- `LatticeProb/Prob/BrownianPredictableTaylor.lean`
+- `LatticeProb/Prob/BrownianStoppedSum.lean`
+- `LatticeProb/Prob/BrownianStoppedLimit.lean`
+- `LatticeProb/Prob/BrownianPathHarmonicExit.lean`
+- `LatticeProb/Prob/Quantile.lean`
+- `LatticeProb/Prob/BinomialTail.lean`
+- `LatticeProb/Prob/SkorokhodPartition.lean`
+- `LatticeProb/Prob/SkorokhodMix.lean`
+- `LatticeProb/Prob/TrivialSigma.lean`
+- `LatticeProb/Prob/QuantileMap.lean`
+- `LatticeProb/Prob/QuantileLimit.lean`
+- `LatticeProb/Prob/BinomialDomination.lean`
+- `LatticeProb/Prob/SkorokhodSpace.lean`
+- `LatticeProb/Prob/TrivialSigmaJoin.lean`
+- `LatticeProb/Prob/GaussPittCore.lean`
+- `LatticeProb/Prob/GaussPittVector.lean`
+- `LatticeProb/Prob/GaussAssociationSets.lean`
+- `LatticeProb/Prob/BrownianAbsMoments.lean`
+- `LatticeProb/Prob/SkorokhodLaw.lean`
+- `LatticeProb/Prob/BrownianGermZeroOne.lean`
+- `LatticeProb/Prob/BrownianAbsMomentsFubini.lean`
+- `LatticeProb/Prob/GaussPittSmooth.lean`
+- `LatticeProb/Topology/Length/CurveLength.lean`
+- `LatticeProb/Prob/GaussBorellFinite.lean`
+- `LatticeProb/Prob/GaussKahaneStein.lean`
+- `LatticeProb/Prob/GaussKahaneCore.lean`
+- `LatticeProb/Topology/PolishContinuousMap.lean`
+- `LatticeProb/Prob/BrownianTailZeroOne.lean`
+- `LatticeProb/Prob/GaussPittLipschitz.lean`
+- `LatticeProb/Prob/GaussBorellVector.lean`
+- `LatticeProb/Prob/GaussKahaneBound.lean`
+- `LatticeProb/Topology/Length/LengthSpace.lean`
+- `LatticeProb/Prob/Skorokhod.lean`
+- `LatticeProb/Prob/GaussKahaneInterp.lean`
+- `LatticeProb/Prob/GaussSupTailBorell.lean`
+- `LatticeProb/Topology/Length/CurveNatural.lean`
+- `LatticeProb/Topology/Length/Midpoint.lean`
+- `LatticeProb/Topology/Length/Internal.lean`
+- `LatticeProb/Prob/GaussAssociationEvents.lean`
+- `LatticeProb/Prob/GaussBorellSeq.lean`
+- `LatticeProb/Prob/GaussKahaneVector.lean`
+- `LatticeProb/Topology/Length/LengthGeodesic.lean`
+- `LatticeProb/Topology/Length/Menger.lean`
+- `LatticeProb/Prob/GaussAssociationFun.lean`
+- `LatticeProb/Prob/GaussKahaneRpow.lean`
+- `LatticeProb/Topology/Length/Geodesic.lean`
+- `LatticeProb/Topology/Length/LengthLimit.lean`
+- `LatticeProb/Prob/CondIndepEv.lean`
+- `LatticeProb/Analysis/ReciprocalPowerDecay.lean`
+- `LatticeProb/Analysis/MatrixHeat.lean`
+- `LatticeProb/Network/Conductance.lean`
+- `LatticeProb/Analysis/Polynomial/Degree.lean`
+- `LatticeProb/Prob/EfronSteinSigma.lean`
+- `LatticeProb/Network/HeatGenerator.lean`
+- `LatticeProb/Network/DirichletForm.lean`
+- `LatticeProb/Analysis/Polynomial/Laplacian.lean`
+- `LatticeProb/Prob/GaussKahane2Const.lean`
+- `LatticeProb/Network/HeatUniformization.lean`
+- `LatticeProb/Network/KilledHeat.lean`
+- `LatticeProb/Network/DirichletSpace.lean`
+- `LatticeProb/Network/WeightedGradient.lean`
+- `LatticeProb/Network/AnchoredEnergy.lean`
+- `LatticeProb/Analysis/Polynomial/BallVanishing.lean`
+- `LatticeProb/Analysis/Polynomial/Analytic.lean`
+- `LatticeProb/Prob/CondIndepDetermined.lean`
+- `LatticeProb/Network/ConductanceHarmonic.lean`
+- `LatticeProb/Network/EnergyENN.lean`
+- `LatticeProb/Network/HeatPositivity.lean`
+- `LatticeProb/Network/DirichletSpaceComplete.lean`
+- `LatticeProb/Network/AnchoredTraceMinimizer.lean`
+- `LatticeProb/Topology/Length/SetDist.lean`
+- `LatticeProb/Prob/GaussSupTailField.lean`
+- `LatticeProb/Network/ConductanceBridge.lean`
+- `LatticeProb/Analysis/Polynomial/BoundaryApproximation.lean`
+- `LatticeProb/Analysis/Polynomial/Dirichlet.lean`
+- `LatticeProb/Prob/AEDetermined.lean`
+- `LatticeProb/Prob/CondIndepEvJoin.lean`
+- `LatticeProb/Network/HeatKernel.lean`
+- `LatticeProb/Network/AnchoredMinimizer.lean`
+- `LatticeProb/Topology/Length/InternalOps.lean`
+- `LatticeProb/Prob/EfronSteinSigmaResample.lean`
+- `LatticeProb/Prob/CondCopies.lean`
+- `LatticeProb/Topology/Length/InternalLimit.lean`
+
+</details>
+
+The comparator audit in
 [`LatticeProbAudit/`](LatticeProbAudit/) is set up for
 [`leanprover/comparator`](https://github.com/leanprover/comparator).
 

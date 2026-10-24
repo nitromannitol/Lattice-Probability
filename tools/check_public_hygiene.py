@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Tracked public-surface operational-attribution and workflow configuration gate.
+"""Tracked public-surface and workflow configuration gate.
 
-Licensed source/publisher credit is retained. Every tracked regular file is
-checked; checker signatures and test negatives are assembled at runtime.
+Every tracked regular file is checked for paths of a local machine; the
+workflows are checked for pinned actions and the required gate invocations.
+Checker signatures and test negatives are assembled at runtime.
 This gate does not interpret or prove mathematical statements.
 """
 from pathlib import Path
@@ -14,14 +15,12 @@ from check_axioms import regular_hash, tracked_paths
 from assurance_diagnostics import GateError, success_summary
 
 ROOT=Path(__file__).resolve().parent.parent
-OPERATIONAL_NAMES=r"\b(?:f"+r"leet|Cl"+r"aude|Deep"+r"Seek|GL"+r"M|Open"+r"AI|So"+r"nnet|Op"+r"us|co"+r"dex)\b"
-ATTRIBUTION=re.compile(r"Co-"+r"Authored-"+r"By:|AI (?:coding )?agents?|\b(?:models?|framework|hardware|prompting_notes):|"
-                       r"~"+r"/(?:f"+r"leet|work|lean)/[^\s]+|/"+r"home/[^/\s]+/|(?:^|\n)automation:\s*|"+OPERATIONAL_NAMES,re.I)
+LOCAL_PATHS=re.compile(r"~"+r"/(?:f"+r"leet|work|lean)/[^\s]+|/"+r"home/[^/\s]+/|/"+r"Users/[^/\s]+/")
 ACTIONS={"actions/checkout":"3d3c42e5aac5ba805825da76410c181273ba90b1", "leanprover/lean-action":"38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9", "actions/cache/restore":"0057852bfaa89a56745cba8c7296529d2fc39830", "actions/cache/save":"0057852bfaa89a56745cba8c7296529d2fc39830", "actions/setup-go":"40f1582b2485089dde7abd97c1529aa768e1baff", "actions/upload-artifact":"043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"}
 
 
 def prose_findings(text):
-    return [m.group(0) for m in ATTRIBUTION.finditer(text)]
+    return [m.group(0) for m in LOCAL_PATHS.finditer(text)]
 
 
 def workflow_findings(text, comparator=False):
