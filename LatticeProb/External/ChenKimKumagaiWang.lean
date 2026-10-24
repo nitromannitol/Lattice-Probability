@@ -206,13 +206,6 @@ theorem ckkw_davies_application (h : ChenKimKumagaiWangDavies)
   simpa only [ckkw_twoState_lambda_zero, ENNReal.toReal_zero, mul_zero, sub_self,
     abs_zero, neg_zero, add_zero, Real.exp_zero, mul_one, zero_mul] using hb
 
-#print axioms ckkwKernel_le_one
-#print axioms ckkw_davies_application
-#print axioms ckkw_twoState_energy
-#print axioms ckkw_twoState_lambda_zero
-#print axioms ckkw_nash_application
-#print axioms ChenKimKumagaiWangDavies
-#print axioms ChenKimKumagaiWangNash
 
 end
 

@@ -848,6 +848,7 @@ import LatticeProb.Graph.LongRangeKernel.LatticeVolume
 import LatticeProb.Graph.LongRangeKernel.LatticeHeat
 import LatticeProb.Graph.LongRangeKernel.LatticeDistance
 import LatticeProb.Graph.LongRangeKernel.CriticalVolume
+import LatticeProb.Graph.LongRangeKernel.LatticeGaussianLower
 import LatticeProb.Analysis.Elliptic.GTCheck
 import LatticeProb.Analysis.Elliptic.OneDimODE
 import LatticeProb.Analysis.Elliptic.OneDim
@@ -873,3 +874,4 @@ import LatticeProb.Prob.JumpChain.Path
 import LatticeProb.Prob.JumpChain.PositionLaw
 import LatticeProb.Prob.JumpChain.Truncation
 import LatticeProb.Prob.JumpChain.TimeScale
+import LatticeProb.Prob.JumpChain.Duhamel
