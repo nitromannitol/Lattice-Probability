@@ -909,3 +909,6 @@ import LatticeProb.Prob.BrownianDirichlet.TaylorError
 import LatticeProb.Prob.BrownianDirichlet.JointMeasurability
 import LatticeProb.Prob.BrownianDirichlet.Dynkin
 import LatticeProb.Prob.BrownianDirichlet.Subinvariance
+import LatticeProb.Prob.BrownianDirichlet.Discounted
+import LatticeProb.Prob.BrownianDirichlet.Localization
+import LatticeProb.Prob.BrownianDirichlet.KilledKernel
