@@ -917,3 +917,6 @@ import LatticeProb.Prob.BrownianDirichlet.OptionalStopping
 import LatticeProb.Prob.BrownianDirichlet.Exhaustion
 import LatticeProb.Prob.BrownianDirichlet.KilledL2Bound
 import LatticeProb.Prob.BrownianDirichlet.Extensions
+import LatticeProb.Prob.BrownianDirichlet.LocalizedStopping
+import LatticeProb.Prob.BrownianDirichlet.KilledLp
+import LatticeProb.Prob.BrownianDirichlet.PayoffLimit
