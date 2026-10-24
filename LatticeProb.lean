@@ -823,6 +823,8 @@ import LatticeProb.Walk.KilledGreenPlanarLower
 import LatticeProb.Walk.BinomialLower
 import LatticeProb.Analysis.PoissonProfile
 import LatticeProb.Analysis.KernelPowersCS
+import LatticeProb.Analysis.KernelPowerBridge
+import LatticeProb.Walk.SRWMultinomial
 import LatticeProb.Prob.StochasticO
 import LatticeProb.Prob.StochasticO.Sums
 import LatticeProb.Prob.HoeffdingSeries
@@ -841,9 +843,11 @@ import LatticeProb.Graph.LongRangeKernel.CriticalScale
 import LatticeProb.Graph.LongRangeKernel.CriticalAsymptotics
 import LatticeProb.Graph.LongRangeKernel.Lattice
 import LatticeProb.External.MuruganSaloffCoste
+import LatticeProb.External.ChenKimKumagaiWang
 import LatticeProb.Graph.LongRangeKernel.LatticeVolume
 import LatticeProb.Graph.LongRangeKernel.LatticeHeat
 import LatticeProb.Graph.LongRangeKernel.LatticeDistance
+import LatticeProb.Graph.LongRangeKernel.CriticalVolume
 import LatticeProb.Analysis.Elliptic.GTCheck
 import LatticeProb.Analysis.Elliptic.OneDimODE
 import LatticeProb.Analysis.Elliptic.OneDim
@@ -867,3 +871,5 @@ import LatticeProb.Prob.JumpChain.RingCount
 import LatticeProb.Prob.JumpChain.StateChain
 import LatticeProb.Prob.JumpChain.Path
 import LatticeProb.Prob.JumpChain.PositionLaw
+import LatticeProb.Prob.JumpChain.Truncation
+import LatticeProb.Prob.JumpChain.TimeScale

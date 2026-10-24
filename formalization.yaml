@@ -92,7 +92,9 @@ status:
     LatticeProb/External/GilbargTrudinger.lean for the formalizations that
     cite them; they are not proved here, nor is the Murugan-Saloff-Coste
     on-diagonal estimate (Electron. J. Probab. 20 (2015), Theorem 1.1) stated
-    in LatticeProb/External/MuruganSaloffCoste.lean.  A sixth proposition there,
+    in LatticeProb/External/MuruganSaloffCoste.lean, nor are the discrete forms of
+    Chen-Kim-Kumagai-Wang (J. Funct. Anal. 281 (2021)), Theorem 4.4 with Example 4.3
+    and Proposition 3.1(ii), in LatticeProb/External/ChenKimKumagaiWang.lean.  A sixth proposition there,
     PotentialKernelAsymptotics (Lawler-Limic, Theorems 4.3.1 and 4.4.4), is
     stated for the formalizations that cite it and proved in
     LatticeProb/External/PotentialKernelAsymptoticsProved.lean, and three more,
