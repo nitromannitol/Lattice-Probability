@@ -820,6 +820,7 @@ import LatticeProb.Sandpile.Nonnegative
 import LatticeProb.Analysis.SandpileScale
 import LatticeProb.Sandpile.Parallel
 import LatticeProb.Walk.KilledGreenPlanarLower
+import LatticeProb.Walk.BinomialLower
 import LatticeProb.Prob.StochasticO
 import LatticeProb.Prob.StochasticO.Sums
 import LatticeProb.Prob.HoeffdingSeries
