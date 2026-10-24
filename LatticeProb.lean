@@ -848,6 +848,7 @@ import LatticeProb.Graph.LongRangeKernel.Lattice
 import LatticeProb.External.MuruganSaloffCoste
 import LatticeProb.External.ChenKimKumagaiWang
 import LatticeProb.Analysis.ContractionSemigroup
+import LatticeProb.Analysis.ContractionSemigroupResolvent
 import LatticeProb.External.EthierKurtzTrotterKato
 import LatticeProb.External.EthierKurtzSkorokhod
 import LatticeProb.External.GilbargTrudingerExistence
@@ -905,6 +906,7 @@ import LatticeProb.Prob.JumpChain.PositionFdd
 import LatticeProb.Prob.JumpChain.MarkovProperty
 import LatticeProb.Prob.JumpChain.IncrementBound
 import LatticeProb.Prob.JumpChain.KilledL2
+import LatticeProb.Prob.JumpChain.KilledGenerator
 
 import LatticeProb.Prob.BrownianDirichlet.Trace
 import LatticeProb.Prob.BrownianDirichlet.ScaledExit
@@ -924,3 +926,7 @@ import LatticeProb.Prob.BrownianDirichlet.KilledLp
 import LatticeProb.Prob.BrownianDirichlet.PayoffLimit
 import LatticeProb.Prob.BrownianDirichlet.InnerLimit
 import LatticeProb.Prob.BrownianDirichlet.KilledStrongContinuity
+import LatticeProb.Prob.BrownianDirichlet.Representation
+import LatticeProb.Prob.BrownianDirichlet.KilledResolvent
+import LatticeProb.Prob.BrownianDirichlet.LargeBallExit
+import LatticeProb.Topology.EpsFilter
