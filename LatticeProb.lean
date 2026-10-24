@@ -849,6 +849,8 @@ import LatticeProb.External.MuruganSaloffCoste
 import LatticeProb.External.ChenKimKumagaiWang
 import LatticeProb.Analysis.ContractionSemigroup
 import LatticeProb.External.EthierKurtzTrotterKato
+import LatticeProb.External.EthierKurtzSkorokhod
+import LatticeProb.External.GilbargTrudingerExistence
 import LatticeProb.Graph.LongRangeKernel.LatticeVolume
 import LatticeProb.Graph.LongRangeKernel.LatticeHeat
 import LatticeProb.Graph.LongRangeKernel.LatticeDistance
@@ -873,6 +875,7 @@ import LatticeProb.Prob.Cadlag.HalfLine.PathMaps
 import LatticeProb.Prob.Cadlag.HalfLine.Metric
 import LatticeProb.Prob.Cadlag.HalfLine.Convergence
 import LatticeProb.Prob.Cadlag.HalfLine.Evaluation
+import LatticeProb.Prob.Cadlag.HalfLine.Laws
 import LatticeProb.Prob.JumpChain.Rates
 import LatticeProb.Prob.JumpChain.History
 import LatticeProb.Prob.JumpChain.Position
@@ -901,3 +904,5 @@ import LatticeProb.Prob.JumpChain.IncrementBound
 
 import LatticeProb.Prob.BrownianDirichlet.Trace
 import LatticeProb.Prob.BrownianDirichlet.ScaledExit
+import LatticeProb.Prob.BrownianDirichlet.TaylorError
+import LatticeProb.Prob.BrownianDirichlet.JointMeasurability

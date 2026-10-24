@@ -55,7 +55,10 @@ Murugan–Saloff-Coste on-diagonal estimate for long-range random walks
 critical lattice scales in `LatticeProb/Graph/LongRangeKernel/`), and the discrete forms of
 Chen–Kim–Kumagai–Wang's Theorem 4.4 (with Example 4.3) and Proposition 3.1(ii)
 (`LatticeProb/External/ChenKimKumagaiWang.lean`), and Ethier–Kurtz's convergence theorem for
-semigroups on varying spaces, Chapter 1, Theorem 6.1 (`LatticeProb/External/EthierKurtzTrotterKato.lean`).  A
+semigroups on varying spaces, Chapter 1, Theorem 6.1
+(`LatticeProb/External/EthierKurtzTrotterKato.lean`), their Chapter 3 Theorems 7.8(b) and 8.6
+on the half-line Skorokhod space (`LatticeProb/External/EthierKurtzSkorokhod.lean`), and
+Gilbarg–Trudinger's existence theorem 6.14 (`LatticeProb/External/GilbargTrudingerExistence.lean`).  A
 theorem that uses one of them takes it as an explicit hypothesis, so its
 statement shows what it rests on.  The Rellich-Kondrachov embedding is used by
 the compactness results of `LatticeProb/Analysis/Sobolev/`.  The Herbst bound
