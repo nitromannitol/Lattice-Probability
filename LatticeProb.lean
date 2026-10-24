@@ -867,6 +867,8 @@ import LatticeProb.Prob.Cadlag.HalfLine.Discrepancy
 import LatticeProb.Prob.Cadlag.HalfLine.Triangle
 import LatticeProb.Prob.Cadlag.HalfLine.ZeroDistance
 import LatticeProb.Prob.Cadlag.HalfLine.PathMaps
+import LatticeProb.Prob.Cadlag.HalfLine.Metric
+import LatticeProb.Prob.Cadlag.HalfLine.Convergence
 import LatticeProb.Prob.JumpChain.Rates
 import LatticeProb.Prob.JumpChain.History
 import LatticeProb.Prob.JumpChain.Position
@@ -890,3 +892,4 @@ import LatticeProb.Prob.JumpChain.ClockLaw
 import LatticeProb.Prob.JumpChain.StateFdd
 import LatticeProb.Prob.JumpChain.PoissonFdd
 import LatticeProb.Prob.JumpChain.PositionFdd
+import LatticeProb.Prob.JumpChain.MarkovProperty
