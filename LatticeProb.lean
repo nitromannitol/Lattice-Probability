@@ -883,6 +883,7 @@ import LatticeProb.Prob.Cadlag.HalfLine.Evaluation
 import LatticeProb.Prob.Cadlag.HalfLine.Laws
 import LatticeProb.Prob.Cadlag.HalfLine.Separable
 import LatticeProb.Prob.Cadlag.HalfLine.ChainPathLaw
+import LatticeProb.Prob.Cadlag.HalfLine.Restriction
 import LatticeProb.Prob.JumpChain.Rates
 import LatticeProb.Prob.JumpChain.History
 import LatticeProb.Prob.JumpChain.Position
@@ -931,6 +932,7 @@ import LatticeProb.Prob.BrownianDirichlet.InnerLimit
 import LatticeProb.Prob.BrownianDirichlet.KilledStrongContinuity
 import LatticeProb.Prob.BrownianDirichlet.Representation
 import LatticeProb.Prob.BrownianDirichlet.ResolventIdentification
+import LatticeProb.Prob.BrownianDirichlet.KilledFdd
 import LatticeProb.Prob.BrownianDirichlet.KilledResolvent
 import LatticeProb.Prob.BrownianDirichlet.LargeBallExit
 import LatticeProb.Topology.EpsFilter
