@@ -862,6 +862,7 @@ import LatticeProb.Analysis.Elliptic.OneDim
 import LatticeProb.Analysis.Elliptic.OneDimExtension
 import LatticeProb.Analysis.Elliptic.OneDimCutoff
 import LatticeProb.Analysis.Elliptic.EuclideanTransport
+import LatticeProb.Analysis.Elliptic.OneDimExistence
 import LatticeProb.Prob.Cadlag.Basic
 import LatticeProb.Prob.Cadlag.Metric
 import LatticeProb.Prob.Cadlag.Measurable
@@ -903,6 +904,7 @@ import LatticeProb.Prob.JumpChain.PoissonFdd
 import LatticeProb.Prob.JumpChain.PositionFdd
 import LatticeProb.Prob.JumpChain.MarkovProperty
 import LatticeProb.Prob.JumpChain.IncrementBound
+import LatticeProb.Prob.JumpChain.KilledL2
 
 import LatticeProb.Prob.BrownianDirichlet.Trace
 import LatticeProb.Prob.BrownianDirichlet.ScaledExit
@@ -920,3 +922,5 @@ import LatticeProb.Prob.BrownianDirichlet.Extensions
 import LatticeProb.Prob.BrownianDirichlet.LocalizedStopping
 import LatticeProb.Prob.BrownianDirichlet.KilledLp
 import LatticeProb.Prob.BrownianDirichlet.PayoffLimit
+import LatticeProb.Prob.BrownianDirichlet.InnerLimit
+import LatticeProb.Prob.BrownianDirichlet.KilledStrongContinuity
