@@ -1,0 +1,759 @@
+import LatticeProb.Prob.Cadlag.HalfLine.Metric
+import LatticeProb.Prob.Cadlag.HalfLine.Convergence
+import Mathlib.Topology.MetricSpace.Lipschitz
+import Mathlib.Topology.Order.IntermediateValue
+
+/-!
+# Grid approximation, separability, and coordinate measurability
+
+Finite step reconstruction is continuous and coordinate measurable. Finite oscillation
+cuts and ceiling-aligned time changes prove convergence of stopped uniform-grid paths
+in the half-line Skorokhod metric. Consequently a separable state space gives a
+separable path space, and coordinate measurability implies Borel measurability.
+-/
+
+namespace LatticeProb.Cadlag.HalfLine
+
+open Set Filter MeasureTheory TopologicalSpace
+open scoped Topology ENNReal NNReal
+
+noncomputable section
+
+variable {E : Type*} [MetricSpace E]
+
+/-- Splicing càdlàg paths, taking the second path at the splice, preserves càdlàgness. -/
+theorem IsCadlag.splice {x y : Time → E} (hx : IsCadlag x) (hy : IsCadlag y)
+    (a : Time) : IsCadlag (fun t => if t < a then x t else y t) := by
+  constructor
+  · intro t
+    by_cases ht : t < a
+    · apply (hx.1 t).congr_of_eventuallyEq_of_mem (hx := Set.mem_Ici.mpr (le_refl t))
+      filter_upwards [mem_inf_of_left (Iio_mem_nhds ht)] with s hs
+      simp only [if_pos (Set.mem_Iio.mp hs)]
+    · apply (hy.1 t).congr_of_eventuallyEq_of_mem (hx := Set.mem_Ici.mpr (le_refl t))
+      filter_upwards [self_mem_nhdsWithin] with s hs
+      have hsa : ¬ s < a := not_lt.mpr ((le_of_not_gt ht).trans (Set.mem_Ici.mp hs))
+      simp only [if_neg hsa]
+  · intro t ht
+    by_cases hta : t ≤ a
+    · obtain ⟨l, hl⟩ := hx.2 t ht
+      refine ⟨l, hl.congr' ?_⟩
+      filter_upwards [self_mem_nhdsWithin] with s hs
+      simp only [if_pos (lt_of_lt_of_le (Set.mem_Iio.mp hs) hta)]
+    · obtain ⟨l, hl⟩ := hy.2 t ht
+      refine ⟨l, hl.congr' ?_⟩
+      filter_upwards [mem_inf_of_left (Ioi_mem_nhds (lt_of_not_ge hta))] with s hs
+      simp only [if_neg (not_lt.mpr (Set.mem_Ioi.mp hs).le)]
+
+/-- Select the grid interval, assigning a grid endpoint to the interval on its right. -/
+def stepIndex : {n : ℕ} → (Fin n → Time) → Time → Fin (n + 1)
+  | 0, _, _ => 0
+  | _ + 1, s, t => if t < s 0 then 0 else (stepIndex (fun i => s i.succ) t).succ
+
+/-- Finite step reconstruction is càdlàg, even without an ordering assumption on the grid. -/
+theorem isCadlag_stepIndex (n : ℕ) (s : Fin n → Time) (v : Fin (n + 1) → E) :
+    IsCadlag (fun t => v (stepIndex s t)) := by
+  induction n with
+  | zero => exact (const (v 0)).2
+  | succ n ih =>
+    simpa only [stepIndex, apply_ite, const] using
+      ((const (v 0)).2.splice (ih (fun i => s i.succ) (fun i => v i.succ)) (s 0))
+
+/-- The path with initial value `v 0` and subsequent values at the given grid thresholds.
+For increasing positive thresholds this is the usual finite step path, constant after the grid. -/
+def stepPath {n : ℕ} (s : Fin n → Time) (v : Fin (n + 1) → E) : D E :=
+  ⟨fun t => v (stepIndex s t), isCadlag_stepIndex n s v⟩
+
+/-- A global state-distance bound bounds the half-line Skorokhod metric by the same number. -/
+theorem dist_le_of_forall_dist_le (x y : D E) {C : ℝ} (hC : 0 ≤ C)
+    (h : ∀ t, dist (x.1 t) (y.1 t) ≤ C) : dist x y ≤ C := by
+  apply (dist_le_uniformIntegral x y).trans
+  apply ENNReal.toReal_le_of_le_ofReal hC
+  calc
+    _ ≤ ∫⁻ u : ℝ in Ioi 0, ENNReal.ofReal (Real.exp (-u)) * ENNReal.ofReal C := by
+      apply lintegral_mono
+      intro u
+      apply mul_le_mul_right
+      apply iSup_le
+      intro t
+      apply iSup_le
+      intro _
+      exact (min_le_left _ _).trans (by
+        rw [edist_dist]
+        exact ENNReal.ofReal_le_ofReal (h t))
+    _ = ENNReal.ofReal C := by
+      rw [lintegral_mul_const' _ _ ENNReal.ofReal_ne_top, exponential_mass, one_mul]
+
+/-- Identity time change makes fixed-grid reconstruction nonexpanding, EK (7.5). -/
+theorem dist_stepPath_le {n : ℕ} (s : Fin n → Time) (v w : Fin (n + 1) → E) :
+    dist (stepPath s v) (stepPath s w) ≤ dist v w := by
+  apply dist_le_of_forall_dist_le _ _ dist_nonneg
+  intro t
+  exact (dist_pi_le_iff dist_nonneg).mp le_rfl (stepIndex s t)
+
+/-- Fixed finite-grid reconstruction is continuous in all its state values, EK (7.5). -/
+theorem continuous_stepPath {n : ℕ} (s : Fin n → Time) :
+    Continuous (stepPath (E := E) s) := by
+  apply LipschitzWith.continuous (K := 1)
+  apply LipschitzWith.of_dist_le_mul
+  intro v w
+  simpa only [NNReal.coe_one, one_mul] using dist_stepPath_le s v w
+
+/-- A grid with no thresholds reconstructs exactly the constant path. -/
+theorem stepPath_empty (s : Fin 0 → Time) (v : Fin 1 → E) :
+    stepPath s v = const (v 0) := rfl
+
+/-- On an increasing grid, the selected interval is at most `i` exactly before threshold `i`. -/
+theorem stepIndex_le_iff {n : ℕ} (s : Fin n → Time) (hs : Monotone s)
+    (t : Time) (i : Fin n) : (stepIndex s t).val ≤ i.val ↔ t < s i := by
+  induction n with
+  | zero => exact Fin.elim0 i
+  | succ n ih =>
+    refine Fin.cases ?_ (fun j => ?_) i
+    · simp only [stepIndex]
+      split_ifs with ht
+      · simp only [Fin.val_zero, le_refl, ht]
+      · exact iff_of_false (Nat.not_succ_le_zero _) ht
+    · simp only [stepIndex]
+      split_ifs with ht
+      · have hti : t < s j.succ := ht.trans_le (hs (Fin.zero_le _))
+        simp only [Fin.val_zero, Fin.val_succ, Nat.zero_le, hti]
+      · simpa only [Fin.val_succ, Nat.add_le_add_iff_right] using
+          ih (fun k => s k.succ) (fun a b h => hs (show a.succ ≤ b.succ from
+            Nat.add_le_add_right h 1)) j
+
+/-- The finite uniform grid has mesh `1 / (m + 1)` and ends at time `m + 1`. -/
+def uniformGrid (m : ℕ) (i : Fin ((m + 1) ^ 2)) : Time :=
+  (i.val + 1 : ℕ) / (m + 1 : Time)
+
+/-- Uniform-grid thresholds are increasing. -/
+theorem strictMono_uniformGrid (m : ℕ) : StrictMono (uniformGrid m) := by
+  intro i j hij
+  apply (div_lt_div_iff_of_pos_right (by positivity : (0 : Time) < m + 1)).2
+  exact_mod_cast Nat.succ_lt_succ hij
+
+/-- EK's finite grid reconstruction samples at `i / (m + 1)` and stops at `m + 1`. -/
+def gridApprox (m : ℕ) (x : D E) : D E :=
+  stepPath (uniformGrid m) (fun i => x.1 (i.val / (m + 1 : Time)))
+
+/-- The interval index on a uniform grid is the truncated natural floor. -/
+theorem stepIndex_uniformGrid (m : ℕ) (t : Time) :
+    (stepIndex (uniformGrid m) t).val =
+      min ⌊(m + 1 : Time) * t⌋₊ ((m + 1) ^ 2) := by
+  apply eq_of_forall_ge_iff
+  intro k
+  by_cases hk : k < (m + 1) ^ 2
+  · change (stepIndex (uniformGrid m) t).val ≤ (⟨k, hk⟩ : Fin _).val ↔ _
+    rw [stepIndex_le_iff _ (strictMono_uniformGrid m).monotone]
+    rw [min_le_iff]
+    simp only [not_le.mpr hk, or_false]
+    rw [← Nat.lt_succ_iff, Nat.floor_lt (by positivity)]
+    simp only [uniformGrid]
+    rw [lt_div_iff₀ (by positivity : (0 : Time) < m + 1), mul_comm]
+  · exact iff_of_true (by have := (stepIndex (uniformGrid m) t).isLt; omega)
+      ((Nat.min_le_right _ _).trans (le_of_not_gt hk))
+
+/-- Uniform-grid reconstruction is exactly the stopped left-sampled path from EK (7.6). -/
+theorem gridApprox_apply (m : ℕ) (x : D E) (t : Time) :
+    (gridApprox m x).1 t =
+      x.1 ((min ⌊(m + 1 : Time) * t⌋₊ ((m + 1) ^ 2) : ℕ) / (m + 1 : Time)) := by
+  change x.1 ((stepIndex (uniformGrid m) t).val / (m + 1 : Time)) = _
+  rw [stepIndex_uniformGrid]
+
+/-- Grid reconstruction retains exactly the initial state. -/
+theorem gridApprox_zero (m : ℕ) (x : D E) : (gridApprox m x).1 0 = x.1 0 := by
+  rw [gridApprox_apply]
+  simp only [mul_zero, Nat.floor_zero, Nat.zero_min, Nat.cast_zero, zero_div]
+
+/-- The evaluation sigma algebra on the genuine path carrier. -/
+abbrev evaluationSigma (E : Type*) [MetricSpace E] : MeasurableSpace (D E) :=
+  ⨆ t : Time, MeasurableSpace.comap (fun x : D E => x.1 t) (borel E)
+
+/-- Every coordinate is measurable for the sigma algebra generated by coordinates. -/
+theorem measurable_eval_evaluationSigma (t : Time) :
+    Measurable[evaluationSigma E, borel E] (fun x : D E => x.1 t) :=
+  (comap_measurable (fun x : D E => x.1 t)).iSup' t
+
+/-- Fixed-grid reconstruction from any finite list of observations is coordinate measurable. -/
+theorem measurable_stepPath_eval [SeparableSpace E] {n : ℕ} (s : Fin n → Time)
+    (r : Fin (n + 1) → Time) :
+    Measurable[evaluationSigma E, borel (D E)]
+      (fun x : D E => stepPath s (fun i => x.1 (r i))) := by
+  letI : MeasurableSpace E := borel E
+  letI : BorelSpace E := ⟨rfl⟩
+  have hvalues : Measurable[evaluationSigma E]
+      (fun x : D E => fun i : Fin (n + 1) => x.1 (r i)) := by
+    letI : MeasurableSpace (D E) := evaluationSigma E
+    exact measurable_pi_iff.mpr (fun i => measurable_eval_evaluationSigma (r i))
+  exact (continuous_stepPath s).measurable.comp hvalues
+
+/-- Each finite uniform-grid approximation is measurable for the evaluation sigma algebra. -/
+theorem measurable_gridApprox [SeparableSpace E] (m : ℕ) :
+    Measurable[evaluationSigma E, borel (D E)] (gridApprox (E := E) m) :=
+  measurable_stepPath_eval (uniformGrid m) (fun i => i.val / (m + 1 : Time))
+
+/-- Distance from a fixed path to a finite grid approximation is coordinate measurable. -/
+theorem measurable_dist_gridApprox [SeparableSpace E] (m : ℕ) (z : D E) :
+    Measurable[evaluationSigma E, borel ℝ] (fun x : D E => dist z (gridApprox m x)) :=
+  (continuous_const.dist continuous_id).measurable.comp (measurable_gridApprox m)
+
+/-- The family of all finite reconstructions on the uniform grids is separable. -/
+theorem isSeparable_uniformGrid_paths [SeparableSpace E] :
+    TopologicalSpace.IsSeparable
+      (⋃ m : ℕ, Set.range (stepPath (E := E) (uniformGrid m))) := by
+  exact TopologicalSpace.IsSeparable.iUnion
+    (fun m => TopologicalSpace.isSeparable_range (continuous_stepPath (uniformGrid m)))
+
+/-- The closure of the finite uniform-grid family is separable. -/
+theorem isSeparable_closure_uniformGrid_paths [SeparableSpace E] :
+    TopologicalSpace.IsSeparable
+      (closure (⋃ m : ℕ, Set.range (stepPath (E := E) (uniformGrid m)))) :=
+  isSeparable_uniformGrid_paths.closure
+
+/-- Near each time a càdlàg path has small oscillation separately on either side. -/
+theorem IsCadlag.exists_open_one_sided_oscillation {x : Time → E} (hx : IsCadlag x)
+    (t : Time) {ε : ℝ} (hε : 0 < ε) :
+    ∃ U : Set Time, IsOpen U ∧ t ∈ U ∧
+      ∀ a ∈ U, ∀ b ∈ U,
+        (a < t ∧ b < t ∨ t ≤ a ∧ t ≤ b) → dist (x a) (x b) < ε := by
+  have hleft : ∃ U : Set Time, IsOpen U ∧ t ∈ U ∧
+      ∀ a ∈ U, ∀ b ∈ U, a < t → b < t → dist (x a) (x b) < ε := by
+    by_cases ht : 0 < t
+    · obtain ⟨l, hl⟩ := hx.2 t ht
+      obtain ⟨U, hU, htU, hsub⟩ := mem_nhdsWithin.mp
+        (hl (Metric.ball_mem_nhds l (half_pos hε)))
+      refine ⟨U, hU, htU, fun a ha b hb hat hbt => ?_⟩
+      have ha' := hsub ⟨ha, hat⟩
+      have hb' := hsub ⟨hb, hbt⟩
+      change dist (x a) l < ε / 2 at ha'
+      change dist (x b) l < ε / 2 at hb'
+      exact (dist_triangle (x a) l (x b)).trans_lt (by
+        rw [dist_comm l (x b)]
+        linarith)
+    · exact ⟨univ, isOpen_univ, mem_univ _, fun a _ _ _ hat _ =>
+        False.elim (ht (zero_le.trans_lt hat))⟩
+  obtain ⟨L, hL, htL, hleft⟩ := hleft
+  obtain ⟨R, hR, htR, hright⟩ := mem_nhdsWithin.mp
+    ((hx.1 t) (Metric.ball_mem_nhds (x t) (half_pos hε)))
+  refine ⟨L ∩ R, hL.inter hR, ⟨htL, htR⟩, fun a ha b hb hab => ?_⟩
+  rcases hab with hab | hab
+  · exact hleft a ha.1 b hb.1 hab.1 hab.2
+  · have ha' := hright ⟨ha.2, hab.1⟩
+    have hb' := hright ⟨hb.2, hab.2⟩
+    change dist (x a) (x t) < ε / 2 at ha'
+    change dist (x b) (x t) < ε / 2 at hb'
+    exact (dist_triangle (x a) (x t) (x b)).trans_lt (by
+      rw [dist_comm (x t) (x b)]
+      linarith)
+
+/-- Only finitely many points on a compact interval can have oscillation at least `ε`. -/
+theorem IsCadlag.finite_oscillation_points {x : Time → E} (hx : IsCadlag x)
+    (T : Time) {ε : ℝ} (hε : 0 < ε) :
+    {t ∈ Icc 0 T | ¬ ∃ U : Set Time, IsOpen U ∧ t ∈ U ∧
+      ∀ a ∈ U, ∀ b ∈ U, dist (x a) (x b) < ε}.Finite := by
+  let S : Set Time := {t | ¬ ∃ U : Set Time, IsOpen U ∧ t ∈ U ∧
+    ∀ a ∈ U, ∀ b ∈ U, dist (x a) (x b) < ε}
+  have hclosed : IsClosed S := by
+    rw [← isOpen_compl_iff]
+    apply isOpen_iff_mem_nhds.mpr
+    intro t ht
+    obtain ⟨U, hU, htU, hdiam⟩ := not_not.mp ht
+    apply mem_of_superset (hU.mem_nhds htU)
+    intro a ha hbad
+    exact hbad ⟨U, hU, ha, hdiam⟩
+  have hdiscrete : IsDiscrete S := by
+    apply isDiscrete_iff_forall_mem_exists_isOpen.mpr
+    intro t ht
+    obtain ⟨U, hU, htU, hdiam⟩ := hx.exists_open_one_sided_oscillation t hε
+    refine ⟨U, hU, ?_⟩
+    ext s
+    constructor
+    · rintro ⟨hsU, hsS⟩
+      apply mem_singleton_iff.mpr
+      by_contra hst
+      apply hsS
+      rcases lt_or_gt_of_ne hst with hst | hts
+      · refine ⟨U ∩ Iio t, hU.inter isOpen_Iio, ⟨hsU, hst⟩, ?_⟩
+        intro a ha b hb
+        exact hdiam a ha.1 b hb.1 (Or.inl ⟨ha.2, hb.2⟩)
+      · refine ⟨U ∩ Ioi t, hU.inter isOpen_Ioi, ⟨hsU, hts⟩, ?_⟩
+        intro a ha b hb
+        exact hdiam a ha.1 b hb.1 (Or.inr ⟨ha.2.le, hb.2.le⟩)
+    · rintro rfl
+      exact ⟨htU, ht⟩
+  exact (isCompact_Icc.inter_right hclosed).finite (hdiscrete.mono inter_subset_right)
+
+/-- A finite set of cuts controls oscillation of nearby times lying on the same side of each cut. -/
+theorem IsCadlag.exists_finite_oscillation_cuts {x : Time → E} (hx : IsCadlag x)
+    (T : Time) {ε : ℝ} (hε : 0 < ε) :
+    ∃ F : Finset Time, ∃ δ : ℝ, 0 < δ ∧
+      ∀ a ∈ Icc 0 T, ∀ b : Time, dist a b < δ →
+        (∀ c ∈ F, a < c ↔ b < c) → dist (x a) (x b) < ε := by
+  classical
+  choose U hU htU hdiam using fun t => hx.exists_open_one_sided_oscillation t hε
+  obtain ⟨F, hF⟩ := (isCompact_Icc : IsCompact (Icc (0 : Time) T)).elim_finite_subcover U hU
+    (fun t _ => mem_iUnion.mpr ⟨t, htU t⟩)
+  have hcover : Icc (0 : Time) T ⊆ ⋃ i : F, U i := by
+    intro t ht
+    obtain ⟨i, hiF, hi⟩ := mem_iUnion₂.mp (hF ht)
+    exact mem_iUnion.mpr ⟨⟨i, hiF⟩, hi⟩
+  obtain ⟨δ, hδ, hδU⟩ := lebesgue_number_lemma_of_metric isCompact_Icc
+    (fun i : F => hU i) hcover
+  refine ⟨F, δ, hδ, fun a ha b hab hsides => ?_⟩
+  obtain ⟨i, hi⟩ := hδU a ha
+  have haU := hi (Metric.mem_ball_self hδ)
+  have hbU := hi (show b ∈ Metric.ball a δ by
+    simpa only [Metric.mem_ball, dist_comm] using hab)
+  apply hdiam i a haU b hbU
+  by_cases hai : a < i
+  · exact Or.inl ⟨hai, (hsides i i.2).mp hai⟩
+  · exact Or.inr ⟨le_of_not_gt hai, le_of_not_gt (by
+      intro hbi
+      exact hai ((hsides i i.2).mpr hbi))⟩
+
+/-- Before the stopping horizon, the truncated grid sample is the ordinary floor sample. -/
+theorem gridApprox_apply_of_le (m : ℕ) (x : D E) {t : Time} (ht : t ≤ m + 1) :
+    (gridApprox m x).1 t = x.1 (⌊(m + 1 : Time) * t⌋₊ / (m + 1 : Time)) := by
+  rw [gridApprox_apply, min_eq_left]
+  rw [← Nat.lt_succ_iff, Nat.floor_lt (by positivity)]
+  have hmul := mul_le_mul_of_nonneg_left ht (show (0 : Time) ≤ m + 1 from zero_le)
+  have hcast : (((m + 1) ^ 2 : ℕ) : Time) = (m + 1 : Time) * (m + 1) := by
+    push_cast
+    ring
+  rw [Nat.cast_succ, hcast]
+  exact hmul.trans_lt (lt_add_one _)
+
+/-- Left sampling never exceeds the sampled time. -/
+theorem floor_sample_le (m : ℕ) (t : Time) :
+    (⌊(m + 1 : Time) * t⌋₊ : Time) / (m + 1 : Time) ≤ t := by
+  apply (div_le_iff₀ (by positivity : (0 : Time) < m + 1)).mpr
+  simpa only [mul_comm] using Nat.floor_le (show (0 : Time) ≤ (m + 1) * t from zero_le)
+
+/-- The left sample lies strictly less than one mesh width from its time. -/
+theorem dist_floor_sample_lt (m : ℕ) (t : Time) :
+    dist ((⌊(m + 1 : Time) * t⌋₊ : Time) / (m + 1 : Time)) t <
+      1 / (m + 1 : ℝ) := by
+  have hfloor := Nat.lt_floor_add_one ((m + 1 : Time) * t)
+  have hfloorReal : (m + 1 : ℝ) * t < (⌊(m + 1 : Time) * t⌋₊ : ℝ) + 1 := by
+    exact_mod_cast hfloor
+  have hpos : (0 : ℝ) < m + 1 := by positivity
+  change |((⌊(m + 1 : Time) * t⌋₊ : ℝ) / (m + 1 : ℝ)) - t| < _
+  rw [abs_of_nonpos (sub_nonpos.mpr (show
+    (⌊(m + 1 : Time) * t⌋₊ : ℝ) / (m + 1 : ℝ) ≤ t from
+      floor_sample_le m t))]
+  apply (lt_div_iff₀ hpos).mpr
+  have hcancel : (⌊(m + 1 : Time) * t⌋₊ : ℝ) / (m + 1 : ℝ) * (m + 1) =
+      (⌊(m + 1 : Time) * t⌋₊ : ℝ) := div_mul_cancel₀ _ hpos.ne'
+  nlinarith only [hfloorReal, hcancel]
+
+/-- Rounding a cut upward exactly characterizes which side its left sample occupies. -/
+theorem floor_sample_lt_iff (m : ℕ) (s c : Time) :
+    (⌊(m + 1 : Time) * s⌋₊ : Time) / (m + 1 : Time) < c ↔
+      s < (⌈(m + 1 : Time) * c⌉₊ : Time) / (m + 1 : Time) := by
+  rw [div_lt_iff₀ (by positivity : (0 : Time) < m + 1), ← Nat.lt_ceil]
+  rw [Nat.floor_lt (by positivity), lt_div_iff₀ (by positivity : (0 : Time) < m + 1)]
+  simp only [mul_comm]
+
+/-- Finite oscillation cuts control stopped grid discrepancies away from shifted cut windows.
+The time change sends each cut to its ceiling grid point and moves times by less than
+half the oscillation radius. The stopping time must lie on the same side of both cuts. -/
+theorem exists_gridApprox_discrepancy_control (x : D E) (T : Time) {ε : ℝ}
+    (hε : 0 < ε) :
+    ∃ F : Finset Time, ∃ δ : ℝ, 0 < δ ∧
+      ∀ (m : ℕ) (l : LambdaPrime) (u : Time), u ≤ T → u ≤ m + 1 →
+        1 / (m + 1 : ℝ) < δ / 2 →
+        (∀ t, t ≤ l t) →
+        (∀ t ≤ T, dist t (l t) < δ / 2) →
+        (∀ c ∈ F, l c = (⌈(m + 1 : Time) * c⌉₊ : Time) / (m + 1 : Time)) →
+        (∀ c ∈ F, u < c ↔ u < l c) →
+        discrepancy x (gridApprox m x) l u ≤ ENNReal.ofReal ε := by
+  obtain ⟨F, δ, hδ, hosc⟩ := x.2.exists_finite_oscillation_cuts T hε
+  refine ⟨F, δ, hδ, fun m l u huT hum hmesh hle hmove halign hstop => ?_⟩
+  refine iSup_le fun t => ?_
+  let a := min t u
+  let v := min (l t) u
+  let b : Time := (⌊(m + 1 : Time) * v⌋₊ : Time) / (m + 1 : Time)
+  have haT : a ∈ Icc 0 T := ⟨zero_le, (min_le_right t u).trans huT⟩
+  have hav : dist a v < δ / 2 := by
+    by_cases htu : t ≤ u
+    · have htv : t ≤ v := le_min (hle t) htu
+      have hvl : v ≤ l t := min_le_left _ _
+      have hdist : dist t v ≤ dist t (l t) := by
+        change |(t : ℝ) - v| ≤ |(t : ℝ) - l t|
+        have htvReal : (t : ℝ) ≤ v := htv
+        have htlReal : (t : ℝ) ≤ l t := hle t
+        have hvlReal : (v : ℝ) ≤ l t := hvl
+        rw [abs_of_nonpos (sub_nonpos.mpr htvReal),
+          abs_of_nonpos (sub_nonpos.mpr htlReal)]
+        exact neg_le_neg (sub_le_sub_left hvlReal _)
+      simpa only [a, min_eq_left htu] using
+        hdist.trans_lt (hmove t (htu.trans huT))
+    · have hut : u ≤ t := le_of_not_ge htu
+      have hul : u ≤ l t := hut.trans (hle t)
+      simpa only [a, v, min_eq_right hut, min_eq_right hul, dist_self] using half_pos hδ
+  have hab : dist a b < δ := by
+    have hvb : dist v b < δ / 2 := by
+      simpa only [b, dist_comm] using (dist_floor_sample_lt m v).trans hmesh
+    exact (dist_triangle a v b).trans_lt (by linarith)
+  have hsides : ∀ c ∈ F, a < c ↔ b < c := by
+    intro c hc
+    have hbc : b < c ↔ v < l c := by
+      simpa only [b, halign c hc] using floor_sample_lt_iff m v c
+    rw [hbc]
+    simp only [a, v, min_lt_iff, l.lt_iff_lt, ← hstop c hc]
+  have hstate := hosc a haT b hab hsides
+  change q (x.1 a) ((gridApprox m x).1 v) ≤ _
+  rw [gridApprox_apply_of_le m x ((min_le_right (l t) u).trans hum)]
+  exact (min_le_left _ _).trans (by
+    rw [edist_dist]
+    exact ENNReal.ofReal_le_ofReal hstate.le)
+
+/-- The exponential discrepancy integral pays at most the volume of an exceptional set. -/
+theorem integratedDiscrepancy_le_of_exceptional_set (x y : D E) (l : LambdaPrime)
+    (T : Time) {B : Set ℝ} (hB : MeasurableSet B) {ε : ℝ}
+    (hsmall : ∀ u : ℝ, 0 < u → u ≤ T → u ∉ B →
+      discrepancy x y l u.toNNReal ≤ ENNReal.ofReal ε) :
+    integratedDiscrepancy x y l ≤ ENNReal.ofReal ε + volume B +
+      ENNReal.ofReal (Real.exp (-(T : ℝ))) := by
+  let f : ℝ → ℝ≥0∞ := fun u => ENNReal.ofReal (Real.exp (-u)) *
+    discrepancy x y l u.toNNReal
+  change (∫⁻ u in Ioi 0, f u) ≤ _
+  rw [← lintegral_inter_add_sdiff f (Ioi 0) measurableSet_Iic]
+  apply add_le_add
+  · rw [← lintegral_inter_add_sdiff f (Ioi 0 ∩ Iic (T : ℝ)) hB]
+    have hbad : (∫⁻ u in (Ioi 0 ∩ Iic (T : ℝ)) ∩ B, f u) ≤ volume B := by
+      calc
+        _ ≤ ∫⁻ u in (Ioi 0 ∩ Iic (T : ℝ)) ∩ B, 1 := by
+          apply setLIntegral_mono' ((measurableSet_Ioi.inter measurableSet_Iic).inter hB)
+          intro u hu
+          have hw : ENNReal.ofReal (Real.exp (-u)) ≤ 1 := by
+            simpa only [ENNReal.ofReal_one] using
+              ENNReal.ofReal_le_ofReal (Real.exp_le_one_iff.mpr (neg_nonpos.mpr (le_of_lt hu.1.1)))
+          exact (mul_le_mul' hw (discrepancy_le_one x y l _)).trans_eq (one_mul 1)
+        _ ≤ volume B := by
+          rw [setLIntegral_one]
+          exact measure_mono inter_subset_right
+    have hgood : (∫⁻ u in (Ioi 0 ∩ Iic (T : ℝ)) \ B, f u) ≤
+        ENNReal.ofReal ε := by
+      calc
+        _ ≤ ∫⁻ u in (Ioi 0 ∩ Iic (T : ℝ)) \ B,
+            ENNReal.ofReal (Real.exp (-u)) * ENNReal.ofReal ε := by
+          apply setLIntegral_mono' ((measurableSet_Ioi.inter measurableSet_Iic).diff hB)
+          intro u hu
+          exact mul_le_mul_right (hsmall u hu.1.1 hu.1.2 hu.2) _
+        _ ≤ ∫⁻ u in Ioi 0, ENNReal.ofReal (Real.exp (-u)) * ENNReal.ofReal ε :=
+          lintegral_mono_set (sdiff_subset.trans inter_subset_left)
+        _ = ENNReal.ofReal ε := by
+          rw [lintegral_mul_const' _ _ ENNReal.ofReal_ne_top, exponential_mass, one_mul]
+    exact (add_le_add hbad hgood).trans_eq (add_comm _ _)
+  · have hset : Ioi (0 : ℝ) \ Iic (T : ℝ) = Ioi (T : ℝ) := by
+      ext u
+      simp only [Set.mem_sdiff, mem_Ioi, mem_Iic, not_le]
+      exact ⟨fun h => h.2, fun h => ⟨T.2.trans_lt h, h⟩⟩
+    rw [hset]
+    calc
+      _ ≤ ∫⁻ u in Ioi (T : ℝ), ENNReal.ofReal (Real.exp (-u)) := by
+        apply lintegral_mono
+        intro u
+        exact (mul_le_mul_right (discrepancy_le_one x y l _) _).trans_eq (mul_one _)
+      _ = ENNReal.ofReal (Real.exp (-(T : ℝ))) := by
+        rw [← ofReal_integral_eq_lintegral_ofReal (integrableOn_exp_neg_Ioi _)
+          (Eventually.of_forall fun u => (Real.exp_pos (-u)).le), integral_exp_neg_Ioi]
+
+/-- Upward rounding shifts a cut by strictly less than one mesh width. -/
+theorem ceil_sample_sub_lt (m : ℕ) (c : Time) :
+    ((⌈(m + 1 : Time) * c⌉₊ : Time) / (m + 1 : Time) : ℝ) - c <
+      1 / (m + 1 : ℝ) := by
+  have hceil := Nat.ceil_lt_add_one (show (0 : Time) ≤ (m + 1) * c from zero_le)
+  have hceilReal : (⌈(m + 1 : Time) * c⌉₊ : ℝ) < (m + 1 : ℝ) * c + 1 := by
+    exact_mod_cast hceil
+  have hpos : (0 : ℝ) < m + 1 := by positivity
+  change (⌈(m + 1 : Time) * c⌉₊ : ℝ) / (m + 1 : ℝ) - c < _
+  apply (lt_div_iff₀ hpos).mpr
+  have hcancel : (⌈(m + 1 : Time) * c⌉₊ : ℝ) / (m + 1 : ℝ) * (m + 1) =
+      (⌈(m + 1 : Time) * c⌉₊ : ℝ) := div_mul_cancel₀ _ hpos.ne'
+  nlinarith only [hceilReal, hcancel]
+
+/-- The total volume of shifted cut windows is bounded by their number times the mesh. -/
+theorem volume_ceil_cut_windows_le (m : ℕ) (F : Finset Time) (l : LambdaPrime)
+    (halign : ∀ c ∈ F,
+      l c = (⌈(m + 1 : Time) * c⌉₊ : Time) / (m + 1 : Time)) :
+    volume (⋃ c ∈ F, Ico (c : ℝ) (l c : ℝ)) ≤
+      F.card * ENNReal.ofReal (1 / (m + 1 : ℝ)) := by
+  calc
+    _ ≤ ∑ c ∈ F, volume (Ico (c : ℝ) (l c : ℝ)) := measure_biUnion_finset_le _ _
+    _ ≤ ∑ _c ∈ F, ENNReal.ofReal (1 / (m + 1 : ℝ)) := by
+      apply Finset.sum_le_sum
+      intro c hc
+      rw [Real.volume_Ico, halign c hc]
+      exact ENNReal.ofReal_le_ofReal (ceil_sample_sub_lt m c).le
+    _ = _ := by rw [Finset.sum_const, nsmul_eq_mul]
+
+/-- Finite oscillation cuts give an integral error bound for ceiling-aligned time changes.
+The explicit mesh term accounts for stopping times between a cut and its shifted image. -/
+theorem exists_gridApprox_integratedDiscrepancy_control (x : D E) (T : Time) {ε : ℝ}
+    (hε : 0 < ε) :
+    ∃ F : Finset Time, ∃ δ : ℝ, 0 < δ ∧
+      ∀ (m : ℕ) (l : LambdaPrime), T ≤ m + 1 → 1 / (m + 1 : ℝ) < δ / 2 →
+        (∀ t, t ≤ l t) →
+        (∀ t ≤ T, dist t (l t) < δ / 2) →
+        (∀ c ∈ F, l c = (⌈(m + 1 : Time) * c⌉₊ : Time) / (m + 1 : Time)) →
+        integratedDiscrepancy x (gridApprox m x) l ≤
+          ENNReal.ofReal ε + F.card * ENNReal.ofReal (1 / (m + 1 : ℝ)) +
+            ENNReal.ofReal (Real.exp (-(T : ℝ))) := by
+  classical
+  obtain ⟨F, δ, hδ, hcontrol⟩ := exists_gridApprox_discrepancy_control x T hε
+  refine ⟨F, δ, hδ, fun m l hT hmesh hle hmove halign => ?_⟩
+  let B : Set ℝ := ⋃ c ∈ F, Ico (c : ℝ) (l c : ℝ)
+  have hB : MeasurableSet B := MeasurableSet.biUnion (Finset.countable_toSet F)
+    (fun _ _ => measurableSet_Ico)
+  have hsmall : ∀ u : ℝ, 0 < u → u ≤ T → u ∉ B →
+      discrepancy x (gridApprox m x) l u.toNNReal ≤ ENNReal.ofReal ε := by
+    intro u hu huT huB
+    have hcoe : (u.toNNReal : ℝ) = u := Real.coe_toNNReal _ hu.le
+    have huT' : u.toNNReal ≤ T := Real.toNNReal_le_iff_le_coe.mpr huT
+    apply hcontrol m l u.toNNReal huT' (huT'.trans hT) hmesh hle hmove halign
+    intro c hc
+    constructor
+    · exact fun h => h.trans_le (hle c)
+    · intro hul
+      by_contra huc
+      apply huB
+      exact mem_iUnion₂.mpr ⟨c, hc, by
+        constructor
+        · have hc' : (c : ℝ) ≤ (u.toNNReal : ℝ) := le_of_not_gt huc
+          simpa only [hcoe] using hc'
+        · have hl' : (u.toNNReal : ℝ) < (l c : ℝ) := hul
+          simpa only [hcoe] using hl' ⟩
+  exact (integratedDiscrepancy_le_of_exceptional_set x (gridApprox m x) l T hB hsmall).trans
+    (add_le_add (add_le_add le_rfl (volume_ceil_cut_windows_le m F l halign)) le_rfl)
+
+/-- Finite ceiling data admit asymptotically undistorted onto time changes.
+A Lipschitz extension of the nonnegative rounding displacements supplies the change. -/
+theorem eventually_exists_ceiling_timeChange (F : Finset Time) {g : ℝ} (hg : 0 < g) :
+    ∀ᶠ m : ℕ in atTop, ∃ l : Lambda, gamma l.1 ≤ ENNReal.ofReal g ∧
+      (∀ t, t ≤ l.1 t) ∧
+      (∀ t, dist t (l.1 t) ≤ 1 / (m + 1 : ℝ)) ∧
+      (∀ c ∈ F, l.1 c = (⌈(m + 1 : Time) * c⌉₊ : Time) / (m + 1 : Time)) := by
+  classical
+  let K : ℝ≥0 := ⟨min (1 - Real.exp (-g)) (Real.exp g - 1) / 2, by
+    have hlo : 0 < 1 - Real.exp (-g) := sub_pos.mpr
+      (Real.exp_lt_one_iff.mpr (neg_lt_zero.mpr hg))
+    have hhi : 0 < Real.exp g - 1 := sub_pos.mpr (Real.one_lt_exp_iff.mpr hg)
+    exact (half_pos (lt_min hlo hhi)).le⟩
+  have hK : 0 < (K : ℝ) := by
+    exact half_pos (lt_min
+      (sub_pos.mpr (Real.exp_lt_one_iff.mpr (neg_lt_zero.mpr hg)))
+      (sub_pos.mpr (Real.one_lt_exp_iff.mpr hg)))
+  have hKlo : (K : ℝ) ≤ 1 - Real.exp (-g) := by
+    exact (half_le_self (le_of_lt (lt_min
+      (sub_pos.mpr (Real.exp_lt_one_iff.mpr (neg_lt_zero.mpr hg)))
+      (sub_pos.mpr (Real.one_lt_exp_iff.mpr hg))))).trans (min_le_left _ _)
+  have hKhi : (K : ℝ) ≤ Real.exp g - 1 := by
+    exact (half_le_self (le_of_lt (lt_min
+      (sub_pos.mpr (Real.exp_lt_one_iff.mpr (neg_lt_zero.mpr hg)))
+      (sub_pos.mpr (Real.one_lt_exp_iff.mpr hg))))).trans (min_le_right _ _)
+  have hKone : (K : ℝ) < 1 := by linarith [Real.exp_pos (-g)]
+  let S := insert 0 F
+  have hpairs : ∀ᶠ m : ℕ in atTop, ∀ c ∈ S, ∀ d ∈ S,
+      c ≠ d → 1 / (m + 1 : ℝ) ≤ K * dist c d := by
+    apply (S.eventually_all).mpr
+    intro c hc
+    apply (S.eventually_all).mpr
+    intro d hd
+    by_cases hcd : c = d
+    · exact Eventually.of_forall (fun _ h => False.elim (h hcd))
+    · have hpos : 0 < (K : ℝ) * dist c d := mul_pos hK (dist_pos.mpr hcd)
+      filter_upwards [tendsto_one_div_add_atTop_nhds_zero_nat.eventually
+        (gt_mem_nhds hpos)] with m hm _
+      exact hm.le
+  filter_upwards [hpairs] with m hm
+  let r : Time → ℝ := fun c =>
+    ((⌈(m + 1 : Time) * c⌉₊ : Time) / (m + 1 : Time) : ℝ) - c
+  have hrlo (c : Time) : 0 ≤ r c := by
+    apply sub_nonneg.mpr
+    change (c : ℝ) ≤ (⌈(m + 1 : Time) * c⌉₊ : ℝ) / (m + 1 : ℝ)
+    apply (le_div_iff₀ (by positivity : (0 : ℝ) < m + 1)).mpr
+    have hc := Nat.le_ceil ((m + 1 : Time) * c)
+    exact_mod_cast (show c * (m + 1) ≤ (⌈(m + 1 : Time) * c⌉₊ : Time) by
+      simpa only [mul_comm] using hc)
+  have hrhi (c : Time) : r c ≤ 1 / (m + 1 : ℝ) := (ceil_sample_sub_lt m c).le
+  have hr : LipschitzOnWith K r S := by
+    apply LipschitzOnWith.of_dist_le_mul
+    intro c hc d hd
+    by_cases hcd : c = d
+    · subst d
+      simp only [dist_self, mul_zero, le_refl]
+    · apply le_trans _ (hm c hc d hd hcd)
+      rw [Real.dist_eq]
+      exact abs_le.mpr ⟨by linarith [hrlo c, hrhi d], by linarith [hrhi c, hrlo d]⟩
+  obtain ⟨f, hf, hrf⟩ := hr.extend_real
+  let b : Time → ℝ := fun t => max (min (f t) (1 / (m + 1 : ℝ))) 0
+  have hb : LipschitzWith K b := by
+    simpa only [b] using (hf.min_const (1 / (m + 1 : ℝ))).max_const 0
+  have hblo (t : Time) : 0 ≤ b t := le_max_right _ _
+  have hbhi (t : Time) : b t ≤ 1 / (m + 1 : ℝ) :=
+    max_le (min_le_right _ _) (by positivity)
+  have hbr (c : Time) (hc : c ∈ S) : b c = r c := by
+    rw [show b c = max (min (f c) (1 / (m + 1 : ℝ))) 0 from rfl,
+      ← hrf hc, min_eq_left (hrhi c), max_eq_left (hrlo c)]
+  have hbzero : b 0 = 0 := by
+    rw [hbr 0 (Finset.mem_insert_self _ _)]
+    simp only [r, mul_zero, Nat.ceil_zero, Nat.cast_zero, zero_div,
+      NNReal.coe_zero, sub_self]
+  let L : Time → Time := fun t => ⟨t + b t, add_nonneg t.2 (hblo t)⟩
+  have hL (t : Time) : t ≤ L t := by change (t : ℝ) ≤ t + b t; linarith [hblo t]
+  have hLzero : L 0 = 0 := by
+    apply NNReal.eq
+    change (0 : ℝ) + b 0 = 0
+    rw [hbzero, add_zero]
+  have hLc : Continuous L := by
+    exact (continuous_subtype_val.add hb.continuous).subtype_mk _
+  have hLmono : StrictMono L := by
+    intro t s hts
+    have hdist := hb.dist_le_mul t s
+    have htsReal : (t : ℝ) < s := hts
+    have hsmall : |b t - b s| ≤ (K : ℝ) * ((s : ℝ) - t) := by
+      simpa only [Real.dist_eq, NNReal.dist_eq, abs_of_neg (sub_neg.mpr htsReal),
+        neg_sub] using hdist
+    change (t : ℝ) + b t < (s : ℝ) + b s
+    have hmul := mul_lt_mul_of_pos_right hKone (sub_pos.mpr htsReal)
+    have hdiff := (abs_le.mp hsmall).2
+    linarith
+  have hLsurj : Function.Surjective L := by
+    intro y
+    obtain ⟨t, _, ht⟩ := intermediate_value_Icc (show (0 : Time) ≤ y from zero_le)
+      hLc.continuousOn (show y ∈ Icc (L 0) (L y) from ⟨by rw [hLzero]; exact zero_le, hL y⟩)
+    exact ⟨t, ht⟩
+  let l : LambdaPrime := hLmono.orderIsoOfSurjective L hLsurj
+  have hgamma : gamma l ≤ ENNReal.ofReal g := by
+    apply gamma_le_of_secant l hg.le
+    intro t s hts
+    have htsReal : (t : ℝ) < s := hts
+    have hdist := hb.dist_le_mul s t
+    have hdiff : |b s - b t| ≤ (K : ℝ) * ((s : ℝ) - t) := by
+      simpa only [Real.dist_eq, NNReal.dist_eq, abs_of_pos (sub_pos.mpr htsReal)]
+        using hdist
+    change Real.exp (-g) ≤ ((s + b s) - (t + b t)) / ((s : ℝ) - t) ∧
+      ((s + b s) - (t + b t)) / ((s : ℝ) - t) ≤ Real.exp g
+    have algebra (d a k lo hi : ℝ) (hd : 0 ≤ d) (hlo : k ≤ 1 - lo)
+        (hhi : k ≤ hi - 1) (ha : |a| ≤ k * d) :
+        lo * d ≤ d + a ∧ d + a ≤ hi * d := by
+      have hl := mul_le_mul_of_nonneg_right hlo hd
+      have hh := mul_le_mul_of_nonneg_right hhi hd
+      have habs := abs_le.mp ha
+      constructor <;> nlinarith only [hl, hh, habs.1, habs.2]
+    have hbounds := algebra _ _ _ _ _ (sub_nonneg.mpr htsReal.le) hKlo hKhi hdiff
+    have hnum : (s : ℝ) + b s - ((t : ℝ) + b t) =
+        ((s : ℝ) - t) + (b s - b t) := by ring
+    rw [hnum]
+    exact ⟨(le_div_iff₀ (sub_pos.mpr htsReal)).mpr hbounds.1,
+      (div_le_iff₀ (sub_pos.mpr htsReal)).mpr hbounds.2⟩
+  let l' : Lambda := ⟨l, ⟨⟨_, lipschitzWith_of_gamma l
+    (ne_of_lt (hgamma.trans_lt ENNReal.ofReal_lt_top))⟩,
+    hgamma.trans_lt ENNReal.ofReal_lt_top⟩⟩
+  refine ⟨l', hgamma, hL, fun t => ?_, fun c hc => ?_⟩
+  · change |(t : ℝ) - (t + b t)| ≤ _
+    rw [sub_add_cancel_left, abs_neg, abs_of_nonneg (hblo t)]
+    exact hbhi t
+  · apply NNReal.eq
+    change (c : ℝ) + b c = _
+    rw [hbr c (Finset.mem_insert_of_mem hc)]
+    dsimp only [r]
+    push_cast
+    ring
+
+/-- EK's stopped uniform-grid approximations converge in the half-line Skorokhod metric. -/
+theorem tendsto_gridApprox (x : D E) :
+    Tendsto (fun m => gridApprox m x) atTop (𝓝 x) := by
+  apply Metric.tendsto_nhds.mpr
+  intro ε hε
+  let a := ε / 4
+  have ha : 0 < a := by dsimp only [a]; positivity
+  obtain ⟨R, hR⟩ := eventually_atTop.mp
+    (Real.tendsto_exp_neg_atTop_nhds_zero.eventually (gt_mem_nhds ha))
+  let T : Time := ⟨max R 0, le_max_right _ _⟩
+  have htail : Real.exp (-(T : ℝ)) < a := hR _ (le_max_left _ _)
+  obtain ⟨F, δ, hδ, hcontrol⟩ := exists_gridApprox_integratedDiscrepancy_control x T ha
+  have hmesh := tendsto_one_div_add_atTop_nhds_zero_nat.eventually
+    (gt_mem_nhds (half_pos hδ))
+  have hcards : ∀ᶠ m : ℕ in atTop, (F.card : ℝ) * (1 / (m + 1 : ℝ)) < a := by
+    have hlim : Tendsto (fun m : ℕ => (F.card : ℝ) * (1 / (m + 1 : ℝ)))
+        atTop (𝓝 0) := by
+      simpa only [mul_zero] using
+        tendsto_one_div_add_atTop_nhds_zero_nat.const_mul (F.card : ℝ)
+    exact hlim.eventually (gt_mem_nhds ha)
+  have hhorizon : ∀ᶠ m : ℕ in atTop, T ≤ m + 1 := by
+    obtain ⟨N, hN⟩ := exists_nat_ge (T : ℝ)
+    filter_upwards [eventually_ge_atTop N] with m hm
+    change (T : ℝ) ≤ (m : ℝ) + 1
+    have hNm : (N : ℝ) ≤ (m : ℝ) + 1 := by
+      exact_mod_cast (show N ≤ m + 1 by omega)
+    exact hN.trans hNm
+  filter_upwards [hmesh, hcards, hhorizon, eventually_exists_ceiling_timeChange F ha]
+    with m hm hcard hT hl
+  obtain ⟨l, hgamma, hle, hmove, halign⟩ := hl
+  have hi := hcontrol m l.1 hT hm hle (fun t _ => (hmove t).trans_lt hm) halign
+  have hcard' : F.card * ENNReal.ofReal (1 / (m + 1 : ℝ)) ≤ ENNReal.ofReal a := by
+    rw [← ENNReal.ofReal_natCast, ← ENNReal.ofReal_mul (Nat.cast_nonneg F.card)]
+    exact ENNReal.ofReal_le_ofReal hcard.le
+  have hi' : integratedDiscrepancy x (gridApprox m x) l.1 ≤ ENNReal.ofReal (3 * a) := by
+    apply hi.trans
+    calc
+      _ ≤ ENNReal.ofReal a + ENNReal.ofReal a + ENNReal.ofReal a :=
+        add_le_add (add_le_add le_rfl hcard') (ENNReal.ofReal_le_ofReal htail.le)
+      _ = ENNReal.ofReal (3 * a) := by
+        rw [← ENNReal.ofReal_add ha.le ha.le,
+          ← ENNReal.ofReal_add (add_nonneg ha.le ha.le) ha.le]
+        congr 1
+        ring
+  have hd : skorohodDistanceExtended x (gridApprox m x) ≤ ENNReal.ofReal (3 * a) :=
+    (iInf_le _ l).trans (max_le
+      (hgamma.trans (ENNReal.ofReal_le_ofReal (by linarith))) hi')
+  have hdreal := ENNReal.toReal_le_of_le_ofReal (by positivity : 0 ≤ 3 * a) hd
+  rw [dist_comm]
+  exact hdreal.trans_lt (by dsimp only [a]; linarith)
+
+/-- The real distance from the finite grid approximation to its path tends to zero. -/
+theorem tendsto_dist_gridApprox (x : D E) :
+    Tendsto (fun m => dist (gridApprox m x) x) atTop (𝓝 0) := by
+  simpa only [dist_self] using (tendsto_gridApprox x).dist
+    (tendsto_const_nhds : Tendsto (fun _ : ℕ => x) atTop (𝓝 x))
+
+/-- The uniform-grid family is dense in the genuine càdlàg carrier. -/
+theorem dense_uniformGrid_paths :
+    Dense (⋃ m : ℕ, Set.range (stepPath (E := E) (uniformGrid m))) := by
+  intro x
+  apply mem_closure_of_tendsto (tendsto_gridApprox x)
+  exact Eventually.of_forall fun m => mem_iUnion.mpr
+    ⟨m, ⟨fun i => x.1 (i.val / (m + 1 : Time)), rfl⟩⟩
+
+/-- A separable state space gives a separable half-line Skorokhod path space. -/
+instance [SeparableSpace E] : SeparableSpace (D E) := by
+  apply isSeparable_univ_iff.mp
+  rw [← dense_uniformGrid_paths.closure_eq]
+  exact isSeparable_closure_uniformGrid_paths
+
+/-- Every Skorokhod Borel set belongs to the evaluation sigma algebra, EK Proposition 7.1. -/
+theorem borel_le_iSup_comap_eval [SeparableSpace E] :
+    borel (D E) ≤ evaluationSigma E := by
+  have hid : Measurable[evaluationSigma E, borel (D E)] (id : D E → D E) := by
+    exact @measurable_of_tendsto_metrizable (D E) (D E) (evaluationSigma E)
+      _ _ (borel (D E)) ⟨rfl⟩ (fun m => gridApprox m) id
+      (fun m => measurable_gridApprox m) (tendsto_pi_nhds.mpr tendsto_gridApprox)
+  simpa only [measurable_iff_comap_le, MeasurableSpace.comap_id] using hid
+
+/-- Coordinate measurability of a càdlàg-valued map implies Skorokhod Borel measurability. -/
+theorem measurable_of_measurable_eval [SeparableSpace E]
+    {Ω : Type*} [MeasurableSpace Ω] {Y : Ω → D E}
+    (hY : ∀ t, Measurable[_, borel E] (fun ω => (Y ω).1 t)) : Measurable Y := by
+  have hcoord : Measurable[_, evaluationSigma E] Y := by
+    rw [measurable_iff_comap_le, evaluationSigma, MeasurableSpace.comap_iSup]
+    exact iSup_le fun t => by
+      rw [MeasurableSpace.comap_comp]
+      exact (hY t).comap_le
+  exact hcoord.mono le_rfl borel_le_iSup_comap_eval
+
+end
+
+end LatticeProb.Cadlag.HalfLine

@@ -876,6 +876,7 @@ import LatticeProb.Prob.Cadlag.HalfLine.Metric
 import LatticeProb.Prob.Cadlag.HalfLine.Convergence
 import LatticeProb.Prob.Cadlag.HalfLine.Evaluation
 import LatticeProb.Prob.Cadlag.HalfLine.Laws
+import LatticeProb.Prob.Cadlag.HalfLine.Separable
 import LatticeProb.Prob.JumpChain.Rates
 import LatticeProb.Prob.JumpChain.History
 import LatticeProb.Prob.JumpChain.Position
@@ -906,3 +907,5 @@ import LatticeProb.Prob.BrownianDirichlet.Trace
 import LatticeProb.Prob.BrownianDirichlet.ScaledExit
 import LatticeProb.Prob.BrownianDirichlet.TaylorError
 import LatticeProb.Prob.BrownianDirichlet.JointMeasurability
+import LatticeProb.Prob.BrownianDirichlet.Dynkin
+import LatticeProb.Prob.BrownianDirichlet.Subinvariance
