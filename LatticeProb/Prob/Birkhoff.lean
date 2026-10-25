@@ -194,7 +194,9 @@ theorem bLimsup_comp {C : ℝ} (hC : 0 ≤ C) (hf : ∀ x, |f x| ≤ C) (x : Ω)
     have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
     have hn1 : ((n : ℝ) + 1) ≠ 0 := by positivity
     have hS : birkhoffSum T f n (T x) = birkhoffSum T f (n + 1) x - f x := by
-      rw [birkhoffSum_succ']; ring
+      rw [birkhoffSum_succ']
+      simp only [Pi.add_apply, Function.comp_apply]
+      ring
     rw [ha, hb]
     simp only [bAvg, hS]
     push_cast
@@ -270,7 +272,9 @@ theorem bLiminf_comp {C : ℝ} (hC : 0 ≤ C) (hf : ∀ x, |f x| ≤ C) (x : Ω)
     have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
     have hn1 : ((n : ℝ) + 1) ≠ 0 := by positivity
     have hS : birkhoffSum T f n (T x) = birkhoffSum T f (n + 1) x - f x := by
-      rw [birkhoffSum_succ']; ring
+      rw [birkhoffSum_succ']
+      simp only [Pi.add_apply, Function.comp_apply]
+      ring
     rw [ha, hb]
     simp only [bAvg, hS]
     push_cast
@@ -702,7 +706,9 @@ theorem ae_bLimsup_comp [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
     have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
     have hn1 : ((n : ℝ) + 1) ≠ 0 := by positivity
     have hS : birkhoffSum T f n (T x) = birkhoffSum T f (n + 1) x - f x := by
-      rw [birkhoffSum_succ']; ring
+      rw [birkhoffSum_succ']
+      simp only [Pi.add_apply, Function.comp_apply]
+      ring
     simp only [bAvg, hS]
     push_cast
     field_simp
