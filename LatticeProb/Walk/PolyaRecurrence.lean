@@ -1,3 +1,5 @@
+module
+
 /-
 # Pólya's recurrence theorem for the simple random walk on `ℤ²`
 
@@ -32,7 +34,9 @@ The proof has four steps.
    divergent harmonic series (`tsum_harmonic_eq_top`) instead of a convergent
    one: this is exactly the difference between recurrence and transience.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

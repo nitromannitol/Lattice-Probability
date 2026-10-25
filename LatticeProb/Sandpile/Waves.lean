@@ -1,3 +1,5 @@
+module
+
 /-
 The `n`-wave (Fey-Levine-Peres wave decomposition) of the classical integer
 sandpile, moved from `Exploding-Sandpiles`'s `Exploding/Support/Toppling.lean`
@@ -11,7 +13,9 @@ from `z`, `u_{t+1}(x) = ⌊(∑_{y∼x}u_t(y) + η(x))/2d⌋`, with no `u_t(x)+1
 It is the single-wave building block of the Diaconis-Fulton wave
 decomposition of the parallel toppling odometer `LatticeProb.Sandpile.podo`.
 -/
-import LatticeProb.Sandpile.Toppling
+public import LatticeProb.Sandpile.Toppling
+
+@[expose] public section
 
 namespace LatticeProb.Sandpile
 

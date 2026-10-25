@@ -1,3 +1,5 @@
+module
+
 /-
 Elementary real and finite-sum inequalities (radial power sums, Boolean
 corner weights, square counting by shells), the piecewise-linear
@@ -7,7 +9,9 @@ multi-parameter moment and modulus arguments of the programme need,
 offered by the divisible-sandpile repository and lifted here so that
 every paper can use them.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

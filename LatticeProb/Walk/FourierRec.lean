@@ -1,9 +1,13 @@
+module
+
 /-
 Support lemmas for the Fourier representation of the simple random walk
 heat kernel: the character shift identities, the product-to-sum identity,
 and integrability of the Fourier integrand over the torus.
 -/
-import LatticeProb.Walk.Fourier
+public import LatticeProb.Walk.Fourier
+
+@[expose] public section
 
 open MeasureTheory
 

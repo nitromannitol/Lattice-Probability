@@ -1,6 +1,10 @@
-import Mathlib
-import LatticeProb.Graph.Basic
-import LatticeProbAudit.Support.Vocabulary
+module
+
+public import Mathlib
+public import LatticeProb.Graph.Basic
+public import LatticeProbAudit.Support.Vocabulary
+
+@[expose] public section
 
 /-!
 # Bridges from the Mathlib-only vocabulary to the library

@@ -1,15 +1,19 @@
-import LatticeProb.Prob.AkcogluKrengelAE.Defs
-import LatticeProb.Prob.AkcogluKrengelAE.BoxCombinatorics
-import LatticeProb.Prob.AkcogluKrengelAE.BoundedErgodic
-import LatticeProb.Prob.AkcogluKrengelAE.UpperBound
-import LatticeProb.Prob.AkcogluKrengelAE.Defect
-import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityDyadic
-import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityPartition
-import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityCovering
-import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityCore
-import LatticeProb.Prob.AkcogluKrengelAE.UnitScaleLowerBound
-import LatticeProb.Prob.AkcogluKrengelAE.CoarseGraining
-import LatticeProb.Prob.AkcogluKrengelAE.Assembly
+module
+
+public import LatticeProb.Prob.AkcogluKrengelAE.Defs
+public import LatticeProb.Prob.AkcogluKrengelAE.BoxCombinatorics
+public import LatticeProb.Prob.AkcogluKrengelAE.BoundedErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.UpperBound
+public import LatticeProb.Prob.AkcogluKrengelAE.Defect
+public import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityDyadic
+public import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityPartition
+public import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityCovering
+public import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityCore
+public import LatticeProb.Prob.AkcogluKrengelAE.UnitScaleLowerBound
+public import LatticeProb.Prob.AkcogluKrengelAE.CoarseGraining
+public import LatticeProb.Prob.AkcogluKrengelAE.Assembly
+
+@[expose] public section
 
 /-!
 # The almost-everywhere Akcoglu-Krengel subadditive ergodic theorem

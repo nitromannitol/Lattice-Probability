@@ -1,3 +1,5 @@
+module
+
 /-
 The i.i.d. initial masses and the moment vocabulary of
 `ssec:notation`.
@@ -17,9 +19,11 @@ How the paper's objects are modelled here:
   so that "finite `p`-th moment" is the statement that they are not `⊤`.
 - `Symmetric ν` is symmetry of the law about `0`.
 -/
-import LatticeProb.Graph.Basic
-import Mathlib.Probability.ProductMeasure
-import Mathlib.Probability.Moments.Variance
+public import LatticeProb.Graph.Basic
+public import Mathlib.Probability.ProductMeasure
+public import Mathlib.Probability.Moments.Variance
+
+@[expose] public section
 
 
 open MeasureTheory

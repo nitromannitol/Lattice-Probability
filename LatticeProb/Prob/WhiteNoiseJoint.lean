@@ -1,3 +1,5 @@
+module
+
 /-
 Jointly measurable versions of the canonical white noise along a spatial `L²` family.
 
@@ -8,8 +10,10 @@ an `L²`-valued map — the evaluations `u ↦ whiteNoiseOf μ (f u) ω` have a 
 measurable in `(u, ω)`.  This is the measurability clause a stochastic Fubini needs when a
 white-noise integral is interchanged with an integral over an independent parameter space.
 -/
-import LatticeProb.Gauss.WhiteNoise
-import LatticeProb.Prob.L2JointVersion
+public import LatticeProb.Gauss.WhiteNoise
+public import LatticeProb.Prob.L2JointVersion
+
+@[expose] public section
 
 noncomputable section
 

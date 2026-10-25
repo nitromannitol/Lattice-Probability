@@ -1,5 +1,9 @@
+module
+
 /- Adapted from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and Yuval Peres. -/
-import LatticeProb.Lattice.Planar.Square
+public import LatticeProb.Lattice.Planar.Square
+
+@[expose] public section
 
 namespace LatticeProb.Lattice.Planar
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Generic even-moment bounds for real Gaussian random variables, the first ingredient of a
 maximal-inequality route for a continuum Gaussian random field.
@@ -24,7 +26,9 @@ Main results:
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

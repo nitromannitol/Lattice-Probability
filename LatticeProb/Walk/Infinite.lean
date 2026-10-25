@@ -1,3 +1,5 @@
+module
+
 /-
 The law of simple random walk and of the lazy walk on infinite paths.
 
@@ -18,7 +20,9 @@ being the hold.  Its transition operator on functions is the `Q` of
 that averaging a function over the neighbours and pushing a measure forward by
 one step are the same operator.
 -/
-import LatticeProb.Walk.Path
+public import LatticeProb.Walk.Path
+
+@[expose] public section
 
 noncomputable section
 

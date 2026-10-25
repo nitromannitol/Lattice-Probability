@@ -1,3 +1,5 @@
+module
+
 /-
 Two-smoothness of `L^p` for `p ≥ 2`, over a product of two probability measures.
 
@@ -20,9 +22,11 @@ hypothesis beyond the two `p`-th moments is discharged by Young's inequality,
 which dominates both the linear and the cross integrand by multiples of `|X|^p`
 and `|Y|^p`.
 -/
-import Mathlib
-import LatticeProb.Prob.PowerIneq
-import LatticeProb.Prob.EfronStein
+public import Mathlib
+public import LatticeProb.Prob.PowerIneq
+public import LatticeProb.Prob.EfronStein
+
+@[expose] public section
 
 open MeasureTheory
 

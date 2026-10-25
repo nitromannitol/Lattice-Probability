@@ -1,13 +1,17 @@
+module
+
 /-
 Translation of smooth tests in time and the corresponding change of variables
 for weak equations and forward difference quotients.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.TimeIntegration
-import Mathlib.MeasureTheory.Group.Prod
-import Mathlib.MeasureTheory.Group.Integral
-import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+public import LatticeProb.Prob.Scaling.TimeIntegration
+public import Mathlib.MeasureTheory.Group.Prod
+public import Mathlib.MeasureTheory.Group.Integral
+public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+
+@[expose] public section
 
 open MeasureTheory
 noncomputable section

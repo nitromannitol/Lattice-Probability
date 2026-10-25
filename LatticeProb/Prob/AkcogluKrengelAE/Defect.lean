@@ -1,4 +1,8 @@
-import LatticeProb.Prob.AkcogluKrengelAE.UpperBound
+module
+
+public import LatticeProb.Prob.AkcogluKrengelAE.UpperBound
+
+@[expose] public section
 
 set_option linter.unnecessarySeqFocus false
 set_option linter.unusedSimpArgs false

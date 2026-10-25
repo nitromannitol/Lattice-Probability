@@ -1,3 +1,5 @@
+module
+
 /-
 Ergodic decomposition on a standard Borel probability space.
 
@@ -11,9 +13,11 @@ or one.
 
 No countable-generation assumption on the invariant σ-algebra is needed.
 -/
-import LatticeProb.Prob.ConditionalMeasure
-import LatticeProb.Prob.Kingman
-import LatticeProb.Prob.ZeroOne
+public import LatticeProb.Prob.ConditionalMeasure
+public import LatticeProb.Prob.Kingman
+public import LatticeProb.Prob.ZeroOne
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Set Filter
 open scoped ENNReal

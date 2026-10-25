@@ -1,3 +1,5 @@
+module
+
 /-
 The exit time of a finite set, and the killed Green function on path space.
 
@@ -20,8 +22,10 @@ integrable, and Tonelli against the killed kernel gives the occupation identity
 for `f` supported on `C`, which is what turns a sum against the killed Green
 function into an expectation along the walk.
 -/
-import LatticeProb.Graph.PathSpace
-import LatticeProb.Network.KilledGreenEscape
+public import LatticeProb.Graph.PathSpace
+public import LatticeProb.Network.KilledGreenEscape
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal

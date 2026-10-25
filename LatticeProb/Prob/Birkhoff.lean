@@ -1,3 +1,5 @@
+module
+
 /-
 Birkhoff's pointwise ergodic theorem.
 
@@ -15,8 +17,10 @@ integrable `f`, truncation gives a bounded `g` with `‖f - g‖₁` as small as
 wanted, and the maximal inequality turns that into an almost sure bound on the
 gap between the two limits of `f`, which is therefore zero.
 -/
-import Mathlib
-import LatticeProb.Prob.MaximalErgodic
+public import Mathlib
+public import LatticeProb.Prob.MaximalErgodic
+
+@[expose] public section
 
 noncomputable section
 

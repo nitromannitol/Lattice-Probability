@@ -1,3 +1,5 @@
+module
+
 /-
 **A pointwise limit of uniformly `1`-Lipschitz functions is itself `1`-Lipschitz.**
 
@@ -9,7 +11,9 @@ structure, measurable. This is free from the Lipschitz bound and the pointwise l
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 

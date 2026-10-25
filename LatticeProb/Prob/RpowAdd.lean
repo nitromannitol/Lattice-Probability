@@ -1,9 +1,13 @@
+module
+
 /-
 The `p`-th power of a sum of two nonnegative reals, bounded by `2 ^ p` times the
 sum of the `p`-th powers.  This is the convexity inequality behind the moment
 bound for the supremum of a process over a box.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

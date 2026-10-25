@@ -1,3 +1,5 @@
+module
+
 /-
 The Gaussian tail of pre-Brownian motion at a single time, by the Chernoff
 argument with the exact moment generating function of the normal law.
@@ -16,7 +18,9 @@ This is the single-time building block of the maximal estimate
 principle / dyadic chaining bound), which the sandpile paper's localization
 lemma quotes.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal

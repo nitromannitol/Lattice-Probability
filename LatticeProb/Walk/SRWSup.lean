@@ -1,3 +1,5 @@
+module
+
 /-
 The on-diagonal sup bound for the simple random walk kernel on `ℤ^d`.
 
@@ -11,10 +13,12 @@ gives `srwHeat d R x ≤ √2^d · C_d · R^{-d/2}`, the simple-walk counterpart
 statement is the constant `√2^d`, one factor of `√2` per coordinate coming from
 the parity of the one-dimensional walk.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWDecomp
-import LatticeProb.Walk.SRWOneDim
-import LatticeProb.Walk.GreenBounds
+public import Mathlib
+public import LatticeProb.Walk.SRWDecomp
+public import LatticeProb.Walk.SRWOneDim
+public import LatticeProb.Walk.GreenBounds
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

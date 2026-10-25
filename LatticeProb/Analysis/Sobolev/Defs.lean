@@ -1,3 +1,5 @@
+module
+
 /-
 Test functions, the Fourier-side Sobolev norms of negative order, and the
 bounded-domain predicate, in the form the continuum membrane arguments use.
@@ -16,7 +18,9 @@ The objects are:
   ‖φ‖_{H^s(D)} ≤ 1}`, again in `ℝ≥0∞`, for a functional `F` on test functions.
 - `IsDomain D` records that `D` is a bounded nonempty open set.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

@@ -1,3 +1,5 @@
+module
+
 /-
 Regular variation at infinity and Potter's bounds.
 
@@ -17,7 +19,9 @@ between two consecutive powers of `a` by monotonicity.
 
 The reference for the statement is de Haan and Ferreira, Proposition B.1.9(5).
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 

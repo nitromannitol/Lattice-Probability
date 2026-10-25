@@ -1,3 +1,5 @@
+module
+
 /-
 The square of the Gaussian density on the line.
 
@@ -6,7 +8,9 @@ the variance, so it is integrable and its integral is `(2√(πv))⁻¹`.  This 
 one-dimensional input of the Cameron--Martin entropy bound of
 `prop:fixed-scale-crossings` (`sandpile.tex:2300-2400`).
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

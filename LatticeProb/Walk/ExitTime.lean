@@ -1,3 +1,5 @@
+module
+
 /-
 Supporting lemmas for the exit time bounds of Bou-Rabee--Peres, Section 2,
 the paper (label `lem:max-exit`).
@@ -25,12 +27,14 @@ Grigor'yan and Telcs, carried out on the cardinality of `A`:
 
 * `h_bound`.  `h_A(x) = 1 + ∑_{y ∈ A, y ∼ x} u_A(y)` has at most `2d` terms.
 -/
-import Mathlib
-import LatticeProb.Walk.Lazy
-import LatticeProb.Walk.Dirichlet
-import LatticeProb.Walk.Harmonic
-import LatticeProb.Walk.Energy
-import LatticeProb.Walk.BoxAverage
+public import Mathlib
+public import LatticeProb.Walk.Lazy
+public import LatticeProb.Walk.Dirichlet
+public import LatticeProb.Walk.Harmonic
+public import LatticeProb.Walk.Energy
+public import LatticeProb.Walk.BoxAverage
+
+@[expose] public section
 
 open Finset
 open scoped Matrix

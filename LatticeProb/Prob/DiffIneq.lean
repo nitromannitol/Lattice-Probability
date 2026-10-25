@@ -1,3 +1,5 @@
+module
+
 /-
 Integrating a differential inequality.
 
@@ -15,9 +17,11 @@ is continuous only on `[0, λ₁]`: composing it with the clamp of `ℝ` onto
 is differentiable at every point, agrees with the paper's integral at `λ₁`, and
 is the `G` the inequality above wants.
 -/
-import Mathlib.Analysis.Calculus.Deriv.MeanValue
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+
+@[expose] public section
 
 open Set
 

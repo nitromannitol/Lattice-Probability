@@ -1,3 +1,5 @@
+module
+
 /-
 The `n`-step transition probability of the walk on an infinite connected graph
 tends to zero, for every pair of vertices.  No bound on the degrees is
@@ -15,7 +17,9 @@ matching of `ℕ × Bool`, an infinite locally finite graph of degree one whose
 components are single edges, the walk is back at its starting vertex at every
 even time, so the return probability does not tend to zero.
 -/
-import LatticeProb.Graph.OnDiagonal
+public import LatticeProb.Graph.OnDiagonal
+
+@[expose] public section
 
 open scoped Classical
 open Filter Topology

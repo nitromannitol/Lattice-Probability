@@ -1,3 +1,5 @@
+module
+
 /-
 Brownian motion with every path continuous.
 
@@ -22,11 +24,13 @@ vacuous: `exists_isBrownianSpace_cont` produces, for every dimension and every
 starting point, a Brownian motion on `ℝ ^ d` whose values are measurable at each
 time and whose every path is continuous.
 -/
-import Mathlib
-import LatticeProb.Prob.ChentsovPiModification
-import LatticeProb.Gauss.BrownianCont
-import LatticeProb.Prob.BrownianExit
-import LatticeProb.Prob.BrownianStrongMarkov
+public import Mathlib
+public import LatticeProb.Prob.ChentsovPiModification
+public import LatticeProb.Gauss.BrownianCont
+public import LatticeProb.Prob.BrownianExit
+public import LatticeProb.Prob.BrownianStrongMarkov
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal Topology

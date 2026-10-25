@@ -1,3 +1,5 @@
+module
+
 /-
 The strong Markov property of the walk on a locally finite graph at an almost
 surely finite stopping time.
@@ -19,7 +21,9 @@ to the limit.  The events `{τ ≤ N}` increase to `{τ < ⊤}`, a set of full
 measure.  Both integrands are bounded by the product of the two bounds, so a
 constant dominates and no integrability hypothesis beyond boundedness is needed.
 -/
-import LatticeProb.Graph.ExitTime
+public import LatticeProb.Graph.ExitTime
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal

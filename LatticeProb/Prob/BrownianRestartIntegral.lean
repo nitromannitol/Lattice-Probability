@@ -1,3 +1,5 @@
+module
+
 /-
 The strong Markov property in the form an optimal stopping argument uses.
 
@@ -15,8 +17,10 @@ gained after the exit time is the value of a fresh motion started at the exit
 position, and the excess of the free value over the value localized to the ball
 is the expectation over `E` of that value.
 -/
-import Mathlib
-import LatticeProb.Prob.BrownianStrongMarkov
+public import Mathlib
+public import LatticeProb.Prob.BrownianStrongMarkov
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal Topology

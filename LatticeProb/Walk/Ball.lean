@@ -1,3 +1,5 @@
+module
+
 /-
 The Euclidean norm on the lattice: the volume of a ball, and the radial series
 it controls.
@@ -10,8 +12,10 @@ the box of sup-radius `R`, and the volume bound and every radial sum transfer.
 The series `∑_y (1+|y|)^{-p}` converges exactly when `p > d`, and that is what a
 scenery tail split at a radius needs on each side.
 -/
-import Mathlib
-import LatticeProb.Walk.Shells
+public import Mathlib
+public import LatticeProb.Walk.Shells
+
+@[expose] public section
 
 noncomputable section
 

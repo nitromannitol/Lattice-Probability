@@ -1,3 +1,5 @@
+module
+
 /-
 Sums of the product kernel over a box, and the two per-step estimates of
 `lem:green` that follow from them.
@@ -7,8 +9,10 @@ Everything in Section 8 is supported in a finite originBox, so a sum "over all o
 product structure of `LatticeProb.K` turns it into a product of one-dimensional sums
 (`Finset.prod_univ_sum`).
 -/
-import Mathlib
-import LatticeProb.Walk.Decomp
+public import Mathlib
+public import LatticeProb.Walk.Decomp
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

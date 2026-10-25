@@ -1,11 +1,15 @@
+module
+
 /-
 The one-dimensional Brownian heat kernel with variance `t/4`. Its square integral
 and the square integrability of its time-truncated test functions define the
 space-time white-noise pairing.
 -/
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

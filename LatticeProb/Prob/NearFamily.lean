@@ -1,3 +1,5 @@
+module
+
 /-
 A family of integer-valued laws indexed by a real parameter, uniformly close to a fixed law
 in mean, exponential moment and coupling distance, and the recentring shift of one such law
@@ -22,7 +24,9 @@ Moved from Parking-Sharpness (`Parking.NearFamily` in `Parking/Support/Near.lean
 `Parking.shiftLaw` together with its lemmas in `Parking/Support/XiLaw.lean`, and
 `Parking.integrable_intCast_of_exp` of `Parking/Support/MeanHorizonStep1.lean`).
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

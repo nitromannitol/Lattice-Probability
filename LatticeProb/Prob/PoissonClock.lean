@@ -1,3 +1,5 @@
+module
+
 /-
 # The rate-two Poisson clock: weight, generator, mean, and variance
 
@@ -43,8 +45,10 @@ underlying Mathlib Poisson-distribution API changed from a real-valued pmf
 this library's Mathlib revision, and re-deriving the same facts against the
 new API is a genuine rewrite, not a mechanical port.
 -/
-import Mathlib
-import LatticeProb.Prob.CauchySchwarzTsum
+public import Mathlib
+public import LatticeProb.Prob.CauchySchwarzTsum
+
+@[expose] public section
 
 namespace LatticeProb
 

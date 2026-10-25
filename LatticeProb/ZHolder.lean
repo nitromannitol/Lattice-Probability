@@ -1,3 +1,5 @@
+module
+
 /-
 Second-moment bounds for a continuum field whose covariance is the double time
 integral of a Brownian heat kernel with generator `(2d)⁻¹Δ`. The kernel is an
@@ -5,7 +7,9 @@ arbitrary function satisfying the explicit heat-kernel formula. Space increments
 have exponent `1/2`; time increments have exponent `1-d/4`, hence at least `1/4`
 when `d ≤ 3`. The joint estimate combines these bounds. No Gaussianity is required.
 -/
-import LatticeProb.HeatKernelHolder
+public import LatticeProb.HeatKernelHolder
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped NNReal ENNReal

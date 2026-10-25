@@ -1,3 +1,5 @@
+module
+
 /-
 The one-dimensional lazy walk kernel, used by Section 8 of `orrw.tex`.
 
@@ -13,8 +15,10 @@ probability distribution, it is symmetric and unimodal, its maximum
 `p_m(0)` is at most `(m+1)^{-1/2}`, and consequently
 `∑_k |p_m(k+1) - p_m(k)| = 2 p_m(0)`.
 -/
-import Mathlib
-import LatticeProb.Walk.Basic
+public import Mathlib
+public import LatticeProb.Walk.Basic
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

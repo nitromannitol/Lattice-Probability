@@ -1,3 +1,5 @@
+module
+
 /-
 The Poisson (Bennett type) tail bound for a sum of independent nonnegative summands
 bounded by `β`:
@@ -18,7 +20,9 @@ Unlike Bernstein's inequality, which is governed by the variance, this bound kee
 factor `(μ/s)^{s/β}`: it is what supplies a power of the truncated mean, and that power is
 what the Fuk-Nagaev inequality needs from the middle block of a truncation.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

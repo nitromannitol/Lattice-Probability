@@ -1,3 +1,5 @@
+module
+
 /-
 The Green function of the lazy walk is twice the Green function of the simple
 walk, in dimension three and above.
@@ -24,9 +26,11 @@ Green functions are bounded uniformly in the horizon: this is
 is the expected one: laziness halves the speed of the walk without changing
 where it goes, so it doubles the expected number of visits to every site.
 -/
-import Mathlib
-import LatticeProb.Walk.Green
-import LatticeProb.Walk.SRWGreenSup
+public import Mathlib
+public import LatticeProb.Walk.Green
+public import LatticeProb.Walk.SRWGreenSup
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

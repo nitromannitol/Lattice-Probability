@@ -1,3 +1,5 @@
+module
+
 /-
 The simple random walk kernel on `ℤ^d` and its truncated Green function.
 
@@ -9,8 +11,10 @@ parity constraint the lazy one does not, and that constraint is what this file
 records first: the kernel vanishes off the ball of radius `j`, and inside it
 vanishes unless the `ℓ¹` norm of the site agrees with `j` in parity.
 -/
-import Mathlib
-import LatticeProb.Walk.Basic
+public import Mathlib
+public import LatticeProb.Walk.Basic
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

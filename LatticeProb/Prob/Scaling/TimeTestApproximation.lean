@@ -1,9 +1,13 @@
+module
+
 /- Uniform approximation of a compactly supported time derivative by forward differences.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.TimeTest
-import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import LatticeProb.Prob.Scaling.TimeTest
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+
+@[expose] public section
 
 open Set Filter Topology
 noncomputable section

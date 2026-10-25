@@ -1,3 +1,5 @@
+module
+
 /-
 The correlation of two truncated Green functions, `eq:corr-bound`.
 
@@ -19,7 +21,9 @@ equals `m√n`, `m(1+log(n/m))`, `√m` and `1 + log m` in dimensions one to fou
 which is exactly what the two sums above give.  That identity is what makes the
 whole clause four lines of algebra once the sums are estimated.
 -/
-import LatticeProb.Walk.WindowD4
+public import LatticeProb.Walk.WindowD4
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Two elementary ingredients of the Gaussian bound on the lattice kernel.
 
@@ -7,10 +9,12 @@ inequality, which turns a product of one-dimensional Gaussian factors, one for
 each coordinate and each with its own number of steps, into a single Gaussian
 factor in the `ℓ¹` norm of the site and the total number of steps.
 -/
-import Mathlib
-import LatticeProb.Walk.SRW
-import LatticeProb.Walk.Decomp
-import LatticeProb.Walk.GreenBounds
+public import Mathlib
+public import LatticeProb.Walk.SRW
+public import LatticeProb.Walk.Decomp
+public import LatticeProb.Walk.GreenBounds
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

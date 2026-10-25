@@ -1,3 +1,5 @@
+module
+
 /-
 White noise on a separable measure space.
 
@@ -9,8 +11,10 @@ it has a countable orthonormal basis, and the product of standard Gaussians over
 that basis carries it isometrically into `L²` of a probability space.  The image
 of a test function is white noise evaluated at it.
 -/
-import Mathlib
-import LatticeProb.Gauss.Process
+public import Mathlib
+public import LatticeProb.Gauss.Process
+
+@[expose] public section
 
 noncomputable section
 

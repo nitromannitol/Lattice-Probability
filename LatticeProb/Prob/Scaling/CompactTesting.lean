@@ -1,3 +1,5 @@
+module
+
 /-
 Continuity of the integration functional on continuous test functions over a compact space,
 and the resulting full-measure event making a countable family of weighted integral identities
@@ -5,10 +7,12 @@ hold simultaneously for every continuous test coefficient.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.SimultaneousTesting
-import Mathlib.MeasureTheory.Function.LpSpace.ContinuousFunctions
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+public import LatticeProb.Prob.Scaling.SimultaneousTesting
+public import Mathlib.MeasureTheory.Function.LpSpace.ContinuousFunctions
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+
+@[expose] public section
 
 open MeasureTheory TopologicalSpace
 noncomputable section

@@ -1,3 +1,5 @@
+module
+
 /-
 The Markov property of simple random walk on the lattice, at a fixed time and at
 a bounded stopping time.
@@ -25,9 +27,11 @@ values, and on the event that it takes the value `k` the shift is the shift by
 `k` and the conditioning data is settled by the first `k` positions, so summing
 the fixed-time statement over `k` gives the strong Markov property.
 -/
-import LatticeProb.IID
-import LatticeProb.Walk.Infinite
-import LatticeProb.Prob.ZeroOne
+public import LatticeProb.IID
+public import LatticeProb.Walk.Infinite
+public import LatticeProb.Prob.ZeroOne
+
+@[expose] public section
 
 noncomputable section
 

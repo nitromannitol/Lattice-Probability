@@ -1,3 +1,5 @@
+module
+
 /-
 The exterior Dirichlet problem on `ℤ^d ∖ {0}` in dimension three and above.
 
@@ -12,11 +14,13 @@ which follows from the on-diagonal sup bound `p_j(x) ≤ C j^{-d/2}` and the fac
 that the walk cannot reach `x` before time `|x|_1`: the Green function at `x` is
 a tail of the convergent series `∑_j j^{-d/2}`.
 -/
-import LatticeProb.Walk.HitProb
-import LatticeProb.Walk.SRWSup
-import LatticeProb.Network.MaximumPrinciple
-import LatticeProb.Graph.Zd
-import LatticeProb.ParticleHoleLemmas
+public import LatticeProb.Walk.HitProb
+public import LatticeProb.Walk.SRWSup
+public import LatticeProb.Network.MaximumPrinciple
+public import LatticeProb.Graph.Zd
+public import LatticeProb.ParticleHoleLemmas
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

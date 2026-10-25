@@ -653,3 +653,10 @@ modules from
 
 The Lean code in this repository is licensed under the **Apache License 2.0**
 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).
+
+## Selected consumer compatibility
+
+This branch retains exact rotor dependency snapshot `9d44b4d4670df393bb86ac5a4e042f215001cddf` and
+adds public module interfaces for Lean v4.35.0-rc2. Existing proof APIs are
+adapted in the selected consumer closure; mathematical definitions, types and
+hypotheses are retained. The full library under this toolchain is unverified.

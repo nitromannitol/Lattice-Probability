@@ -1,3 +1,5 @@
+module
+
 /-
 The vocabulary shared by the statements: the walk-averaged
 payoff, the two suprema of the optimal stopping problem, the joint law of the
@@ -9,8 +11,10 @@ component of a vertex in a set.
 it and `supStopValue` is `sup_τ E_x[S_τ | ξ]` over bounded stopping times, both
 in `[0,∞]`, so that the paper's `= ∞` is a value and not a junk real.
 -/
-import LatticeProb.Graph.Walk
-import LatticeProb.Graph.Scenery
+public import LatticeProb.Graph.Walk
+public import LatticeProb.Graph.Scenery
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
