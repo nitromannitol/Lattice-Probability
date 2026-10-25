@@ -1,3 +1,5 @@
+module
+
 /-
 The on-diagonal heat kernel of the simple random walk.
 
@@ -10,10 +12,12 @@ Cauchy-Schwarz against that ball, whose cardinality is `O(n^{d/2})`, finishes.
 
 This is the estimate that `∑_y g_t(0,y)^2 = ∑_{a,b<t} p_{a+b}(0,0)` rests on.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWGaussBound
-import LatticeProb.Walk.Shells
-import LatticeProb.Walk.Path
+public import Mathlib
+public import LatticeProb.Walk.SRWGaussBound
+public import LatticeProb.Walk.Shells
+public import LatticeProb.Walk.Path
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # The Nash inequality on `ℤ²`
 
@@ -25,8 +27,10 @@ The proof is the elementary route: an `L¹` Sobolev inequality on `ℤ²`
 obtained from two one-dimensional total-variation bounds, applied to `f²`,
 and then two Cauchy-Schwarz interpolations.
 -/
-import Mathlib
-import LatticeProb.Prob.CauchySchwarzTsum
+public import Mathlib
+public import LatticeProb.Prob.CauchySchwarzTsum
+
+@[expose] public section
 
 open Filter Topology
 open scoped BigOperators

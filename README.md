@@ -685,3 +685,12 @@ modules from
 
 The Lean code in this repository is licensed under the **Apache License 2.0**
 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).
+
+## Selected consumer compatibility
+
+This branch starts from the exact Centrally-Excited-Random-Walk dependency snapshot `424de9b04279b9aa58364ab227b44c8007e0b5ba`.
+It adds public module interfaces for Lean v4.35.0-rc2 and preserves the mathematical
+definitions, types and hypotheses. Existing proof calls are adapted to the supported
+Mathlib API only within the selected consumer import closure. The full library under
+this toolchain has not been verified; the consumer’s full Palomar preflight checks its
+selected Challenge/Solution closure.

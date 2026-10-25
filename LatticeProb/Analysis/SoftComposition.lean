@@ -1,3 +1,5 @@
+module
+
 /-
 Composition of smooth maxima and minima (`LatticeProb.Analysis.SoftMaximum`)
 with dimension-independent coordinate derivative bounds: first-derivative sums
@@ -6,7 +8,9 @@ and quadratically with the number of composition layers.
 
 Moved from Divisible-Sandpile-Percolation, `Sandpile/Support/SoftComposition.lean`.
 -/
-import LatticeProb.Analysis.SoftMaximum
+public import LatticeProb.Analysis.SoftMaximum
+
+@[expose] public section
 
 open scoped BigOperators
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The head-tail decomposition of a product measure indexed by the natural numbers.
 
@@ -13,8 +15,10 @@ has the law of the whole sequence, because shifting by one is an injective
 reindexing that preserves the one-site laws.  So the joint law of the pair is
 the product of the two laws, and Fubini finishes.
 -/
-import Mathlib.Probability.Independence.ZeroOne
-import LatticeProb.Prob.ZeroOne
+public import Mathlib.Probability.Independence.ZeroOne
+public import LatticeProb.Prob.ZeroOne
+
+@[expose] public section
 
 noncomputable section
 

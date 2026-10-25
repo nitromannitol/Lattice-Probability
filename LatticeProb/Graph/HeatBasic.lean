@@ -1,10 +1,14 @@
+module
+
 /-
 Elementary facts about the transition kernel: nonnegativity, the
 Chapman--Kolmogorov lower bound through one intermediate vertex, positivity
 along a walk, and the transfer of a finite Green function from one vertex to
 another on a connected graph.
 -/
-import LatticeProb.Graph.Green
+public import LatticeProb.Graph.Green
+
+@[expose] public section
 
 open scoped ENNReal
 

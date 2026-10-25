@@ -1,5 +1,9 @@
-import LatticeProb.Prob.KingmanLinear.FromInducedToAllTimes
-import LatticeProb.Prob.KingmanLinear.LimitInvariant
+module
+
+public import LatticeProb.Prob.KingmanLinear.FromInducedToAllTimes
+public import LatticeProb.Prob.KingmanLinear.LimitInvariant
+
+@[expose] public section
 
 /-!
 # Main theorem (statement byte-identical to the Exploding design files)

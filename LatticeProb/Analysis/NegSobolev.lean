@@ -1,3 +1,5 @@
+module
+
 /-
 Negative-order Sobolev norms on a bounded domain, in the form the divisible
 sandpile percolation paper uses.
@@ -12,7 +14,9 @@ The multiplier `(1 + (2π‖ξ‖)²)^s` is increasing in `s`, so the unit ball 
 `H^{-s₀}` is contained in that of `H^{-s}` for `s₀ ≤ s`: the continuous
 inclusion `H^{-s₀}(D) ⊆ H^{-s}(D)`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

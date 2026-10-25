@@ -1,3 +1,5 @@
+module
+
 /-
 The probability of ever hitting the origin, and the Green-function identity
 `P_x(τ_0 < ∞) = G(x,0)/G(0,0)`.
@@ -15,10 +17,12 @@ are the probabilities of hitting the origin by time `k`, which identifies
 `∑_k f_k(x)` with the law of the event `{∃ j, X_j = 0}` under the walk started
 at `x`.
 -/
-import LatticeProb.Walk.Markov
-import LatticeProb.Walk.GreenIdentity
-import LatticeProb.Walk.SimpleTransfer
-import LatticeProb.Prob.InfinitePiSplit
+public import LatticeProb.Walk.Markov
+public import LatticeProb.Walk.GreenIdentity
+public import LatticeProb.Walk.SimpleTransfer
+public import LatticeProb.Prob.InfinitePiSplit
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

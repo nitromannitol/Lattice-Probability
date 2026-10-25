@@ -1,3 +1,5 @@
+module
+
 /-
 Revealing an independent family along a path chosen from what has been seen.
 
@@ -19,7 +21,9 @@ differ may still reveal a common law: in the lattice application `X (y, j)` is
 the site the `j`-th departure from `y` moves to, whose law depends on `y`,
 while `g (y, j) z = z - y` is the step, whose law does not.
 -/
-import LatticeProb.Prob.Coordinate
+public import LatticeProb.Prob.Coordinate
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Moved from nitromannitol/rotor-23, `Rotor/Support/FiniteProduct.lean` (the
 `FiniteProduct` section, lines 1-266), Apache-2.0; copyright 2026 Ahmed
@@ -7,7 +9,9 @@ paper, but every declaration in the section quoted here is stated for a bare
 finite index type `ι` and never mentions the rotor mechanism, so it is moved
 here unchanged, with only the namespace renamed.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 /-!
 # Russo's formula and pivotal-coordinate calculus for a finite product model

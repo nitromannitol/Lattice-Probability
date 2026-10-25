@@ -1,9 +1,13 @@
+module
+
 /- Bounded tests of local weak residuals, localized by positivity.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.CompactPairing
-import LatticeProb.Prob.Scaling.PositiveCutoff
+public import LatticeProb.Prob.Scaling.CompactPairing
+public import LatticeProb.Prob.Scaling.PositiveCutoff
+
+@[expose] public section
 
 open MeasureTheory Set
 open LatticeProb.Scaling.BoundedFunctionalLift

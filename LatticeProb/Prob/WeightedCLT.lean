@@ -1,3 +1,5 @@
+module
+
 /-
 A central limit theorem for finite weighted rows of independent copies, under
 only a second moment (no third-moment or Lindeberg-array machinery): the proof
@@ -14,9 +16,11 @@ itself a rederivation of the already-existing `LatticeProb.measurePreserving_pic
 directly against the library's own `LatticeProb.iidLaw` and
 `LatticeProb.measurePreserving_pick`, with no new lattice-specific content.
 -/
-import Mathlib.Probability.CentralLimitTheorem
-import Mathlib.Analysis.SpecialFunctions.Exp
-import LatticeProb.Prob.FiniteMarginal
+public import Mathlib.Probability.CentralLimitTheorem
+public import Mathlib.Analysis.SpecialFunctions.Exp
+public import LatticeProb.Prob.FiniteMarginal
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ComplexOrder

@@ -1,3 +1,5 @@
+module
+
 /-
 Hölder's inequality combining a TAIL bound (the measure of a set) with a MOMENT bound (an
 `L^r` norm), for an arbitrary probability space.  Stated for abstract objects only (an
@@ -9,10 +11,12 @@ verbatim into the shared library.  Built from Mathlib's own Bochner-integral Hö
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.Data.Real.ConjExponents
-import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.Data.Real.ConjExponents
+public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+
+@[expose] public section
 
 open MeasureTheory
 

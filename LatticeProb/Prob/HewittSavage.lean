@@ -1,3 +1,5 @@
+module
+
 /-
 The Hewitt-Savage zero-one law for a product measure on `ι → X`.
 
@@ -16,7 +18,9 @@ Its proof is the proof of `measure_eq_zero_or_one_of_preimage_eq` with the
 iterate replaced by the transformation the hypothesis supplies, and it is
 therefore adapted from the same Apache-2.0 licensed source; see NOTICE.
 -/
-import LatticeProb.Prob.ZeroOne
+public import LatticeProb.Prob.ZeroOne
+
+@[expose] public section
 
 noncomputable section
 

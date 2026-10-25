@@ -1,3 +1,5 @@
+module
+
 /-
 The classical (integer, Abelian) sandpile under parallel toppling on `ℤ^d`,
 moved from `Exploding-Sandpiles`'s `Exploding/Support/Toppling.lean` and
@@ -43,7 +45,9 @@ real-valued neighbour sum, `LatticeProb/Site.lean`); the integer-valued sum
 here is `nbrSumZ`, matching the source repo's own choice of name for exactly
 this reason.
 -/
-import LatticeProb.Site
+public import LatticeProb.Site
+
+@[expose] public section
 
 namespace LatticeProb.Sandpile
 

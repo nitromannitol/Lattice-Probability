@@ -1,11 +1,15 @@
-import LatticeProb.Prob.KingmanLinear.Defs
-import LatticeProb.Prob.KingmanLinear.Restated
-import LatticeProb.Prob.KingmanLinear.LinearSets
-import LatticeProb.Prob.KingmanLinear.InducedFamily
-import LatticeProb.Prob.KingmanLinear.Interpolation
-import LatticeProb.Prob.KingmanLinear.FromInducedToAllTimes
-import LatticeProb.Prob.KingmanLinear.LimitInvariant
-import LatticeProb.Prob.KingmanLinear.MainTheorem
+module
+
+public import LatticeProb.Prob.KingmanLinear.Defs
+public import LatticeProb.Prob.KingmanLinear.Restated
+public import LatticeProb.Prob.KingmanLinear.LinearSets
+public import LatticeProb.Prob.KingmanLinear.InducedFamily
+public import LatticeProb.Prob.KingmanLinear.Interpolation
+public import LatticeProb.Prob.KingmanLinear.FromInducedToAllTimes
+public import LatticeProb.Prob.KingmanLinear.LimitInvariant
+public import LatticeProb.Prob.KingmanLinear.MainTheorem
+
+@[expose] public section
 
 /-!
 # Kingman's theorem under a linear bound, without integrability of `g 1`

@@ -1,3 +1,5 @@
+module
+
 /-
 A generic McShane-type Lipschitz extension of a functional built from an integral, needed to
 apply an equicontinuity criterion to a random field whose realizations are NOT continuous.
@@ -17,7 +19,9 @@ model-specific object appears in any statement.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

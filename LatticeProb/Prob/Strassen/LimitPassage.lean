@@ -1,4 +1,8 @@
-import LatticeProb.Prob.Strassen.LevelCoupling
+module
+
+public import LatticeProb.Prob.Strassen.LevelCoupling
+
+@[expose] public section
 
 /-!
 # F. Passage to the limit

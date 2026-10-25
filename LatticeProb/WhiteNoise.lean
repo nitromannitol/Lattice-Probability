@@ -1,12 +1,16 @@
+module
+
 /-
 Smooth compactly supported test functions, the Laplacian with generator `(2d)⁻¹Δ`,
 spatial white noise, and the coordinatewise lattice floor.
 -/
-import LatticeProb.Site
-import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.Analysis.Calculus.Deriv.Pi
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Probability.Distributions.Gaussian.Real
+public import LatticeProb.Site
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.Deriv.Pi
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

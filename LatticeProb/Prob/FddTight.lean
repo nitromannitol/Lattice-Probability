@@ -1,3 +1,5 @@
+module
+
 /-
 From the finite-dimensional laws and equicontinuity in probability to the expectation of a
 functional of the whole path.
@@ -23,8 +25,10 @@ the finite vector `(f i (x k))ₖ`, so its expectation converges by the finite-d
 hypothesis, and it differs from `Φ (f i)` by at most the tolerance except on the event that
 `f i` varies by more than `δ` at scale `η`, whose probability the equicontinuity bounds.
 -/
-import Mathlib
-import LatticeProb.Prob.NetApprox
+public import Mathlib
+public import LatticeProb.Prob.NetApprox
+
+@[expose] public section
 
 open MeasureTheory Filter
 

@@ -1,10 +1,14 @@
-import Mathlib
-import LatticeProb.Walk.LocalCLT
-import LatticeProb.Walk.FourierRec
-import LatticeProb.Walk.SimpleTransfer
-import LatticeProb.Walk.GreenIdentity
-import LatticeProb.Walk.Ball
-import LatticeProb.Walk.LineKernel
+module
+
+public import Mathlib
+public import LatticeProb.Walk.LocalCLT
+public import LatticeProb.Walk.FourierRec
+public import LatticeProb.Walk.SimpleTransfer
+public import LatticeProb.Walk.GreenIdentity
+public import LatticeProb.Walk.Ball
+public import LatticeProb.Walk.LineKernel
+
+@[expose] public section
 
 /-!
 # The simple random walk on `ℤ^d` in continuous time
@@ -331,7 +335,7 @@ theorem abs_ctHeat_le (hd : 1 ≤ d) {t : ℝ} (ht : 0 ≤ t) (x : Site d) :
     field_simp
   have hprod : (∏ i : Fin d, |lineKernel (t / d) (x i)|)
       ≤ ∏ i : Fin d, Real.exp (-|(x i : ℝ)| / 2 + t / d) :=
-    Finset.prod_le_prod (fun i _ => abs_nonneg _)
+    Finset.prod_le_prod₀ (fun i _ => abs_nonneg _)
       (fun i _ => abs_lineKernel_half_le hsd (x i))
   calc |ctHeat d t x|
       = |∏ i : Fin d, lineKernel (t / d) (x i)| := by rw [ctHeat]

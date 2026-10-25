@@ -1,7 +1,11 @@
+module
+
 /-
 Scaling of the Fourier-side Sobolev norm: `‖c φ‖²_{H^s} = c² ‖φ‖²_{H^s}`.
 -/
-import LatticeProb.Analysis.Sobolev.Basic
+public import LatticeProb.Analysis.Sobolev.Basic
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

@@ -1,3 +1,5 @@
+module
+
 /-
 Elementary facts about a path on the lattice, and the law of the first `n`
 steps of simple random walk.
@@ -16,8 +18,10 @@ horizon finite means every quantity below is a function on a finite type and no
 measurability side condition can be silently dropped; `LatticeProb.Walk.Infinite`
 carries the same walk on infinite paths and identifies the two.
 -/
-import Mathlib
-import LatticeProb.Walk.Basic
+public import Mathlib
+public import LatticeProb.Walk.Basic
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

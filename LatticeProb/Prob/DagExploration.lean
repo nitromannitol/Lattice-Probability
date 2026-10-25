@@ -1,3 +1,5 @@
+module
+
 /-
 Revealing an independent family along a well-founded dependency order.
 
@@ -24,7 +26,9 @@ finite-dimensional distributions directly: a finite set of reads has a maximal
 element for the dependency, no other read of the set depends on it, and that is
 exactly what is needed to factor its coordinate out of the event.
 -/
-import LatticeProb.Prob.Exploration
+public import LatticeProb.Prob.Exploration
+
+@[expose] public section
 
 noncomputable section
 

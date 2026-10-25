@@ -1,5 +1,9 @@
+module
+
 /- Adapted from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and Yuval Peres. -/
-import LatticeProb.Lattice.Planar.ContourCases
+public import LatticeProb.Lattice.Planar.ContourCases
+
+@[expose] public section
 
 open Finset List Fin.NatCast
 

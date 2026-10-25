@@ -1,3 +1,5 @@
+module
+
 /-
 The Poisson equation for the truncated Green function, `orrw.tex`
 (`eq:poisson`):
@@ -9,8 +11,10 @@ The Poisson equation for the truncated Green function, `orrw.tex`
 `(2d)^{-1} ∑_a f(x + e_a) - f(x)`; the form recorded below is that display
 multiplied by `2d`, which is how it enters the compensator identity.
 -/
-import Mathlib
-import LatticeProb.Walk.Lazy
+public import Mathlib
+public import LatticeProb.Walk.Lazy
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

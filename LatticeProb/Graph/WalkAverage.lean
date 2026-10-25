@@ -1,3 +1,5 @@
+module
+
 /-
 The finite-horizon walk average is the integral against the law of the walk.
 
@@ -16,10 +18,12 @@ radius `n` about `x` up to time `n`, so `F` restricted to them takes finitely
 many values; replacing `F` by the functional that agrees with it there and
 vanishes elsewhere changes neither side and is bounded.
 -/
-import LatticeProb.Graph.Zd
-import LatticeProb.Graph.WalkLemmas
-import LatticeProb.Walk.Markov
-import LatticeProb.ParticleHoleLemmas
+public import LatticeProb.Graph.Zd
+public import LatticeProb.Graph.WalkLemmas
+public import LatticeProb.Walk.Markov
+public import LatticeProb.ParticleHoleLemmas
+
+@[expose] public section
 
 open MeasureTheory
 

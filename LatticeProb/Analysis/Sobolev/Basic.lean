@@ -1,9 +1,13 @@
+module
+
 /-
 Basic facts about the Fourier-side Sobolev norms: monotonicity of the norm in
 the order, antitonicity of the dual norm, and the elementary estimates on the
 dual norm (scaling, sums, domination).
 -/
-import LatticeProb.Analysis.Sobolev.Defs
+public import LatticeProb.Analysis.Sobolev.Defs
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

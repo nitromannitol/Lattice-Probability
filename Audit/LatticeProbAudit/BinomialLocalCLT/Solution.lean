@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Walk.BinomialLocalCLT
+module
+
+public import Mathlib
+public import LatticeProb.Walk.BinomialLocalCLT
+
+@[expose] public section
 
 /-!
 # Solution: BinomialLocalCLT

@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Walk.ContinuousHeat
+module
+
+public import Mathlib
+public import LatticeProb.Walk.ContinuousHeat
+
+@[expose] public section
 
 /-!
 # The planar potential kernel in Fourier form

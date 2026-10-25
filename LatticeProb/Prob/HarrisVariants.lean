@@ -1,3 +1,5 @@
+module
+
 /-
 Adapted from https://github.com/anthropics/formal-math, percolation subdirectory,
 commit 795efb86, file percolation/Percolation/Literature/LocallyMonotoneFKG.lean,
@@ -12,8 +14,10 @@ coordinates.  The last of these is the locally monotone form: an event which is
 increasing in one block of coordinates and decreasing in another is still
 positively correlated with a product of events in the two blocks.
 -/
-import Mathlib.Probability.ConditionalProbability
-import LatticeProb.Prob.Harris
+public import Mathlib.Probability.ConditionalProbability
+public import LatticeProb.Prob.Harris
+
+@[expose] public section
 
 namespace LatticeProb
 

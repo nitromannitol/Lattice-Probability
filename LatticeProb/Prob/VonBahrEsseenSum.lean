@@ -1,3 +1,5 @@
+module
+
 /-
 The probabilistic half of the von Bahr-Esseen inequality.
 
@@ -15,10 +17,12 @@ independent of the new summand, which is centred; Markov's inequality at
 exponent `p` turns the moment bound into the tail bound.  The constant is
 `C_p = 2`.
 -/
-import Mathlib
-import LatticeProb.Prob.VonBahrEsseen
-import LatticeProb.Prob.Moments
-import LatticeProb.Prob.LpSmooth
+public import Mathlib
+public import LatticeProb.Prob.VonBahrEsseen
+public import LatticeProb.Prob.Moments
+public import LatticeProb.Prob.LpSmooth
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

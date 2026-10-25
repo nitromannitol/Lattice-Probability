@@ -1,3 +1,5 @@
+module
+
 /-
 The number of steps a coordinate schedule gives to a block of coordinates, and
 the average of the inverse square root of that number.
@@ -25,7 +27,9 @@ Cauchy-Schwarz turns that into the bound on the inverse SQUARE ROOT, which is
 what a one-dimensional gradient of size `K^{-1/2}` needs.  No large deviation
 estimate for the block count is required, and no binomial coefficient appears.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

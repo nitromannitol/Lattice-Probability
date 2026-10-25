@@ -1,3 +1,5 @@
+module
+
 /-
 A Gaussian off-diagonal bound for the one-dimensional lazy walk kernel `P1`.
 
@@ -16,8 +18,10 @@ the bounds along `0, 1, …, k` yields
 Outside the range the left-hand side vanishes, and the estimate is symmetric in
 `k`, so it holds for every integer `k`.
 -/
-import Mathlib
-import LatticeProb.Walk.OneDim
+public import Mathlib
+public import LatticeProb.Walk.OneDim
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

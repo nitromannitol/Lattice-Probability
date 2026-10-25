@@ -1,8 +1,12 @@
+module
+
 /- First-moment and addition criteria for vanishing errors.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 open MeasureTheory Filter Topology
 namespace LatticeProb.Scaling.VanishingMass
 

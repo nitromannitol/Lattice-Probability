@@ -1,3 +1,5 @@
+module
+
 /-
 The variational principles of an electrical network, and the effective
 resistance.
@@ -23,7 +25,9 @@ resistance.
 Sums run over ordered pairs, so every energy here is twice the Dirichlet
 energy; see `LatticeProb/Network/Basic.lean`.
 -/
-import LatticeProb.Network.KilledGreen
+public import LatticeProb.Network.KilledGreen
+
+@[expose] public section
 
 open Finset
 open scoped Classical

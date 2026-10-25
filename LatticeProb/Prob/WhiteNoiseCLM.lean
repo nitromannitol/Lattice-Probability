@@ -1,3 +1,5 @@
+module
+
 /-
 The canonical white noise as a continuous linear map on `LÂ²`.
 
@@ -9,7 +11,9 @@ integral of the image of `f`, and the map is what carries measurability of `f â†
 
 The pointwise identity with `whiteNoiseOf` is definitional.
 -/
-import LatticeProb.Gauss.WhiteNoise
+public import LatticeProb.Gauss.WhiteNoise
+
+@[expose] public section
 
 noncomputable section
 

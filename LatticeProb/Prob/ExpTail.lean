@@ -1,3 +1,5 @@
+module
+
 /-
 The exponential-tail Jensen comparison for sparse symmetric laws: an even convex function
 tested against a rescaled unit-exponential law is bounded below by a two-point comparison at
@@ -5,8 +7,10 @@ the endpoints `±1` and at `0`, uniformly as the rescaling parameter grows.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.Probability.Distributions.Exponential
-import Mathlib.Analysis.Convex.Integral
+public import Mathlib.Probability.Distributions.Exponential
+public import Mathlib.Analysis.Convex.Integral
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.ConvexOrder

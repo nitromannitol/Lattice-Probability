@@ -1,6 +1,10 @@
-import LatticeProb.Prob.Kingman
-import LatticeProb.Prob.AkcogluKrengel
-import LatticeProb.Site
+module
+
+public import LatticeProb.Prob.Kingman
+public import LatticeProb.Prob.AkcogluKrengel
+public import LatticeProb.Site
+
+@[expose] public section
 
 set_option linter.unnecessarySeqFocus false
 set_option linter.unusedSimpArgs false

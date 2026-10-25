@@ -1,3 +1,5 @@
+module
+
 /-
 The multiparameter subadditive ergodic theorem of Akcoglu and Krengel, along cubes: the mean half.
 
@@ -20,8 +22,10 @@ a Fekete-type lemma on this bound gives the limit.
 The proof was written by the library's proof fleet (deepseek-v4.1-flash and Mistral leanstral)
 from a statement-owned decomposition and verified by the library gates.
 -/
-import LatticeProb.Prob.Kingman
-import LatticeProb.Site
+public import LatticeProb.Prob.Kingman
+public import LatticeProb.Site
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

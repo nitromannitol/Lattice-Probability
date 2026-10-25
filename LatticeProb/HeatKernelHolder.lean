@@ -1,9 +1,13 @@
+module
+
 /-
 Power-integral bounds for heat-kernel Hölder estimates. The inequalities
 `1 - exp(-c) ≤ c^α` and `(a+b)^(-γ) ≤ 2^(-γ) (ab)^(-γ/2)` give bounds
 on double integrals over squares and offset rectangles.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Real MeasureTheory
 

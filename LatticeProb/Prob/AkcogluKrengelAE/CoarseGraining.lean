@@ -1,4 +1,8 @@
-import LatticeProb.Prob.AkcogluKrengelAE.UnitScaleLowerBound
+module
+
+public import LatticeProb.Prob.AkcogluKrengelAE.UnitScaleLowerBound
+
+@[expose] public section
 
 set_option linter.unnecessarySeqFocus false
 set_option linter.unusedSimpArgs false

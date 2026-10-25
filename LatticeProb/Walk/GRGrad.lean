@@ -1,3 +1,5 @@
+module
+
 /-
 The gradient of the truncated lazy Green function.
 
@@ -7,10 +9,12 @@ space decay `(1 + |x|)^{1-d}`, uniformly in the horizon: that is the summation
 estimate of `LatticeProb/Walk/GaussSeries.lean`.  The zero-step term of the sum
 vanishes off the two sites next to the origin and so costs only a constant.
 -/
-import Mathlib
-import LatticeProb.Walk.LazyGrad
-import LatticeProb.Walk.GaussSeries
-import LatticeProb.Walk.SimpleTransfer
+public import Mathlib
+public import LatticeProb.Walk.LazyGrad
+public import LatticeProb.Walk.GaussSeries
+public import LatticeProb.Walk.SimpleTransfer
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

@@ -1,3 +1,5 @@
+module
+
 /-
 The extended continuous mapping theorem.
 
@@ -20,7 +22,9 @@ and a `δ`-ball about `x` on which `|f_n − f(x)| ≤ ε/2` for all `n ≥ N` m
 `S_N`, so `x ∉ B_N`.  The local uniform form is proved here to follow from the
 sequential one in any metric space.
 -/
-import Mathlib.MeasureTheory.Measure.Portmanteau
+public import Mathlib.MeasureTheory.Measure.Portmanteau
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ENNReal NNReal

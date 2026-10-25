@@ -1,3 +1,5 @@
+module
+
 /-
 Lyapunov's moment monotonicity for a nonnegative random variable, via Jensen's inequality at
 the concave map `t ↦ t^{s/p}`: if `Y ≥ 0` has an integrable `p`-th moment bounded by `M`, then
@@ -6,9 +8,11 @@ for every exponent `s` with `0 < s ≤ p`, `Y` also has an integrable `s`-th mom
 moment bound (`p` large, needed for the chaining argument) into the `L²` bound a variance-type
 estimate needs.
 -/
-import Mathlib.Analysis.Convex.SpecificFunctions.Pow
-import Mathlib.Analysis.Convex.Integral
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+public import Mathlib.Analysis.Convex.Integral
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+
+@[expose] public section
 
 open MeasureTheory
 

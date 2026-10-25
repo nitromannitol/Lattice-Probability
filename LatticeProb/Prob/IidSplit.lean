@@ -1,3 +1,5 @@
+module
+
 /-
 The Fubini identity for an i.i.d. field split at one site.
 
@@ -6,8 +8,10 @@ step of case (b) of `prop:dgt4-contact-asymptotics` is Fubini for the i.i.d. fie
 split at that site.  This file records the identity in the shape the sandpile
 formalization consumes.
 -/
-import LatticeProb.Prob.UpdateSite
-import LatticeProb.IID
+public import LatticeProb.Prob.UpdateSite
+public import LatticeProb.IID
+
+@[expose] public section
 
 noncomputable section
 

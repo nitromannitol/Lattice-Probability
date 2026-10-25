@@ -1,8 +1,12 @@
+module
+
 /- Integrating out time preserves smooth compactly supported test functions.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped Convolution

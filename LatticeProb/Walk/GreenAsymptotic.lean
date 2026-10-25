@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Walk.GaussTimeIntegral
+module
+
+public import Mathlib
+public import LatticeProb.Walk.GaussTimeIntegral
+
+@[expose] public section
 
 /-!
 # The asymptotics of the Green function of the simple random walk, `d ≥ 3`

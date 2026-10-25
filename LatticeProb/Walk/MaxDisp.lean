@@ -1,3 +1,5 @@
+module
+
 /-
 The maximal displacement of simple random walk.
 
@@ -21,9 +23,11 @@ concentrated.  The `ℓ¹` norm is at least `a` only when some coordinate is at
 least `a/d`, so a union bound over the `2d` signed coordinates finishes.  Every
 integral is a lower integral, so no integrability hypothesis is needed.
 -/
-import LatticeProb.Walk.Markov
-import LatticeProb.Walk.SRW
-import LatticeProb.Prob.InfinitePiSplit
+public import LatticeProb.Walk.Markov
+public import LatticeProb.Walk.SRW
+public import LatticeProb.Prob.InfinitePiSplit
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Liouville theorems for harmonic functions on a network: on a finite connected
 graph every harmonic function is constant, and on a recurrent network every
@@ -9,9 +11,11 @@ is bounded by `C` times the total mass of the `n`-step kernel; recurrence makes
 the Green function infinite, so those masses are unbounded and `f` must be
 constant.
 -/
-import LatticeProb.Network.Basic
-import LatticeProb.Graph.Basic
-import LatticeProb.Graph.Setting
+public import LatticeProb.Network.Basic
+public import LatticeProb.Graph.Basic
+public import LatticeProb.Graph.Setting
+
+@[expose] public section
 
 open scoped Classical
 

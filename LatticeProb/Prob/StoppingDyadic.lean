@@ -1,3 +1,5 @@
+module
+
 /-
 The dyadic approximation of a stopping time from above.
 
@@ -12,7 +14,9 @@ The stopping-time property is the only step that is not arithmetic: the event
 dyadic rational, and that event belongs to the filtration at the dyadic time
 `⌊2ⁿ i⌋ / 2ⁿ`, which precedes `i`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal Topology

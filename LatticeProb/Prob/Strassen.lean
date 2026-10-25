@@ -1,12 +1,16 @@
-import LatticeProb.Prob.Strassen.Defs
-import LatticeProb.Prob.Strassen.OrderBasics
-import LatticeProb.Prob.Strassen.HallPoset
-import LatticeProb.Prob.Strassen.Rounding
-import LatticeProb.Prob.Strassen.MarginalWeights
-import LatticeProb.Prob.Strassen.DiscreteCoupling
-import LatticeProb.Prob.Strassen.LevelCoupling
-import LatticeProb.Prob.Strassen.LimitPassage
-import LatticeProb.Prob.Strassen.Converse
+module
+
+public import LatticeProb.Prob.Strassen.Defs
+public import LatticeProb.Prob.Strassen.OrderBasics
+public import LatticeProb.Prob.Strassen.HallPoset
+public import LatticeProb.Prob.Strassen.Rounding
+public import LatticeProb.Prob.Strassen.MarginalWeights
+public import LatticeProb.Prob.Strassen.DiscreteCoupling
+public import LatticeProb.Prob.Strassen.LevelCoupling
+public import LatticeProb.Prob.Strassen.LimitPassage
+public import LatticeProb.Prob.Strassen.Converse
+
+@[expose] public section
 
 /-!
 # Strassen's coupling theorem
