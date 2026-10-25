@@ -100,7 +100,10 @@ status:
     and 8.6, in LatticeProb/External/EthierKurtzSkorokhod.lean, nor Gilbarg-Trudinger's
     Theorem 6.14, in LatticeProb/External/GilbargTrudingerExistence.lean, nor
     Billingsley's finite-horizon Skorokhod Polishness theorem (12.1-12.2, with the
-    range-space and interval amendments), in LatticeProb/External/BillingsleySkorokhod.lean.  A sixth proposition there,
+    range-space and interval amendments), in LatticeProb/External/BillingsleySkorokhod.lean;
+    nor the stopping-time form of Ethier-Kurtz 3.8.6(c) and Remark 8.7(b), in
+    LatticeProb/External/EthierKurtzStopping.lean; nor the kernel-uniform constant form
+    of MSC15 Theorem 1.1 traced in its proof, in LatticeProb/External/MuruganSaloffCosteUniform.lean.  A sixth proposition there,
     PotentialKernelAsymptotics (Lawler-Limic, Theorems 4.3.1 and 4.4.4), is
     stated for the formalizations that cite it and proved in
     LatticeProb/External/PotentialKernelAsymptoticsProved.lean, and three more,

@@ -60,7 +60,12 @@ semigroups on varying spaces, Chapter 1, Theorem 6.1
 on the half-line Skorokhod space (`LatticeProb/External/EthierKurtzSkorokhod.lean`), and
 Gilbarg–Trudinger's existence theorem 6.14 (`LatticeProb/External/GilbargTrudingerExistence.lean`), and
 Billingsley's finite-horizon Skorokhod Polishness result (Theorems 12.1–12.2 with the
-range-space and interval amendments, `LatticeProb/External/BillingsleySkorokhod.lean`).  A
+range-space and interval amendments, `LatticeProb/External/BillingsleySkorokhod.lean`);
+the stopping-time form of Ethier–Kurtz 3.8.6(c) and Remark 8.7(b)
+(`LatticeProb/External/EthierKurtzStopping.lean`); and the kernel-uniform constant
+form of Murugan–Saloff-Coste 2015, Theorem 1.1, with dependence traced in its proof
+(`LatticeProb/External/MuruganSaloffCosteUniform.lean`). The last input implies the
+literal per-kernel input by the proved `uniform_implies_literal`.  A
 theorem that uses one of them takes it as an explicit hypothesis, so its
 statement shows what it rests on.  The Rellich-Kondrachov embedding is used by
 the compactness results of `LatticeProb/Analysis/Sobolev/`.  The Herbst bound
