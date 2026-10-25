@@ -58,7 +58,9 @@ Chen–Kim–Kumagai–Wang's Theorem 4.4 (with Example 4.3) and Proposition 3.1
 semigroups on varying spaces, Chapter 1, Theorem 6.1
 (`LatticeProb/External/EthierKurtzTrotterKato.lean`), their Chapter 3 Theorems 7.8(b) and 8.6
 on the half-line Skorokhod space (`LatticeProb/External/EthierKurtzSkorokhod.lean`), and
-Gilbarg–Trudinger's existence theorem 6.14 (`LatticeProb/External/GilbargTrudingerExistence.lean`).  A
+Gilbarg–Trudinger's existence theorem 6.14 (`LatticeProb/External/GilbargTrudingerExistence.lean`), and
+Billingsley's finite-horizon Skorokhod Polishness result (Theorems 12.1–12.2 with the
+range-space and interval amendments, `LatticeProb/External/BillingsleySkorokhod.lean`).  A
 theorem that uses one of them takes it as an explicit hypothesis, so its
 statement shows what it rests on.  The Rellich-Kondrachov embedding is used by
 the compactness results of `LatticeProb/Analysis/Sobolev/`.  The Herbst bound

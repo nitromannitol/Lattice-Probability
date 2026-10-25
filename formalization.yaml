@@ -98,7 +98,9 @@ status:
     Ethier-Kurtz (Markov Processes, 1986), Chapter 1, Theorem 6.1, in
     LatticeProb/External/EthierKurtzTrotterKato.lean, nor their Chapter 3, Theorems 7.8(b)
     and 8.6, in LatticeProb/External/EthierKurtzSkorokhod.lean, nor Gilbarg-Trudinger's
-    Theorem 6.14, in LatticeProb/External/GilbargTrudingerExistence.lean.  A sixth proposition there,
+    Theorem 6.14, in LatticeProb/External/GilbargTrudingerExistence.lean, nor
+    Billingsley's finite-horizon Skorokhod Polishness theorem (12.1-12.2, with the
+    range-space and interval amendments), in LatticeProb/External/BillingsleySkorokhod.lean.  A sixth proposition there,
     PotentialKernelAsymptotics (Lawler-Limic, Theorems 4.3.1 and 4.4.4), is
     stated for the formalizations that cite it and proved in
     LatticeProb/External/PotentialKernelAsymptoticsProved.lean, and three more,
