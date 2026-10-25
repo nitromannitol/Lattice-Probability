@@ -57,8 +57,8 @@ The library has 392 modules, about 87,000 lines and 4,541 declarations.
   shows what it rests on.  Only the Herbst bound and the Rellich-Kondrachov
   embedding are used, by `LatticeProb.gaussian_lipschitz_concentration` and by
   the compactness results of `LatticeProb/Analysis/Sobolev/`.
-- Pinned to Lean `v4.32.0` and `mathlib` at revision
-  `81a5d257c8e410db227a6665ed08f64fea08e997`.  The dependent repositories use
+- Pinned to Lean `v4.35.0-rc2` and `mathlib` at revision
+  `065356127b1dc0016f66b7283ce0ce2c4055aa55`.  The dependent repositories use
   the same pin.
 
 ## Contents
@@ -506,7 +506,7 @@ recorded in [`Audit/COMPARATOR_RUNS.md`](Audit/COMPARATOR_RUNS.md).
 
 The project uses [`elan`](https://github.com/leanprover/elan) (the Lean
 toolchain manager) and Lake.  The toolchain is pinned in
-[`lean-toolchain`](lean-toolchain) (`leanprover/lean4:v4.32.0`), so `elan`
+[`lean-toolchain`](lean-toolchain) (`leanprover/lean4:v4.35.0-rc2`), so `elan`
 installs the right Lean version automatically.
 
 ```bash
