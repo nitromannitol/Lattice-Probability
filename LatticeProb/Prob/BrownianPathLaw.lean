@@ -1,3 +1,5 @@
+module
+
 /-
 The law of a Brownian motion on path space, and its invariance under restarting.
 
@@ -19,8 +21,10 @@ time.  The rescaling by `√d` that relates a coordinate of the motion to a
 standard pre-Brownian motion is undone by a measurable map on path space, which
 is the identity when `d = 0` because there are then no coordinates at all.
 -/
-import Mathlib
-import LatticeProb.Prob.BrownianMarkov
+public import Mathlib
+public import LatticeProb.Prob.BrownianMarkov
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal Topology

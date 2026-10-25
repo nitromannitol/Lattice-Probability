@@ -1,3 +1,5 @@
+module
+
 /-
 The `ℤ^d` specializations of the random walk representation, in the vocabulary
 of the two dependent formalizations.
@@ -13,8 +15,10 @@ library's walk law on path space and its notion of a stopping time.
 graph theorem `LatticeProb.Graph.randomWalkRepresentation` read on the lattice,
 through the identification of the two forms of the walk expectation.
 -/
-import LatticeProb.Graph.WalkAverage
-import LatticeProb.Graph.RWRepresentation
+public import LatticeProb.Graph.WalkAverage
+public import LatticeProb.Graph.RWRepresentation
+
+@[expose] public section
 
 open MeasureTheory LatticeProb
 

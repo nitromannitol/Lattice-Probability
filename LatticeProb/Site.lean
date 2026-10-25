@@ -1,3 +1,5 @@
+module
+
 /-
 The lattice `ℤ^d`: sites, unit vectors, the nearest-neighbour graph, and the
 simple random walk operator.  Shared by every formalization in this library.
@@ -11,7 +13,9 @@ How the objects are modelled:
 - `walkOp` is the transition operator of simple random walk,
   `(P u)(x) = (1/2d) ∑_{y ∼ x} u(y)`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

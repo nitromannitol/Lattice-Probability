@@ -1,3 +1,5 @@
+module
+
 /-
 The two classical plane-topology theorems that the unique-continuation
 formalization cites from outside itself, in the polygonal setting its drawings
@@ -10,7 +12,9 @@ of surfaces*, Amer. Math. Monthly 99 (1992) 116-130.  They are stated here as
 `Prop`-valued predicates so that a paper's chain can be sealed with them as an
 explicit hypothesis.
 -/
-import LatticeProb.Topology.Polygonal
+public import LatticeProb.Topology.Polygonal
+
+@[expose] public section
 
 noncomputable section
 

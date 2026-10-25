@@ -1,3 +1,5 @@
+module
+
 /-
 The discrete Caccioppoli inequality for a harmonic function on a finite
 weighted graph, and the first step of Moser iteration it feeds: a mean-value
@@ -14,7 +16,9 @@ to Mathlib or to `LatticeProb.Network`), so it is dropped; `formOn_eq_neg_two_mu
 is already `LatticeProb.Network.formOn_eq_neg_two_mul` (`Network/Basic.lean`),
 not in `Network/Variational.lean` as the source file's import suggests.
 -/
-import LatticeProb.Network.Basic
+public import LatticeProb.Network.Basic
+
+@[expose] public section
 
 open scoped BigOperators Classical
 

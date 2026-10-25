@@ -1,3 +1,5 @@
+module
+
 /-
 Translation equivariance of the particle-hole process.
 
@@ -17,7 +19,9 @@ under adding a fixed vector to both sides, coordinate by coordinate.  So the
 equivariance holds at the level of the labels and not only of the counts, which
 is what the survivor counts of a mass transport argument need.
 -/
-import LatticeProb.ParticleHoleLemmas
+public import LatticeProb.ParticleHoleLemmas
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The truncated Green function of the simple random walk on `ℤ^d`, dimension by
 dimension.
@@ -15,12 +17,14 @@ counterpart of the lazy statements `LatticeProb.gR_one_dim_le`,
 factor of `√2` per coordinate coming from the parity of the one-dimensional
 walk.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWDecomp
-import LatticeProb.Walk.SRWOneDim
-import LatticeProb.Walk.SRWSup
-import LatticeProb.Walk.GreenBounds
-import LatticeProb.Walk.Series
+public import Mathlib
+public import LatticeProb.Walk.SRWDecomp
+public import LatticeProb.Walk.SRWOneDim
+public import LatticeProb.Walk.SRWSup
+public import LatticeProb.Walk.GreenBounds
+public import LatticeProb.Walk.Series
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

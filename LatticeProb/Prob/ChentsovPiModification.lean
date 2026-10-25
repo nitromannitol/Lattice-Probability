@@ -1,3 +1,5 @@
+module
+
 /-
 Towards the multi-parameter Kolmogorov-Chentsov theorem: the passage from the
 Kolmogorov condition over `Fin k → ℝ` to the dyadic bad events, and the
@@ -13,8 +15,10 @@ bound is finite.  With that, the level-`n` bad events of the dyadic grid have
 summable probabilities, Borel-Cantelli makes the increment bounds hold from some
 level on almost surely, and the chained limit `dlimPi` is continuous.
 -/
-import LatticeProb.Prob.Chentsov
-import LatticeProb.Prob.KolmogorovBound
+public import LatticeProb.Prob.Chentsov
+public import LatticeProb.Prob.KolmogorovBound
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory ProbabilityTheory Filter Topology LatticeProb

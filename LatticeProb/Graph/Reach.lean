@@ -1,3 +1,5 @@
+module
+
 /-
 The finite set of endpoints of the walks of a given length, the two one-step
 recursions for the transition kernel, its reversibility against the degree
@@ -9,7 +11,9 @@ the support of `heat G n x`: outside it the `n`-step transition probability
 vanishes.  Every sum over the vertex set below is therefore a finite sum, and
 no summability hypothesis is needed anywhere.
 -/
-import LatticeProb.Graph.HeatBasic
+public import LatticeProb.Graph.HeatBasic
+
+@[expose] public section
 
 open scoped Classical
 

@@ -1,3 +1,5 @@
+module
+
 /-
 A central limit theorem for finite weighted rows of independent copies, under
 only a second moment (no third-moment or Lindeberg-array machinery): the proof
@@ -14,9 +16,11 @@ itself a rederivation of the already-existing `LatticeProb.measurePreserving_pic
 directly against the library's own `LatticeProb.iidLaw` and
 `LatticeProb.measurePreserving_pick`, with no new lattice-specific content.
 -/
-import Mathlib.Probability.CentralLimitTheorem
-import Mathlib.Analysis.SpecialFunctions.Exp
-import LatticeProb.Prob.FiniteMarginal
+public import Mathlib.Probability.CentralLimitTheorem
+public import Mathlib.Analysis.SpecialFunctions.Exp
+public import LatticeProb.Prob.FiniteMarginal
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ComplexOrder
@@ -43,7 +47,7 @@ theorem norm_prod_sub_prod_le_sum {ι : Type*} (s : Finset ι) (f g : ι → ℂ
     have hg' : ∀ j ∈ s, ‖g j‖ ≤ 1 := fun j hj => hg j (Finset.mem_insert_of_mem hj)
     have hprod : ‖∏ j ∈ s, g j‖ ≤ 1 := by
       calc ‖∏ j ∈ s, g j‖ = ∏ j ∈ s, ‖g j‖ := norm_prod _ _
-        _ ≤ ∏ _j ∈ s, (1 : ℝ) := Finset.prod_le_prod (fun j _ => norm_nonneg _) hg'
+        _ ≤ ∏ _j ∈ s, (1 : ℝ) := Finset.prod_le_prod₀ (fun j _ => norm_nonneg _) hg'
         _ = 1 := by simp
     rw [Finset.prod_insert hi, Finset.prod_insert hi, Finset.sum_insert hi]
     have he : f i * (∏ j ∈ s, f j) - g i * (∏ j ∈ s, g j) =

@@ -1,3 +1,5 @@
+module
+
 /-
 The Nash-Williams cutset bound.
 
@@ -9,7 +11,9 @@ below by the reciprocal of its total conductance.  Summing over pairwise
 disjoint cutsets gives `nashWilliams`, and with Thomson's principle a lower
 bound on the effective resistance.
 -/
-import LatticeProb.Network.Flow
+public import LatticeProb.Network.Flow
+
+@[expose] public section
 
 open Finset
 

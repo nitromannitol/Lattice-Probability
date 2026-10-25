@@ -1,3 +1,5 @@
+module
+
 /-
 Electrical networks on a locally finite graph.
 
@@ -26,7 +28,9 @@ a finite set `B` and an index set `S` containing `B` and all of its neighbours;
 that is the only shape the applications need, and it is what makes the
 summation by parts a finite manipulation.
 -/
-import LatticeProb.Graph.Basic
+public import LatticeProb.Graph.Basic
+
+@[expose] public section
 
 namespace LatticeProb.Network
 

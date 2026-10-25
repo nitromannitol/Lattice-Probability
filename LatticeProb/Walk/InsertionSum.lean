@@ -1,3 +1,5 @@
+module
+
 /-
 The insertion inequality on `ℤ^d`: for `d ≥ 2` and any injective enumeration
 `x 0, …, x (M-1)` of `M ≥ 1` sites, with `A_i` the set of the sites before `x i`,
@@ -17,10 +19,12 @@ Moved from the ORRW formalization (`nitromannitol/ORRW-Lower-Bound`,
 `ORRW/Support/InsertionSum.lean`), where it proves the insertion inequality
 `lem:insertion` of Bou-Rabee and Peres on once-reinforced random walk.
 -/
-import Mathlib
-import LatticeProb.Walk.Harmonic
-import LatticeProb.Walk.ExitTime
-import LatticeProb.Walk.ResistancePacking
+public import Mathlib
+public import LatticeProb.Walk.Harmonic
+public import LatticeProb.Walk.ExitTime
+public import LatticeProb.Walk.ResistancePacking
+
+@[expose] public section
 
 open Finset
 open scoped Matrix

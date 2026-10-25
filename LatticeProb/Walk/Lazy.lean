@@ -1,3 +1,5 @@
+module
+
 /-
 The lazy random walk on `ℤ^d`, and its Green function truncated at `R` steps.
 
@@ -43,8 +45,10 @@ correspondence table of the ORRW formalization, where these conventions were fix
   is multiplication by `1/2`.  Nothing below asserts anything false in that
   degenerate case; the statements that need stochasticity carry `0 < d`.
 -/
-import Mathlib
-import LatticeProb.Walk.Basic
+public import Mathlib
+public import LatticeProb.Walk.Basic
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

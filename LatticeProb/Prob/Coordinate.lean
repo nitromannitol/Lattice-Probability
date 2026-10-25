@@ -1,3 +1,5 @@
+module
+
 /-
 One coordinate of an infinite product, against everything else.
 
@@ -11,9 +13,11 @@ that coordinate with a fixed value, `F (Function.update ω q c) = F ω`, which i
 how it arises: the event that the odometer has reached the `j`-th instruction at
 a site does not depend on that instruction.
 -/
-import Mathlib.Probability.Independence.ZeroOne
-import Mathlib.Probability.Independence.Integration
-import LatticeProb.Prob.ZeroOne
+public import Mathlib.Probability.Independence.ZeroOne
+public import Mathlib.Probability.Independence.Integration
+public import LatticeProb.Prob.ZeroOne
+
+@[expose] public section
 
 noncomputable section
 

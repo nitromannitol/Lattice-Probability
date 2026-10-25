@@ -1,4 +1,8 @@
-import LatticeProb
+module
+
+public import LatticeProb
+
+@[expose] public section
 
 /-!
 # Axioms audit

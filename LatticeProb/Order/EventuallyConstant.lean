@@ -1,3 +1,5 @@
+module
+
 /-
 Two facts about eventual stabilization of a sequence, moved from
 `Dynamic-Dimensional-Reduction`'s `DimRed/Support/OneDimTerminal.lean` (proved
@@ -14,7 +16,9 @@ which is the form every consumer in this ecosystem's finite-domain
 finiteness/termination arguments (the sandpile, parking, and rotor-walk
 formalizations) needs.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

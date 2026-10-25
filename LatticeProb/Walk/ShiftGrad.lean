@@ -1,3 +1,5 @@
+module
+
 /-
 The same-parity gradient of the lattice walk, reduced to its generators.
 
@@ -24,8 +26,10 @@ The bound on ONE generator is taken as a hypothesis here.  In the plane it is
 still owed, and it is what the block splitting of the kernel for a pair of
 coordinates against the rest is for.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWDiag
+public import Mathlib
+public import LatticeProb.Walk.SRWDiag
+
+@[expose] public section
 
 noncomputable section
 

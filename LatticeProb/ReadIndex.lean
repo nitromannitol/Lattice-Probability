@@ -1,3 +1,5 @@
+module
+
 /-
 Which stack entry a particle reads, and that no entry is read twice.
 
@@ -22,7 +24,9 @@ its rank among the co-departing particles for the label order, so it runs over
 `0, …, A_t(y) - 1` injectively, and the odometer is monotone, so different
 rounds use disjoint intervals.
 -/
-import LatticeProb.ParticleHoleLemmas
+public import LatticeProb.ParticleHoleLemmas
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The ergodic zero-one law on the lattice: an event of an i.i.d. field on `ℤ^d`
 that is invariant under a single nonzero translation has probability `0` or `1`.
@@ -9,8 +11,10 @@ does all three: it is injective, the one-site law does not depend on the site,
 and a finite set is contained in a box, which `n` translations leave once `n`
 exceeds twice the radius of the box.
 -/
-import LatticeProb.IID
-import LatticeProb.Prob.ZeroOne
+public import LatticeProb.IID
+public import LatticeProb.Prob.ZeroOne
+
+@[expose] public section
 
 noncomputable section
 

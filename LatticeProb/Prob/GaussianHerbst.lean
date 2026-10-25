@@ -1,3 +1,5 @@
+module
+
 /-
 The Chernoff step of Gaussian concentration, from the cited Herbst exponential
 moment bound.
@@ -9,8 +11,10 @@ standard Gaussians: it is one application of
 `LatticeProb.GaussianHerbstBound n`.
 -/
 
-import LatticeProb.Prob.GaussianConcentration
-import LatticeProb.External.GaussianLogSobolev
+public import LatticeProb.Prob.GaussianConcentration
+public import LatticeProb.External.GaussianLogSobolev
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory ProbabilityTheory

@@ -1,3 +1,5 @@
+module
+
 /-
 The exponential Efron-Stein inequality for a product measure, by coordinate
 telescoping.
@@ -8,8 +10,10 @@ coordinates one at a time and add the increments.  That global bound is what
 makes every exponential of such a function integrable against a product measure
 whose one-site law has an exponential moment.
 -/
-import Mathlib
-import LatticeProb.Prob.SubGaussian
+public import Mathlib
+public import LatticeProb.Prob.SubGaussian
+
+@[expose] public section
 
 open MeasureTheory
 

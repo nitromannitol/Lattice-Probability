@@ -1,3 +1,5 @@
+module
+
 /-
 The Efron-Stein inequality over a countable index set.
 
@@ -15,10 +17,12 @@ converges almost everywhere to the functional, because it IS the conditional
 expectation on the coordinates in `S` and Levy's upward theorem applies.  Fatou
 then transfers the variance.
 -/
-import Mathlib
-import LatticeProb.Prob.Splice
-import LatticeProb.Prob.EfronSteinCov
-import LatticeProb.Prob.FiniteMarginal
+public import Mathlib
+public import LatticeProb.Prob.Splice
+public import LatticeProb.Prob.EfronSteinCov
+public import LatticeProb.Prob.FiniteMarginal
+
+@[expose] public section
 
 noncomputable section
 

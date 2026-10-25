@@ -1,3 +1,5 @@
+module
+
 /-
 The three estimates of `lem:green` (`orrw.tex`).
 
@@ -8,10 +10,12 @@ The sup bound is proved without Fourier analysis: the schedule decomposition of
 oscillation bound is that estimate summed over `0 ≤ r < R`.  The total variation
 bound is the paper's own argument, with the constant `4 d^{3/2} √R` unchanged.
 -/
-import Mathlib
-import LatticeProb.Walk.LazyBox
-import LatticeProb.Walk.Moment
-import LatticeProb.Walk.Series
+public import Mathlib
+public import LatticeProb.Walk.LazyBox
+public import LatticeProb.Walk.Moment
+public import LatticeProb.Walk.Series
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
@@ -55,7 +59,7 @@ lemma sched_prod_bound {r : ℕ} (c : Fin r → Fin d) (a : ℕ) :
     have hprod : ∏ i, (1 : ℝ) / Real.sqrt ((cnt c i : ℝ) + 1) ≤ 1 := by
       calc ∏ i, (1 : ℝ) / Real.sqrt ((cnt c i : ℝ) + 1)
           ≤ ∏ _i : Fin d, (1 : ℝ) :=
-            Finset.prod_le_prod (fun i _ => one_div_sqrt_cnt_nonneg c i)
+            Finset.prod_le_prod₀ (fun i _ => one_div_sqrt_cnt_nonneg c i)
               (fun i _ => one_div_sqrt_cnt_le_one c i)
         _ = 1 := by simp
     have : (0 : ℝ) ≤ ((Real.sqrt ((a : ℝ) + 2))⁻¹) ^ d := by positivity
@@ -77,7 +81,7 @@ lemma sched_prod_bound {r : ℕ} (c : Fin r → Fin d) (a : ℕ) :
         ≤ ((Real.sqrt ((a : ℝ) + 2))⁻¹) ^ d := by
       calc ∏ i, (1 : ℝ) / Real.sqrt ((cnt c i : ℝ) + 1)
           ≤ ∏ _i : Fin d, (Real.sqrt ((a : ℝ) + 2))⁻¹ :=
-            Finset.prod_le_prod (fun i _ => one_div_sqrt_cnt_nonneg c i) (fun i _ => hfac i)
+            Finset.prod_le_prod₀ (fun i _ => one_div_sqrt_cnt_nonneg c i) (fun i _ => hfac i)
         _ = ((Real.sqrt ((a : ℝ) + 2))⁻¹) ^ d := by simp
     linarith
 

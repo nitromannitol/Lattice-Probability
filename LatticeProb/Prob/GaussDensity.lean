@@ -1,3 +1,5 @@
+module
+
 /-
 The density of the standard Gaussian on a Euclidean space.
 
@@ -7,8 +9,10 @@ orthonormal basis, and proves no density for it.  The density is the product of
 the one-dimensional densities, because the pushforward is along a volume
 preserving map.
 -/
-import Mathlib
-import LatticeProb.Prob.PiDensity
+public import Mathlib
+public import LatticeProb.Prob.PiDensity
+
+@[expose] public section
 
 noncomputable section
 

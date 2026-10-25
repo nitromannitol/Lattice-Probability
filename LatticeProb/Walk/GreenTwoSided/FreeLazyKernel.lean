@@ -1,16 +1,20 @@
-import LatticeProb.Site
-import LatticeProb.Graph.Zd
-import LatticeProb.Graph.ExitDecomp
-import LatticeProb.Network.Killed
-import LatticeProb.Network.KilledGreen
-import LatticeProb.Walk.SRWGaussBound
-import LatticeProb.Walk.GreenIdentity
-import LatticeProb.Walk.Decomp
-import LatticeProb.Walk.LocalCLTOne
-import LatticeProb.Walk.SRWOneDim
-import LatticeProb.Walk.LocalCLT
-import LatticeProb.Walk.ExitBox
-import LatticeProb.Walk.GreenTwoSided.PointwiseBounds
+module
+
+public import LatticeProb.Site
+public import LatticeProb.Graph.Zd
+public import LatticeProb.Graph.ExitDecomp
+public import LatticeProb.Network.Killed
+public import LatticeProb.Network.KilledGreen
+public import LatticeProb.Walk.SRWGaussBound
+public import LatticeProb.Walk.GreenIdentity
+public import LatticeProb.Walk.Decomp
+public import LatticeProb.Walk.LocalCLTOne
+public import LatticeProb.Walk.SRWOneDim
+public import LatticeProb.Walk.LocalCLT
+public import LatticeProb.Walk.ExitBox
+public import LatticeProb.Walk.GreenTwoSided.PointwiseBounds
+
+@[expose] public section
 
 /-!
 # The free lazy kernel
@@ -486,7 +490,7 @@ private theorem const_div_pow_le_prod_P1 (hd : 1 ≤ d) (c₁ : ℝ) (hc₁ : 0 
     rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
   unfold K
   rw [← hconst]
-  refine Finset.prod_le_prod (fun i _ => ?_) (fun i _ => hprod i)
+  refine Finset.prod_le_prod₀ (fun i _ => ?_) (fun i _ => hprod i)
   exact div_nonneg hc₁.le (le_of_lt (mul_pos (Real.sqrt_pos.mpr (by norm_num)) hsR))
 
 

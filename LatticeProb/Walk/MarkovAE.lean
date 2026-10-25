@@ -1,3 +1,5 @@
+module
+
 /-
 The strong Markov property of simple random walk on the lattice at an almost
 surely finite stopping time.
@@ -18,7 +20,9 @@ events `{τ ≤ N}` increase to `{τ < ⊤}`, a set of full measure.  Both integ
 are bounded by the product of the two bounds, so a constant dominates and no
 integrability hypothesis beyond boundedness is needed.
 -/
-import LatticeProb.Walk.Markov
+public import LatticeProb.Walk.Markov
+
+@[expose] public section
 
 noncomputable section
 

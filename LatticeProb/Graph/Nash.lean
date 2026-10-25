@@ -1,3 +1,5 @@
+module
+
 /-
 The Nash inequality of dimension one on an infinite connected locally finite
 graph, in the form the on-diagonal heat kernel bound needs.
@@ -18,7 +20,9 @@ Every sum runs over a `Finset T` containing the support of `f` together with
 the neighbours of that support; the summands vanish off it, so the value does
 not depend on the choice.
 -/
-import LatticeProb.Graph.Reach
+public import LatticeProb.Graph.Reach
+
+@[expose] public section
 
 namespace LatticeProb.Graph
 

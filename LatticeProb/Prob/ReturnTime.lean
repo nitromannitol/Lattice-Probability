@@ -1,3 +1,5 @@
+module
+
 /-
 The first-return time and the first-return (induced) map.
 
@@ -11,7 +13,9 @@ These definitions are shared by `LatticeProb.Prob.Kac` (Kac's lemma) and by the 
 formalization of the induced map itself (Poincaré recurrence, measure preservation, ergodicity of
 the induced map); they are stated once here instead of being duplicated in each.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

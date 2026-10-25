@@ -1,3 +1,5 @@
+module
+
 /-
 The first-passage decomposition of the killed kernel, and the escape
 probability.
@@ -20,7 +22,9 @@ to `o` at all.  Hence
 which is the escape probability as the reciprocal of the effective resistance,
 now with `1 - ρ` built from the kernel rather than read off a potential.
 -/
-import LatticeProb.Network.Escape
+public import LatticeProb.Network.Escape
+
+@[expose] public section
 
 open Finset
 open scoped Classical

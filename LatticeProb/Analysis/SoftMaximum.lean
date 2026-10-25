@@ -1,3 +1,5 @@
+module
+
 /-
 The smooth (log-sum-exp) maximum and minimum of a finite family of reals: their
 order bounds, their uniform stability under a perturbation of the inputs, and
@@ -7,7 +9,9 @@ coordinate derivatives.  These are analytic primitives, stated for a bare
 
 Moved from Divisible-Sandpile-Percolation, `Sandpile/Support/SoftMaximum.lean`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open scoped BigOperators
 

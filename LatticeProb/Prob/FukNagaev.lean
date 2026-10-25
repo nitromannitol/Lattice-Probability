@@ -1,3 +1,5 @@
+module
+
 /-
 The Fuk-Nagaev tail inequality: for `p ≥ 2` there are `c > 0` and `C_p < ∞` with
 
@@ -25,9 +27,11 @@ factor `(e μ/s)^{s/β} = (2e μ/t)^p` supplies the missing power of `M_p`.  Wri
 The two regimes `m ≥ (2p)^{-p}` and `u < 12p` are trivial for `C_p ≥ (2p)^p` and
 `c ≤ (log 2)/(12 p)` respectively.
 -/
-import LatticeProb.Prob.Bernstein
-import LatticeProb.Prob.PoissonTail
-import LatticeProb.Prob.VonBahrEsseenSum
+public import LatticeProb.Prob.Bernstein
+public import LatticeProb.Prob.PoissonTail
+public import LatticeProb.Prob.VonBahrEsseenSum
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

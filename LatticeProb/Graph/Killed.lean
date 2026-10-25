@@ -1,3 +1,5 @@
+module
+
 /-
 The divisible-sandpile odometer of the walk killed off a set, and its
 optimal-stopping representation.
@@ -22,7 +24,9 @@ Connectedness is not used; the hypothesis is the positivity of the degree,
 which is what the averages need and is what an infinite connected graph
 provides.
 -/
-import LatticeProb.Graph.WalkLemmas
+public import LatticeProb.Graph.WalkLemmas
+
+@[expose] public section
 
 namespace LatticeProb.Graph
 

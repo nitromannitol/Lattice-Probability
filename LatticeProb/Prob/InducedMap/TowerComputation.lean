@@ -1,4 +1,8 @@
-import LatticeProb.Prob.InducedMap.RetTimeMeasurability
+module
+
+public import LatticeProb.Prob.InducedMap.RetTimeMeasurability
+
+@[expose] public section
 
 /-!
 # The tower (Kakutani skyscraper) computation
