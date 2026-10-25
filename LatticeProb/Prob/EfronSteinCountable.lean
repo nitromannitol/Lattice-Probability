@@ -43,7 +43,7 @@ theorem truncate_apply_of_mem {S : Set V} [DecidablePred (· ∈ S)] {ω : V →
 
 theorem measurable_truncate (S : Set V) [DecidablePred (· ∈ S)] :
     Measurable (truncate S : (V → ℝ) → V → ℝ) := by
-  refine measurable_pi_lambda _ fun i => ?_
+  refine measurable_pi_iff.mpr fun i => ?_
   by_cases hi : i ∈ S
   · simp only [truncate, comb, hi, if_pos]
     exact measurable_pi_apply i
@@ -225,7 +225,7 @@ def siteEnergy (F : (V → ℝ) → ℝ) (v : V) : ℝ≥0∞ :=
 
 theorem measurable_updateAt (v : V) :
     Measurable (fun q : (V → ℝ) × ℝ => Function.update q.1 v q.2) := by
-  refine measurable_pi_lambda _ fun i => ?_
+  refine measurable_pi_iff.mpr fun i => ?_
   by_cases hi : i = v
   · subst hi
     simp only [Function.update_self]
@@ -299,7 +299,7 @@ theorem siteEnergy_partialInt_le {S : Set V} [DecidablePred (· ∈ S)] {v : V} 
     intro q
     refine ofReal_sq_integral_le_lintegral P ?_
     have hupd : Measurable (fun ζ : V → ℝ => Function.update ζ v q.2) := by
-      refine measurable_pi_lambda _ fun i => ?_
+      refine measurable_pi_iff.mpr fun i => ?_
       by_cases hi : i = v
       · subst hi
         simp only [Function.update_self]
@@ -418,13 +418,13 @@ theorem variance_le_half_sum_of_local (S : Finset V) {Φ : (V → ℝ) → ℝ}
     have : (S.equivFin.symm a) = (S.equivFin.symm b) := Subtype.ext hab
     exact S.equivFin.symm.injective this
   set T : (V → ℝ) → (Fin k → ℝ) := fun ω j => ω (e j) with hT
-  have hTmeas : Measurable T := measurable_pi_lambda _ fun j => measurable_pi_apply (e j)
+  have hTmeas : Measurable T := measurable_pi_iff.mpr fun j => measurable_pi_apply (e j)
   have hTmap : P.map T = Measure.pi (fun _ : Fin k => ν) := infinitePi_map_comp ν e heinj
   have hTmp : MeasurePreserving T P (Measure.pi fun _ : Fin k => ν) := ⟨hTmeas, hTmap⟩
   set sp : (Fin k → ℝ) → (V → ℝ) :=
     fun x v => if h : v ∈ S then x (S.equivFin ⟨v, h⟩) else 0 with hsp
   have hspmeas : Measurable sp := by
-    refine measurable_pi_lambda _ fun v => ?_
+    refine measurable_pi_iff.mpr fun v => ?_
     by_cases hv : v ∈ S
     · simp only [hsp, hv, dif_pos]
       exact measurable_pi_apply _
@@ -478,7 +478,7 @@ theorem variance_le_half_sum_of_local (S : Finset V) {Φ : (V → ℝ) → ℝ}
       (fun r : (Fin k → ℝ) × ℝ => (G r.1 - G (Function.update r.1 j r.2)) ^ 2) := by
     intro j
     have hupd : Measurable (fun r : (Fin k → ℝ) × ℝ => Function.update r.1 j r.2) := by
-      refine measurable_pi_lambda _ fun i => ?_
+      refine measurable_pi_iff.mpr fun i => ?_
       by_cases hi : i = j
       · subst hi
         simp only [Function.update_self]
