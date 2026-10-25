@@ -652,7 +652,7 @@ The Lean code in this repository is licensed under the **Apache License 2.0**
 
 This revision adds public module interfaces for Lean 4.35.0-rc2 and uses the
 matching pinned Mathlib revision. The mathematical definitions and registered
-statements are preserved. Two existing walk proofs use the current filter-membership
+statements are preserved. Existing walk proofs use the current filter-membership
 and nonnegative-product APIs. Verification of the ORRW consumer closure is separate
 from a complete rebuild of this library; a complete rebuild under the updated
 toolchain has not yet been established.
