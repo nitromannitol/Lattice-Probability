@@ -1,3 +1,5 @@
+module
+
 /-
 Orthogonality of the characters of the circle, in the real form.
 
@@ -13,7 +15,9 @@ nonzero integer `k` and `2π` for `k = 0`.  That base case is what this file
 proves.  The substitution `θ ↦ kθ` reduces it to `∫ cos = sin`, and both
 endpoints vanish because the sine of an integer multiple of `π` is zero.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

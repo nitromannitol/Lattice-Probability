@@ -1,3 +1,5 @@
+module
+
 /-
 The isonormal process: a linear isometry from `ℓ²` of the index set into the
 square-integrable functions on the Gaussian product space, whose values are
@@ -9,8 +11,10 @@ What makes the image Gaussian is that the partial sums along an exhaustion of
 the index set are Gaussian by `map_gaussSum`, and that Gaussian laws survive
 almost sure limits.
 -/
-import Mathlib
-import LatticeProb.Gauss.Coords
+public import Mathlib
+public import LatticeProb.Gauss.Coords
+
+@[expose] public section
 
 noncomputable section
 

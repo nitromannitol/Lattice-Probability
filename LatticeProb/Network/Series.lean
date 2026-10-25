@@ -1,3 +1,5 @@
+module
+
 /-
 The series law, as a chain of nested cutsets.
 
@@ -16,7 +18,9 @@ series.  Resistances add.  The factor two is the ordered-pair convention of
 `LatticeProb/Network/Basic.lean`, under which every energy sum counts each edge
 twice.
 -/
-import LatticeProb.Network.NashWilliams
+public import LatticeProb.Network.NashWilliams
+
+@[expose] public section
 
 open Finset
 open scoped Classical

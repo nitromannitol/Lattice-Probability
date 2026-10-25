@@ -1,6 +1,10 @@
-import LatticeProb.Lattice.Planar.Metric
-import LatticeProb.Lattice.Planar.FaceGeometry
-import LatticeProb.Lattice.Planar.ActiveListLemma
+module
+
+public import LatticeProb.Lattice.Planar.Metric
+public import LatticeProb.Lattice.Planar.FaceGeometry
+public import LatticeProb.Lattice.Planar.ActiveListLemma
+
+@[expose] public section
 
 /-!
 # Square-lattice contours and separation

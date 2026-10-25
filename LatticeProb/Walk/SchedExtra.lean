@@ -1,3 +1,5 @@
+module
+
 /-
 A sharper schedule average, with one coordinate weighted twice.
 
@@ -7,8 +9,10 @@ factors into `d + 1`, and the same Chernoff split then gives `C R^{-(d+1)/2}`.
 The bulk and tail estimates are restated here with an arbitrary natural
 exponent `p` in place of `d`, so that they can be applied at `p = d + 1`.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWGauss
+public import Mathlib
+public import LatticeProb.Walk.SRWGauss
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

@@ -1,3 +1,5 @@
+module
+
 /-
 A telescoping sum over `ℕ` for an arbitrary real sequence `f : ℕ → ℝ`, telescoping
 `∑_{k<t} (f(k+1) - f(k))` down to `f(t) - f(0)`. Useful for a martingale second-moment bound
@@ -5,7 +7,9 @@ built from consecutive differences of a mean process.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.Scaling.Telescope

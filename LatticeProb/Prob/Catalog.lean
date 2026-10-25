@@ -1,3 +1,5 @@
+module
+
 /-
 The general probability facts the papers cite, under this library's names.
 
@@ -15,7 +17,9 @@ and the Hewitt-Savage zero-one law in `LatticeProb.Prob.HewittSavage`.  The
 statements this library takes from the literature without proof are in
 `LatticeProb.External`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

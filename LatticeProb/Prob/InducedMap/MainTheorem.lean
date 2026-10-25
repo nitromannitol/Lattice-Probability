@@ -1,4 +1,8 @@
-import LatticeProb.Prob.InducedMap.Iterates
+module
+
+public import LatticeProb.Prob.InducedMap.Iterates
+
+@[expose] public section
 
 /-!
 # The induced map: assembled statement

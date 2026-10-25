@@ -1,3 +1,5 @@
+module
+
 /-
 Supporting lemmas for the resistance packing bound of Bou-Rabee--Peres,
 Section 2, the paper (label `lem:packing`).
@@ -32,10 +34,12 @@ the proof needs, namely a unit flow along a single path:
   against the telescoping series `∑ 1/(r(r+1)) = 1`, which converges because
   `d ≥ 2`.
 -/
-import Mathlib
-import LatticeProb.Walk.Lazy
-import LatticeProb.Walk.Dirichlet
-import LatticeProb.Walk.Harmonic
+public import Mathlib
+public import LatticeProb.Walk.Lazy
+public import LatticeProb.Walk.Dirichlet
+public import LatticeProb.Walk.Harmonic
+
+@[expose] public section
 
 open Finset
 

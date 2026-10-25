@@ -1,11 +1,15 @@
+module
+
 /- Measurability of strict positivity throughout a compact set.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
-import Mathlib.Topology.Order.Compact
-import Mathlib.Topology.Bases
-import Mathlib.Data.Rat.Encodable
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.Topology.Order.Compact
+public import Mathlib.Topology.Bases
+public import Mathlib.Data.Rat.Encodable
+
+@[expose] public section
 
 open MeasureTheory Set TopologicalSpace
 namespace LatticeProb.Scaling.CompactPositivity

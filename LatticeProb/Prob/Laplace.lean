@@ -1,10 +1,14 @@
+module
+
 /-
 A fixed symmetric exponential (Laplace) reference law, with its moment hypotheses.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.ExpTail
-import Mathlib.Probability.Moments.Variance
+public import LatticeProb.Prob.ExpTail
+public import Mathlib.Probability.Moments.Variance
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.ConvexOrder

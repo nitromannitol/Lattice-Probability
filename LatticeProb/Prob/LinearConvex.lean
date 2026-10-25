@@ -1,9 +1,13 @@
+module
+
 /-
 Convexity and Lipschitz bounds for the absolute value of a finite linear sum.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.ConvexProduct
+public import LatticeProb.Prob.ConvexProduct
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.ConvexOrder

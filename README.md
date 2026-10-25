@@ -653,3 +653,10 @@ modules from
 
 The Lean code in this repository is licensed under the **Apache License 2.0**
 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).
+
+## Module compatibility
+
+This revision retains the original mathematical definitions and registered statements,
+adds public module interfaces for the selected Lean4.35.0-rc2 / matching Mathlib pins,
+and adapts existing proof calls to that API. Validation targets the RWRS consumer
+closure; a complete rebuild of this library under the updated toolchain is pending.

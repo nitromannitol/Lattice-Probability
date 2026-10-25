@@ -1,3 +1,5 @@
+module
+
 /-
 The Green function of the simple walk, and the transfer of a gradient bound to
 it from the lazy walk.
@@ -7,10 +9,12 @@ factor two of `LatticeProb/Walk/GreenIdentity.lean`, so any bound proved for
 the truncated lazy Green function, uniformly in the horizon, passes to the
 limit and halves.
 -/
-import Mathlib
-import LatticeProb.Walk.Green
-import LatticeProb.Walk.SRWGreenSup
-import LatticeProb.Walk.GreenIdentity
+public import Mathlib
+public import LatticeProb.Walk.Green
+public import LatticeProb.Walk.SRWGreenSup
+public import LatticeProb.Walk.GreenIdentity
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

@@ -1,3 +1,5 @@
+module
+
 /-
 The voltage function: a bounded nonnegative function with Laplacian `δ_b - δ_a`.
 
@@ -24,8 +26,10 @@ the effective resistance, the reciprocity `deg(a)P_a(τ_b < τ_a^+) =
 deg(b)P_b(τ_a < τ_b^+)`, or the hitting probabilities that the usual construction
 `f(x) = P_x(T_a < T_b)/(deg(a)P_a(T_b < T_a^+))` goes through.
 -/
-import Mathlib
-import LatticeProb.Network.FirstPassage
+public import Mathlib
+public import LatticeProb.Network.FirstPassage
+
+@[expose] public section
 
 open Finset
 open scoped ENNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 The recurrence toolkit for the classical integer sandpile, moved from
 `Exploding-Sandpiles`'s `Exploding/Support/Vocab.lean` (the `RecurrentOn`/
@@ -31,8 +33,10 @@ equivalent formulations of the same notion (Dhar); no equivalence between
 them is proved in either repo, so they are recorded here as two vocabularies
 for one concept, not merged.
 -/
-import LatticeProb.Sandpile.Waves
-import LatticeProb.Graph.Boundary
+public import LatticeProb.Sandpile.Waves
+public import LatticeProb.Graph.Boundary
+
+@[expose] public section
 
 namespace LatticeProb.Sandpile
 

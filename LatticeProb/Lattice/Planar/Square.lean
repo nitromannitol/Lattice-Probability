@@ -1,7 +1,11 @@
+module
+
 /- Adapted from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and Yuval Peres. -/
-import LatticeProb.Lattice.Planar.Basic
-import LatticeProb.Lattice.Planar.Periodic
-import LatticeProb.Lattice.Planar.RotorOrder
+public import LatticeProb.Lattice.Planar.Basic
+public import LatticeProb.Lattice.Planar.Periodic
+public import LatticeProb.Lattice.Planar.RotorOrder
+
+@[expose] public section
 
 open Fin.NatCast
 

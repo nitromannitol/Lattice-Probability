@@ -1,3 +1,5 @@
+module
+
 /-
 The strong Markov property of Brownian motion on `ℝ ^ d`.
 
@@ -39,11 +41,13 @@ at each time is measurable, and every path is continuous.  The first is needed
 for the natural filtration to exist at all, the second for the restarted path at
 a random time to be measurable and for the approximation to converge.
 -/
-import Mathlib
-import LatticeProb.Prob.IndepPi
-import LatticeProb.Prob.BrownianPathLaw
-import LatticeProb.Prob.StoppingDyadic
-import LatticeProb.Prob.BrownianMarkov
+public import Mathlib
+public import LatticeProb.Prob.IndepPi
+public import LatticeProb.Prob.BrownianPathLaw
+public import LatticeProb.Prob.StoppingDyadic
+public import LatticeProb.Prob.BrownianMarkov
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal Topology

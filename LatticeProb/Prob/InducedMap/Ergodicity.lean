@@ -1,4 +1,8 @@
-import LatticeProb.Prob.InducedMap.MeasurePreservation
+module
+
+public import LatticeProb.Prob.InducedMap.MeasurePreservation
+
+@[expose] public section
 
 /-!
 # Ergodicity of the first-return map

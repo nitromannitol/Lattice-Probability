@@ -1,9 +1,13 @@
+module
+
 /- Uniform temporal quadrature bounds for compactly supported smooth tests.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.TimeTest
-import LatticeProb.Prob.Scaling.TimeRiemannEstimate
+public import LatticeProb.Prob.Scaling.TimeTest
+public import LatticeProb.Prob.Scaling.TimeRiemannEstimate
+
+@[expose] public section
 
 open MeasureTheory
 noncomputable section

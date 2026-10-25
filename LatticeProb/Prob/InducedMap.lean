@@ -1,9 +1,13 @@
-import LatticeProb.Prob.InducedMap.RetTimeMeasurability
-import LatticeProb.Prob.InducedMap.TowerComputation
-import LatticeProb.Prob.InducedMap.MeasurePreservation
-import LatticeProb.Prob.InducedMap.Ergodicity
-import LatticeProb.Prob.InducedMap.Iterates
-import LatticeProb.Prob.InducedMap.MainTheorem
+module
+
+public import LatticeProb.Prob.InducedMap.RetTimeMeasurability
+public import LatticeProb.Prob.InducedMap.TowerComputation
+public import LatticeProb.Prob.InducedMap.MeasurePreservation
+public import LatticeProb.Prob.InducedMap.Ergodicity
+public import LatticeProb.Prob.InducedMap.Iterates
+public import LatticeProb.Prob.InducedMap.MainTheorem
+
+@[expose] public section
 
 /-!
 # The first-return (induced) map

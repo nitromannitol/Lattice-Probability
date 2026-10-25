@@ -1,3 +1,5 @@
+module
+
 /-
 Adapted from https://github.com/anthropics/formal-math, percolation subdirectory,
 commit 795efb86, file percolation/Percolation/Literature/ZeroOneLaw.lean,
@@ -14,11 +16,13 @@ product measure and an injective reindexing `g` whose iterates push every finite
 set off itself, the criterion applies to the cylinder ring, so the coordinate
 shift by `g` is ergodic.
 -/
-import Mathlib.Dynamics.Ergodic.Ergodic
-import Mathlib.MeasureTheory.Constructions.ProjectiveFamilyContent
-import Mathlib.MeasureTheory.Measure.MeasuredSets
-import Mathlib.Probability.Independence.InfinitePi
-import Mathlib.Probability.ProductMeasure
+public import Mathlib.Dynamics.Ergodic.Ergodic
+public import Mathlib.MeasureTheory.Constructions.ProjectiveFamilyContent
+public import Mathlib.MeasureTheory.Measure.MeasuredSets
+public import Mathlib.Probability.Independence.InfinitePi
+public import Mathlib.Probability.ProductMeasure
+
+@[expose] public section
 
 
 noncomputable section

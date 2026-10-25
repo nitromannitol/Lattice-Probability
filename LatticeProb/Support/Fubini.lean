@@ -1,3 +1,5 @@
+module
+
 /-
 Fubini for a bounded jointly measurable function of two probability spaces.
 
@@ -5,7 +7,9 @@ A bounded jointly measurable function is integrable for the product measure, so
 the two iterated integrals agree.  This is the form in which the survival
 estimates of the divisible-sandpile paper exchange the order of integration.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

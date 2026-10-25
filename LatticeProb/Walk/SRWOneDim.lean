@@ -1,3 +1,5 @@
+module
+
 /-
 The one-dimensional simple random walk kernel against the lazy one.
 
@@ -9,9 +11,11 @@ proved there transfers.  The consequence recorded here is the sup bound
 `P^n(0, k) ≤ √2 / √(n+1)`, which has no parity restriction because at the times
 and sites where the parity fails the kernel is zero.
 -/
-import Mathlib
-import LatticeProb.Walk.SRW
-import LatticeProb.Walk.OneDim
+public import Mathlib
+public import LatticeProb.Walk.SRW
+public import LatticeProb.Walk.OneDim
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

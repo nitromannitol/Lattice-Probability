@@ -1,3 +1,5 @@
+module
+
 /-
 The mean value property iterated: a function that is its own one-step average at
 every vertex equals its `n`-step kernel average, summed over the vertices
@@ -8,9 +10,11 @@ on a recurrent network: it writes `f x` as the `n`-step kernel average of `f`,
 so a bounded `f` is controlled by the total mass of the kernel, which is
 unbounded exactly when the network is recurrent.
 -/
-import LatticeProb.Graph.Basic
-import LatticeProb.Graph.Green
-import LatticeProb.Graph.Reach
+public import LatticeProb.Graph.Basic
+public import LatticeProb.Graph.Green
+public import LatticeProb.Graph.Reach
+
+@[expose] public section
 
 open scoped Classical
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The second moment of the range of the walk.
 
@@ -19,9 +21,11 @@ property `LatticeProb.markov_stopping` is all that is needed; the value `t + 1`
 off the event `{τ_z ≤ t}` is what keeps it a stopping time, where `ENat.toNat`
 of the untruncated time would not be.
 -/
-import LatticeProb.Walk.Range
-import LatticeProb.Walk.MarkovAE
-import LatticeProb.Walk.ExteriorDirichlet
+public import LatticeProb.Walk.Range
+public import LatticeProb.Walk.MarkovAE
+public import LatticeProb.Walk.ExteriorDirichlet
+
+@[expose] public section
 
 noncomputable section
 

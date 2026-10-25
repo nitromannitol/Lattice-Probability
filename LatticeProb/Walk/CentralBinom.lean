@@ -1,3 +1,5 @@
+module
+
 /-
 The Stirling normalization of the central binomial coefficient.
 
@@ -10,8 +12,10 @@ normalization of the one-dimensional local limit theorem: the ratio
 `C(2m,m+k)/C(2m,m)` is handled without Stirling in `LatticeProb.Walk.BinomRatio`,
 and the peak value is handled here.
 -/
-import LatticeProb.Walk.SRWOneDim
-import Mathlib.Analysis.SpecialFunctions.Stirling
+public import LatticeProb.Walk.SRWOneDim
+public import Mathlib.Analysis.SpecialFunctions.Stirling
+
+@[expose] public section
 
 noncomputable section
 

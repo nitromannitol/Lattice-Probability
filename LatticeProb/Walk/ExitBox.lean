@@ -1,3 +1,5 @@
+module
+
 /-
 The exit time of a box.
 
@@ -8,8 +10,10 @@ dimension, and the total mass of the mean exit time over the box is at most
 `C (2r+1)^{d+2}`.  These are the forms in which the estimate is used: the exit
 time of a box of radius `r` is of order `r^2`.
 -/
-import LatticeProb.Walk.ExitTime
-import LatticeProb.Walk.RangeBox
+public import LatticeProb.Walk.ExitTime
+public import LatticeProb.Walk.RangeBox
+
+@[expose] public section
 
 namespace LatticeProb
 

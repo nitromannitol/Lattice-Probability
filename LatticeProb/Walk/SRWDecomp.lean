@@ -1,3 +1,5 @@
+module
+
 /-
 The coordinate decomposition of the simple random walk on `ℤ^d`.
 
@@ -14,9 +16,11 @@ which does the same for the lazy walk.  The only difference is the one-step
 identity: the lazy walk keeps a holding term of weight `1/2`, while here the two
 neighbours carry weight `1/2` each and there is no holding term.
 -/
-import Mathlib
-import LatticeProb.Walk.SRW
-import LatticeProb.Walk.Decomp
+public import Mathlib
+public import LatticeProb.Walk.SRW
+public import LatticeProb.Walk.Decomp
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

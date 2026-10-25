@@ -1,3 +1,5 @@
+module
+
 /-
 White-noise evaluation as a linear isometry into `L²`.
 
@@ -6,7 +8,9 @@ isometry of `L²(μ)` into `L²(P)`; linearity follows from the covariance ident
 polarization.  This is the form in which a bounded linear map commutes with a Bochner
 integral, which is what a stochastic Fubini for white noise needs.
 -/
-import LatticeProb.Prob.L2JointVersion
+public import LatticeProb.Prob.L2JointVersion
+
+@[expose] public section
 
 noncomputable section
 

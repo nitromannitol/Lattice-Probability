@@ -1,4 +1,8 @@
-import LatticeProb.Support.ContSums
+module
+
+public import LatticeProb.Support.ContSums
+
+@[expose] public section
 
 /-!
 # The ℓ²-to-ℓ^p comparison

@@ -1,3 +1,5 @@
+module
+
 /-
 Brownian motion exists.
 
@@ -8,9 +10,11 @@ moment of a centred Gaussian of variance `v` is a fixed multiple of `v ^ 2`, so
 a pre-Brownian motion satisfies the Kolmogorov condition with exponents
 `p = 4`, `q = 2`, and `q > 1` is what the chaining needs.
 -/
-import Mathlib
-import LatticeProb.Prob.Chentsov
-import LatticeProb.Gauss.Brownian
+public import Mathlib
+public import LatticeProb.Prob.Chentsov
+public import LatticeProb.Gauss.Brownian
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Uniform weighted moments and small-ball masses for laws with an exponential
 moment, and the matching moment/mass bounds for their centred Gaussian
@@ -16,7 +18,9 @@ is copied in from `Sandpile.Support.StableIntegral`, which is Mathlib-only and
 purely generic (a set integral is at least the measure of the set times a
 uniform lower bound on it).
 -/
-import LatticeProb.Prob.SubGaussian
+public import LatticeProb.Prob.SubGaussian
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Set
 open scoped NNReal

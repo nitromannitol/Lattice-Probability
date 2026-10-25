@@ -1,3 +1,5 @@
+module
+
 /-
 Doob's maximal inequality for the partial-sum process of an i.i.d. sequence of bounded,
 mean-zero real-valued steps read off an arbitrary infinite product measure `Measure.infinitePi
@@ -15,9 +17,11 @@ The bridge from an abstract i.i.d. sequence to Mathlib's `MeasureTheory.Filtrati
 conditional increment identity `E[(S_{k+1})² - (S_k)² | 𝒢_k] = ∫ g² dν` that makes `S²` a
 submartingale with `E[(S_n)²] ≤ n·B²` when `|g| ≤ B` everywhere.
 -/
-import Mathlib.Probability.Martingale.OptionalStopping
-import Mathlib.Probability.Independence.InfinitePi
-import Mathlib.Probability.ConditionalExpectation
+public import Mathlib.Probability.Martingale.OptionalStopping
+public import Mathlib.Probability.Independence.InfinitePi
+public import Mathlib.Probability.ConditionalExpectation
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology Finset
 open scoped NNReal ENNReal

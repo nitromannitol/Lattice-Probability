@@ -1,3 +1,5 @@
+module
+
 /-
 The gradient of the lazy random walk kernel.
 
@@ -11,13 +13,15 @@ bound, and averaging it over schedules with the sharper estimate of
 `LatticeProb/Walk/SchedExtra.lean` gives `R^{-(d+1)/2}` in place of `R^{-d/2}`,
 with the Gaussian factor in the `l1` norm preserved.
 -/
-import Mathlib
-import LatticeProb.Walk.SchedExtra
-import LatticeProb.Walk.SRWGauss
-import LatticeProb.Walk.OneDimGauss
-import LatticeProb.Walk.Decomp
-import LatticeProb.Walk.P1Grad
-import LatticeProb.Walk.LazyBox
+public import Mathlib
+public import LatticeProb.Walk.SchedExtra
+public import LatticeProb.Walk.SRWGauss
+public import LatticeProb.Walk.OneDimGauss
+public import LatticeProb.Walk.Decomp
+public import LatticeProb.Walk.P1Grad
+public import LatticeProb.Walk.LazyBox
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

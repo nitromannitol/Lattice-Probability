@@ -1,5 +1,9 @@
-import LatticeProb.Analysis.Sobolev.DualNet
-import LatticeProb.External.RellichKondrachovNegSobolev
+module
+
+public import LatticeProb.Analysis.Sobolev.DualNet
+public import LatticeProb.External.RellichKondrachovNegSobolev
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

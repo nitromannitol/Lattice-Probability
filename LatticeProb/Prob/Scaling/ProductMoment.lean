@@ -1,3 +1,5 @@
+module
+
 /-
 A Minkowski-type inequality for a nonnegative function of two independent arguments: the
 `ν`-average of the `μ`-side `r`-th-moment norm is bounded by the JOINT `r`-th-moment norm on
@@ -7,10 +9,12 @@ the product) followed by Jensen's inequality for the concave map `t ↦ t^{1/r}`
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.Analysis.MeanInequalitiesPow
-import Mathlib.Analysis.Convex.SpecificFunctions.Pow
-import Mathlib.Analysis.Convex.Integral
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.Analysis.MeanInequalitiesPow
+public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+public import Mathlib.Analysis.Convex.Integral
+
+@[expose] public section
 
 open MeasureTheory Filter
 

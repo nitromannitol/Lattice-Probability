@@ -1,3 +1,5 @@
+module
+
 /-
 The first-passage decomposition of the transition kernel at the exit time of a
 set.
@@ -24,8 +26,10 @@ by the supremum of the Green function over the complement of `C`, which is the
 form the applications need, and it is proved from the partial sums, whose own
 recursion is `sum_range_exitHeat_succ`.
 -/
-import LatticeProb.Network.Killed
-import LatticeProb.Graph.Zd
+public import LatticeProb.Network.Killed
+public import LatticeProb.Graph.Zd
+
+@[expose] public section
 
 namespace LatticeProb.Graph
 

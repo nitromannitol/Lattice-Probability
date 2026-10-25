@@ -1,9 +1,13 @@
+module
+
 /-
 Elementary facts about the parallel toppling procedure: the odometer
 recursion in the form `eq:u-update`, monotonicity of the odometer, and the
 identity `σ_n = σ + Δu_n` used throughout Section 3.
 -/
-import LatticeProb.Graph.Setting
+public import LatticeProb.Graph.Setting
+
+@[expose] public section
 
 namespace LatticeProb.Graph
 

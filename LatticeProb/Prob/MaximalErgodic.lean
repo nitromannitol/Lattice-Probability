@@ -1,3 +1,5 @@
+module
+
 /-
 The maximal ergodic theorem.
 
@@ -13,7 +15,9 @@ off the set, and the second contributes at most `∫ M_N ∘ T = ∫ M_N`, becau
 
 This is the step Mathlib does not have and the pointwise ergodic theorem needs.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

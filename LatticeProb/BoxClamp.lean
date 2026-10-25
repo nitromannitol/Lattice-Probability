@@ -1,3 +1,5 @@
+module
+
 /-
 Extending a continuous function on a compact rectangle `[0,T] × [-2A,2A]` to the whole plane
 by clamping the argument to the rectangle, for an arbitrary `T, A ≥ 0`.  Stated for abstract
@@ -7,8 +9,10 @@ functional of a REWARD FIELD restricted to a compact spatial-time box) into a Li
 functional of a point of `C(rewardBox T A, ℝ)`, which is exactly what the extended continuous
 mapping theorem needs.
 -/
-import Mathlib.Topology.ContinuousMap.Compact
-import Mathlib.Topology.Order.ProjIcc
+public import Mathlib.Topology.ContinuousMap.Compact
+public import Mathlib.Topology.Order.ProjIcc
+
+@[expose] public section
 
 noncomputable section
 

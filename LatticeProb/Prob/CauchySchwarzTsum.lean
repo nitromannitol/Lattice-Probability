@@ -1,3 +1,5 @@
+module
+
 /-
 # Cauchy-Schwarz for `tsum`
 
@@ -10,7 +12,9 @@ reached there via `Manhattan.Paper.{L2Decay,HeatKernel}`'s import of
 `Manhattan.Paper.Nash`). Fully generic: Cauchy-Schwarz for an unordered sum
 of nonnegative terms over an arbitrary index type.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

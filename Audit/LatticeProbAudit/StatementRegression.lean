@@ -1,7 +1,11 @@
-import LatticeProbAudit.Support.Statements
-import LatticeProbAudit.Kingman.Solution
-import LatticeProbAudit.GFF.Solution
-import LatticeProbAudit.BinomialLocalCLT.Solution
+module
+
+public import LatticeProbAudit.Support.Statements
+public import LatticeProbAudit.Kingman.Solution
+public import LatticeProbAudit.GFF.Solution
+public import LatticeProbAudit.BinomialLocalCLT.Solution
+
+@[expose] public section
 
 /-!
 # Statement regression for the comparator solutions

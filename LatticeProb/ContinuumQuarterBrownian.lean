@@ -1,10 +1,14 @@
+module
+
 /-
 A continuous Brownian motion with variance `t/4`, constructed by halving
 a standard Brownian motion. Finite weighted combinations are centred Gaussian
 with covariance `min(s,t)/4`, yielding their characteristic functions.
 -/
-import LatticeProb.ContinuumNoiseField
-import LatticeProb.Prob.BrownianContAll
+public import LatticeProb.ContinuumNoiseField
+public import LatticeProb.Prob.BrownianContAll
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal ENNReal RealInnerProductSpace

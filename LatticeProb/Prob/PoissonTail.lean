@@ -1,3 +1,5 @@
+module
+
 /-
 The Poisson (Bennett type) tail bound for a sum of independent nonnegative summands
 bounded by `β`:
@@ -18,7 +20,9 @@ Unlike Bernstein's inequality, which is governed by the variance, this bound kee
 factor `(μ/s)^{s/β}`: it is what supplies a power of the truncated mean, and that power is
 what the Fuk-Nagaev inequality needs from the middle block of a truncation.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
@@ -151,7 +155,7 @@ theorem poisson_chernoff {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι] (P : 
       ≤ Real.exp ((∑ i, ∫ ω, W i ω ∂P) * (Real.exp (lam * β) - 1) / β) := by
     have h1 : ∏ i, mgf (W i) P lam
         ≤ ∏ i : ι, Real.exp ((∫ ω, W i ω ∂P) * (Real.exp (lam * β) - 1) / β) :=
-      Finset.prod_le_prod (fun i _ => hmgfnn i) (fun i _ => hfac i)
+      Finset.prod_le_prod₀ (fun i _ => hmgfnn i) (fun i _ => hfac i)
     refine h1.trans (le_of_eq ?_)
     rw [← Real.exp_sum]
     congr 1

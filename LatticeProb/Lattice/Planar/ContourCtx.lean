@@ -1,7 +1,11 @@
+module
+
 /- Adapted from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and Yuval Peres. -/
-import LatticeProb.Lattice.Planar.ContourPath
-import LatticeProb.Lattice.Planar.SectorFacts
-import LatticeProb.Lattice.Planar.Separation
+public import LatticeProb.Lattice.Planar.ContourPath
+public import LatticeProb.Lattice.Planar.SectorFacts
+public import LatticeProb.Lattice.Planar.Separation
+
+@[expose] public section
 
 open Finset List Fin.NatCast
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The law of a PAIR of independent simple random walks.
 
@@ -6,7 +8,9 @@ the law of the walk started at `y`.  Its Fubini theorems turn every double
 expectation `E_x E_y` of the sandpile papers into one integral against a
 single measure.
 -/
-import LatticeProb.Walk.Markov
+public import LatticeProb.Walk.Markov
+
+@[expose] public section
 open MeasureTheory LatticeProb
 noncomputable section
 /-- The law of two independent walks started at `x` and `y`. -/

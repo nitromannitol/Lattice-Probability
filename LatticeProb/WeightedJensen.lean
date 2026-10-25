@@ -1,3 +1,5 @@
+module
+
 /-
 The weighted-Jensen geometric-tail lemma: a bound on the `p`-th power of a finite sum of
 nonnegative reals, in terms of the SAME power of its individual terms weighted by a geometric
@@ -16,7 +18,9 @@ reverses this to `w_k ^ (1 - p) ≤ ((1 - r) * r ^ k) ^ (1 - p) = (1 - r) ^ (1 -
 p))`, giving the stated bound.  The bound is UNIFORM IN `N`: no summability of `x` is assumed or
 needed.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
