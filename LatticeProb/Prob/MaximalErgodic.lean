@@ -78,6 +78,7 @@ theorem maxBirkhoff_le_add (T : Ω → Ω) (f : Ω → ℝ) (N : ℕ) (x : Ω)
   | succ N ih =>
       have hstep : birkhoffSum T f (N + 1) x ≤ f x + maxBirkhoff T f (N + 1) (T x) := by
         rw [birkhoffSum_succ']
+        simp only [Pi.add_apply, Function.comp_apply]
         linarith [birkhoffSum_le_maxBirkhoff T f (Nat.le_succ N) (T x)]
       rcases max_cases (maxBirkhoff T f N x) (birkhoffSum T f (N + 1) x) with
         ⟨hmax, hle⟩ | ⟨hmax, hlt⟩
