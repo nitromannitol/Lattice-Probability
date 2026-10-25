@@ -1,5 +1,9 @@
+module
+
 /- Propagation of complement-component incidence along a locally isolated horizontal arc. -/
-import LatticeProb.Topology.LocalFaceIncidence
+public import LatticeProb.Topology.LocalFaceIncidence
+
+@[expose] public section
 namespace LatticeProb.PlaneTopology
 
 open Set

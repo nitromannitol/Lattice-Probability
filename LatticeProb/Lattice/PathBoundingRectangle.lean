@@ -1,3 +1,5 @@
+module
+
 /-
 Coordinate bounds along nearest-neighbour walks in `ℤ^d`.
 
@@ -7,8 +9,10 @@ differs from that of `z 0` by at most `i`.  Hence a site whose every coordinate 
 range of that coordinate along the walk has coordinate-sum distance at most `d (m - 1)`
 from `z 0`.  The statements use plain sums of absolute coordinate differences.
 -/
-import Mathlib
-import LatticeProb.Site
+public import Mathlib
+public import LatticeProb.Site
+
+@[expose] public section
 
 namespace LatticeProb
 

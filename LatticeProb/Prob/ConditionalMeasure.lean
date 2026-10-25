@@ -1,3 +1,5 @@
+module
+
 /-
 Regular conditional probability measures and their invariant fibres.
 
@@ -5,7 +7,9 @@ The conditioning σ-algebra need not be countably generated. Kernel uniqueness
 compares whole fibre measures on a common conull set. The fixed-event identity
 alone has an exceptional set that may depend on the event.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Set Filter
 open scoped ENNReal

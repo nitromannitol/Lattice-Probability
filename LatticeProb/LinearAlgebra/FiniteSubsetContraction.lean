@@ -1,3 +1,5 @@
+module
+
 /-
 # Finset and determinant coordinates for signed contraction
 
@@ -7,10 +9,12 @@ increasing enumeration of each subset of the required size; other degrees have
 zero exterior coefficient.
 -/
 
-import LatticeProb.LinearAlgebra.SubsetContraction
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Finset.Sort
-import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import LatticeProb.LinearAlgebra.SubsetContraction
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+
+@[expose] public section
 
 
 

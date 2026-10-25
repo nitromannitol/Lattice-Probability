@@ -1,3 +1,5 @@
+module
+
 /-
 # The conditional capstone: the library equivalent of the frozen thin conclusion
 
@@ -6,14 +8,16 @@ transported dense-lower hypothesis at density `p < 1`, the library proves the ex
 shape of the frozen consumer statement: there is `ε > 0` such that every probability
 `2`-dependent planar field with one-site probability at most `2ε` is dominated on increasing
 events by the product Bernoulli field of density `1/8`.  The statement is abstract, with no
-import of the rotor development and no rotor file touched.
+public import of the rotor development and no rotor file touched.
 
 The capstone is given once in the library's planar vocabulary and once in the consumer
 vocabulary, together with the equivalence of the two existential shapes.  The dense half remains
 an explicit hypothesis; no domination statement is proved and no `Prop` is frozen.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinExistsShape
+public import LatticeProb.Prob.Percolation.LSSThinExistsShape
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 # Supplying the `C^m` bound to the Rellich consumer
 
@@ -29,8 +31,10 @@ reduction from `rkBandLimitedJetNet` to `rkLowFreqNet` needs the support repair
 (the centres of the jet net are band-limited, hence not test functions; see
 `BandTruncReal.lean` and the report), which is not written.
 -/
-import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
-import LatticeProb.Analysis.Sobolev.RellichCmNetReduction
+public import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
+public import LatticeProb.Analysis.Sobolev.RellichCmNetReduction
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal FourierTransform SchwartzMap

@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Prob.BerryEsseenOneDim
+module
+
+public import Mathlib
+public import LatticeProb.Prob.BerryEsseenOneDim
+
+@[expose] public section
 
 /-!
 # Solution: BerryEsseen

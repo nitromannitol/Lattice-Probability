@@ -1,3 +1,5 @@
+module
+
 /-
 # The Rellich–Kondrachov external as the internal low-frequency finite net
 
@@ -11,7 +13,9 @@ external by `.mpr`.
 The equivalence is a change of variable: the map `η ↦ η ^ 2` is a bijection of `(0, ∞)` onto
 itself, with inverse `δ ↦ Real.sqrt δ`, and `Real.sq_sqrt` rewrites `(Real.sqrt δ) ^ 2 = δ`.
 -/
-import LatticeProb.Analysis.Sobolev.RellichEstimate
+public import LatticeProb.Analysis.Sobolev.RellichEstimate
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

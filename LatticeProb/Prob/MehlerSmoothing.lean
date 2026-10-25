@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Prob.GaussianLogSobolevOU
+module
+
+public import Mathlib
+public import LatticeProb.Prob.GaussianLogSobolevOU
+
+@[expose] public section
 
 /-!
 # Mehler smoothing: derivative calculus and the Ornstein-Uhlenbeck heat equation (`d = 1`)

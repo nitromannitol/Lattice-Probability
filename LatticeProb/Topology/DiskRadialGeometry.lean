@@ -1,11 +1,15 @@
+module
+
 /-
 # Radial segments in the coordinate disk
 
 Every point of an inward radial segment other than its original circle endpoint
 lies in the open coordinate disk.
 -/
-import LatticeProb.Topology.DiskEndpointNeighborhoods
-import LatticeProb.Topology.DiskPolygonalApproximation
+public import LatticeProb.Topology.DiskEndpointNeighborhoods
+public import LatticeProb.Topology.DiskPolygonalApproximation
+
+@[expose] public section
 
 
 

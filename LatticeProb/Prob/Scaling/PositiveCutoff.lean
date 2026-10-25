@@ -1,8 +1,12 @@
+module
+
 /- A bounded Lipschitz cutoff detecting uniform positivity on a set.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.BoundedFunctionalLift
+public import LatticeProb.Prob.Scaling.BoundedFunctionalLift
+
+@[expose] public section
 
 open Set MeasureTheory
 noncomputable section

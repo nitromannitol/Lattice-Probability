@@ -1,12 +1,16 @@
-import Mathlib.Analysis.Complex.Trigonometric
-import Mathlib.Analysis.Normed.Group.Basic
-import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
-import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
-import Mathlib.MeasureTheory.Measure.LevyConvergence
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Topology.Instances.ENNReal.Lemmas
+module
+
+public import Mathlib.Analysis.Complex.Trigonometric
+public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.MeasureTheory.Measure.LevyConvergence
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Topology.Instances.ENNReal.Lemmas
+
+@[expose] public section
 
 /-!
 # Characteristic-function limits

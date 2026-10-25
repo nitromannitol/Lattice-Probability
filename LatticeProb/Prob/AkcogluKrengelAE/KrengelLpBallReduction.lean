@@ -1,3 +1,5 @@
+module
+
 /-
 # The multiparameter `Lᵖ` maximal bound (`KrengelLpBall`): reduction and ℓ¹-ball geometry
 
@@ -48,9 +50,11 @@ tiling and is not directly the cover used here.
 
 The geometry lemmas below are all fully proved; the only unproved inputs are the two named `Prop`s `KrengelMaximalInputCentred` and `L1BallCoverTransfer`.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.BirkhoffLpMaximalProved
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
-import LatticeProb.Walk.Range
+public import LatticeProb.Prob.AkcogluKrengelAE.BirkhoffLpMaximalProved
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+public import LatticeProb.Walk.Range
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

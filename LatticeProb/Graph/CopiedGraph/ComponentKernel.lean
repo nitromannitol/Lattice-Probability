@@ -1,9 +1,13 @@
+module
+
 /-
 Component indicators in the left kernel of literal copied incidence matrices.
 -/
 
-import LatticeProb.Graph.CopiedGraph.Basic
-import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
+public import LatticeProb.Graph.CopiedGraph.Basic
+public import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
+
+@[expose] public section
 
 
 

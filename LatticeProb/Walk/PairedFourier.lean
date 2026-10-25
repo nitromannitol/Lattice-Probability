@@ -1,6 +1,10 @@
-import Mathlib
-import LatticeProb.Walk.LocalCLT
-import LatticeProb.Walk.GaussTimeIntegral
+module
+
+public import Mathlib
+public import LatticeProb.Walk.LocalCLT
+public import LatticeProb.Walk.GaussTimeIntegral
+
+@[expose] public section
 
 /-!
 # The paired heat kernel of the simple random walk in Fourier form

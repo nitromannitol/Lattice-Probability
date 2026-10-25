@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Prob.Kingman
+module
+
+public import Mathlib
+public import LatticeProb.Prob.Kingman
+
+@[expose] public section
 
 /-!
 # Solution: Kingman

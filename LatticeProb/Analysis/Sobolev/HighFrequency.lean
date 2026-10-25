@@ -1,3 +1,5 @@
+module
+
 /-
 The high-frequency tail of the Sobolev norm and the vanishing of the weight ratio.
 
@@ -9,7 +11,9 @@ Rellich–Kondrachov compactness argument: the high-frequency part of the unit b
 of `H^s(D)` is uniformly small in `H^{s₀}(D)`, so only the low-frequency part has
 to be covered by a finite net.
 -/
-import LatticeProb.Analysis.Sobolev.Weight
+public import LatticeProb.Analysis.Sobolev.Weight
+
+@[expose] public section
 
 open Filter MeasureTheory
 open scoped ENNReal FourierTransform Topology

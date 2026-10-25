@@ -1,3 +1,5 @@
+module
+
 /-
 # Coercive resolvents of a dissipative-skew generator
 
@@ -18,8 +20,10 @@ the energy norms of `H`. This is the standard route to resolvent bounds for a
 generator with an antisymmetric (transport) perturbation of a symmetric
 dissipative part, independent of any particular lattice or model.
 -/
-import Mathlib.Analysis.InnerProductSpace.LaxMilgram
-import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.InnerProductSpace.LaxMilgram
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Geometrically simple finite polygonal chains
 
@@ -6,8 +8,10 @@ trace only at its next vertex. Prefix cutting preserves this property. Finite
 induction and the last-contact splice erase intersections and overlaps without
 enlarging the original trace.
 -/
-import LatticeProb.Topology.PolygonalLastContact
-import Mathlib.Data.List.Induction
+public import LatticeProb.Topology.PolygonalLastContact
+public import Mathlib.Data.List.Induction
+
+@[expose] public section
 
 
 

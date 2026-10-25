@@ -1,3 +1,5 @@
+module
+
 /-
 # Signed contraction on finite subset coefficients
 
@@ -6,9 +8,11 @@ Its annihilation matrix has blocks `[[C, a I], [0, -C]]`. The canonical
 anticommutation identity gives the sharp square-sum contraction bound.
 -/
 
-import Mathlib.Data.Matrix.Block
-import Mathlib.Data.Real.Basic
-import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Matrix.Block
+public import Mathlib.Data.Real.Basic
+public import Mathlib.Algebra.BigOperators.Fin
+
+@[expose] public section
 
 
 

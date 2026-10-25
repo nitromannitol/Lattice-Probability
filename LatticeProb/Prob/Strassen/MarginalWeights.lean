@@ -1,4 +1,8 @@
-import LatticeProb.Prob.Strassen.Defs
+module
+
+public import LatticeProb.Prob.Strassen.Defs
+
+@[expose] public section
 
 /-!
 # C. Finite-dimensional marginal weights

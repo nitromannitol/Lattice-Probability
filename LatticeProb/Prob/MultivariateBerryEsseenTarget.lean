@@ -1,3 +1,5 @@
+module
+
 /-
 # Multivariate Berry--Esseen: the frozen vocabulary
 
@@ -36,7 +38,9 @@ indicator with a tail controlled by the orthant estimate in `LatticeProb/Prob/Ga
 else one needs a disintegration of `Measure.pi ν` (absent from Mathlib).  Its consumer D1 — the
 assembly `multivariateBerryEsseen` — is bookkeeping once C1 exists.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix
 open scoped NNReal

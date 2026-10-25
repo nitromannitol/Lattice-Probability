@@ -1,3 +1,5 @@
+module
+
 /-
 # The gap between the mollified family and the original family
 
@@ -20,8 +22,10 @@ consumes the uniform translation-continuity supplied by `sobolevNormSq_translate
 (`TranslationQuant.lean:25`).  This file does not add a hypothesis to the library statement; it
 isolates the step that the library statement leaves implicit.
 -/
-import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
-import LatticeProb.Analysis.Sobolev.Additivity
+public import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
+public import LatticeProb.Analysis.Sobolev.Additivity
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology

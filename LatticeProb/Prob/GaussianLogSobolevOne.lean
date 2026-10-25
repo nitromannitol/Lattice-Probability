@@ -1,3 +1,5 @@
+module
+
 /-
 # The one-dimensional Gaussian log-Sobolev inequality: obstruction record
 
@@ -126,7 +128,9 @@ the Bobkov/transport route becomes plumbable.  Without one of these the 1-D LSI
 is a multi-hundred-line real-analysis file in its own right, not a bounded
 packet.
 -/
-import LatticeProb.External.GaussianLogSobolev
+public import LatticeProb.External.GaussianLogSobolev
+
+@[expose] public section
 
 -- No declaration is introduced: the `n = 1` instance above is not proved here,
 -- and stating it would require a `sorry`.

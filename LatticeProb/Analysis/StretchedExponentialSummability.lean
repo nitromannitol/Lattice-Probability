@@ -1,3 +1,5 @@
+module
+
 /-
 Polynomially weighted summability of stretched-exponential sequences.
 
@@ -7,7 +9,9 @@ at `x = c √s`.
 
 These are analytic bounds for real sequences.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

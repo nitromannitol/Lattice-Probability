@@ -1,3 +1,5 @@
+module
+
 /-
 # Schur-complement factorisation of the Gaussian density
 
@@ -27,8 +29,10 @@ Route.
    (`integral_sub_right_eq_self`), and transport `integral_covDensity` from `Fin m` to the index
    type `κ` along `MeasurableEquiv.piCongrLeft` (volume preserving).
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityIntegrable
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityIntegrable
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

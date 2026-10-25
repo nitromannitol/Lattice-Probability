@@ -1,3 +1,5 @@
+module
+
 /-
 The three estimates of `lem:green` (`orrw.tex`).
 
@@ -8,10 +10,12 @@ The sup bound is proved without Fourier analysis: the schedule decomposition of
 oscillation bound is that estimate summed over `0 ≤ r < R`.  The total variation
 bound is the paper's own argument, with the constant `4 d^{3/2} √R` unchanged.
 -/
-import Mathlib
-import LatticeProb.Walk.LazyBox
-import LatticeProb.Walk.Moment
-import LatticeProb.Walk.Series
+public import Mathlib
+public import LatticeProb.Walk.LazyBox
+public import LatticeProb.Walk.Moment
+public import LatticeProb.Walk.Series
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

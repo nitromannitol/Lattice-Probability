@@ -1,3 +1,5 @@
+module
+
 /- # The Fejér kernel
 
 The Fejér kernel `k_T(x) = (1 - cos (T x)) / (π T x²)` is defined through its cosine-integral
@@ -6,7 +8,9 @@ representation `(1 / π) ∫_0^T (1 - t / T) cos (t x) dt`, which is meaningful 
 closed form, nonnegativity, the two-sided bounds, evenness, continuity, integrability, total mass
 one, the tail bound `∫_{|w| > h} k_T ≤ 4 / (π T h)`, and the Fourier representation.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped FourierTransform

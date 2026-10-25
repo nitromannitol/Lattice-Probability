@@ -1,3 +1,5 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
@@ -6,13 +8,15 @@ BouRabeeGwynne/BrownianExitStoppingTime.lean, BouRabeeGwynne/StoppedBrownianMeas
 BouRabeeGwynne/BrownianFiniteExit.lean.
 -/
 
-import LatticeProb.Topology.ContinuousMapBorel
-import LatticeProb.Prob.BrownianOpenExit
-import LatticeProb.Prob.BrownianOpenExitStopping
-import LatticeProb.Prob.BrownianOpenExitFinite
-import Mathlib.Analysis.Normed.Group.Bounded
-import Mathlib.Probability.BrownianMotion.Basic
-import Mathlib.Probability.Process.Stopping
+public import LatticeProb.Topology.ContinuousMapBorel
+public import LatticeProb.Prob.BrownianOpenExit
+public import LatticeProb.Prob.BrownianOpenExitStopping
+public import LatticeProb.Prob.BrownianOpenExitFinite
+public import Mathlib.Analysis.Normed.Group.Bounded
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Probability.Process.Stopping
+
+@[expose] public section
 
 /-!
 # Brownian paths: exit times from open sets and their finiteness

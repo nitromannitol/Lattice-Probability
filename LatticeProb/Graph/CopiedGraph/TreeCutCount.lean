@@ -1,12 +1,16 @@
+module
+
 /-
 Weighted same-copy tree cuts and literal two-root forest counts.
 No connectivity, planarity, determinant identity, or electrical solver is assumed.
 -/
-import LatticeProb.Graph.CopiedGraph.TreeCut
-import LatticeProb.Graph.CopiedGraph.SignedPathTraversal
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.SetTheory.Cardinal.Finite
+public import LatticeProb.Graph.CopiedGraph.TreeCut
+public import LatticeProb.Graph.CopiedGraph.SignedPathTraversal
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.SetTheory.Cardinal.Finite
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical BigOperators

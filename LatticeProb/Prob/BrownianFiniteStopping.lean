@@ -1,10 +1,14 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/BrownianFiniteStopping.lean.
 -/
 
-import LatticeProb.Prob.BrownianWeakMarkovPath
+public import LatticeProb.Prob.BrownianWeakMarkovPath
+
+@[expose] public section
 
 /-!
 # Brownian Markov identity at finitely valued stopping times

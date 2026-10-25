@@ -1,3 +1,5 @@
+module
+
 /-
 # The Ornstein–Uhlenbeck (Mehler) semigroup for the Gaussian log-Sobolev route
 
@@ -22,8 +24,10 @@ entropy-dissipation proof of the `n = 1` instance runs on:
 
 Nothing here is conditional on `sorry`; `OUHeatEquation` is a named `Prop`, never an axiom.
 -/
-import Mathlib
-import LatticeProb.External.GaussianLogSobolev
+public import Mathlib
+public import LatticeProb.External.GaussianLogSobolev
+
+@[expose] public section
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology

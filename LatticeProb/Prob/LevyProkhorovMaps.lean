@@ -1,13 +1,17 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/LevyProkhorovMaps.lean and BouRabeeGwynne/PartitionCouplingDistance.lean.
 -/
-import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
-import Mathlib.MeasureTheory.Measure.Prod
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
-import Mathlib.Analysis.Normed.Lp.MeasurableSpace
-import LatticeProb.Topology.CurveSpace
+public import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
+public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
+public import LatticeProb.Topology.CurveSpace
+
+@[expose] public section
 
 /-!
 # Lévy–Prokhorov edistance under maps and couplings

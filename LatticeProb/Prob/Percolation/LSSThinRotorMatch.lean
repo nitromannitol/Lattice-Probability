@@ -1,3 +1,5 @@
+module
+
 /-
 # Matching the thin-LSS bridge to the consumer vocabulary
 
@@ -17,7 +19,9 @@ The dense half remains an explicit hypothesis; no domination statement is proved
 `Prop` is frozen.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinFinal
+public import LatticeProb.Prob.Percolation.LSSThinFinal
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

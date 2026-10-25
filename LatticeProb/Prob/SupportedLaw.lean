@@ -1,12 +1,16 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: ReflectedGMS/MeasureTheory/AENullSet.lean and ReflectedGMS/MeasureTheory/SupportedLaw.lean.
 -/
-import Mathlib.MeasureTheory.Measure.Dirac
-import Mathlib.MeasureTheory.Measure.Map
-import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.MeasureTheory.Measure.Dirac
+public import Mathlib.MeasureTheory.Measure.Map
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+
+@[expose] public section
 
 /-!
 # Laws supported on almost-sure sets

@@ -1,3 +1,5 @@
+module
+
 /-
 # Li--Shao normal comparison: the mixed-derivative orthant integral (route item 4)
 
@@ -33,8 +35,10 @@ Compared with the route-note formulation, the slice-integrability hypothesis of
 integrability `IntegrableOn pxy (Set.Iic b)` already yields almost-every slice integrability
 through Fubini, and the swap is done on the box before any slice is taken.
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparisonOrthantDeriv
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonOrthantDeriv
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal ENNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 # Multivariate Berry–Esseen: per-summand characteristic-function estimates
 
@@ -14,8 +16,10 @@ centred probability law `ν` on `ℝ` with finite third absolute moment, write `
 The restriction `σ² t² ≤ 2` is needed because `‖1 - σ²t²/2‖` equals `1 - σ²t²/2` only there.  The
 estimates for sums of independent summands (which carry the factor `exp (-σ²t²/8)`) are separate.
 -/
-import Mathlib
-import LatticeProb.Prob.MultivariateBerryEsseen
+public import Mathlib
+public import LatticeProb.Prob.MultivariateBerryEsseen
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

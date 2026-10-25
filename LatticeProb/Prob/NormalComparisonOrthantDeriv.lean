@@ -1,3 +1,5 @@
+module
+
 /-
 # Li--Shao normal comparison: the orthant integration by parts (route item 4)
 
@@ -38,8 +40,10 @@ covariance derivative) still needs `LatticeProb.multivariateGaussian_eq_withDens
 together with `hasDerivAt_integral_of_dominated_loc_of_deriv_le`, and route item 5
 (`boundaryIntegral_le_bivariateDensity`) the conditional factorisation.
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparisonOrthant
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonOrthant
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal ENNReal

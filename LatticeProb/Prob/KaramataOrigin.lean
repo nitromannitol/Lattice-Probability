@@ -1,3 +1,5 @@
+module
+
 /-
 Karamata's theorem at the origin, and the reciprocal of an integrated tail.
 
@@ -27,9 +29,11 @@ monotone increasing and regularly varying of index `α - 1 > -1`.  Karamata at t
 The reference for the statement is Bingham, Goldie and Teugels, Theorem 1.5.11, or de Haan and
 Ferreira, Theorem B.1.5.
 -/
-import Mathlib
-import LatticeProb.Prob.RegularVariation
-import LatticeProb.Prob.Karamata
+public import Mathlib
+public import LatticeProb.Prob.RegularVariation
+public import LatticeProb.Prob.Karamata
+
+@[expose] public section
 
 open Filter Topology MeasureTheory Set
 

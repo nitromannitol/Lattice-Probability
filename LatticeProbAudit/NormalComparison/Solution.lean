@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Prob.NormalComparisonFinal
+module
+
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonFinal
+
+@[expose] public section
 
 /-!
 # Solution: NormalComparison

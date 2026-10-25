@@ -1,3 +1,5 @@
+module
+
 /-
 # Bordering matrices with zero row sums
 
@@ -6,7 +8,9 @@ preserves its grounded determinant. Adding all columns into the ground
 column gives a block triangular matrix, without any condition on proper
 minors. This provides an invertible border for complementary-minor identities.
 -/
-import LatticeProb.LinearAlgebra.InverseComplementaryMinor
+public import LatticeProb.LinearAlgebra.InverseComplementaryMinor
+
+@[expose] public section
 
 
 

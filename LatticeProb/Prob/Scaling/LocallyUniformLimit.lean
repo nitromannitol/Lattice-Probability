@@ -1,3 +1,5 @@
+module
+
 /-
 **Monotonicity in one coordinate and joint continuity are closed under locally uniform
 limits.**
@@ -21,7 +23,9 @@ arguments; this file supplies only the deterministic closure fact, independent o
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 

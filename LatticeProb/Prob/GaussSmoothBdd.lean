@@ -1,14 +1,18 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: LQGMetric/Gaussian/ConcentrationCov.lean.
 -/
-import LatticeProb.Prob.GaussProductRotation
-import LatticeProb.Prob.GaussSteinIBP
-import Mathlib.Analysis.Calculus.Gradient.Basic
-import Mathlib.Analysis.InnerProductSpace.Dual
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import Mathlib.Probability.Distributions.Gaussian.Fernique
+public import LatticeProb.Prob.GaussProductRotation
+public import LatticeProb.Prob.GaussSteinIBP
+public import Mathlib.Analysis.Calculus.Gradient.Basic
+public import Mathlib.Analysis.InnerProductSpace.Dual
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+public import Mathlib.Probability.Distributions.Gaussian.Fernique
+
+@[expose] public section
 
 /-!
 # Gaussian covariance identity for smooth bounded functions

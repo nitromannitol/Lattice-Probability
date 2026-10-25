@@ -1,43 +1,47 @@
+module
+
 /-
 # Disk alternation and polygonal parity axiom reports
 
 Print the foundational dependencies of the principal results on compact connected
 sets in the coordinate round disk and the polygonal separation lemmas.
 -/
-import LatticeProb.Topology.CircleAngleWindow
-import LatticeProb.Topology.ConnectedThickening
-import LatticeProb.Topology.DiskEndpointNeighborhoods
-import LatticeProb.Topology.PolygonalChain
-import LatticeProb.Topology.PolygonalParityGeometry
-import LatticeProb.Topology.PolygonalApproximation
-import LatticeProb.Topology.PolygonalChainEndpoints
-import LatticeProb.Topology.PolygonalChainPlane
-import LatticeProb.Topology.PolygonalLastContact
-import LatticeProb.Topology.PolygonalParity
-import LatticeProb.Topology.DiskOutsideCompletion
-import LatticeProb.Topology.DiskPolygonalApproximation
-import LatticeProb.Topology.PolygonalParitySeparation
-import LatticeProb.Topology.SimplePolygonalChain
-import LatticeProb.Topology.DiskRadialGeometry
-import LatticeProb.Topology.PolygonalArc
-import LatticeProb.Topology.PolygonalParityLocalSides
-import LatticeProb.Topology.DiskArcPair
-import LatticeProb.Topology.DiskEndpointRestoration
-import LatticeProb.Topology.DiskOutsideArc
-import LatticeProb.Topology.PolygonalParityCoordinates
-import LatticeProb.Topology.DiskRestoredEndpoints
-import LatticeProb.Topology.PolygonalParityChain
-import LatticeProb.Topology.DiskContinuaArcs
-import LatticeProb.Topology.DiskCrosscutParityInternal
-import LatticeProb.Topology.DiskCircleParityInternal
-import LatticeProb.Topology.DiskEndpointGeometry
-import LatticeProb.Topology.DiskRadialCompletion
-import LatticeProb.Topology.PolygonalEndpointDirection
-import LatticeProb.Topology.PolygonalEndpointJump
-import LatticeProb.Topology.DiskCircleEndpointJump
-import LatticeProb.Topology.DiskRadialCrosscut
-import LatticeProb.Topology.DiskPolygonalAlternation
-import LatticeProb.Topology.DiskAlternation
+public import LatticeProb.Topology.CircleAngleWindow
+public import LatticeProb.Topology.ConnectedThickening
+public import LatticeProb.Topology.DiskEndpointNeighborhoods
+public import LatticeProb.Topology.PolygonalChain
+public import LatticeProb.Topology.PolygonalParityGeometry
+public import LatticeProb.Topology.PolygonalApproximation
+public import LatticeProb.Topology.PolygonalChainEndpoints
+public import LatticeProb.Topology.PolygonalChainPlane
+public import LatticeProb.Topology.PolygonalLastContact
+public import LatticeProb.Topology.PolygonalParity
+public import LatticeProb.Topology.DiskOutsideCompletion
+public import LatticeProb.Topology.DiskPolygonalApproximation
+public import LatticeProb.Topology.PolygonalParitySeparation
+public import LatticeProb.Topology.SimplePolygonalChain
+public import LatticeProb.Topology.DiskRadialGeometry
+public import LatticeProb.Topology.PolygonalArc
+public import LatticeProb.Topology.PolygonalParityLocalSides
+public import LatticeProb.Topology.DiskArcPair
+public import LatticeProb.Topology.DiskEndpointRestoration
+public import LatticeProb.Topology.DiskOutsideArc
+public import LatticeProb.Topology.PolygonalParityCoordinates
+public import LatticeProb.Topology.DiskRestoredEndpoints
+public import LatticeProb.Topology.PolygonalParityChain
+public import LatticeProb.Topology.DiskContinuaArcs
+public import LatticeProb.Topology.DiskCrosscutParityInternal
+public import LatticeProb.Topology.DiskCircleParityInternal
+public import LatticeProb.Topology.DiskEndpointGeometry
+public import LatticeProb.Topology.DiskRadialCompletion
+public import LatticeProb.Topology.PolygonalEndpointDirection
+public import LatticeProb.Topology.PolygonalEndpointJump
+public import LatticeProb.Topology.DiskCircleEndpointJump
+public import LatticeProb.Topology.DiskRadialCrosscut
+public import LatticeProb.Topology.DiskPolygonalAlternation
+public import LatticeProb.Topology.DiskAlternation
+
+@[expose] public section
 
 #print axioms LatticeProb.Topology.exists_injective_polygonal_outside_completion
 #print axioms LatticeProb.Topology.exists_polygonal_outside_completion

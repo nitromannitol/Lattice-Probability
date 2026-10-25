@@ -1,6 +1,10 @@
-import LatticeProb.Euclidean.Lattice
-import LatticeProb.Euclidean.Cube
-import LatticeProb.Euclidean.Shell
+module
+
+public import LatticeProb.Euclidean.Lattice
+public import LatticeProb.Euclidean.Cube
+public import LatticeProb.Euclidean.Shell
+
+@[expose] public section
 
 /-!
 # Summability of the radial error series

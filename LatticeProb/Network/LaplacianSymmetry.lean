@@ -1,3 +1,5 @@
+module
+
 /-
 Symmetry of the graph Laplacian against finitely supported functions.
 
@@ -11,7 +13,9 @@ symmetry `formOn_comm` of the Dirichlet form.  The finite index set is `D` toget
 neighbours of `D`, and `netLaplacian_unitCond` identifies the network Laplacian with
 `Graph.laplacian`.  Only the statement in the vocabulary of `Graph.laplacian` is new here.
 -/
-import LatticeProb.Network.Basic
+public import LatticeProb.Network.Basic
+
+@[expose] public section
 
 namespace LatticeProb.Network
 

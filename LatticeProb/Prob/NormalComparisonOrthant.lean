@@ -1,3 +1,5 @@
+module
+
 /-
 # Li--Shao normal comparison: the integrated bivariate contribution
 
@@ -21,8 +23,10 @@ docstring of `NormalComparison.lean`: the multivariate density
 probability, and the double integration by parts that identifies it with the
 boundary integral.
 -/
-import LatticeProb.Prob.NormalComparison
-import LatticeProb.Prob.NormalComparisonScale
+public import LatticeProb.Prob.NormalComparison
+public import LatticeProb.Prob.NormalComparisonScale
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal MatrixOrder Matrix

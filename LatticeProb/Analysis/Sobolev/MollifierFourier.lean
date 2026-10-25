@@ -1,3 +1,5 @@
+module
+
 /-
 # The Fourier transform of a dilation and the mollifier normalisation
 
@@ -18,9 +20,11 @@ mollifier: `mollifierFourierTendsto` proves `MollifierFourierTendsto`, i.e.
 `𝓕 χ_n → 1` pointwise and `‖𝓕 χ_n‖ ≤ 1` for `χ_n x = n^d • φ (n • x)`
 with `∫ φ = 1`.
 -/
-import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
-import LatticeProb.Analysis.Sobolev.Defs
+public import Mathlib.Analysis.Fourier.FourierTransform
+public import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
+public import LatticeProb.Analysis.Sobolev.Defs
+
+@[expose] public section
 
 open MeasureTheory Filter
 open scoped FourierTransform Topology

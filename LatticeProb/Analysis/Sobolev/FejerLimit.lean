@@ -1,3 +1,5 @@
+module
+
 /-
 # The Fejér limit: the smooth truncation is genuinely band-limited
 
@@ -32,9 +34,11 @@ is not stated here; it needs finiteness of the weighted integral
 `∫⁻ w_s ‖𝓕 φ‖²`, which Mathlib-level smoothness does supply but which is not
 yet recorded for `sobolevNormSq`.
 -/
-import LatticeProb.Analysis.Sobolev.FejerIntegrable
-import LatticeProb.Analysis.Sobolev.Weight
-import LatticeProb.Analysis.Sobolev.BandTruncReal
+public import LatticeProb.Analysis.Sobolev.FejerIntegrable
+public import LatticeProb.Analysis.Sobolev.Weight
+public import LatticeProb.Analysis.Sobolev.BandTruncReal
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap

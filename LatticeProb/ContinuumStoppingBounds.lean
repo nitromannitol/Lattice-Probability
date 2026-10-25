@@ -1,8 +1,12 @@
+module
+
 /-
 Bounds on the optimal-stopping value from bounds on the stopped field,
 the Gaussian law of the field, and vanishing outside the time window.
 -/
-import LatticeProb.ContinuumNoiseField
+public import LatticeProb.ContinuumNoiseField
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal

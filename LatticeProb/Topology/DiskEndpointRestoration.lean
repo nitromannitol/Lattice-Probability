@@ -1,3 +1,5 @@
+module
+
 /-
 # Finite disk chains with their original boundary endpoints
 
@@ -6,9 +8,11 @@ chains are constructed in neighborhoods of the scaled continua lying inside the
 original disjoint neighborhoods and the open disk. Adding the two radial endpoint
 segments preserves disjointness and leaves only the original endpoints on the circle.
 -/
-import LatticeProb.Topology.PolygonalApproximation
-import LatticeProb.Topology.PolygonalChainEndpoints
-import LatticeProb.Topology.DiskRadialGeometry
+public import LatticeProb.Topology.PolygonalApproximation
+public import LatticeProb.Topology.PolygonalChainEndpoints
+public import LatticeProb.Topology.DiskRadialGeometry
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Reducing `PinelisInductionStep` to named pieces
 
@@ -19,7 +21,9 @@ This file isolates the two ingredients that are not the genuinely hard step:
 `crossTerm_le_of_doob` assembles the two reductions into the cross-term bound, so that
 `PinelisInductionStep` is reduced to `PinelisDoobStep` plus the two transfer lemmas.
 -/
-import LatticeProb.Prob.BernsteinInduction
+public import LatticeProb.Prob.BernsteinInduction
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal

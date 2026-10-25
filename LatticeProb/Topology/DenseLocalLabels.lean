@@ -1,9 +1,13 @@
+module
+
 /-
 Labels defined on a dense subset of a preconnected set agree when they are constant
 in each ambient open neighborhood of a covering family. The proof constructs two
 open unions of neighborhoods and excludes their intersection using density.
 -/
-import Mathlib.Topology.Connected.Basic
+public import Mathlib.Topology.Connected.Basic
+
+@[expose] public section
 open Set
 
 namespace LatticeProb.Topology

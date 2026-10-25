@@ -1,3 +1,5 @@
+module
+
 /-
 # A different low-frequency compactness route: uniform translation-continuity
 
@@ -24,7 +26,9 @@ which gives uniform translation-continuity on the `H^s`-unit ball: the second te
 `≤ 4 (1+R²)^{s₀−s}`, uniformly small for large `R` because `s₀ < s`, and the first is
 `(2πR‖h‖)²` for `‖φ‖_{H^{s₀}} ≤ 1`.
 -/
-import LatticeProb.Analysis.Sobolev.MollifierFourier
+public import LatticeProb.Analysis.Sobolev.MollifierFourier
+
+@[expose] public section
 
 open MeasureTheory Filter
 open scoped ENNReal FourierTransform Topology

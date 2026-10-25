@@ -1,3 +1,5 @@
+module
+
 /-
 Moved from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and
 Yuval Peres.  Sources:
@@ -11,7 +13,9 @@ Yuval Peres.  Sources:
   rotor-routing termination paper, but stated throughout for a bare product
   of probability measures with no rotor-specific type anywhere.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 /-!
 # Total variation distance and product coupling

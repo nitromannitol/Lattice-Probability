@@ -1,4 +1,8 @@
-import LatticeProb.Prob.InfinitePiSplit
+module
+
+public import LatticeProb.Prob.InfinitePiSplit
+
+@[expose] public section
 
 /-! First-step decomposition for a walk driven by independent instructions.
 The ordered hitting event observes time zero and excludes a simultaneous visit

@@ -1,60 +1,64 @@
-import LatticeProb.Meta.LyonsAxioms
-import LatticeProb.Meta.AllMinorsAxioms
-import LatticeProb
-import LatticeProb.Meta.CopiedGraphAxioms
-import LatticeProb.Meta.DiskAlternationAxioms
-import LatticeProb.Meta.PairingMinorAxioms
-import LatticeProb.Meta.WilsonGenericAxioms
-import LatticeProb.Meta.PlaneIncidenceAxioms
-import LatticeProb.Walk.KilledGreenPlanarLower
-import LatticeProb.Topology.CurveSpace
-import LatticeProb.Prob.BoundedStopping
-import LatticeProb.Network.Dirichlet
-import LatticeProb.Network.FiniteCalculus
-import LatticeProb.Prob.SupportedLaw
-import LatticeProb.Prob.LevyProkhorovMaps
-import LatticeProb.Prob.DependentKernelMap
-import LatticeProb.Prob.SubcouplingCompletion
-import LatticeProb.Prob.MatchedCellCoupling
-import LatticeProb.Prob.FinitePartitionCoupling
-import LatticeProb.Prob.FinitePartitionCouplingKernel
-import LatticeProb.Prob.CameronMartin
-import LatticeProb.Prob.McLeish.ExpRemainder
-import LatticeProb.Prob.McLeish.Truncation
-import LatticeProb.Prob.McLeish.ProductLimit
-import LatticeProb.Prob.McLeish.ProductMoment
-import LatticeProb.Prob.McLeish.Remainder
-import LatticeProb.Prob.McLeish.CharFunLimit
-import LatticeProb.Prob.McLeish.TruncProduct
-import LatticeProb.Prob.McLeish.RatioLimit
-import LatticeProb.Prob.McLeish.MartingaleCLT
-import LatticeProb.Prob.GaussProductRotation
-import LatticeProb.Prob.GaussSteinIBP
-import LatticeProb.Prob.GaussEuclideanPushforward
-import LatticeProb.Prob.GaussSmoothBdd
-import LatticeProb.Prob.GaussSmoothMGF
-import LatticeProb.Prob.GaussMollify
-import LatticeProb.Prob.BrownianOpenExit
-import LatticeProb.Prob.BrownianOpenExitStopping
-import LatticeProb.Prob.BrownianOpenExitFinite
-import LatticeProb.Analysis.HarmonicBridge
-import LatticeProb.Prob.GaussianHerbstDischarge
-import LatticeProb.Topology.ContinuousMapBorel
-import LatticeProb.Prob.BrownianPathMap
-import LatticeProb.Prob.GaussLipConcentration
-import LatticeProb.Prob.BrownianMomentsCore
-import LatticeProb.Analysis.HessianTaylorRemainder
-import LatticeProb.Prob.DyadicExitApprox
-import LatticeProb.Prob.BrownianPathSpace
-import LatticeProb.Prob.FiniteChainPairTV
-import LatticeProb.Prob.SubGaussianMaximal
-import LatticeProb.Prob.BrownianPathCoords
-import LatticeProb.Prob.BrownianExitPosition
-import LatticeProb.Analysis.HarmonicScaling
-import LatticeProb.Prob.BrownianIncrementMoments
-import LatticeProb.Prob.BrownianWeakMarkovPath
-import LatticeProb.Prob.BrownianFiniteStopping
-import LatticeProb.Prob.BrownianHessianTaylor
+module
+
+public import LatticeProb.Meta.LyonsAxioms
+public import LatticeProb.Meta.AllMinorsAxioms
+public import LatticeProb
+public import LatticeProb.Meta.CopiedGraphAxioms
+public import LatticeProb.Meta.DiskAlternationAxioms
+public import LatticeProb.Meta.PairingMinorAxioms
+public import LatticeProb.Meta.WilsonGenericAxioms
+public import LatticeProb.Meta.PlaneIncidenceAxioms
+public import LatticeProb.Walk.KilledGreenPlanarLower
+public import LatticeProb.Topology.CurveSpace
+public import LatticeProb.Prob.BoundedStopping
+public import LatticeProb.Network.Dirichlet
+public import LatticeProb.Network.FiniteCalculus
+public import LatticeProb.Prob.SupportedLaw
+public import LatticeProb.Prob.LevyProkhorovMaps
+public import LatticeProb.Prob.DependentKernelMap
+public import LatticeProb.Prob.SubcouplingCompletion
+public import LatticeProb.Prob.MatchedCellCoupling
+public import LatticeProb.Prob.FinitePartitionCoupling
+public import LatticeProb.Prob.FinitePartitionCouplingKernel
+public import LatticeProb.Prob.CameronMartin
+public import LatticeProb.Prob.McLeish.ExpRemainder
+public import LatticeProb.Prob.McLeish.Truncation
+public import LatticeProb.Prob.McLeish.ProductLimit
+public import LatticeProb.Prob.McLeish.ProductMoment
+public import LatticeProb.Prob.McLeish.Remainder
+public import LatticeProb.Prob.McLeish.CharFunLimit
+public import LatticeProb.Prob.McLeish.TruncProduct
+public import LatticeProb.Prob.McLeish.RatioLimit
+public import LatticeProb.Prob.McLeish.MartingaleCLT
+public import LatticeProb.Prob.GaussProductRotation
+public import LatticeProb.Prob.GaussSteinIBP
+public import LatticeProb.Prob.GaussEuclideanPushforward
+public import LatticeProb.Prob.GaussSmoothBdd
+public import LatticeProb.Prob.GaussSmoothMGF
+public import LatticeProb.Prob.GaussMollify
+public import LatticeProb.Prob.BrownianOpenExit
+public import LatticeProb.Prob.BrownianOpenExitStopping
+public import LatticeProb.Prob.BrownianOpenExitFinite
+public import LatticeProb.Analysis.HarmonicBridge
+public import LatticeProb.Prob.GaussianHerbstDischarge
+public import LatticeProb.Topology.ContinuousMapBorel
+public import LatticeProb.Prob.BrownianPathMap
+public import LatticeProb.Prob.GaussLipConcentration
+public import LatticeProb.Prob.BrownianMomentsCore
+public import LatticeProb.Analysis.HessianTaylorRemainder
+public import LatticeProb.Prob.DyadicExitApprox
+public import LatticeProb.Prob.BrownianPathSpace
+public import LatticeProb.Prob.FiniteChainPairTV
+public import LatticeProb.Prob.SubGaussianMaximal
+public import LatticeProb.Prob.BrownianPathCoords
+public import LatticeProb.Prob.BrownianExitPosition
+public import LatticeProb.Analysis.HarmonicScaling
+public import LatticeProb.Prob.BrownianIncrementMoments
+public import LatticeProb.Prob.BrownianWeakMarkovPath
+public import LatticeProb.Prob.BrownianFiniteStopping
+public import LatticeProb.Prob.BrownianHessianTaylor
+
+@[expose] public section
 
 /-!
 # Axioms audit

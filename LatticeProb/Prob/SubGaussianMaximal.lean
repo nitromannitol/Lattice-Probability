@@ -1,12 +1,16 @@
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
-import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
-import Mathlib.MeasureTheory.Measure.Real
-import Mathlib.Probability.ConditionalExpectation
-import Mathlib.Probability.Independence.Basic
-import Mathlib.Probability.Martingale.Basic
-import Mathlib.Probability.Martingale.OptionalStopping
-import Mathlib.Probability.Moments.SubGaussian
+module
+
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Probability.ConditionalExpectation
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.Probability.Martingale.Basic
+public import Mathlib.Probability.Martingale.OptionalStopping
+public import Mathlib.Probability.Moments.SubGaussian
+
+@[expose] public section
 
 /-!
 # Sub-Gaussian bounds for sums of independent increments

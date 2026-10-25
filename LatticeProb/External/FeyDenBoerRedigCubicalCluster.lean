@@ -1,4 +1,8 @@
-import LatticeProb.Sandpile.LeastAction
+module
+
+public import LatticeProb.Sandpile.LeastAction
+
+@[expose] public section
 
 /-!
 # Cubical toppling clusters on the background `2d - 2`

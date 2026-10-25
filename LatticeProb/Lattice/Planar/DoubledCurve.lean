@@ -1,5 +1,9 @@
+module
+
 /- Adapted from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and Yuval Peres. -/
-import LatticeProb.Lattice.Planar.Winding
+public import LatticeProb.Lattice.Planar.Winding
+
+@[expose] public section
 
 open Finset
 

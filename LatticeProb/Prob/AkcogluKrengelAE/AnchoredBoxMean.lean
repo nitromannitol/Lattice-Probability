@@ -1,6 +1,10 @@
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
-import LatticeProb.Prob.AkcogluKrengelAE.BallMaximalLp
-import LatticeProb.Prob.AkcogluKrengel
+module
+
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.BallMaximalLp
+public import LatticeProb.Prob.AkcogluKrengel
+
+@[expose] public section
 
 /-!
 # The `Lᵖ` box mean ergodic theorem, and the pair-to-anchored-box reduction

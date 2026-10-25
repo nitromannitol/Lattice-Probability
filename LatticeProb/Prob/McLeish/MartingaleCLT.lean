@@ -1,7 +1,11 @@
-import LatticeProb.Prob.McLeish.ProductLimit
-import LatticeProb.Prob.McLeish.TruncProduct
-import LatticeProb.Prob.McLeish.RatioLimit
-import LatticeProb.Prob.McLeish.CharFunLimit
+module
+
+public import LatticeProb.Prob.McLeish.ProductLimit
+public import LatticeProb.Prob.McLeish.TruncProduct
+public import LatticeProb.Prob.McLeish.RatioLimit
+public import LatticeProb.Prob.McLeish.CharFunLimit
+
+@[expose] public section
 
 /-!
 # Central limit theorem for martingale difference arrays

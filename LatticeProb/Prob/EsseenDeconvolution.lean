@@ -1,3 +1,5 @@
+module
+
 /-
 # Esseen's smoothing inequality: the deconvolution step
 
@@ -19,7 +21,9 @@ nondecreasing and `G` is `m`-Lipschitz, `Δ` stays within `η / 2 - κ` of the e
   properties of distribution functions.
 * `LatticeProb.sup_cdf_sub_le_of_smoothed` — the deconvolution step for distribution functions.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

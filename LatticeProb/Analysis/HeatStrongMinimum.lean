@@ -1,3 +1,5 @@
+module
+
 /-
 # The strong minimum principle for the heat operator `(2d)⁻¹Δ`
 
@@ -18,11 +20,13 @@ The proof is a barrier argument.  If `v(s, x₀) = m > 0` for some
 below `v` on the parabolic boundary of `D`.  The weak minimum principle on
 the compact set `D` gives `w ≤ v`, which fails at `(s₀, x₀)`.
 -/
-import LatticeProb.WhiteNoise
-import Mathlib.Analysis.Calculus.DerivativeTest
-import Mathlib.Analysis.Calculus.ContDiff.Deriv
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.Topology.MetricSpace.Thickening
+public import LatticeProb.WhiteNoise
+public import Mathlib.Analysis.Calculus.DerivativeTest
+public import Mathlib.Analysis.Calculus.ContDiff.Deriv
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.Topology.MetricSpace.Thickening
+
+@[expose] public section
 
 open Filter Topology Set
 

@@ -1,4 +1,8 @@
-import LatticeProb.Prob.Strassen.MarginalWeights
+module
+
+public import LatticeProb.Prob.Strassen.MarginalWeights
+
+@[expose] public section
 
 /-!
 # D. The discrete coupling on the full space

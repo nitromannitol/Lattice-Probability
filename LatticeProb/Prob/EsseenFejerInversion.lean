@@ -1,3 +1,5 @@
+module
+
 /- # Esseen's smoothing inequality: Fejér inversion
 
 Let `μ`, `γ` be probability measures on `ℝ` with finite first absolute moments, put
@@ -13,9 +15,11 @@ Bounding the triangle by one yields
 * `LatticeProb.abs_smoothed_cdf_sub_le` — the Fejér-smoothed difference of distribution functions
   is bounded by the Fourier side.
 -/
-import Mathlib
-import LatticeProb.Prob.FejerKernel
-import LatticeProb.Prob.CdfDifferenceFourier
+public import Mathlib
+public import LatticeProb.Prob.FejerKernel
+public import LatticeProb.Prob.CdfDifferenceFourier
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

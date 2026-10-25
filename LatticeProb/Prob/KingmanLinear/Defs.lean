@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Prob.ReturnTime
+module
+
+public import Mathlib
+public import LatticeProb.Prob.ReturnTime
+
+@[expose] public section
 
 /-!
 # The return-time Birkhoff sum, the induced family, and the linear-bound sets

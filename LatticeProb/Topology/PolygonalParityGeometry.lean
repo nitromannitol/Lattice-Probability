@@ -1,3 +1,5 @@
+module
+
 /-
 # Euclidean frames and finite polygonal edge traces
 
@@ -14,14 +16,16 @@ Copyright (c) 2026 Álvaro Begué. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Álvaro Begué
 -/
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.Convex.Topology
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Convex.Topology
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 
 

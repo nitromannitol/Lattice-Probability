@@ -1,3 +1,5 @@
+module
+
 /-
 # The a.e. Fatou limit for the tails of a convergent sequence
 
@@ -24,7 +26,9 @@ needed by the concentration, `{∫F + t ≤ F}`, is handled by intersecting with
 
 No `sorry`, no `axiom`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

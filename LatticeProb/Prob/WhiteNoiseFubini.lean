@@ -1,3 +1,5 @@
+module
+
 /-
 The stochastic Fubini identity for white noise.
 
@@ -7,8 +9,10 @@ the average of the noises: `𝒲(∫ k dP_B) = ∫ 𝒲(k) dP_B` in `L²(P)`.  T
 interchange a stochastic Fubini needs when a white-noise integral is taken against a
 random test function.
 -/
-import LatticeProb.Prob.WhiteNoiseIsometry
-import LatticeProb.Gauss.WhiteNoise
+public import LatticeProb.Prob.WhiteNoiseIsometry
+public import LatticeProb.Gauss.WhiteNoise
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 

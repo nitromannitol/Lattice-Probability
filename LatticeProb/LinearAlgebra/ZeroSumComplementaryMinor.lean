@@ -1,3 +1,5 @@
+module
+
 /-
 # Complementary minors of zero-sum matrices
 
@@ -7,7 +9,9 @@ matrix; its inverse contains the row differences, and the ordinary signed
 Jacobi identity supplies the complementary minor. Independent full orders
 retain their literal permutation sign, with no proper-minor invertibility.
 -/
-import LatticeProb.LinearAlgebra.ZeroSumBorderInverse
+public import LatticeProb.LinearAlgebra.ZeroSumBorderInverse
+
+@[expose] public section
 
 
 

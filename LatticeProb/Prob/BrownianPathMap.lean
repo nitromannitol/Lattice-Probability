@@ -1,4 +1,8 @@
-import LatticeProb.Topology.ContinuousMapBorel
+module
+
+public import LatticeProb.Topology.ContinuousMapBorel
+
+@[expose] public section
 
 /-!
 # Sample paths as continuous maps

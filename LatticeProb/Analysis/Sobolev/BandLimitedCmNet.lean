@@ -1,3 +1,5 @@
+module
+
 /-
 # The band-limited `C^m` net: the uniform-bound packaging
 
@@ -27,7 +29,9 @@ collapses the first into one constant valid for all `k ≤ m` by a finite maximu
    net in the paper's sense is a bound on all multi-indices of order `≤ m`, which is a finite
    max over `k ≤ m` of the operator norms (the step below), plus the translation between the two.
 -/
-import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
+public import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

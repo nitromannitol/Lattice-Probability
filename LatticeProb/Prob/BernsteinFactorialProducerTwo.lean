@@ -1,3 +1,5 @@
+module
+
 /-
 # Raw-factorial producer, part two: per-term extraction and exponent summability
 
@@ -20,7 +22,9 @@ immediate (an empty sum is `0`; `λ = 0` gives the exponent `0` and the bound `1
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinFactorialProducer
+public import LatticeProb.Prob.BernsteinFactorialProducer
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

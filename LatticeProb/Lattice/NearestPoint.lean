@@ -1,3 +1,5 @@
+module
+
 /-
 Rounding a point of `ℝ^d` to the nearest site of `ℤ^d`, moved from
 `Exploding-Sandpiles`'s `Exploding/Support/Vocab.lean:186` and
@@ -9,7 +11,9 @@ and with `LatticeProb.box`, the sup-norm box already in `LatticeProb.Site`
 under a different name, as `LatticeProb.box d n`; this file uses the shared
 name).
 -/
-import LatticeProb.Site
+public import LatticeProb.Site
+
+@[expose] public section
 
 namespace LatticeProb
 

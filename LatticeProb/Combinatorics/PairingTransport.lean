@@ -1,3 +1,5 @@
+module
+
 /-
 # Reindexing paired terminal lists
 
@@ -6,8 +8,10 @@ matching permutation `π` to `β.symm ∘ π ∘ α`. The coverage, cross-matchi
 and first-list separation predicates are transported by their actual index
 witnesses. The permutation equivalence also gives the exact product of signs.
 -/
-import Mathlib.GroupTheory.Perm.Sign
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.GroupTheory.Perm.Sign
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+
+@[expose] public section
 
 
 

@@ -1,11 +1,15 @@
+module
+
 /-
 Paired ordered incidence minors retain the exact component root permutation sign.
 -/
 
-import LatticeProb.Graph.CopiedGraph.RootMatching
-import LatticeProb.Graph.CopiedGraph.IncidenceSpan
-import LatticeProb.LinearAlgebra.Matrix.ColumnSpanDeterminant
-import Mathlib.Tactic.Ring
+public import LatticeProb.Graph.CopiedGraph.RootMatching
+public import LatticeProb.Graph.CopiedGraph.IncidenceSpan
+public import LatticeProb.LinearAlgebra.Matrix.ColumnSpanDeterminant
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 
 

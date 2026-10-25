@@ -1,3 +1,5 @@
+module
+
 /-
 # The scalar covariance `v I`: the Gaussian density and the orthant probability factor
 
@@ -17,9 +19,11 @@ exponent `x ⬝ᵥ (v⁻¹ • 1 *ᵥ x) = v⁻¹ * ∑ (x i)^2`.  The orthant s
 `Set.Iic b` with `Set.pi univ (fun i => Set.Iic (b i))`, `Measure.restrict_pi_pi`, and
 `integral_fintype_prod_eq_prod`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityOrthantLink
-import LatticeProb.Prob.GaussCovDensityIntegrable
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityOrthantLink
+public import LatticeProb.Prob.GaussCovDensityIntegrable
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix
 open scoped NNReal

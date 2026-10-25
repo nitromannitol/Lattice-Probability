@@ -1,12 +1,16 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/Harmonic.lean and BouRabeeGwynne/HarmonicCutoff.lean.
 -/
-import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
-import Mathlib.Analysis.InnerProductSpace.Laplacian
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Geometry.Manifold.PartitionOfUnity
+public import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
+public import Mathlib.Analysis.InnerProductSpace.Laplacian
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Geometry.Manifold.PartitionOfUnity
+
+@[expose] public section
 
 /-!
 # Harmonic functions on open sets and harmonic cutoffs

@@ -1,3 +1,5 @@
+module
+
 /-
 Splicing two configurations along a set of coordinates, and the partial
 integral it defines.
@@ -12,9 +14,11 @@ of the functional on the coordinates in `S`, which is what the countable
 Efron-Stein inequality needs, and it is written here without naming a
 sigma-algebra.
 -/
-import Mathlib
-import LatticeProb.Prob.PiSum
-import LatticeProb.Prob.EfronStein
+public import Mathlib
+public import LatticeProb.Prob.PiSum
+public import LatticeProb.Prob.EfronStein
+
+@[expose] public section
 
 noncomputable section
 

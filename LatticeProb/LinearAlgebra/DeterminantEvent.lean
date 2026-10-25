@@ -1,3 +1,5 @@
+module
+
 /-
 # Increasing events and orthogonal determinant extensions
 
@@ -6,7 +8,9 @@ contraction bound then compares the squared determinant weights of the two
 frames, without any intermediate probability laws.
 -/
 
-import LatticeProb.LinearAlgebra.DeterminantAnnihilation
+public import LatticeProb.LinearAlgebra.DeterminantAnnihilation
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Raw-factorial producer, part three: the exponent-sum interchange and majorant value
 
@@ -20,7 +22,9 @@ empty-horizon case is `s = ∅` (sum `0`), and `λ = 0` is inside the statement 
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinFactorialProducerTwo
+public import LatticeProb.Prob.BernsteinFactorialProducerTwo
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

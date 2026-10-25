@@ -1,3 +1,5 @@
+module
+
 /-
 # The conditional-variance pairing for the Rosenthal cross term
 
@@ -14,8 +16,10 @@ hypotheses of the Doob step):
 the Rosenthal variance term `(∫ V n^{p/2})^{2/p}` (`V n = ∑ E[ξ_i² | F_{i-1}]`) paired with
 the endpoint `L^p` norm.  No new external input; no new `Prop`; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinCrossTermBound
-import LatticeProb.Prob.BernsteinDoobMaximal
+public import LatticeProb.Prob.BernsteinCrossTermBound
+public import LatticeProb.Prob.BernsteinDoobMaximal
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

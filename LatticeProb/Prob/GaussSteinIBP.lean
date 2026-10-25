@@ -1,14 +1,18 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: LQGDimension/Gaussian/SteinIBP.lean.
 -/
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
-import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Probability.Distributions.Gaussian.Multivariate
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+
+@[expose] public section
 
 /-!
 # Gaussian integration by parts (Stein's lemma)

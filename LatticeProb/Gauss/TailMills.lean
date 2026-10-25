@@ -1,3 +1,5 @@
+module
+
 /-
 The lower tail of the centred real Gaussian, and the inversion of the tail that
 Step 1 of `lem:dgt4-path-survival` performs at `sandpile.tex:5509-5512`:
@@ -19,7 +21,9 @@ universal factor `e^{-3/2}` against the sharp Mills ratio, which is all the
 inversion needs: the correction it produces is `log(a/√v) + O(1)`, exactly the
 `log b` term of the paper.
 -/
-import LatticeProb.Gauss.IsonormalSum
+public import LatticeProb.Gauss.IsonormalSum
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal

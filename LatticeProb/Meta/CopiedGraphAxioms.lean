@@ -1,4 +1,8 @@
-import LatticeProb.Graph.CopiedGraph.ForestCountPotential
+module
+
+public import LatticeProb.Graph.CopiedGraph.ForestCountPotential
+
+@[expose] public section
 
 /-! Axiom dependencies of copied-graph counting and path-current theorems. -/
 

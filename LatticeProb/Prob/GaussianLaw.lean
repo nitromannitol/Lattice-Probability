@@ -1,7 +1,11 @@
+module
+
 /-
 Determination of centred Gaussian process laws by covariance.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 noncomputable section
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal

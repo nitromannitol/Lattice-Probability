@@ -1,3 +1,5 @@
+module
+
 /-
 The particle-driven construction of the particle-hole process, and the
 statement that it has the same law as the stack construction.
@@ -21,10 +23,12 @@ each read looks only at the finitely many reads that precede it in the
 dependency order once the configuration is fixed, and every instruction law
 pushes forward to the SAME displacement law (`instructionLaw_map_sub`).
 -/
-import LatticeProb.ReadIndex
-import LatticeProb.Invariance
-import LatticeProb.Prob.DagExploration
-import LatticeProb.Prob.PiSum
+public import LatticeProb.ReadIndex
+public import LatticeProb.Invariance
+public import LatticeProb.Prob.DagExploration
+public import LatticeProb.Prob.PiSum
+
+@[expose] public section
 
 noncomputable section
 

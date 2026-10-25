@@ -1,11 +1,15 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/FinitePartitionCoupling.lean and
 BouRabeeGwynne/PartitionCouplingDistance.lean.
 -/
-import LatticeProb.Prob.MatchedCellCoupling
-import LatticeProb.Prob.LevyProkhorovMaps
+public import LatticeProb.Prob.MatchedCellCoupling
+public import LatticeProb.Prob.LevyProkhorovMaps
+
+@[expose] public section
 
 /-!
 # Explicit finite partition coupling

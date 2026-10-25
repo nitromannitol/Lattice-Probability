@@ -1,6 +1,10 @@
-import LatticeProb.Prob.McLeish.ExpRemainder
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Analysis.Complex.Exponential
+module
+
+public import LatticeProb.Prob.McLeish.ExpRemainder
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Analysis.Complex.Exponential
+
+@[expose] public section
 
 /-!
 # Deterministic remainder estimates for products of exponential factors

@@ -1,10 +1,14 @@
+module
+
 /- Countably many compact sets suffice to enclose compact subsets of arbitrary open sets.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.Topology.Compactness.LocallyCompact
-import Mathlib.Topology.Bases
-import Mathlib.Topology.Separation.Hausdorff
+public import Mathlib.Topology.Compactness.LocallyCompact
+public import Mathlib.Topology.Bases
+public import Mathlib.Topology.Separation.Hausdorff
+
+@[expose] public section
 
 open Set TopologicalSpace Filter Topology
 namespace LatticeProb.Scaling.CompactTestCover

@@ -1,3 +1,5 @@
+module
+
 /-
 # Determinants of rectangular matrix products
 
@@ -6,7 +8,9 @@ factor. Choices that repeat a row contribute zero, including when the shared
 index carrier is smaller than the square index carrier.
 -/
 
-import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Third-order Taylor remainders and comparison of probability laws with matching
 first and second moments: if two laws agree on the first two moments, the
@@ -8,10 +10,12 @@ behind a central limit theorem proved by moment matching.
 Moved from Divisible-Sandpile-Percolation, `Sandpile/Support/ThirdTaylor.lean`.
 This file was already Mathlib-only in the source repository.
 -/
-import Mathlib.Analysis.Calculus.Taylor
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Tactic
+public import Mathlib.Analysis.Calculus.Taylor
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Tactic
+
+@[expose] public section
 
 open Set MeasureTheory
 

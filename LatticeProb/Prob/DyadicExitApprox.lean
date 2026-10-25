@@ -1,3 +1,5 @@
+module
+
 /-
 Copyright (c) 2025 Kexing Ying. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
@@ -12,12 +14,14 @@ https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/DyadicExitApprox.lean and BouRabeeGwynne/BrownianStoppingApprox.lean.
 -/
 
-import LatticeProb.Prob.StoppingDyadic
-import Mathlib.Probability.Process.Stopping
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
+public import LatticeProb.Prob.StoppingDyadic
+public import Mathlib.Probability.Process.Stopping
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 /-!
 # Dyadic approximation of stopping times with values in `WithTop ℝ≥0`

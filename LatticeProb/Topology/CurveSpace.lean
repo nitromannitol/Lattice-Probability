@@ -1,19 +1,23 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/CurveSpace.lean and BouRabeeGwynne/CurvePauses.lean.
 -/
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Topology.ContinuousMap.Compact
-import Mathlib.Topology.ContinuousMap.SecondCountableSpace
-import Mathlib.Topology.Order.MonotoneContinuity
-import Mathlib.Topology.UnitInterval
-import Mathlib.Topology.MetricSpace.Basic
-import Mathlib.Topology.Order.IntermediateValue
-import Mathlib.Topology.Order.ProjIcc
-import Mathlib.Order.Hom.Set
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Topology.ContinuousMap.Compact
+public import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+public import Mathlib.Topology.Order.MonotoneContinuity
+public import Mathlib.Topology.UnitInterval
+public import Mathlib.Topology.MetricSpace.Basic
+public import Mathlib.Topology.Order.IntermediateValue
+public import Mathlib.Topology.Order.ProjIcc
+public import Mathlib.Order.Hom.Set
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 /-!
 # Continuous curves modulo increasing changes of time

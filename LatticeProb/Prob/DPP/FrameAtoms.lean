@@ -1,3 +1,5 @@
+module
+
 /-
 # Atoms of a finite projection determinantal law
 
@@ -5,11 +7,13 @@ The inclusion-determinant identities and nonnegativity determine the atoms of
 an orthonormal-column frame. Normalization and support are derived internally.
 -/
 
-import LatticeProb.LinearAlgebra.Matrix.CauchyBinet
-import LatticeProb.Prob.Determinantal.InclusionNormalization
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Data.Real.Basic
+public import LatticeProb.LinearAlgebra.Matrix.CauchyBinet
+public import LatticeProb.Prob.Determinantal.InclusionNormalization
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Data.Real.Basic
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /- # The Fourier transform of a difference of distribution functions
 
 For two probability measures `μ`, `γ` on `ℝ` with finite first absolute moment and
@@ -5,7 +7,9 @@ For two probability measures `μ`, `γ` on `ℝ` with finite first absolute mome
 `∫ Δ(u) e^{itu} du = (φ_γ(t) - φ_μ(t)) / (i t)` for `t ≠ 0`, where `φ = charFun`.  We also
 show that `φ_μ - φ_γ` vanishes linearly at `0`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

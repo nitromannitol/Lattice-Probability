@@ -1,11 +1,15 @@
-import Mathlib
-import LatticeProb.Walk.GreenPointwise
-import LatticeProb.Walk.GreenTwoSided.Kernels
-import LatticeProb.Walk.VarianceScale
-import LatticeProb.Walk.Shells
-import LatticeProb.Walk.GreenIdentity
-import LatticeProb.Network.Killed
-import LatticeProb.Network.Caccioppoli
+module
+
+public import Mathlib
+public import LatticeProb.Walk.GreenPointwise
+public import LatticeProb.Walk.GreenTwoSided.Kernels
+public import LatticeProb.Walk.VarianceScale
+public import LatticeProb.Walk.Shells
+public import LatticeProb.Walk.GreenIdentity
+public import LatticeProb.Network.Killed
+public import LatticeProb.Network.Caccioppoli
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

@@ -1,17 +1,21 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/HessianTaylorRemainder.lean.
 -/
 
-import Mathlib.Analysis.Calculus.MeanValue
-import Mathlib.Analysis.Calculus.Deriv.Pow
-import Mathlib.Analysis.Normed.Module.Convex
-import Mathlib.Analysis.Calculus.ContDiff.Comp
-import Mathlib.Analysis.Normed.Group.Bounded
-import Mathlib.Topology.UniformSpace.HeineCantor
-import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
-import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Calculus.MeanValue
+public import Mathlib.Analysis.Calculus.Deriv.Pow
+public import Mathlib.Analysis.Normed.Module.Convex
+public import Mathlib.Analysis.Calculus.ContDiff.Comp
+public import Mathlib.Analysis.Normed.Group.Bounded
+public import Mathlib.Topology.UniformSpace.HeineCantor
+public import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+
+@[expose] public section
 
 /-!
 # A C² Taylor remainder from oscillation of the actual Hessian

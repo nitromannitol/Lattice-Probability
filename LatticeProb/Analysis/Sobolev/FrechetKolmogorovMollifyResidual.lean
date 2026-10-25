@@ -1,3 +1,5 @@
+module
+
 /-
 # The mollification estimate: the residual of the Fréchet–Kolmogorov route
 
@@ -26,7 +28,9 @@ all of which are refuted on the record; the hypotheses of this file are the unif
 translation-continuity, which is already proved as `sobolevNormSq_translate_sub_le`, and the
 convolution structure of `convReal`.  This file registers nothing.
 -/
-import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
+public import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology

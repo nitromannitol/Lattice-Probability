@@ -1,3 +1,5 @@
+module
+
 /-
 # The one-dimensional Gaussian log-Sobolev inequality: the last input of the general-`n` chain
 
@@ -31,7 +33,9 @@ The semigroup and generator are landed (`Prob/GaussianLogSobolevOU.lean`: `ouSem
 `ouGenerator`, and the named `OUHeatEquation`); the two integrations by parts against `γ` and
 the `Γ₂` identity are the missing layer, and neither is in Mathlib.
 -/
-import LatticeProb.Prob.GaussianLogSobolevChain
+public import LatticeProb.Prob.GaussianLogSobolevChain
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,14 @@
+module
+
 /-
 Finite-cell event factorization for independent random variables with dependent alphabets.
 An event determined by a finite set of cells is a measurable inverse image of a set of
 finite tuples. Independence of disjoint tuples separates that event from prescribed
 values on a second finite set of cells.
 -/
-import Mathlib.Probability.Independence.Basic
+public import Mathlib.Probability.Independence.Basic
+
+@[expose] public section
 
 namespace LatticeProb.Prob.FiniteCellFactorization
 

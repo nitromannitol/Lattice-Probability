@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Walk.ContinuousHeatGauss
+module
+
+public import Mathlib
+public import LatticeProb.Walk.ContinuousHeatGauss
+
+@[expose] public section
 
 /-!
 # Time integrals of the continuous-time kernel and of its Gaussian counterpart

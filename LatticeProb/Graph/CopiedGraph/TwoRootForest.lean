@@ -1,9 +1,13 @@
+module
+
 /-
 Two-root forests, tree-copy deletion, and rerooting on the same original carrier.
 The elementary constructions are adapted from the finite-avalanches development;
 precise source paths and byte pins are recorded with the extraction.
 -/
-import LatticeProb.Graph.CopiedGraph.Basic
+public import LatticeProb.Graph.CopiedGraph.Basic
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical

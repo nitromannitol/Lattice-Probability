@@ -1,3 +1,5 @@
+module
+
 /-
 # The `L^p` Doob maximal inequality for the partial sums
 
@@ -19,8 +21,10 @@ Tonelli exchange together with the elementary inner integral `∫_0^{Mω} p t^{p
 p/(p-1) Mω^{p-1}`) is the one step carried as a hypothesis here; all Bochner integrals are finite
 by the stated integrability, so no integral collapses to the junk `0`.  No new external input.
 -/
-import LatticeProb.Prob.BernsteinMaximalLayerCake
-import LatticeProb.Prob.BernsteinCrossTerm
+public import LatticeProb.Prob.BernsteinMaximalLayerCake
+public import LatticeProb.Prob.BernsteinCrossTerm
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

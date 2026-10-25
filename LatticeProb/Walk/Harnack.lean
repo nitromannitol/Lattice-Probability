@@ -1,7 +1,11 @@
-import LatticeProb.Walk.Harnack.Basics
-import LatticeProb.Walk.Harnack.Dirichlet
-import LatticeProb.Walk.Harnack.GreenEstimates
-import LatticeProb.Walk.Harnack.SmallR
+module
+
+public import LatticeProb.Walk.Harnack.Basics
+public import LatticeProb.Walk.Harnack.Dirichlet
+public import LatticeProb.Walk.Harnack.GreenEstimates
+public import LatticeProb.Walk.Harnack.SmallR
+
+@[expose] public section
 
 /-!
 # The Harnack inequality for nonnegative harmonic functions on a box of `ℤ^d`

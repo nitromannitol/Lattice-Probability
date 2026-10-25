@@ -1,3 +1,5 @@
+module
+
 /-
 # The Gaussian log-Sobolev inequality in every dimension: the assembly and its residual
 
@@ -36,9 +38,11 @@ The input `LipschitzLogApprox n` requires smooth positive approximating densitie
 Lipschitz bound on their logarithms, mass one, gradient integrability, and convergence of the
 entropy integrals. This approximation input remains explicit in the assembly.
 -/
-import LatticeProb.Prob.GaussianLogSobolevRegularity
-import LatticeProb.Prob.GaussianLogSobolevOUFlow
-import LatticeProb.Prob.GaussianLogSobolevGradProd
+public import LatticeProb.Prob.GaussianLogSobolevRegularity
+public import LatticeProb.Prob.GaussianLogSobolevOUFlow
+public import LatticeProb.Prob.GaussianLogSobolevGradProd
+
+@[expose] public section
 
 noncomputable section
 

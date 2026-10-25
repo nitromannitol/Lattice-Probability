@@ -1,9 +1,13 @@
+module
+
 /-
 The complement of finitely many points in the real plane is path connected.
 The proof specializes the countable-complement theorem to the rank-two product space.
 -/
-import Mathlib.Analysis.Normed.Module.Connected
-import Mathlib.LinearAlgebra.Dimension.Constructions
+public import Mathlib.Analysis.Normed.Module.Connected
+public import Mathlib.LinearAlgebra.Dimension.Constructions
+
+@[expose] public section
 namespace LatticeProb.PlaneTopology
 
 /-- The real plane has dimension strictly greater than one. -/

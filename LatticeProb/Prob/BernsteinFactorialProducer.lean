@@ -1,3 +1,5 @@
+module
+
 /-
 # The raw-factorial conditional-exponential producer
 
@@ -20,7 +22,9 @@ invoking the raw factorial bound gives `∑_i d_λ(i) ≤ λ²v/(2(1-aλ))`.
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinSteps
+public import LatticeProb.Prob.BernsteinSteps
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

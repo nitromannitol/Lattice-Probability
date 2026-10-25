@@ -1,3 +1,5 @@
+module
+
 /-
 Independence of two families of random variables read coordinate by coordinate.
 
@@ -17,7 +19,9 @@ intersections of one event from each σ-algebra of a family; it generates the
 supremum of the family because an event of one member is the intersection with
 the whole space in every other coordinate.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 

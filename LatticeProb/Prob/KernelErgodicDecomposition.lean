@@ -1,3 +1,5 @@
+module
+
 /-
 A bounded start toward the ergodic decomposition of a stationary random rooted
 network (`RWRS.External.ErgodicDecomposition`, Benjamini--Curien, Section 2.1,
@@ -36,7 +38,9 @@ over neighbours `y` of the root, `m = RWRS.invariantSigma 0`, the invariant-
 observable restriction of the stationarity test, and the fact that
 `RWRS.NetGood`-a.e. network has every `m`-measurable event kernel-invariant.
 -/
-import LatticeProb.Prob.ErgodicDecomposition
+public import LatticeProb.Prob.ErgodicDecomposition
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

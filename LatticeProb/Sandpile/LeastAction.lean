@@ -1,4 +1,8 @@
-import LatticeProb.Sandpile.Toppling
+module
+
+public import LatticeProb.Sandpile.Toppling
+
+@[expose] public section
 
 /-!
 # The least action principle for legal topplings

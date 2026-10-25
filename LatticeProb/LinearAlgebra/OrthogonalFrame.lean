@@ -1,10 +1,14 @@
+module
+
 /-
 Finite Euclidean vector families give rectangular real matrices whose Gram
 matrix records inner products and whose outer product reconstructs the sum
 of coordinate projections. Cross-orthogonal families can be concatenated.
 -/
-import LatticeProb.LinearAlgebra.ProjectionFiltration
-import Mathlib.Data.Fin.Tuple.Basic
+public import LatticeProb.LinearAlgebra.ProjectionFiltration
+public import Mathlib.Data.Fin.Tuple.Basic
+
+@[expose] public section
 
 namespace LatticeProb.ProjectionFiltration
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Finite filtrations of nested orthogonal projections
 
@@ -6,9 +8,11 @@ rank-one increments. The Euclidean operator representation supplies an
 orthonormal basis of the range of their difference.
 -/
 
-import Mathlib.Analysis.Matrix.Hermitian
-import Mathlib.LinearAlgebra.Matrix.Symmetric
-import LatticeProb.LinearAlgebra.NestedProjectionBasis
+public import Mathlib.Analysis.Matrix.Hermitian
+public import Mathlib.LinearAlgebra.Matrix.Symmetric
+public import LatticeProb.LinearAlgebra.NestedProjectionBasis
+
+@[expose] public section
 
 
 

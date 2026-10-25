@@ -1,6 +1,10 @@
-import Mathlib
-import LatticeProb.Walk.SimpleTransfer
-import LatticeProb.Walk.Ball
+module
+
+public import Mathlib
+public import LatticeProb.Walk.SimpleTransfer
+public import LatticeProb.Walk.Ball
+
+@[expose] public section
 
 /-!
 # The asymptotics of the lattice Green function and potential kernel

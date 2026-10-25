@@ -1,9 +1,13 @@
-import LatticeProb.Walk.PotentialKernel
-import LatticeProb.Walk.Harnack.Basics
-import LatticeProb.Walk.Lazy
-import LatticeProb.Walk.Ball
-import LatticeProb.Network.MaximumPrinciple
-import LatticeProb.Network.KilledGreen
+module
+
+public import LatticeProb.Walk.PotentialKernel
+public import LatticeProb.Walk.Harnack.Basics
+public import LatticeProb.Walk.Lazy
+public import LatticeProb.Walk.Ball
+public import LatticeProb.Network.MaximumPrinciple
+public import LatticeProb.Network.KilledGreen
+
+@[expose] public section
 
 /-!
 # Logarithmic lower bound for the killed Green function of the planar box

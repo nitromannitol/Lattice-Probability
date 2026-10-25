@@ -1,3 +1,5 @@
+module
+
 /-
 # Bernstein: the Pinelis induction assembly
 
@@ -22,7 +24,9 @@ This file performs the bounded assembly of the induction:
 
 Nothing here is conditional on `sorry`; the only hypothesis is the named `Prop`.
 -/
-import LatticeProb.Prob.BernsteinOneStep
+public import LatticeProb.Prob.BernsteinOneStep
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal

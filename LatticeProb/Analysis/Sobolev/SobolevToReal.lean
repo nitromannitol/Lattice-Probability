@@ -1,3 +1,5 @@
+module
+
 /-
 # The real-integral form of the Sobolev norm
 
@@ -6,7 +8,9 @@ the Bochner integral of the weighted squared Fourier modulus, under the integrab
 weighted modulus.  The bridge is Mathlib's `ofReal_integral_eq_lintegral_ofReal` followed by
 `ENNReal.toReal_ofReal`.
 -/
-import LatticeProb.Analysis.Sobolev.SobolevYoungConvolution
+public import LatticeProb.Analysis.Sobolev.SobolevYoungConvolution
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

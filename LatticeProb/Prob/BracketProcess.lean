@@ -1,3 +1,5 @@
+module
+
 /-
 # The bracket process of a continuous martingale: dyadic realized covariation
 
@@ -27,7 +29,9 @@ Not in this file (see the closing note): the existence of the limit `bracket`, t
 `Martingale.sq_sub_bracket`, and `tendstoInMeasure_realizedQVar_bracket`.  Those are blocked on
 a uniform-in-the-mesh convergence estimate that Mathlib does not supply.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped NNReal ENNReal Topology

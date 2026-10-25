@@ -1,3 +1,5 @@
+module
+
 /-
 # The final planar thin statement assembled from the complement bridge
 
@@ -11,7 +13,9 @@ The dense half is an explicit hypothesis, quantified uniformly over the field la
 statement is proved here, no `Prop` is frozen, and nothing is claimed about `Rotor.External.LSS`.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinIsIncreasing
+public import LatticeProb.Prob.Percolation.LSSThinIsIncreasing
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

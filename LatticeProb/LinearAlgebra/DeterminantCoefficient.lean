@@ -1,3 +1,5 @@
+module
+
 /-
 # Linear coefficient of a determinant with a constant parameter matrix
 
@@ -7,9 +9,11 @@ first row and then the first column isolates `X` in the upper left entry;
 Laplace expansion gives the coefficient. In particular, adding arbitrary row
 and column potentials does not change it.
 -/
-import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-import Mathlib.Algebra.Polynomial.Coeff
-import Mathlib.Tactic.Ring
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.Algebra.Polynomial.Coeff
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 
 

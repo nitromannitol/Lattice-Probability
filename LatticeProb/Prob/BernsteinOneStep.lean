@@ -1,3 +1,5 @@
+module
+
 /-
 The filtration instantiation of the one-step moment estimate.
 
@@ -15,7 +17,9 @@ The step is taken as a hypothesis here (the caller derives it from the filtratio
 remaining research-level obligation is the cumulative Pinelis induction, recorded in
 `scratch/pk/bernstein-route.md`.
 -/
-import LatticeProb.Prob.BernsteinMartingale
+public import LatticeProb.Prob.BernsteinMartingale
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal

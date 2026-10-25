@@ -1,3 +1,5 @@
+module
+
 /-
 # Event-side transport of the thin-form complement bridge on the planar carrier
 
@@ -13,7 +15,9 @@ The dense half is an explicit hypothesis throughout; no domination statement is 
 `Prop` is frozen, and nothing is claimed about `Rotor.External.LSS`.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinInstantiation
+public import LatticeProb.Prob.Percolation.LSSThinInstantiation
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

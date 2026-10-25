@@ -1,5 +1,9 @@
-import LatticeProb.Prob.NormalComparisonLimit
-import LatticeProb.Prob.NormalComparisonInterpolation
+module
+
+public import LatticeProb.Prob.NormalComparisonLimit
+public import LatticeProb.Prob.NormalComparisonInterpolation
+
+@[expose] public section
 
 /-!
 # The normal comparison inequality

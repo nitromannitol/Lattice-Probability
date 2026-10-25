@@ -1,9 +1,13 @@
+module
+
 /-
 The Brownian optimal-stopping value for a general reward, taking the supremum
 over integrable payoffs. At reward `-Z_T`, this agrees with the noise-field
 value because stopping at the horizon attains zero.
 -/
-import LatticeProb.ContinuumStoppingBounds
+public import LatticeProb.ContinuumStoppingBounds
+
+@[expose] public section
 
 open MeasureTheory
 open scoped NNReal ENNReal

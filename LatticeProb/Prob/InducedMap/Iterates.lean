@@ -1,4 +1,8 @@
-import LatticeProb.Prob.InducedMap.Ergodicity
+module
+
+public import LatticeProb.Prob.InducedMap.Ergodicity
+
+@[expose] public section
 
 /-!
 # Iterates of the induced map

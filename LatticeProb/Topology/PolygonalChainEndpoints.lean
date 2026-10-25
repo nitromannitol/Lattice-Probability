@@ -1,10 +1,14 @@
+module
+
 /-
 # Adding prescribed endpoints to finite polygonal chains
 
 Attaching the two endpoint segments preserves the finite chain trace exactly
 as the union of those segments and the original middle chain.
 -/
-import LatticeProb.Topology.PolygonalChain
+public import LatticeProb.Topology.PolygonalChain
+
+@[expose] public section
 
 
 

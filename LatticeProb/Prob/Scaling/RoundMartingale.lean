@@ -1,3 +1,5 @@
+module
+
 /-
 A martingale with conditionally centred increments on an abstract filtration has second moment
 equal to the sum of its increments' second moments. `Ω` is an arbitrary probability space,
@@ -16,7 +18,9 @@ the increments need not be independent, only conditionally centred.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

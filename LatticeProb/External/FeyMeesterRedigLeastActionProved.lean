@@ -1,4 +1,8 @@
-import LatticeProb.External.FeyMeesterRedigLeastAction
+module
+
+public import LatticeProb.External.FeyMeesterRedigLeastAction
+
+@[expose] public section
 
 /-!
 # The least action principle of Fey, Meester and Redig, proved

@@ -1,3 +1,5 @@
+module
+
 /-
 The square of the truncated Green function, and the correlation of two
 truncated Green functions, as double sums of the return probability.
@@ -14,7 +16,9 @@ the number of pairs at level `s` as the weight.  That weight is exactly
 is what makes the double sum comparable with `∑_s min(s, t) s^{-d/2}` once the
 on-diagonal bounds of `LatticeProb/Walk/SRWDiag.lean` are put in.
 -/
-import LatticeProb.Walk.SRWDiag
+public import LatticeProb.Walk.SRWDiag
+
+@[expose] public section
 
 noncomputable section
 

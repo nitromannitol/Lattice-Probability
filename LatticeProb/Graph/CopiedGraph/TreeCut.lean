@@ -1,9 +1,13 @@
+module
+
 /-
 Deleting a specified original copy from a tree path and inserting that same copy
 are inverse constructions. The elementary forest lemmas used here were adapted
 from finite-avalanches; precise source pins accompany the extraction.
 -/
-import LatticeProb.Graph.CopiedGraph.TwoRootForest
+public import LatticeProb.Graph.CopiedGraph.TwoRootForest
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical

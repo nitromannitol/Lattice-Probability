@@ -1,3 +1,5 @@
+module
+
 /-
 # The Gaussian orthant probability as an integral of `covDensity` over `Set.Iic b`
 
@@ -17,10 +19,12 @@ value on the (measurable) orthant is a set lintegral; `lintegral_orthant_eq` tra
 `Set.Iic b` along the volume-preserving `WithLp.toLp 2`.  The real form is
 `integral_eq_lintegral_of_nonneg_ae` with `0 ≤ covDensity S` (`covDensity_pos`).
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityIntegrable
-import LatticeProb.Prob.NormalComparisonOrthantSigned
-import LatticeProb.Prob.NormalComparisonOrthantDeriv
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityIntegrable
+public import LatticeProb.Prob.NormalComparisonOrthantSigned
+public import LatticeProb.Prob.NormalComparisonOrthantDeriv
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix
 

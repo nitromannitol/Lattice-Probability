@@ -1,3 +1,5 @@
+module
+
 /-
 # Sorting an injective finite terminal list
 
@@ -6,8 +8,10 @@ bijection with the inverse increasing enumeration constructs the permutation
 of terminal indices. Its evaluation identities relate the original list and
 the `orderEmbOfFin` map in both directions, including the empty-list case.
 -/
-import Mathlib.Data.Finset.Sort
-import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Data.Fintype.Card
+
+@[expose] public section
 
 
 

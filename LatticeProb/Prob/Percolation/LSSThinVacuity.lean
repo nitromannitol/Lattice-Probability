@@ -1,3 +1,5 @@
+module
+
 /-
 # Non-vacuity of the dense hypothesis: a concrete witness
 
@@ -12,7 +14,9 @@ The dependence and one-site facts are the genuinely new content.  No domination 
 proved, no `Prop` is frozen, no rotor file is touched, and nothing is claimed unconditionally.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinDischarge
+public import LatticeProb.Prob.Percolation.LSSThinDischarge
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

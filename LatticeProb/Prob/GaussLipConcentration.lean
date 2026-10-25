@@ -1,18 +1,22 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: LQGMetric/Gaussian/ConcentrationLip.lean.
 -/
-import LatticeProb.Prob.GaussMollify
-import Mathlib.Analysis.Normed.Group.Uniform
-import Mathlib.MeasureTheory.Function.L1Space.Integrable
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
-import Mathlib.MeasureTheory.Integral.Lebesgue.Add
-import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-import Mathlib.Order.LiminfLimsup
-import Mathlib.Probability.Distributions.Gaussian.Fernique
-import Mathlib.Probability.Distributions.Gaussian.Multivariate
-import Mathlib.Probability.Moments.Basic
+public import LatticeProb.Prob.GaussMollify
+public import Mathlib.Analysis.Normed.Group.Uniform
+public import Mathlib.MeasureTheory.Function.L1Space.Integrable
+public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.Order.LiminfLimsup
+public import Mathlib.Probability.Distributions.Gaussian.Fernique
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+public import Mathlib.Probability.Moments.Basic
+
+@[expose] public section
 
 /-!
 # Gaussian concentration for Lipschitz functions

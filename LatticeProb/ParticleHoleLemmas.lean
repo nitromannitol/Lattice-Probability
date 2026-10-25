@@ -1,3 +1,5 @@
+module
+
 /-
 The leaf facts about the particle–hole process of `LatticeProb.ParticleHole`.
 
@@ -19,8 +21,10 @@ again.  The count of particles that settle at a site in one round is
 ones that find a hole are exactly those of rank below the number of holes, and
 `LatticeProb.card_filter_rank_lt` counts them.
 -/
-import LatticeProb.ParticleHole
-import LatticeProb.Rank
+public import LatticeProb.ParticleHole
+public import LatticeProb.Rank
+
+@[expose] public section
 
 noncomputable section
 

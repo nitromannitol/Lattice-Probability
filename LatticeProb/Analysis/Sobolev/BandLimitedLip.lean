@@ -1,4 +1,8 @@
-import LatticeProb.Analysis.Sobolev.BandLimitedCmNet
+module
+
+public import LatticeProb.Analysis.Sobolev.BandLimitedCmNet
+
+@[expose] public section
 
 /-!
 # The uniform Lipschitz (k = 1 Bernstein) bound for the band-limited family

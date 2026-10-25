@@ -1,13 +1,17 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/BrownianExitStoppingTime.lean and BouRabeeGwynne/StoppedBrownianMeasurable.lean.
 -/
 
-import LatticeProb.Prob.BrownianOpenExit
-import LatticeProb.Prob.BrownianMarkov
-import Mathlib.Probability.Process.Stopping
-import Mathlib.Topology.Instances.ENNReal.Lemmas
+public import LatticeProb.Prob.BrownianOpenExit
+public import LatticeProb.Prob.BrownianMarkov
+public import Mathlib.Probability.Process.Stopping
+public import Mathlib.Topology.Instances.ENNReal.Lemmas
+
+@[expose] public section
 
 /-!
 # Open-set exit times are stopping times and measurable

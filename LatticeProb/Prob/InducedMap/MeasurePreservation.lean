@@ -1,4 +1,8 @@
-import LatticeProb.Prob.InducedMap.TowerComputation
+module
+
+public import LatticeProb.Prob.InducedMap.TowerComputation
+
+@[expose] public section
 
 /-!
 # Poincaré recurrence and invariance of the restricted measure

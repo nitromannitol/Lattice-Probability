@@ -1,3 +1,5 @@
+module
+
 /-
 # The factorial-Bernstein bound: conditional mgf to moment
 
@@ -19,7 +21,9 @@ tail-to-moment step give the actual factorial-Bernstein `r`-th moment bound
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinFactorialBound
+public import LatticeProb.Prob.BernsteinFactorialBound
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped NNReal ENNReal

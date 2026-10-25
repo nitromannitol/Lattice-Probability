@@ -1,3 +1,5 @@
+module
+
 /-
 Multiplicative stability of nonnegative functions under uniform field
 perturbations (`ExpStable`), preserved by positive sums, products, and by
@@ -5,7 +7,9 @@ composing with a smooth maximum's softmax weight.
 
 Moved from Divisible-Sandpile-Percolation, `Sandpile/Support/SoftStability.lean`.
 -/
-import LatticeProb.Analysis.SoftComposition
+public import LatticeProb.Analysis.SoftComposition
+
+@[expose] public section
 
 namespace LatticeProb
 

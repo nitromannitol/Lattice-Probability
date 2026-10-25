@@ -1,3 +1,5 @@
+module
+
 /-
 # Original circle parity for a finite disk crosscut
 
@@ -6,8 +8,10 @@ radial segment. Choose a generic outward ray from finite edge and vertex data.
 The endpoint jump and circle interval constancy then give opposite parity on
 the two complementary original angular intervals.
 -/
-import LatticeProb.Topology.DiskRadialCompletion
-import LatticeProb.Topology.DiskCircleEndpointJump
+public import LatticeProb.Topology.DiskRadialCompletion
+public import LatticeProb.Topology.DiskCircleEndpointJump
+
+@[expose] public section
 
 
 

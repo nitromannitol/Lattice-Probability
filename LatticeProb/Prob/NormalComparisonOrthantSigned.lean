@@ -1,3 +1,5 @@
+module
+
 /-
 # Li--Shao normal comparison: the orthant transport to `EuclideanSpace`, signed form
 
@@ -19,8 +21,10 @@ Gaussian density, so the Bochner integral and the integrability need the same tr
   coordinate and the tail orthant, obtained by chaining the two lemmas above with the
   Bochner box-Fubini `integral_Iic_cons`.
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparisonOrthantDeriv
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonOrthantDeriv
+
+@[expose] public section
 
 open MeasureTheory
 

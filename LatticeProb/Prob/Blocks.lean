@@ -1,3 +1,5 @@
+module
+
 /-
 Disjoint blocks of coordinates of an independent family are independent.
 
@@ -9,8 +11,10 @@ reindexing: reading the family along the disjoint union of the blocks is reading
 it along an injective family of indices, so the joint law is the product, and
 uncurrying the disjoint union is exactly the grouping.
 -/
-import Mathlib
-import LatticeProb.Prob.FiniteMarginal
+public import Mathlib
+public import LatticeProb.Prob.FiniteMarginal
+
+@[expose] public section
 
 noncomputable section
 

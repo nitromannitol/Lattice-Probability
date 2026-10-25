@@ -1,3 +1,5 @@
+module
+
 /-
 Long injective nearest-neighbour detours that avoid a site while their bounding
 rectangle contains it.
@@ -12,8 +14,10 @@ nearest neighbours, and no point equals `x`, while the rectangle spanned by the 
 The detour is total in its index: the formula is given for every natural index, and only the
 first `2 R + 2` points are used by the statement.
 -/
-import Mathlib
-import LatticeProb.Site
+public import Mathlib
+public import LatticeProb.Site
+
+@[expose] public section
 
 namespace LatticeProb
 

@@ -1,17 +1,21 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: QuantumZipper/Proofs/Probability/CameronMartin.lean.
 -/
-import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
-import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Probability.Moments.ComplexMGF
-import Mathlib.Probability.Moments.Covariance
-import Mathlib.Probability.Moments.Variance
-import Mathlib.MeasureTheory.Constructions.Cylinders
-import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
-import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
+public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Probability.Moments.ComplexMGF
+public import Mathlib.Probability.Moments.Covariance
+public import Mathlib.Probability.Moments.Variance
+public import Mathlib.MeasureTheory.Constructions.Cylinders
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.MeasureTheory.Function.L2Space
+
+@[expose] public section
 
 /-!
 # Cameron–Martin tilts of centred Gaussian processes

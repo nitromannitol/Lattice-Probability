@@ -1,3 +1,5 @@
+module
+
 /-
 # Cardinality of rooted copied forests
 
@@ -6,9 +8,11 @@ selects exactly one vertex of every component, including isolated vertices.
 The ambient graph may contain loops and parallel copies.
 -/
 
-import LatticeProb.Graph.CopiedGraph.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Card
+public import LatticeProb.Graph.CopiedGraph.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Card
+
+@[expose] public section
 
 
 

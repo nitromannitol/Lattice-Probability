@@ -1,14 +1,18 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/BrownianHessianGenerator.lean, BouRabeeGwynne/BrownianTaylorBound.lean.
 -/
 
-import LatticeProb.Prob.BrownianIncrementMoments
-import LatticeProb.Analysis.HarmonicBridge
-import LatticeProb.Analysis.HessianTaylorRemainder
-import Mathlib.Analysis.InnerProductSpace.Laplacian
-import Mathlib.Analysis.InnerProductSpace.PiL2
+public import LatticeProb.Prob.BrownianIncrementMoments
+public import LatticeProb.Analysis.HarmonicBridge
+public import LatticeProb.Analysis.HessianTaylorRemainder
+public import Mathlib.Analysis.InnerProductSpace.Laplacian
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+
+@[expose] public section
 
 /-!
 # Hessian and Taylor expectations for standard Brownian motion

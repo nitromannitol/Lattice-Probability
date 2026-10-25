@@ -1,3 +1,5 @@
+module
+
 /-
 # Orthonormal bases for increments of nested projections
 
@@ -6,7 +8,9 @@ orthonormal basis, annihilated by the smaller projection. Summing the
 coordinate projections of this basis reconstructs the difference.
 -/
 
-import LatticeProb.LinearAlgebra.OrthonormalProjectionSum
+public import LatticeProb.LinearAlgebra.OrthonormalProjectionSum
+
+@[expose] public section
 
 
 

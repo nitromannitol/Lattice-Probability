@@ -1,3 +1,5 @@
+module
+
 /-
 Moved from nitromannitol/Divisible-Sandpile-Percolation, Apache-2.0; copyright
 2026 Ahmed Bou-Rabee and Yuval Peres.  Sources:
@@ -40,8 +42,10 @@ only". Extracting them would need a substantial, non-mechanical rewrite
 against a cleaner set of hypotheses, which is out of scope for this move; see
 the harvest report for the full dependency trace.
 -/
-import LatticeProb.ParticleHoleLemmas
-import LatticeProb.Prob.Percolation.Crossing
+public import LatticeProb.ParticleHoleLemmas
+public import LatticeProb.Prob.Percolation.Crossing
+
+@[expose] public section
 
 /-!
 # RSW amplification arithmetic, bounded-degree path counting, and walk bottlenecks

@@ -1,3 +1,5 @@
+module
+
 /-
 # Connected metric neighborhoods of continua
 
@@ -5,9 +7,11 @@ A positive metric thickening of a connected subset of a real normed space is
 connected. Two disjoint compact continua therefore admit disjoint connected open
 neighborhoods inside any prescribed open neighborhoods.
 -/
-import Mathlib.Analysis.Normed.Module.Convex
-import Mathlib.Analysis.Convex.PathConnected
-import Mathlib.Topology.MetricSpace.Thickening
+public import Mathlib.Analysis.Normed.Module.Convex
+public import Mathlib.Analysis.Convex.PathConnected
+public import Mathlib.Topology.MetricSpace.Thickening
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # The entropy chain rule for a product measure
 
@@ -28,7 +30,9 @@ with the conditional average of `fderiv (log ∘ h(·,y)) x`; that differentiati
 under the integral is the residual.  The assembly (3) then stays the named `Prop`
 `GaussianLogSobolevGradTensorStep`.
 -/
-import LatticeProb.Prob.GaussianLogSobolevGrad
+public import LatticeProb.Prob.GaussianLogSobolevGrad
+
+@[expose] public section
 
 noncomputable section
 

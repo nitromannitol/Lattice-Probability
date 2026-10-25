@@ -1,6 +1,10 @@
+module
+
 /- Adapted from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and Yuval Peres. -/
-import LatticeProb.Lattice.Planar.CurveSides
-import LatticeProb.Lattice.Planar.ExplChain
+public import LatticeProb.Lattice.Planar.CurveSides
+public import LatticeProb.Lattice.Planar.ExplChain
+
+@[expose] public section
 
 open Finset List
 

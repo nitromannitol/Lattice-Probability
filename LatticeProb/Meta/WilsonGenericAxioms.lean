@@ -1,21 +1,25 @@
+module
+
 /-
 # Finite stacks, cycle popping, loop erasure and independent-cell masses
 
 Axiom reports for principal reusable results, complementing the complete
 library declaration and generated-constant census.
 -/
-import LatticeProb.Combinatorics.LoopErasure.Basic
-import LatticeProb.Graph.CyclePopping.Basic
-import LatticeProb.Graph.TreeOrientation
-import LatticeProb.Prob.CountablePartition
-import LatticeProb.Prob.FiniteCellFactorization
-import LatticeProb.Prob.FiniteOutputNormalization
-import LatticeProb.Prob.IidBlocks
-import LatticeProb.Combinatorics.LoopErasure.Composition
-import LatticeProb.Prob.AdaptiveReads
-import LatticeProb.Graph.CyclePopping.Trace
-import LatticeProb.Prob.CellTranscripts
-import LatticeProb.Graph.CyclePopping.Erasure
+public import LatticeProb.Combinatorics.LoopErasure.Basic
+public import LatticeProb.Graph.CyclePopping.Basic
+public import LatticeProb.Graph.TreeOrientation
+public import LatticeProb.Prob.CountablePartition
+public import LatticeProb.Prob.FiniteCellFactorization
+public import LatticeProb.Prob.FiniteOutputNormalization
+public import LatticeProb.Prob.IidBlocks
+public import LatticeProb.Combinatorics.LoopErasure.Composition
+public import LatticeProb.Prob.AdaptiveReads
+public import LatticeProb.Graph.CyclePopping.Trace
+public import LatticeProb.Prob.CellTranscripts
+public import LatticeProb.Graph.CyclePopping.Erasure
+
+@[expose] public section
 
 #print axioms LatticeProb.Graph.adj_eq_snd_or_eq_snd
 #print axioms LatticeProb.Prob.FiniteCellFactorization.measure_event_inter_values

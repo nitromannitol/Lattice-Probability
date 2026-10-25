@@ -1,13 +1,17 @@
+module
+
 /-
 All complementary minors of a copied-graph Laplacian count component-matching
 forests. Cauchy–Binet separates the selections; integer incidence vanishing
 removes nonforests, paired incidence signs evaluate forests, and the unique
 root matching partitions the selections into exact permutation fibers.
 -/
-import LatticeProb.LinearAlgebra.Matrix.CauchyBinet
-import LatticeProb.Graph.CopiedGraph.IncidenceConverse
-import LatticeProb.Graph.CopiedGraph.PairedIncidenceSign
-import LatticeProb.Graph.CopiedGraph.RootedForestCounting
+public import LatticeProb.LinearAlgebra.Matrix.CauchyBinet
+public import LatticeProb.Graph.CopiedGraph.IncidenceConverse
+public import LatticeProb.Graph.CopiedGraph.PairedIncidenceSign
+public import LatticeProb.Graph.CopiedGraph.RootedForestCounting
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical BigOperators

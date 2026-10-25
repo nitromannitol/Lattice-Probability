@@ -1,15 +1,19 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/BrownianFiniteExit.lean.
 -/
 
-import LatticeProb.Prob.BrownianOpenExit
-import LatticeProb.Prob.BrownianExit
-import Mathlib.Analysis.Normed.Group.Bounded
-import Mathlib.MeasureTheory.Measure.MeasureSpace
-import Mathlib.Probability.BrownianMotion.Basic
-import Mathlib.Probability.Distributions.Gaussian.Real
+public import LatticeProb.Prob.BrownianOpenExit
+public import LatticeProb.Prob.BrownianExit
+public import Mathlib.Analysis.Normed.Group.Bounded
+public import Mathlib.MeasureTheory.Measure.MeasureSpace
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
+
+@[expose] public section
 
 /-!
 # Finiteness of the open-set exit time of Brownian motion

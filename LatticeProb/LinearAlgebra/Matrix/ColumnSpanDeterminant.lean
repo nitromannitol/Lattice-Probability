@@ -1,10 +1,14 @@
+module
+
 /-
 Determinant-preserving root-column changes and their actual permutation signs.
 -/
 
-import LatticeProb.LinearAlgebra.Matrix.RootColumnExpansion
-import Mathlib.LinearAlgebra.Matrix.ToLin
-import Mathlib.Data.Matrix.ColumnRowPartitioned
+public import LatticeProb.LinearAlgebra.Matrix.RootColumnExpansion
+public import Mathlib.LinearAlgebra.Matrix.ToLin
+public import Mathlib.Data.Matrix.ColumnRowPartitioned
+
+@[expose] public section
 
 
 

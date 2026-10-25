@@ -1,3 +1,5 @@
+module
+
 /-
 Small `Real.rpow`/floor/absolute-value arithmetic facts used throughout the Kolmogorov-Chentsov
 moment chain: bounding a sum's `p`-th power by cardinality times the sum of `p`-th powers
@@ -11,7 +13,9 @@ through a moment bound (`rpow_neg_half_rpow_half`, `rpow_quarter_mul_rpow_neg_qu
 (`toNat_cast_real`).  Every statement is for abstract reals, sequences, or finite sets: none
 depends on a particular choice of random field.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

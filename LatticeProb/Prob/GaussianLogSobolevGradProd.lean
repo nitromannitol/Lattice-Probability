@@ -1,3 +1,5 @@
+module
+
 /-
 # The Γ-form product step is the one-step tensorization
 
@@ -15,7 +17,9 @@ general-`n` chain is `GaussianLogSobolevGrad 1` together with the one-step tenso
   `GradProdStep`;
 * `gaussianLogSobolevGradProdStep_iff_tensorStep` — the equivalence for fixed `Grad 1`.
 -/
-import LatticeProb.Prob.GaussianLogSobolevGradTensorProved
+public import LatticeProb.Prob.GaussianLogSobolevGradTensorProved
+
+@[expose] public section
 
 noncomputable section
 

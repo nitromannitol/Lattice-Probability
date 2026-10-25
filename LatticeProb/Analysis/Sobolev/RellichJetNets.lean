@@ -1,7 +1,11 @@
-import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
-import Mathlib.LinearAlgebra.Multilinear.FiniteDimensional
-import Mathlib.Analysis.Calculus.MeanValue
-import LatticeProb.Analysis.Sobolev.RellichNet
+module
+
+public import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
+public import Mathlib.LinearAlgebra.Multilinear.FiniteDimensional
+public import Mathlib.Analysis.Calculus.MeanValue
+public import LatticeProb.Analysis.Sobolev.RellichNet
+
+@[expose] public section
 
 /-! # Finite nets of simultaneous derivatives on a common compact support
 

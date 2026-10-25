@@ -1,11 +1,15 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/FiniteDirichlet.lean.
 -/
-import LatticeProb.Network.HarmonicAlgebra
-import Mathlib.Combinatorics.SimpleGraph.Hasse
-import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+public import LatticeProb.Network.HarmonicAlgebra
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
+public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+
+@[expose] public section
 
 /-!
 # The Dirichlet problem on a locally finite network

@@ -1,6 +1,10 @@
-import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.Probability.Distributions.Gaussian.Multivariate
-import Mathlib.Probability.Distributions.Gaussian.Real
+module
+
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+public import Mathlib.Probability.Distributions.Gaussian.Real
+
+@[expose] public section
 
 /-!
 # The standard Gaussian on a Euclidean space in coordinates

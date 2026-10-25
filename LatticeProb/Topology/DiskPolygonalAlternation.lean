@@ -1,3 +1,5 @@
+module
+
 /-
 # Alternation of original circle endpoints for polygonal crosscuts
 
@@ -7,7 +9,9 @@ intervals at opposite parities. Constancy along an avoiding second disk path
 then contradicts its alternating original endpoints. The wraparound interval
 is retained using the literal period `2π`.
 -/
-import LatticeProb.Topology.DiskRadialCrosscut
+public import LatticeProb.Topology.DiskRadialCrosscut
+
+@[expose] public section
 
 
 

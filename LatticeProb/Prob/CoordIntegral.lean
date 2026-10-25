@@ -1,3 +1,5 @@
+module
+
 /-
 One coordinate of an infinite product against the rest, for a general function
 of that coordinate.
@@ -9,7 +11,9 @@ increment needs the same factorization against an arbitrary function of the
 coordinate, and that is what these two lemmas are.  Nothing here is special to
 the lattice.
 -/
-import LatticeProb.Prob.Coordinate
+public import LatticeProb.Prob.Coordinate
+
+@[expose] public section
 
 noncomputable section
 

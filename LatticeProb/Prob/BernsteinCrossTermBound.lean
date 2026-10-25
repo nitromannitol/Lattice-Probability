@@ -1,3 +1,5 @@
+module
+
 /-
 # The full maximal-form cross-term bound for the Bernstein/Rosenthal route
 
@@ -28,7 +30,9 @@ Bochner integrals below are integrable by hypothesis, so no integral collapses t
 
 There is no new external input and the file is not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinCrossTerm
+public import LatticeProb.Prob.BernsteinCrossTerm
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

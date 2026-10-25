@@ -1,3 +1,5 @@
+module
+
 /-
 # The sharp band projection and the truncation error it leaves
 
@@ -27,9 +29,11 @@ this is the same `rOut = 2` convention recorded in `lib-bandtrunc-real.md`, and
 it is harmless: the band vanishes on the closed complement `‖ξ‖ ≥ 2Λ`, so no
 boundary/null-set argument is needed.
 -/
-import LatticeProb.Analysis.Sobolev.FejerLimit
-import LatticeProb.Analysis.Sobolev.Truncation
-import LatticeProb.Analysis.Sobolev.Additivity
+public import LatticeProb.Analysis.Sobolev.FejerLimit
+public import LatticeProb.Analysis.Sobolev.Truncation
+public import LatticeProb.Analysis.Sobolev.Additivity
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap

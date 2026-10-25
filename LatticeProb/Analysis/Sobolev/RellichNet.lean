@@ -1,3 +1,5 @@
+module
+
 /-
 # The finite-net step of Rellich–Kondrachov, reduced to its quantitative content
 
@@ -14,8 +16,10 @@ This is the largest sub-lemma of `rkLowFrequencyStatement` that is available
 from the existing truncation and Fourier-decay lemmas; the remaining gap is
 recorded in the docstring of `rk_finite_net_of_Cm_net`.
 -/
-import LatticeProb.Analysis.Sobolev.RellichEstimate
-import LatticeProb.Analysis.Sobolev.Scaling
+public import LatticeProb.Analysis.Sobolev.RellichEstimate
+public import LatticeProb.Analysis.Sobolev.Scaling
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

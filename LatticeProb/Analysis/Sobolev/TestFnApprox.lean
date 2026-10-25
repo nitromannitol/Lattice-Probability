@@ -1,5 +1,9 @@
-import LatticeProb.Analysis.Sobolev.Defs
-import LatticeProb.Analysis.Sobolev.Weight
+module
+
+public import LatticeProb.Analysis.Sobolev.Defs
+public import LatticeProb.Analysis.Sobolev.Weight
+
+@[expose] public section
 
 /-!
 # The support/mollification repair: Peetre's inequality and the bounded multiplier bound

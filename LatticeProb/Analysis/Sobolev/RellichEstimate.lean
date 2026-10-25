@@ -1,3 +1,5 @@
+module
+
 /-
 The quantitative Fourier-decay estimate behind the Rellich–Kondrachov compact
 embedding, and the high-frequency step of the compactness argument.
@@ -19,8 +21,10 @@ compact set whose derivatives up to order `m` are bounded by `1` has
 
 No hypothesis of the paper is assumed here; the two results are unconditional.
 -/
-import LatticeProb.Analysis.Sobolev.Weight
-import LatticeProb.External.RellichKondrachovNegSobolev
+public import LatticeProb.Analysis.Sobolev.Weight
+public import LatticeProb.External.RellichKondrachovNegSobolev
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform Topology Filter

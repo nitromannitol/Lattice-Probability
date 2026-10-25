@@ -1,3 +1,5 @@
+module
+
 /-
 # Alternation of compact connected continua in the round disk
 
@@ -6,8 +8,10 @@ finite polygonal arcs at their original circle endpoints. Prune the first
 finite chain, preserving strict nonendpoint interior. The original-circle
 endpoint parity jump for that chain contradicts the avoiding second disk path.
 -/
-import LatticeProb.Topology.DiskContinuaArcs
-import LatticeProb.Topology.DiskPolygonalAlternation
+public import LatticeProb.Topology.DiskContinuaArcs
+public import LatticeProb.Topology.DiskPolygonalAlternation
+
+@[expose] public section
 
 
 

@@ -1,9 +1,13 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/DependentKernelMap.lean and BouRabeeGwynne/DependentKernelMapAE.lean.
 -/
-import Mathlib.Probability.Kernel.Composition.Lemmas
+public import Mathlib.Probability.Kernel.Composition.Lemmas
+
+@[expose] public section
 
 /-!
 # Pushforwards of composition products along dependent maps

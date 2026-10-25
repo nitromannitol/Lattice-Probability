@@ -1,7 +1,11 @@
-import LatticeProb.Euclidean.Lattice
-import LatticeProb.Euclidean.Cube
-import LatticeProb.Euclidean.Shell
-import LatticeProb.Euclidean.Summability
+module
+
+public import LatticeProb.Euclidean.Lattice
+public import LatticeProb.Euclidean.Cube
+public import LatticeProb.Euclidean.Shell
+public import LatticeProb.Euclidean.Summability
+
+@[expose] public section
 
 /-!
 # Integrals of the critical radial integrand over lattice cube unions

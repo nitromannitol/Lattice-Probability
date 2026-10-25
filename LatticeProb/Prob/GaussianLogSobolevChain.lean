@@ -1,3 +1,5 @@
+module
+
 /-
 # The Gaussian log-Sobolev inequality in every dimension, from the Γ chain
 
@@ -28,7 +30,9 @@ passage is isolated as the named `Prop`
 assembly `GaussianLogSobolevGradProdStep` (the entropy chain rule `entropy_prod_split`, the
 weighted Jensen `norm_sq_integral_le_integral_norm_sq`, and the `piFinSuccAbove` transport).
 -/
-import LatticeProb.Prob.GaussianLogSobolevGradTensorProved
+public import LatticeProb.Prob.GaussianLogSobolevGradTensorProved
+
+@[expose] public section
 
 noncomputable section
 

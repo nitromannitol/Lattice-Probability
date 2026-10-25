@@ -1,3 +1,5 @@
+module
+
 /-
 # Geometric local sides of a polygonal edge
 
@@ -7,8 +9,10 @@ avoids the other edges and has constant crossing parity. The proved ray flip
 places their parities on opposite values. Consequently any preconnected set
 joining points in the two halfballs intersects the original closed edge chain.
 -/
-import LatticeProb.Topology.PolygonalParitySeparation
-import Mathlib.Analysis.Convex.PathConnected
+public import LatticeProb.Topology.PolygonalParitySeparation
+public import Mathlib.Analysis.Convex.PathConnected
+
+@[expose] public section
 
 
 

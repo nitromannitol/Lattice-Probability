@@ -1,3 +1,5 @@
+module
+
 /-
 Cramér-Wold, for a triangular array whose members may live on different probability spaces: a
 `Fin m → ℝ`-valued sequence `X i : Ω i → Fin m → ℝ` converges in distribution to `Z` as soon as
@@ -17,7 +19,9 @@ linear equivalence `EuclideanSpace.equiv`.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped RealInnerProductSpace

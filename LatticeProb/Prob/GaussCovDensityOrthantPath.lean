@@ -1,3 +1,5 @@
+module
+
 /-
 # Normal comparison (Li--Shao): differentiating the orthant probability along the smart path
 
@@ -25,11 +27,13 @@ with `p_t = covDensity S_t`.
   `hasDerivAt_orthant_covDensity_path`) and `continuousOn_of_dominated` (continuity,
   `continuousOn_orthant_covDensity_path`) for the measure `volume.restrict (Set.Iic b)`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityPath
-import LatticeProb.Prob.GaussCovDensityMajorant
-import LatticeProb.Prob.GaussCovDensityIntegrable
-import LatticeProb.Prob.NormalComparisonPath
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityPath
+public import LatticeProb.Prob.GaussCovDensityMajorant
+public import LatticeProb.Prob.GaussCovDensityIntegrable
+public import LatticeProb.Prob.NormalComparisonPath
+
+@[expose] public section
 
 open MeasureTheory Matrix Topology Filter
 

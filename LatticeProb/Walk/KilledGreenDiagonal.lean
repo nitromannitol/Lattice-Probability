@@ -1,4 +1,8 @@
-import LatticeProb.Walk.GreenTwoSided.UpperBound
+module
+
+public import LatticeProb.Walk.GreenTwoSided.UpperBound
+
+@[expose] public section
 
 /-!
 # Diagonal of the killed Green function

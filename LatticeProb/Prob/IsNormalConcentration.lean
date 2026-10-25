@@ -1,3 +1,5 @@
+module
+
 /-
 # Isonormal concentration: Lipschitz preservation and the Fatou limit
 
@@ -22,8 +24,10 @@ theorem at the frozen constant `L` rather than the library's sup-metric `L √n`
 
 No `sorry`, no `axiom`.
 -/
-import LatticeProb.Prob.EfronSteinCountable
-import LatticeProb.Prob.GaussianConcentrationL2
+public import LatticeProb.Prob.EfronSteinCountable
+public import LatticeProb.Prob.GaussianConcentrationL2
+
+@[expose] public section
 
 noncomputable section
 

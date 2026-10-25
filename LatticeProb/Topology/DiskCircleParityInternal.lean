@@ -1,3 +1,5 @@
+module
+
 /-
 # Parity on complementary original circle intervals
 
@@ -11,7 +13,9 @@ completion supply the circle-incidence prerequisite in the consumer below.
 The complementary interval constants are obtained from continuity and
 preconnectedness of the corresponding circle images.
 -/
-import LatticeProb.Topology.DiskCrosscutParityInternal
+public import LatticeProb.Topology.DiskCrosscutParityInternal
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # The regularity bridge for the general-`n` Gaussian log-Sobolev composition
 
@@ -33,7 +35,9 @@ differentiability is in Mathlib in every finite dimension
 (`LipschitzWith.ae_differentiableAt`); what is missing is the Dirichlet-energy
 limit and the convolution machinery for a general positive density.
 -/
-import LatticeProb.Prob.GaussianLogSobolevChain
+public import LatticeProb.Prob.GaussianLogSobolevChain
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # The `H^s`–`H^{−s}` duality bound for smooth compactly supported test functions
 
@@ -13,7 +15,9 @@ the reflected translate `t ↦ ρ (x - t)`, and for a directional derivative
 `ContDiffBump`, centred at an arbitrary point.  The convolution-value pairing is positive;
 the derivative consumer has a nonzero kernel and applies its pairing bound.
 -/
-import LatticeProb.Analysis.Sobolev.DualityAssembly
+public import LatticeProb.Analysis.Sobolev.DualityAssembly
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

@@ -1,8 +1,12 @@
-import LatticeProb.Analysis.Sobolev.RellichJetNets
-import LatticeProb.Analysis.Sobolev.RellichConvolutionJets
-import LatticeProb.Analysis.Sobolev.RellichMollificationClosed
-import LatticeProb.Analysis.Sobolev.Additivity
-import LatticeProb.External.RellichKondrachovNegSobolev
+module
+
+public import LatticeProb.Analysis.Sobolev.RellichJetNets
+public import LatticeProb.Analysis.Sobolev.RellichConvolutionJets
+public import LatticeProb.Analysis.Sobolev.RellichMollificationClosed
+public import LatticeProb.Analysis.Sobolev.Additivity
+public import LatticeProb.External.RellichKondrachovNegSobolev
+
+@[expose] public section
 
 /-! # Rellich finite nets with genuine test-function centres
 

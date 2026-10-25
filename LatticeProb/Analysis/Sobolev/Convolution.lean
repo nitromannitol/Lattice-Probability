@@ -1,7 +1,11 @@
+module
+
 /-
 Convolution and its Fourier transform for real and complex functions.
 -/
-import LatticeProb.Analysis.Sobolev.Defs
+public import LatticeProb.Analysis.Sobolev.Defs
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology

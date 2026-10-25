@@ -1,3 +1,5 @@
+module
+
 /-
 # `PinelisInductionStep` is false as stated
 
@@ -38,7 +40,9 @@ the junk value `0` of the Bochner integral cannot occur.
 
 No `sorry`, no `axiom`.
 -/
-import LatticeProb.Prob.BernsteinInduction
+public import LatticeProb.Prob.BernsteinInduction
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

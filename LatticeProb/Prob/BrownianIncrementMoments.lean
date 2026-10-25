@@ -1,14 +1,18 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/BrownianQuadraticMoments.lean.
 -/
 
-import LatticeProb.Prob.BrownianPathSpace
-import LatticeProb.Prob.BrownianMomentsCore
-import Mathlib.Algebra.Order.Chebyshev
-import Mathlib.Probability.Independence.Integration
-import Mathlib.Probability.Moments.Covariance
+public import LatticeProb.Prob.BrownianPathSpace
+public import LatticeProb.Prob.BrownianMomentsCore
+public import Mathlib.Algebra.Order.Chebyshev
+public import Mathlib.Probability.Independence.Integration
+public import Mathlib.Probability.Moments.Covariance
+
+@[expose] public section
 
 /-!
 # Second and fourth moments of standard Brownian increments

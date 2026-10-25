@@ -1,4 +1,8 @@
-import LatticeProb.Prob.KingmanLinear.Defs
+module
+
+public import LatticeProb.Prob.KingmanLinear.Defs
+
+@[expose] public section
 
 /-!
 # 1. The sets `A_k`

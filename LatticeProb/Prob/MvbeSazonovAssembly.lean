@@ -1,3 +1,5 @@
+module
+
 /-
 # The mvbe Sazonov assembly: the `m^{1/4}` balance and the analytic inputs
 
@@ -19,9 +21,11 @@ remaining C1 pieces:
 
 The two `Prop`s are the remaining analytic content; neither is assumed anywhere as an axiom.
 -/
-import Mathlib
-import LatticeProb.Prob.OrthantSmoothing
-import LatticeProb.Prob.MultivariateEsseenDeconvolution
+public import Mathlib
+public import LatticeProb.Prob.OrthantSmoothing
+public import LatticeProb.Prob.MultivariateEsseenDeconvolution
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal

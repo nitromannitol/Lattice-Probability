@@ -1,10 +1,14 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/SubcouplingCompletion.lean
 -/
-import Mathlib.MeasureTheory.Measure.Prod
-import Mathlib.MeasureTheory.Measure.Sub
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Mathlib.MeasureTheory.Measure.Sub
+
+@[expose] public section
 
 /-!
 # Completing a finite matched coupling by an actual product measure

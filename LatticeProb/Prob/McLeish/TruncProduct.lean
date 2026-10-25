@@ -1,10 +1,14 @@
-import LatticeProb.Prob.McLeish.Truncation
-import LatticeProb.Prob.McLeish.ProductMoment
-import Mathlib.MeasureTheory.Function.L1Space.Integrable
-import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Probability.Martingale.Basic
+module
+
+public import LatticeProb.Prob.McLeish.Truncation
+public import LatticeProb.Prob.McLeish.ProductMoment
+public import Mathlib.MeasureTheory.Function.L1Space.Integrable
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Probability.Martingale.Basic
+
+@[expose] public section
 
 /-!
 # The predictably truncated array satisfies the product-moment hypotheses

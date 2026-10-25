@@ -1,11 +1,15 @@
+module
+
 /-
 # Distinct circle points in one angular turn
 
 The angles are arbitrary real representatives. Only their strict ordering and
 the final wraparound bound are used.
 -/
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.Tactic.Linarith
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Tactic.Linarith
+
+@[expose] public section
 
 
 

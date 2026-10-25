@@ -1,9 +1,13 @@
-import LatticeProb.Prob.BrownianContAll
-import LatticeProb.Prob.BrownianPathSpace
-import LatticeProb.Prob.BrownianPathMap
-import Mathlib.Probability.BrownianMotion.Basic
-import Mathlib.Probability.HasLaw
-import Mathlib.Probability.Independence.Basic
+module
+
+public import LatticeProb.Prob.BrownianContAll
+public import LatticeProb.Prob.BrownianPathSpace
+public import LatticeProb.Prob.BrownianPathMap
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.Independence.Basic
+
+@[expose] public section
 
 /-!
 # Continuous versions of Brownian motion on `ℝ ^ d` and their law on path space

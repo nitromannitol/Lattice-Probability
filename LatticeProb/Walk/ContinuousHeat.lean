@@ -1,10 +1,14 @@
-import Mathlib
-import LatticeProb.Walk.LocalCLT
-import LatticeProb.Walk.FourierRec
-import LatticeProb.Walk.SimpleTransfer
-import LatticeProb.Walk.GreenIdentity
-import LatticeProb.Walk.Ball
-import LatticeProb.Walk.LineKernel
+module
+
+public import Mathlib
+public import LatticeProb.Walk.LocalCLT
+public import LatticeProb.Walk.FourierRec
+public import LatticeProb.Walk.SimpleTransfer
+public import LatticeProb.Walk.GreenIdentity
+public import LatticeProb.Walk.Ball
+public import LatticeProb.Walk.LineKernel
+
+@[expose] public section
 
 /-!
 # The simple random walk on `ℤ^d` in continuous time

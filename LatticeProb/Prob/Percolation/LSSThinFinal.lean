@@ -1,3 +1,5 @@
+module
+
 /-
 # The complete conditional thin-LSS bridge
 
@@ -17,8 +19,10 @@ No domination statement is proved here, no `Prop` is frozen, no rotor file is to
 nothing is claimed unconditionally about `Rotor.External.LSS`.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinOneSite
-import LatticeProb.Prob.Percolation.LSSThinKDependent
+public import LatticeProb.Prob.Percolation.LSSThinOneSite
+public import LatticeProb.Prob.Percolation.LSSThinKDependent
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

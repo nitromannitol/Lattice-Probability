@@ -1,3 +1,5 @@
+module
+
 /- # Berry-Esseen in one dimension for independent non-identical summands
 
 For a finite family of centred probability laws `ν i` on `ℝ` with finite third absolute moments
@@ -10,8 +12,10 @@ normalised theorem `berryEsseen_normalized`.
   law of the sum.
 * `LatticeProb.berryEsseen_oneDim` — the Berry-Esseen inequality in one dimension.
 -/
-import Mathlib
-import LatticeProb.Prob.BerryEsseenNormalizedProved
+public import Mathlib
+public import LatticeProb.Prob.BerryEsseenNormalizedProved
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
@@ -5,10 +7,12 @@ Source: BouRabeeGwynne/IndependentCoordinatePairs.lean, BouRabeeGwynne/BrownianW
 BouRabeeGwynne/BrownianLawUniqueness.lean.
 -/
 
-import LatticeProb.Prob.BrownianPathSpace
-import LatticeProb.Topology.ContinuousMapBorel
-import Mathlib.MeasureTheory.Constructions.Projective
-import Mathlib.Probability.HasLaw
+public import LatticeProb.Prob.BrownianPathSpace
+public import LatticeProb.Topology.ContinuousMapBorel
+public import Mathlib.MeasureTheory.Constructions.Projective
+public import Mathlib.Probability.HasLaw
+
+@[expose] public section
 
 /-!
 # Future increments and uniqueness of the standard Brownian law on path space

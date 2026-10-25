@@ -1,3 +1,5 @@
+module
+
 /-
 # Reducing `GradOneExp` to the Ornstein–Uhlenbeck heat-flow contraction
 
@@ -21,7 +23,9 @@ heat-flow content.  The log-Sobolev inequality follows by letting `t` grow: with
 * `gaussianLogSobolevGrad_of_ouFlow` — the input implies `GaussianLogSobolevGrad 1`;
 * `gaussianLogSobolevGradOneExp_of_ouFlow` — and hence `GaussianLogSobolevGradOneExp`.
 -/
-import LatticeProb.Prob.GaussianLogSobolevGradOneForm
+public import LatticeProb.Prob.GaussianLogSobolevGradOneForm
+
+@[expose] public section
 
 noncomputable section
 

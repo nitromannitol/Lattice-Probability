@@ -1,3 +1,5 @@
+module
+
 /-
 Reading finitely many coordinates of an independent family.
 
@@ -8,7 +10,9 @@ independent family along a finite injective family of indices gives exactly the
 finite product of the corresponding laws.  Nothing here needs the index type to
 be the lattice.
 -/
-import LatticeProb.IID
+public import LatticeProb.IID
+
+@[expose] public section
 
 noncomputable section
 

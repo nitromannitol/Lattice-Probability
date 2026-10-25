@@ -1,3 +1,5 @@
+module
+
 /-
 # Finite polygonal chains and the Lattice-Probability plane
 
@@ -5,8 +7,10 @@ A finite chain gives a polygonal set in the existing library convention: a
 finite union of closed segments. Linear maps also transport chains into that
 convention, including the coordinate-pair to `Fin 2 → ℝ` equivalence.
 -/
-import LatticeProb.Topology.PolygonalChain
-import LatticeProb.Topology.Polygonal
+public import LatticeProb.Topology.PolygonalChain
+public import LatticeProb.Topology.Polygonal
+
+@[expose] public section
 
 
 

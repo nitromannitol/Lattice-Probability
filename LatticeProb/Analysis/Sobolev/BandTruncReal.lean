@@ -1,3 +1,5 @@
+module
+
 /-
 # The real test-function truncation and its Fourier characteristic identity
 
@@ -20,8 +22,10 @@ realness of `bandTrunc (φc)`: see the docstring of `bandProj`.  It needs the
 Fourier transform of a real part / of a conjugation, which Mathlib does not
 provide; the sharp-indicator identity is not stated here.
 -/
-import LatticeProb.Analysis.Sobolev.FrequencyTruncation
-import LatticeProb.Analysis.Sobolev.BandLimited
+public import LatticeProb.Analysis.Sobolev.FrequencyTruncation
+public import LatticeProb.Analysis.Sobolev.BandLimited
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap

@@ -1,11 +1,15 @@
+module
+
 /- Conservation of signed current on each copied tree path.
 All copies retain their original identities; loops and equal terminals are included. -/
-import LatticeProb.Graph.CopiedGraph.IncidentPath
-import LatticeProb.Graph.CopiedGraph.SignedPathTraversal
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Linarith
+public import LatticeProb.Graph.CopiedGraph.IncidentPath
+public import LatticeProb.Graph.CopiedGraph.SignedPathTraversal
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Linarith
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical BigOperators

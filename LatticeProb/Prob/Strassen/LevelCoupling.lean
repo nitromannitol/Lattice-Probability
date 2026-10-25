@@ -1,6 +1,10 @@
-import LatticeProb.Prob.Strassen.HallPoset
-import LatticeProb.Prob.Strassen.Rounding
-import LatticeProb.Prob.Strassen.DiscreteCoupling
+module
+
+public import LatticeProb.Prob.Strassen.HallPoset
+public import LatticeProb.Prob.Strassen.Rounding
+public import LatticeProb.Prob.Strassen.DiscreteCoupling
+
+@[expose] public section
 
 /-!
 # E. The level-`F` approximate coupling

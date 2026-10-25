@@ -1,3 +1,5 @@
+module
+
 /-
 The exponential Efron-Stein inequality itself, and the second-moment integrability
 lemmas it needs, completing `LatticeProb.Prob.EfronStein`.
@@ -12,8 +14,10 @@ lemmas its proof by induction on the coordinates requires.
 
 Moved from Divisible-Sandpile-Percolation, `Sandpile/Support/EfronStein.lean`.
 -/
-import Mathlib
-import LatticeProb.Prob.EfronStein
+public import Mathlib
+public import LatticeProb.Prob.EfronStein
+
+@[expose] public section
 
 open MeasureTheory
 

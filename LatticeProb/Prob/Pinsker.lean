@@ -1,7 +1,11 @@
+module
+
 /-
 Pinsker's inequality from Gibbs' inequality for an exponential tilt and Hoeffding's lemma.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 noncomputable section
 open MeasureTheory ProbabilityTheory InformationTheory
 open scoped ENNReal NNReal

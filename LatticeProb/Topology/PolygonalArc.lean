@@ -1,3 +1,5 @@
+module
+
 /-
 # Injective polygonal arcs inside finite chain traces
 
@@ -6,7 +8,9 @@ paths. Geometric simplicity makes this path injective. Finite loop pruning
 therefore extracts an actual polygonal arc with the original endpoints and
 trace contained in the original chain, without any separation theorem.
 -/
-import LatticeProb.Topology.SimplePolygonalChain
+public import LatticeProb.Topology.SimplePolygonalChain
+
+@[expose] public section
 
 
 

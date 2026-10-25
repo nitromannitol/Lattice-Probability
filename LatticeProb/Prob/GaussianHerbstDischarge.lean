@@ -1,10 +1,14 @@
-import LatticeProb.Prob.GaussLipConcentration
-import LatticeProb.Prob.GaussEuclideanPushforward
-import LatticeProb.Prob.GaussianHerbst
-import LatticeProb.External.GaussianLogSobolev
-import Mathlib.Analysis.Normed.Lp.PiLp
-import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.Probability.Distributions.Gaussian.Multivariate
+module
+
+public import LatticeProb.Prob.GaussLipConcentration
+public import LatticeProb.Prob.GaussEuclideanPushforward
+public import LatticeProb.Prob.GaussianHerbst
+public import LatticeProb.External.GaussianLogSobolev
+public import Mathlib.Analysis.Normed.Lp.PiLp
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+
+@[expose] public section
 
 /-!
 # The Gaussian Herbst bound holds in every dimension

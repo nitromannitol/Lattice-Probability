@@ -1,3 +1,5 @@
+module
+
 /-
 The killed Green function as a voltage, on a graph that need not be connected.
 
@@ -23,7 +25,9 @@ vertex still walks out of a finite set and still has a neighbour.
 The connected statements are corollaries: `hesc` is `hG.preconnected x q` for a
 fixed `q ∉ C`, and `hdeg` is `degree_pos_of_ne hG`.
 -/
-import LatticeProb.Network.KilledGreen
+public import LatticeProb.Network.KilledGreen
+
+@[expose] public section
 
 open Finset
 open scoped ENNReal

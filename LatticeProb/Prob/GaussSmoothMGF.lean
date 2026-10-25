@@ -1,9 +1,13 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: LQGMetric/Gaussian/ConcentrationSmooth.lean.
 -/
-import LatticeProb.Prob.GaussSmoothBdd
+public import LatticeProb.Prob.GaussSmoothBdd
+
+@[expose] public section
 
 /-!
 # Sharp sub-Gaussian MGF bound for smooth bounded functions of a standard Gaussian vector

@@ -1,12 +1,16 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/ContinuousExitProperties.lean.
 -/
 
-import Mathlib.Topology.Order.DenselyOrdered
-import Mathlib.Topology.Order.Monotone
-import Mathlib.Topology.Instances.NNReal.Lemmas
+public import Mathlib.Topology.Order.DenselyOrdered
+public import Mathlib.Topology.Order.Monotone
+public import Mathlib.Topology.Instances.NNReal.Lemmas
+
+@[expose] public section
 
 /-!
 # Exit times of continuous paths from open sets

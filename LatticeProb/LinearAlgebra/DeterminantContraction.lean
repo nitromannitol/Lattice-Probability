@@ -1,3 +1,5 @@
+module
+
 /-
 # Contraction of an appended determinant row
 
@@ -5,7 +7,9 @@ These identities express contraction by a vector in determinant coordinates.
 They apply to arbitrary finite index types, including an empty original minor.
 -/
 
-import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+
+@[expose] public section
 
 
 

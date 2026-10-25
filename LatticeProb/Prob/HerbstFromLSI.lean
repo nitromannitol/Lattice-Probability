@@ -1,3 +1,5 @@
+module
+
 /-
 The Herbst argument: the Gaussian log-Sobolev inequality implies the exponential
 moment bound for a Lipschitz functional.
@@ -19,11 +21,13 @@ the moment generating function `M`.  The integration of that inequality from
 The argument is the classical one of Herbst (1975), as presented in Ledoux,
 *The Concentration of Measure Phenomenon*, Section 5.1.
 -/
-import LatticeProb.External.GaussianLogSobolev
-import LatticeProb.Prob.GaussianConcentration
-import LatticeProb.Prob.ConvexProduct
-import LatticeProb.Prob.ExponentialMoments
-import LatticeProb.Prob.GaussianHerbst
+public import LatticeProb.External.GaussianLogSobolev
+public import LatticeProb.Prob.GaussianConcentration
+public import LatticeProb.Prob.ConvexProduct
+public import LatticeProb.Prob.ExponentialMoments
+public import LatticeProb.Prob.GaussianHerbst
+
+@[expose] public section
 
 noncomputable section
 open Filter MeasureTheory ProbabilityTheory

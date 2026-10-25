@@ -1,3 +1,5 @@
+module
+
 /-
 # The rectangle multiparameter ergodic theorem: the boundary-slab reduction
 
@@ -53,7 +55,9 @@ countable set, the a.e. statement survives the countable intersection of the con
 This shift bookkeeping is not formalized here; the present file reduces the frozen rectangle
 statement to the `0 ≤ a` case and to item 1.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.BoundedErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.BoundedErgodic
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped BigOperators

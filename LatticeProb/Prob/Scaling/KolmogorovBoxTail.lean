@@ -1,3 +1,5 @@
+module
+
 /-
 Generic packaging of the library's own Kolmogorov-Chentsov boundedness theorem
 (`LatticeProb.kolmogorovBoundPi`, from the module `LatticeProb.Prob.KolmogorovBound`) into a
@@ -18,8 +20,10 @@ family `hGoodBound`/`hgoodtail` needs, with no further dyadic chaining construct
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
-import LatticeProb.Prob.KolmogorovBound
+public import Mathlib
+public import LatticeProb.Prob.KolmogorovBound
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ENNReal

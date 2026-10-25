@@ -1,3 +1,5 @@
+module
+
 /-
 Normal comparison: the final bound from supplied endpoint facts.
 
@@ -5,10 +7,12 @@ The remainder-limit theorem is imported from NormalComparisonLimit.
 The retained endpoint form assumes hF0, hlim and hinterp and concludes
 the normal-comparison bound with constant 1/4.
 -/
-import LatticeProb.Prob.NormalComparison
-import LatticeProb.Prob.NormalComparisonCovariance
-import LatticeProb.Prob.NormalComparisonLimit
-import LatticeProb.Prob.NormalComparisonExists
+public import LatticeProb.Prob.NormalComparison
+public import LatticeProb.Prob.NormalComparisonCovariance
+public import LatticeProb.Prob.NormalComparisonLimit
+public import LatticeProb.Prob.NormalComparisonExists
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal Matrix

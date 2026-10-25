@@ -1,3 +1,5 @@
+module
+
 /-
 # The one-step integrated estimate behind `Parking.External.Bernstein`
 
@@ -21,8 +23,10 @@ This is step 1 of the route recorded in `Prob/MartingaleRosenthal.lean.DONE`; th
 remaining assembly (Pinelis's induction over the filtration and the factorial-moment
 clause) is recorded in `scratch/pk/bernstein-route.md`.
 -/
-import LatticeProb.Prob.MartingaleRosenthal
-import LatticeProb.Prob.PowerIneq
+public import LatticeProb.Prob.MartingaleRosenthal
+public import LatticeProb.Prob.PowerIneq
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal

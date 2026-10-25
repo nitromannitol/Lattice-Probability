@@ -1,3 +1,5 @@
+module
+
 /-
 The dimension-four window estimates.
 
@@ -15,7 +17,9 @@ is the one whose direction is easy to get wrong: the correct comparison is
 `1/(k+1) ≤ log(k+1) - log k`, the left endpoint rule, and the factor two is the
 price of reading it at `1/k` instead.
 -/
-import LatticeProb.Walk.VarianceScale
+public import LatticeProb.Walk.VarianceScale
+
+@[expose] public section
 
 noncomputable section
 

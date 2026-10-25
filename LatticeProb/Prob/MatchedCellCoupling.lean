@@ -1,10 +1,14 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/MatchedCellCoupling.lean
 -/
-import LatticeProb.Prob.SubcouplingCompletion
-import Mathlib.Probability.Distributions.Bernoulli
+public import LatticeProb.Prob.SubcouplingCompletion
+public import Mathlib.Probability.Distributions.Bernoulli
+
+@[expose] public section
 
 /-!
 # Actual coupling of the common mass of two measurable cells

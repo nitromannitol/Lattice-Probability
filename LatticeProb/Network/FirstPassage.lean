@@ -1,3 +1,5 @@
+module
+
 /-
 The mean local time is largest at its own base point.
 
@@ -11,9 +13,11 @@ already bounds by `E_y[L_n(y)]`, so no hitting time has to be constructed.
 Combined with reversibility this gives `sup_v g_n(o,v) ≤ g_n(o,o)`, the form the
 Green function is used in.
 -/
-import LatticeProb.Network.Killed
-import LatticeProb.Graph.Green
-import LatticeProb.Graph.Setting
+public import LatticeProb.Network.Killed
+public import LatticeProb.Graph.Green
+public import LatticeProb.Graph.Setting
+
+@[expose] public section
 
 open Finset
 open scoped ENNReal

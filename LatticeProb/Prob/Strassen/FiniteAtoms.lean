@@ -1,9 +1,13 @@
+module
+
 /- # Exact atom marginals of a coupling of finite weighted laws
 
 Disjoint singleton fibers recover both marginals. Finite measure bounds and nonnegative weights then identify their real atom sums.
 -/
 
-import LatticeProb.Prob.Strassen.FiniteLaw
+public import LatticeProb.Prob.Strassen.FiniteLaw
+
+@[expose] public section
 
 
 

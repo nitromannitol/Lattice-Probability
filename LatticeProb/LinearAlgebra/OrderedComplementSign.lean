@@ -1,3 +1,5 @@
+module
+
 /-
 # Signs of increasing complementary orders
 
@@ -6,8 +8,10 @@ increasing roots. The relative sign of two such full orders is the parity
 of the sum of the two root-label sums. Ordered unit-column determinant
 expansion proves the sign without counting inversions explicitly.
 -/
-import LatticeProb.LinearAlgebra.InverseComplementaryMinor
-import LatticeProb.LinearAlgebra.Matrix.RootColumnExpansion
+public import LatticeProb.LinearAlgebra.InverseComplementaryMinor
+public import LatticeProb.LinearAlgebra.Matrix.RootColumnExpansion
+
+@[expose] public section
 
 
 

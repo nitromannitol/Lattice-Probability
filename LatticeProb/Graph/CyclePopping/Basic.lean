@@ -1,12 +1,16 @@
+module
+
 /-
 Finite cycle popping for vertex instruction stacks. Each vertex has its own literal
 natural-number cursor and its own instruction type. Popping advances exactly the vertices
 of one directed cycle. Distinct legal cycles are disjoint, their pops commute, and finite
 legal runs from the same configuration have a common continuation.
 -/
-import Mathlib.Data.Finset.Disjoint
-import Mathlib.Logic.Function.Iterate
-import Mathlib.Logic.Relation
+public import Mathlib.Data.Finset.Disjoint
+public import Mathlib.Logic.Function.Iterate
+public import Mathlib.Logic.Relation
+
+@[expose] public section
 
 /-!
 Finite cycle popping for vertex instruction stacks. Each vertex has its own literal

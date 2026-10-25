@@ -1,3 +1,5 @@
+module
+
 /-
 # Closing two finite polygonal crosscuts for ray parity
 
@@ -7,8 +9,10 @@ with the same endpoints cancels this boundary. Their segment trace is exactly
 the union of the original chain traces when the endpoints differ. Geometric
 simplicity supplies nondegeneracy of every consecutive edge.
 -/
-import LatticeProb.Topology.PolygonalParityCoordinates
-import LatticeProb.Topology.SimplePolygonalChain
+public import LatticeProb.Topology.PolygonalParityCoordinates
+public import LatticeProb.Topology.SimplePolygonalChain
+
+@[expose] public section
 
 
 

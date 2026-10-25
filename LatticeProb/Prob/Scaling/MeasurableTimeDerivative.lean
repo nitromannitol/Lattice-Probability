@@ -1,3 +1,5 @@
+module
+
 /-
 A measurable choice of derivative representative for a family of real functions, built from
 forward difference quotients, agreeing with the classical derivative wherever one exists.
@@ -8,10 +10,12 @@ canonical measurable value even without a sign hypothesis.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.Analysis.Calculus.Deriv.Slope
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
-import Mathlib.MeasureTheory.Constructions.Polish.StronglyMeasurable
+public import Mathlib.Analysis.Calculus.Deriv.Slope
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.MeasureTheory.Constructions.Polish.StronglyMeasurable
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

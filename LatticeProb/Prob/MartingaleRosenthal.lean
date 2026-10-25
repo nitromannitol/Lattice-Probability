@@ -1,3 +1,5 @@
+module
+
 /-
 The conditional second-order step behind the martingale Rosenthal–Burkholder
 inequality.
@@ -20,7 +22,9 @@ The conditional moment generating function that plays the same role in the
 Bernstein (tail) route is `LatticeProb.condExp_exp_le` in `Prob/Freedman.lean`;
 the pointwise input here is `LatticeProb.exists_abs_add_rpow_bound`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal

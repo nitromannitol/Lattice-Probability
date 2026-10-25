@@ -1,3 +1,5 @@
+module
+
 /-
 # Orthogonal annihilation of determinant coefficients
 
@@ -6,8 +8,10 @@ terms from occupied coordinates vanish by repeated rows. CAR then recovers the
 original coefficient vector after creation by a unit orthogonal vector.
 -/
 
-import LatticeProb.LinearAlgebra.DeterminantCreation
-import LatticeProb.LinearAlgebra.FinsetCAR
+public import LatticeProb.LinearAlgebra.DeterminantCreation
+public import LatticeProb.LinearAlgebra.FinsetCAR
+
+@[expose] public section
 
 
 

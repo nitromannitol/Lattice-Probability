@@ -1,3 +1,5 @@
+module
+
 /-
 # Non-identically distributed Berry–Esseen: the product of characteristic functions
 
@@ -15,9 +17,11 @@ window.  The indices with `σ_i² t² > 1` are handled separately: by Lyapunov (
 carry at most `ρ |t|³ ≤ t²/8` of the total variance `t²`, and their factors are only bounded by
 `1`; the remaining indices carry the Gaussian decay used in the exponent.
 -/
-import Mathlib
-import LatticeProb.Prob.BerryEsseenCharFun
-import LatticeProb.Prob.ProdSubProd
+public import Mathlib
+public import LatticeProb.Prob.BerryEsseenCharFun
+public import LatticeProb.Prob.ProdSubProd
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

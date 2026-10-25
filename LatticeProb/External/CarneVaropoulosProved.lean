@@ -1,5 +1,9 @@
-import LatticeProb.External.CarneVaropoulos
-import LatticeProb.Graph.CarneVaropoulos
+module
+
+public import LatticeProb.External.CarneVaropoulos
+public import LatticeProb.Graph.CarneVaropoulos
+
+@[expose] public section
 
 /-!
 # The Carne–Varopoulos bound, proved

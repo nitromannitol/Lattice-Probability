@@ -1,15 +1,19 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Sources: BouRabeeGwynne/BrownianMoments.lean, BouRabeeGwynne/GaussianIncrementBounds.lean.
 -/
 
-import Mathlib.Probability.BrownianMotion.Basic
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Probability.Moments.MGFAnalytic
-import Mathlib.Probability.Moments.IntegrableExpMul
-import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
-import Mathlib.Tactic.Ring
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Probability.Moments.MGFAnalytic
+public import Mathlib.Probability.Moments.IntegrableExpMul
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 /-!
 # Exact fourth moments of Gaussian and Brownian increments

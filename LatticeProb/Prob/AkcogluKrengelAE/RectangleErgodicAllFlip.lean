@@ -1,3 +1,5 @@
+module
+
 /-
 # Reflected actions and the arbitrary-anchor rectangle theorem
 
@@ -7,7 +9,9 @@ invariant sets — no invertibility of the maps `τ z` is used.  This lets the a
 rectangle theorem (`RectangleErgodicAll`) be reduced to the `0 ≤ a` one (`RectangleErgodic`) by
 reflecting the coordinates.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Set Finset
 open scoped BigOperators

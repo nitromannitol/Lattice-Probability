@@ -1,3 +1,5 @@
+module
+
 /-
 # Polygonal approximation of arbitrary disk continua
 
@@ -5,10 +7,12 @@ The disk is the closed Euclidean disk given by the sum of the coordinate squares
 regardless of the ambient product norm. Inward scaling places both continua in
 its open interior, where disjoint finite polygonal connections can be constructed.
 -/
-import LatticeProb.Topology.PolygonalApproximation
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Ring
+public import LatticeProb.Topology.PolygonalApproximation
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 
 

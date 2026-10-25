@@ -1,3 +1,5 @@
+module
+
 /-
 The l2-versus-sup transport step for the Gaussian Herbst input, and the
 `Fin n` Gaussian concentration in the l2 (Cameron–Martin) form.
@@ -16,8 +18,10 @@ exponent.  The exact frozen constant `L` is not reachable this way; this module
 proves the closest available reduction, together with the deterministic
 `l2`-versus-sup comparison it rests on.
 -/
-import LatticeProb.Prob.GaussianHerbst
-import LatticeProb.Gauss.Coords
+public import LatticeProb.Prob.GaussianHerbst
+public import LatticeProb.Gauss.Coords
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal

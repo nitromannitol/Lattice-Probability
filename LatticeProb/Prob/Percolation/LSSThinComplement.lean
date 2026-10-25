@@ -1,3 +1,5 @@
+module
+
 /-
 # The thin-form complement bridge for the Liggett--Schonmann--Stacey input
 
@@ -29,9 +31,11 @@ parameter arithmetic is `1 - 7/8 = 1/8`.  The module proves every deterministic 
 No `Prop` is frozen, no cited statement is assumed, and `Rotor.External.LSS` is not claimed.
 -/
 
-import LatticeProb.Prob.Percolation.BondPercolation
-import LatticeProb.Prob.Strassen.Defs
-import LatticeProb.Site
+public import LatticeProb.Prob.Percolation.BondPercolation
+public import LatticeProb.Prob.Strassen.Defs
+public import LatticeProb.Site
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

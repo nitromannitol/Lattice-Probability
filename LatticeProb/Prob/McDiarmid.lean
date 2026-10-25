@@ -1,3 +1,5 @@
+module
+
 /-
 McDiarmid's bounded-differences inequality for a finite product of probability spaces.
 
@@ -15,7 +17,9 @@ The route tensorizes by marginals instead of building a martingale. `rmarg μ s 
 `HasSubgaussianMGF.measure_ge_le` finishes.
 
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

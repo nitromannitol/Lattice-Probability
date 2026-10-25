@@ -1,3 +1,5 @@
+module
+
 /-
 # The conditional mgf product bound for a martingale filtration
 
@@ -14,7 +16,9 @@ factor by `E[e^{λ ξ_{n+1}} | F n] ≤ c_{n+1}`.  This file is that lemma.
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinFactorialFinal
+public import LatticeProb.Prob.BernsteinFactorialFinal
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

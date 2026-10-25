@@ -1,3 +1,5 @@
+module
+
 /-
 # Li--Shao normal comparison: the mixed-derivative orthant integral in an arbitrary pair of
 coordinates (route item 4)
@@ -25,9 +27,11 @@ pair `i ≠ j` of coordinates.  This file moves `(i, j)` to `(0, 1)` by a coordi
   `p' (Fin.cons (b' 0) (Fin.cons (b' 1) x'')) = p (pairCorner σ b x'')` on the right, and the
   final statement `exists_perm_integral_Iic_mixed_deriv` chooses `σ` for a given pair `i ≠ j`.
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparisonOrthantMixed
-import LatticeProb.Prob.NormalComparisonOrthantPerm
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonOrthantMixed
+public import LatticeProb.Prob.NormalComparisonOrthantPerm
+
+@[expose] public section
 
 open MeasureTheory
 

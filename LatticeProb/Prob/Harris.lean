@@ -1,13 +1,17 @@
+module
+
 /-
 Adapted from https://github.com/anthropics/formal-math, percolation subdirectory,
 commit 795efb86, file percolation/Percolation/Literature/HarrisInequality.lean,
 used under the Apache License 2.0.  Namespaces have been changed to `LatticeProb`
 and the percolation-specific commentary removed; the statements are unchanged.
 -/
-import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.MeasureTheory.Measure.SeparableMeasure
-import Mathlib.Order.PropInstances
-import Mathlib.Probability.ProductMeasure
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.MeasureTheory.Measure.SeparableMeasure
+public import Mathlib.Order.PropInstances
+public import Mathlib.Probability.ProductMeasure
+
+@[expose] public section
 
 /-!
 # The Harris inequality on infinite product spaces

@@ -1,3 +1,5 @@
+module
+
 /-
 # The orthant smoothing kernel: the Gaussian-smoothed orthant indicator (mvbe C1)
 
@@ -14,9 +16,11 @@ orthant of `ℝ^m` is not an integrable difference of boxes when `m > 1`, so the
 These are the objects the C1 smoothing inequality convolves with.  The remaining analytic input is
 the Fourier transform of `orthantSmooth` — a product of smoothed half-line transforms.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityScalar
-import LatticeProb.Prob.MultivariateSmoothing
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityScalar
+public import LatticeProb.Prob.MultivariateSmoothing
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal

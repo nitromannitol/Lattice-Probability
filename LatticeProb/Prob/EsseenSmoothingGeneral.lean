@@ -1,3 +1,5 @@
+module
+
 /-
 # Esseen's smoothing inequality for a general target with a Lipschitz distribution function
 
@@ -20,8 +22,10 @@ The proof is the same three-ingredient combination as there — the deconvolutio
 `gaussianReal_Iic_lipschitz` replaced by the hypothesis `hG`.  The constants combine to
 `2 B + 16 a m`.
 -/
-import Mathlib
-import LatticeProb.Prob.EsseenSmoothing
+public import Mathlib
+public import LatticeProb.Prob.EsseenSmoothing
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal

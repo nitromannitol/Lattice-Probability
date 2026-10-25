@@ -1,4 +1,8 @@
-import LatticeProb.Walk.BallGreenBounds
+module
+
+public import LatticeProb.Walk.BallGreenBounds
+
+@[expose] public section
 
 /-!
 # The dimension-four ball-killed Green estimates, as a library proposition

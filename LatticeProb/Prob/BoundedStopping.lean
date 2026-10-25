@@ -1,16 +1,20 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: ReflectedGMS/Limit/{FiniteStopping,StoppingApproximation,BoundedStopping}.lean.
 -/
-import Mathlib.Probability.Martingale.OptionalSampling
-import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
-import Mathlib.Probability.Process.Stopping
-import Mathlib.Algebra.Order.Floor.Semiring
-import Mathlib.Algebra.Order.Nonneg.Floor
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.Topology.Order.LeftRight
-import LatticeProb.Prob.StoppingDyadic
+public import Mathlib.Probability.Martingale.OptionalSampling
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
+public import Mathlib.Probability.Process.Stopping
+public import Mathlib.Algebra.Order.Floor.Semiring
+public import Mathlib.Algebra.Order.Nonneg.Floor
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Topology.Order.LeftRight
+public import LatticeProb.Prob.StoppingDyadic
+
+@[expose] public section
 
 /-!
 Optional stopping at finitely valued stopping times on actual nonnegative-real

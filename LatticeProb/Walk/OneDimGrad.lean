@@ -1,3 +1,5 @@
+module
+
 /-
 The one-dimensional total-variation gradient of the simple random walk kernel.
 
@@ -13,10 +15,12 @@ between `k` and `k+2` is HALF the difference at time `m` between `k-1` and
 `k+3`, and two applications of the inductive hypothesis close it, with the
 symmetry of the kernel covering the one case `k = 0` where `k - 1` is negative.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWDecomp
-import LatticeProb.Walk.SRWSup
-import LatticeProb.Walk.SRWDiag
+public import Mathlib
+public import LatticeProb.Walk.SRWDecomp
+public import LatticeProb.Walk.SRWSup
+public import LatticeProb.Walk.SRWDiag
+
+@[expose] public section
 
 noncomputable section
 

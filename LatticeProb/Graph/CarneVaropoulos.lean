@@ -1,8 +1,12 @@
-import Mathlib
-import LatticeProb.Graph.ChebyshevWalk
-import LatticeProb.Graph.ExitTime
-import LatticeProb.Network.Killed
-import LatticeProb.Graph.Reach
+module
+
+public import Mathlib
+public import LatticeProb.Graph.ChebyshevWalk
+public import LatticeProb.Graph.ExitTime
+public import LatticeProb.Network.Killed
+public import LatticeProb.Graph.Reach
+
+@[expose] public section
 
 /-!
 # The Carne–Varopoulos bound

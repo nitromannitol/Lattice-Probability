@@ -1,12 +1,16 @@
+module
+
 /-
 Normal comparison: the density derivative from an affine-matrix derivative.
 
 The affine smart-path identity is imported. The retained theorem applies
 the explicit matrix-direction derivative hypothesis hadd to the smart path.
 -/
-import LatticeProb.Prob.NormalComparisonBoundary
-import LatticeProb.Prob.NormalComparisonCovariance
-import LatticeProb.Prob.GaussCovDensityOrthantPath
+public import LatticeProb.Prob.NormalComparisonBoundary
+public import LatticeProb.Prob.NormalComparisonCovariance
+public import LatticeProb.Prob.GaussCovDensityOrthantPath
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

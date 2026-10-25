@@ -1,3 +1,5 @@
+module
+
 /-
 The Gaussian upper bound on the simple random walk kernel.
 
@@ -10,11 +12,13 @@ schedule average, and what is left is the average of `∏_i (N_i+1)^{-1/2}`, whi
 is of order `r^{-d/2}`.  The bound is in the `ℓ¹` norm, hence stronger than the
 usual Euclidean form.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWGauss
-import LatticeProb.Walk.SRWDecomp
-import LatticeProb.Walk.SRWSup
-import LatticeProb.Walk.S1Gauss
+public import Mathlib
+public import LatticeProb.Walk.SRWGauss
+public import LatticeProb.Walk.SRWDecomp
+public import LatticeProb.Walk.SRWSup
+public import LatticeProb.Walk.S1Gauss
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

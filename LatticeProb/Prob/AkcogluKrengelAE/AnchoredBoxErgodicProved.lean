@@ -1,3 +1,5 @@
+module
+
 /-
 # The anchored-box ergodic theorem: the invariance identification
 
@@ -21,7 +23,9 @@ statement is kept as the `Prop` `AnchoredBoxLimitExists` here so that this file 
 `RectangleErgodic` (the box-iteration module's build being out of sync on the shared checkout);
 it is exactly the conclusion of `exists_ae_tendsto_anchoredBox_with_integral`.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped BigOperators

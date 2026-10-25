@@ -1,8 +1,12 @@
-import LatticeProb.Prob.BrownianExit
-import LatticeProb.Prob.BrownianPathMap
-import LatticeProb.Prob.BrownianPathSpace
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Topology.CompactOpen
+module
+
+public import LatticeProb.Prob.BrownianExit
+public import LatticeProb.Prob.BrownianPathMap
+public import LatticeProb.Prob.BrownianPathSpace
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Topology.CompactOpen
+
+@[expose] public section
 
 /-!
 # Exit position of a Brownian motion, read on path space

@@ -1,12 +1,16 @@
+module
+
 /-
 Adapted from Mathlib's `Mathlib/MeasureTheory/Constructions/BorelSpace/ContinuousMap.lean` (commit a4c8ef0a), which is not in the Mathlib version LP pins.
 Copyright (c) 2025 Etienne Marion. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Etienne Marion, Rémy Degenne
 -/
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-import Mathlib.Topology.CompactOpen
-import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.Topology.CompactOpen
+public import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+
+@[expose] public section
 
 /-!
 # A measurable space structure on the type of continuous maps

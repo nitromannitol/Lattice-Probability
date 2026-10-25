@@ -1,3 +1,5 @@
+module
+
 /-
 # Normal comparison (Li--Shao) for the multivariate Gaussian: elementary steps
 
@@ -33,8 +35,10 @@ that produces the exponential factor).
 With items 1, 3, 4, 5 and 7, the interpolation `∫_0^1 deriv F t dt` plus the two
 real inequalities proved here closes the Li--Shao bound.
 -/
-import LatticeProb.Gauss.MultivariateDensity
-import LatticeProb.Prob.GaussDensity
+public import LatticeProb.Gauss.MultivariateDensity
+public import LatticeProb.Prob.GaussDensity
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal MatrixOrder

@@ -1,3 +1,5 @@
+module
+
 /-
 # The thin-form domination statement in the consumer shape
 
@@ -17,7 +19,9 @@ The dense half is an explicit hypothesis; no domination statement is proved here
 frozen and nothing is claimed unconditionally about `Rotor.External.LSS`.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinPlanar
+public import LatticeProb.Prob.Percolation.LSSThinPlanar
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 The orthant bound for a Gaussian with nearly isotropic covariance.
 
@@ -8,8 +10,10 @@ and `1+δ` is the image of the standard Gaussian under a linear map `A` with
 `1+δ`, and integrating that comparison over an orthant gives the persistence
 bound `P(G_j ≤ η for all j) ≤ [√((1+δ)/(1-δ)) Φ(η/√(1+δ))]^m`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussDensity
+public import Mathlib
+public import LatticeProb.Prob.GaussDensity
+
+@[expose] public section
 
 noncomputable section
 

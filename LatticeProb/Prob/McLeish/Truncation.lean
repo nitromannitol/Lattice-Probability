@@ -1,8 +1,12 @@
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
-import Mathlib.MeasureTheory.Function.L1Space.Integrable
-import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
-import Mathlib.Probability.Martingale.Basic
+module
+
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
+public import Mathlib.MeasureTheory.Function.L1Space.Integrable
+public import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
+public import Mathlib.Probability.Martingale.Basic
+
+@[expose] public section
 
 /-!
 # Predictable truncation of a martingale difference array

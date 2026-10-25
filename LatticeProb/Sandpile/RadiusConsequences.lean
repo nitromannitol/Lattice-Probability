@@ -1,5 +1,9 @@
-import LatticeProb.External.FeyDenBoerRedigCubicalCluster
-import LatticeProb.External.FeyLevinePeresRadius
+module
+
+public import LatticeProb.External.FeyDenBoerRedigCubicalCluster
+public import LatticeProb.External.FeyLevinePeresRadius
+
+@[expose] public section
 
 /-!
 # Radius consequences for the parallel toppling odometer

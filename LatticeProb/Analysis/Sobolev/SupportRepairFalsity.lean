@@ -1,3 +1,5 @@
+module
+
 /-
 # The falsity of the unrestricted low-frequency support repair: the analytic core
 
@@ -26,11 +28,13 @@ of the Fourier transform of a translated projection through `fourier_bandProj` a
 route is *not* enough: a test function on `D` may carry an arbitrarily large `L¹` norm and so can
 match the projection locally; it is the global oscillation of the translate that defeats the net.
 -/
-import LatticeProb.Analysis.Sobolev.FejerLimit
-import LatticeProb.Analysis.Sobolev.Scaling
-import LatticeProb.Analysis.Sobolev.TranslationContinuity
-import Mathlib.Analysis.Fourier.RiemannLebesgueLemma
-import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+public import LatticeProb.Analysis.Sobolev.FejerLimit
+public import LatticeProb.Analysis.Sobolev.Scaling
+public import LatticeProb.Analysis.Sobolev.TranslationContinuity
+public import Mathlib.Analysis.Fourier.RiemannLebesgueLemma
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology SchwartzMap

@@ -1,7 +1,11 @@
-import Mathlib
-import LatticeProb.Walk.PairedMultiplier
-import LatticeProb.Walk.PairedOffIntegral
-import LatticeProb.Walk.PairedGaussMoments
+module
+
+public import Mathlib
+public import LatticeProb.Walk.PairedMultiplier
+public import LatticeProb.Walk.PairedOffIntegral
+public import LatticeProb.Walk.PairedGaussMoments
+
+@[expose] public section
 
 /-!
 # The local central limit theorem on `ℤ^d`

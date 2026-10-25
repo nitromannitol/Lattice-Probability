@@ -1,11 +1,15 @@
-import LatticeProb.Prob.McLeish.Remainder
-import LatticeProb.Prob.McLeish.Truncation
-import LatticeProb.Prob.McLeish.ProductMoment
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Analysis.Complex.Norm
-import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
-import Mathlib.Topology.Order.Basic
+module
+
+public import LatticeProb.Prob.McLeish.Remainder
+public import LatticeProb.Prob.McLeish.Truncation
+public import LatticeProb.Prob.McLeish.ProductMoment
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Analysis.Complex.Norm
+public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
+public import Mathlib.Topology.Order.Basic
+
+@[expose] public section
 
 /-!
 # Convergence in measure of the normalised exponential ratio

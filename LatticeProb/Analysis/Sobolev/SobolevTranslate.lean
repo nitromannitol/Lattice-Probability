@@ -1,3 +1,5 @@
+module
+
 /-
 # Translation invariance of the Fourier-side Sobolev norm
 
@@ -10,7 +12,9 @@ classical Fréchet–Kolmogorov proof of `FrechetKolmogorovH`
 `ρ_ε * f − f = ∫ ρ_ε(y) (f(·−y) − f) dy` is bounded in `H^s` by the
 supremum of the translated differences.
 -/
-import LatticeProb.Analysis.Sobolev.TranslationBound
+public import LatticeProb.Analysis.Sobolev.TranslationBound
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform Topology

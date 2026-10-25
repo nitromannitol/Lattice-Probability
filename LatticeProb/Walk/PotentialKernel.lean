@@ -1,8 +1,12 @@
-import Mathlib
-import LatticeProb.Walk.PotentialKernelFourier
-import LatticeProb.Walk.GaussTimeIntegral
-import LatticeProb.Walk.LogTimeIntegral
-import LatticeProb.Walk.SRWSup
+module
+
+public import Mathlib
+public import LatticeProb.Walk.PotentialKernelFourier
+public import LatticeProb.Walk.GaussTimeIntegral
+public import LatticeProb.Walk.LogTimeIntegral
+public import LatticeProb.Walk.SRWSup
+
+@[expose] public section
 
 /-!
 # The planar potential kernel

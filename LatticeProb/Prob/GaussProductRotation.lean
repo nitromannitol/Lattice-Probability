@@ -1,17 +1,21 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: LQGDimension/Gaussian/Concentration.lean (section Rotation).
 -/
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.InnerProductSpace.ProdL2
-import Mathlib.Analysis.Normed.Lp.ProdLp
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
-import Mathlib.Probability.Distributions.Gaussian.Multivariate
-import Mathlib.Tactic.FunProp
-import Mathlib.Tactic.LinearCombination
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.InnerProductSpace.ProdL2
+public import Mathlib.Analysis.Normed.Lp.ProdLp
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+public import Mathlib.Tactic.FunProp
+public import Mathlib.Tactic.LinearCombination
+
+@[expose] public section
 
 /-!
 # Rotations of a product of two standard Gaussian measures

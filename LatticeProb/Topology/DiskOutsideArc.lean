@@ -1,3 +1,5 @@
+module
+
 /-
 # Injective outside completions of disk paths
 
@@ -6,8 +8,10 @@ finite segment path with the same original circle endpoints. Its trace meets
 any disk path between these endpoints exactly at the endpoints. If a second
 disk path is disjoint from the first, it also avoids the outside completion.
 -/
-import LatticeProb.Topology.DiskOutsideCompletion
-import LatticeProb.Topology.PolygonalArc
+public import LatticeProb.Topology.DiskOutsideCompletion
+public import LatticeProb.Topology.PolygonalArc
+
+@[expose] public section
 
 
 

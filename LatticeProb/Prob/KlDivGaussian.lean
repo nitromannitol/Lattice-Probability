@@ -1,3 +1,5 @@
+module
+
 /-
 The relative entropy between two Gaussians of a common variance.
 
@@ -6,7 +8,9 @@ entropy between two Gaussians.  The one-dimensional value is `m²/(2v)` for mean
 `0` and `m` and variance `v`; the finite product form is in
 `LatticeProb/Prob/KlDivGaussianPi.lean`.
 -/
-import LatticeProb.Prob.KlDivGaussianAux
+public import LatticeProb.Prob.KlDivGaussianAux
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal

@@ -1,9 +1,13 @@
+module
+
 /- Locally uniform limits of time quotients are derivatives of their primitives.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.TimeDifferenceIntegral
-import Mathlib.Analysis.Calculus.Deriv.Slope
+public import LatticeProb.Prob.Scaling.TimeDifferenceIntegral
+public import Mathlib.Analysis.Calculus.Deriv.Slope
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology
 

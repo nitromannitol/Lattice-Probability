@@ -1,3 +1,5 @@
+module
+
 /-
 # The `n`-dimensional Ornstein–Uhlenbeck layer for the Gaussian log-Sobolev route
 
@@ -24,7 +26,9 @@ general case is the single named open input `OUHeatEquationN`.
 
 Nothing is conditional on `sorry`; `OUHeatEquationN` is a named `Prop`, never an axiom.
 -/
-import LatticeProb.Prob.GaussianLogSobolevOU
+public import LatticeProb.Prob.GaussianLogSobolevOU
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal

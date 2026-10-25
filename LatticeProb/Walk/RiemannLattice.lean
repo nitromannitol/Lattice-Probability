@@ -1,3 +1,5 @@
+module
+
 /-
 A multi-dimensional Riemann-sum-to-integral limit: for a continuous compactly supported
 function `f : (Fin d → ℝ) → ℝ`, the discrete lattice sum `∑_y f(y/R)` over `y : Site d`,
@@ -24,8 +26,10 @@ a continuum test function.
 
 Moved from Parking-Sharpness (`Parking/Support/RiemannLattice.lean`).
 -/
-import LatticeProb.ParticleHoleLemmas
-import Mathlib
+public import LatticeProb.ParticleHoleLemmas
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ENNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 # The Fejér side condition: `m · 𝓕 φ` and its transform are integrable
 
@@ -15,8 +17,10 @@ This finishes the second side condition of the smoothed Fejér route started in
 
 The Fejér limit `m → 1_{‖ξ‖ ≤ Λ}` and the boundary sphere stay out of scope.
 -/
-import LatticeProb.Analysis.Sobolev.FejerSideCondition
-import LatticeProb.Analysis.Sobolev.FrequencyTruncation
+public import LatticeProb.Analysis.Sobolev.FejerSideCondition
+public import LatticeProb.Analysis.Sobolev.FrequencyTruncation
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap Convolution

@@ -1,10 +1,14 @@
+module
+
 /-
 Finite transcripts of dependent independent cells. A transcript stores each index
 together with its observed value. Distinct indices give its exact product mass;
 adaptively generated transcripts must supply this distinctness in each application.
 -/
-import LatticeProb.Prob.AdaptiveReads
-import Mathlib.Data.List.OfFn
+public import LatticeProb.Prob.AdaptiveReads
+public import Mathlib.Data.List.OfFn
+
+@[expose] public section
 
 
 set_option autoImplicit false

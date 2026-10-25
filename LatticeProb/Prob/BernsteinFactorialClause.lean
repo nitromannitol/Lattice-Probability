@@ -1,3 +1,5 @@
+module
+
 /-
 # The factorial-Bernstein clause: tail to `r`-th moment
 
@@ -19,8 +21,10 @@ using the Bochner layer-cake identity `∫ Y^r dμ = ∫_0^∞ r t^{r-1} μ{Y �
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinLayerCake
-import LatticeProb.Prob.BernsteinIntegrate
+public import LatticeProb.Prob.BernsteinLayerCake
+public import LatticeProb.Prob.BernsteinIntegrate
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped NNReal ENNReal

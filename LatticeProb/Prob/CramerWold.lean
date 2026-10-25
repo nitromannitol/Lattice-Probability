@@ -1,3 +1,5 @@
+module
+
 /-
 The Cramér-Wold device: an `E`-valued family of random vectors converges in
 distribution as soon as every one-dimensional projection of it does.
@@ -14,7 +16,9 @@ carry the product measurable structure, not the Euclidean inner product, so the
 device is also recorded on `Fin m → ℝ`, transported along the continuous linear
 equivalence with `EuclideanSpace ℝ (Fin m)` by the continuous mapping theorem.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology Complex
 

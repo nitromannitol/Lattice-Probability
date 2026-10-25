@@ -1,3 +1,5 @@
+module
+
 /-
 # The Rellich low-frequency glue: the sound truncation and support-repair inputs
 
@@ -21,9 +23,11 @@ This module lands that route as two named inputs and their composition:
 
 No use is made of `rkUniformCmNet` / `BandLimitedCmNet`, which are false.
 -/
-import LatticeProb.Analysis.Sobolev.Additivity
-import LatticeProb.Analysis.Sobolev.FejerLimit
-import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
+public import LatticeProb.Analysis.Sobolev.Additivity
+public import LatticeProb.Analysis.Sobolev.FejerLimit
+public import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal FourierTransform

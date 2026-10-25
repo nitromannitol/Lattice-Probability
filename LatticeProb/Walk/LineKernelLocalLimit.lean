@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Walk.LineKernelGauss
+module
+
+public import Mathlib
+public import LatticeProb.Walk.LineKernelGauss
+
+@[expose] public section
 
 /-!
 # The local limit theorem for the one-dimensional continuous-time kernel

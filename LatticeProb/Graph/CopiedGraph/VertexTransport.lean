@@ -1,3 +1,5 @@
+module
+
 /-
 # Vertex relabeling of copied forests
 
@@ -7,8 +9,10 @@ proves reachability transport. The same walk equivalence transports the forest
 and unique-root predicates with explicit root witnesses, giving equivalences
 which fix every selected finite edge subset.
 -/
-import LatticeProb.Graph.CopiedGraph.RootedForest
-import Mathlib.SetTheory.Cardinal.Finite
+public import LatticeProb.Graph.CopiedGraph.RootedForest
+public import Mathlib.SetTheory.Cardinal.Finite
+
+@[expose] public section
 
 
 

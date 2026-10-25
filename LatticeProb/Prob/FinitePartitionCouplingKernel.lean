@@ -1,11 +1,15 @@
+module
+
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
 Source: BouRabeeGwynne/FinitePartitionCouplingKernel.lean.
 -/
-import LatticeProb.Prob.FinitePartitionCoupling
-import Mathlib.Probability.Kernel.Basic
-import Mathlib.Probability.Kernel.Composition.Prod
+public import LatticeProb.Prob.FinitePartitionCoupling
+public import Mathlib.Probability.Kernel.Basic
+public import Mathlib.Probability.Kernel.Composition.Prod
+
+@[expose] public section
 
 /-!
 # The explicit finite partition coupling is a measurable kernel

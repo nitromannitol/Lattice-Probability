@@ -1,10 +1,14 @@
+module
+
 /-
 # Canonical anticommutation on ordinary finite subsets
 
 The literal signed sums are transported from the recursive subset matrices.
 -/
 
-import LatticeProb.LinearAlgebra.FiniteSubsetContraction
+public import LatticeProb.LinearAlgebra.FiniteSubsetContraction
+
+@[expose] public section
 
 
 

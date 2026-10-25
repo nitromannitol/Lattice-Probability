@@ -1,3 +1,5 @@
+module
+
 /-
 Moved from nitromannitol/rotor-23, `Rotor/Support/CyclicRank.lean`, Apache-2.0;
 copyright 2026 Ahmed Bou-Rabee and Yuval Peres.  There the file is described
@@ -9,7 +11,9 @@ only for an unrelated notation convenience, not for any type in a
 declaration below, confirmed by reading every signature), so it is moved
 here unchanged, with only the namespace renamed.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 /-!
 # The cyclic rank of a transitively-acting permutation

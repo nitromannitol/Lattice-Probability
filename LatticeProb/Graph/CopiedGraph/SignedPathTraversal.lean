@@ -1,10 +1,14 @@
+module
+
 /-
 Signed traversal on original copied tree paths. The definition and its zero-case
 proofs are adapted from finite-avalanches, Electrical/Trees/SignedPathTraversal.
 The cut-color identity uses only the exact elementary rooted forest predicate.
 -/
-import LatticeProb.Graph.CopiedGraph.TwoRootForest
-import Mathlib.Data.Real.Basic
+public import LatticeProb.Graph.CopiedGraph.TwoRootForest
+public import Mathlib.Data.Real.Basic
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical

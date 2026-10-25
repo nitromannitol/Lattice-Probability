@@ -1,7 +1,11 @@
+module
+
 /-
 Limits and quantitative modulus bounds for summable dyadic increments in finite products.
 -/
-import LatticeProb.Prob.ChentsovPi
+public import LatticeProb.Prob.ChentsovPi
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory ProbabilityTheory Filter Topology LatticeProb

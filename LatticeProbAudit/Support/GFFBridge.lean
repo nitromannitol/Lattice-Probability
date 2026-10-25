@@ -1,6 +1,10 @@
-import Mathlib
-import LatticeProb.Graph.Basic
-import LatticeProbAudit.GFF.SolutionBasic
+module
+
+public import Mathlib
+public import LatticeProb.Graph.Basic
+public import LatticeProbAudit.GFF.SolutionBasic
+
+@[expose] public section
 
 /-!
 # Comparator bridge: `LatticeProbAudit.GFF` vocabulary to the library

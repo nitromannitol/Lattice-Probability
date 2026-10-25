@@ -1,5 +1,9 @@
-import LatticeProb.Euclidean.Lattice
-import LatticeProb.Euclidean.Cube
+module
+
+public import LatticeProb.Euclidean.Lattice
+public import LatticeProb.Euclidean.Cube
+
+@[expose] public section
 
 /-!
 # Euclidean balls, shells, and lattice shell counts
