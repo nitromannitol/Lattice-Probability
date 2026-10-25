@@ -1,3 +1,5 @@
+module
+
 /-
 The walk killed on leaving a set: reversibility, the survival probability, and
 the exponential decay that makes the killed Green function of a finite set a
@@ -18,9 +20,11 @@ the first-step recursion.  Everything below is proved from that recursion.
   sums of the survival probability are bounded and the killed Green function is
   finite.
 -/
-import LatticeProb.Network.Basic
-import LatticeProb.Graph.Odometer
-import LatticeProb.Graph.HeatBasic
+public import LatticeProb.Network.Basic
+public import LatticeProb.Graph.Odometer
+public import LatticeProb.Graph.HeatBasic
+
+@[expose] public section
 
 open Finset
 open scoped ENNReal

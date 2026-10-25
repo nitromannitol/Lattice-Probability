@@ -1,3 +1,5 @@
+module
+
 /-
 The discrete Gaussian free field with zero boundary values on a finite set of a graph.
 
@@ -8,9 +10,11 @@ vector `c`, the function `u = ∑_o c_o g_C(o, ·)` vanishes off `C` and has `-�
 (`laplacian_killedGreenReal`), so `∑ c_x g_C(x, y) c_y = ∑ u (-Δu)`, which is half the Dirichlet
 energy of `u` (`energyOn_eq_neg_two_mul`) and therefore nonnegative (`energyOn_nonneg`).
 -/
-import LatticeProb.Network.KilledGreen
-import LatticeProb.Network.Variational
-import Mathlib.Probability.Distributions.Gaussian.Multivariate
+public import LatticeProb.Network.KilledGreen
+public import LatticeProb.Network.Variational
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+
+@[expose] public section
 
 open ProbabilityTheory MeasureTheory
 

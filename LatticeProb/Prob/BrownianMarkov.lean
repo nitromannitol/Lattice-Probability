@@ -1,3 +1,5 @@
+module
+
 /-
 Restarting Brownian motion.
 
@@ -26,8 +28,10 @@ fact that makes it one is proved here: for a process with continuous paths, the
 event of having left the ball before a time `t` is decided by countably many
 times in `[0, t]`, hence lies in the natural filtration at `t`.
 -/
-import Mathlib
-import LatticeProb.Prob.BrownianExit
+public import Mathlib
+public import LatticeProb.Prob.BrownianExit
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 

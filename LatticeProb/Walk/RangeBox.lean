@@ -1,3 +1,5 @@
+module
+
 /-
 The one geometric input to Proposition 6.1 of Bou-Rabee--Peres,
 the path model (`eq:range-originBox`):
@@ -7,8 +9,10 @@ the path model (`eq:range-originBox`):
 
 Nothing here is frozen.
 -/
-import LatticeProb.Walk.Lazy
-import LatticeProb.Walk.Path
+public import LatticeProb.Walk.Lazy
+public import LatticeProb.Walk.Path
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

@@ -1,3 +1,5 @@
+module
+
 /-
 The Gaussian maximal estimate for Brownian motion.
 
@@ -27,10 +29,12 @@ paths and no measurability: a pre-Brownian motion has a measurable modification
 with continuous paths, and two modifications with continuous paths agree at
 every time almost surely.
 -/
-import Mathlib
-import LatticeProb.Prob.Dyadic
-import LatticeProb.Prob.Ottaviani
-import LatticeProb.Prob.BrownianTail
+public import Mathlib
+public import LatticeProb.Prob.Dyadic
+public import LatticeProb.Prob.Ottaviani
+public import LatticeProb.Prob.BrownianTail
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter MeasurableSpace
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Almost sure convergence of the partial sums of the isonormal process.
 
@@ -13,7 +15,9 @@ decay at a polynomial rate.  That is what is proved here, for an arbitrary
 square-summable family of coefficients and an arbitrary exhaustion with tails
 `O(1/n)`; the Green-function instance is in `Support/LinGaussField.lean`.
 -/
-import LatticeProb.Gauss.Isonormal
+public import LatticeProb.Gauss.Isonormal
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal

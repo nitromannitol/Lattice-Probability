@@ -1,3 +1,5 @@
+module
+
 /-
 The pointwise inequality behind the von Bahr-Esseen moment bound.
 
@@ -29,7 +31,9 @@ which covers the case where the negative increment `c = -b` overshoots `a`.  And
 the constant `2` coming from `p ≤ 2`.  Reduction to `a ≥ 0` is the symmetry
 `(a,b) ↦ (-a,-b)`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Real
 

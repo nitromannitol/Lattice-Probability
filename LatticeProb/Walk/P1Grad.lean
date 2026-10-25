@@ -1,3 +1,5 @@
+module
+
 /-
 A discrete gradient bound for the one-dimensional lazy walk kernel `P1`.
 
@@ -17,8 +19,10 @@ Reflecting to the negative half shifts the site by one, which costs a factor
 `e^{1/4}` once the Gaussian rate is relaxed from `4(m+1)` to `8(m+1)`, and
 `5 e^{1/4} ≤ 8`.
 -/
-import Mathlib
-import LatticeProb.Walk.OneDimGauss
+public import Mathlib
+public import LatticeProb.Walk.OneDimGauss
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

@@ -1,3 +1,5 @@
+module
+
 /-
 The gradient of the TRUNCATED Green function of the simple random walk.
 
@@ -21,10 +23,12 @@ The conclusion is `LatticeProb.exists_srwGreen_gradient`, uniform in the
 truncation, which the infinite-horizon form of `LatticeProb/Walk/SimpleTransfer.lean`
 does not give and which is what a sum over horizons needs.
 -/
-import Mathlib
-import LatticeProb.Walk.BinomWindow
-import LatticeProb.Walk.GRGrad
-import LatticeProb.Walk.SRWGaussBound
+public import Mathlib
+public import LatticeProb.Walk.BinomWindow
+public import LatticeProb.Walk.GRGrad
+public import LatticeProb.Walk.SRWGaussBound
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

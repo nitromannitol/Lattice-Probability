@@ -1,3 +1,5 @@
+module
+
 /-
 The vertex boundary of a set in a graph, moved from `Exploding-Sandpiles`'s
 `Exploding/Support/Vocab.lean:17-26`, generalized from the nearest-neighbour
@@ -12,7 +14,9 @@ and `LatticeProb.Graph.closureN` at `G = LatticeProb.lattice d`, so once this
 module is available `RandomSandpile` can drop its own copies and import these
 instead.
 -/
-import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+
+@[expose] public section
 
 namespace LatticeProb.Graph
 

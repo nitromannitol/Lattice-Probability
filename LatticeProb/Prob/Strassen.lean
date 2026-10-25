@@ -1,3 +1,5 @@
+module
+
 /-
 Strassen's coupling theorem for `{0,1}`-valued fields on a countable set.
 
@@ -29,7 +31,9 @@ F. Limit: `ProbabilityMeasure ((S → Bool)²)` is compact
 The proof was written by the library's proof fleet from a statement-owned decomposition and
 verified by the library gates.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

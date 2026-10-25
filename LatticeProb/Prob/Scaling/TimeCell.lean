@@ -1,3 +1,5 @@
+module
+
 /-
 A finite step function taking value `a n` on the `n`-th of `N` consecutive intervals of equal
 length `h`, its integral, its pointwise formula via `Nat.floor`, and its integral against a
@@ -5,7 +7,9 @@ second measure after multiplying by a further, coordinate-dependent integrand.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 open MeasureTheory Set
 noncomputable section
 namespace LatticeProb.Scaling.TimeCell

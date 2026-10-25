@@ -1,8 +1,12 @@
+module
+
 /- Vanishing in probability from deterministic error bounds and uniform first moments.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

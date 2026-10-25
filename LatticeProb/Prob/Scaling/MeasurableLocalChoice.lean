@@ -1,8 +1,12 @@
+module
+
 /- Selecting a measurable local representative from a countable family.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+
+@[expose] public section
 
 open MeasureTheory Set
 namespace LatticeProb.Scaling.MeasurableLocalChoice

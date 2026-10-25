@@ -1,3 +1,5 @@
+module
+
 /-
 The Kolmogorov-Chentsov theorem.
 
@@ -17,8 +19,10 @@ process itself is used again: the truncations `dtrunc n t` converge to `t`, so
 `X (dtrunc n t)` converges to `X t` in measure by Chebyshev, while it converges
 almost surely to the constructed value.
 -/
-import Mathlib
-import LatticeProb.Prob.DyadicChain
+public import Mathlib
+public import LatticeProb.Prob.DyadicChain
+
+@[expose] public section
 
 noncomputable section
 

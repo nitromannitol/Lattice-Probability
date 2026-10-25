@@ -1,8 +1,12 @@
+module
+
 /-
 Quantitative probability bounds for continuous processes on finite-dimensional boxes.
 -/
-import LatticeProb.Prob.ChentsovPiProcess
-import LatticeProb.Prob.ChentsovPiLimit
+public import LatticeProb.Prob.ChentsovPiProcess
+public import LatticeProb.Prob.ChentsovPiLimit
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory ProbabilityTheory Filter Topology LatticeProb

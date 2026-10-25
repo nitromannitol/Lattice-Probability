@@ -1,8 +1,12 @@
+module
+
 /-
 Independent, identically distributed fields on the lattice, and the law of a
 site-indexed family of instruction stacks.
 -/
-import LatticeProb.Site
+public import LatticeProb.Site
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

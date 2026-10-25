@@ -1,3 +1,5 @@
+module
+
 /-
 The divisible sandpile on a general graph, and the walk objects,
 Sections 1 and 3.
@@ -30,10 +32,12 @@ Degrees enter as denominators.  A vertex of degree zero would give the junk
 value `a / 0 = 0`; on an infinite connected graph there is no such vertex, and
 the statements below all carry connectedness or a positive degree bound.
 -/
-import Mathlib.Combinatorics.SimpleGraph.Finite
-import Mathlib.Combinatorics.SimpleGraph.Metric
-import Mathlib.Topology.Instances.ENNReal.Lemmas
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import Mathlib.Combinatorics.SimpleGraph.Metric
+public import Mathlib.Topology.Instances.ENNReal.Lemmas
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+
+@[expose] public section
 
 open scoped ENNReal
 

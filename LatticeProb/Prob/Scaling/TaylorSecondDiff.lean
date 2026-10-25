@@ -1,8 +1,12 @@
+module
+
 /- Symmetric second differences from Taylor's theorem with Lagrange remainder.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Set
 noncomputable section

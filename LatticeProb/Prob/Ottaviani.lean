@@ -1,3 +1,5 @@
+module
+
 /-
 Ottaviani's maximal inequality, in the form of a first passage decomposition.
 
@@ -15,7 +17,9 @@ and the inclusion enter as hypotheses, and the conclusion is the inequality
 between the two probabilities.  The application to Brownian motion is in
 `LatticeProb/Prob/BrownianMax.lean`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

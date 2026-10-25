@@ -1,3 +1,5 @@
+module
+
 /-
 The relative entropy of `n` independent one-dimensional Gaussian shifts of a
 common variance.
@@ -9,7 +11,9 @@ equivalence, and the relative entropy is invariant under one; the chain rule
 entropy is the one-dimensional value `klDiv_gaussianReal_shift`, and the
 remaining factor is the same product with one fewer coordinate.
 -/
-import LatticeProb.Prob.KlDivGaussian
+public import LatticeProb.Prob.KlDivGaussian
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 The two steps of Gaussian concentration that do not need the logarithmic Sobolev
 inequality, and the invariance of the standard Gaussian product law under a
@@ -13,9 +15,11 @@ exponential moment bound.
 product law on `Fin n → ℝ` is invariant under a coordinate permutation, which is
 what lets a symmetric functional be handled by conditioning on one coordinate.
 -/
-import Mathlib
-import LatticeProb.Prob.EfronStein
-import LatticeProb.Prob.SubGaussian
+public import Mathlib
+public import LatticeProb.Prob.EfronStein
+public import LatticeProb.Prob.SubGaussian
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

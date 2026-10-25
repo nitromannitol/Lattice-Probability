@@ -1,8 +1,12 @@
+module
+
 /-
 Elementary facts about the finite-horizon walk average `walkExp`, the walk
 payoff, and bounded stopping times, used in the proof of `thm:RW`.
 -/
-import LatticeProb.Graph.Odometer
+public import LatticeProb.Graph.Odometer
+
+@[expose] public section
 
 namespace LatticeProb.Graph
 

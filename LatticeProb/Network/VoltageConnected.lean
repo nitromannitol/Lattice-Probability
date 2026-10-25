@@ -1,3 +1,5 @@
+module
+
 /-
 The voltage function on an infinite connected graph, recurrent or not.
 
@@ -17,9 +19,11 @@ most the length of a fixed walk from `a` to `b`.  The shifted potentials
 point along the exhaustion by finite sets is the voltage function, because the
 Laplacian at a vertex is a finite sum and hence continuous in the product topology.
 -/
-import LatticeProb.Network.Variational
-import LatticeProb.Network.MaximumPrinciple
-import LatticeProb.Network.Escape
+public import LatticeProb.Network.Variational
+public import LatticeProb.Network.MaximumPrinciple
+public import LatticeProb.Network.Escape
+
+@[expose] public section
 
 open Finset Filter Topology
 open scoped Classical

@@ -1,3 +1,5 @@
+module
+
 /-
 Sums of a real power over an initial segment of the integers, bounded by the
 matching power of the length.
@@ -17,7 +19,9 @@ for `0 < β ≤ 1` and `x ≥ 1`,
 since `(x-1)^β = x^β (1 - 1/x)^β ≤ x^β (1 - β/x)`.  Summing this over
 `x = 1, …, N` telescopes to `N^β`.
 -/
-import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+
+@[expose] public section
 
 noncomputable section
 

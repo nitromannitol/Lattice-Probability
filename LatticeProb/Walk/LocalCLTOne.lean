@@ -1,3 +1,5 @@
+module
+
 /-
 The one-dimensional local central limit theorem.
 
@@ -21,9 +23,11 @@ central limit theorem in the parity form: the sites of the wrong parity are not
 mentioned because the kernel vanishes there, and the factor `2` of the
 `d`-dimensional parity form is the density of one parity class.
 -/
-import LatticeProb.Walk.BinomRatio
-import LatticeProb.Walk.CentralBinom
-import LatticeProb.Walk.SRWOneDim
+public import LatticeProb.Walk.BinomRatio
+public import LatticeProb.Walk.CentralBinom
+public import LatticeProb.Walk.SRWOneDim
+
+@[expose] public section
 
 noncomputable section
 

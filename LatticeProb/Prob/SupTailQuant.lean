@@ -1,3 +1,5 @@
+module
+
 /-
 The quantitative tail of the supremum of a process over a box, from an
 almost-sure modulus of continuity at a fixed scale.
@@ -16,9 +18,11 @@ supremum of `|X ·|` itself, by the deterministic chaining estimate
 nonnegative reals that identifies the level set of the supremum with the level
 set of its `p`-th power.
 -/
-import Mathlib
-import LatticeProb.Prob.SupTail
-import LatticeProb.Prob.KolmogorovBound
+public import Mathlib
+public import LatticeProb.Prob.SupTail
+public import LatticeProb.Prob.KolmogorovBound
+
+@[expose] public section
 
 noncomputable section
 set_option maxHeartbeats 800000

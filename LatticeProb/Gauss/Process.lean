@@ -1,3 +1,5 @@
+module
+
 /-
 The isonormal process as a Gaussian process indexed by a Hilbert space.
 
@@ -8,8 +10,10 @@ indexed by the Hilbert space, linear in the index and with covariance the inner
 product; that is white noise on the space, and Brownian motion is its
 restriction to the indicators of intervals.
 -/
-import Mathlib
-import LatticeProb.Gauss.Isonormal
+public import Mathlib
+public import LatticeProb.Gauss.Isonormal
+
+@[expose] public section
 
 noncomputable section
 

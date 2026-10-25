@@ -1,3 +1,5 @@
+module
+
 /- The weak limit of a family of real random variables from truncated approximations, by
 Prokhorov compactness, for an arbitrary probability space.
 
@@ -12,7 +14,9 @@ a limit point against which every bounded Lipschitz integral converges is the we
 convergence is then read against all bounded continuous test functions
 (`exists_weak_limit_of_cutoff`, `exists_weak_limit`).
 -/
-import Mathlib.MeasureTheory.Measure.Prokhorov
+public import Mathlib.MeasureTheory.Measure.Prokhorov
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.WeakLimit

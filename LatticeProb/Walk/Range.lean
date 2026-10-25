@@ -1,3 +1,5 @@
+module
+
 /-
 The range of the simple random walk as a functional of the path: its
 expectation, the hitting identity behind it, and the lower bound
@@ -15,10 +17,12 @@ expected number of visits to `z` before time `t` is at most the chance of ever
 visiting it times the number of returns; summing over `z` makes the left side
 `t + 1`.
 -/
-import LatticeProb.Walk.HitProb
-import LatticeProb.Prob.CountableMeasurable
-import LatticeProb.Walk.SRWDiag
-import LatticeProb.ParticleHoleLemmas
+public import LatticeProb.Walk.HitProb
+public import LatticeProb.Prob.CountableMeasurable
+public import LatticeProb.Walk.SRWDiag
+public import LatticeProb.ParticleHoleLemmas
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

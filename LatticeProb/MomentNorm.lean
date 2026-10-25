@@ -1,3 +1,5 @@
+module
+
 /-
 The `L^r` moment norm as a real number, `rNorm μ r f := (∫ |f|^r ∂μ)^{1/r}`, and its basic API
 (nonnegativity, monotonicity in the function and in the exponent, homogeneity under a
@@ -7,9 +9,11 @@ inequality in the specific form `X ≤ Y + a(√(bX) + k) → X ≤ 2Y + a²b + 
 square-root cross term.  Every statement here is for an abstract measurable space, measure and
 function.
 -/
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
+
+@[expose] public section
 
 noncomputable section
 

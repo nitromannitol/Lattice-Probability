@@ -1,3 +1,5 @@
+module
+
 /-
 The same-parity total-variation gradient of the simple random walk, in every
 dimension.
@@ -33,11 +35,13 @@ In dimension one there is no pair, and the statement is the one-dimensional
 gradient `LatticeProb.exists_tsum_abs_S1_shift_le` read through the identification
 of `ℤ` with the sites.
 -/
-import Mathlib
-import LatticeProb.Walk.SchedRot
-import LatticeProb.Walk.SchedBinom
-import LatticeProb.Walk.OneDimGrad
-import LatticeProb.Walk.ShiftGrad
+public import Mathlib
+public import LatticeProb.Walk.SchedRot
+public import LatticeProb.Walk.SchedBinom
+public import LatticeProb.Walk.OneDimGrad
+public import LatticeProb.Walk.ShiftGrad
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

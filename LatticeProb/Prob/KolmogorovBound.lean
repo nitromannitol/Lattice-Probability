@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Prob.KolmogorovPi
+module
+
+public import Mathlib
+public import LatticeProb.Prob.KolmogorovPi
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory ProbabilityTheory Filter Topology LatticeProb ENNReal

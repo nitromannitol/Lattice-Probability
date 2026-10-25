@@ -1,3 +1,5 @@
+module
+
 /-
 An abstract finite-range translation-invariant transition kernel on `Site d`, the recursion
 it drives, and its truncated Green function.
@@ -16,8 +18,10 @@ Moved from Parking-Sharpness (`Parking.IsLatticeKernel` and its companions of
 `Parking/Support/Kernel.lean`; `Parking.greenMax`, tied to the specific simple-random-walk
 Green function, is not moved).
 -/
-import LatticeProb.ParticleHole
-import LatticeProb.Walk.Shells
+public import LatticeProb.ParticleHole
+public import LatticeProb.Walk.Shells
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The Paley-Zygmund inequality.
 
@@ -18,8 +20,10 @@ on the law at all.  That is the shape in which the second moment of the range of
 the walk, `LatticeProb.integral_rangeCard_sq_le`, is turned into a lower bound on
 the probability that the range is large.
 -/
-import Mathlib
-import LatticeProb.Prob.EfronSteinCov
+public import Mathlib
+public import LatticeProb.Prob.EfronSteinCov
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The coordinate decomposition of the lazy walk on `ℤ^d`.
 
@@ -8,9 +10,11 @@ kernel `∏_i p_{N_i(c)}(x_i)`, where `N_i(c)` counts the steps at which `c`
 selects coordinate `i`.  That is `LatticeProb.iterate_delta0_eq` below, and every
 estimate of `lem:green` is read off from it.
 -/
-import Mathlib
-import LatticeProb.Walk.Lazy
-import LatticeProb.Walk.OneDim
+public import Mathlib
+public import LatticeProb.Walk.Lazy
+public import LatticeProb.Walk.OneDim
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

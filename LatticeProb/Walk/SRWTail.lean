@@ -1,3 +1,5 @@
+module
+
 /-
 Hoeffding's Gaussian bound on the tail of the one-dimensional simple walk.
 
@@ -14,7 +16,9 @@ function, satisfies `srwSum (m+1) f = (srwSum m (f (· + 1)) + srwSum m (f (· -
 which for `f = e^{θ ·}` is multiplication by `cosh θ`.  The sums are over a box
 that contains the support of the kernel, so nothing infinite appears.
 -/
-import LatticeProb.Walk.SRW
+public import LatticeProb.Walk.SRW
+
+@[expose] public section
 
 noncomputable section
 

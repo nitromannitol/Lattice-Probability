@@ -1,3 +1,5 @@
+module
+
 /-
 Several fresh coordinates of an infinite product at once.
 
@@ -17,9 +19,11 @@ instruction, and it is what makes the statement usable without naming the
 sigma-algebra the exposure generates: the identity holds against EVERY bounded
 function invariant in that sense, which is the conditional-expectation statement.
 -/
-import Mathlib
-import LatticeProb.Prob.Coordinate
-import LatticeProb.Prob.Exploration
+public import Mathlib
+public import LatticeProb.Prob.Coordinate
+public import LatticeProb.Prob.Exploration
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

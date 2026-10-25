@@ -1,3 +1,5 @@
+module
+
 /-
 A lower bound in convex order for a near-family of mean-zero integer laws recentred to the
 real line (`shiftLaw`, `NearFamily` of `LatticeProb.Prob.NearFamily`), matching a companion
@@ -22,9 +24,11 @@ is not a point mass. So `a₀` is a quarter of that mass and serves every small 
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.NearFamily
-import LatticeProb.Prob.ConvexProduct
-import Mathlib.Probability.Moments.Variance
+public import LatticeProb.Prob.NearFamily
+public import LatticeProb.Prob.ConvexProduct
+public import Mathlib.Probability.Moments.Variance
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal

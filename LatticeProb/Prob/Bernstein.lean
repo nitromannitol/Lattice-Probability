@@ -1,3 +1,5 @@
+module
+
 /-
 Bernstein's inequality for bounded independent centred random variables.
 
@@ -22,7 +24,9 @@ collapses to `-t²/(2(B² + Mt/3))`.  The two-sided form applies the one-sided o
 
 This is the Bernstein inequality quoted for part (c) of `lem:fuk-nagaev` in `rwrs.tex`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal Nat

@@ -1,3 +1,5 @@
+module
+
 /-
 The truncated Green function of the lazy random walk, and the growth the papers
 quote for it: `G_n(0,0)` is of order `√n` in `d = 1`, of order `log n` in
@@ -17,8 +19,10 @@ at most `r` steps in each coordinate, and the one-dimensional central weight
 `p_m(0)` is at least `(4m+1)^{-1/2}` because `p_m(0)^2 (4m+1)` is
 nondecreasing in `m`.
 -/
-import Mathlib
-import LatticeProb.Walk.GreenBounds
+public import Mathlib
+public import LatticeProb.Walk.GreenBounds
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

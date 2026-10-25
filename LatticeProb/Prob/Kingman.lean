@@ -1,3 +1,5 @@
+module
+
 /-
 Kingman's subadditive ergodic theorem.
 
@@ -23,7 +25,9 @@ The lower bound is the block decomposition: for a horizon `N` and a tolerance
 `costFn`, whose mean tends to zero as `N` grows; the set where its Birkhoff
 averages stay large is then shrunk by the maximal ergodic theorem.
 -/import Mathlib
-import LatticeProb.Prob.Birkhoff
+public import LatticeProb.Prob.Birkhoff
+
+@[expose] public section
 
 noncomputable section
 
