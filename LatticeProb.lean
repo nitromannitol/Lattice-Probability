@@ -999,3 +999,11 @@ import LatticeProb.Prob.Percolation.LatticePoissonPole
 import LatticeProb.Prob.Percolation.LatticePoissonPoleConsumer
 import LatticeProb.Prob.Percolation.LatticeUniqueCluster
 import LatticeProb.Prob.Percolation.LatticeUniqueClusterEvent
+import LatticeProb.Prob.Percolation.LatticeClusterLipschitz
+import LatticeProb.Prob.Percolation.LatticeClusterLipschitzConsumer
+import LatticeProb.Prob.Percolation.LatticeLinearGrowth
+import LatticeProb.Prob.Percolation.LatticeLinearGrowthConsumer
+import LatticeProb.Network.OpenLadderEmbedding
+import LatticeProb.Network.OpenLadderEmbeddingConsumer
+import LatticeProb.External.SupercriticalBondUniquenessInput
+import LatticeProb.Prob.Percolation.SupercriticalBondUniquenessConsumer

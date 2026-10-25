@@ -1277,3 +1277,16 @@ are adapted from Leonardo Bonanno's
 
 The Lean code in this repository is licensed under the **Apache License 2.0**
 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).
+
+### Lattice components and finite networks
+
+The percolation modules include graph-distance Lipschitz functions on actual open
+components, pointwise linear growth measured in the lattice norm, and the bridge to
+normalized harmonic growth spaces. The network modules identify the finite open ladder
+with its induced lattice embedding in every dimension at least two. Small-case consumers
+check the coordinate maps and all relevant edges.
+
+`LatticeProb.External.SupercriticalBondUniquenessInput` records the classical critical
+probability and unique infinite-component statements for the canonical Bernoulli bond
+law. This proposition is an explicit cited assumption, without a proof or global instance.
+Its separate consumer derives parameter existence from that assumption.
