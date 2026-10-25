@@ -1,3 +1,5 @@
+module
+
 /-
 # Creation and contraction of ordered determinant coefficients
 
@@ -5,8 +7,10 @@ The added vector is the first column. First-column Laplace expansion therefore
 has exactly the signed deletion coefficients of left exterior multiplication.
 -/
 
-import LatticeProb.LinearAlgebra.OrderedMinorInsertion
-import LatticeProb.LinearAlgebra.DeterminantContraction
+public import LatticeProb.LinearAlgebra.OrderedMinorInsertion
+public import LatticeProb.LinearAlgebra.DeterminantContraction
+
+@[expose] public section
 
 
 

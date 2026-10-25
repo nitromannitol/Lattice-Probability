@@ -1,3 +1,5 @@
+module
+
 /-
 # Transport of rooted forests with prescribed terminal matchings
 
@@ -7,10 +9,12 @@ reindex the prescribed walks. A vertex equivalence transports the root range
 and every walk through the proved vertex transport. Whole signed cardinality
 sums follow by permutation reindexing and pointwise subset equivalences.
 -/
-import LatticeProb.Graph.CopiedGraph.VertexTransport
-import LatticeProb.Combinatorics.PairingTransport
-import LatticeProb.Combinatorics.TerminalOrder
-import Mathlib.Algebra.BigOperators.Ring.Finset
+public import LatticeProb.Graph.CopiedGraph.VertexTransport
+public import LatticeProb.Combinatorics.PairingTransport
+public import LatticeProb.Combinatorics.TerminalOrder
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+
+@[expose] public section
 
 
 

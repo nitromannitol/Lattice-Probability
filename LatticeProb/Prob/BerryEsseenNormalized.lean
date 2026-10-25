@@ -1,3 +1,5 @@
+module
+
 /- # Normalised Berry-Esseen for non-identically distributed summands
 
 This file is route A4 of the multivariate Berry-Esseen chain (`scratch/pk/mvbe-route.md`).  For a
@@ -20,9 +22,11 @@ The proof takes the smoothing parameter `T = 1/(8ρ)`: on `[-T, T]` the product 
 functions is within `4 ρ |t|³ exp (-t²/3)` of the Gaussian one, the resulting Fourier integral is
 at most `20 ρ`, and the second term of Esseen's inequality is at most `66 ρ`.
 -/
-import Mathlib
-import LatticeProb.Prob.BerryEsseenSumCharFun
-import LatticeProb.Prob.GaussianBerryEsseenFacts
+public import Mathlib
+public import LatticeProb.Prob.BerryEsseenSumCharFun
+public import LatticeProb.Prob.GaussianBerryEsseenFacts
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal

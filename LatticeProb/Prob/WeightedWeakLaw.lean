@@ -1,3 +1,5 @@
+module
+
 /-
 The weak law of large numbers for a weighted i.i.d. sum, under a first moment
 only: the weighted sum of the centred field is small compared with the total
@@ -19,9 +21,11 @@ imported, and the coordinate facts (`RWRS.Support.map_eval_iidLaw`,
 the corresponding facts already in `LatticeProb.Prob.Coordinate` and Mathlib's
 `Measure.infinitePi` API (`Measure.infinitePi_map_eval`, `iIndepFun_infinitePi`).
 -/
-import Mathlib
-import LatticeProb.Prob.Coordinate
-import LatticeProb.Prob.Moments
+public import Mathlib
+public import LatticeProb.Prob.Coordinate
+public import LatticeProb.Prob.Moments
+
+@[expose] public section
 
 namespace LatticeProb
 

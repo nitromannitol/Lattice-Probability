@@ -1,3 +1,5 @@
+module
+
 /-
 # The low-frequency net residual, reduced to its named sub-pieces
 
@@ -44,9 +46,11 @@ needs and that Mathlib does not supply:
 Nothing here is frozen or registered; this is a separate reduction beside
 `RellichLowFreqNet.lean`.
 -/
-import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
-import LatticeProb.Analysis.Sobolev.RellichNet
-import LatticeProb.Analysis.Sobolev.RellichMollify
+public import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
+public import LatticeProb.Analysis.Sobolev.RellichNet
+public import LatticeProb.Analysis.Sobolev.RellichMollify
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

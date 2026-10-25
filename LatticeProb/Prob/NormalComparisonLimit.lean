@@ -1,3 +1,5 @@
+module
+
 /-
 # Normal comparison (Li--Shao): the limit `t ↑ 1` and the final bound
 
@@ -14,10 +16,12 @@ Along the smart path `M t = (1 - t) • (v • 1) + t • S` write
 * passing to the limit in `F 0 ≤ F T ≤ F 0 + R T` gives the normal comparison inequality with
   constant `1/4` (`normalComparison_bound_of_interpolation`).
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparisonEndpoint
-import LatticeProb.Prob.GaussCovDensityScalar
-import LatticeProb.Prob.GaussCovDensityOrthantLink
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonEndpoint
+public import LatticeProb.Prob.GaussCovDensityScalar
+public import LatticeProb.Prob.GaussCovDensityOrthantLink
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal Matrix

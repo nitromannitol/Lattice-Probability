@@ -1,3 +1,5 @@
+module
+
 /-
 # Esseen's smoothing inequality for a Gaussian target
 
@@ -19,10 +21,12 @@ The proof combines the three ingredients proved in the neighbouring files:
 
 The constants combine to `2 B + 16 a m`.
 -/
-import Mathlib
-import LatticeProb.Prob.EsseenFejerInversion
-import LatticeProb.Prob.EsseenDeconvolution
-import LatticeProb.Prob.GaussianBerryEsseenFacts
+public import Mathlib
+public import LatticeProb.Prob.EsseenFejerInversion
+public import LatticeProb.Prob.EsseenDeconvolution
+public import LatticeProb.Prob.GaussianBerryEsseenFacts
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal

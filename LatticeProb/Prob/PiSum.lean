@@ -1,3 +1,5 @@
+module
+
 /-
 Two independent families side by side, and holding a parameter fixed.
 
@@ -11,7 +13,9 @@ that decides which particles ever depart, can be fixed before the exploration
 is defined: if the law of the reads is the same for every value of the
 parameter, then it is that law after the parameter is integrated out.
 -/
-import LatticeProb.Prob.Coordinate
+public import LatticeProb.Prob.Coordinate
+
+@[expose] public section
 
 noncomputable section
 

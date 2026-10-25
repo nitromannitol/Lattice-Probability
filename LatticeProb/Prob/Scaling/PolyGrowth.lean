@@ -1,3 +1,5 @@
+module
+
 /-
 Generic real-number lemmas for propagating an explicit polynomial bound through a chain of
 existentially-quantified constants that depend on a nonnegative parameter `A`: if a quantity is
@@ -8,7 +10,9 @@ real numbers only, so this module can move verbatim into the shared library.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+
+@[expose] public section
 
 noncomputable section
 

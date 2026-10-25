@@ -1,3 +1,5 @@
+module
+
 /-
 # Radial geometry at a polygonal disk endpoint
 
@@ -6,7 +8,9 @@ has strictly negative radial pairing. A simple finite chain has a neighborhood
 of its first endpoint meeting only its first segment. The proofs use the exact
 squared coordinate radius and compactness of the remaining finite trace.
 -/
-import LatticeProb.Topology.DiskCircleParityInternal
+public import LatticeProb.Topology.DiskCircleParityInternal
+
+@[expose] public section
 
 
 

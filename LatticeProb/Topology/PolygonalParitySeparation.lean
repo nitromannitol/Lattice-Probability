@@ -1,3 +1,5 @@
+module
+
 /-
 # Separation at an isolated polygonal edge
 
@@ -8,7 +10,9 @@ set joining the two local sides, and choose the nonlevel ray direction from the
 finite edge family. For cyclic vertex lists, closedness is derived by endpoint
 cancellation. No separation or general-position assumption is required.
 -/
-import LatticeProb.Topology.PolygonalParity
+public import LatticeProb.Topology.PolygonalParity
+
+@[expose] public section
 
 
 

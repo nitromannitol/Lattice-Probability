@@ -1,3 +1,5 @@
+module
+
 /-
 # Normal comparison (Li--Shao): left-continuity of the orthant probability at the endpoint
 
@@ -22,8 +24,10 @@ final step needs the Gaussian orthant probability to be left-continuous at `t = 
   `tendsto_multivariateGaussian_orthant_path` : the portmanteau theorem gives
   `N(0, S_t)(orthant) → N(0, S)(orthant)` as `t ↑ 1`.
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparisonPath
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonPath
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped Matrix

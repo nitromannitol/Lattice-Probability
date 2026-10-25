@@ -1,3 +1,5 @@
+module
+
 /-
 # Derivatives and Gaussian decay of the density `covDensity S` along a coordinate line
 
@@ -17,8 +19,10 @@ Route.  Everything is one-dimensional calculus along `s ↦ Function.update x j 
 statements follow from the chain and product rules; the decay at `-∞` from the rapid decay
 `exp (a u² + b u) = o (u ^ r)` at `+∞` (`a < 0`) applied to `u = -s`, using `T j j > 0`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensity
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensity
+
+@[expose] public section
 
 open Filter Topology Matrix MeasureTheory
 

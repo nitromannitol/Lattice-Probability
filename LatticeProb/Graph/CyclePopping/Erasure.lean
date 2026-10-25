@@ -1,3 +1,5 @@
+module
+
 /-
 Chronological loop erasure produces a finite legal cycle-pop run. The induction keeps
 two distinct cursors: the cursor after all raw departures and the cursor after deleted
@@ -5,7 +7,9 @@ cycles. Retained arrows remain selected at the latter cursor, and consuming that
 path accounts exactly for the difference. At each revisit the retained suffix is one
 simple visible cycle, whose legality is derived from its actual arrows.
 -/
-import LatticeProb.Graph.CyclePopping.Trace
+public import LatticeProb.Graph.CyclePopping.Trace
+
+@[expose] public section
 
 /-!
 Chronological loop erasure produces a finite legal cycle-pop run. The induction keeps

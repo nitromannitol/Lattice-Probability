@@ -1,9 +1,13 @@
+module
+
 /- Joint convergence for functionals Lipschitz on an admissible class of paths.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.FddBlockTightness
-import LatticeProb.Prob.Scaling.BoundedFunctionalLift
+public import LatticeProb.Prob.Scaling.FddBlockTightness
+public import LatticeProb.Prob.Scaling.BoundedFunctionalLift
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open LatticeProb.Scaling.BoundedFunctionalLift

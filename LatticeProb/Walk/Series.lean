@@ -1,8 +1,12 @@
+module
+
 /-
 Elementary series bounds used to sum the pointwise estimates of `lem:green`
 over `0 ≤ r < R`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

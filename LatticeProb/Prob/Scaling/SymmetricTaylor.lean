@@ -1,8 +1,12 @@
+module
+
 /- Uniform Taylor bounds for symmetric second differences.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Set
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Endpoint comparison after deleting orthogonal columns
 
@@ -5,7 +7,9 @@ Repeated rank-one contraction compares only the squared determinant weights of
 the endpoint frames. No intermediate probability distributions are constructed.
 -/
 
-import LatticeProb.LinearAlgebra.DeterminantBoundaries
+public import LatticeProb.LinearAlgebra.DeterminantBoundaries
+
+@[expose] public section
 
 
 

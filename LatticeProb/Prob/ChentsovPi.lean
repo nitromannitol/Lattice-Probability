@@ -1,3 +1,5 @@
+module
+
 /-
 The multi-parameter Kolmogorov-Chentsov theorem.
 
@@ -13,8 +15,10 @@ step in one coordinate are neighbours; a chain between two grid points at
 sup-distance `δ` has at most `k` links per level, which is where the factor
 `k` enters and nothing else changes.
 -/
-import Mathlib
-import LatticeProb.Prob.Chentsov
+public import Mathlib
+public import LatticeProb.Prob.Chentsov
+
+@[expose] public section
 
 noncomputable section
 

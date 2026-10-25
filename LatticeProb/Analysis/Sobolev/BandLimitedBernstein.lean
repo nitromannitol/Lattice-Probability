@@ -1,3 +1,5 @@
+module
+
 /-
 # The band-limited Bernstein bound
 
@@ -29,7 +31,9 @@ The remaining step to the consumed `L²` form is the Cauchy–Schwarz comparison
 Plancherel; the statements below are therefore in the `L¹`-on-the-band form, and
 the `L²` upgrade remains a separate step.
 -/
-import LatticeProb.Analysis.Sobolev.FrequencyTruncation
+public import LatticeProb.Analysis.Sobolev.FrequencyTruncation
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap RealInnerProductSpace

@@ -1,3 +1,5 @@
+module
+
 /-
 # The orthant integral of the mixed second partial of the Gaussian density (route item 4)
 
@@ -29,11 +31,13 @@ conditions are, verbatim after `beta` reduction,
 and the global hypothesis `hint` is `integrable_partial2_covDensity`.  The boundary integral is
 nonnegative because `covDensity S` is positive (`covDensity_pos`).
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensity
-import LatticeProb.Prob.GaussCovDensityPartials
-import LatticeProb.Prob.GaussCovDensityIntegrable
-import LatticeProb.Prob.NormalComparisonOrthantPair
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensity
+public import LatticeProb.Prob.GaussCovDensityPartials
+public import LatticeProb.Prob.GaussCovDensityIntegrable
+public import LatticeProb.Prob.NormalComparisonOrthantPair
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

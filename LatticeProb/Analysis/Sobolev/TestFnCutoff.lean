@@ -1,3 +1,5 @@
+module
+
 /-
 # The support cut-off: a test function equal to `1` on a compact subset of a domain
 
@@ -11,8 +13,10 @@ The remaining elementary step (not taken here) is the construction of such a `t`
 and compact `K ⊆ D`, which is the standard separation of a compact set from the closed complement
 of an open set.
 -/
-import Mathlib
-import LatticeProb.Analysis.Sobolev.Defs
+public import Mathlib
+public import LatticeProb.Analysis.Sobolev.Defs
+
+@[expose] public section
 
 open MeasureTheory Set
 

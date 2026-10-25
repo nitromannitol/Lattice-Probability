@@ -1,3 +1,5 @@
+module
+
 /-
 # The bounded `C^m`-net sub-piece of the Rellich–Kondrachov low-frequency residual
 
@@ -42,9 +44,11 @@ and that reduction runs from a false premise.  The sound replacement bounds the
 *band-limited projections* `P_Λ φ`, which the Bernstein estimate below does make
 `C^m`-bounded.
 -/
-import Mathlib
-import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
-import LatticeProb.Analysis.Sobolev.BandLimited
+public import Mathlib
+public import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
+public import LatticeProb.Analysis.Sobolev.BandLimited
+
+@[expose] public section
 
 open MeasureTheory Set Metric
 open scoped ENNReal FourierTransform

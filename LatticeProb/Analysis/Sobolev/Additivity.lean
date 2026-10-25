@@ -1,3 +1,5 @@
+module
+
 /-
 # Quadratic additivity of the Fourier-side Sobolev norm
 
@@ -8,8 +10,10 @@ the squared `H^s` norm of `f + g` is at most twice the sum of the squared norms.
 It is the pointwise bound `‖𝓕(f + g)‖ ^ 2 ≤ 2 ‖𝓕f‖ ^ 2 + 2 ‖𝓕g‖ ^ 2` integrated
 against the Sobolev weight, using the additivity of the Fourier integral.
 -/
-import LatticeProb.Analysis.Sobolev.Basic
-import LatticeProb.Analysis.Sobolev.Scaling
+public import LatticeProb.Analysis.Sobolev.Basic
+public import LatticeProb.Analysis.Sobolev.Scaling
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

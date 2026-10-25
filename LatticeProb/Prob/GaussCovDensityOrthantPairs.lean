@@ -1,3 +1,5 @@
+module
+
 /-
 # Normal comparison (Li--Shao): the pair-sum form of the orthant derivative
 
@@ -18,8 +20,10 @@ with `a = M⁻¹ x`.  This file provides
   diagonal;
 * `hasDerivAt_orthant_covDensity_path_pairs`, the pair-sum form of the derivative.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityOrthantPath
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityOrthantPath
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Finite-set frame atom formula on the original carrier
 
@@ -5,7 +7,9 @@ An arbitrary finite carrier is enumerated internally by `Fintype.equivFin`.
 No support, normalization, or atom identity is supplied by the caller.
 -/
 
-import LatticeProb.Prob.DPP.FrameAtoms
+public import LatticeProb.Prob.DPP.FrameAtoms
+
+@[expose] public section
 
 
 

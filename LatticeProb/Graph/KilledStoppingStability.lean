@@ -1,3 +1,5 @@
+module
+
 /-
 # Stability of killed optimal-stopping values
 
@@ -72,10 +74,12 @@ The frozen `Sandpile.External.CubeStoppingStability` and every frozen statement 
 repository are untouched: this file only states the library analogue and proves the sub-lemma.
 -/
 
-import LatticeProb.Graph.Killed
-import LatticeProb.Graph.Zd
-import LatticeProb.Prob.BrownianExit
-import LatticeProb.Prob.BrownianMarkov
+public import LatticeProb.Graph.Killed
+public import LatticeProb.Graph.Zd
+public import LatticeProb.Prob.BrownianExit
+public import LatticeProb.Prob.BrownianMarkov
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal ENNReal

@@ -1,6 +1,10 @@
-import LatticeProb.Euclidean.Lattice
-import LatticeProb.Euclidean.Shell
-import LatticeProb.Euclidean.Series
+module
+
+public import LatticeProb.Euclidean.Lattice
+public import LatticeProb.Euclidean.Shell
+public import LatticeProb.Euclidean.Series
+
+@[expose] public section
 
 /-!
 # Upper and exterior bounds for scaled radial sums

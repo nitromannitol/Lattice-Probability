@@ -1,3 +1,5 @@
+module
+
 /-
 Weighted exponential concentration on a product measure.
 
@@ -11,9 +13,11 @@ every `λ ℓ_i` stays in the range.  From the exponential form of
 for a coordinate-Lipschitz function of the whole configuration, and its
 Bernstein tail by Chernoff.
 -/
-import Mathlib
-import LatticeProb.Prob.SubGaussian
-import LatticeProb.Prob.EfronStein
+public import Mathlib
+public import LatticeProb.Prob.SubGaussian
+public import LatticeProb.Prob.EfronStein
+
+@[expose] public section
 
 open MeasureTheory
 

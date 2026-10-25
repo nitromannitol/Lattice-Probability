@@ -1,6 +1,10 @@
-import Mathlib.Analysis.Calculus.ContDiff.Convolution
-import LatticeProb.Analysis.Sobolev.RellichKernelFamilyBounds
-import LatticeProb.Analysis.Sobolev.ConvolutionStructure
+module
+
+public import Mathlib.Analysis.Calculus.ContDiff.Convolution
+public import LatticeProb.Analysis.Sobolev.RellichKernelFamilyBounds
+public import LatticeProb.Analysis.Sobolev.ConvolutionStructure
+
+@[expose] public section
 
 /-! # Uniform all-order bounds for actual convolved test functions
 

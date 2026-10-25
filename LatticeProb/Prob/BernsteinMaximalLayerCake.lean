@@ -1,3 +1,5 @@
+module
+
 /-
 # The weak-type / truncation step toward the `L^p` Doob maximal inequality
 
@@ -14,7 +16,9 @@ are the exchange of the two integrals (Tonelli, giving `(p/(p-1)) ∫ f M^{p-1}`
 reduction below is unconditional apart from the finiteness hypotheses, so no integral collapses
 to the junk `0`; it contains no new external input and is not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinLayerCake
+public import LatticeProb.Prob.BernsteinLayerCake
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped NNReal ENNReal

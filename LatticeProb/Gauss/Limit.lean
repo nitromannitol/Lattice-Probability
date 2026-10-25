@@ -1,3 +1,5 @@
+module
+
 /-
 Gaussian laws are closed under almost sure limits.
 
@@ -9,7 +11,9 @@ proof is the characteristic function: `|e^{itx}| = 1`, so dominated convergence
 carries the almost sure limit inside the integral, and a characteristic function
 determines a finite measure on the line.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

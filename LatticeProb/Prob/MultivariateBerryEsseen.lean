@@ -1,3 +1,5 @@
+module
+
 /-
 # Multivariate Berry–Esseen: the one-dimensional analytic core
 
@@ -19,7 +21,9 @@ Still missing and out of scope here: route A2 (`charFun_exp_sub_le`, `charFun_no
 A3 (`esseens_smoothing`), A4 (`berryEsseen_oneDim`) and the multivariate assembly C1/D1.  The
 frozen Prop in `Divisible-Sandpile-Percolation` is untouched.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ComplexOrder

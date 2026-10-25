@@ -1,3 +1,5 @@
+module
+
 /-
 # Closed ray-parity chains at original disk endpoints
 
@@ -11,9 +13,11 @@ constancy forces equal parity at its original second and fourth endpoints.
 This is an internal path-data theorem. The opposite parity of the two original
 boundary intervals, needed for the disk alternation contradiction, is the circle endpoint jump proved in the endpoint modules.
 -/
-import LatticeProb.Topology.PolygonalParityChain
-import LatticeProb.Topology.DiskOutsideArc
-import LatticeProb.Topology.CircleAngleWindow
+public import LatticeProb.Topology.PolygonalParityChain
+public import LatticeProb.Topology.DiskOutsideArc
+public import LatticeProb.Topology.CircleAngleWindow
+
+@[expose] public section
 
 
 

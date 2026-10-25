@@ -1,10 +1,14 @@
+module
+
 /- Summation by parts for finitely supported lattice tests and discrete time.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Site
-import Mathlib.Topology.Algebra.InfiniteSum.Ring
-import Mathlib.Algebra.BigOperators.Intervals
+public import LatticeProb.Site
+public import Mathlib.Topology.Algebra.InfiniteSum.Ring
+public import Mathlib.Algebra.BigOperators.Intervals
+
+@[expose] public section
 
 open LatticeProb
 noncomputable section

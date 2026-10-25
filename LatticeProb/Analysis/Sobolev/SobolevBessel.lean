@@ -1,3 +1,5 @@
+module
+
 /-
 # The `H^s`-structure packaging: `sobolevNormSq` as the Bessel-potential norm
 
@@ -14,9 +16,11 @@ that the `H^s`-valued Bochner integral (and hence the Minkowski average of the m
 identity) becomes available.  The right-hand side is the Bessel-potential norm written directly on
 the Fourier side (the `2π` normalisation is absorbed into `(2π‖ξ‖)²`).
 -/
-import Mathlib.Analysis.Distribution.Sobolev
-import Mathlib.MeasureTheory.Function.LpSeminorm.Defs
-import LatticeProb.Analysis.Sobolev.Defs
+public import Mathlib.Analysis.Distribution.Sobolev
+public import Mathlib.MeasureTheory.Function.LpSeminorm.Defs
+public import LatticeProb.Analysis.Sobolev.Defs
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

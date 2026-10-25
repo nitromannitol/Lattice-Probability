@@ -1,3 +1,5 @@
+module
+
 /-
 Kac's lemma.
 
@@ -21,8 +23,10 @@ and `⋃ n, Y n = {x | ∃ n, T^[n] x ∈ A}` (first entrance, by `Nat.find`). T
 `μ A ≠ 0` force `μ U = 1`.
 
 -/
-import Mathlib
-import LatticeProb.Prob.ReturnTime
+public import Mathlib
+public import LatticeProb.Prob.ReturnTime
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Set
 open scoped ENNReal

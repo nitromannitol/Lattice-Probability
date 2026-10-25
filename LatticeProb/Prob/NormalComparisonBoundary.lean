@@ -1,3 +1,5 @@
+module
+
 /-
 Normal comparison: covariance-entry bounds.
 
@@ -5,7 +7,9 @@ The smart-path entries, definiteness and derivatives are imported from
 NormalComparisonPath. The arbitrary-dimensional covariance-entry bound and
 its consequence along the smart path are retained here.
 -/
-import LatticeProb.Prob.NormalComparisonPath
+public import LatticeProb.Prob.NormalComparisonPath
+
+@[expose] public section
 
 open scoped MatrixOrder
 open Matrix

@@ -1,4 +1,8 @@
-import LatticeProb.Euclidean.Lattice
+module
+
+public import LatticeProb.Euclidean.Lattice
+
+@[expose] public section
 
 /-!
 # Half-open unit cubes centered at integer points

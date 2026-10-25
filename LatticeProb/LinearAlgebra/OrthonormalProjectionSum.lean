@@ -1,3 +1,5 @@
+module
+
 /-
 # Sums of orthonormal coordinate projections
 
@@ -6,8 +8,10 @@ projections. Adding such a sum to a projection that annihilates the family
 again gives an orthogonal projection.
 -/
 
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.InnerProductSpace.Symmetric
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.InnerProductSpace.Symmetric
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Determinant coefficients under independent index permutations
 
@@ -5,7 +7,9 @@ Permuting rows and columns multiplies each polynomial determinant coefficient
 by the product of the two permutation signs. Determinant permutation identities
 and coefficient extraction through constant multiplication prove the formula.
 -/
-import LatticeProb.LinearAlgebra.DeterminantCoefficient
+public import LatticeProb.LinearAlgebra.DeterminantCoefficient
+
+@[expose] public section
 
 
 

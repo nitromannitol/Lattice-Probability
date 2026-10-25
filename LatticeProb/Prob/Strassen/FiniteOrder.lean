@@ -1,10 +1,14 @@
+module
+
 /- # Monotone real atom couplings on finite posets
 
 Encode the finite partial order in a Boolean cube, apply the proved monotone coupling theorem, and recover the exact real atom marginals.
 -/
 
-import LatticeProb.Prob.Strassen.FiniteAtoms
-import LatticeProb.Prob.Strassen.LimitPassage
+public import LatticeProb.Prob.Strassen.FiniteAtoms
+public import LatticeProb.Prob.Strassen.LimitPassage
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The multiparameter subadditive ergodic theorem of Akcoglu and Krengel, along cubes: the mean half.
 
@@ -18,8 +20,10 @@ coordinate in turn to squeeze `G(n·1)/n^d` between `G(m·1)/m^d + d C m / n` fo
 a Fekete-type lemma on this bound gives the limit.
 
 -/
-import LatticeProb.Prob.Kingman
-import LatticeProb.Site
+public import LatticeProb.Prob.Kingman
+public import LatticeProb.Site
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

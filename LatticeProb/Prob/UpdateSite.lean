@@ -1,3 +1,5 @@
+module
+
 /-
 Resampling one coordinate of an infinite product, and the Fubini identity it gives.
 
@@ -8,7 +10,9 @@ sandpile formalization: the integral of a function of the resampled field equals
 integral of the function itself, and a function of the resampled field may be averaged
 over the fresh coordinate first.
 -/
-import LatticeProb.Prob.Splice
+public import LatticeProb.Prob.Splice
+
+@[expose] public section
 
 noncomputable section
 

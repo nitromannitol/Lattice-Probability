@@ -1,9 +1,13 @@
+module
+
 /-
 Affine reparametrization of a closed subinterval of the unit interval. The explicit
 inverse transports both endpoint and strict interior membership.
 -/
-import Mathlib.Topology.UnitInterval
-import Mathlib.Tactic.Linarith
+public import Mathlib.Topology.UnitInterval
+public import Mathlib.Tactic.Linarith
+
+@[expose] public section
 namespace LatticeProb.Topology
 
 open Set

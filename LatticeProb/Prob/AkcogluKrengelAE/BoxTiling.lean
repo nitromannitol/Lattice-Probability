@@ -1,3 +1,5 @@
+module
+
 /-
 # The per-coordinate box tiling: the anchored-box theorem from the anchored-cube iteration
 
@@ -14,7 +16,9 @@ Birkhoff identity `boxAvg_insert_eq_bAvg_boxAvg` are the exact analogues of the 
 inequality is needed: the box limit is produced by the same moving-target Birkhoff argument, with
 the average length running over the coordinate function `m` rather than the index.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+
+@[expose] public section
 
 set_option linter.unnecessarySeqFocus false
 set_option linter.unusedSimpArgs false

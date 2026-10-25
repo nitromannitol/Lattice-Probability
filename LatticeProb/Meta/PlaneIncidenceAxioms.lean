@@ -1,15 +1,19 @@
+module
+
 /-
 # Local plane incidence, dense labels and finite-point complements
 
 Axiom reports for principal reusable results, complementing the complete
 library declaration and generated-constant census.
 -/
-import LatticeProb.Topology.DenseLocalLabels
-import LatticeProb.Topology.FinitePointComplement
-import LatticeProb.Topology.LocalFaceIncidence
-import LatticeProb.Topology.SubintervalParameter
-import LatticeProb.Topology.ArcFaceIncidence
-import LatticeProb.Topology.AxisNeighborhood
+public import LatticeProb.Topology.DenseLocalLabels
+public import LatticeProb.Topology.FinitePointComplement
+public import LatticeProb.Topology.LocalFaceIncidence
+public import LatticeProb.Topology.SubintervalParameter
+public import LatticeProb.Topology.ArcFaceIncidence
+public import LatticeProb.Topology.AxisNeighborhood
+
+@[expose] public section
 
 #print axioms LatticeProb.PlaneTopology.interior_subset_component_incidence_of_regular_axis
 #print axioms LatticeProb.PlaneTopology.axis_mem_closure_compl

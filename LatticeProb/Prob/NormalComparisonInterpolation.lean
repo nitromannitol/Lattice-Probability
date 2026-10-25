@@ -1,3 +1,5 @@
+module
+
 /-
 # Li--Shao normal comparison: the interpolation on `[0, T]` (route item 8)
 
@@ -20,12 +22,14 @@ with constant diagonal `v > 0` and nonnegative entries.  Write
 
 * `orthant_path_interpolation`: both statements above.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityOrthantPath
-import LatticeProb.Prob.GaussCovDensityOrthantPairs
-import LatticeProb.Prob.GaussCovDensityPartial2Bounds
-import LatticeProb.Prob.GaussCovDensityBoundary
-import LatticeProb.Prob.NormalComparisonOrthantIcc
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityOrthantPath
+public import LatticeProb.Prob.GaussCovDensityOrthantPairs
+public import LatticeProb.Prob.GaussCovDensityPartial2Bounds
+public import LatticeProb.Prob.GaussCovDensityBoundary
+public import LatticeProb.Prob.NormalComparisonOrthantIcc
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

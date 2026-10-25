@@ -1,7 +1,11 @@
-import Mathlib
-import LatticeProb.Network.GFF
-import LatticeProbAudit.GFF.SolutionBasic
-import LatticeProbAudit.Support.GFFBridge
+module
+
+public import Mathlib
+public import LatticeProb.Network.GFF
+public import LatticeProbAudit.GFF.SolutionBasic
+public import LatticeProbAudit.Support.GFFBridge
+
+@[expose] public section
 
 /-!
 # Solution: GFF

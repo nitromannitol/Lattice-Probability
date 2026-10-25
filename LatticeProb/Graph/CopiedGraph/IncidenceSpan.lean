@@ -1,11 +1,15 @@
+module
+
 /-
 Integer spans of literal incidence columns on graphs with individual edge copies.
 -/
 
-import LatticeProb.Graph.CopiedGraph.Basic
-import Mathlib.LinearAlgebra.Matrix.ToLin
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import Mathlib.Algebra.Group.Int.Units
+public import LatticeProb.Graph.CopiedGraph.Basic
+public import Mathlib.LinearAlgebra.Matrix.ToLin
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import Mathlib.Algebra.Group.Int.Units
+
+@[expose] public section
 
 
 

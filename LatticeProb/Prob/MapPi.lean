@@ -1,3 +1,5 @@
+module
+
 /-
 The pushforward of an independent family along a map of the one-site space.
 
@@ -10,8 +12,10 @@ proof is `Measure.eq_infinitePi` against cylinders: the preimage of the cylinder
 `{η | ∀ i ∈ s, η i ∈ t i}` under the coordinatewise map is the cylinder
 `{η | ∀ i ∈ s, η i ∈ f ⁻¹' t i}`.
 -/
-import Mathlib
-import LatticeProb.IID
+public import Mathlib
+public import LatticeProb.IID
+
+@[expose] public section
 
 noncomputable section
 

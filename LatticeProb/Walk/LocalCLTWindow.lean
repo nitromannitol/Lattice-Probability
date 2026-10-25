@@ -1,6 +1,10 @@
-import Mathlib
-import LatticeProb.Walk.PairedLocalCLT
-import LatticeProb.Walk.LatticeGreen
+module
+
+public import Mathlib
+public import LatticeProb.Walk.PairedLocalCLT
+public import LatticeProb.Walk.LatticeGreen
+
+@[expose] public section
 
 /-!
 # The local central limit theorem on parabolic windows

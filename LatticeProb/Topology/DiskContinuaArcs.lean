@@ -1,3 +1,5 @@
+module
+
 /-
 # Polygonal arcs from disjoint compact disk continua
 
@@ -6,8 +8,10 @@ approximation in separated connected neighborhoods. Finite loop pruning then
 produces two disjoint injective paths, with the same original endpoints and
 strictly interior nonendpoint points, from arbitrary compact connected continua.
 -/
-import LatticeProb.Topology.DiskArcPair
-import LatticeProb.Topology.DiskRestoredEndpoints
+public import LatticeProb.Topology.DiskArcPair
+public import LatticeProb.Topology.DiskRestoredEndpoints
+
+@[expose] public section
 
 open Set LatticeProb.Topology
 

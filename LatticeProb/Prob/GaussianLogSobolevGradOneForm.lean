@@ -1,3 +1,5 @@
+module
+
 /-
 # The exponential form of the one-dimensional Γ-form Gaussian log-Sobolev inequality
 
@@ -14,7 +16,9 @@ two predicates are equivalent; the exponential form is the exact missing Mathlib
 * `gaussianLogSobolevGrad_of_oneExp` — exponential form ⇒ Γ-form;
 * `gaussianLogSobolevGrad_one_iff_exp` — the equivalence.
 -/
-import LatticeProb.Prob.GaussianLogSobolevOneInput
+public import LatticeProb.Prob.GaussianLogSobolevOneInput
+
+@[expose] public section
 
 noncomputable section
 

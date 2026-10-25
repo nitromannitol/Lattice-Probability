@@ -1,4 +1,8 @@
-import LatticeProb.External.GreenNorms
+module
+
+public import LatticeProb.External.GreenNorms
+
+@[expose] public section
 
 /-!
 # The two norms of the truncated Green function, proved

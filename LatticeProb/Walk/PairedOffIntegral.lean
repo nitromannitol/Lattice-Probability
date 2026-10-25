@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Walk.PairedMultiplierOff
+module
+
+public import Mathlib
+public import LatticeProb.Walk.PairedMultiplierOff
+
+@[expose] public section
 
 /-!
 # The torus integral of the majorant off the Gaussian region

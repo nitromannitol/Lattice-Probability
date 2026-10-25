@@ -1,21 +1,25 @@
+module
+
 /-
 # Terminal pairings and complementary matrix minors axiom reports
 
 Print the foundational dependencies of the principal results on copied-forest
 transport, determinant coefficients and grounded complementary minors.
 -/
-import LatticeProb.Combinatorics.PairingTransport
-import LatticeProb.Combinatorics.TerminalOrder
-import LatticeProb.Graph.CopiedGraph.PairingForest
-import LatticeProb.Graph.CopiedGraph.VertexTransport
-import LatticeProb.LinearAlgebra.DeterminantCoefficient
-import LatticeProb.LinearAlgebra.InverseComplementaryMinor
-import LatticeProb.Graph.CopiedGraph.RootedMatchingTransport
-import LatticeProb.LinearAlgebra.DeterminantCoefficientOrder
-import LatticeProb.LinearAlgebra.OrderedComplementSign
-import LatticeProb.LinearAlgebra.ZeroSumBorder
-import LatticeProb.LinearAlgebra.ZeroSumBorderInverse
-import LatticeProb.LinearAlgebra.ZeroSumComplementaryMinor
+public import LatticeProb.Combinatorics.PairingTransport
+public import LatticeProb.Combinatorics.TerminalOrder
+public import LatticeProb.Graph.CopiedGraph.PairingForest
+public import LatticeProb.Graph.CopiedGraph.VertexTransport
+public import LatticeProb.LinearAlgebra.DeterminantCoefficient
+public import LatticeProb.LinearAlgebra.InverseComplementaryMinor
+public import LatticeProb.Graph.CopiedGraph.RootedMatchingTransport
+public import LatticeProb.LinearAlgebra.DeterminantCoefficientOrder
+public import LatticeProb.LinearAlgebra.OrderedComplementSign
+public import LatticeProb.LinearAlgebra.ZeroSumBorder
+public import LatticeProb.LinearAlgebra.ZeroSumBorderInverse
+public import LatticeProb.LinearAlgebra.ZeroSumComplementaryMinor
+
+@[expose] public section
 
 #print axioms LatticeProb.Combinatorics.pairing_reindex_iff
 #print axioms LatticeProb.Combinatorics.exists_terminal_sorting_perm

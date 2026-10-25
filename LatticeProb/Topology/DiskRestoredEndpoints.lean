@@ -1,12 +1,16 @@
+module
+
 /-
 # Original boundary endpoint chains on the actual coordinate disk
 
 This construction uses arbitrary compact connected continua and the original
 ordered angles. It supplies finite chains and their exact circle traces.
 -/
-import LatticeProb.Topology.DiskEndpointRestoration
-import LatticeProb.Topology.PolygonalChainPlane
-import LatticeProb.Topology.CircleAngleWindow
+public import LatticeProb.Topology.DiskEndpointRestoration
+public import LatticeProb.Topology.PolygonalChainPlane
+public import LatticeProb.Topology.CircleAngleWindow
+
+@[expose] public section
 
 
 

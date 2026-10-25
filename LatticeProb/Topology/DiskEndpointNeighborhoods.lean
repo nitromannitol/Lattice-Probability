@@ -1,3 +1,5 @@
+module
+
 /-
 # Endpoint segments inside the original continuum neighborhoods
 
@@ -6,10 +8,12 @@ close to one. Each radial endpoint segment then stays in its original set's
 neighborhood. The disk is specified by coordinate squares; metric neighborhoods
 use the ambient product metric.
 -/
-import Mathlib.Analysis.Normed.Module.Convex
-import Mathlib.Topology.MetricSpace.Thickening
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+public import Mathlib.Analysis.Normed.Module.Convex
+public import Mathlib.Topology.MetricSpace.Thickening
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 
 

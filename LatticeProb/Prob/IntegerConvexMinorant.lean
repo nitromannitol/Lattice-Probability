@@ -1,10 +1,14 @@
+module
+
 /-
 A convex function on the integers dominates a linear function and a positive jump.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.ConvexProduct
-import Mathlib.Analysis.Convex.Slope
+public import LatticeProb.Prob.ConvexProduct
+public import Mathlib.Analysis.Convex.Slope
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.ConvexOrder

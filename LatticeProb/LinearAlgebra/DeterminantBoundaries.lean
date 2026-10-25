@@ -1,3 +1,5 @@
+module
+
 /-
 # Boundary cases for orthonormal frames
 
@@ -6,7 +8,9 @@ normalization supplies the unit and orthogonality facts used by recovery and
 increasing-event comparison.
 -/
 
-import LatticeProb.LinearAlgebra.DeterminantEvent
+public import LatticeProb.LinearAlgebra.DeterminantEvent
+
+@[expose] public section
 
 
 

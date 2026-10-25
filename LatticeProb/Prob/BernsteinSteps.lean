@@ -1,3 +1,5 @@
+module
+
 /-
 # The bounded Bernstein steps: the one-step estimate and the factorial-moment mgf bound
 
@@ -13,7 +15,9 @@ Route items 4 and 6 of `scratch/pk/bernstein-route.md` for
 Item 5 (`exists_martingale_rosenthal`, the cumulative Pinelis induction) is the research-level core
 and is not attempted here; it remains the exact hypothesis of the final assembly.
 -/
-import LatticeProb.Prob.BernsteinMartingale
+public import LatticeProb.Prob.BernsteinMartingale
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal

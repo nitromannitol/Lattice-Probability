@@ -1,3 +1,5 @@
+module
+
 /-
 The exponential family and its derivative under the integral sign.
 
@@ -8,9 +10,11 @@ the differentiation of `s ↦ ∫ e^{s S} f` within `Set.Ici 0` are generic
 analysis, with no parking content, and every model that differentiates an
 exponential moment will want them.
 -/
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
-import Mathlib.Analysis.Calculus.Deriv.Slope
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+public import Mathlib.Analysis.Calculus.Deriv.Slope
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+
+@[expose] public section
 
 noncomputable section
 

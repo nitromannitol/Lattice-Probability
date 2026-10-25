@@ -1,3 +1,5 @@
+module
+
 /-
 `ℕ∞`-valued arrival/hitting-time boilerplate, moved from
 `Exploding-Sandpiles`'s `Exploding/Support/Wave.lean` and
@@ -10,7 +12,9 @@ there is none) and the arithmetic for combining a finite such time with a
 natural constant.  Paper-independent: none of the five statements below
 mentions a graph, a lattice, or a sandpile.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

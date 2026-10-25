@@ -1,3 +1,5 @@
+module
+
 /-
 # Global integrability of the Gaussian density and its first two coordinate partials
 
@@ -26,8 +28,10 @@ Route (probabilistic).
 
 The same transfer with `g = 1` gives the normalisation `∫ covDensity S = 1`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensity
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensity
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Counting the lattice by sup-norm shells, and the two elementary series the
 proof of `lem:gamma-sum` sums over them.
@@ -10,9 +12,11 @@ product of intervals, so it carries `(2r+1)^d` sites, and the shell at radius
 turns the pointwise bound `Γ_m(y) ≤ C(1+|y|)^{2-2d}` into a constant when
 `d ≥ 3` and into a logarithm when `d = 2`.
 -/
-import Mathlib
-import LatticeProb.Walk.SRW
-import LatticeProb.ParticleHoleLemmas
+public import Mathlib
+public import LatticeProb.Walk.SRW
+public import LatticeProb.ParticleHoleLemmas
+
+@[expose] public section
 
 noncomputable section
 

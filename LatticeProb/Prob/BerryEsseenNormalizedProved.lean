@@ -1,3 +1,5 @@
+module
+
 /-
 # The normalised Berry-Esseen theorem
 
@@ -11,9 +13,11 @@ inequality (for every Gaussian variance).  This file puts the two together.
   and `∑ Var = 1`, the distribution function of the sum differs from the standard normal one by at
   most `100 ∑ ∫ |z|³ dν i`.
 -/
-import Mathlib
-import LatticeProb.Prob.BerryEsseenNormalized
-import LatticeProb.Prob.EsseenSmoothing
+public import Mathlib
+public import LatticeProb.Prob.BerryEsseenNormalized
+public import LatticeProb.Prob.EsseenSmoothing
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal

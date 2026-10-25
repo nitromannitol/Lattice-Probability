@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Walk.LineKernel
+module
+
+public import Mathlib
+public import LatticeProb.Walk.LineKernel
+
+@[expose] public section
 
 /-!
 # The Gaussian comparison for the one-dimensional continuous-time kernel

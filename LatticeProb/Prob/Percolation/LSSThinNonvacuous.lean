@@ -1,3 +1,5 @@
+module
+
 /-
 # Non-vacuity of the conditional discharge at a concrete witness
 
@@ -13,7 +15,9 @@ The pairing is abstract inside the library, with no rotor import and no rotor fi
 domination statement is proved and no `Prop` is frozen.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinVacuity
+public import LatticeProb.Prob.Percolation.LSSThinVacuity
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

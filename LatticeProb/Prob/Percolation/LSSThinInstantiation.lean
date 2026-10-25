@@ -1,3 +1,5 @@
+module
+
 /-
 # Instantiation of the thin-form complement bridge on the planar carrier
 
@@ -14,7 +16,9 @@ No domination statement is proved here; the dense half is an explicit hypothesis
 `Rotor.External.LSS`.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinComplement
+public import LatticeProb.Prob.Percolation.LSSThinComplement
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

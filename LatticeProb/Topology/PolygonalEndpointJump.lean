@@ -1,3 +1,5 @@
+module
+
 /-
 # A finite crossing jump at an isolated polygonal endpoint
 
@@ -7,7 +9,9 @@ one pointing forward, a small transverse displacement changes only the forward
 incident marker. Summing the markers gives a parity difference of one. These
 are local finite geometry statements; no Jordan or separation premise is used.
 -/
-import LatticeProb.Topology.PolygonalEndpointDirection
+public import LatticeProb.Topology.PolygonalEndpointDirection
+
+@[expose] public section
 
 
 

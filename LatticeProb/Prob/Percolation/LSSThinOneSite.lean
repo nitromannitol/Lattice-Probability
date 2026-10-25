@@ -1,3 +1,5 @@
+module
+
 /-
 # The one-site probability transport of the planar complement bridge
 
@@ -12,7 +14,9 @@ No domination statement is proved here, no `Prop` is frozen, no rotor file is to
 nothing is claimed about `Rotor.External.LSS`.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinPlanar
+public import LatticeProb.Prob.Percolation.LSSThinPlanar
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

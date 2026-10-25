@@ -1,4 +1,8 @@
-import LatticeProb.Prob.GaussCovDensityPath
+module
+
+public import LatticeProb.Prob.GaussCovDensityPath
+
+@[expose] public section
 
 /-!
 # Covariance derivatives of Gaussian densities

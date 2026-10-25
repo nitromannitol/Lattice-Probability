@@ -1,3 +1,5 @@
+module
+
 /-
 # Crossing signs on the original unit circle
 
@@ -7,9 +9,11 @@ equal to that edge's radial pairing. Nonzero derivatives control the signs on
 both sides of the original angle. The exact level-line meeting formula then
 determines which incident half-open marker changes.
 -/
-import LatticeProb.Topology.PolygonalEndpointJump
-import Mathlib.Analysis.Calculus.Deriv.Slope
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+public import LatticeProb.Topology.PolygonalEndpointJump
+public import Mathlib.Analysis.Calculus.Deriv.Slope
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+
+@[expose] public section
 
 
 

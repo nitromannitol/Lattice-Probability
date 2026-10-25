@@ -1,11 +1,15 @@
+module
+
 /-
 Nonzero determinants characterize rooted selections of original incidence columns.
 -/
 
-import LatticeProb.Graph.CopiedGraph.IncidenceSpan
-import LatticeProb.Graph.CopiedGraph.RootedForest
-import LatticeProb.Graph.CopiedGraph.ComponentKernel
-import Mathlib.LinearAlgebra.LinearIndependent.Basic
+public import LatticeProb.Graph.CopiedGraph.IncidenceSpan
+public import LatticeProb.Graph.CopiedGraph.RootedForest
+public import LatticeProb.Graph.CopiedGraph.ComponentKernel
+public import Mathlib.LinearAlgebra.LinearIndependent.Basic
+
+@[expose] public section
 
 
 

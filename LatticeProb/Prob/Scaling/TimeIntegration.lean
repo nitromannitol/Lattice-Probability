@@ -1,11 +1,15 @@
+module
+
 /-
 Integration by parts in time on an open set, for a continuous primitive with
 a continuous time derivative and a smooth test function supported in that set.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.TimeTest
-import Mathlib.MeasureTheory.Integral.Prod
+public import LatticeProb.Prob.Scaling.TimeTest
+public import Mathlib.MeasureTheory.Integral.Prod
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 noncomputable section

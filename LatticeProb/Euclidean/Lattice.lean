@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Site
+module
+
+public import Mathlib
+public import LatticeProb.Site
+
+@[expose] public section
 
 /-!
 # Euclidean radius and physical scaling of the integer lattice

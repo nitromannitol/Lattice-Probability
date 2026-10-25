@@ -1,3 +1,5 @@
+module
+
 /-
 # Inverse of a zero-sum matrix border
 
@@ -7,7 +9,9 @@ matrix. Its inverse has a constant ground column, and every other column is
 the extended grounded inverse minus its value at the pinning vertex.
 The proof multiplies the displayed inverse by the border explicitly.
 -/
-import LatticeProb.LinearAlgebra.ZeroSumBorder
+public import LatticeProb.LinearAlgebra.ZeroSumBorder
+
+@[expose] public section
 
 
 

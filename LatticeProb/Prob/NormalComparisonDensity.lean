@@ -1,3 +1,5 @@
+module
+
 /-
 # The multivariate Gaussian density: the covariance density assembly step
 
@@ -18,8 +20,10 @@ of the inverse root.
 
 No `External` is touched and no `Prop` is frozen.
 -/
-import LatticeProb.Gauss.MultivariateDensity
-import LatticeProb.Prob.GaussOrthant
+public import LatticeProb.Gauss.MultivariateDensity
+public import LatticeProb.Prob.GaussOrthant
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix
 open scoped ENNReal MatrixOrder

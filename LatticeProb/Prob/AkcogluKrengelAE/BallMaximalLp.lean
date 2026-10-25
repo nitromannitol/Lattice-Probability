@@ -1,3 +1,5 @@
+module
+
 /-
 # The multiparameter pointwise ergodic maximal inequality (Krengel's `Lᵖ` bound)
 
@@ -34,8 +36,10 @@ The two genuinely missing inputs are isolated as named `Prop`s and are **not** p
 Everything below is `sorry`-free; the two `Prop`s mark the exact remaining gap rather than
 assume it.
 -/
-import LatticeProb.Prob.Birkhoff
-import LatticeProb.Walk.Ball
+public import LatticeProb.Prob.Birkhoff
+public import LatticeProb.Walk.Ball
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

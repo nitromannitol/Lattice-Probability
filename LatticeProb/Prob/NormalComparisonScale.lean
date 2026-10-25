@@ -1,3 +1,5 @@
+module
+
 /-
 # Normal comparison (Li--Shao): the covariance scale integral
 
@@ -14,7 +16,9 @@ same integrand by `Real.sqrt_eq_rpow` and `Real.rpow_neg`.
 This file lands the scale integral on top of the smart path and the bivariate density bound of
 `LatticeProb/Prob/NormalComparison.lean`.  No `External` is touched and no `Prop` is frozen.
 -/
-import LatticeProb.Prob.NormalComparison
+public import LatticeProb.Prob.NormalComparison
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Interval

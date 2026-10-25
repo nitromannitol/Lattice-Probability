@@ -1,3 +1,5 @@
+module
+
 /-
 The quantitative half of the Rellich–Kondrachov mollification step.
 
@@ -25,7 +27,9 @@ This file proves the estimate.  The three analytic ingredients are:
 The scaled-family limit `C(K_Λ) → 0` is a separate, purely real-variable
 statement about `𝓕K`; it is recorded at the end of the file.
 -/
-import LatticeProb.Analysis.Sobolev.Defs
+public import LatticeProb.Analysis.Sobolev.Defs
+
+@[expose] public section
 
 open MeasureTheory ContinuousLinearMap Set Real
 open scoped ENNReal FourierTransform Convolution Pointwise

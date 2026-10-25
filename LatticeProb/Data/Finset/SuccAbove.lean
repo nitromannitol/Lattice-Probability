@@ -1,9 +1,13 @@
+module
+
 /-
 Finite ordered sets after deleting a position from a finite ordinal.
 -/
 
-import Mathlib.Data.Finset.Sort
-import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Algebra.BigOperators.Fin
+
+@[expose] public section
 
 
 

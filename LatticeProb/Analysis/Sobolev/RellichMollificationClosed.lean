@@ -1,8 +1,12 @@
-import LatticeProb.Analysis.Sobolev.RellichMollify
-import LatticeProb.Analysis.Sobolev.HighFrequency
-import LatticeProb.Analysis.Sobolev.FourierCharPhase
-import LatticeProb.Analysis.Sobolev.Convolution
-import Mathlib.Analysis.Calculus.BumpFunction.Normed
+module
+
+public import LatticeProb.Analysis.Sobolev.RellichMollify
+public import LatticeProb.Analysis.Sobolev.HighFrequency
+public import LatticeProb.Analysis.Sobolev.FourierCharPhase
+public import LatticeProb.Analysis.Sobolev.Convolution
+public import Mathlib.Analysis.Calculus.BumpFunction.Normed
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology Convolution

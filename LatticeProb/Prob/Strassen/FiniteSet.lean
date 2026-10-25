@@ -1,9 +1,13 @@
+module
+
 /- # Couplings of finite random sets from increasing-event domination
 
 Specialize the finite partial-order coupling to inclusion of finite subsets; insertion closure gives the required upper-set condition.
 -/
 
-import LatticeProb.Prob.Strassen.FiniteOrder
+public import LatticeProb.Prob.Strassen.FiniteOrder
+
+@[expose] public section
 
 
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Injective arcs in disjoint finite disk chains
 
@@ -5,7 +7,9 @@ Finite loop pruning extracts injective polygonal paths while preserving the
 original endpoints and trace inclusion. Applying it to two disjoint chains
 preserves disjointness, disk containment and strict nonendpoint interior.
 -/
-import LatticeProb.Topology.PolygonalArc
+public import LatticeProb.Topology.PolygonalArc
+
+@[expose] public section
 
 open Set LatticeProb.Topology
 

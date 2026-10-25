@@ -1,3 +1,5 @@
+module
+
 /-
 # Differentiation under the integral for a marginal
 
@@ -13,7 +15,9 @@ proof is Mathlib's parametric differentiation lemma
 `hasFDerivAt_integral_of_dominated_of_fderiv_le`
 (`Mathlib/Analysis/Calculus/ParametricIntegral.lean:210`).
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The mollification sub-step of the Rellich–Kondrachov low-frequency argument.
 
@@ -23,7 +25,9 @@ convolution identity plus dominated convergence against the weight
 `(1 + (2π‖ξ‖)²)^{s₀}`, and is recorded as the remaining obstruction in the
 comment at the end of this file.
 -/
-import LatticeProb.Analysis.Sobolev.Defs
+public import LatticeProb.Analysis.Sobolev.Defs
+
+@[expose] public section
 
 open MeasureTheory ContinuousLinearMap Set
 open scoped ENNReal FourierTransform Convolution Pointwise

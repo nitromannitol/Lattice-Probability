@@ -5,7 +5,7 @@ package «lattice-probability» where
   leanOptions := #[⟨`autoImplicit, false⟩]
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4" @ "81a5d257c8e410db227a6665ed08f64fea08e997"
+  "https://github.com/leanprover-community/mathlib4" @ "065356127b1dc0016f66b7283ce0ce2c4055aa55"
 
 @[default_target]
 lean_lib «LatticeProb» where

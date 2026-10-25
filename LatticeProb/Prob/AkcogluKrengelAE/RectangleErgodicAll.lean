@@ -1,3 +1,5 @@
+module
+
 /-
 # The arbitrary-`a` extension of the rectangle ergodic theorem
 
@@ -10,7 +12,9 @@ by at most `1` (`ceil_sub_le`, `ceil_sub_le'`).  The sandwich
 reduces the arbitrary-`a` case to the `0 ≤ a` case at the shifted scales `N ± K`; the a.e.-scale
 assembly is isolated as `RectangleErgodicAllReduction`.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Set Finset
 open scoped BigOperators

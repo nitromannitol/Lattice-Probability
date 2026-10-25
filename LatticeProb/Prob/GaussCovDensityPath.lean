@@ -1,3 +1,5 @@
+module
+
 /-
 # The covariance derivative of the Gaussian density along a line `t ↦ A + t B`
 
@@ -21,8 +23,10 @@ classical identity is `∂ₜ p = (1/2) ∑ᵢⱼ Bᵢⱼ ∂ᵢ∂ⱼ p`, where
 * `hasDerivAt_covDensity_add_smul`: the chain rule on
   `covDensity (A + t B) x = (2π)^{-n/2} (det (A + t B))^{-1/2} exp (-(x ⬝ᵥ (A + t B)⁻¹ x)/2)`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensity
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensity
+
+@[expose] public section
 
 open Matrix Polynomial Topology Filter
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # The layer-cake identity behind the `L^p` Doob maximal inequality
 
@@ -16,7 +18,9 @@ This is a self-contained analytic lemma: it uses the Mathlib layer-cake formula
 `Integrable.integral_eq_integral_meas_le` and the change of variables `y = x ^ p`
 (`integral_comp_rpow_Ioi_of_pos`).  There is no new external input.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped NNReal ENNReal

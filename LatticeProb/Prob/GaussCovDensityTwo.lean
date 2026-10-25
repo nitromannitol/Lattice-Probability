@@ -1,3 +1,5 @@
+module
+
 /-
 # The density of `N(0, !![v, c; c, v])` is the bivariate Gaussian density
 
@@ -18,9 +20,11 @@ Route.  With `r = c / v` and `|c| < v`:
   `(v a² - 2 c a b + v b²) / (v² - c²) = (a² - 2 r a b + b²) / (v (1 - r²))`;
 * the prefactor is `(2π)^{-1} (v² - c²)^{-1/2} = (2π v √(1 - r²))⁻¹`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensity
-import LatticeProb.Prob.NormalComparison
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensity
+public import LatticeProb.Prob.NormalComparison
+
+@[expose] public section
 
 open Matrix
 

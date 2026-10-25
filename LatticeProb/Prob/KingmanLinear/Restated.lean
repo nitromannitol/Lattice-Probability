@@ -1,7 +1,11 @@
-import Mathlib
-import LatticeProb.Prob.InducedMap
-import LatticeProb.Prob.Kac
-import LatticeProb.Prob.Invariance
+module
+
+public import Mathlib
+public import LatticeProb.Prob.InducedMap
+public import LatticeProb.Prob.Kac
+public import LatticeProb.Prob.Invariance
+
+@[expose] public section
 
 /-!
 # Restated from `induced-map`, `kac` and `invariance`

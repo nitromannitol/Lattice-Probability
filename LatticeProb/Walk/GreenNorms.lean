@@ -1,7 +1,11 @@
-import Mathlib
-import LatticeProb.Walk.VarianceScale
-import LatticeProb.Walk.SRWGreenSup
-import LatticeProb.Walk.SRWGreenLower
+module
+
+public import Mathlib
+public import LatticeProb.Walk.VarianceScale
+public import LatticeProb.Walk.SRWGreenSup
+public import LatticeProb.Walk.SRWGreenLower
+
+@[expose] public section
 
 /-!
 # The two norms of the truncated Green function

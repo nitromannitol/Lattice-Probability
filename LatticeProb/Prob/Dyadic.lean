@@ -1,3 +1,5 @@
+module
+
 /-
 The dyadic skeleton witnesses the supremum of a continuous path.
 
@@ -8,7 +10,9 @@ continuous on the compact interval, so a point where the band is left is
 within `a / 2` of a dyadic point.  This is the deterministic heart of the
 reduction of a continuous-time maximal inequality to its discrete skeleton.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal

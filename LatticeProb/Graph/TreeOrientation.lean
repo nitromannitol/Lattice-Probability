@@ -1,9 +1,13 @@
+module
+
 /-
 Rootward orientation of an edge in a tree. The two simple paths from its endpoints
 to a common root determine which endpoint has that edge as its first step. The proof
 uses uniqueness of simple paths, without a choice of vertex or edge enumeration.
 -/
-import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+
+@[expose] public section
 
 set_option autoImplicit false
 

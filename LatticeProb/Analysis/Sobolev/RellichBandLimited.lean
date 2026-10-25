@@ -1,3 +1,5 @@
+module
+
 /-
 # Rellich–Kondrachov: the low-frequency statement from a band-limited `C^m`-net
 
@@ -14,8 +16,10 @@ precise remaining gap: its two missing inputs are the frequency-truncation
 operator `P_Λ` and the band-limited Bernstein/`H^s → C^m` bound, neither of which
 exists in Mathlib (see the docstring of `rk_finite_net_of_Cm_net`).
 -/
-import LatticeProb.Analysis.Sobolev.RellichNet
-import LatticeProb.Analysis.Sobolev.RellichEquiv
+public import LatticeProb.Analysis.Sobolev.RellichNet
+public import LatticeProb.Analysis.Sobolev.RellichEquiv
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

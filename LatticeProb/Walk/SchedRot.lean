@@ -1,3 +1,5 @@
+module
+
 /-
 The rotated coordinate-schedule decomposition of the simple random walk.
 
@@ -35,8 +37,10 @@ In the shift by `e_i + e_j` the rotated coordinates move by `(2, 0)`, so only
 one factor is touched, and the one-dimensional two-step gradient applies with
 the RANDOM length `K(c)`.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWDecomp
+public import Mathlib
+public import LatticeProb.Walk.SRWDecomp
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

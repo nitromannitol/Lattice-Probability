@@ -1,3 +1,5 @@
+module
+
 /-
 # Plancherel in `∫⁻`/`ofReal` form
 
@@ -6,7 +8,9 @@ agrees almost everywhere with the pointwise Fourier integral `𝓕`.  Integrabil
 necessary: the
 Bochner integral defining `𝓕` is `0` off `L¹`, so the unrestricted `L²` statement is false.
 -/
-import LatticeProb.Analysis.Sobolev.Defs
+public import LatticeProb.Analysis.Sobolev.Defs
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap ComplexInnerProductSpace ContDiff

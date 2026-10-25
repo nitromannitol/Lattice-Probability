@@ -1,4 +1,8 @@
-import LatticeProb.Walk.GreenNorms
+module
+
+public import LatticeProb.Walk.GreenNorms
+
+@[expose] public section
 
 /-!
 # The two norms of the truncated Green function

@@ -1,3 +1,5 @@
+module
+
 /-
 Sub-invariant functions are invariant.
 
@@ -16,7 +18,9 @@ many `q`: a.e. `x` has `q < f x ↔ q < f (T x)` for all rational `q ≥ 0`, whi
 No ergodicity and no integrability is needed for the invariance; the target `ℝ≥0∞` handles `∞`.
 
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Set
 open scoped ENNReal

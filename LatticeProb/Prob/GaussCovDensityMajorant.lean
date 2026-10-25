@@ -1,3 +1,5 @@
+module
+
 /-
 # Uniform Gaussian majorants of the density along the smart path
 
@@ -23,9 +25,11 @@ Write `q x = ∑ k, x k ^ 2`.  For `v > 0`, `S` positive semidefinite, `T ∈ [0
   `C * (1 + q x) * exp (-(c * q x))`, using `|(S_t⁻¹ x)_i| ≤ D ∑ |x_k|` and
   `(∑ |x_k|)² ≤ n q x`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensity
-import LatticeProb.Prob.NormalComparisonPath
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensity
+public import LatticeProb.Prob.NormalComparisonPath
+
+@[expose] public section
 
 open Matrix
 

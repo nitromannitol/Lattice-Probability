@@ -1,3 +1,5 @@
+module
+
 /-
 The central binomial ratio, uniformly on the diffusive scale.
 
@@ -14,7 +16,9 @@ the uniformity in `k`, which is the substantive half, is the estimate below.
 The one analytic input is the second-order bound `|log(1+x) - x| ≤ 2x²` on
 `|x| ≤ 1/2`, which is Mathlib's `Real.abs_log_sub_add_sum_range_le` at one term.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

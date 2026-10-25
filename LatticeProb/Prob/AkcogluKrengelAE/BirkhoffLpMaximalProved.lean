@@ -1,3 +1,5 @@
+module
+
 /-
 # Wiener's one-parameter `Lᵖ` maximal theorem (`LatticeProb.BirkhoffLpMaximal`)
 
@@ -18,7 +20,9 @@ Route:
 
 Everything is `sorry`-free; the only axioms are the standard three.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.BallMaximalLp
+public import LatticeProb.Prob.AkcogluKrengelAE.BallMaximalLp
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

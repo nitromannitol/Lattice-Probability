@@ -1,6 +1,10 @@
+module
+
 /- Elementary incident-copy path lemmas adapted from the finite-avalanche proof.
 The exact source pins and namespace adaptations are retained in EXTRACTION.json. -/
-import LatticeProb.Graph.CopiedGraph.TwoRootForest
+public import LatticeProb.Graph.CopiedGraph.TwoRootForest
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical

@@ -1,7 +1,11 @@
+module
+
 /- Concatenation and cycle erasure for chronological loop erasure. A closed excursion
 at the endpoint of a walk, whose other vertices avoid the loop-erased path, does not
 change the loop erasure. -/
-import LatticeProb.Combinatorics.LoopErasure.Basic
+public import LatticeProb.Combinatorics.LoopErasure.Basic
+
+@[expose] public section
 
 /-! Concatenation and cycle erasure for chronological loop erasure. A closed excursion
 at the endpoint of a walk, whose other vertices avoid the loop-erased path, does not

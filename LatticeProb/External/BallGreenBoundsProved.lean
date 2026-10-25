@@ -1,4 +1,8 @@
-import LatticeProb.External.BallGreenBounds
+module
+
+public import LatticeProb.External.BallGreenBounds
+
+@[expose] public section
 
 /-!
 # The ball-killed Green estimates, proved

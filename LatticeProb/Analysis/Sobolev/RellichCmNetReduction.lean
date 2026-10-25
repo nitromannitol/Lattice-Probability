@@ -1,3 +1,5 @@
+module
+
 /-
 # The `C^m` net ⟹ low-frequency net reduction (Arzelà–Ascoli glue)
 
@@ -21,10 +23,12 @@ The former reduction `rkLowFreqNet_of_uniformCmNet`, which carried the `C^m`-net
 `RellichLowFreqNet.lean`), and its only consumer `RellichAssembly.lean` is quarantined.  The sound
 route to `rkLowFreqNet` is `RellichLowFreqGlue.lean`.
 -/
-import Mathlib
-import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
-import LatticeProb.Analysis.Sobolev.RellichEstimate
-import LatticeProb.Analysis.Sobolev.RellichNet
+public import Mathlib
+public import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
+public import LatticeProb.Analysis.Sobolev.RellichEstimate
+public import LatticeProb.Analysis.Sobolev.RellichNet
+
+@[expose] public section
 
 open MeasureTheory Set Metric
 open scoped ENNReal FourierTransform

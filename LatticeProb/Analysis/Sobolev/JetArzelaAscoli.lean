@@ -1,3 +1,5 @@
+module
+
 /-
 # Arzelà–Ascoli with a general normed codomain (the jet-net input)
 
@@ -12,7 +14,9 @@ The proof is the same: `BoundedContinuousFunction.arzela_ascoli` with the compac
 `Metric.closedBall 0 C` (compact by `ProperSpace`), equicontinuity from the Lipschitz bound, and
 `EMetric.totallyBounded_iff'` for the centres-in-`S` net form.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set Metric
 open scoped ENNReal

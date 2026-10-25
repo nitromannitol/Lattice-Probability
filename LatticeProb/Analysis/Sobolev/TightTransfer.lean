@@ -1,4 +1,8 @@
-import LatticeProb.Analysis.Sobolev.Compact
+module
+
+public import LatticeProb.Analysis.Sobolev.Compact
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

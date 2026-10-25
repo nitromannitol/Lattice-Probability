@@ -1,4 +1,8 @@
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+module
+
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+
+@[expose] public section
 
 /-!
 # The rectangle theorem for arbitrary `a ≤ b`

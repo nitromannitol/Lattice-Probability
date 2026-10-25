@@ -1,3 +1,5 @@
+module
+
 /-
 # Outside completions retaining a radial first edge
 
@@ -6,7 +8,9 @@ the two original outward radial segments. This retains a literal doubled first
 vertex, nondegenerate edges, and a remaining trace disjoint from the first
 circle endpoint. The whole completion need not be simple for crossing parity.
 -/
-import LatticeProb.Topology.DiskEndpointGeometry
+public import LatticeProb.Topology.DiskEndpointGeometry
+
+@[expose] public section
 
 
 

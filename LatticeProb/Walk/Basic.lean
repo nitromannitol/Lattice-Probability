@@ -1,3 +1,5 @@
+module
+
 /-
 Paths on the lattice: a step is a signed coordinate direction, a path is a word
 of steps, and the position after `k` steps is the partial sum of the word.
@@ -14,7 +16,9 @@ the origin.  `pos w k` is its position after `k` steps, constant once `k`
 reaches `n`; `pathRange w k` is the set of sites visited up to time `k` and
 `pathEdges w k` the set of undirected edges crossed.
 -/
-import LatticeProb.Site
+public import LatticeProb.Site
+
+@[expose] public section
 
 namespace LatticeProb
 

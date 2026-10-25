@@ -1,3 +1,5 @@
+module
+
 /-
 The frequency splitting of the Sobolev norm and the uniform smallness of the
 high-frequency part of the unit ball.
@@ -10,7 +12,9 @@ beyond which the high-frequency part of the `H^{s₀}` norm is at most `η²` on
 whole unit ball of `H^s`.  Only the low-frequency part of the unit ball then has
 to be covered by a finite net.
 -/
-import LatticeProb.Analysis.Sobolev.HighFrequency
+public import LatticeProb.Analysis.Sobolev.HighFrequency
+
+@[expose] public section
 
 open Filter MeasureTheory
 open scoped ENNReal FourierTransform Topology

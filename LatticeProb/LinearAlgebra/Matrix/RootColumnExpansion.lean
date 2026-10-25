@@ -1,9 +1,13 @@
+module
+
 /-
 Determinant expansion along increasingly ordered final unit columns.
 -/
 
-import LatticeProb.Data.Finset.SuccAbove
-import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import LatticeProb.Data.Finset.SuccAbove
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+
+@[expose] public section
 
 
 

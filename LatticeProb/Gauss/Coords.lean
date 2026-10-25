@@ -1,3 +1,5 @@
+module
+
 /-
 An independent family of standard Gaussians indexed by an arbitrary set, and the
 law of a finite linear combination of its coordinates.
@@ -9,9 +11,11 @@ family along the finitely many indices of `s` gives a finite product measure,
 and the characteristic function of the linear combination is the product of the
 characteristic functions, each a Gaussian one.
 -/
-import Mathlib
-import LatticeProb.Prob.FiniteMarginal
-import LatticeProb.Gauss.Limit
+public import Mathlib
+public import LatticeProb.Prob.FiniteMarginal
+public import LatticeProb.Gauss.Limit
+
+@[expose] public section
 
 noncomputable section
 

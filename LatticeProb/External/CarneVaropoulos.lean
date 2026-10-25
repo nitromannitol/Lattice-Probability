@@ -1,4 +1,8 @@
-import LatticeProb.Graph.Walk
+module
+
+public import LatticeProb.Graph.Walk
+
+@[expose] public section
 
 /-!
 # The Carne–Varopoulos bound

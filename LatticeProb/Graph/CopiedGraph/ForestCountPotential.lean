@@ -1,9 +1,13 @@
+module
+
 /- The literal forest-count potential, normalized by the original tree count.
 Averaging copied tree-path conservation yields its positive Poisson equation. -/
-import LatticeProb.Graph.CopiedGraph.TreeCutCount
-import LatticeProb.Graph.CopiedGraph.TreeExistence
-import LatticeProb.Graph.CopiedGraph.PathDivergence
-import Mathlib.Algebra.BigOperators.Field
+public import LatticeProb.Graph.CopiedGraph.TreeCutCount
+public import LatticeProb.Graph.CopiedGraph.TreeExistence
+public import LatticeProb.Graph.CopiedGraph.PathDivergence
+public import Mathlib.Algebra.BigOperators.Field
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical BigOperators

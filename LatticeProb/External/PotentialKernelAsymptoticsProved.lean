@@ -1,7 +1,11 @@
-import Mathlib
-import LatticeProb.External.PotentialKernelAsymptotics
-import LatticeProb.Walk.GreenAsymptotic
-import LatticeProb.Walk.PotentialKernel
+module
+
+public import Mathlib
+public import LatticeProb.External.PotentialKernelAsymptotics
+public import LatticeProb.Walk.GreenAsymptotic
+public import LatticeProb.Walk.PotentialKernel
+
+@[expose] public section
 
 /-!
 # The lattice Green function and potential kernel asymptotics, proved

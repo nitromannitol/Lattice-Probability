@@ -1,5 +1,9 @@
-import LatticeProb.Analysis.Sobolev.RellichNet
-import LatticeProb.Analysis.Sobolev.SobolevTestDuality
+module
+
+public import LatticeProb.Analysis.Sobolev.RellichNet
+public import LatticeProb.Analysis.Sobolev.SobolevTestDuality
+
+@[expose] public section
 
 /-! # Uniform test-function pairing bounds for compact families of smooth kernels
 

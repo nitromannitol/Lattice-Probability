@@ -1,3 +1,5 @@
+module
+
 /-
 # Fréchet–Kolmogorov precompactness for the `H^s` unit ball of test functions
 
@@ -21,9 +23,11 @@ and assembles it from the classical Fréchet–Kolmogorov compactness input:
   (`tsupport φ ⊆ closure D`);
 * `rkLowFreqNet_of_bandLimitedPrecompact` — the sound glue to `rkLowFreqNet`.
 -/
-import LatticeProb.Analysis.Sobolev.TranslationContinuity
-import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
-import LatticeProb.Analysis.Sobolev.Basic
+public import LatticeProb.Analysis.Sobolev.TranslationContinuity
+public import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
+public import LatticeProb.Analysis.Sobolev.Basic
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology

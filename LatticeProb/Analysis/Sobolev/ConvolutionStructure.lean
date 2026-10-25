@@ -1,3 +1,5 @@
+module
+
 /-
 # Structural properties of the mollified family `f ⋆ ρ`
 
@@ -10,7 +12,9 @@ facts for `convReal`, directly from Mathlib's convolution API.
 * `contDiff_convReal` — `f ⋆ ρ` is `C^∞` when `ρ` is `C^∞` compactly supported and `f`
   is locally integrable.
 -/
-import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
+public import LatticeProb.Analysis.Sobolev.FrechetKolmogorovReduce
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology

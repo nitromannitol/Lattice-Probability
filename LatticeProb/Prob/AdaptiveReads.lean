@@ -1,7 +1,11 @@
+module
+
 /- Fresh vertex/depth indices and finite products for independent cell reads.
 The cursor advances at each departure, so repeated visits always read a new cell. -/
-import LatticeProb.Graph.CyclePopping.Basic
-import Mathlib.Probability.Independence.InfinitePi
+public import LatticeProb.Graph.CyclePopping.Basic
+public import Mathlib.Probability.Independence.InfinitePi
+
+@[expose] public section
 
 /-! Fresh vertex/depth indices and finite products for independent cell reads.
 The cursor advances at each departure, so repeated visits always read a new cell. -/

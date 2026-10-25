@@ -1,3 +1,5 @@
+module
+
 /-
 # Reducing `FrechetKolmogorovH` to two classical inputs
 
@@ -16,9 +18,11 @@ Fréchet–Kolmogorov proof:
 
 The composition is the standard three-step FK argument.
 -/
-import LatticeProb.Analysis.Sobolev.FrechetKolmogorov
-import LatticeProb.Analysis.Sobolev.Additivity
-import LatticeProb.Analysis.Sobolev.Convolution
+public import LatticeProb.Analysis.Sobolev.FrechetKolmogorov
+public import LatticeProb.Analysis.Sobolev.Additivity
+public import LatticeProb.Analysis.Sobolev.Convolution
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology

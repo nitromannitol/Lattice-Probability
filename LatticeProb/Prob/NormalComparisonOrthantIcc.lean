@@ -1,3 +1,5 @@
+module
+
 /-
 # Li--Shao normal comparison: the bivariate density along the path on `[0, T]`
 
@@ -13,8 +15,10 @@ nonnegativity and continuity of the bivariate density along the path.
 obtained from `integral_bivariateGaussDensity_le` at correlation `T r < 1` after the
 substitution `t = T u`.
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparisonOrthant
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonOrthant
+
+@[expose] public section
 
 namespace LatticeProb
 

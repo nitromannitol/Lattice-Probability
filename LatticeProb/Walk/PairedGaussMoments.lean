@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Walk.PairedFourier
+module
+
+public import Mathlib
+public import LatticeProb.Walk.PairedFourier
+
+@[expose] public section
 
 /-!
 # Gaussian integrals on `ℝ^d` for the local limit theorem

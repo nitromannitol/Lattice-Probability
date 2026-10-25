@@ -1,3 +1,5 @@
+module
+
 /-
 The splice average and the martingale decomposition of a covariance.
 
@@ -7,7 +9,9 @@ and a family of splicing maps measure preserving for two independent copies),
 and every model that reveals randomness one coordinate at a time and bounds a
 covariance by the increments of a filtration uses it.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

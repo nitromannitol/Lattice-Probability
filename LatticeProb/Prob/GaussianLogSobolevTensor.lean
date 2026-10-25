@@ -1,3 +1,5 @@
+module
+
 /-
 # Tensorization of the Gaussian log-Sobolev inequality: reduction and gap
 
@@ -39,8 +41,10 @@ The exact missing Mathlib declaration is therefore the one-dimensional
 gradient-form Gaussian log-Sobolev inequality (Gross/Bakry–Émery), from which
 `GaussianLogSobolevOne` follows by `|∇ log h| ≤ C`.
 -/
-import LatticeProb.External.GaussianLogSobolev
-import LatticeProb.Prob.HerbstFromLSI
+public import LatticeProb.External.GaussianLogSobolev
+public import LatticeProb.Prob.HerbstFromLSI
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # The coordinate carrier map between `ℤ × ℤ` and `Site 2`, and its transports
 
@@ -12,7 +14,9 @@ The domination half is never touched; no `Prop` is frozen, no cited statement is
 nothing is claimed about `Rotor.External.LSS`.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinInstantiation
+public import LatticeProb.Prob.Percolation.LSSThinInstantiation
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

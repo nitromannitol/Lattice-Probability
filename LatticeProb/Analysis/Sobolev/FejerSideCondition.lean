@@ -1,3 +1,5 @@
+module
+
 /-
 # The Fejér side condition: the product `m · 𝓕 φ` is a Fourier transform
 
@@ -21,7 +23,9 @@ The limiting step `m → 1_{‖ξ‖ ≤ Λ}` (monotone/dominated convergence of
 `sobolevNormSqHigh` along a Fejér sequence) is not attempted here: it is the
 boundary-sphere point recorded in `fejer-band-step.md`.
 -/
-import LatticeProb.Analysis.Sobolev.FrequencyTruncation
+public import LatticeProb.Analysis.Sobolev.FrequencyTruncation
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap

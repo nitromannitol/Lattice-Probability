@@ -1,12 +1,16 @@
-import LatticeProb.Meta.LyonsAxioms
-import LatticeProb.Meta.AllMinorsAxioms
-import LatticeProb
-import LatticeProb.Meta.CopiedGraphAxioms
-import LatticeProb.Meta.DiskAlternationAxioms
-import LatticeProb.Meta.PairingMinorAxioms
-import LatticeProb.Meta.WilsonGenericAxioms
-import LatticeProb.Meta.PlaneIncidenceAxioms
-import LatticeProb.Walk.KilledGreenPlanarLower
+module
+
+public import LatticeProb.Meta.LyonsAxioms
+public import LatticeProb.Meta.AllMinorsAxioms
+public import LatticeProb
+public import LatticeProb.Meta.CopiedGraphAxioms
+public import LatticeProb.Meta.DiskAlternationAxioms
+public import LatticeProb.Meta.PairingMinorAxioms
+public import LatticeProb.Meta.WilsonGenericAxioms
+public import LatticeProb.Meta.PlaneIncidenceAxioms
+public import LatticeProb.Walk.KilledGreenPlanarLower
+
+@[expose] public section
 
 /-!
 # Axioms audit

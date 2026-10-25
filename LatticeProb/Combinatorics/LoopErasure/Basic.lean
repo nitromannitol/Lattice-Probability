@@ -1,9 +1,13 @@
+module
+
 /-
 Chronological loop erasure adapted from Scott Armstrong’s finite-avalanches formalization.
 The namespace is changed for reuse; the recursive algorithm retains each original arrow.
 -/
-import Mathlib.Combinatorics.Quiver.Path.Vertices
-import Mathlib.Tactic
+public import Mathlib.Combinatorics.Quiver.Path.Vertices
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Chronological loop erasure on endpoint-indexed walks. Quiver arrows are
 retained, so a surviving edge keeps its original copy, even for parallel edges. -/

@@ -1,4 +1,8 @@
-import LatticeProb.Prob.Strassen.Defs
+module
+
+public import LatticeProb.Prob.Strassen.Defs
+
+@[expose] public section
 
 /-!
 # Converse (easy): a monotone coupling gives domination

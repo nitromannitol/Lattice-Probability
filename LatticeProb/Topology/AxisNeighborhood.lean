@@ -1,8 +1,12 @@
+module
+
 /-
 Every complement point in a regular axis rectangle has a component accumulating at
 every interior axis point. In particular, the complement accumulates along the axis.
 -/
-import LatticeProb.Topology.LocalFaceIncidence
+public import LatticeProb.Topology.LocalFaceIncidence
+
+@[expose] public section
 namespace LatticeProb.PlaneTopology
 
 open Set

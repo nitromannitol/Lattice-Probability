@@ -1,3 +1,5 @@
+module
+
 /-
 A quantitative moment bound for the supremum of a process over a box.
 
@@ -15,9 +17,11 @@ an almost-sure pointwise bound on the box supremum into a moment bound, using
 scale `δ` into the pointwise bound, by the deterministic chaining estimate
 `LatticeProb.abs_le_of_modulus_and_bound` with `ceil (dist a b / δ) + 1` steps.
 -/
-import Mathlib
-import LatticeProb.Prob.KolmogorovBound
-import LatticeProb.Prob.RpowAdd
+public import Mathlib
+public import LatticeProb.Prob.KolmogorovBound
+public import LatticeProb.Prob.RpowAdd
+
+@[expose] public section
 
 noncomputable section
 set_option maxHeartbeats 800000

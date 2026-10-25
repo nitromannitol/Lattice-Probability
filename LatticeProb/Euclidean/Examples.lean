@@ -1,7 +1,11 @@
-import LatticeProb.Euclidean.Asymptotic
-import LatticeProb.Euclidean.Estimates
-import LatticeProb.Euclidean.Shell
-import LatticeProb.Euclidean.Summability
+module
+
+public import LatticeProb.Euclidean.Asymptotic
+public import LatticeProb.Euclidean.Estimates
+public import LatticeProb.Euclidean.Shell
+public import LatticeProb.Euclidean.Summability
+
+@[expose] public section
 
 /-!
 # Lawful instances in dimensions one and two

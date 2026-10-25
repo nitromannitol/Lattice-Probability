@@ -1,3 +1,5 @@
+module
+
 /- # Gaussian facts for the Berry-Esseen assembly
 
 Elementary facts about the centred Gaussian law `gaussianReal 0 v` (`v > 0`) used when the
@@ -7,7 +9,9 @@ Lipschitz with that constant; the law has a finite first absolute moment; its ch
 function is `exp (-(v t² / 2))`; and a numerical Gaussian moment integral
 `∫_{-T}^{T} t² exp (-t² / 3) dt ≤ 5`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Set
 open scoped NNReal

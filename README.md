@@ -1123,3 +1123,12 @@ modules from
 
 The Lean code in this repository is licensed under the **Apache License 2.0**
 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).
+
+## Selected consumer compatibility
+
+This branch starts from the exact Exploding-Sandpiles dependency snapshot `78f4b2cec065fa2fb5116b06c41966855f62cf50`.
+It adds public module interfaces for Lean v4.35.0-rc2 and preserves the mathematical
+definitions, types and hypotheses. Existing proof calls are adapted to the supported
+Mathlib API only within the selected consumer import closure. The full library under
+this toolchain has not been verified; the consumer’s full Palomar preflight checks its
+selected Challenge/Solution closure.

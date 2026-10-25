@@ -1,3 +1,5 @@
+module
+
 /-
 # Finite polygonal chains in real normed spaces
 
@@ -13,8 +15,10 @@ Copyright (c) 2026 Álvaro Begué. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Álvaro Begué
 -/
-import Mathlib.Analysis.Normed.Module.Convex
-import Mathlib.Analysis.Convex.PathConnected
+public import Mathlib.Analysis.Normed.Module.Convex
+public import Mathlib.Analysis.Convex.PathConnected
+
+@[expose] public section
 
 
 

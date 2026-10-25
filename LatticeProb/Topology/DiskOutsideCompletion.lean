@@ -1,3 +1,5 @@
+module
+
 /-
 # Polygonal completions outside the coordinate disk
 
@@ -7,11 +9,13 @@ The construction joins their doubled points in the open exterior, then adds
 outward radial segments. The exterior connection follows from the continuous
 radius-two circle and polygonal connectedness of open connected components.
 -/
-import LatticeProb.Topology.PolygonalChainEndpoints
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.Analysis.LocallyConvex.WithSeminorms
-import Mathlib.Topology.Connected.LocallyConnected
-import Mathlib.Tactic.Ring
+public import LatticeProb.Topology.PolygonalChainEndpoints
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.Analysis.LocallyConvex.WithSeminorms
+public import Mathlib.Topology.Connected.LocallyConnected
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 
 

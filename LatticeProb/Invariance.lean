@@ -1,3 +1,5 @@
+module
+
 /-
 The law of the driving data is translation invariant.
 
@@ -10,8 +12,10 @@ the data reads the stack of `y + v` and translates its instructions back, and
 translating a uniform choice of a neighbour of `y + v` by `-v` is a uniform
 choice of a neighbour of `y`, so that factor is invariant too.
 -/
-import LatticeProb.Equivariance
-import LatticeProb.Prob.ZeroOne
+public import LatticeProb.Equivariance
+public import LatticeProb.Prob.ZeroOne
+
+@[expose] public section
 
 noncomputable section
 

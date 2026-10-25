@@ -1,3 +1,5 @@
+module
+
 /-
 **General-purpose real-analysis and finite-sum lemmas for a triangular-array
 characteristic-function CLT.**
@@ -9,7 +11,9 @@ lazy random walk needs. All five lemmas are fully generic: none of them has any 
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 

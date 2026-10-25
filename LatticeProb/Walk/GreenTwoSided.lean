@@ -1,10 +1,14 @@
-import LatticeProb.Walk.GreenTwoSided.Kernels
-import LatticeProb.Walk.GreenTwoSided.PointwiseBounds
-import LatticeProb.Walk.GreenTwoSided.UpperBound
-import LatticeProb.Walk.GreenTwoSided.LazyWalk
-import LatticeProb.Walk.GreenTwoSided.FreeLazyKernel
-import LatticeProb.Walk.GreenTwoSided.ChainingBound
-import LatticeProb.Walk.GreenTwoSided.LowerBound
+module
+
+public import LatticeProb.Walk.GreenTwoSided.Kernels
+public import LatticeProb.Walk.GreenTwoSided.PointwiseBounds
+public import LatticeProb.Walk.GreenTwoSided.UpperBound
+public import LatticeProb.Walk.GreenTwoSided.LazyWalk
+public import LatticeProb.Walk.GreenTwoSided.FreeLazyKernel
+public import LatticeProb.Walk.GreenTwoSided.ChainingBound
+public import LatticeProb.Walk.GreenTwoSided.LowerBound
+
+@[expose] public section
 
 /-!
 # Two-sided bounds for the killed Green function of a box in `ℤ^d`

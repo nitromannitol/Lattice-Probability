@@ -1,3 +1,5 @@
+module
+
 /-
 A one-line real-arithmetic fact about `Nat.floor`: `⌊a+b⌋₊ ≤ ⌊a⌋₊ + ⌊b⌋₊ + 1` for nonnegative
 reals, and its consequence for a two-scale floor: `⌊⌊R²⌋₊·s⌋₊` and `⌊s·R²⌋₊` differ by at most
@@ -9,7 +11,9 @@ factor first, the other rounding the product) need to be compared uniformly in t
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.Scaling.FloorGap

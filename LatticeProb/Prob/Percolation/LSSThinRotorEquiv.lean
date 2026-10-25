@@ -1,3 +1,5 @@
+module
+
 /-
 # Exact equivalence of the library capstone with the frozen consumer body
 
@@ -13,7 +15,9 @@ directions are given.  The statement is abstract inside the library, with no imp
 development and no rotor file touched; the dense half remains an explicit hypothesis.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinCapstone
+public import LatticeProb.Prob.Percolation.LSSThinCapstone
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

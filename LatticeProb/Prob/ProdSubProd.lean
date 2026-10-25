@@ -1,3 +1,5 @@
+module
+
 /-
 # Telescoping bound for a difference of finite products of complex numbers
 
@@ -15,7 +17,9 @@ controlled by their maxima.  No bound on the factors is needed (contrast with
 The usual application is to characteristic functions of a sum of independent summands compared
 with the Gaussian factors `exp (-σ_j² t² / 2)` (non-identically distributed Berry-Esseen).
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

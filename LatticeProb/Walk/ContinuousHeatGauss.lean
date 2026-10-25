@@ -1,6 +1,10 @@
-import Mathlib
-import LatticeProb.Walk.ContinuousHeat
-import LatticeProb.Walk.LineKernelLocalLimit
+module
+
+public import Mathlib
+public import LatticeProb.Walk.ContinuousHeat
+public import LatticeProb.Walk.LineKernelLocalLimit
+
+@[expose] public section
 
 /-!
 # The local limit theorem for the continuous-time walk on `ℤ^d`

@@ -1,11 +1,15 @@
+module
+
 /- Integral bounds for forward differences of continuous monotone functions.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-import Mathlib.Analysis.Calculus.UniformLimitsDeriv
-import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.Analysis.Calculus.UniformLimitsDeriv
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology
 

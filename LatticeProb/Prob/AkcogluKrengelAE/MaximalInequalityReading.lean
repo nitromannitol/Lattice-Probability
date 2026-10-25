@@ -1,8 +1,12 @@
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
-import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityCore
-import LatticeProb.Prob.AkcogluKrengelAE.UpperBound
-import LatticeProb.Prob.AkcogluKrengelAE.Assembly
-import LatticeProb.Prob.AkcogluKrengel
+module
+
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.MaximalInequalityCore
+public import LatticeProb.Prob.AkcogluKrengelAE.UpperBound
+public import LatticeProb.Prob.AkcogluKrengelAE.Assembly
+public import LatticeProb.Prob.AkcogluKrengel
+
+@[expose] public section
 
 /-!
 # Reading of the multiparameter maximal-inequality machinery

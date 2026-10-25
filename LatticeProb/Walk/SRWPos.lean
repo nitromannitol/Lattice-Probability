@@ -1,3 +1,5 @@
+module
+
 /-
 Positivity of the simple-random-walk heat kernel at reachable sites.
 
@@ -9,7 +11,9 @@ kernel is strictly positive exactly on the reachable sites.  The criterion is
 what discharges the hypothesis `0 < p_ℓ(x, y)` of the local central limit
 theorem quoted in `sandpile.tex:1145-1161`.
 -/
-import LatticeProb.Walk.SRW
+public import LatticeProb.Walk.SRW
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

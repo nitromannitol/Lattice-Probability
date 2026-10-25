@@ -1,3 +1,5 @@
+module
+
 /-
 # The `L²` mean ergodic step for the multiparameter cube averages
 
@@ -10,7 +12,9 @@ This file adds the **mean (`L²`) convergence** of those averages: the `L²` mea
 the multiparameter pointwise ergodic theorem, `∫ |gridAvg σ h univ n - G|² → 0`.  It is a
 dominated convergence corollary of the a.e. theorem, with dominating constant `(2M)²`.
 -/
-import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+public import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped BigOperators

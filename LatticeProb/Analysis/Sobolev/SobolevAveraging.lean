@@ -1,3 +1,5 @@
+module
+
 /-
 # The mollification residual as an average of translation differences
 
@@ -21,7 +23,9 @@ integrable `f` and `ρ` the integral exists almost everywhere
 Fourier transform, hence only the a.e. class, the norm bound
 `sobolevNormSq_sub_convReal_le` holds unconditionally.
 -/
-import LatticeProb.Analysis.Sobolev.SobolevToReal
+public import LatticeProb.Analysis.Sobolev.SobolevToReal
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

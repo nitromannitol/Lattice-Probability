@@ -1,4 +1,8 @@
-import LatticeProb.Sandpile.LeastAction
+module
+
+public import LatticeProb.Sandpile.LeastAction
+
+@[expose] public section
 
 /-!
 # The least action principle of Fey, Meester and Redig

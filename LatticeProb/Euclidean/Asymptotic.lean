@@ -1,8 +1,12 @@
-import LatticeProb.Euclidean.Lattice
-import LatticeProb.Euclidean.Cube
-import LatticeProb.Euclidean.Shell
-import LatticeProb.Euclidean.Summability
-import LatticeProb.Euclidean.Integral
+module
+
+public import LatticeProb.Euclidean.Lattice
+public import LatticeProb.Euclidean.Cube
+public import LatticeProb.Euclidean.Shell
+public import LatticeProb.Euclidean.Summability
+public import LatticeProb.Euclidean.Integral
+
+@[expose] public section
 
 /-!
 # Asymptotic of the critical Euclidean lattice sum

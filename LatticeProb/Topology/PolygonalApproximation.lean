@@ -1,11 +1,15 @@
+module
+
 /-
 # Separated polygonal connections near compact continua
 
 The connections are constructed in disjoint connected open neighborhoods.
 The continua themselves need only be topologically connected.
 -/
-import LatticeProb.Topology.PolygonalChain
-import LatticeProb.Topology.ConnectedThickening
+public import LatticeProb.Topology.PolygonalChain
+public import LatticeProb.Topology.ConnectedThickening
+
+@[expose] public section
 
 
 

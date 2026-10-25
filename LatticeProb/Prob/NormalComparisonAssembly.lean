@@ -1,3 +1,5 @@
+module
+
 /-
 Normal comparison: the final bound from the endpoint limit and interpolation.
 
@@ -5,10 +7,12 @@ The density, scalar-covariance and starting-value identities are imported.
 The retained theorem supplies the proved starting value to the endpoint form
 and leaves hlim and hinterp as its explicit hypotheses.
 -/
-import LatticeProb.Prob.NormalComparisonFinal
-import LatticeProb.Prob.NormalComparisonCovariance
-import LatticeProb.Prob.GaussCovDensityScalar
-import LatticeProb.Prob.NormalComparisonLimit
+public import LatticeProb.Prob.NormalComparisonFinal
+public import LatticeProb.Prob.NormalComparisonCovariance
+public import LatticeProb.Prob.GaussCovDensityScalar
+public import LatticeProb.Prob.NormalComparisonLimit
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology Matrix
 open scoped NNReal ENNReal Matrix

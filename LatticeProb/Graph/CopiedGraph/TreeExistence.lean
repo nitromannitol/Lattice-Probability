@@ -1,9 +1,13 @@
+module
+
 /- Minimal-cardinality construction of a tree on the full original carrier.
 Adapted from finite-avalanches, CopiedGraphConnectivity.reaches_erase_of_alternative
 and Electrical/Trees/CopiedTreeExistence; original notices/source pins accompany this extraction. -/
-import LatticeProb.Graph.CopiedGraph.Basic
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Fintype.Card
+public import LatticeProb.Graph.CopiedGraph.Basic
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Fintype.Card
+
+@[expose] public section
 
 namespace LatticeProb.Graph.CopiedGraph
 open scoped Classical

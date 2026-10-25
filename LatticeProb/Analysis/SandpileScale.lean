@@ -1,3 +1,5 @@
+module
+
 /-
 Numerical scale bounds for the exploding-square estimate.
 
@@ -7,7 +9,9 @@ integer ceiling `L` of `A N^(1/d)` satisfies `L + 2 ≤ P n` for a constant `P`,
 expression is bounded by `C n^d` (for `d ≥ 3`) or by `C n^2 log (n+1)` (for `d = 2`).
 These are purely numerical inequalities with no radius, Green, wave, or source premise.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # The multivariate Gaussian with correlations: the Cramér–Wold representation
 
@@ -41,7 +43,9 @@ expansion in the correlations) is not attempted.
 
 No `External/*` file is touched.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal MatrixOrder

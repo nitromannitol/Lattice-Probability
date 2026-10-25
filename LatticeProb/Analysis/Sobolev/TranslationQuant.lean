@@ -1,3 +1,5 @@
+module
+
 /-
 # The quantitative Sobolev translation bound
 
@@ -11,7 +13,9 @@ for a test function `φ`.  The frequency integral is split at `R`: below `R` the
 `norm_fourierChar_sub_one_le_two` is used.  This yields `BandLimitedTranslationContinuous` by
 choosing `R` large (uniform high-frequency smallness, `s₀ < s`) and `‖h‖` small.
 -/
-import LatticeProb.Analysis.Sobolev.FourierCharPhase
+public import LatticeProb.Analysis.Sobolev.FourierCharPhase
+
+@[expose] public section
 
 open MeasureTheory Filter
 open Set

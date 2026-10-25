@@ -1,3 +1,5 @@
+module
+
 /-
 # The boundary integral along the smart path (route item 5)
 
@@ -19,12 +21,14 @@ density at variance `v` and correlation `t * S (σ 0) (σ 1) / v`.
   `covDensity_two_cov` (`LatticeProb/Prob/GaussCovDensityTwo.lean`) identifies it with
   `bivariateGaussDensity v (c / v)`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityMarginal
-import LatticeProb.Prob.GaussCovDensityTwo
-import LatticeProb.Prob.GaussCovDensityOrthant
-import LatticeProb.Prob.NormalComparisonPath
-import LatticeProb.Prob.NormalComparisonBoundary
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityMarginal
+public import LatticeProb.Prob.GaussCovDensityTwo
+public import LatticeProb.Prob.GaussCovDensityOrthant
+public import LatticeProb.Prob.NormalComparisonPath
+public import LatticeProb.Prob.NormalComparisonBoundary
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # Li--Shao normal comparison: permuting the coordinates of an orthant integral (route item 4)
 
@@ -19,7 +21,9 @@ supplies the two ingredients:
 * **`exists_perm_zero_one`** — any ordered pair of distinct coordinates `i ≠ j` of
   `Fin (m + 2)` is the image of `(0, 1)` under some permutation, built from two transpositions.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

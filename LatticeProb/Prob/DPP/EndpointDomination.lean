@@ -1,3 +1,5 @@
+module
+
 /-
 # Projection-law domination from compatible endpoint frames
 
@@ -5,9 +7,11 @@ The original inclusion laws identify endpoint atoms with squared ordered
 determinants. Carrier transport and repeated column deletion give event
 domination; normalization from the empty minor gives the literal atom coupling.
 -/
-import LatticeProb.Prob.DPP.EventTransport
-import LatticeProb.LinearAlgebra.DeterminantEndpointComparison
-import LatticeProb.Prob.Strassen.FiniteSet
+public import LatticeProb.Prob.DPP.EventTransport
+public import LatticeProb.LinearAlgebra.DeterminantEndpointComparison
+public import LatticeProb.Prob.Strassen.FiniteSet
+
+@[expose] public section
 
 
 namespace LatticeProb.DPP

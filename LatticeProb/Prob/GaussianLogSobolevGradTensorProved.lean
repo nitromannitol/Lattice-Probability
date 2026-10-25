@@ -1,3 +1,5 @@
+module
+
 /-
 # The Γ tensorization assembly: status and the chain-rule component
 
@@ -34,8 +36,10 @@ write a density `h` with `x` the first and `y` the remaining coordinates, and le
 Adding the two bounds gives `Ent(h) ≤ (1/2) ∫ (a² + b²) h ≤ (1/2) ∫ ‖∇ log h‖² h`, since on the
 product with the sup norm `‖∇ log h‖ = a + b ≥ max(a,b)` and hence `‖∇ log h‖² ≥ a² + b²`.
 -/
-import LatticeProb.Prob.FDerivIntegralMarginal
-import LatticeProb.Prob.GaussianLogSobolevGradTensor
+public import LatticeProb.Prob.FDerivIntegralMarginal
+public import LatticeProb.Prob.GaussianLogSobolevGradTensor
+
+@[expose] public section
 
 noncomputable section
 

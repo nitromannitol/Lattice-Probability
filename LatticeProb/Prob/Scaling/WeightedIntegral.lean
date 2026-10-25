@@ -1,8 +1,12 @@
+module
+
 /- Stability of weighted integrals under uniform perturbations of the coefficient.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 open MeasureTheory
 namespace LatticeProb.Scaling.WeightedIntegral
 

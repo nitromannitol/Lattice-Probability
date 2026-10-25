@@ -1,3 +1,5 @@
+module
+
 /-
 # Complementary minors of an inverse matrix
 
@@ -6,7 +8,9 @@ is the complementary block determinant. Multiplying by a block triangular
 matrix built from the inverse proves the identity without assuming that
 any proper block is invertible.
 -/
-import Mathlib.LinearAlgebra.Matrix.SchurComplement
+public import Mathlib.LinearAlgebra.Matrix.SchurComplement
+
+@[expose] public section
 
 
 

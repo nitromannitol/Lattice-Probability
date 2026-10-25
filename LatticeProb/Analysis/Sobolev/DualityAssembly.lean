@@ -1,3 +1,5 @@
+module
+
 /-
 # Assembly of the `H^s`–`H^{−s}` duality bound
 
@@ -11,9 +13,11 @@ The `L¹ ∩ L²` hypotheses cannot be dropped: for a non-integrable `f` the poi
 integral is `0`, so `sobolevNormSq d s f = 0` while `∫ f f` can be positive, e.g. for
 `f x = 1 / (1 + |x|)` on `ℝ`.
 -/
-import LatticeProb.Analysis.Sobolev.PlancherelPackaging
-import LatticeProb.Analysis.Sobolev.SobolevToReal
-import LatticeProb.Analysis.Sobolev.SobolevYoungConvolution
+public import LatticeProb.Analysis.Sobolev.PlancherelPackaging
+public import LatticeProb.Analysis.Sobolev.SobolevToReal
+public import LatticeProb.Analysis.Sobolev.SobolevYoungConvolution
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

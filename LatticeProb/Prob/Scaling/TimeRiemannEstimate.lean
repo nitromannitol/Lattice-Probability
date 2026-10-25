@@ -1,8 +1,12 @@
+module
+
 /- A uniform error bound for the right-endpoint time quadrature.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Finset
 namespace LatticeProb.Scaling.TimeRiemannEstimate

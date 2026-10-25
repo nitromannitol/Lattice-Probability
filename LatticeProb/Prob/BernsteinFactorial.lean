@@ -1,3 +1,5 @@
+module
+
 /-
 # Bernstein Step E: the factorial-moment exponential series
 
@@ -24,8 +26,10 @@ Together these reduce Step E to the termwise comparison `μ[X^q | m] ≤ μ[|X|^
 (summed against the Bernstein series `tsum_factorial_bernstein`); that comparison and the final
 `1 + c ≤ exp c` are the remaining bounded assembly.
 -/
-import Mathlib
-import LatticeProb.Prob.BernsteinMartingale
+public import Mathlib
+public import LatticeProb.Prob.BernsteinMartingale
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal

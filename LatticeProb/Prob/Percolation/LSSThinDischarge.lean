@@ -1,3 +1,5 @@
+module
+
 /-
 # The conditional discharge of the frozen thin statement
 
@@ -11,7 +13,9 @@ The statement is abstract inside the library, with no import of the rotor develo
 rotor file touched.  No domination statement is proved and no `Prop` is frozen.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinRotorEquiv
+public import LatticeProb.Prob.Percolation.LSSThinRotorEquiv
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

@@ -1,11 +1,15 @@
+module
+
 /- # Normalization of finite inclusion-minor laws
 
 Apply the inclusion identity to the empty subset; its determinant is one.
 -/
 
-import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Real.Basic
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Real.Basic
+
+@[expose] public section
 
 
 

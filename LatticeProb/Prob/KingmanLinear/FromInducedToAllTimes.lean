@@ -1,6 +1,10 @@
-import LatticeProb.Prob.KingmanLinear.LinearSets
-import LatticeProb.Prob.KingmanLinear.InducedFamily
-import LatticeProb.Prob.KingmanLinear.Interpolation
+module
+
+public import LatticeProb.Prob.KingmanLinear.LinearSets
+public import LatticeProb.Prob.KingmanLinear.InducedFamily
+public import LatticeProb.Prob.KingmanLinear.Interpolation
+
+@[expose] public section
 
 /-!
 # 4. From the induced family to all times

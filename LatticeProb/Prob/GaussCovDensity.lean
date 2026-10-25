@@ -1,3 +1,5 @@
+module
+
 /-
 # The density of the centred Gaussian `N(0, S)` as a function on `Fin n → ℝ`
 
@@ -12,8 +14,10 @@ Li--Shao normal comparison, route items 3 and 4
 
 proves it positive, and restates `multivariateGaussian_eq_withDensity` in terms of it.
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparisonDensity
+public import Mathlib
+public import LatticeProb.Prob.NormalComparisonDensity
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix
 

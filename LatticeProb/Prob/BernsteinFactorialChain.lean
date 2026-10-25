@@ -1,3 +1,5 @@
+module
+
 /-
 # The conditional Bernstein mgf of the martingale sum
 
@@ -15,7 +17,9 @@ which is exactly the hypothesis consumed by `LatticeProb.moment_le_of_condMgf`
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinFactorialAssemble
+public import LatticeProb.Prob.BernsteinFactorialAssemble
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

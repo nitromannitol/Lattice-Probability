@@ -1,3 +1,5 @@
+module
+
 /-
 Jointly measurable representatives of strongly measurable L2-valued families.
 
@@ -10,7 +12,9 @@ An isonormal covariance identity makes white-noise evaluation an isometry into
 random-variable L2. Composing that isometry with a measurable spatial L2 family
 therefore gives joint versions without any choice of pointwise linear samples.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal RealInnerProductSpace
 namespace LatticeProb

@@ -1,3 +1,5 @@
+module
+
 /-
 The variance scale of the truncated Green function: the upper half of the table.
 
@@ -14,9 +16,11 @@ five and above.  Everything is written with `√s ^ d` in place of `s^{d/2}`, so
 that in each fixed dimension the exponent is a natural number and no real power
 appears; the two forms agree by `Real.sqrt_eq_rpow`.
 -/
-import LatticeProb.Walk.GreenSq
-import LatticeProb.Walk.SRWGaussBound
-import LatticeProb.Walk.Series
+public import LatticeProb.Walk.GreenSq
+public import LatticeProb.Walk.SRWGaussBound
+public import LatticeProb.Walk.Series
+
+@[expose] public section
 
 noncomputable section
 

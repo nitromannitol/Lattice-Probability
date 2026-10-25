@@ -1,3 +1,5 @@
+module
+
 /-
 The one-dimensional convex-order comparison of a mean-zero law with a fixed exponential
 reference law, via symmetrization: any mean-zero law with an exponential moment bounded by
@@ -23,10 +25,12 @@ inequality gives for the symmetrization of a law with `∫ e^{θ|z|} ≤ A`. The
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Laplace
-import LatticeProb.Prob.ConvexProduct
-import Mathlib.MeasureTheory.Integral.Layercake
-import Mathlib.MeasureTheory.Order.Group.Lattice
+public import LatticeProb.Prob.Laplace
+public import LatticeProb.Prob.ConvexProduct
+public import Mathlib.MeasureTheory.Integral.Layercake
+public import Mathlib.MeasureTheory.Order.Group.Lattice
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.ConvexOrder

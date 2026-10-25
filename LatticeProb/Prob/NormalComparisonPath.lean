@@ -1,3 +1,5 @@
+module
+
 /-
 # Normal comparison (Li--Shao): the smart path, entries, definiteness, derivative
 
@@ -18,8 +20,10 @@ path that the differentiation of the orthant probability (route item 3) and the 
   `S i j - (v • 1) i j` (so `S i j` off the diagonal, and `0` on the diagonal when `S` has
   constant diagonal `v`), and continuous in `t`.
 -/
-import Mathlib
-import LatticeProb.Prob.NormalComparison
+public import Mathlib
+public import LatticeProb.Prob.NormalComparison
+
+@[expose] public section
 
 open scoped MatrixOrder Matrix
 

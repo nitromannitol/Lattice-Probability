@@ -1,3 +1,5 @@
+module
+
 /-
 # Axiom reports for finite projection determinantal laws
 
@@ -6,7 +8,9 @@ identities culminate in domination for nested projections. These reports
 complement the library-wide declaration and generated-constant census.
 -/
 
-import LatticeProb.Prob.DPP.NestedProjectionDomination
+public import LatticeProb.Prob.DPP.NestedProjectionDomination
+
+@[expose] public section
 
 #print axioms LatticeProb.SubsetContraction.finsetContract_prependColumn
 #print axioms LatticeProb.SubsetContraction.recovery_event_of_prependColumn_orthonormal

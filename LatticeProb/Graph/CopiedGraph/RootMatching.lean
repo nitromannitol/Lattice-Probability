@@ -1,9 +1,13 @@
+module
+
 /-
 The unique component correspondence between root sets of the same copied forest.
 -/
 
-import LatticeProb.Graph.CopiedGraph.RootedForest
-import Mathlib.Logic.Equiv.Defs
+public import LatticeProb.Graph.CopiedGraph.RootedForest
+public import Mathlib.Logic.Equiv.Defs
+
+@[expose] public section
 
 
 

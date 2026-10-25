@@ -1,10 +1,14 @@
+module
+
 /-
 Chronological traces on arrow stacks. Consuming a trace advances the cursor at every
 departure. A closed simple excursion follows one visible cycle, so its consumption is
 exactly one legal cycle pop. The proofs retain the complete original quiver arrows.
 -/
-import LatticeProb.Graph.CyclePopping.Basic
-import LatticeProb.Combinatorics.LoopErasure.Composition
+public import LatticeProb.Graph.CyclePopping.Basic
+public import LatticeProb.Combinatorics.LoopErasure.Composition
+
+@[expose] public section
 
 /-!
 Chronological traces on arrow stacks. Consuming a trace advances the cursor at every

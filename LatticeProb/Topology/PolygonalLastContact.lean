@@ -1,3 +1,5 @@
+module
+
 /-
 # Last contacts and finite polygonal splicing
 
@@ -6,8 +8,10 @@ remaining closed segment meets the old trace at just that contact, including
 when earlier segments overlap it along a line. A finite prefix ending at the
 contact supplies a new polygonal chain with the same initial point.
 -/
-import LatticeProb.Topology.PolygonalChain
-import Mathlib.Topology.Order.Compact
+public import LatticeProb.Topology.PolygonalChain
+public import Mathlib.Topology.Order.Compact
+
+@[expose] public section
 
 
 

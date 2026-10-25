@@ -1,3 +1,5 @@
+module
+
 /-
 Normal comparison: the boundary bound from a marginal estimate.
 
@@ -5,8 +7,10 @@ The corner map and nonnegativity of its density integral are imported.
 The retained theorem derives the bivariate boundary bound from the explicit
 marginal-estimate hypothesis hmarg.
 -/
-import LatticeProb.Prob.NormalComparisonFinalFive
-import LatticeProb.Prob.GaussCovDensityOrthant
+public import LatticeProb.Prob.NormalComparisonFinalFive
+public import LatticeProb.Prob.GaussCovDensityOrthant
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

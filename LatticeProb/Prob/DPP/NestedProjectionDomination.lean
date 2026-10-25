@@ -1,3 +1,5 @@
+module
+
 /-
 # Domination of finite nested projection determinantal laws
 
@@ -6,8 +8,10 @@ with nested ranges. The original inclusion identities identify their endpoint
 atoms; squared determinant comparison gives event domination, and finite-poset
 transport produces a coupling with the literal original marginals.
 -/
-import LatticeProb.Prob.DPP.EndpointDomination
-import LatticeProb.LinearAlgebra.NestedProjectionFrame
+public import LatticeProb.Prob.DPP.EndpointDomination
+public import LatticeProb.LinearAlgebra.NestedProjectionFrame
+
+@[expose] public section
 
 
 namespace LatticeProb.DPP

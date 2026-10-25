@@ -1,3 +1,5 @@
+module
+
 /-
 # The one-dimensional Berry--Esseen theorem in random-variable form
 
@@ -17,8 +19,10 @@ variables** `Y : ι → Ω → ℝ` on a probability space `(Ω, P)`, as
 
 The conclusion is the route's A4 statement with the explicit constant `100`.
 -/
-import Mathlib
-import LatticeProb.Prob.BerryEsseenOneDim
+public import Mathlib
+public import LatticeProb.Prob.BerryEsseenOneDim
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 # Cauchy–Binet over original column subsets
 
@@ -5,8 +7,10 @@ The square minors are indexed by explicit equivalences with the selected subset.
 Both minors use the same enumeration, and their product is independent of it.
 -/
 
-import LatticeProb.LinearAlgebra.Matrix.RectangularDeterminant
-import Mathlib.Data.Fintype.Powerset
+public import LatticeProb.LinearAlgebra.Matrix.RectangularDeterminant
+public import Mathlib.Data.Fintype.Powerset
+
+@[expose] public section
 
 
 

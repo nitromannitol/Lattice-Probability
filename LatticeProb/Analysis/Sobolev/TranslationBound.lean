@@ -1,3 +1,5 @@
+module
+
 /-
 # The quantitative translation bound for the Fréchet–Kolmogorov route
 
@@ -14,7 +16,9 @@ The ingredients are:
   `2π|t| ≤ 1`;
 * `fourier_translate_sub_lift` — the difference form of the translation identity.
 -/
-import LatticeProb.Analysis.Sobolev.TranslationContinuity
+public import LatticeProb.Analysis.Sobolev.TranslationContinuity
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology

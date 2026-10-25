@@ -1,3 +1,5 @@
+module
+
 /-
 Pre-Brownian motion exists.
 
@@ -8,8 +10,10 @@ noise supplies one directly: the indicators of the intervals `(0, t]` have
 `L²`-inner products `min s t`, so the isonormal process evaluated at them is a
 centred Gaussian process with the covariance of Brownian motion.
 -/
-import Mathlib
-import LatticeProb.Gauss.WhiteNoise
+public import Mathlib
+public import LatticeProb.Gauss.WhiteNoise
+
+@[expose] public section
 
 noncomputable section
 

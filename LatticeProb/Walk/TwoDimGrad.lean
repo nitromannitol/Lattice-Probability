@@ -1,3 +1,5 @@
+module
+
 /-
 The two-dimensional kernel factorizes in the rotated coordinates, and the
 mixed same-parity shift reduces to the one-dimensional gradient.
@@ -18,8 +20,10 @@ This is the smallest genuine case of the same-parity gradient of
 `ssec:green-estimates`, and it is the case the standard-basis coordinate
 schedule cannot reach.
 -/
-import Mathlib
-import LatticeProb.Walk.OneDimGrad
+public import Mathlib
+public import LatticeProb.Walk.OneDimGrad
+
+@[expose] public section
 
 noncomputable section
 

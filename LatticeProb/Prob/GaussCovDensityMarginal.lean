@@ -1,3 +1,5 @@
+module
+
 /-
 # The pair marginal of the Gaussian density at a corner point
 
@@ -23,10 +25,12 @@ Route.
    vanishes (`integral_undef`), so the integrand is integrable; the orthant integral is then at
    most the full integral (`setIntegral_le_integral`, the integrand being positive).
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensitySchur
-import LatticeProb.Prob.NormalComparisonOrthantPair
-import LatticeProb.Prob.GaussCovDensityTwo
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensitySchur
+public import LatticeProb.Prob.NormalComparisonOrthantPair
+public import LatticeProb.Prob.GaussCovDensityTwo
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

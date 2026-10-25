@@ -1,3 +1,5 @@
+module
+
 /-
 # Transport of finite-set event probabilities
 
@@ -5,7 +7,9 @@ A ground-set equivalence transports insertion-closed events and finite sums.
 Pulling a coordinate frame back to the original carrier identifies the actual
 atoms with ordered determinant coefficients without transporting inclusion sums.
 -/
-import LatticeProb.Prob.DPP.OrderedAtoms
+public import LatticeProb.Prob.DPP.OrderedAtoms
+
+@[expose] public section
 
 
 namespace LatticeProb.DPP

@@ -1,3 +1,5 @@
+module
+
 /-
 # The maximal-form cross-term helper for the Bernstein/Rosenthal bound
 
@@ -14,7 +16,9 @@ process.
 
 Nothing here is a new external input; the file is not imported by the root.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

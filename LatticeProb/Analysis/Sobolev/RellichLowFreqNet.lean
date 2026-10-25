@@ -1,3 +1,5 @@
+module
+
 /-
 # Rellich–Kondrachov: the low-frequency net, corrected
 
@@ -45,9 +47,11 @@ truncation operator `P_Λ`, the band-limited Bernstein/`H^s → C^m` bound, the
 Arzelà–Ascoli net, and the support/mollification repair that replaces the
 non-compactly-supported band-limited centres by test functions on `D`.
 -/
-import LatticeProb.Analysis.Sobolev.RellichEquiv
-import LatticeProb.Analysis.Sobolev.Truncation
-import LatticeProb.Analysis.Sobolev.BandLimited
+public import LatticeProb.Analysis.Sobolev.RellichEquiv
+public import LatticeProb.Analysis.Sobolev.Truncation
+public import LatticeProb.Analysis.Sobolev.BandLimited
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

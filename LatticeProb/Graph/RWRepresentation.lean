@@ -1,3 +1,5 @@
+module
+
 /-
 The random-walk representation of the odometer on a graph.
 
@@ -9,7 +11,9 @@ odometer is an upper bound for every bounded stopping rule and that it is the
 least one.  The scenery is the excess mass, so the payoff is the sum of the
 scenery along the walk.
 -/
-import LatticeProb.Graph.Representation
+public import LatticeProb.Graph.Representation
+
+@[expose] public section
 
 variable {V : Type*} {G : SimpleGraph V} [G.LocallyFinite]
 

@@ -1,3 +1,5 @@
+module
+
 /-
 # The existential shape of the frozen thin domination statement
 
@@ -14,8 +16,10 @@ The threshold is produced explicitly as `ε = (1 - p) / 2` from the dense hypoth
 is touched, and nothing is claimed unconditionally.
 -/
 
-import LatticeProb.Prob.Percolation.LSSThinRotorMatch
-import LatticeProb.Prob.Percolation.LSSThinConsumerShape
+public import LatticeProb.Prob.Percolation.LSSThinRotorMatch
+public import LatticeProb.Prob.Percolation.LSSThinConsumerShape
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

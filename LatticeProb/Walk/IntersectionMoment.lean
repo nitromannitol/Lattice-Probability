@@ -1,7 +1,11 @@
-import Mathlib
-import LatticeProb.Walk.Markov
-import LatticeProb.Walk.GreenPointwise
-import LatticeProb.Walk.SRWDiag
+module
+
+public import Mathlib
+public import LatticeProb.Walk.Markov
+public import LatticeProb.Walk.GreenPointwise
+public import LatticeProb.Walk.SRWDiag
+
+@[expose] public section
 
 /-!
 # The second moment of the intersection count in `d ≥ 5`

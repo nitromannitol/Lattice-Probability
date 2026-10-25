@@ -1,3 +1,5 @@
+module
+
 /-
 # Li-Shao normal comparison: bounds for the mixed-partial orthant integrals
 
@@ -12,10 +14,12 @@ correlation `t * S i j / v` (`boundary_covDensity_path_le`).
 * `orthantPartial2_nonneg_le`: `0 ≤ orthantPartial2 (normalComparisonSmartPath v S t) b i j` and
   it is at most `bivariateGaussDensity v (t * S i j / v) (b i) (b j)`, for `i ≠ j`.
 -/
-import Mathlib
-import LatticeProb.Prob.GaussCovDensityOrthantPairs
-import LatticeProb.Prob.GaussCovDensityBoundary
-import LatticeProb.Prob.GaussCovDensityOrthant
+public import Mathlib
+public import LatticeProb.Prob.GaussCovDensityOrthantPairs
+public import LatticeProb.Prob.GaussCovDensityBoundary
+public import LatticeProb.Prob.GaussCovDensityOrthant
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

@@ -1,11 +1,15 @@
+module
+
 /-
 Translation invariance of the nearest-neighbour adjacency of `ℤ^d`: adding one
 fixed site to both endpoints of a pair of sites preserves adjacency in
 `LatticeProb.lattice d`, and conversely.  The statement depends only on the
 definition of `LatticeProb.lattice` and `LatticeProb.unit` in `LatticeProb.Site`.
 -/
-import Mathlib
-import LatticeProb.Site
+public import Mathlib
+public import LatticeProb.Site
+
+@[expose] public section
 
 namespace LatticeProb
 

@@ -1,9 +1,13 @@
+module
+
 /-
 Transfer of event masses through a common countable partition. Each realization
 may use its own sample space and atoms. Equal measurable atom masses, disjointness,
 and the two exact event decompositions suffice for equality of the event masses.
 -/
-import Mathlib.MeasureTheory.Measure.NullMeasurable
+public import Mathlib.MeasureTheory.Measure.NullMeasurable
+
+@[expose] public section
 
 
 set_option autoImplicit false

@@ -1,3 +1,5 @@
+module
+
 /-
 # Finite generic directions in a radial cone
 
@@ -6,8 +8,10 @@ nonzero vector excludes at most one perturbation parameter. A finite exclusion
 therefore leaves a parameter in every open interval. Positive normalization
 preserves the strict inward and outward forward inequalities.
 -/
-import LatticeProb.Topology.DiskEndpointGeometry
-import Mathlib.Order.Interval.Set.Infinite
+public import LatticeProb.Topology.DiskEndpointGeometry
+public import Mathlib.Order.Interval.Set.Infinite
+
+@[expose] public section
 
 
 

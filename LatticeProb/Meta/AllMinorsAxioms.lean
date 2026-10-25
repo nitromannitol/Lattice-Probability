@@ -1,9 +1,13 @@
+module
+
 /-
 Axiom dependencies of the copied-graph all-minors and rooted-forest theorems.
 Each command reports the transitive assumptions of a principal export.
 -/
 
-import LatticeProb.Graph.CopiedGraph.AllMinorsMatrixTree
+public import LatticeProb.Graph.CopiedGraph.AllMinorsMatrixTree
+
+@[expose] public section
 
 #print axioms Finset.sum_val_preimageSuccAbove
 #print axioms LatticeProb.Graph.CopiedGraph.IsRootedForest.card_add_card_roots

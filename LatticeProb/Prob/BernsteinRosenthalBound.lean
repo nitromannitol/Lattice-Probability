@@ -1,3 +1,5 @@
+module
+
 /-
 # The assembled Rosenthal bound for the martingale partial sums
 
@@ -15,8 +17,10 @@ estimate into `A ≤ C (B + V)`, `V = ∑_{i<n} ∫ |ξ (i+1)|^p`.  Feeding thes
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinVariancePair
-import LatticeProb.Prob.BernsteinInduction
+public import LatticeProb.Prob.BernsteinVariancePair
+public import LatticeProb.Prob.BernsteinInduction
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

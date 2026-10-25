@@ -1,3 +1,5 @@
+module
+
 /-
 # The weighted Young convolution inequality for the Sobolev norm
 
@@ -36,8 +38,10 @@ For a kernel `ρ` of total mass one it also needs the `H^s` bound of that averag
 of the translation errors, and the choice of `ρ` inside the radius supplied by the
 translation-continuity hypothesis.  Those steps are not in this file.
 -/
-import LatticeProb.Analysis.Sobolev.Convolution
-import LatticeProb.Analysis.Sobolev.Additivity
+public import LatticeProb.Analysis.Sobolev.Convolution
+public import LatticeProb.Analysis.Sobolev.Additivity
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal FourierTransform Topology

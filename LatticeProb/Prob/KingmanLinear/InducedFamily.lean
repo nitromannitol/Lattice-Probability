@@ -1,7 +1,11 @@
-import LatticeProb.Prob.KingmanLinear.Defs
-import LatticeProb.Prob.KingmanLinear.Restated
-import LatticeProb.Prob.KingmanLinear.LinearSets
-import LatticeProb.Prob.Kingman
+module
+
+public import LatticeProb.Prob.KingmanLinear.Defs
+public import LatticeProb.Prob.KingmanLinear.Restated
+public import LatticeProb.Prob.KingmanLinear.LinearSets
+public import LatticeProb.Prob.Kingman
+
+@[expose] public section
 
 /-!
 # 2. The induced family

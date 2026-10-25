@@ -1,3 +1,5 @@
+module
+
 /-
 # The frequency-truncation operator `P_Λ`
 
@@ -15,7 +17,9 @@ it is band-limited.
 The remaining inputs of `rkLowFreqNet` — the band-limited Bernstein bound and
 the Arzelà–Ascoli net with the support repair — are not touched here.
 -/
-import LatticeProb.Analysis.Sobolev.BandLimited
+public import LatticeProb.Analysis.Sobolev.BandLimited
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap

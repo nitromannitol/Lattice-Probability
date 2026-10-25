@@ -1,3 +1,5 @@
+module
+
 /-
 The integration step of the Herbst argument.
 
@@ -18,8 +20,10 @@ inequality.
 The argument is the classical one of Herbst (1975), as presented in Ledoux,
 *The Concentration of Measure Phenomenon*, Section 5.1.
 -/
-import LatticeProb.Prob.HerbstFromLSI
-import LatticeProb.Prob.ConvexOrder
+public import LatticeProb.Prob.HerbstFromLSI
+public import LatticeProb.Prob.ConvexOrder
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory ProbabilityTheory Filter

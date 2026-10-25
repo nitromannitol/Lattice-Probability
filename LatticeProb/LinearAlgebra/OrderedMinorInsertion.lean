@@ -1,3 +1,5 @@
+module
+
 /-
 # Ordered row insertion and determinant signs
 
@@ -5,9 +7,11 @@ Moving a newly inserted row from its sorted position to the first position
 contributes exactly the finite-subset insertion sign.
 -/
 
-import LatticeProb.LinearAlgebra.FiniteSubsetContraction
-import Mathlib.GroupTheory.Perm.Fin
-import Mathlib.Order.Interval.Finset.Fin
+public import LatticeProb.LinearAlgebra.FiniteSubsetContraction
+public import Mathlib.GroupTheory.Perm.Fin
+public import Mathlib.Order.Interval.Finset.Fin
+
+@[expose] public section
 
 
 

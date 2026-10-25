@@ -1,9 +1,13 @@
+module
+
 /-
 The odometer recursion: the odometer after `n + 1` rounds is the positive part
 of the average of the odometer after `n` rounds over the neighbours, plus the
 scenery.  The graph is infinite, locally finite and connected throughout.
 -/
-import LatticeProb.Graph.Odometer
+public import LatticeProb.Graph.Odometer
+
+@[expose] public section
 
 open LatticeProb.Graph
 

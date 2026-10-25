@@ -1,3 +1,5 @@
+module
+
 /-
 Finite-dimensional convergence and equicontinuity with an additional random block.
 The block is retained in each finite-net approximation, so the resulting functional
@@ -5,8 +7,10 @@ converges jointly with that block without identifying the two probability spaces
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
-import LatticeProb.Prob.FddTight
+public import Mathlib
+public import LatticeProb.Prob.FddTight
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal Topology

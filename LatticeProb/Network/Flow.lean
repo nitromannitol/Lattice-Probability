@@ -1,3 +1,5 @@
+module
+
 /-
 Flows and Thomson's principle.
 
@@ -16,7 +18,9 @@ energies differ by the energy of the difference.
 Applied to the killed Green function this bounds the effective resistance by the
 energy of any unit flow out of `C`, which is the form used to decide transience.
 -/
-import LatticeProb.Network.Variational
+public import LatticeProb.Network.Variational
+
+@[expose] public section
 
 open Finset
 open scoped Classical

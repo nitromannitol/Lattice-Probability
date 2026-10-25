@@ -1,6 +1,10 @@
-import LatticeProb.Walk.ExteriorDirichlet
-import LatticeProb.Walk.SRWGreenLower
-import LatticeProb.Walk.PotentialKernel
+module
+
+public import LatticeProb.Walk.ExteriorDirichlet
+public import LatticeProb.Walk.SRWGreenLower
+public import LatticeProb.Walk.PotentialKernel
+
+@[expose] public section
 
 /-!
 # Hitting every site in two dimensions

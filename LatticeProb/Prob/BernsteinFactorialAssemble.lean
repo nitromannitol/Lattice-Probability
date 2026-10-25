@@ -1,3 +1,5 @@
+module
+
 /-
 # The conditional mgf of the sum from the per-increment bounds
 
@@ -15,7 +17,9 @@ Bernstein exponent and `∑_{i<n} d_{i+1} ≤ λ²v/(2(1-aλ))`.  The final mome
 
 No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
-import LatticeProb.Prob.BernsteinFactorialFull
+public import LatticeProb.Prob.BernsteinFactorialFull
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped NNReal ENNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 # Original coordinate plane and Euclidean polygonal parity
 
@@ -8,7 +10,9 @@ Thus geometric local separation applies on the original product plane to
 arbitrary preconnected sets and actual continuous paths. Neighborhoods are
 pulled back as open sets; no product norm ball is identified with a round disk.
 -/
-import LatticeProb.Topology.PolygonalParityLocalSides
+public import LatticeProb.Topology.PolygonalParityLocalSides
+
+@[expose] public section
 
 
 

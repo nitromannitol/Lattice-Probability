@@ -1,3 +1,5 @@
+module
+
 /-
 The exploration lemma in conditional form.
 
@@ -24,8 +26,10 @@ same values so far give the same next index.  That implies `pred`, and with
 values read through an injective `g` it gives the congruence in terms of the
 revealed values alone.
 -/
-import Mathlib
-import LatticeProb.Prob.Exploration
+public import Mathlib
+public import LatticeProb.Prob.Exploration
+
+@[expose] public section
 
 noncomputable section
 

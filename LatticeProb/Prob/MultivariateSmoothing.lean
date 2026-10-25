@@ -1,3 +1,5 @@
+module
+
 /-
 # The multivariate orthant: vocabulary for the Sazonov smoothing inequality (mvbe C1)
 
@@ -28,8 +30,10 @@ Further Sazonov facts: the functional is symmetric (`sazonovRemainder_comm`) and
 nonnegative and antitone (`sazonovTail_nonneg`, `sazonovTail_antitone`), with the balance
 threshold `T ≥ m^{3/4} → sazonovTail m T ≤ m^{1/4}` (`sazonovTail_le_quarter`).
 -/
-import Mathlib
-import LatticeProb.Prob.MultivariateBerryEsseenTarget
+public import Mathlib
+public import LatticeProb.Prob.MultivariateBerryEsseenTarget
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal

@@ -1,3 +1,5 @@
+module
+
 /-
 # Finite weighted laws and order encodings
 
@@ -7,7 +9,9 @@ encoded by its principal lower sets in a finite Boolean cube.
 Finite weighted Dirac sums give literal atom laws. Encoding principal lower sets in a Boolean cube preserves and reflects the original partial order.
 -/
 
-import LatticeProb.Prob.Strassen.Defs
+public import LatticeProb.Prob.Strassen.Defs
+
+@[expose] public section
 
 
 

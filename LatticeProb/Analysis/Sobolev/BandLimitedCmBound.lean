@@ -1,3 +1,5 @@
+module
+
 /-
 # The band-limited `Cᵐ` bound in `L²` and `H^s`
 
@@ -20,9 +22,11 @@ restricted measure `volume.restrict (ball 0 (2Λ))`), and the passage from `L²`
 Neither step needs Plancherel: the `H^s` bound is obtained directly against the
 `H^s` integral.
 -/
-import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
-import LatticeProb.Analysis.Sobolev.BandTruncReal
-import LatticeProb.Analysis.Sobolev.Weight
+public import LatticeProb.Analysis.Sobolev.BandLimitedBernstein
+public import LatticeProb.Analysis.Sobolev.BandTruncReal
+public import LatticeProb.Analysis.Sobolev.Weight
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform SchwartzMap RealInnerProductSpace

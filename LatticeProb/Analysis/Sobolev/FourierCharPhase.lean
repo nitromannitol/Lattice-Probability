@@ -1,3 +1,5 @@
+module
+
 /-
 # The high-frequency phase bound for the translation estimate
 
@@ -6,7 +8,9 @@ The companion `TranslationBound.lean` controls `𝐞 ⟪h,ξ⟫ − 1` at bounde
 trivial bound `‖𝐞 t − 1‖ ≤ 2` is used; this module lands it, the second half of the phase
 estimate in the quantitative translation bound for the Fréchet–Kolmogorov route.
 -/
-import LatticeProb.Analysis.Sobolev.TranslationBound
+public import LatticeProb.Analysis.Sobolev.TranslationBound
+
+@[expose] public section
 
 open scoped FourierTransform
 

@@ -1,6 +1,10 @@
+module
+
 /- Geometric bounds for avoiding repeated constant blocks in an IID sequence. -/
-import Mathlib.Probability.Independence.InfinitePi
-import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Probability.Independence.InfinitePi
+public import Mathlib.Analysis.SpecificLimits.Basic
+
+@[expose] public section
 
 /-! Geometric bounds for avoiding repeated constant blocks in an IID sequence. -/
 namespace LatticeProb.Prob.IidBlocks

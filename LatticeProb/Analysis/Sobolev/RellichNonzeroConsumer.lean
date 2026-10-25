@@ -1,4 +1,8 @@
-import LatticeProb.Analysis.Sobolev.RellichConvolvedCompact
+module
+
+public import LatticeProb.Analysis.Sobolev.RellichConvolvedCompact
+
+@[expose] public section
 
 /-! # A nonzero lawful consumer at arbitrary positive or negative orders -/
 

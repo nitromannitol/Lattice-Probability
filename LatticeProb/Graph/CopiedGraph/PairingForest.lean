@@ -1,3 +1,5 @@
+module
+
 /-
 # Pairings as rooted copied forests
 
@@ -6,7 +8,9 @@ is a forest rooted at the first list. Conversely, root uniqueness and the
 prescribed matching walks give exact pairing connectivity and separation.
 The proof follows copied walks, so all original edge identities are retained.
 -/
-import LatticeProb.Graph.CopiedGraph.RootedForest
+public import LatticeProb.Graph.CopiedGraph.RootedForest
+
+@[expose] public section
 
 
 

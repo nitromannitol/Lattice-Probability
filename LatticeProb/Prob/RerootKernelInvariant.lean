@@ -1,3 +1,5 @@
+module
+
 /-
 A bounded bridge toward the RWRS `ErgodicDecomposition` external.
 
@@ -23,7 +25,9 @@ At an isolated root the neighbour sum is empty; the kernel is then defined as `�
 root does not move), which keeps it a probability kernel everywhere and is immaterial
 under the hypothesis `∀ᵐ N ∂Q, NetGood N` that the RWRS external carries.
 -/
-import LatticeProb.Prob.KernelErgodicDecomposition
+public import LatticeProb.Prob.KernelErgodicDecomposition
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

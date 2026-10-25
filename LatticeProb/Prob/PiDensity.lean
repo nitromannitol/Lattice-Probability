@@ -1,3 +1,5 @@
+module
+
 /-
 Tonelli for a finite product, and the density of a finite product measure.
 
@@ -6,7 +8,9 @@ product of the densities.  Mathlib has the Bochner form of Fubini in `n`
 variables but not the lower-integral form, and neither form of the density
 statement; both are what a multivariate Gaussian density rests on.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

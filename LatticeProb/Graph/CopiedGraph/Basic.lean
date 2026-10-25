@@ -1,12 +1,16 @@
+module
+
 /-
 Finite graphs with individually indexed edge copies, including loops and parallel copies.
 The walk and insertion proofs are adapted from the finite-avalanches development;
 precise source paths and byte pins are recorded with the extraction.
 -/
-import Mathlib.Logic.Relation
-import Mathlib.Data.Finset.Erase
-import Mathlib.Data.Finset.Insert
-import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Logic.Relation
+public import Mathlib.Data.Finset.Erase
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Data.Fintype.Powerset
+
+@[expose] public section
 
 namespace LatticeProb.Graph
 

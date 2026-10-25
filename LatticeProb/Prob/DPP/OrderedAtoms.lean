@@ -1,3 +1,5 @@
+module
+
 /-
 # Ordered determinant coordinates for projection DPP atoms
 
@@ -6,8 +8,10 @@ It therefore identifies the actual inclusion law with the squared coefficients
 used by ordered finite-subset contraction.
 -/
 
-import LatticeProb.Prob.DPP.FrameCarrier
-import LatticeProb.LinearAlgebra.FiniteSubsetContraction
+public import LatticeProb.Prob.DPP.FrameCarrier
+public import LatticeProb.LinearAlgebra.FiniteSubsetContraction
+
+@[expose] public section
 
 
 

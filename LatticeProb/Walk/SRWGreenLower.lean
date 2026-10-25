@@ -1,7 +1,11 @@
-import LatticeProb.Walk.SRWDiag
-import LatticeProb.Walk.VarianceScale
-import LatticeProb.Walk.SRWGreenSup
-import LatticeProb.Walk.Range
+module
+
+public import LatticeProb.Walk.SRWDiag
+public import LatticeProb.Walk.VarianceScale
+public import LatticeProb.Walk.SRWGreenSup
+public import LatticeProb.Walk.Range
+
+@[expose] public section
 
 /-!
 # Lower bounds for the truncated Green function

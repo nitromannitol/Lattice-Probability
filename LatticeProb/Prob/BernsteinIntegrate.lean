@@ -1,3 +1,5 @@
+module
+
 /-
 Step F of the Bernstein route: the deterministic real-analysis integration of the
 sub-exponential (Bernstein) conditional mgf bound `exp (-t² / (2 (v + a t)))` to the
@@ -14,8 +16,10 @@ exponential moment, both evaluated by Mathlib's
 `integral_rpow_mul_exp_neg_mul_rpow`; the only asymptotic input is `Γ(x) ≤ x^x` for
 `x ≥ 1`.
 -/
-import Mathlib
-import LatticeProb.Prob.Freedman
+public import Mathlib
+public import LatticeProb.Prob.Freedman
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal

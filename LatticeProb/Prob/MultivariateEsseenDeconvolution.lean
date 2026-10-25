@@ -1,3 +1,5 @@
+module
+
 /-
 # Multivariate Esseen deconvolution: the structural core
 
@@ -35,7 +37,9 @@ smoothing-bandwidth optimisation, not from here.  The `m^{1/4}` Sazonov smoothin
 — the Gaussian-smoothed orthant kernel, its Fourier transform, and the balance producing `m^{1/4}`
 — remains the research-level blocker (C1).
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

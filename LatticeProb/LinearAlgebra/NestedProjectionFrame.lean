@@ -1,11 +1,15 @@
+module
+
 /-
 Nested symmetric idempotent real matrices admit compatible ordered orthonormal
 frames on their original finite carrier. An orthonormal basis of the difference
 range is placed before a basis of the smaller range; symmetry proves their
 cross orthogonality and coordinate projection sums prove both reconstructions.
 -/
-import LatticeProb.LinearAlgebra.OrthogonalFrame
-import LatticeProb.LinearAlgebra.DeterminantEndpointComparison
+public import LatticeProb.LinearAlgebra.OrthogonalFrame
+public import LatticeProb.LinearAlgebra.DeterminantEndpointComparison
+
+@[expose] public section
 
 namespace LatticeProb.ProjectionFiltration
 

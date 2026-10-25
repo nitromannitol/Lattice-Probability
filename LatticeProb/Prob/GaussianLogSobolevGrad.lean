@@ -1,3 +1,5 @@
+module
+
 /-
 # The gradient (carré-du-champ) form of Gaussian log-Sobolev
 
@@ -34,8 +36,10 @@ argument, neither of which is in Mathlib; the one-dimensional Rademacher theorem
 `Fin n → ℝ` analogue.  The exact missing declaration is recorded at the end of
 this file.
 -/
-import LatticeProb.Prob.GaussianLogSobolevTensor
-import LatticeProb.External.GaussianLogSobolev
+public import LatticeProb.Prob.GaussianLogSobolevTensor
+public import LatticeProb.External.GaussianLogSobolev
+
+@[expose] public section
 
 noncomputable section
 

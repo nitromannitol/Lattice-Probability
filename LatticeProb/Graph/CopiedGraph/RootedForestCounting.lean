@@ -1,3 +1,5 @@
+module
+
 /-
 Finite copied-forest sums are partitioned by their unique component root matching.
 The private dependent-sum reduction follows `Fintype.prod_dite` in Mathlib.
@@ -5,12 +7,14 @@ For that adapted reduction:
 Copyright (c) 2017 Mario Carneiro. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import LatticeProb.Graph.CopiedGraph.RootMatching
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Fintype.Perm
-import Mathlib.Data.Sigma.Basic
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.SetTheory.Cardinal.Finite
+public import LatticeProb.Graph.CopiedGraph.RootMatching
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Fintype.Perm
+public import Mathlib.Data.Sigma.Basic
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.SetTheory.Cardinal.Finite
+
+@[expose] public section
 
 /-!
 # Counting copied forests by their component root matching
