@@ -1,3 +1,5 @@
+module
+
 /-
 Measurability through a countable-valued observable.
 
@@ -8,7 +10,9 @@ here are that reason, stated once.  They are what makes the odometer, the
 arrival counts and the fields built from them measurable, and they need nothing
 about the lattice.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

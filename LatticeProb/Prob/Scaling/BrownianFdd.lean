@@ -1,3 +1,5 @@
+module
+
 /-
 **The finite-dimensional characteristic function of a `d`-dimensional Brownian motion, at a
 general linear combination over coordinates and times.**
@@ -24,8 +26,10 @@ per-coordinate Gaussian exponentials into the stated joint exponential.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
-import LatticeProb.Prob.BrownianExit
+public import Mathlib
+public import LatticeProb.Prob.BrownianExit
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology LatticeProb
 open scoped ENNReal NNReal RealInnerProductSpace

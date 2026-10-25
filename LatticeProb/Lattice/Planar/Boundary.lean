@@ -1,6 +1,10 @@
+module
+
 /- Adapted from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and Yuval Peres. -/
-import LatticeProb.Lattice.Planar.Dual
-import LatticeProb.Lattice.Planar.KingPaths
+public import LatticeProb.Lattice.Planar.Dual
+public import LatticeProb.Lattice.Planar.KingPaths
+
+@[expose] public section
 
 open Finset
 

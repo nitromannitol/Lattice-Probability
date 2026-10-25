@@ -1,3 +1,5 @@
+module
+
 /-
 A one-line arithmetic fact about `min`: the product of two minima lower-bounds the minimum of
 the cross products, for nonnegative reals. Stated for four arbitrary nonnegative reals; useful
@@ -6,7 +8,9 @@ kernel-norm bounds) into a single rate constant for their product.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.Scaling.MinProduct

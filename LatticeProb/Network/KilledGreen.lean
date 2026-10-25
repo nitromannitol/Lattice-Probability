@@ -1,3 +1,5 @@
+module
+
 /-
 The killed Green function as a voltage.
 
@@ -12,7 +14,9 @@ is what `killedKer_symm` provides, and then the defining recursion of
 `killedHeat` in the first argument becomes the statement about the Laplacian in
 `v`.
 -/
-import LatticeProb.Network.Killed
+public import LatticeProb.Network.Killed
+
+@[expose] public section
 
 open Finset
 open scoped ENNReal

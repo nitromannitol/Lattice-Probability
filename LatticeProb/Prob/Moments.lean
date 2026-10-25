@@ -1,3 +1,5 @@
+module
+
 /-
 The second and fourth moments of a finite sum of independent centred real
 random variables.
@@ -17,9 +19,11 @@ the bound the fourth-moment method uses.  All the integrability side conditions
 come from a single fourth moment: on a probability space `|t|^p ≤ 1 + t^4` for
 `p ≤ 4`, and a product of independent integrable functions is integrable.
 -/
-import Mathlib.Probability.Independence.Integration
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Probability.Independence.Integration
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Pi
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Finset
 

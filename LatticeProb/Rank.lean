@@ -1,3 +1,5 @@
+module
+
 /-
 Ranking the elements of a finite set by an injective key.
 
@@ -9,7 +11,9 @@ injective on `A` the ranks run over `0, 1, …, |A| - 1` exactly once each, so t
 elements of rank below `H` number `min |A| H`.  Nothing here is about the
 lattice; it is stated for a finite set and a key in an arbitrary linear order.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

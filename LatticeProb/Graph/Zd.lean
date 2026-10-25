@@ -1,12 +1,16 @@
+module
+
 /-
 The specialization of the general-graph setting to the nearest-neighbour
 lattice `ℤ^d` of the shared library, in the vocabulary the dependent
 formalizations use: the graph is `LatticeProb.lattice d`, every vertex has
 degree `2d`, and the averaging operator is `LatticeProb.walkOp`.
 -/
-import LatticeProb.Graph.HeatBasic
-import LatticeProb.Graph.Green
-import LatticeProb.Site
+public import LatticeProb.Graph.HeatBasic
+public import LatticeProb.Graph.Green
+public import LatticeProb.Site
+
+@[expose] public section
 
 namespace LatticeProb.Graph.Zd
 

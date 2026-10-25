@@ -1,3 +1,5 @@
+module
+
 /-
 Moved from nitromannitol/rotor-23, `Rotor/Support/Konig.lean`, Apache-2.0;
 copyright 2026 Ahmed Bou-Rabee and Yuval Peres.  There the file is used in the
@@ -6,7 +8,9 @@ is stated for a bare type `α` and a predicate `P` on `List α`, with no
 reference to the rotor model, so it is moved here unchanged, with only the
 namespace renamed.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 /-!
 # König's lemma for a prefix-closed, finitely branching family

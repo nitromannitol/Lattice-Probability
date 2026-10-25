@@ -1,3 +1,5 @@
+module
+
 /-
 Summing a heat-kernel gradient bound `r^{-(d+1)/2}` against its Gaussian factor
 `exp(-n^2 / (8 (r + d)))` over all times `1 ≤ r < R` produces the spatial decay
@@ -5,9 +7,11 @@ Summing a heat-kernel gradient bound `r^{-(d+1)/2}` against its Gaussian factor
 Gaussian factor is discarded on the far side and expanded through a single
 term of the exponential series on the near side.
 -/
-import Mathlib
-import LatticeProb.Walk.Series
-import LatticeProb.Walk.GreenBounds
+public import Mathlib
+public import LatticeProb.Walk.Series
+public import LatticeProb.Walk.GreenBounds
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

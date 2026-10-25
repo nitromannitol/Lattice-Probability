@@ -1,3 +1,5 @@
+module
+
 /-
 The equilibrium potential, and the escape rate as the reciprocal resistance.
 
@@ -15,8 +17,10 @@ identity `P_o(leave C before returning) = 1 / (deg(o) · R_eff)` in potential
 form; identifying the potential with the hitting probability itself needs a
 first-passage decomposition of the killed kernel, which is not proved here.
 -/
-import LatticeProb.Network.Series
-import LatticeProb.Network.MaximumPrinciple
+public import LatticeProb.Network.Series
+public import LatticeProb.Network.MaximumPrinciple
+
+@[expose] public section
 
 open Finset
 open scoped Classical

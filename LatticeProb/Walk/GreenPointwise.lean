@@ -1,3 +1,5 @@
+module
+
 /-
 The pointwise Green bound `G(0,z) ≤ C(1+|z|)^{2-d}` in dimension four and above.
 
@@ -15,10 +17,12 @@ makes every power an integer power.
 The norm here is the graph norm `|z|_1`, which is at least the Euclidean norm,
 so this form of the bound is the stronger one.
 -/
-import Mathlib
-import LatticeProb.Walk.Correlation
-import LatticeProb.Walk.SimpleTransfer
-import LatticeProb.Walk.Ball
+public import Mathlib
+public import LatticeProb.Walk.Correlation
+public import LatticeProb.Walk.SimpleTransfer
+public import LatticeProb.Walk.Ball
+
+@[expose] public section
 
 noncomputable section
 

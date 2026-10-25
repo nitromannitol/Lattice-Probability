@@ -1,3 +1,5 @@
+module
+
 /-
 Strict positivity of a derivative from backward propagation of its zeros, and the resulting
 statement that the positive set of a monotone field vanishing at time zero lies entirely at
@@ -5,9 +7,11 @@ positive times.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.Analysis.Calculus.Deriv.MeanValue
-import Mathlib.Analysis.Calculus.Deriv.Slope
-import Mathlib.Topology.Order.IntermediateValue
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.Calculus.Deriv.Slope
+public import Mathlib.Topology.Order.IntermediateValue
+
+@[expose] public section
 
 open Set
 

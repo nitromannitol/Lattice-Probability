@@ -1,5 +1,9 @@
-import LatticeProb.Walk.LocalCLT
-import LatticeProb.Walk.SRW
+module
+
+public import LatticeProb.Walk.LocalCLT
+public import LatticeProb.Walk.SRW
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

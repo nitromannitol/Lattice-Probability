@@ -1,3 +1,5 @@
+module
+
 /-
 Moved from nitromannitol/Divisible-Sandpile-Percolation, Apache-2.0; copyright
 2026 Ahmed Bou-Rabee and Yuval Peres.  Sources:
@@ -27,7 +29,9 @@ even though both model the same lattice `ℤ²`.  `LatticeProb.Prob.Percolation.
 BondPercolation` uses the latter; nothing here is unified with it, since the
 two types are not definitionally equal.
 -/
-import LatticeProb.Site
+public import LatticeProb.Site
+
+@[expose] public section
 
 open LatticeProb
 

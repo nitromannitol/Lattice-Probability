@@ -1,3 +1,5 @@
+module
+
 /-
 The homogeneity of `sSup` under a nonnegative scalar, for the set of values an abstract
 optimal-stopping problem's admissible rules produce.  Stated for an arbitrary `Set ℝ` (the
@@ -8,8 +10,10 @@ instance of this with `S` the set of terminal values.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.Data.Real.Pointwise
-import Mathlib.Algebra.GroupWithZero.Action.Pointwise.Set
+public import Mathlib.Data.Real.Pointwise
+public import Mathlib.Algebra.GroupWithZero.Action.Pointwise.Set
+
+@[expose] public section
 
 open scoped Pointwise
 

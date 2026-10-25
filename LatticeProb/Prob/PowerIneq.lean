@@ -1,3 +1,5 @@
+module
+
 /-
 The second-order expansion of `|x|^p` for `p ≥ 2`.
 
@@ -21,7 +23,9 @@ proved by applying the mean value theorem twice: once to `(1+s)^{p-1}` to see
 that the derivative of the error vanishes to first order, and once to the error
 itself.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

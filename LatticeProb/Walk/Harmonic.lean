@@ -1,3 +1,5 @@
+module
+
 /-
 Supporting lemmas for the one-point insertion lemma of Bou-Rabee--Peres,
 Section 2, the paper (label `lem:schur`).
@@ -26,9 +28,11 @@ of `u` rather than with a Schur complement, which Mathlib does not have.
   `maximum_principle`, which makes the Green's function nonpositive in the sign
   convention of `dirichletLaplacian`.
 -/
-import Mathlib
-import LatticeProb.Walk.Lazy
-import LatticeProb.Walk.Dirichlet
+public import Mathlib
+public import LatticeProb.Walk.Lazy
+public import LatticeProb.Walk.Dirichlet
+
+@[expose] public section
 
 open Finset
 open scoped Matrix

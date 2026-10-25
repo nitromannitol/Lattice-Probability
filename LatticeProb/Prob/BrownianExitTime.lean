@@ -1,3 +1,5 @@
+module
+
 /-
 The exit time of a ball, and the fact that it is a stopping time.
 
@@ -16,8 +18,10 @@ time needs a time with values in `ℝ≥0`, and `exitTimeTrunc` is the exit time
 stopped at a horizon `T`, which is such a time, is again a stopping time, and
 agrees with the exit time on the event that the ball is left before `T`.
 -/
-import Mathlib
-import LatticeProb.Prob.BrownianMarkov
+public import Mathlib
+public import LatticeProb.Prob.BrownianMarkov
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal Topology

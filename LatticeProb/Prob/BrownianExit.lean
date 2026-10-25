@@ -1,3 +1,5 @@
+module
+
 /-
 The exit time of Brownian motion on `ℝ ^ d` from a ball.
 
@@ -21,9 +23,11 @@ The conclusion is the Gaussian bound `C exp (- c A ^ 2 / T)` on the probability
 that the motion leaves the ball of radius `A` about its starting point before
 time `T`, with `C = 4 d + 4` and `c = 1 / 32` depending only on the dimension.
 -/
-import Mathlib
-import LatticeProb.Prob.BrownianMax
-import LatticeProb.Gauss.BrownianCont
+public import Mathlib
+public import LatticeProb.Prob.BrownianMax
+public import LatticeProb.Gauss.BrownianCont
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter
 

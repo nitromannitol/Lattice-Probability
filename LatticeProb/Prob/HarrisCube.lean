@@ -1,3 +1,5 @@
+module
+
 /-
 The Harris inequality on the two cases the papers use: the discrete cube
 `ι → Bool` and the continuous cube `ι → ℝ`.
@@ -8,7 +10,9 @@ separately because they are how the inequality is cited: an i.i.d. field of
 open and closed sites is a product measure on `ι → Bool`, and an i.i.d. field of
 real weights is a product measure on `ι → ℝ`.
 -/
-import LatticeProb.Prob.HarrisVariants
+public import LatticeProb.Prob.HarrisVariants
+
+@[expose] public section
 
 open MeasureTheory Measure
 

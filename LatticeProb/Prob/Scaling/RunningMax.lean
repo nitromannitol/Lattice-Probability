@@ -1,3 +1,5 @@
+module
+
 /-
 **The running maximum of a jointly continuous field, and its basic properties.**
 
@@ -16,7 +18,9 @@ immediately.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 

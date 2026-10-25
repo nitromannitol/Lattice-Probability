@@ -1,3 +1,5 @@
+module
+
 /-
 Dyadic chaining.
 
@@ -14,7 +16,9 @@ to them.  Telescoping that gives `|f (dtrunc j t) - f (dtrunc m t)|` at most the
 tail `∑_{n > m} a n`, and two points at distance at most `2^{-m}` have
 truncations at level `m` which are again `0` or one step apart.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

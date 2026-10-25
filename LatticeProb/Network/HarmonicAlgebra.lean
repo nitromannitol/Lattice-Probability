@@ -1,3 +1,5 @@
+module
+
 /-
 Elementary algebra of `LatticeProb.Network.HarmonicOn`: it is closed under
 restriction, sums and scalar multiples; the network Laplacian written as a
@@ -8,7 +10,9 @@ locate a negative term forced by a large positive one.
 
 Moved from Unique-Continuation-Planar, `UCPlanar/Support/Harmonic.lean`.
 -/
-import LatticeProb.Network.Basic
+public import LatticeProb.Network.Basic
+
+@[expose] public section
 
 open scoped BigOperators Classical
 

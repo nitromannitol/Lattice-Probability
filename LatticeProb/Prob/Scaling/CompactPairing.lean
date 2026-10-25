@@ -1,8 +1,12 @@
+module
+
 /- Bounded measurable pairings and their uniform-distance estimates.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.BoundedFunctionalLift
+public import LatticeProb.Prob.Scaling.BoundedFunctionalLift
+
+@[expose] public section
 
 open MeasureTheory Set
 open LatticeProb.Scaling.BoundedFunctionalLift

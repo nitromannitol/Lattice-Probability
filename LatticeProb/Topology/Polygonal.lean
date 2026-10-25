@@ -1,3 +1,5 @@
+module
+
 /-
 Polygonal subsets of the plane: the vocabulary of the classical plane-topology
 theorems that the unique-continuation formalization cites from outside itself.
@@ -6,7 +8,9 @@ theorems that the unique-continuation formalization cites from outside itself.
 the setting of the cited plane-topology theorems, which are stated as
 `Prop`-valued predicates in `LatticeProb.External.PolygonalTopology`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

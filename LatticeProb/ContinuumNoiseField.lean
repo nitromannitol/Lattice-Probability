@@ -1,11 +1,15 @@
+module
+
 /-
 The space-time white-noise field with intensity `v`, its covariance and variance,
 and the associated Brownian optimal-stopping value. The Brownian motion has
 variance `t/4`; stopping rules are specified by Galmarino’s criterion.
 -/
-import LatticeProb.ContinuumHeatKernel
-import LatticeProb.Gauss.WhiteNoise
-import LatticeProb.Gauss.BrownianCont
+public import LatticeProb.ContinuumHeatKernel
+public import LatticeProb.Gauss.WhiteNoise
+public import LatticeProb.Gauss.BrownianCont
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal ENNReal

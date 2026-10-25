@@ -1,3 +1,5 @@
+module
+
 /-
 The local central limit theorem for the binomial kernel, with an explicit `1/m` error.
 
@@ -13,8 +15,10 @@ left-hand side is `2 · gaussianDensity` at every second `j` and `0` at the othe
 unconstrained statement is false.
 -/
 
-import Mathlib
-import LatticeProb.Walk.CentralBinom
+public import Mathlib
+public import LatticeProb.Walk.CentralBinom
+
+@[expose] public section
 
 open Filter Finset Real MeasureTheory
 open scoped Topology

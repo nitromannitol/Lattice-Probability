@@ -1,3 +1,5 @@
+module
+
 /-
 The Fourier representation of the simple random walk heat kernel, proved
 without any Fourier theory: the right-hand side satisfies the same
@@ -11,8 +13,10 @@ This is the first half of the `d`-dimensional local central limit theorem
 (`Sandpile.External.LocalCLT`); the three-region split of the θ-integral and
 the uniformity are in `LatticeProb/Walk/LocalCLT.lean`.
 -/
-import LatticeProb.Walk.Character
-import LatticeProb.Walk.SRW
+public import LatticeProb.Walk.Character
+public import LatticeProb.Walk.SRW
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,3 +1,5 @@
+module
+
 /-
 The deterministic lattice objects of Bou-Rabee--Peres, *Once-reinforced random
 walk on `ℤ^d` has range exponent at least `d/(d+1)`*, Section 2, "The insertion
@@ -35,8 +37,10 @@ correspondence table of the ORRW formalization (`nitromannitol/ORRW-Lower-Bound`
   `dirichletLaplacian_isUnit` below rules this out for `d ≥ 1`, by the
   maximum-principle form of the paper's negative-definiteness argument.
 -/
-import Mathlib
-import LatticeProb.Walk.Lazy
+public import Mathlib
+public import LatticeProb.Walk.Lazy
+
+@[expose] public section
 
 namespace LatticeProb
 
@@ -102,7 +106,7 @@ lemma sum_adj_eq_sum_dir (A : Finset (Site d)) (g : Site d → ℝ)
         (fun a : Dir d => x + dirVec a)
       = A.filter (fun y => Adj x y) := by
     ext y
-    simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and, Adj]
+    simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
     constructor
     · rintro ⟨a, ha, rfl⟩; exact ⟨ha, a, rfl⟩
     · rintro ⟨hy, a, rfl⟩; exact ⟨a, hy, rfl⟩

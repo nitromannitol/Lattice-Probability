@@ -1,3 +1,5 @@
+module
+
 /-
 A conditional expectation determined by matching a candidate on every piece of a countable
 partition of the sub-σ-algebra. `Ω` is an arbitrary measurable space, `m ≤ m₀` an arbitrary
@@ -11,7 +13,9 @@ range of summation is itself random but determined by the smaller σ-algebra.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

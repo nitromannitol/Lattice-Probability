@@ -1,3 +1,5 @@
+module
+
 /-
 Convex comparison of finite products with integrable coordinates: a Lipschitz-implies-integrable
 fact, and the tensorization lemma that a convex-order comparison between two one-dimensional
@@ -6,8 +8,10 @@ convex Lipschitz function of all coordinates.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.MeasureTheory.SpecificCodomains.Pi
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.MeasureTheory.SpecificCodomains.Pi
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.ConvexOrder

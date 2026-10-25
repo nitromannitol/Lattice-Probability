@@ -1,3 +1,5 @@
+module
+
 /-
 The fair binomial law on `ℤ` (the number of successes in `l` trials of success
 probability `1/2`, extended by zero outside `[0, l]`), its autocorrelation `conv`
@@ -33,7 +35,9 @@ that module builds the local-CLT Gaussian approximation, not this shift-correlat
 Moved from Parking-Sharpness (`Parking.binomLaw` of `Parking/Support/Oriented.lean`, and
 `Parking.conv` together with the shift-energy identity of `Parking/Support/Shift.lean`).
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

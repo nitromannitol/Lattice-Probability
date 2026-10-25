@@ -1,3 +1,5 @@
+module
+
 /-
 The on-diagonal heat kernel bound of spectral dimension one: on an infinite
 connected graph of degree bounded by `d`,
@@ -26,7 +28,9 @@ the even return probabilities.
 No bound on the degrees enters before the last step, where `deg(x) ≤ d` turns
 the density `s_n` back into a probability.
 -/
-import LatticeProb.Graph.Nash
+public import LatticeProb.Graph.Nash
+
+@[expose] public section
 
 open scoped Classical
 

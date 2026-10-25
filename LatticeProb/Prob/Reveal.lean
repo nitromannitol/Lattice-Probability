@@ -1,3 +1,5 @@
+module
+
 /-
 Revealing one coordinate of a product law, and the product rule for the
 i.i.d. law.
@@ -15,10 +17,12 @@ functions over a finite set of sites is integrable for the i.i.d. law and
 its mean is the product of the one-site means.  It supplies the exponential
 moment of a finite sum of counts.
 -/
-import LatticeProb.Prob.Splice
-import LatticeProb.Site
-import LatticeProb.IID
-import LatticeProb.Prob.CountableMeasurable
+public import LatticeProb.Prob.Splice
+public import LatticeProb.Site
+public import LatticeProb.IID
+public import LatticeProb.Prob.CountableMeasurable
+
+@[expose] public section
 
 open MeasureTheory
 

@@ -1,3 +1,5 @@
+module
+
 /-
 A partition of unity attached to a finite set of points of a metric space, and the
 interpolation of a function by its values on that set.
@@ -16,7 +18,9 @@ one.  Together these turn a functional which is uniformly continuous for the sup
 a function of finitely many values of `v`, up to an error controlled by the modulus of
 continuity of `v`.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

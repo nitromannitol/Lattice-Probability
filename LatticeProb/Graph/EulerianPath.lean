@@ -1,3 +1,5 @@
+module
+
 /-
 Moved from nitromannitol/rotor-23, `Rotor/Support/EulerPath.lean`, Apache-2.0;
 copyright 2026 Ahmed Bou-Rabee and Yuval Peres.  There the file is the
@@ -6,7 +8,9 @@ combinatorial core of the proof of `lem:decreasing-positions` (i)
 of directed edges on an arbitrary type `V`, with no reference to the rotor
 mechanism, so it is moved here unchanged, with only the namespace renamed.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 /-!
 # A path from a set to a vertex of excess in-degree

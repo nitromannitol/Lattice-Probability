@@ -1,3 +1,5 @@
+module
+
 /-
 The Fourier layer of the local central limit theorem.
 
@@ -11,12 +13,14 @@ otherwise).  The peeling lemma `integral_box_peel` reduces the `d`-dimensional
 integral to the one-dimensional one coordinate at a time, which is how the
 Fourier representation of `srwHeat` is built by recursion on `d`.
 -/
-import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
-import LatticeProb.Walk.Character
-import LatticeProb.Walk.Basic
-import LatticeProb.Walk.SRW
-import LatticeProb.Walk.Fourier
-import LatticeProb.Site
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+public import LatticeProb.Walk.Character
+public import LatticeProb.Walk.Basic
+public import LatticeProb.Walk.SRW
+public import LatticeProb.Walk.Fourier
+public import LatticeProb.Site
+
+@[expose] public section
 
 namespace LatticeProb.LocalCLT
 

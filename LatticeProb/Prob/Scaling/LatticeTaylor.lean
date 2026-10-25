@@ -1,8 +1,12 @@
+module
+
 /- Coordinate rescaling and symmetric second differences for the lattice walk operator.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Site
+public import LatticeProb.Site
+
+@[expose] public section
 
 open LatticeProb
 noncomputable section

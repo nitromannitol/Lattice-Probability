@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProbAudit.Support.Vocabulary
+module
+
+public import Mathlib
+public import LatticeProbAudit.Support.Vocabulary
+
+@[expose] public section
 
 /-!
 # The audited statements in the challenge environment

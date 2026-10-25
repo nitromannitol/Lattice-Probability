@@ -1,3 +1,5 @@
+module
+
 /-
 The maximum principle for a network Laplacian.
 
@@ -12,7 +14,9 @@ In the application `S = {o}` is the source of the killed Green function and `M`
 its value there, so a voltage vanishing on the boundary of `C` is bounded by its
 value at the source, and two voltages with the same data agree.
 -/
-import LatticeProb.Network.Killed
+public import LatticeProb.Network.Killed
+
+@[expose] public section
 
 open Finset
 

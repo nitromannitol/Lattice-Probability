@@ -1,3 +1,5 @@
+module
+
 /-
 Supporting lemmas for the exit time bounds of Bou-Rabee--Peres, Section 2,
 the paper (label `lem:max-exit`).
@@ -37,11 +39,13 @@ The Dirichlet energy is the one already defined in `ORRW/Support/Thomson.lean`,
 where each undirected edge is counted once in each direction, so
 `energy V u_A = 2T(A)` rather than `T(A)`.
 -/
-import Mathlib
-import LatticeProb.Walk.Lazy
-import LatticeProb.Walk.Dirichlet
-import LatticeProb.Walk.Harmonic
-import LatticeProb.Walk.Energy
+public import Mathlib
+public import LatticeProb.Walk.Lazy
+public import LatticeProb.Walk.Dirichlet
+public import LatticeProb.Walk.Harmonic
+public import LatticeProb.Walk.Energy
+
+@[expose] public section
 
 open Finset
 

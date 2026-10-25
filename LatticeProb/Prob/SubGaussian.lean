@@ -1,3 +1,5 @@
+module
+
 /-
 Sub-Gaussian behaviour on a range of the parameter, which is what a variable
 with only an exponential moment has and what Mathlib's
@@ -10,7 +12,9 @@ every real `u`.  Mathlib has the Taylor estimate only on `|u| ≤ 1`
 (`Real.abs_exp_sub_one_sub_id_le`), so it is proved here from
 `Real.add_one_le_exp` alone, in two cases.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

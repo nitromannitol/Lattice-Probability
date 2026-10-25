@@ -1,3 +1,5 @@
+module
+
 /-
 The weight a truncated lazy Green function gives to each simple-walk kernel.
 
@@ -14,8 +16,10 @@ above it, and the size of the transition window, which is `O(√R)` by a Chernof
 bound.  Both are proved here, together with the exponentially small tail of the
 deficit well below `R/2`.
 -/
-import Mathlib
-import LatticeProb.Walk.GreenIdentity
+public import Mathlib
+public import LatticeProb.Walk.GreenIdentity
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

@@ -1,3 +1,5 @@
+module
+
 /-
 The localized odometer on the lattice: the one-step recursion for the value of
 the optimal-stopping problem in which the scenery is summed only while the walk
@@ -10,8 +12,10 @@ vocabulary of the dependent formalizations.  The two are related by
 `LatticeProb.Graph.killedOdometer_isLUB` read on the lattice, through the
 identification of the finite-horizon walk average with the integral.
 -/
-import LatticeProb.Graph.Killed
-import LatticeProb.Graph.ZdRepresentation
+public import LatticeProb.Graph.Killed
+public import LatticeProb.Graph.ZdRepresentation
+
+@[expose] public section
 
 open MeasureTheory LatticeProb
 

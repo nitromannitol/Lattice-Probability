@@ -1,3 +1,5 @@
+module
+
 /-
 The Gaussian logarithmic Sobolev inequality and the exponential moment bound it
 implies, the classical input from outside the papers that the Gaussian
@@ -21,7 +23,9 @@ These are cited results, carried as explicit hypotheses of the theorems that use
 them, never as axioms.
 -/
 
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory ProbabilityTheory
