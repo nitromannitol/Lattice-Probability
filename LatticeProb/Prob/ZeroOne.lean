@@ -128,7 +128,7 @@ theorem measure_eq_zero_or_one_of_preimage_eq [IsProbabilityMeasure μ] {C : Set
 theorem preErgodic_of_prob_eq_zero_or_one [IsProbabilityMeasure μ] {T : Ω → Ω}
     (h : ∀ ⦃A : Set Ω⦄, MeasurableSet A → T ⁻¹' A = A → μ A = 0 ∨ μ A = 1) : PreErgodic T μ := by
   refine ⟨fun A hA hinv => ?_⟩
-  rw [Filter.eventuallyConst_set']
+  rw [Filter.eventuallyEmptyOrUniv_iff']
   rcases h hA hinv with h0 | h1
   · exact Or.inl (ae_eq_empty.2 h0)
   · exact Or.inr (ae_eq_univ.2 ((prob_compl_eq_zero_iff hA).2 h1))
@@ -173,7 +173,7 @@ variable [MeasurableSpace X]
 
 /-- `coordShift g` is measurable for the product σ-algebra. [folklore] -/
 theorem measurable_coordShift (g : ι → ι) : Measurable (coordShift (X := X) g) :=
-  measurable_pi_lambda _ fun i => measurable_pi_apply (g i)
+  measurable_pi_iff.mpr fun i => measurable_pi_apply (g i)
 
 /-- The shift along an injective, law-preserving reindexing preserves the product measure
 (Mathlib's `Measure.map_infinitePi_infinitePi_of_inj`). [folklore] -/
@@ -207,7 +207,7 @@ theorem infinitePi_inter_preimage_coordShift_cylinder (P : ι → Measure X)
   -- express both events through the restrictions to `s` and to `g(s)`
   let ρ : (↥(s.image g) → X) → (↥s → X) :=
     fun v i => v ⟨g i, Finset.mem_image_of_mem g i.2⟩
-  have hρ : Measurable ρ := measurable_pi_lambda _ fun i => measurable_pi_apply _
+  have hρ : Measurable ρ := measurable_pi_iff.mpr fun i => measurable_pi_apply _
   have hB : cylinder s S = (fun (ω : ι → X) (i : ↥s) => ω i) ⁻¹' S := rfl
   have hB' : coordShift g ⁻¹' cylinder s S =
       (fun (ω : ι → X) (i : ↥(s.image g)) => ω i) ⁻¹' (ρ ⁻¹' S) := by
