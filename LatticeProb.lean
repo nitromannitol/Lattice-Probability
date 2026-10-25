@@ -950,3 +950,15 @@ import LatticeProb.External.EthierKurtzStopping
 import LatticeProb.Prob.Cadlag.HalfLine.AldousHalfLine
 import LatticeProb.Prob.Cadlag.HalfLine.AldousFinite
 import LatticeProb.External.MuruganSaloffCosteUniform
+import LatticeProb.Analysis.WeightedSquareSeries
+import LatticeProb.Prob.OrthogonalSeries
+import LatticeProb.Euclidean.LatticeCountLower
+import LatticeProb.Analysis.Elliptic.CanonicalDirichlet
+import LatticeProb.Analysis.Elliptic.OneDimDomain
+import LatticeProb.Prob.JumpChain.InitialKilling
+import LatticeProb.Analysis.AntisymmetricPairing
+import LatticeProb.Analysis.Elliptic.WeakDirichlet
+import LatticeProb.External.GilbargTrudingerSobolev
+import LatticeProb.Analysis.Elliptic.WeakDirichletAlgebra
+import LatticeProb.Analysis.Elliptic.ClassicalWeakGraph
+import LatticeProb.Euclidean.LatticeAnnulusRiemann
