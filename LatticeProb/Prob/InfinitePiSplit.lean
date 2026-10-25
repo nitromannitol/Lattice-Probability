@@ -15,6 +15,7 @@ has the law of the whole sequence, because shifting by one is an injective
 reindexing that preserves the one-site laws.  So the joint law of the pair is
 the product of the two laws, and Fubini finishes.
 -/
+public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.Probability.Independence.ZeroOne
 public import LatticeProb.Prob.ZeroOne
 
