@@ -1,10 +1,14 @@
-import LatticeProb.Site
-import LatticeProb.Network.KilledGreen
-import LatticeProb.Graph.Zd
-import LatticeProb.Network.MaximumPrinciple
-import LatticeProb.Walk.SRW
-import LatticeProb.Walk.GreenTwoSided
-import LatticeProb.Walk.Harnack.GreenEstimates
+module
+
+public import LatticeProb.Site
+public import LatticeProb.Network.KilledGreen
+public import LatticeProb.Graph.Zd
+public import LatticeProb.Network.MaximumPrinciple
+public import LatticeProb.Walk.SRW
+public import LatticeProb.Walk.GreenTwoSided
+public import LatticeProb.Walk.Harnack.GreenEstimates
+
+@[expose] public section
 
 /-!
 # Small R and the Harnack inequality

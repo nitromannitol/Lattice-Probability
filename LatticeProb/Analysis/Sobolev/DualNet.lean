@@ -1,5 +1,9 @@
-import LatticeProb.Analysis.Sobolev.AbsApply
-import LatticeProb.Analysis.Sobolev.TestFnSub
+module
+
+public import LatticeProb.Analysis.Sobolev.AbsApply
+public import LatticeProb.Analysis.Sobolev.TestFnSub
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

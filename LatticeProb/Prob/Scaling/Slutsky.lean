@@ -1,3 +1,5 @@
+module
+
 /-
 The Slutsky lemma, generic: if `X_R` converges in law to `X`, tested against every bounded
 continuous function of a finite real product, and `Y_R → 0` in probability (in the sup norm of
@@ -22,8 +24,10 @@ own `≤`.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
-import LatticeProb.Prob.Scaling.CramerWoldFilter
+public import Mathlib
+public import LatticeProb.Prob.Scaling.CramerWoldFilter
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 

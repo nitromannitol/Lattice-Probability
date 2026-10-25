@@ -1,3 +1,5 @@
+module
+
 /-
 The simple random walk on a general graph, on path space.
 
@@ -12,10 +14,12 @@ head chooses a neighbour uniformly, and the tail drives the walk from there, so
 as an identity of measures on path space.  Everything else in this file is read
 off it.
 -/
-import Mathlib
-import LatticeProb.Graph.Walk
-import LatticeProb.Graph.WalkLemmas
-import LatticeProb.Prob.InfinitePiSplit
+public import Mathlib
+public import LatticeProb.Graph.Walk
+public import LatticeProb.Graph.WalkLemmas
+public import LatticeProb.Prob.InfinitePiSplit
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal

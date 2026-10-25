@@ -1,3 +1,5 @@
+module
+
 /-
 The particle–hole process on `ℤ^d`, as `parking.tex` describes it in Section 3:
 a configuration `η` places `η(x)⁺` particles or `η(x)⁻` holes at each site;
@@ -26,7 +28,9 @@ How the paper's objects are modelled here:
 - The particles that can be at `y` after round `t` started within sup-distance
   `t` of `y`, so every count below is over an explicit finite set.
 -/
-import LatticeProb.IID
+public import LatticeProb.IID
+
+@[expose] public section
 
 noncomputable section
 

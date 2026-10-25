@@ -1,3 +1,5 @@
+module
+
 /-
 A positive particle odometer excludes an unfilled hole.
 
@@ -6,7 +8,9 @@ hole" (`parking.tex:1820-1823`) is the induction that combines the one-step
 identity `particleOdometer_succ` with the fact that no site carries an active
 particle and an unfilled hole.
 -/
-import LatticeProb.ParticleHoleLemmas
+public import LatticeProb.ParticleHoleLemmas
+
+@[expose] public section
 
 noncomputable section
 

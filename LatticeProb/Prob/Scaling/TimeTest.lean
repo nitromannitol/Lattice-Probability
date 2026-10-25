@@ -1,11 +1,15 @@
+module
+
 /-
 Time differentiation preserves smooth compactly supported test functions. Its
 integral along a time slice vanishes by the fundamental theorem of calculus.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.Analysis.Calculus.ContDiff.Comp
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import Mathlib.Analysis.Calculus.ContDiff.Comp
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+
+@[expose] public section
 
 open MeasureTheory
 noncomputable section

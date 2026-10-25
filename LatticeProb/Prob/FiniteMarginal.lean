@@ -1,3 +1,5 @@
+module
+
 /-
 Reading finitely many coordinates of an independent family.
 
@@ -8,7 +10,9 @@ independent family along a finite injective family of indices gives exactly the
 finite product of the corresponding laws.  Nothing here needs the index type to
 be the lattice.
 -/
-import LatticeProb.IID
+public import LatticeProb.IID
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem infinitePi_map_comp {ι α : Type*} [MeasurableSpace α] (ν : Measure �
       = Measure.pi fun _ : κ => ν := by
   classical
   have hmeas : Measurable (fun (ω : ι → α) (k : κ) => ω (v k)) :=
-    measurable_pi_lambda _ fun k => measurable_pi_apply (v k)
+    measurable_pi_iff.mpr fun k => measurable_pi_apply (v k)
   refine (Measure.pi_eq (μ := fun _ : κ => ν) fun t ht => ?_).symm
   set T : ι → Set α := fun i => ⋂ k : κ, (if v k = i then t k else Set.univ) with hTdef
   have hTmeas : ∀ i, MeasurableSet (T i) := by
@@ -84,7 +88,7 @@ theorem measurePreserving_pick (d : ℕ) (ν : Measure ℝ) [IsProbabilityMeasur
     {κ : Type*} [Fintype κ] (v : κ → Site d) (hv : Function.Injective v) :
     MeasurePreserving (fun ω : Site d → ℝ => fun k => ω (v k))
       (iidLaw d ν) (Measure.pi fun _ : κ => ν) :=
-  ⟨measurable_pi_lambda _ fun k => measurable_pi_apply (v k), iidLaw_map_comp d ν v hv⟩
+  ⟨measurable_pi_iff.mpr fun k => measurable_pi_apply (v k), iidLaw_map_comp d ν v hv⟩
 
 /-- **The integral of a function of finitely many distinct sites.**  For an i.i.d. field
 and a finite injective family of sites, the integral of a function of those sites is the

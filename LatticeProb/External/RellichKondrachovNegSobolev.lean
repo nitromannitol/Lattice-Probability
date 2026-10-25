@@ -1,3 +1,5 @@
+module
+
 /-
 The cited compact embedding of negative Sobolev order on a bounded domain
 (Rellich–Kondrachov): for `s₀ < s` and `D` a bounded open set, the unit ball of
@@ -6,7 +8,9 @@ Rellich and Kondrachov; the paper's linearization lemma
 (`sandpile.tex:5610-5655`) uses it in the `H^{-s}_loc` clause and does not prove
 it.  It enters here as an explicit hypothesis, never as an axiom.
 -/
-import LatticeProb.Analysis.Sobolev.Basic
+public import LatticeProb.Analysis.Sobolev.Basic
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

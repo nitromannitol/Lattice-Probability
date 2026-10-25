@@ -1,4 +1,8 @@
-import LatticeProb.Prob.AkcogluKrengelAE.Defs
+module
+
+public import LatticeProb.Prob.AkcogluKrengelAE.Defs
+
+@[expose] public section
 
 set_option linter.unnecessarySeqFocus false
 set_option linter.unusedSimpArgs false

@@ -1,3 +1,5 @@
+module
+
 /-
 The head-tail decomposition of a product measure indexed by the natural numbers.
 
@@ -13,8 +15,10 @@ has the law of the whole sequence, because shifting by one is an injective
 reindexing that preserves the one-site laws.  So the joint law of the pair is
 the product of the two laws, and Fubini finishes.
 -/
-import Mathlib.Probability.Independence.ZeroOne
-import LatticeProb.Prob.ZeroOne
+public import Mathlib.Probability.Independence.ZeroOne
+public import LatticeProb.Prob.ZeroOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,13 +51,13 @@ theorem consNat_head_tail (ω : ℕ → X) : consNat (ω 0) (tailNat ω) = ω :=
   | succ k => rfl
 
 theorem measurable_consNat : Measurable fun q : X × (ℕ → X) => consNat q.1 q.2 := by
-  refine measurable_pi_lambda _ fun k => ?_
+  refine measurable_pi_iff.mpr fun k => ?_
   cases k with
   | zero => exact measurable_fst
   | succ k => exact measurable_snd.eval
 
 theorem measurable_tailNat : Measurable (tailNat (X := X)) :=
-  measurable_pi_lambda _ fun k => measurable_pi_apply (k + 1)
+  measurable_pi_iff.mpr fun k => measurable_pi_apply (k + 1)
 
 omit [MeasurableSpace X] in
 theorem tailNat_eq_coordShift : tailNat (X := X) = coordShift fun k : ℕ => k + 1 := rfl

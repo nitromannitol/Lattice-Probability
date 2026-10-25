@@ -1,5 +1,9 @@
-import Mathlib
-import LatticeProb.Prob.ReturnTime
+module
+
+public import Mathlib
+public import LatticeProb.Prob.ReturnTime
+
+@[expose] public section
 
 /-!
 # Measurability of the return time and the first-return map

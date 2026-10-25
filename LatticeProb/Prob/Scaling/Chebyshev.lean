@@ -1,3 +1,5 @@
+module
+
 /-
 Chebyshev's inequality, in the second-moment/tail-measure form a martingale negligibility
 bound needs. `Ω` is an arbitrary measurable space, `μ` an arbitrary finite measure, and
@@ -8,7 +10,9 @@ converts the tail event `{a < |f|}` to `{a² ≤ f²}`; the whole argument uses 
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 

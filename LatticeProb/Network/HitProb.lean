@@ -1,4 +1,8 @@
-import LatticeProb.Network.FirstReturn
+module
+
+public import LatticeProb.Network.FirstReturn
+
+@[expose] public section
 
 /-!
 # Hitting probability before leaving a set

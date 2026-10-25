@@ -1,7 +1,11 @@
+module
+
 /- Adapted from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and Yuval Peres. -/
-import LatticeProb.Lattice.Planar.ExplCover
-import LatticeProb.Lattice.Planar.ExplTree
-import LatticeProb.Lattice.Planar.Ring
+public import LatticeProb.Lattice.Planar.ExplCover
+public import LatticeProb.Lattice.Planar.ExplTree
+public import LatticeProb.Lattice.Planar.Ring
+
+@[expose] public section
 
 open Finset List
 

@@ -1,3 +1,5 @@
+module
+
 /-
 Freedman's inequality for a discrete martingale with bounded increments.
 
@@ -18,8 +20,10 @@ optimizes the resulting bound.  The pointwise inequality behind the conditional 
 generating function bound is the one used for Bernstein's inequality for independent
 summands.
 -/
-import Mathlib
-import LatticeProb.Prob.Bernstein
+public import Mathlib
+public import LatticeProb.Prob.Bernstein
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 

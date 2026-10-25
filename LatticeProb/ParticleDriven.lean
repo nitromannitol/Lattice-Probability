@@ -1,3 +1,5 @@
+module
+
 /-
 The particle-driven construction of the particle-hole process, and the
 statement that it has the same law as the stack construction.
@@ -21,10 +23,12 @@ each read looks only at the finitely many reads that precede it in the
 dependency order once the configuration is fixed, and every instruction law
 pushes forward to the SAME displacement law (`instructionLaw_map_sub`).
 -/
-import LatticeProb.ReadIndex
-import LatticeProb.Invariance
-import LatticeProb.Prob.DagExploration
-import LatticeProb.Prob.PiSum
+public import LatticeProb.ReadIndex
+public import LatticeProb.Invariance
+public import LatticeProb.Prob.DagExploration
+public import LatticeProb.Prob.PiSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -196,7 +200,7 @@ theorem map_pDataLaw_of_map {M : Type*} [MeasurableSpace M] (θ : Measure M)
     rw [Measure.infinitePi_map_pi _ fun _ : Label d × ℕ => hf]
     simp only [moveLaw, hθ]
   have hmeasf : Measurable fun ω : Label d × ℕ → M => fun q => f (ω q) :=
-    measurable_pi_lambda _ fun q => hf.comp (measurable_pi_apply q)
+    measurable_pi_iff.mpr fun q => hf.comp (measurable_pi_apply q)
   have hpair : ((Measure.infinitePi fun _ : Label d × ℕ => θ).prod (rankLaw d)).map
       (Prod.map (fun ω q => f (ω q)) id) = (moveLaw d).prod (rankLaw d) := by
     rw [← Measure.map_prod_map _ _ hmeasf measurable_id, hmove, Measure.map_id]

@@ -653,3 +653,10 @@ modules from
 
 The Lean code in this repository is licensed under the **Apache License 2.0**
 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).
+
+## Selected consumer compatibility
+
+This branch preserves the exact parking dependency snapshot `9d44b4d4670df393bb86ac5a4e042f215001cddf`,
+adding public module interfaces and existing proof API compatibility for the
+selected consumer. Mathematical definitions, types and hypotheses are retained.
+The full library under Lean v4.35.0-rc2 has not been verified.

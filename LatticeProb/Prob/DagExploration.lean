@@ -1,3 +1,5 @@
+module
+
 /-
 Revealing an independent family along a well-founded dependency order.
 
@@ -24,7 +26,9 @@ finite-dimensional distributions directly: a finite set of reads has a maximal
 element for the dependency, no other read of the set depends on it, and that is
 exactly what is needed to factor its coordinate out of the event.
 -/
-import LatticeProb.Prob.Exploration
+public import LatticeProb.Prob.Exploration
+
+@[expose] public section
 
 noncomputable section
 
@@ -322,7 +326,7 @@ theorem map_revealed_dag (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasur
     rw [← hlaw i]
     exact Measure.isProbabilityMeasure_map (hg i).aemeasurable
   have hmeas : Measurable (revealedDag idx g) :=
-    measurable_pi_lambda _ fun a => measurable_revealedDag hidx.meas hg a
+    measurable_pi_iff.mpr fun a => measurable_revealedDag hidx.meas hg a
   refine Measure.eq_infinitePi (μ := fun _ : κ => ν) (hμ := hνprob) fun s t ht => ?_
   have hpre : revealedDag idx g ⁻¹' Set.pi (↑s) t = exploredDag idx g t s := by
     ext ω

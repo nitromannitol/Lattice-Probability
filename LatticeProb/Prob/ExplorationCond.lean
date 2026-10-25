@@ -1,3 +1,5 @@
+module
+
 /-
 The exploration lemma in conditional form.
 
@@ -24,8 +26,10 @@ same values so far give the same next index.  That implies `pred`, and with
 values read through an injective `g` it gives the congruence in terms of the
 revealed values alone.
 -/
-import Mathlib
-import LatticeProb.Prob.Exploration
+public import Mathlib
+public import LatticeProb.Prob.Exploration
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ variable {α : Type*} [MeasurableSpace α]
 def prefixCoords (α : Type*) (n : ℕ) (x : ℕ → α) : Fin n → α := fun k => x (k : ℕ)
 
 theorem measurable_prefixCoords (n : ℕ) : Measurable (prefixCoords α n) :=
-  measurable_pi_lambda _ fun k => measurable_pi_apply (k : ℕ)
+  measurable_pi_iff.mpr fun k => measurable_pi_apply (k : ℕ)
 
 /-- The sigma-algebra of the first `n` coordinates of a sequence. -/
 @[reducible] def prefixAlg (α : Type*) [MeasurableSpace α] (n : ℕ) :
@@ -256,7 +260,7 @@ theorem condExp_revealed (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasur
     exact Measure.isProbabilityMeasure_map (hg i₀).aemeasurable
   set P : Measure (Π i, X i) := Measure.infinitePi μ with hP
   set Φ : (Π i, X i) → (ℕ → α) := revealed idx g with hΦdef
-  have hΦ : Measurable Φ := measurable_pi_lambda _ fun k => measurable_revealed hidx.meas hg k
+  have hΦ : Measurable Φ := measurable_pi_iff.mpr fun k => measurable_revealed hidx.meas hg k
   have hmap : P.map Φ = Measure.infinitePi fun _ : ℕ => ν := map_revealed μ hidx hg hlaw
   have hcomap : MeasurableSpace.comap (revealedPrefix idx g n) inferInstance
       = MeasurableSpace.comap Φ (prefixAlg α n) := by

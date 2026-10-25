@@ -1,11 +1,15 @@
+module
+
 /- Spatial derivatives of smooth functions on space-time.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.Analysis.Calculus.Deriv.Pi
-import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Analysis.Calculus.Deriv.Comp
-import Mathlib.Analysis.Calculus.ContDiff.Comp
+public import Mathlib.Analysis.Calculus.Deriv.Pi
+public import Mathlib.Analysis.Calculus.Deriv.Prod
+public import Mathlib.Analysis.Calculus.Deriv.Comp
+public import Mathlib.Analysis.Calculus.ContDiff.Comp
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.Scaling.SpaceTimeDerivatives

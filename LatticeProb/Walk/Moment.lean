@@ -1,3 +1,5 @@
+module
+
 /-
 Moments of the number of updates of one coordinate.
 
@@ -11,8 +13,10 @@ Under the schedule representation of `ORRW/Support/LazyDecomp.lean` the law of
 all of this is unnormalized counting: the statements below are sums over the
 `d^r` schedules, not expectations.
 -/
-import Mathlib
-import LatticeProb.Walk.Decomp
+public import Mathlib
+public import LatticeProb.Walk.Decomp
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

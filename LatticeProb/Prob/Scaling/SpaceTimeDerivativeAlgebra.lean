@@ -1,8 +1,12 @@
+module
+
 /- Linearity of spatial directional differentiation.
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.SpaceTimeDerivatives
+public import LatticeProb.Prob.Scaling.SpaceTimeDerivatives
+
+@[expose] public section
 
 noncomputable section
 namespace LatticeProb.Scaling.SpaceTimeDerivatives

@@ -1,3 +1,5 @@
+module
+
 /-
 Karamata's theorem for the integrated tail.
 
@@ -11,8 +13,10 @@ The proof is the classical one: substituting `r = t u` turns the tail integral i
 variation, and Potter's bound dominates it by the integrable `(1 + δ) u ^ (-α+δ)`
 uniformly in `t`, so dominated convergence gives `∫_1^∞ u ^ (-α) du = 1 / (α - 1)`.
 -/
-import Mathlib
-import LatticeProb.Prob.RegularVariation
+public import Mathlib
+public import LatticeProb.Prob.RegularVariation
+
+@[expose] public section
 
 open Filter Topology MeasureTheory Set
 

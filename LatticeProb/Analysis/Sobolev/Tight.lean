@@ -1,8 +1,12 @@
+module
+
 /-
 Tightness transfer between negative Sobolev orders: a family of random
 functionals tight in `H^{-s₀}(D)` is tight in `H^{-s}(D)` for `s₀ < s`.
 -/
-import LatticeProb.Analysis.Sobolev.Basic
+public import LatticeProb.Analysis.Sobolev.Basic
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal FourierTransform

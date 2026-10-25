@@ -1,3 +1,5 @@
+module
+
 /-
 A Gaussian off-diagonal bound for the one-dimensional simple random walk kernel.
 
@@ -18,10 +20,12 @@ is absorbed by comparing `16(m+1)` with `8(n+2)`.  The result is the bound
 
 valid at every time and every site.
 -/
-import Mathlib
-import LatticeProb.Walk.SRWDecomp
-import LatticeProb.Walk.SRWOneDim
-import LatticeProb.Walk.OneDimGauss
+public import Mathlib
+public import LatticeProb.Walk.SRWDecomp
+public import LatticeProb.Walk.SRWOneDim
+public import LatticeProb.Walk.OneDimGauss
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

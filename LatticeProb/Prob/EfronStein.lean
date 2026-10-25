@@ -1,3 +1,5 @@
+module
+
 /-
 The exponential Efron-Stein inequality for a product measure, by coordinate
 telescoping.
@@ -8,8 +10,10 @@ coordinates one at a time and add the increments.  That global bound is what
 makes every exponential of such a function integrable against a product measure
 whose one-site law has an exponential moment.
 -/
-import Mathlib
-import LatticeProb.Prob.SubGaussian
+public import Mathlib
+public import LatticeProb.Prob.SubGaussian
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -330,7 +334,7 @@ theorem integrable_exp_lip (ν : Measure ℝ) [IsProbabilityMeasure ν] (θ₀ :
 
 theorem measurable_cons_pair :
     Measurable fun p : ℝ × (Fin N → ℝ) => (Fin.cons p.1 p.2 : Fin (N + 1) → ℝ) := by
-  refine measurable_pi_lambda _ fun i => ?_
+  refine measurable_pi_iff.mpr fun i => ?_
   refine Fin.cases ?_ ?_ i
   · simp only [Fin.cons_zero]
     exact measurable_fst
@@ -654,7 +658,7 @@ the new value. -/
 theorem measurable_update_pair (i : Fin N) :
     Measurable fun p : (Fin N → ℝ) × ℝ => Function.update p.1 i p.2 := by
   classical
-  refine measurable_pi_lambda _ fun j => ?_
+  refine measurable_pi_iff.mpr fun j => ?_
   by_cases h : j = i
   · subst h
     have he : (fun p : (Fin N → ℝ) × ℝ => Function.update p.1 j p.2 j) = fun p => p.2 := by

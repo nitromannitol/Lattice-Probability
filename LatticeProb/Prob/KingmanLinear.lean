@@ -1,3 +1,5 @@
+module
+
 /-
 Kingman's theorem for a nonnegative subadditive family with an almost-sure LINEAR bound and a
 Lipschitz-in-time control, WITHOUT integrability of `g 1`.
@@ -26,10 +28,12 @@ Route.
 The proof was written by the library's proof fleet from a statement-owned decomposition and
 verified by the library gates.
 -/
-import LatticeProb.Prob.Kingman
-import LatticeProb.Prob.InducedMap
-import LatticeProb.Prob.Kac
-import LatticeProb.Prob.Invariance
+public import LatticeProb.Prob.Kingman
+public import LatticeProb.Prob.InducedMap
+public import LatticeProb.Prob.Kac
+public import LatticeProb.Prob.Invariance
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Set
 

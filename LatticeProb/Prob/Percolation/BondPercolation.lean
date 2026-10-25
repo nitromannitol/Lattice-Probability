@@ -1,3 +1,5 @@
+module
+
 /-
 Moved from nitromannitol/rotor-23, Apache-2.0; copyright 2026 Ahmed Bou-Rabee and
 Yuval Peres.  Sources:
@@ -32,8 +34,10 @@ introduced as a separate declaration, since nothing else in this cluster uses
 it.  `Rotor`'s own `linfDist` on `Site` is not redefined: it is already the
 declaration `LatticeProb.Lattice.Planar.linfDist`.
 -/
-import LatticeProb.Lattice.Planar.Metric
-import LatticeProb.Prob.Percolation.FiniteProductPivotal
+public import LatticeProb.Lattice.Planar.Metric
+public import LatticeProb.Prob.Percolation.FiniteProductPivotal
+
+@[expose] public section
 
 /-!
 # Bernoulli bond percolation on the square lattice

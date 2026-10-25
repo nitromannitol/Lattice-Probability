@@ -1,10 +1,14 @@
+module
+
 /- A common probability-one event for a continuous family of test identities.
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.MeasureTheory.Measure.MeasureSpace
-import Mathlib.Topology.Separation.Hausdorff
-import Mathlib.Topology.Bases
+public import Mathlib.MeasureTheory.Measure.MeasureSpace
+public import Mathlib.Topology.Separation.Hausdorff
+public import Mathlib.Topology.Bases
+
+@[expose] public section
 
 open MeasureTheory TopologicalSpace
 namespace LatticeProb.Scaling.SimultaneousTesting

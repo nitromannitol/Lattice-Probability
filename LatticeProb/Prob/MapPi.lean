@@ -1,3 +1,5 @@
+module
+
 /-
 The pushforward of an independent family along a map of the one-site space.
 
@@ -10,8 +12,10 @@ proof is `Measure.eq_infinitePi` against cylinders: the preimage of the cylinder
 `{η | ∀ i ∈ s, η i ∈ t i}` under the coordinatewise map is the cylinder
 `{η | ∀ i ∈ s, η i ∈ f ⁻¹' t i}`.
 -/
-import Mathlib
-import LatticeProb.IID
+public import Mathlib
+public import LatticeProb.IID
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem infinitePi_map_pi {ι α β : Type*} [MeasurableSpace α] [MeasurableSpa
       = Measure.infinitePi fun _ : ι => ν.map f := by
   classical
   have hF : Measurable (fun (η : ι → α) (i : ι) => f (η i)) :=
-    measurable_pi_lambda _ fun i => hf.comp (measurable_pi_apply i)
+    measurable_pi_iff.mpr fun i => hf.comp (measurable_pi_apply i)
   have : IsProbabilityMeasure (ν.map f) := Measure.isProbabilityMeasure_map hf.aemeasurable
   refine Measure.eq_infinitePi (fun _ : ι => ν.map f) fun s t ht => ?_
   have hpre : (fun (η : ι → α) (i : ι) => f (η i)) ⁻¹' (Set.pi ↑s t)

@@ -1,3 +1,5 @@
+module
+
 /-
 The real-parameter (filter) form of `CramerWold.lean`'s device, needed whenever the limit of
 interest is an `R → ∞` limit over a real parameter rather than a sequence indexed by `ℕ`, while
@@ -23,7 +25,9 @@ convergence of the pushed-forward expectations, for an arbitrary filter (Mathlib
 
 Moved from Parking-Sharpness.
 -/
-import LatticeProb.Prob.Scaling.CramerWold
+public import LatticeProb.Prob.Scaling.CramerWold
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped RealInnerProductSpace

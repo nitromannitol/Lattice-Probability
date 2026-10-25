@@ -1,7 +1,11 @@
+module
+
 /-
 Finite dyadic bad events for processes indexed by Euclidean boxes.
 -/
-import LatticeProb.Prob.ChentsovPi
+public import LatticeProb.Prob.ChentsovPi
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory LatticeProb

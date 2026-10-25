@@ -1,3 +1,5 @@
+module
+
 /-
 Sub-Gaussian behaviour on a range of the parameter, which is what a variable
 with only an exponential moment has and what Mathlib's
@@ -10,7 +12,9 @@ every real `u`.  Mathlib has the Taylor estimate only on `|u| ≤ 1`
 (`Real.abs_exp_sub_one_sub_id_le`), so it is proved here from
 `Real.add_one_le_exp` alone, in two cases.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 
@@ -199,7 +203,7 @@ theorem integral_exp_weighted_sum_le {N : ℕ} (ν : Measure ℝ) [IsProbability
     _ = ∏ i : Fin N, ∫ z : ℝ, Real.exp (lam * ℓ i * z) ∂ν :=
         integral_fintype_prod_eq_prod (fun i z => Real.exp (lam * ℓ i * z))
     _ ≤ ∏ i : Fin N, Real.exp (c * (lam * ℓ i) ^ 2) := by
-        refine Finset.prod_le_prod (fun i _ => ?_) (fun i _ => ?_)
+        refine Finset.prod_le_prod₀ (fun i _ => ?_) (fun i _ => ?_)
         · exact integral_nonneg fun z => (Real.exp_pos _).le
         · exact (hSG (lam * ℓ i) (hlam i)).2
     _ = Real.exp (c * lam ^ 2 * ∑ i : Fin N, ℓ i ^ 2) := by

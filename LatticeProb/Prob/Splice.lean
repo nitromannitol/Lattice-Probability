@@ -1,3 +1,5 @@
+module
+
 /-
 Splicing two configurations along a set of coordinates, and the partial
 integral it defines.
@@ -12,9 +14,11 @@ of the functional on the coordinates in `S`, which is what the countable
 Efron-Stein inequality needs, and it is written here without naming a
 sigma-algebra.
 -/
-import Mathlib
-import LatticeProb.Prob.PiSum
-import LatticeProb.Prob.EfronStein
+public import Mathlib
+public import LatticeProb.Prob.PiSum
+public import LatticeProb.Prob.EfronStein
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem comb_apply_of_notMem {S : Set ι} [DecidablePred (· ∈ S)] {ω η : Π
 
 theorem measurable_comb (S : Set ι) [DecidablePred (· ∈ S)] :
     Measurable (fun p : (Π i, X i) × (Π i, X i) => comb S p.1 p.2) := by
-  refine measurable_pi_lambda _ fun i => ?_
+  refine measurable_pi_iff.mpr fun i => ?_
   by_cases hi : i ∈ S
   · simp only [comb, hi, if_pos]
     fun_prop
@@ -109,7 +113,7 @@ theorem measurePreserving_update_infinitePi [DecidableEq ι] (μ : ∀ i, Measur
     rw [this]
     exact measurePreserving_comb μ ({v}ᶜ : Set ι)
   have hfmeas : Measurable (fun q : (Π i, X i) × X v => Function.update q.1 v q.2) := by
-    refine measurable_pi_lambda _ fun i => ?_
+    refine measurable_pi_iff.mpr fun i => ?_
     by_cases hi : i = v
     · subst hi
       simp only [Function.update_self]

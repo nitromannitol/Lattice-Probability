@@ -1,3 +1,5 @@
+module
+
 /-
 The continuous time weights that replace the indicator of a time interval in the
 local central limit step.
@@ -17,7 +19,9 @@ double time integrals it produces increase to the double time integral of
 `lowerCut`, shortens the interval by `3/n` as well, which is what makes its support
 fit strictly inside the lattice time range for every large scale.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 

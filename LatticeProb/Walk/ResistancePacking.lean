@@ -1,3 +1,5 @@
+module
+
 /-
 The resistance packing bound on `ℤ^d`: for `d ≥ 2`, and any injective enumeration
 `x 0, …, x (M-1)` of `M` sites, the effective resistances from each `x i` to the complement
@@ -15,8 +17,10 @@ Moved from the ORRW formalization (`nitromannitol/ORRW-Lower-Bound`,
 `ORRW/Support/InsertionSum.lean` and `ORRW/Support/Thomson.lean`), where it proves the
 resistance packing lemma `lem:packing` of Bou-Rabee and Peres on once-reinforced random walk.
 -/
-import Mathlib
-import LatticeProb.Walk.Energy
+public import Mathlib
+public import LatticeProb.Walk.Energy
+
+@[expose] public section
 
 open Finset
 

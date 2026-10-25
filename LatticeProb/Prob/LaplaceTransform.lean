@@ -1,3 +1,5 @@
+module
+
 /-
 The Laplace transform of the negated one-site law, in two parameter regimes:
 a quadratic bound `exp(Cμ²)` for `μ ≤ 1`, which is what a centred law with an
@@ -12,7 +14,9 @@ verified directly): every fact this file needs from it
 (`subGaussianOn_of_exp_moment`, `integrable_id_of_exp_moment`) is already in
 the library under that name.
 -/
-import LatticeProb.Prob.SubGaussian
+public import LatticeProb.Prob.SubGaussian
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

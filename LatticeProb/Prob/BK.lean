@@ -1,3 +1,5 @@
+module
+
 /-
 The van den Berg-Kesten inequality on the discrete cube.
 
@@ -19,7 +21,9 @@ decrease the probability, and that is a four-case comparison at that coordinate.
 Everything here is a finite sum; no measure theory is used until the last
 section, which transports the inequality to `Measure.pi` of Bernoulli measures.
 -/
-import Mathlib
+public import Mathlib
+
+@[expose] public section
 
 namespace LatticeProb
 

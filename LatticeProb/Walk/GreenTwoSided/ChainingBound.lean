@@ -1,18 +1,22 @@
-import LatticeProb.Site
-import LatticeProb.Graph.Zd
-import LatticeProb.Graph.ExitDecomp
-import LatticeProb.Network.Killed
-import LatticeProb.Network.KilledGreen
-import LatticeProb.Walk.SRWGaussBound
-import LatticeProb.Walk.GreenIdentity
-import LatticeProb.Walk.Decomp
-import LatticeProb.Walk.LocalCLTOne
-import LatticeProb.Walk.SRWOneDim
-import LatticeProb.Walk.LocalCLT
-import LatticeProb.Walk.ExitBox
-import LatticeProb.Walk.GreenTwoSided.UpperBound
-import LatticeProb.Walk.GreenTwoSided.LazyWalk
-import LatticeProb.Walk.GreenTwoSided.FreeLazyKernel
+module
+
+public import LatticeProb.Site
+public import LatticeProb.Graph.Zd
+public import LatticeProb.Graph.ExitDecomp
+public import LatticeProb.Network.Killed
+public import LatticeProb.Network.KilledGreen
+public import LatticeProb.Walk.SRWGaussBound
+public import LatticeProb.Walk.GreenIdentity
+public import LatticeProb.Walk.Decomp
+public import LatticeProb.Walk.LocalCLTOne
+public import LatticeProb.Walk.SRWOneDim
+public import LatticeProb.Walk.LocalCLT
+public import LatticeProb.Walk.ExitBox
+public import LatticeProb.Walk.GreenTwoSided.UpperBound
+public import LatticeProb.Walk.GreenTwoSided.LazyWalk
+public import LatticeProb.Walk.GreenTwoSided.FreeLazyKernel
+
+@[expose] public section
 
 /-!
 # Killed near-diagonal bound and chaining

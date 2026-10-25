@@ -1,3 +1,5 @@
+module
+
 /-
 The covariance form of the Efron-Stein inequality.
 
@@ -17,7 +19,9 @@ first coordinate, and the covariance of the two head averages is the inductive
 hypothesis.  The constant is `1` at every step, which is what the paper's
 factor `2` needs, since `E|ζ - ζ'|² = 2 Var(ζ)`.
 -/
-import LatticeProb.Prob.LpSmooth
+public import LatticeProb.Prob.LpSmooth
+
+@[expose] public section
 
 noncomputable section
 

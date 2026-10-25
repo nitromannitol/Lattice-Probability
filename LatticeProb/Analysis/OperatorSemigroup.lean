@@ -1,3 +1,5 @@
+module
+
 /-
 # The bounded-generator Laplace resolvent identity
 
@@ -19,11 +21,13 @@ particular lattice or model; it is the bounded-generator special case of
 Lumer-Phillips / Hille-Yosida semigroup theory, and is built to match the
 generator language of `LatticeProb.Analysis.DissipativeSkewOperator`.
 -/
-import Mathlib.Analysis.Calculus.Deriv.Mul
-import Mathlib.Analysis.InnerProductSpace.Adjoint
-import Mathlib.Analysis.SpecialFunctions.Exponential
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import Mathlib.Analysis.Calculus.Deriv.Mul
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.SpecialFunctions.Exponential
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+
+@[expose] public section
 
 noncomputable section
 
