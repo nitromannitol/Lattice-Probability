@@ -78,7 +78,7 @@ theorem pathLaw_map_restrict (d : ℕ) [NeZero d] (I : Finset ℕ) :
 def take (d n : ℕ) (ω : ℕ → Dir d) : Fin n → Dir d := fun i => ω i
 
 theorem measurable_take (d n : ℕ) : Measurable (take d n) :=
-  measurable_pi_lambda _ fun i => measurable_pi_apply (i : ℕ)
+  measurable_pi_iff.mpr fun i => measurable_pi_apply (i : ℕ)
 
 theorem preimage_take_singleton {d n : ℕ} (w : Fin n → Dir d) :
     take d n ⁻¹' {w}
