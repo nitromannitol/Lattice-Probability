@@ -94,7 +94,7 @@ theorem subadditiveAlong_birkhoffSum (T : Ω → Ω) (f : Ω → ℝ) :
     SubadditiveAlong T fun n => birkhoffSum T f n := by
   intro m n x
   show birkhoffSum T f (m + n) x ≤ birkhoffSum T f m x + birkhoffSum T f n (T^[m] x)
-  rw [birkhoffSum_add]
+  exact (birkhoffSum_add_right_apply T f m n x).le
 
 /-! ### The subadditive family is dominated by the Birkhoff sums of its first term -/
 
@@ -112,7 +112,7 @@ theorem le_birkhoffSum_of_subadditiveAlong {g : ℕ → Ω → ℝ} (hsub : Suba
         simp [birkhoffSum]
       · have h1 : g (n + 1) x ≤ g n x + g 1 (T^[n] x) := hsub n 1 x
         have h2 : birkhoffSum T (g 1) (n + 1) x
-            = birkhoffSum T (g 1) n x + g 1 (T^[n] x) := birkhoffSum_succ T (g 1) n x
+            = birkhoffSum T (g 1) n x + g 1 (T^[n] x) := birkhoffSum_succ_apply T (g 1) n x
         have h3 := ih hn
         linarith [h1, h2, h3]
 
