@@ -1081,4 +1081,5 @@ import LatticeProb.Prob.Percolation.FiniteGradientBondDeletionConsumer
 import LatticeProb.Graph.MatedCRT.FromPaths
 import LatticeProb.Graph.MatedCRT.Infima
 import LatticeProb.Graph.MatedCRT.PathGraphLemmas
+import LatticeProb.Graph.MatedCRT.Connectivity
 import LatticeProb.Graph.MatedCRT.PathGraphExamples
