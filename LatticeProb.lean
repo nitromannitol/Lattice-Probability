@@ -1025,3 +1025,7 @@ import LatticeProb.Prob.Percolation.CorrectedPlaneAlgebra
 import LatticeProb.Prob.Percolation.CorrectedPlaneAlgebraConsumer
 import LatticeProb.Network.EdgeDeletionRigidity
 import LatticeProb.Network.EdgeDeletionRigidityConsumer
+import LatticeProb.Prob.Percolation.LatticeBondErgodicity
+import LatticeProb.Prob.Percolation.LatticeBondErgodicityConsumer
+import LatticeProb.Prob.Percolation.CorrectedPlaneLinearMap
+import LatticeProb.Prob.Percolation.CorrectedPlaneLinearMapConsumer
