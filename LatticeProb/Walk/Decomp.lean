@@ -60,19 +60,19 @@ lemma K_eq_mul_erase (n : Fin d → ℕ) (x : Site d) (i : Fin d) :
 lemma K_shift_pos (n : Fin d → ℕ) (x : Site d) (i : Fin d) :
     K n (x + dirVec ((i, true) : Dir d))
       = P1 (n i) (x i + 1) * ∏ j ∈ Finset.univ.erase i, P1 (n j) (x j) := by
-  rw [K_eq_mul_erase n (x + dirVec ((i, true) : Dir d)) i, add_dirVec_true_apply, if_pos rfl]
+  rw [K_eq_mul_erase n (x + dirVec ((i, true) : Dir d)) i, add_dirVec_true_apply, ite_eq_left rfl]
   congr 1
   refine Finset.prod_congr rfl fun j hj => ?_
-  rw [add_dirVec_true_apply, if_neg (Finset.ne_of_mem_erase hj)]
+  rw [add_dirVec_true_apply, ite_eq_right (Finset.ne_of_mem_erase hj)]
 
 /-- Expresses translation invariance of the walk's kernel under shifting the site by a negative unit step along coordinate i, the basic symmetry used when comparing weights at neighboring sites. -/
 lemma K_shift_neg (n : Fin d → ℕ) (x : Site d) (i : Fin d) :
     K n (x + dirVec ((i, false) : Dir d))
       = P1 (n i) (x i - 1) * ∏ j ∈ Finset.univ.erase i, P1 (n j) (x j) := by
-  rw [K_eq_mul_erase n (x + dirVec ((i, false) : Dir d)) i, add_dirVec_false_apply, if_pos rfl]
+  rw [K_eq_mul_erase n (x + dirVec ((i, false) : Dir d)) i, add_dirVec_false_apply, ite_eq_left rfl]
   congr 1
   refine Finset.prod_congr rfl fun j hj => ?_
-  rw [add_dirVec_false_apply, if_neg (Finset.ne_of_mem_erase hj)]
+  rw [add_dirVec_false_apply, ite_eq_right (Finset.ne_of_mem_erase hj)]
 
 /-- One lazy step in coordinate `i` advances the `i`-th factor of the product
 kernel by one, which is the operator identity behind `LatticeProb.iterate_delta0_eq`. -/
@@ -110,8 +110,8 @@ lemma cnt_snoc {r : ℕ} (c : Fin r → Fin d) (i : Fin d) :
   rw [Finset.sum_congr rfl fun t _ => h1 t, Fin.snoc_last]
   by_cases hij : j = i
   · subst hij
-    rw [Function.update_self, if_pos rfl]
-  · rw [Function.update_of_ne hij, if_neg (fun h => hij h.symm), add_zero]
+    rw [Function.update_self, ite_eq_left rfl]
+  · rw [Function.update_of_ne hij, ite_eq_right (fun h => hij h.symm), add_zero]
 
 /-- Appending one letter to a schedule. -/
 def snocEquiv (r : ℕ) (d : ℕ) : ((Fin r → Fin d) × Fin d) ≃ (Fin (r + 1) → Fin d) where
@@ -143,17 +143,17 @@ theorem iterate_delta0_eq (hd : 0 < d) (r : ℕ) (x : Site d) :
     unfold K delta0
     by_cases hx : x = 0
     · subst hx
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       symm
       exact Finset.prod_eq_one fun i _ => by rw [P1_zero_step]; simp
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
       obtain ⟨i, hi⟩ : ∃ i : Fin d, x i ≠ 0 := by
         by_contra hc
         push Not at hc
         exact hx (funext hc)
       symm
       refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
-      rw [P1_zero_step, if_neg hi]
+      rw [P1_zero_step, ite_eq_right hi]
   | succ r ih =>
     have hdR : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
     have hstep : ∀ y : Site d, Q^[r] (delta0 : Site d → ℝ) y

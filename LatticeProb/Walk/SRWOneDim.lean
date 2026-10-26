@@ -40,7 +40,7 @@ theorem srwHeat_one_two_mul (m : ℕ) (k : ℤ) :
         norm_num
         funext i
         exact i.elim0
-      · rw [if_neg hk, srwHeat_zero, if_neg]
+      · rw [ite_eq_right hk, srwHeat_zero, ite_eq_right]
         intro hc
         apply hk
         have : (![2 * k] : Site 1) 0 = (0 : Site 1) 0 := by rw [hc]
@@ -130,7 +130,7 @@ theorem srwHeat_one_binom : ∀ (n a b : ℕ), a + b = n →
       subst ha; subst hb
       have hz : (![(0 : ℤ)] : Site 1) = 0 := by funext i; fin_cases i; rfl
       simp only [Nat.cast_zero, sub_zero]
-      rw [hz, srwHeat_zero, if_pos rfl]
+      rw [hz, srwHeat_zero, ite_eq_left rfl]
       norm_num
   | succ n ih =>
       intro a b hab

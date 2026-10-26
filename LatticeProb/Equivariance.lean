@@ -201,10 +201,10 @@ theorem nextPos_shift (hD : ShiftDriver v D' D) (hS : ShiftState v S' S)
     nextPos D' S' t p = nextPos D S t (shiftLabel v p) - v := by
   have hp : S'.pos p = S.pos (shiftLabel v p) - v := hS.pos p
   by_cases h : S.active (shiftLabel v p) = true
-  · simp only [nextPos, hS.active p, h, if_true, hD.stack, instructionIndex_shift hD hS, hp,
+  · simp only [nextPos, hS.active p, h, ite_true, hD.stack, instructionIndex_shift hD hS, hp,
       sub_add_cancel]
   · simp only [Bool.not_eq_true] at h
-    simp only [nextPos, hS.active p, h, Bool.false_eq_true, if_false, hp]
+    simp only [nextPos, hS.active p, h, Bool.false_eq_true, ite_false, hp]
 
 theorem mem_arrivalsAt_shift (hD : ShiftDriver v D' D) (hS : ShiftState v S' S)
     (t : ℕ) (x : Site d) (p : Label d) :

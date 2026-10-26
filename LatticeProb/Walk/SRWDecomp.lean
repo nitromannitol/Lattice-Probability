@@ -50,8 +50,8 @@ lemma vecCons_eq_zero_iff (k : ℤ) : (![k] : Site 1) = 0 ↔ k = 0 := by
 lemma S1_zero (k : ℤ) : S1 0 k = if k = 0 then 1 else 0 := by
   rw [S1, srwHeat_zero]
   by_cases hk : k = 0
-  · rw [if_pos hk, if_pos ((vecCons_eq_zero_iff k).mpr hk)]
-  · rw [if_neg hk, if_neg (fun h => hk ((vecCons_eq_zero_iff k).mp h))]
+  · rw [ite_eq_left hk, ite_eq_left ((vecCons_eq_zero_iff k).mpr hk)]
+  · rw [ite_eq_right hk, ite_eq_right (fun h => hk ((vecCons_eq_zero_iff k).mp h))]
 
 /-- The one-dimensional kernel satisfies the nearest-neighbour recursion. -/
 lemma S1_succ (n : ℕ) (k : ℤ) : S1 (n + 1) k = (S1 n (k - 1) + S1 n (k + 1)) / 2 :=
@@ -77,14 +77,14 @@ lemma KS_zero_fun (x : Site d) : KS (fun _ => 0) x = if x = 0 then 1 else 0 := b
   unfold KS
   by_cases hx : x = 0
   · subst hx
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact Finset.prod_eq_one fun i _ => by rw [S1_zero]; simp
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     obtain ⟨i, hi⟩ : ∃ i : Fin d, x i ≠ 0 := by
       by_contra hc
       push Not at hc
       exact hx (funext hc)
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (by rw [S1_zero, if_neg hi])
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (by rw [S1_zero, ite_eq_right hi])
 
 /-- Splits the product kernel into its `i`-th factor and the product over the
 remaining coordinates. -/
@@ -97,20 +97,20 @@ the `i`-th factor of the product kernel. -/
 lemma KS_shift_pos (n : Fin d → ℕ) (x : Site d) (i : Fin d) :
     KS n (x + dirVec ((i, true) : Dir d))
       = S1 (n i) (x i + 1) * ∏ j ∈ Finset.univ.erase i, S1 (n j) (x j) := by
-  rw [KS_eq_mul_erase n (x + dirVec ((i, true) : Dir d)) i, add_dirVec_true_apply, if_pos rfl]
+  rw [KS_eq_mul_erase n (x + dirVec ((i, true) : Dir d)) i, add_dirVec_true_apply, ite_eq_left rfl]
   congr 1
   refine Finset.prod_congr rfl fun j hj => ?_
-  rw [add_dirVec_true_apply, if_neg (Finset.ne_of_mem_erase hj)]
+  rw [add_dirVec_true_apply, ite_eq_right (Finset.ne_of_mem_erase hj)]
 
 /-- Shifting the site by a negative unit step along coordinate `i` changes only
 the `i`-th factor of the product kernel. -/
 lemma KS_shift_neg (n : Fin d → ℕ) (x : Site d) (i : Fin d) :
     KS n (x + dirVec ((i, false) : Dir d))
       = S1 (n i) (x i - 1) * ∏ j ∈ Finset.univ.erase i, S1 (n j) (x j) := by
-  rw [KS_eq_mul_erase n (x + dirVec ((i, false) : Dir d)) i, add_dirVec_false_apply, if_pos rfl]
+  rw [KS_eq_mul_erase n (x + dirVec ((i, false) : Dir d)) i, add_dirVec_false_apply, ite_eq_left rfl]
   congr 1
   refine Finset.prod_congr rfl fun j hj => ?_
-  rw [add_dirVec_false_apply, if_neg (Finset.ne_of_mem_erase hj)]
+  rw [add_dirVec_false_apply, ite_eq_right (Finset.ne_of_mem_erase hj)]
 
 /-- One simple step in coordinate `i` advances the `i`-th factor of the product
 kernel by one.  Unlike the lazy walk there is no holding term: the two

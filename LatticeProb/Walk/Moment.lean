@@ -49,7 +49,7 @@ theorem sum_pow_cnt (r : ℕ) (i : Fin d) (u : ℝ) :
     have h : ∀ j : Fin d, (if j = i then u else 1) = 1 + (if j = i then u - 1 else 0) := by
       intro j; split <;> ring
     rw [Finset.sum_congr rfl fun j _ => h j, Finset.sum_add_distrib, Finset.sum_ite_eq',
-      if_pos (Finset.mem_univ i), Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+      ite_eq_left (Finset.mem_univ i), Finset.sum_const, Finset.card_univ, Fintype.card_fin,
       nsmul_eq_mul, mul_one]
     ring
   -- Expanding the `r`-th power of the one-step sum enumerates the schedules.

@@ -88,12 +88,12 @@ theorem preimage_take_singleton {d n : ℕ} (w : Fin n → Dir d) :
     Finset.mem_range]
   constructor
   · intro h i hi
-    rw [dif_pos hi, Set.mem_singleton_iff, ← h]
+    rw [dite_eq_left hi, Set.mem_singleton_iff, ← h]
     rfl
   · intro h
     funext i
     have hi := h (i : ℕ) i.isLt
-    rw [dif_pos i.isLt, Set.mem_singleton_iff] at hi
+    rw [dite_eq_left i.isLt, Set.mem_singleton_iff] at hi
     exact hi
 
 /-- The law of the first `n` steps of the infinite path is the law of the first
@@ -105,13 +105,13 @@ theorem pathLaw_map_take (d n : ℕ) [NeZero d] :
     preimage_take_singleton w, pathLaw,
     Measure.infinitePi_pi _ (fun i _ => by
       by_cases h : i < n
-      · rw [dif_pos h]; exact MeasurableSet.singleton _
-      · rw [dif_neg h]; exact MeasurableSet.univ)]
+      · rw [dite_eq_left h]; exact MeasurableSet.singleton _
+      · rw [dite_eq_right h]; exact MeasurableSet.univ)]
   have hterm : ∀ i ∈ Finset.range n,
       stepLaw d (if h : i < n then {w ⟨i, h⟩} else Set.univ)
         = (((2 * d : ℕ) : ENNReal))⁻¹ := by
     intro i hi
-    rw [dif_pos (Finset.mem_range.mp hi), stepLaw_singleton]
+    rw [dite_eq_left (Finset.mem_range.mp hi), stepLaw_singleton]
   rw [Finset.prod_congr rfl hterm, Finset.prod_const, Finset.card_range]
   rw [walkLaw, PMF.toMeasure_apply_singleton _ _ (MeasurableSet.singleton w),
     walkPMF_apply]

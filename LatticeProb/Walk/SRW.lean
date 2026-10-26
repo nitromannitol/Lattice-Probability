@@ -90,10 +90,10 @@ theorem graphNorm_add_dirVec_zmod (x : Site d) (a : Dir d) :
     · intro h; exact absurd (Finset.mem_univ a.1) h
   rw [hsum, hd]
   cases hb : a.2
-  · rw [if_neg (by simp)]
+  · rw [ite_eq_right (by simp)]
     push_cast
     rw [CharTwo.neg_eq]
-  · rw [if_pos (by simp)]
+  · rw [ite_eq_left (by simp)]
     push_cast
     ring
 

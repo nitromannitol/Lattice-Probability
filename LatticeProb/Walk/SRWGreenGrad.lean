@@ -78,11 +78,11 @@ theorem gR_sub_two_srwGreen (m : ℕ) (x : Site d) :
       = 2 * srwGreen d m x := by
     rw [← Finset.sum_subset hsub fun k _ hk => by
       simp only [Finset.mem_range, not_lt] at hk
-      rw [if_neg (by omega), zero_mul]]
+      rw [ite_eq_right (by omega), zero_mul]]
     unfold srwGreen
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun k hk => by
-      rw [if_pos (Finset.mem_range.mp hk)]
+      rw [ite_eq_left (Finset.mem_range.mp hk)]
   rw [gR_eq_sum_Aw (2 * m) x, ← h2, ← Finset.sum_sub_distrib]
   exact Finset.sum_congr rfl fun k _ => by ring
 
@@ -271,7 +271,7 @@ theorem exists_window_error_le (d : ℕ) (hd : 2 ≤ d) :
       have hkm : k < m := by
         have := Finset.mem_range.mp hk
         omega
-      rw [if_pos hkm, abs_of_nonpos (by linarith [Aw_le_two (2 * m) k])]
+      rw [ite_eq_left hkm, abs_of_nonpos (by linarith [Aw_le_two (2 * m) k])]
       have h1 : srwHeat d k x ≤ 1 := srwHeat_le_one hd0 k x
       have h2 : (0 : ℝ) ≤ 2 - Aw (2 * m) k := by linarith [Aw_le_two (2 * m) k]
       nlinarith [srwHeat_nonneg k x]

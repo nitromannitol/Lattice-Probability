@@ -85,7 +85,7 @@ This is an artefact of the finite-horizon model of `LatticeProb.Walk.Basic`; the
 walk is never evaluated past time `n`. -/
 theorem pos_of_length_le {d n : ℕ} (w : Fin n → Dir d) {k : ℕ} (hk : n ≤ k) :
     pos w k = ∑ t : Fin n, dirVec (w t) :=
-  Finset.sum_congr rfl fun t _ => if_pos (lt_of_lt_of_le t.isLt hk)
+  Finset.sum_congr rfl fun t _ => ite_eq_left (lt_of_lt_of_le t.isLt hk)
 
 /-- Every site visited at or before time `k` lies in `pathRange w k`. "The range at time `n` is the set of sites visited up to time `n`." -/
 theorem pos_mem_pathRange {d n : ℕ} (w : Fin n → Dir d) {i k : ℕ} (h : i ≤ k) :
@@ -105,7 +105,7 @@ theorem pos_init {d n : ℕ} (w : Fin (n + 1) → Dir d) {k : ℕ} (hk : k ≤ n
     pos (Fin.init w) k = pos w k := by
   unfold pos
   rw [Fin.sum_univ_castSucc]
-  simp only [Fin.init, Fin.val_last, Nat.not_lt.mpr hk, if_false, add_zero]
+  simp only [Fin.init, Fin.val_last, Nat.not_lt.mpr hk, ite_false, add_zero]
   rfl
 
 /-- The traversed-edge set at any time `k ≤ n` is unchanged by dropping the last

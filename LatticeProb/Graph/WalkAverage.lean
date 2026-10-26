@@ -70,7 +70,7 @@ theorem ae_siteWalkLaw [NeZero d] (x : Site d) {p : (ℕ → Site d) → Prop}
   rw [ae_iff, siteWalkLaw, Measure.map_apply (measurable_sitePath x) hc]
   have he : (sitePath x) ⁻¹' {a | ¬ p a} = ∅ := by
     ext ξ
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_not]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_not]
     exact h ξ
   rw [he, measure_empty]
 
@@ -244,7 +244,7 @@ def prefixExt (n : ℕ) (a : Fin (n + 1) → Site d) : ℕ → Site d :=
 
 theorem prefixExt_apply {n : ℕ} (a : Fin (n + 1) → Site d) {k : ℕ} (hk : k ≤ n) :
     prefixExt n a k = a ⟨k, by omega⟩ := by
-  rw [prefixExt, dif_pos (by omega : k < n + 1)]
+  rw [prefixExt, dite_eq_left (by omega : k < n + 1)]
 
 /-- **The identity, unconditional.**  For a functional settled by the positions
 up to time `n`, the finite-horizon walk average is the integral against the law
@@ -256,7 +256,7 @@ theorem walkExp_eq_integral [NeZero d] (n : ℕ) (x : Site d) (F : (ℕ → Site
     LatticeProb.Graph.walkExp (lattice d) n x F = ∫ X, F X ∂(siteWalkLaw d x) := by
   classical
   have hxB : x ∈ boxFinset x n := mem_boxFinset_iff.mpr fun i => by simp
-  haveI : Nonempty {y // y ∈ boxFinset x n} := ⟨⟨x, hxB⟩⟩
+  have : Nonempty {y // y ∈ boxFinset x n} := ⟨⟨x, hxB⟩⟩
   set M : ℝ := Finset.univ.sup' Finset.univ_nonempty
     (fun a : Fin (n + 1) → {y // y ∈ boxFinset x n} =>
       |F (prefixExt n fun i => (a i : Site d))|) with hM
@@ -264,11 +264,11 @@ theorem walkExp_eq_integral [NeZero d] (n : ℕ) (x : Site d) (F : (ℕ → Site
   have hcond : ∀ X : ℕ → Site d,
       (X 0 = x ∧ ∀ k < n, (lattice d).Adj (X k) (X (k + 1))) → Fb X = F X := by
     intro X hX
-    rw [hFb, onAdjPaths, if_pos hX]
+    rw [hFb, onAdjPaths, ite_eq_left hX]
   have hnot : ∀ X : ℕ → Site d,
       ¬ (X 0 = x ∧ ∀ k < n, (lattice d).Adj (X k) (X (k + 1))) → Fb X = 0 := by
     intro X hX
-    rw [hFb, onAdjPaths, if_neg hX]
+    rw [hFb, onAdjPaths, ite_eq_right hX]
   have hMnn : 0 ≤ M := by
     have h := Finset.le_sup'
       (f := fun a : Fin (n + 1) → {y // y ∈ boxFinset x n} =>
@@ -333,7 +333,7 @@ def LatticeProb.Graph.WalkAverageIsIntegral : Prop :=
 theorem LatticeProb.Graph.walkAverageIsIntegral :
     LatticeProb.Graph.WalkAverageIsIntegral := by
   intro d hd n x F hF
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   exact LatticeProb.walkExp_eq_integral n x F hF
 
 end

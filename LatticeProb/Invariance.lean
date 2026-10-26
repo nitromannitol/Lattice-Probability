@@ -49,7 +49,7 @@ theorem instructionLaw_isProbability (hd : 1 ≤ d) (y : Site d) :
 /-! ### The three factors -/
 
 theorem stackLaw_isProbability (hd : 1 ≤ d) : IsProbabilityMeasure (stackLaw d) := by
-  haveI : ∀ y : Site d, IsProbabilityMeasure (instructionLaw y) := fun y =>
+  have : ∀ y : Site d, IsProbabilityMeasure (instructionLaw y) := fun y =>
     instructionLaw_isProbability hd y
   exact inferInstanceAs
     (IsProbabilityMeasure (Measure.infinitePi fun p : Site d × ℕ => instructionLaw p.1))
@@ -59,7 +59,7 @@ theorem uniformUnit_isProbability : IsProbabilityMeasure (volume.restrict (Set.I
   simp
 
 theorem rankLaw_isProbability (d : ℕ) : IsProbabilityMeasure (rankLaw d) := by
-  haveI := uniformUnit_isProbability
+  have := uniformUnit_isProbability
   exact inferInstanceAs (IsProbabilityMeasure
     (Measure.infinitePi fun _ : Label d × ℕ => volume.restrict (Set.Icc (0 : ℝ) 1)))
 
@@ -95,7 +95,7 @@ theorem iidLaw_map_shiftConf {α : Type*} [MeasurableSpace α] (ν : Measure α)
 /-- The stack law is translation invariant. -/
 theorem stackLaw_map_shiftStack (hd : 1 ≤ d) (v : Site d) :
     (stackLaw d).map (shiftStack v) = stackLaw d := by
-  haveI : ∀ y : Site d, IsProbabilityMeasure (instructionLaw y) := fun y =>
+  have : ∀ y : Site d, IsProbabilityMeasure (instructionLaw y) := fun y =>
     instructionLaw_isProbability hd y
   have hinj : Function.Injective fun q : Site d × ℕ => (q.1 + v, q.2) := by
     rintro ⟨x, i⟩ ⟨y, j⟩ h
@@ -126,7 +126,7 @@ theorem stackLaw_map_shiftStack (hd : 1 ≤ d) (v : Site d) :
 /-- The law of the uniform variables is translation invariant. -/
 theorem rankLaw_map_shiftRank (v : Site d) :
     (rankLaw d).map (shiftRank v) = rankLaw d := by
-  haveI := uniformUnit_isProbability
+  have := uniformUnit_isProbability
   have hinj : Function.Injective fun q : Label d × ℕ => (shiftLabel v q.1, q.2) := by
     rintro ⟨p, i⟩ ⟨q, j⟩ h
     simp only [Prod.mk.injEq] at h

@@ -246,7 +246,7 @@ theorem edgeParam_injective :
     have hij' : i = j := by
       by_contra hne
       have h1 := congrFun hd i
-      rw [hval i i, hval j i, if_pos rfl, if_neg hne] at h1
+      rw [hval i i, hval j i, ite_eq_left rfl, ite_eq_right hne] at h1
       norm_num at h1
     simp only [Prod.mk.injEq]
     exact ⟨hxy, hij'⟩
@@ -257,7 +257,7 @@ theorem edgeParam_injective :
       rw [add_zero, ← add_assoc]
       exact hij
     have h5 := congrFun hsum i
-    rw [Pi.add_apply, Pi.zero_apply, hval i i, if_pos rfl] at h5
+    rw [Pi.add_apply, Pi.zero_apply, hval i i, ite_eq_left rfl] at h5
     have h6 : (0 : ℤ) ≤ dirVec ((j, true) : Dir d) i := by
       rw [hval j i]
       split <;> norm_num

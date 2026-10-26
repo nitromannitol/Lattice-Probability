@@ -146,6 +146,7 @@ automation:
         and the real moment norm definition are preserved. Full library verification
         is not claimed. Existing exploration probability-map instances and the
         shift-map measurability proof were adapted to the pinned APIs.
+        Observed deprecated proof aliases and proposition bindings were updated.
     - method: "agent"
       models:
         - "claude-opus-5"

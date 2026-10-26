@@ -68,8 +68,8 @@ lemma sum_abs_diff_K_box {L : ℕ} (n : Fin d → ℕ) (i₀ : Fin d) (h : ∀ i
   classical
   let f : (i : Fin d) → ℤ → ℝ := fun i k =>
     if i = i₀ then |P1 (n i) (k + 1) - P1 (n i) k| else P1 (n i) k
-  have hf0 : ∀ k : ℤ, f i₀ k = |P1 (n i₀) (k + 1) - P1 (n i₀) k| := fun _ => if_pos rfl
-  have hfn : ∀ i : Fin d, i ≠ i₀ → ∀ k : ℤ, f i k = P1 (n i) k := fun _ hi _ => if_neg hi
+  have hf0 : ∀ k : ℤ, f i₀ k = |P1 (n i₀) (k + 1) - P1 (n i₀) k| := fun _ => ite_eq_left rfl
+  have hfn : ∀ i : Fin d, i ≠ i₀ → ∀ k : ℤ, f i k = P1 (n i) k := fun _ hi _ => ite_eq_right hi
   have hpt : ∀ x : Site d,
       |K n (x + dirVec ((i₀, true) : Dir d)) - K n x| = ∏ i, f i (x i) := by
     intro x

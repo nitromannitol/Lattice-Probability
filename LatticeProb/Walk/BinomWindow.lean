@@ -471,12 +471,12 @@ theorem sum_abs_profile_le (m : ℕ) (hm : 1 ≤ m) :
   have hlow : ∑ k ∈ Finset.range m, |Aw (2 * m) k - (if k < m then (2 : ℝ) else 0)|
       = ∑ k ∈ Finset.range m, (2 - Aw (2 * m) k) := by
     refine Finset.sum_congr rfl fun k hk => ?_
-    rw [if_pos (Finset.mem_range.mp hk), abs_of_nonpos (by linarith [Aw_le_two (2 * m) k])]
+    rw [ite_eq_left (Finset.mem_range.mp hk), abs_of_nonpos (by linarith [Aw_le_two (2 * m) k])]
     ring
   have hhigh : ∑ k ∈ Finset.Ico m (2 * m), |Aw (2 * m) k - (if k < m then (2 : ℝ) else 0)|
       = ∑ k ∈ Finset.Ico m (2 * m), Aw (2 * m) k := by
     refine Finset.sum_congr rfl fun k hk => ?_
-    rw [if_neg (by
+    rw [ite_eq_right (by
       have := (Finset.mem_Ico.mp hk).1
       omega), sub_zero, abs_of_nonneg (Aw_nonneg (2 * m) k)]
   have htotal : ∑ k ∈ Finset.range m, Aw (2 * m) k

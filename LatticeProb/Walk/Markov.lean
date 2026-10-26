@@ -91,8 +91,8 @@ def shiftInc (n : ℕ) (ξ : ℕ → Site d) : ℕ → Site d := fun k => ξ (n 
 theorem measurable_truncInc (n : ℕ) : Measurable (truncInc (d := d) n) :=
   measurable_pi_iff.mpr fun i => by
     by_cases h : i < n
-    · simpa only [truncInc, if_pos h] using measurable_pi_apply i
-    · simpa only [truncInc, if_neg h] using
+    · simpa only [truncInc, ite_eq_left h] using measurable_pi_apply i
+    · simpa only [truncInc, ite_eq_right h] using
         (measurable_const : Measurable fun _ : ℕ → Site d => (0 : Site d))
 
 theorem measurable_shiftInc (n : ℕ) : Measurable (shiftInc (d := d) n) :=
@@ -140,11 +140,11 @@ theorem indepFun_truncInc_shiftInc (d n : ℕ) [NeZero d] :
   · refine comap_le_of_coordinates _ fun j => ?_
     by_cases hj : j < n
     · have he : (fun ξ : ℕ → Site d => truncInc n ξ j) = fun ξ => ξ j := by
-        funext ξ; simp only [truncInc, if_pos hj]
+        funext ξ; simp only [truncInc, ite_eq_left hj]
       rw [he]
       exact le_biSup s (show j ∈ S from hj)
     · have he : (fun ξ : ℕ → Site d => truncInc n ξ j) = fun _ => (0 : Site d) := by
-        funext ξ; simp only [truncInc, if_neg hj]
+        funext ξ; simp only [truncInc, ite_eq_right hj]
       rw [he, MeasurableSpace.comap_const]
       exact bot_le
   · refine comap_le_of_coordinates _ fun k => ?_
@@ -236,7 +236,7 @@ theorem sitePath_truncInc {n k : ℕ} (hk : k ≤ n) (x : Site d) (ξ : ℕ → 
   simp only [sitePath]
   congr 1
   refine Finset.sum_congr rfl fun j hj => ?_
-  rw [truncInc, if_pos (lt_of_lt_of_le (Finset.mem_range.mp hj) hk)]
+  rw [truncInc, ite_eq_left (lt_of_lt_of_le (Finset.mem_range.mp hj) hk)]
 
 /-! ### Stopping times and the conditioning data -/
 
@@ -262,7 +262,7 @@ theorem measurable_of_dependsUpTo {α : Type*} [MeasurableSpace α] {n : ℕ}
   have hfact : f = g ∘ r := by
     funext X
     refine (hf X _ fun k hk => ?_).symm ▸ rfl
-    rw [dif_pos (by omega : k < n + 1)]
+    rw [dite_eq_left (by omega : k < n + 1)]
   rw [hfact]
   exact (measurable_of_countable g).comp (measurable_pi_iff.mpr fun i => measurable_pi_apply _)
 
@@ -673,8 +673,8 @@ theorem markov_stopping_family (d : ℕ) [NeZero d] (N : ℕ) (x : Site d)
         = Set.indicator (τ ⁻¹' {k}) (fun _ => (1 : ℝ)) := by
       funext X
       by_cases h : τ X = k
-      · rw [if_pos h, Set.indicator_of_mem (show X ∈ τ ⁻¹' {k} from h)]
-      · rw [if_neg h, Set.indicator_of_notMem (show X ∉ τ ⁻¹' {k} from h)]
+      · rw [ite_eq_left h, Set.indicator_of_mem (show X ∈ τ ⁻¹' {k} from h)]
+      · rw [ite_eq_right h, Set.indicator_of_notMem (show X ∉ τ ⁻¹' {k} from h)]
     rw [he]
     exact measurable_const.indicator hset
   have hΨm : ∀ k, Measurable (Function.uncurry (Ψ k)) := by
@@ -693,9 +693,9 @@ theorem markov_stopping_family (d : ℕ) [NeZero d] (N : ℕ) (x : Site d)
     rw [hΨ]
     simp only
     by_cases h : τ X = k
-    · rw [if_pos h, if_pos (hτ k X X' hXX' h), hpast k X X' Y hXX']
+    · rw [ite_eq_left h, ite_eq_left (hτ k X X' hXX' h), hpast k X X' Y hXX']
     · have h' : τ X' ≠ k := fun hc => h (hτ k X' X (fun j hj => (hXX' j hj).symm) hc)
-      rw [if_neg h, if_neg h', mul_zero, mul_zero]
+      rw [ite_eq_right h, ite_eq_right h', mul_zero, mul_zero]
   have hsplitL : ∀ X : ℕ → Site d,
       Φ (τ X) X (shiftPath (τ X) X)
         = ∑ k ∈ Finset.range (N + 1), Ψ k X (shiftPath k X) := by

@@ -53,7 +53,7 @@ lemma sched_prod_bound {r : ℕ} (c : Fin r → Fin d) (a : ℕ) :
   by_cases hex : ∃ i : Fin d, cnt c i ≤ a
   · obtain ⟨i₀, hi₀⟩ := hex
     have hone : (1 : ℝ) ≤ ∑ i : Fin d, (if cnt c i ≤ a then (1 : ℝ) else 0) := by
-      calc (1 : ℝ) = (if cnt c i₀ ≤ a then (1 : ℝ) else 0) := by rw [if_pos hi₀]
+      calc (1 : ℝ) = (if cnt c i₀ ≤ a then (1 : ℝ) else 0) := by rw [ite_eq_left hi₀]
         _ ≤ _ := Finset.single_le_sum (f := fun i => (if cnt c i ≤ a then (1 : ℝ) else 0))
               (fun i _ => by split <;> norm_num) (Finset.mem_univ i₀)
     have hprod : ∏ i, (1 : ℝ) / Real.sqrt ((cnt c i : ℝ) + 1) ≤ 1 := by
@@ -290,7 +290,7 @@ theorem gR_osc_bound (hd : 2 ≤ d) {R : ℕ} (hR : 1 ≤ R) (x y : Site d) :
   have hmain := gR_le hd0 hR x
   by_cases hd2 : d = 2
   · subst hd2
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have hterm : ∀ r ∈ Finset.Ico 1 R,
         greenConst 2 * ((r : ℝ) ^ (-((2 : ℕ) : ℝ) / 2)) = greenConst 2 * ((r : ℝ))⁻¹ := by
       intro r hr
@@ -312,7 +312,7 @@ theorem gR_osc_bound (hd : 2 ≤ d) {R : ℕ} (hR : 1 ≤ R) (x y : Site d) :
       linarith
     have hlognn : (0 : ℝ) ≤ Real.log ((R : ℝ) + 1) := by linarith
     nlinarith [hmain, hxy, hharm, hlogR, hlog2, hg, hlognn]
-  · rw [if_neg hd2]
+  · rw [ite_eq_right hd2]
     have hd3 : 3 ≤ d := by omega
     have hterm : ∀ r ∈ Finset.Ico 1 R,
         greenConst d * ((r : ℝ) ^ (-(d : ℝ) / 2)) ≤ greenConst d * ((r : ℝ) ^ (-(3 : ℝ) / 2)) := by

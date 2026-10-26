@@ -244,13 +244,13 @@ theorem measure_exploredDag (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMea
         have hcover : exploredDag idx g B s₀
             = ⋃ j : ι, (exploredDag idx g B s₀ ∩ {ω : Π i, X i | idx a ω = j}) := by
           ext ω
-          simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+          simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
           exact ⟨fun h => ⟨idx a ω, h, rfl⟩, fun ⟨_, h, _⟩ => h⟩
         have hsplit : exploredDag idx g B s
             = ⋃ j : ι, ((exploredDag idx g B s₀ ∩ {ω : Π i, X i | idx a ω = j})
                 ∩ {ω : Π i, X i | ω j ∈ g j ⁻¹' B a}) := by
           ext ω
-          simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_preimage]
+          simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage]
           constructor
           · intro h
             refine ⟨idx a ω, ⟨fun b hb => h b (Finset.mem_of_mem_erase hb), rfl⟩, ?_⟩
@@ -330,7 +330,7 @@ theorem map_revealed_dag (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasur
   refine Measure.eq_infinitePi (μ := fun _ : κ => ν) (hμ := hνprob) fun s t ht => ?_
   have hpre : revealedDag idx g ⁻¹' Set.pi (↑s) t = exploredDag idx g t s := by
     ext ω
-    simp only [Set.mem_preimage, Set.mem_pi, Finset.mem_coe, exploredDag, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_pi, Finset.mem_coe, exploredDag, Set.mem_ofPred_eq]
   rw [Measure.map_apply hmeas (MeasurableSet.pi s.countable_toSet fun i _ => ht i), hpre,
     measure_exploredDag μ hidx hg hlaw ht s]
 

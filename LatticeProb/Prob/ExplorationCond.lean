@@ -103,7 +103,7 @@ theorem condExp_eval_prefixAlg (ν : Measure α) [IsProbabilityMeasure ν] (n : 
     (Measure.infinitePi fun _ : ℕ => ν)[fun x : ℕ → α => f (x n) | prefixAlg α n]
       =ᵐ[Measure.infinitePi fun _ : ℕ => ν] fun _ => ∫ v, f v ∂ν := by
   classical
-  haveI : Nonempty α := nonempty_of_isProbabilityMeasure ν
+  have : Nonempty α := nonempty_of_isProbabilityMeasure ν
   set P : Measure (ℕ → α) := Measure.infinitePi fun _ : ℕ => ν with hP
   have hmapn : P.map (fun x : ℕ → α => x n) = ν := Measure.infinitePi_map_eval _ n
   have hle : prefixAlg α n ≤ (inferInstance : MeasurableSpace (ℕ → α)) := prefixAlg_le n
@@ -255,7 +255,7 @@ theorem condExp_revealed (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasur
       =ᵐ[Measure.infinitePi μ] fun _ => ∫ v, f v ∂ν := by
   classical
   obtain ⟨i₀⟩ : Nonempty ι := nonempty_of_exploration μ idx
-  haveI hν : IsProbabilityMeasure ν := by
+  have hν : IsProbabilityMeasure ν := by
     rw [← hlaw i₀]
     infer_instance
   set P : Measure (Π i, X i) := Measure.infinitePi μ with hP

@@ -189,14 +189,14 @@ theorem measure_explored (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasur
       = ⋃ j : ι, (explored idx g B n ∩ {ω : Π i, X i | idx n ω = j}) := by
     intro n
     ext ω
-    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
     exact ⟨fun h => ⟨idx n ω, h, rfl⟩, fun ⟨_, h, _⟩ => h⟩
   have hsplit : ∀ n : ℕ, explored idx g B (n + 1)
       = ⋃ j : ι, ((explored idx g B n ∩ {ω : Π i, X i | idx n ω = j})
           ∩ {ω : Π i, X i | ω j ∈ g j ⁻¹' B n}) := by
     intro n
     ext ω
-    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_preimage]
+    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage]
     constructor
     · intro h
       refine ⟨idx n ω, ⟨fun k hk => h k (Nat.lt_succ_of_lt hk), rfl⟩, ?_⟩
@@ -281,7 +281,7 @@ theorem map_revealed (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasure (�
     by_cases hk : k ∈ s <;> simp [hBdef, hk, ht k]
   have hpre : revealed idx g ⁻¹' Set.pi (↑s) t = explored idx g B N := by
     ext ω
-    simp only [Set.mem_preimage, Set.mem_pi, Finset.mem_coe, explored, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_pi, Finset.mem_coe, explored, Set.mem_ofPred_eq]
     constructor
     · intro h k hk
       by_cases hks : k ∈ s
@@ -304,7 +304,7 @@ theorem map_revealed_apply (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeas
     (hlaw : ∀ i, (μ i).map (g i) = ν) (n : ℕ) :
     (Measure.infinitePi μ).map (fun ω => revealed idx g ω n) = ν := by
   obtain ⟨i₀⟩ : Nonempty ι := nonempty_of_exploration μ idx
-  haveI : IsProbabilityMeasure ν := by
+  have : IsProbabilityMeasure ν := by
     rw [← hlaw i₀]; infer_instance
   have hmeas : Measurable (revealed idx g) :=
     measurable_pi_iff.mpr fun k => measurable_revealed hidx.meas hg k

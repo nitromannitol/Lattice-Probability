@@ -116,7 +116,7 @@ lemma sched_prod_extra_bound {r : ℕ} (c : Fin r → Fin d) (i₀ : Fin d) (a :
   by_cases hex : ∃ i : Fin d, cnt c i ≤ a
   · obtain ⟨j, hj⟩ := hex
     have hone : (1 : ℝ) ≤ ∑ i : Fin d, (if cnt c i ≤ a then (1 : ℝ) else 0) := by
-      calc (1 : ℝ) = (if cnt c j ≤ a then (1 : ℝ) else 0) := by rw [if_pos hj]
+      calc (1 : ℝ) = (if cnt c j ≤ a then (1 : ℝ) else 0) := by rw [ite_eq_left hj]
         _ ≤ _ := Finset.single_le_sum (f := fun i => (if cnt c i ≤ a then (1 : ℝ) else 0))
               (fun i _ => by split <;> norm_num) (Finset.mem_univ j)
     have hprod : ∏ i, (1 : ℝ) / Real.sqrt ((cnt c i : ℝ) + 1) ≤ 1 := by

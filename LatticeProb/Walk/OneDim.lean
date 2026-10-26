@@ -40,11 +40,11 @@ lemma binomZ_nonneg (n : ℕ) (j : ℤ) : 0 ≤ binomZ n j := by
 
 /-- Provides the vanishing of the one-dimensional lazy walk kernel at negative sites, so the distribution can be summed over all of ℤ without case analysis. -/
 lemma binomZ_of_neg {n : ℕ} {j : ℤ} (h : j < 0) : binomZ n j = 0 := by
-  unfold binomZ; rw [if_neg (by omega)]
+  unfold binomZ; rw [ite_eq_right (by omega)]
 
 /-- Bridges the integer-valued binomial coefficient to its natural-number counterpart so the one-dimensional walk probabilities can be handled with standard binomial estimates. -/
 lemma binomZ_natCast (n j : ℕ) : binomZ n (j : ℤ) = (n.choose j : ℝ) := by
-  unfold binomZ; rw [if_pos (by positivity)]; simp
+  unfold binomZ; rw [ite_eq_left (by positivity)]; simp
 
 /-- The one-dimensional lazy walk's step law vanishes outside its range, since the generalized binomial coefficient is zero when the offset exceeds the number of steps. -/
 lemma binomZ_of_lt {n : ℕ} {j : ℤ} (h : (n : ℤ) < j) : binomZ n j = 0 := by
@@ -134,9 +134,9 @@ lemma P1_zero_step (k : ℤ) : P1 0 k = if k = 0 then 1 else 0 := by
   rw [h]
   unfold binomZ
   rcases lt_trichotomy k 0 with hk | hk | hk
-  · rw [if_neg (by omega), if_neg (by omega)]
+  · rw [ite_eq_right (by omega), ite_eq_right (by omega)]
   · subst hk; norm_num
-  · rw [if_pos (by omega), if_neg (by omega),
+  · rw [ite_eq_left (by omega), ite_eq_right (by omega),
       Nat.choose_eq_zero_of_lt (by omega : 0 < k.toNat)]
     norm_num
 

@@ -41,7 +41,7 @@ theorem delta0_gradient (hd : 1 ≤ d) (x : Site d) (i₀ : Fin d) :
       rw [h] at this
       simp at this
       omega
-    simp only [delta0, if_neg hx, if_neg hx']
+    simp only [delta0, ite_eq_right hx, ite_eq_right hx']
     have : (0 : ℝ) ≤ 2 ^ ((d : ℝ) - 1) * (1 + (graphNorm x : ℝ)) ^ (1 - (d : ℝ)) := by
       refine mul_nonneg (Real.rpow_nonneg (by norm_num) _) (Real.rpow_nonneg (by positivity) _)
     simpa using this
@@ -85,7 +85,7 @@ theorem gR_gradient_of {C₀ : ℝ} (hC₀ : 0 ≤ C₀)
   have hsplit : Finset.range R = if R = 0 then ∅ else insert 0 (Finset.Ico 1 R) := by
     by_cases hR : R = 0
     · simp [hR]
-    · rw [if_neg hR]
+    · rw [ite_eq_right hR]
       ext t
       simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Ico]
       omega
@@ -140,7 +140,7 @@ theorem gR_gradient_of {C₀ : ℝ} (hC₀ : 0 ≤ C₀)
       have h4 : (0 : ℝ) ≤ 8 * gradConst d * C₀ := by positivity
       positivity
     exact this
-  · rw [hsplit, if_neg hR, Finset.sum_insert (by simp)]
+  · rw [hsplit, ite_eq_right hR, Finset.sum_insert (by simp)]
     refine (abs_add_le _ _).trans ?_
     have hle2 : |∑ r ∈ Finset.Ico 1 R,
         (Q^[r] (delta0 : Site d → ℝ) x

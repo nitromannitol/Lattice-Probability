@@ -130,11 +130,11 @@ noncomputable def binomWeight (k r : ℕ) : ℝ :=
 
 /-- The value of the weight at the times that carry it. -/
 theorem binomWeight_of_le {k r : ℕ} (h : k ≤ r) :
-    binomWeight k r = (2 : ℝ)⁻¹ ^ r * (r.choose k : ℝ) := if_pos h
+    binomWeight k r = (2 : ℝ)⁻¹ ^ r * (r.choose k : ℝ) := ite_eq_left h
 
 /-- The weight vanishes before time `k`. -/
 theorem binomWeight_of_lt {k r : ℕ} (h : r < k) : binomWeight k r = 0 :=
-  if_neg (by omega)
+  ite_eq_right (by omega)
 
 /-- The weight is nonnegative. -/
 theorem binomWeight_nonneg (k r : ℕ) : 0 ≤ binomWeight k r := by
