@@ -58,34 +58,34 @@ theorem lintegral_enorm_rpow (μ : Measure Ω) {r : ℝ} (hr0 : 0 < r) (f : Ω �
     (le_of_lt hr0)]
 
 /-- The `L^r` norm of Mathlib in terms of the real `r`-th moment. -/
-theorem eLpNorm_eq_ofReal (μ : Measure Ω) {r : ℝ} (hr0 : 0 < r) (f : Ω → ℝ)
-    (hint : Integrable (fun ω => |f ω| ^ r) μ) :
+theorem eLpNorm_eq_ofReal_of_aestronglyMeasurable (μ : Measure Ω) {r : ℝ} (hr0 : 0 < r) (f : Ω → ℝ)
+    (hfm : AEStronglyMeasurable f μ) (hint : Integrable (fun ω => |f ω| ^ r) μ) :
     eLpNorm f (ENNReal.ofReal r) μ
       = (ENNReal.ofReal (∫ ω, |f ω| ^ r ∂μ)) ^ (1 / r) := by
   have hp0 : ENNReal.ofReal r ≠ 0 := by
     simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
     exact hr0
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 ENNReal.ofReal_ne_top,
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 ENNReal.ofReal_ne_top hfm,
     ENNReal.toReal_ofReal (le_of_lt hr0), lintegral_enorm_rpow μ hr0 f hint]
 
 /-- The bridge between the real `r`-th moment norm and the `L^r` norm of
 Mathlib. -/
-theorem eLpNorm_toReal_eq (μ : Measure Ω) {r : ℝ} (hr : 1 ≤ r) (f : Ω → ℝ)
-    (hint : Integrable (fun ω => |f ω| ^ r) μ) :
+theorem eLpNorm_toReal_eq_of_aestronglyMeasurable (μ : Measure Ω) {r : ℝ} (hr : 1 ≤ r) (f : Ω → ℝ)
+    (hfm : AEStronglyMeasurable f μ) (hint : Integrable (fun ω => |f ω| ^ r) μ) :
     (eLpNorm f (ENNReal.ofReal r) μ).toReal = rNorm μ r f := by
   have hr0 : (0 : ℝ) < r := lt_of_lt_of_le zero_lt_one hr
   have hI0 : (0 : ℝ) ≤ ∫ ω, |f ω| ^ r ∂μ :=
     integral_nonneg fun ω => Real.rpow_nonneg (abs_nonneg _) r
-  rw [eLpNorm_eq_ofReal μ hr0 f hint,
+  rw [eLpNorm_eq_ofReal_of_aestronglyMeasurable μ hr0 f hfm hint,
     ENNReal.ofReal_rpow_of_nonneg hI0 (show (0:ℝ) ≤ 1 / r by positivity),
     ENNReal.toReal_ofReal (Real.rpow_nonneg hI0 _)]
   rfl
 
-theorem eLpNorm_ne_top (μ : Measure Ω) {r : ℝ} (hr : 1 ≤ r) (f : Ω → ℝ)
-    (hint : Integrable (fun ω => |f ω| ^ r) μ) :
+theorem eLpNorm_ne_top_of_aestronglyMeasurable (μ : Measure Ω) {r : ℝ} (hr : 1 ≤ r) (f : Ω → ℝ)
+    (hfm : AEStronglyMeasurable f μ) (hint : Integrable (fun ω => |f ω| ^ r) μ) :
     eLpNorm f (ENNReal.ofReal r) μ ≠ ⊤ := by
   have hr0 : (0 : ℝ) < r := lt_of_lt_of_le zero_lt_one hr
-  rw [eLpNorm_eq_ofReal μ hr0 f hint]
+  rw [eLpNorm_eq_ofReal_of_aestronglyMeasurable μ hr0 f hfm hint]
   exact ENNReal.rpow_ne_top_of_nonneg (by positivity) ENNReal.ofReal_ne_top
 
 /-- The `r`-th moment norm is monotone in the absolute value. -/
@@ -124,10 +124,11 @@ theorem rNorm_add_le (μ : Measure Ω) {r : ℝ} (hr : 1 ≤ r) {f g : Ω → �
   have hadd : eLpNorm (fun ω => f ω + g ω) (ENNReal.ofReal r) μ
       ≤ eLpNorm f (ENNReal.ofReal r) μ + eLpNorm g (ENNReal.ofReal r) μ :=
     eLpNorm_add_le hfm hgm hp1
-  have hne_f := eLpNorm_ne_top μ hr f hf
-  have hne_g := eLpNorm_ne_top μ hr g hg
-  rw [← eLpNorm_toReal_eq μ hr (fun ω => f ω + g ω) hfg, ← eLpNorm_toReal_eq μ hr f hf,
-    ← eLpNorm_toReal_eq μ hr g hg, ← ENNReal.toReal_add hne_f hne_g]
+  have hne_f := eLpNorm_ne_top_of_aestronglyMeasurable μ hr f hfm hf
+  have hne_g := eLpNorm_ne_top_of_aestronglyMeasurable μ hr g hgm hg
+  rw [← eLpNorm_toReal_eq_of_aestronglyMeasurable μ hr (fun ω => f ω + g ω) (hfm.add hgm) hfg,
+    ← eLpNorm_toReal_eq_of_aestronglyMeasurable μ hr f hfm hf,
+    ← eLpNorm_toReal_eq_of_aestronglyMeasurable μ hr g hgm hg, ← ENNReal.toReal_add hne_f hne_g]
   exact ENNReal.toReal_mono (ENNReal.add_ne_top.mpr ⟨hne_f, hne_g⟩) hadd
 
 /-- Moment norms increase with the exponent under a probability measure. -/
@@ -135,8 +136,9 @@ theorem rNorm_mono_exponent (μ : Measure Ω) [IsProbabilityMeasure μ] {p q : �
     (hpq : p ≤ q) (f : Ω → ℝ) (hm : AEStronglyMeasurable f μ)
     (hpi : Integrable (fun ω => |f ω| ^ p) μ) (hqi : Integrable (fun ω => |f ω| ^ q) μ) :
     rNorm μ p f ≤ rNorm μ q f := by
-  rw [← eLpNorm_toReal_eq μ hp f hpi, ← eLpNorm_toReal_eq μ (hp.trans hpq) f hqi]
-  exact ENNReal.toReal_mono (eLpNorm_ne_top μ (hp.trans hpq) f hqi)
+  rw [← eLpNorm_toReal_eq_of_aestronglyMeasurable μ hp f hm hpi,
+    ← eLpNorm_toReal_eq_of_aestronglyMeasurable μ (hp.trans hpq) f hm hqi]
+  exact ENNReal.toReal_mono (eLpNorm_ne_top_of_aestronglyMeasurable μ (hp.trans hpq) f hm hqi)
     (eLpNorm_le_eLpNorm_of_exponent_le (ENNReal.ofReal_le_ofReal hpq) hm)
 
 /-- Raising the moment norm back to its exponent recovers the moment. -/

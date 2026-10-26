@@ -137,6 +137,14 @@ status:
 
 automation:
   methods:
+    - method: agent
+      models: ["GPT-6.1 Sol"]
+      tool_setup: >-
+        Compatibility maintenance for the selected Parking consumer: public module
+        interfaces, existing proof API adaptations and explicitly measurable moment
+        norm bridges for the pinned Mathlib interface. Outer consumer theorem types
+        and the real moment norm definition are preserved. Full library verification
+        is not claimed.
     - method: "agent"
       models:
         - "claude-opus-5"
@@ -250,10 +258,12 @@ fidelity:
     cited theorems; that they do so faithfully is a reading, not a check.
 
 review:
-  status: "author-verified"
+  status: "unchecked"
   reviewers:
     - "Ahmed Bou-Rabee"
   notes: >-
+    Compatibility maintenance has not received an independent current review.
+    Prior release review, as previously reported: author-verified.
     Correctness of every proof is guaranteed by the Lean kernel and Mathlib (no
     sorry, no custom axiom).  The statements of the three audited theorems are
     additionally checked against Mathlib-only restatements by
