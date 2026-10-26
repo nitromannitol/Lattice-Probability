@@ -1015,3 +1015,11 @@ import LatticeProb.Prob.Percolation.CorrectedPlaneCharacterization
 import LatticeProb.Prob.Percolation.CorrectedPlaneConsumer
 import LatticeProb.Prob.Percolation.CorrectedPlaneGrowth
 import LatticeProb.Prob.Percolation.SupercriticalBondCorrectorConsumer
+import LatticeProb.Network.IntegerGradientEnergy
+import LatticeProb.Network.IntegerGradientEnergyConsumer
+import LatticeProb.Network.FiniteEnergyVoltage
+import LatticeProb.Network.FiniteEnergyVoltageConsumer
+import LatticeProb.Prob.Percolation.LatticeBondTranslation
+import LatticeProb.Prob.Percolation.LatticeBondTranslationLaw
+import LatticeProb.Prob.Percolation.CorrectedPlaneAlgebra
+import LatticeProb.Prob.Percolation.CorrectedPlaneAlgebraConsumer
