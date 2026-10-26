@@ -1071,3 +1071,10 @@ import LatticeProb.Prob.Percolation.DeterministicIntegerSlopeConsumer
 import LatticeProb.Network.FiniteBridgeRigidity
 import LatticeProb.Network.FiniteBridgeRigidityConsumer
 import LatticeProb.Prob.Percolation.DeletedBridgeRigidity
+import LatticeProb.Network.SingleEdgeEnergyRepair
+import LatticeProb.Prob.Percolation.NonBridgeComponentCarrier
+import LatticeProb.Prob.Percolation.CorrectedPlaneEnergyRepair
+import LatticeProb.Prob.Percolation.CorrectedPlaneEnergyRepairConsumer
+import LatticeProb.Prob.Percolation.ComponentGradientBonds
+import LatticeProb.Prob.Percolation.FiniteGradientBondDeletion
+import LatticeProb.Prob.Percolation.FiniteGradientBondDeletionConsumer
