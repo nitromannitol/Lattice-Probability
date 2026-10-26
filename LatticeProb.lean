@@ -1037,3 +1037,10 @@ import LatticeProb.Prob.Percolation.IntegerSlopeOpenHit
 import LatticeProb.Prob.Percolation.IntegerSlopeOpenHitConsumer
 import LatticeProb.Prob.ErgodicClosedSets
 import LatticeProb.Prob.ErgodicClosedSetsConsumer
+import LatticeProb.Prob.Percolation.RootedCorrectedPlaneBorel
+import LatticeProb.Prob.Percolation.RootedCorrectedPlaneBorelConsumer
+import LatticeProb.Prob.BernoulliFiniteFlip
+import LatticeProb.Prob.Percolation.LatticeBondFiniteFlip
+import LatticeProb.Prob.Percolation.LatticeBondFiniteFlipConsumer
+import LatticeProb.Prob.MeasurableUniqueGraph
+import LatticeProb.Prob.MeasurableUniqueGraphConsumer
