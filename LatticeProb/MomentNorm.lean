@@ -123,7 +123,7 @@ theorem rNorm_add_le (μ : Measure Ω) {r : ℝ} (hr : 1 ≤ r) {f g : Ω → �
     exact ENNReal.ofReal_le_ofReal hr
   have hadd : eLpNorm (fun ω => f ω + g ω) (ENNReal.ofReal r) μ
       ≤ eLpNorm f (ENNReal.ofReal r) μ + eLpNorm g (ENNReal.ofReal r) μ :=
-    eLpNorm_add_le hfm hgm hp1
+    eLpNorm_add_le hp1
   have hne_f := eLpNorm_ne_top_of_aestronglyMeasurable μ hr f hfm hf
   have hne_g := eLpNorm_ne_top_of_aestronglyMeasurable μ hr g hgm hg
   rw [← eLpNorm_toReal_eq_of_aestronglyMeasurable μ hr (fun ω => f ω + g ω) (hfm.add hgm) hfg,
@@ -139,7 +139,7 @@ theorem rNorm_mono_exponent (μ : Measure Ω) [IsProbabilityMeasure μ] {p q : �
   rw [← eLpNorm_toReal_eq_of_aestronglyMeasurable μ hp f hm hpi,
     ← eLpNorm_toReal_eq_of_aestronglyMeasurable μ (hp.trans hpq) f hm hqi]
   exact ENNReal.toReal_mono (eLpNorm_ne_top_of_aestronglyMeasurable μ (hp.trans hpq) f hm hqi)
-    (eLpNorm_le_eLpNorm_of_exponent_le (ENNReal.ofReal_le_ofReal hpq) hm)
+    (eLpNorm_le_eLpNorm_of_exponent_le (ENNReal.ofReal_le_ofReal hpq))
 
 /-- Raising the moment norm back to its exponent recovers the moment. -/
 theorem rNorm_rpow (μ : Measure Ω) {r : ℝ} (hr : 0 < r) (f : Ω → ℝ) :

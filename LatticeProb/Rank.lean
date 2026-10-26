@@ -96,7 +96,7 @@ theorem card_filter_rank_lt (A : Finset α) (f : α → β) (hf : Set.InjOn f A)
     simp only [Finset.mem_filter, Finset.mem_range, lt_min_iff]
   calc (A.filter fun p => (A.filter fun q => f q < f p).card < H).card
       = (A.filter fun p => rankIn A f p < H).card := by
-        simp only [rankIn]
+        rfl
     _ = ((A.filter fun p => rankIn A f p < H).image (rankIn A f)).card := h1.symm
     _ = ((A.image (rankIn A f)).filter fun k => k < H).card := by rw [h2]
     _ = ((Finset.range A.card).filter fun k => k < H).card := by rw [image_rankIn hf]

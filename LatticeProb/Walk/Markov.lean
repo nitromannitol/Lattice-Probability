@@ -168,7 +168,7 @@ theorem integral_truncInc_shiftInc (d n : ℕ) [NeZero d]
   have hshift : Measure.map (shiftInc (d := d) n) μ = μ :=
     (measurePreserving_shiftInc d n).map_eq
   have hprodmeas : IsProbabilityMeasure (Measure.map (truncInc (d := d) n) μ) :=
-    Measure.isProbabilityMeasure_map (measurable_truncInc n).aemeasurable
+    by infer_instance
   have hint : Integrable (Function.uncurry Φ)
       ((Measure.map (truncInc (d := d) n) μ).prod μ) :=
     Integrable.of_bound hΦ.aestronglyMeasurable C (Filter.Eventually.of_forall fun p => hC p.1 p.2)
@@ -212,7 +212,7 @@ theorem measurable_shiftPath (n : ℕ) : Measurable (shiftPath (d := d) n) :=
 instance siteWalkLaw_isProbabilityMeasure (d : ℕ) [NeZero d] (x : Site d) :
     IsProbabilityMeasure (siteWalkLaw d x) := by
   rw [siteWalkLaw]
-  exact Measure.isProbabilityMeasure_map (measurable_sitePath x).aemeasurable
+  infer_instance
 
 theorem siteWalkLaw_eq (d : ℕ) [NeZero d] (x : Site d) :
     siteWalkLaw d x = (incPathLaw d).map (sitePath x) := rfl

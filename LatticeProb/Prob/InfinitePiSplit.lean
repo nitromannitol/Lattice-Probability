@@ -16,6 +16,7 @@ reindexing that preserves the one-site laws.  So the joint law of the pair is
 the product of the two laws, and Fubini finishes.
 -/
 public import Mathlib.Probability.Independence.ZeroOne
+public import Mathlib.MeasureTheory.Integral.Prod
 public import LatticeProb.Prob.ZeroOne
 
 @[expose] public section

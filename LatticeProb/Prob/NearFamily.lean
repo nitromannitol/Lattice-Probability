@@ -58,7 +58,9 @@ theorem measurable_intShift (δ : ℝ) : Measurable (fun k : ℤ => (k : ℝ) + 
 /-- The shifted law is a probability measure. -/
 instance isProbabilityMeasure_shiftLaw (δ : ℝ) (ν : Measure ℤ) [IsProbabilityMeasure ν] :
     IsProbabilityMeasure (shiftLaw δ ν) :=
-  Measure.isProbabilityMeasure_map (measurable_intShift δ).aemeasurable
+  by
+    unfold shiftLaw
+    infer_instance
 
 /-- The shift moves the mean by `δ`. -/
 theorem integral_shiftLaw_id (δ : ℝ) (ν : Measure ℤ) [IsProbabilityMeasure ν]

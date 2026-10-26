@@ -112,7 +112,7 @@ theorem map_prod_pair_of_forall_map (P : Measure Ω) [IsProbabilityMeasure P]
   haveI : IsProbabilityMeasure Q := by
     obtain ⟨y⟩ := nonempty_of_isProbabilityMeasure P
     rw [← h y]
-    exact Measure.isProbabilityMeasure_map (hF.comp measurable_prodMk_left).aemeasurable
+    infer_instance
   have hmeas : Measurable fun p : Ω × β => (p.1, F p.1 p.2) := measurable_fst.prodMk hF'
   refine (Measure.prod_eq fun s t hs ht => ?_).symm
   rw [Measure.map_apply hmeas (hs.prod ht)]

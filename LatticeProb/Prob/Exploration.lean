@@ -270,7 +270,7 @@ theorem map_revealed (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasure (�
   have hνprob : IsProbabilityMeasure ν := by
     obtain ⟨i⟩ := hne
     rw [← hlaw i]
-    exact Measure.isProbabilityMeasure_map (hg i).aemeasurable
+    infer_instance
   have hmeas : Measurable (revealed idx g) :=
     measurable_pi_iff.mpr fun n => measurable_revealed hidx.meas hg n
   refine Measure.eq_infinitePi _ fun s t ht => ?_
@@ -305,7 +305,7 @@ theorem map_revealed_apply (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeas
     (Measure.infinitePi μ).map (fun ω => revealed idx g ω n) = ν := by
   obtain ⟨i₀⟩ : Nonempty ι := nonempty_of_exploration μ idx
   haveI : IsProbabilityMeasure ν := by
-    rw [← hlaw i₀]; exact Measure.isProbabilityMeasure_map (hg i₀).aemeasurable
+    rw [← hlaw i₀]; infer_instance
   have hmeas : Measurable (revealed idx g) :=
     measurable_pi_iff.mpr fun k => measurable_revealed hidx.meas hg k
   have : (fun ω : Π i, X i => revealed idx g ω n)
