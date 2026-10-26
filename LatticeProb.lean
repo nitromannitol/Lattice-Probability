@@ -1033,3 +1033,7 @@ import LatticeProb.Prob.Percolation.IntegerSlopeCompactHit
 import LatticeProb.Prob.Percolation.IntegerSlopeCompactHitConsumer
 import LatticeProb.Prob.Percolation.RootedHarmonicMeasurable
 import LatticeProb.Prob.Percolation.RootedHarmonicMeasurableConsumer
+import LatticeProb.Prob.Percolation.IntegerSlopeOpenHit
+import LatticeProb.Prob.Percolation.IntegerSlopeOpenHitConsumer
+import LatticeProb.Prob.ErgodicClosedSets
+import LatticeProb.Prob.ErgodicClosedSetsConsumer
