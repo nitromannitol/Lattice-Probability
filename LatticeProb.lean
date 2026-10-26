@@ -1031,3 +1031,5 @@ import LatticeProb.Prob.Percolation.CorrectedPlaneLinearMap
 import LatticeProb.Prob.Percolation.CorrectedPlaneLinearMapConsumer
 import LatticeProb.Prob.Percolation.IntegerSlopeCompactHit
 import LatticeProb.Prob.Percolation.IntegerSlopeCompactHitConsumer
+import LatticeProb.Prob.Percolation.RootedHarmonicMeasurable
+import LatticeProb.Prob.Percolation.RootedHarmonicMeasurableConsumer
