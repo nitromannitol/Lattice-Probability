@@ -137,6 +137,9 @@ def source_inventory(root, paths=None, *, include_comparator=False):
 
 
 def input_identity(root, paths=None, *, include_comparator=False):
+    from check_external_inputs import check as external_input_identity
+
+    external_inputs = external_input_identity(root)
     source = source_inventory(root, paths,include_comparator=include_comparator)
     configured=list(CONFIG)+[f"LatticeProbAudit/{p}/comparator.json" for p in COMPARATOR_PAIRS]
     configurations = {p: regular_hash(root, p) for p in configured}
@@ -153,13 +156,15 @@ def input_identity(root, paths=None, *, include_comparator=False):
         raise GateError("duplicate dependency identity")
     tools = sorted(p.relative_to(root).as_posix() for p in (root / "tools").rglob("*.py"))
     required = {"tools/check_axioms.py", "tools/assurance_diagnostics.py", "tools/check_warnings.py",
-                "tools/check_public_hygiene.py", "tools/check_comparators.py", "tools/verify.py"}
+                "tools/check_public_hygiene.py", "tools/check_comparators.py", "tools/verify.py",
+                "tools/check_external_inputs.py"}
     if not required <= set(tools) or not any(p.startswith("tools/tests/test_") for p in tools):
         raise GateError("missing configured checker or meaningful tests")
     head = require_clean(run(["git", "rev-parse", "HEAD"], root)).stdout.strip()
     if not re.fullmatch(r"[0-9a-f]{40}", head):
         raise GateError("invalid checkout identity")
     return {"policy":POLICY, "base_commit":head, "sources":source,
+            "external_inputs":external_inputs,
             "comparator_baselines":comparator_baselines(root),
             "configurations":configurations, "dependencies":sorted(revisions,key=lambda p:p["name"]),
             "assurance_files":{p:regular_hash(root,p) for p in tools +

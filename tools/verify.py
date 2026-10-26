@@ -15,6 +15,7 @@ ROOT=Path(__file__).resolve().parent.parent
 
 
 def verify(root, evidence, *, preflight_only=False, comparator=None, execute=run):
+    # Identity validates the exact cited-input allowlist before and after the gate sequence.
     before=input_identity(root,include_comparator=comparator is not None)
     tests=sorted((root/"tools/tests").glob("test_*.py"))
     if not tests: raise GateError("missing required meaningful tests")
