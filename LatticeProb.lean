@@ -1078,3 +1078,7 @@ import LatticeProb.Prob.Percolation.CorrectedPlaneEnergyRepairConsumer
 import LatticeProb.Prob.Percolation.ComponentGradientBonds
 import LatticeProb.Prob.Percolation.FiniteGradientBondDeletion
 import LatticeProb.Prob.Percolation.FiniteGradientBondDeletionConsumer
+import LatticeProb.Graph.MatedCRT.FromPaths
+import LatticeProb.Graph.MatedCRT.Infima
+import LatticeProb.Graph.MatedCRT.PathGraphLemmas
+import LatticeProb.Graph.MatedCRT.PathGraphExamples
