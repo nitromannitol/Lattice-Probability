@@ -1062,3 +1062,12 @@ import LatticeProb.Prob.Percolation.DeletedInfiniteComponentConsumer
 import LatticeProb.Prob.Percolation.RootedPlaneFieldAlgebra
 import LatticeProb.Prob.Percolation.MeasurableCorrectorGradients
 import LatticeProb.Prob.Percolation.MeasurableCorrectorGradientsConsumer
+import LatticeProb.Prob.Percolation.BondFlipTranslation
+import LatticeProb.Prob.Percolation.TranslationFlipStableEvent
+import LatticeProb.Prob.Percolation.TranslationFlipStableEventConsumer
+import LatticeProb.Prob.Percolation.CorrectedSlopeTranslation
+import LatticeProb.Prob.Percolation.DeterministicIntegerSlope
+import LatticeProb.Prob.Percolation.DeterministicIntegerSlopeConsumer
+import LatticeProb.Network.FiniteBridgeRigidity
+import LatticeProb.Network.FiniteBridgeRigidityConsumer
+import LatticeProb.Prob.Percolation.DeletedBridgeRigidity
