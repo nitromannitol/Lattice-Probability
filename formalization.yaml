@@ -144,7 +144,8 @@ automation:
         interfaces, existing proof API adaptations and explicitly measurable moment
         norm bridges for the pinned Mathlib interface. Outer consumer theorem types
         and the real moment norm definition are preserved. Full library verification
-        is not claimed.
+        is not claimed. Existing exploration probability-map instances and the
+        shift-map measurability proof were adapted to the pinned APIs.
     - method: "agent"
       models:
         - "claude-opus-5"

@@ -69,7 +69,8 @@ theorem instructionLaw_map_sub (v y : Site d) :
     (instructionLaw (y + v)).map (fun z : Site d => z - v) = instructionLaw y := by
   have hmeas : Measurable (fun z : Site d => z - v) := measurable_id.sub measurable_const
   simp only [instructionLaw]
-  rw [Measure.map_smul, Measure.map_finset_sum' hmeas.aemeasurable]
+  rw [Measure.map_smul _ hmeas.aemeasurable,
+    Measure.map_finset_sum' hmeas.aemeasurable]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Measure.map_add _ _ hmeas, Measure.map_dirac' hmeas, Measure.map_dirac' hmeas,

@@ -257,7 +257,7 @@ theorem condExp_revealed (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasur
   obtain ⟨i₀⟩ : Nonempty ι := nonempty_of_exploration μ idx
   haveI hν : IsProbabilityMeasure ν := by
     rw [← hlaw i₀]
-    exact Measure.isProbabilityMeasure_map (hg i₀).aemeasurable
+    infer_instance
   set P : Measure (Π i, X i) := Measure.infinitePi μ with hP
   set Φ : (Π i, X i) → (ℕ → α) := revealed idx g with hΦdef
   have hΦ : Measurable Φ := measurable_pi_iff.mpr fun k => measurable_revealed hidx.meas hg k
