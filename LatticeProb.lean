@@ -1053,3 +1053,12 @@ import LatticeProb.Prob.Percolation.MeasurableRootedPlaneConsumer
 import LatticeProb.Prob.Percolation.FiniteBondDeletion
 import LatticeProb.Prob.Percolation.InfiniteComponentDeletion
 import LatticeProb.Prob.Percolation.FiniteBondDeletionConsumer
+import LatticeProb.Prob.Percolation.OpenComponentTranslationIso
+import LatticeProb.Prob.Percolation.CorrectedPlaneTranslation
+import LatticeProb.Prob.Percolation.CorrectedPlaneTranslationConsumer
+import LatticeProb.Graph.ComponentInduce
+import LatticeProb.Prob.Percolation.DeletedInfiniteComponent
+import LatticeProb.Prob.Percolation.DeletedInfiniteComponentConsumer
+import LatticeProb.Prob.Percolation.RootedPlaneFieldAlgebra
+import LatticeProb.Prob.Percolation.MeasurableCorrectorGradients
+import LatticeProb.Prob.Percolation.MeasurableCorrectorGradientsConsumer
