@@ -24,10 +24,11 @@ class ExternalInputTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.value = json.loads((ROOT / external.REGISTRY).read_text())
-        row = self.value["inputs"][0]
-        meaning = row["meaning"]
-        paths = ({external.REGISTRY, meaning["source"], row["conditional_consumer"]["source"]}
-                 | set(meaning["carrier_dependencies"]) | set(meaning["configuration"]))
+        paths = {external.REGISTRY}
+        for row in self.value["inputs"]:
+            meaning = row["meaning"]
+            paths |= ({meaning["source"], row["conditional_consumer"]["source"]}
+                      | set(meaning["carrier_dependencies"]) | set(meaning["configuration"]))
         for relative in paths:
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -55,6 +56,79 @@ class ExternalInputTests(unittest.TestCase):
         self.assertIn("(hclassical : SupercriticalBondUniqueness)", consumer["type"])
         self.assertIn("∃ p : unitInterval, criticalProbability d < (p : ℝ)", consumer["type"])
         self.assertNotIn("False", consumer["type"])
+        self.assertEqual(len(identity["inputs"]), 2)
+        self.assertEqual(identity["inputs"][1]["status"],
+                         "FROZEN_ASSUMPTION_UNPROVED")
+        second = self.value["inputs"][1]
+        self.assertEqual(second["meaning"]["source_sha256"],
+                         "9f446f7cb8a6e5d880554906e4506458a0e0e3f2f4a19d84ab76a6f277d01aeb")
+        actual = second["conditional_consumer"]["type"]
+        self.assertIn("(hclassical : SupercriticalBondUniqueness)", actual)
+        self.assertIn("(hcorrector : SupercriticalBondCorrectorInput)", actual)
+        self.assertIn("∃ p : unitInterval", actual)
+        self.assertIn("∃ x y : uniqueInfiniteComponent h, u x ≠ u y", actual)
+
+    def test_corrector_body_and_full_iff_source_drift(self):
+        meaning = self.value["inputs"][1]["meaning"]
+        characterization = meaning["semantic_unit"]["full_characterization"]
+        cases = ((meaning["source"], "∃! u", "∃ u"),
+                 (characterization["source"], "IsCorrectedPlane C q u ↔",
+                  "IsCorrectedPlane C q u →"))
+        for path, old, new in cases:
+            with self.subTest(path=path):
+                original = (self.root / path).read_bytes()
+                self.change_source(path, old, new)
+                with self.assertRaisesRegex(GateError, "carrier-body drift"):
+                    external.check(self.root)
+                (self.root / path).write_bytes(original)
+
+    def test_corrector_self_rehash_cannot_change_semantic_unit(self):
+        meaning = self.value["inputs"][1]["meaning"]
+        full = meaning["semantic_unit"]["full_characterization"]
+        path = full["source"]
+        self.change_source(path, "IsCorrectedPlane C q u ↔", "IsCorrectedPlane C q u →")
+        changed = hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+        meaning["carrier_dependencies"][path] = changed
+        full["source_sha256"] = changed
+        full["command"] = full["command"].replace(" C q u ↔", " C q u →")
+        full["type"] = full["type"].replace(" C q u ↔", " C q u →")
+        self.save()
+        with self.assertRaisesRegex(GateError, "meaning/citation/status"):
+            external.check(self.root)
+
+    def test_corrector_locator_type_and_status_are_fixed(self):
+        original = copy.deepcopy(self.value["inputs"][1]["meaning"])
+        mutations = (
+            lambda m: m["bibliography"][1]["locators"].pop(),
+            lambda m: m["semantic_unit"]["full_characterization"].update(type="True"),
+            lambda m: m.update(status="PROVED"),
+            lambda m: m.update(status="REVIEWED_ASSUMPTION_PENDING_FREEZE"),
+        )
+        for mutate in mutations:
+            with self.subTest(mutation=mutate):
+                meaning = copy.deepcopy(original)
+                mutate(meaning)
+                self.value["inputs"][1]["meaning"] = meaning
+                self.save()
+                with self.assertRaisesRegex(GateError, "meaning/citation/status"):
+                    external.check(self.root)
+
+    def test_actual_corrector_consumer_source_and_type_drift(self):
+        consumer = self.value["inputs"][1]["conditional_consumer"]
+        self.change_source(consumer["source"],
+                           "(hcorrector : SupercriticalBondCorrectorInput)",
+                           "(hcorrector : True)")
+        with self.assertRaisesRegex(GateError, "conditional consumer source drift"):
+            external.check(self.root)
+        consumer["type"] = consumer["type"].replace(
+            "(hcorrector : SupercriticalBondCorrectorInput)", "(hcorrector : True)")
+        consumer["command"] = consumer["command"].replace(
+            "(hcorrector : SupercriticalBondCorrectorInput)", "(hcorrector : True)")
+        consumer["source_sha256"] = hashlib.sha256(
+            (self.root / consumer["source"]).read_bytes()).hexdigest()
+        self.save()
+        with self.assertRaisesRegex(GateError, "conditional consumer identity"):
+            external.check(self.root)
 
     def test_definition_body_drift(self):
         self.change_source(self.meaning()["source"], "= 1)", "= 0)")

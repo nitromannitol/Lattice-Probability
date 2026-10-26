@@ -1014,3 +1014,4 @@ import LatticeProb.External.SupercriticalBondCorrectorInput
 import LatticeProb.Prob.Percolation.CorrectedPlaneCharacterization
 import LatticeProb.Prob.Percolation.CorrectedPlaneConsumer
 import LatticeProb.Prob.Percolation.CorrectedPlaneGrowth
+import LatticeProb.Prob.Percolation.SupercriticalBondCorrectorConsumer

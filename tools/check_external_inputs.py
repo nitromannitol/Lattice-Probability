@@ -25,6 +25,10 @@ EXACT_ALLOWLIST = {
         "86bea5ed061e21fc8636e65209581569709a1bb7e0315bf4fd8c57245ba324aa",
         "c627ff813699e1aab7a0b453e98e50b7e7d92f9c5a876fbdd550dfbf764f2bc9",
     ),
+    "LatticeProb.External.SupercriticalBondCorrectorInput": (
+        "6a555fffa16192ad6684309400918b4daf4b7a718d0db7e56e52aac732962111",
+        "7d7e1ed2ef9cf1c1fbb48ec6c8b4508cd8506ad9215671c849b76bc4afd96916",
+    ),
 }
 
 
@@ -67,6 +71,15 @@ def check(root):
                 raise GateError("external inputs: exact " + role + " source drift")
             if record["command"] not in (root / record["source"]).read_text():
                 raise GateError("external inputs: missing exact " + role + " command")
+        # The second reviewed meaning includes the existing proved full iff, even
+        # though the input definition does not import the growth theorem directly.
+        for record in meaning.get("semantic_unit", {}).values():
+            if not isinstance(record, dict):
+                continue
+            if regular_hash(root, record["source"]) != record["source_sha256"]:
+                raise GateError("external inputs: semantic-unit source drift")
+            if record["command"] not in (root / record["source"]).read_text():
+                raise GateError("external inputs: missing exact semantic-unit command")
         identities.append({"name": name, "meaning_identity": expected_meaning,
                            "conditional_consumer_identity": expected_consumer,
                            "status": meaning["status"]})
@@ -75,11 +88,15 @@ def check(root):
 
 def main():
     try:
-        check(ROOT)
+        identity = check(ROOT)
     except (GateError, OSError, ValueError) as error:
         print(f"check_external_inputs: FAIL: {error}", file=sys.stderr)
         return 1
-    print("check_external_inputs: OK (one frozen unproved cited assumption; metadata only)")
+    statuses = [row["status"] for row in identity["inputs"]]
+    frozen = statuses.count("FROZEN_ASSUMPTION_UNPROVED")
+    pending = statuses.count("REVIEWED_ASSUMPTION_PENDING_FREEZE")
+    print(f"check_external_inputs: OK ({len(statuses)} cited assumptions: "
+          f"{frozen} frozen unproved, {pending} reviewed pending freeze; metadata only)")
     return 0
 
 
