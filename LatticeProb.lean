@@ -1047,3 +1047,9 @@ import LatticeProb.Prob.MeasurableUniqueGraphConsumer
 import LatticeProb.Prob.Percolation.OpenGraphTranslation
 import LatticeProb.Prob.Percolation.OpenComponentTranslation
 import LatticeProb.Prob.Percolation.OpenComponentTranslationConsumer
+import LatticeProb.Prob.Percolation.RootedEncodedPlaneUnique
+import LatticeProb.Prob.Percolation.MeasurableRootedPlane
+import LatticeProb.Prob.Percolation.MeasurableRootedPlaneConsumer
+import LatticeProb.Prob.Percolation.FiniteBondDeletion
+import LatticeProb.Prob.Percolation.InfiniteComponentDeletion
+import LatticeProb.Prob.Percolation.FiniteBondDeletionConsumer
