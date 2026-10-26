@@ -1029,3 +1029,5 @@ import LatticeProb.Prob.Percolation.LatticeBondErgodicity
 import LatticeProb.Prob.Percolation.LatticeBondErgodicityConsumer
 import LatticeProb.Prob.Percolation.CorrectedPlaneLinearMap
 import LatticeProb.Prob.Percolation.CorrectedPlaneLinearMapConsumer
+import LatticeProb.Prob.Percolation.IntegerSlopeCompactHit
+import LatticeProb.Prob.Percolation.IntegerSlopeCompactHitConsumer
