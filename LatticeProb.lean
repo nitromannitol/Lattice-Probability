@@ -1009,3 +1009,8 @@ import LatticeProb.External.SupercriticalBondUniquenessInput
 import LatticeProb.Prob.Percolation.SupercriticalBondUniquenessConsumer
 import LatticeProb.Graph.Zd.IntegerLaplacian
 import LatticeProb.Graph.Zd.IntegerLaplacianConsumer
+
+import LatticeProb.External.SupercriticalBondCorrectorInput
+import LatticeProb.Prob.Percolation.CorrectedPlaneCharacterization
+import LatticeProb.Prob.Percolation.CorrectedPlaneConsumer
+import LatticeProb.Prob.Percolation.CorrectedPlaneGrowth
