@@ -1290,3 +1290,7 @@ check the coordinate maps and all relevant edges.
 probability and unique infinite-component statements for the canonical Bernoulli bond
 law. This proposition is an explicit cited assumption, without a proof or global instance.
 Its separate consumer derives parameter existence from that assumption.
+
+A finitely supported real function on the full integer lattice with integer-valued
+Laplacian is proved to be integer-valued in every positive dimension. The proof chooses
+a noninteger site maximal in one coordinate and uses the Laplacian at the site above it.

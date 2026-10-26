@@ -1007,3 +1007,5 @@ import LatticeProb.Network.OpenLadderEmbedding
 import LatticeProb.Network.OpenLadderEmbeddingConsumer
 import LatticeProb.External.SupercriticalBondUniquenessInput
 import LatticeProb.Prob.Percolation.SupercriticalBondUniquenessConsumer
+import LatticeProb.Graph.Zd.IntegerLaplacian
+import LatticeProb.Graph.Zd.IntegerLaplacianConsumer
