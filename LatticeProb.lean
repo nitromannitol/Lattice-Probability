@@ -1044,3 +1044,6 @@ import LatticeProb.Prob.Percolation.LatticeBondFiniteFlip
 import LatticeProb.Prob.Percolation.LatticeBondFiniteFlipConsumer
 import LatticeProb.Prob.MeasurableUniqueGraph
 import LatticeProb.Prob.MeasurableUniqueGraphConsumer
+import LatticeProb.Prob.Percolation.OpenGraphTranslation
+import LatticeProb.Prob.Percolation.OpenComponentTranslation
+import LatticeProb.Prob.Percolation.OpenComponentTranslationConsumer
