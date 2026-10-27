@@ -1085,3 +1085,5 @@ import LatticeProb.Graph.MatedCRT.Connectivity
 import LatticeProb.Graph.MatedCRT.PathGraphExamples
 
 import LatticeProb.Prob.Percolation.LatticeAnnularSup
+
+import LatticeProb.Prob.Percolation.FiniteRegionMeasurable
