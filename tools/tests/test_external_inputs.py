@@ -56,7 +56,7 @@ class ExternalInputTests(unittest.TestCase):
         self.assertIn("(hclassical : SupercriticalBondUniqueness)", consumer["type"])
         self.assertIn("∃ p : unitInterval, criticalProbability d < (p : ℝ)", consumer["type"])
         self.assertNotIn("False", consumer["type"])
-        self.assertEqual(len(identity["inputs"]), 2)
+        self.assertEqual(len(identity["inputs"]), 4)
         self.assertEqual(identity["inputs"][1]["status"],
                          "FROZEN_ASSUMPTION_UNPROVED")
         second = self.value["inputs"][1]
@@ -67,6 +67,61 @@ class ExternalInputTests(unittest.TestCase):
         self.assertIn("(hcorrector : SupercriticalBondCorrectorInput)", actual)
         self.assertIn("∃ p : unitInterval", actual)
         self.assertIn("∃ x y : uniqueInfiniteComponent h, u x ≠ u y", actual)
+
+    def test_green_and_order_zero_consumers_keep_their_cited_inputs_explicit(self):
+        green, order_zero = self.value["inputs"][2:]
+        self.assertEqual(green["meaning"]["name"],
+                         "LatticeProb.External.SupercriticalBondGreenColumnExistence")
+        self.assertEqual(order_zero["meaning"]["name"],
+                         "LatticeProb.External.ArmstrongDarioOrderZero")
+        for row in (green, order_zero):
+            self.assertEqual(row["meaning"]["status"], "FROZEN_ASSUMPTION_UNPROVED")
+        self.assertIn("(hg : SupercriticalBondGreenColumnExistence)",
+                      green["conditional_consumer"]["type"])
+        self.assertIn("(hu : SupercriticalBondUniqueness)",
+                      green["conditional_consumer"]["type"])
+        self.assertIn("(input : LatticeProb.External.ArmstrongDarioOrderZero)",
+                      order_zero["conditional_consumer"]["type"])
+        self.assertIn("∃ c : ℝ, ∀ r : ℝ", order_zero["conditional_consumer"]["type"])
+
+    def test_new_input_status_body_and_citation_changes_are_rejected(self):
+        for index in (2, 3):
+            original = copy.deepcopy(self.value["inputs"][index])
+            changes = (
+                lambda m: m.update(status="PROVED"),
+                lambda m: m.update(command="def Unreviewed : Prop := True", body="True"),
+                lambda m: m["bibliography"][0].update(title="Unreviewed citation"),
+            )
+            for change in changes:
+                with self.subTest(index=index, change=change):
+                    self.value["inputs"][index] = copy.deepcopy(original)
+                    change(self.value["inputs"][index]["meaning"])
+                    self.save()
+                    with self.assertRaisesRegex(GateError, "meaning/citation/status"):
+                        external.check(self.root)
+            self.value["inputs"][index] = original
+            self.save()
+
+    def test_new_input_self_rehash_cannot_authorize_quantifier_weakening(self):
+        changes = ((2, "∃! g", "∃ g"), (3, "∀ r : ℝ", "∃ r : ℝ"))
+        for index, old, new in changes:
+            with self.subTest(index=index):
+                original = copy.deepcopy(self.value["inputs"][index])
+                meaning = self.value["inputs"][index]["meaning"]
+                path = meaning["source"]
+                original_source = (self.root / path).read_bytes()
+                self.change_source(path, old, new)
+                changed = hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+                meaning["source_sha256"] = changed
+                meaning["carrier_dependencies"][path] = changed
+                meaning["command"] = meaning["command"].replace(old, new, 1)
+                meaning["body"] = meaning["body"].replace(old, new, 1)
+                self.save()
+                with self.assertRaisesRegex(GateError, "meaning/citation/status"):
+                    external.check(self.root)
+                (self.root / path).write_bytes(original_source)
+                self.value["inputs"][index] = original
+                self.save()
 
     def test_corrector_body_and_full_iff_source_drift(self):
         meaning = self.value["inputs"][1]["meaning"]

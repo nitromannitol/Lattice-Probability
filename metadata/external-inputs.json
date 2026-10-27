@@ -81,7 +81,6 @@
         "type": "    (hclassical : SupercriticalBondUniqueness) (d : ℕ) [NeZero d] (hd : 2 ≤ d) :\n    ∃ p : unitInterval, criticalProbability d < (p : ℝ) ∧ (p : ℝ) < 1"
       }
     },
-
     {
       "meaning": {
         "name": "LatticeProb.External.SupercriticalBondCorrectorInput",
@@ -230,6 +229,191 @@
         "command": "theorem exists_two_dimensional_plane_of_cited_inputs\n    (hclassical : SupercriticalBondUniqueness)\n    (hcorrector : SupercriticalBondCorrectorInput) :\n    ∃ p : unitInterval, criticalProbability 2 < (p : ℝ) ∧ (p : ℝ) < 1 ∧\n      ∃ (ω : Configuration 2) (h : HasUniqueInfiniteOpenComponent ω)\n        (o : uniqueInfiniteComponent h) (u : uniqueInfiniteComponent h → ℝ),\n        (∀ x, componentLaplacian (uniqueInfiniteComponent h) u x = 0) ∧\n        componentSlopeAsymptotics (uniqueInfiniteComponent h) (Pi.single 0 1) u ∧\n        u o = 0 ∧ ∃ x y : uniqueInfiniteComponent h, u x ≠ u y := by\n  obtain ⟨p, hpc, hp1⟩ := exists_supercritical_parameter_of_classical_input hclassical 2\n    (by decide)\n  have hq : (Pi.single 0 1 : Fin 2 → ℝ) ≠ 0 := by\n    intro heq\n    have := congrFun heq 0\n    norm_num at this\n  obtain ⟨ω, h, o, u, hu, hnorm, hnonconstant⟩ :=\n    exists_nonconstant_normalized_plane_of_cited_inputs hclassical hcorrector 2\n      (by decide) p hpc hp1 (Pi.single 0 1) hq\n  have hfull := (isCorrectedPlane_iff_harmonic_and_slope_asymptotics _ _ _).mp hu\n  exact ⟨p, hpc, hp1, ω, h, o, u, hfull.1, hfull.2, hnorm, hnonconstant⟩",
         "type": "    (hclassical : SupercriticalBondUniqueness)\n    (hcorrector : SupercriticalBondCorrectorInput) :\n    ∃ p : unitInterval, criticalProbability 2 < (p : ℝ) ∧ (p : ℝ) < 1 ∧\n      ∃ (ω : Configuration 2) (h : HasUniqueInfiniteOpenComponent ω)\n        (o : uniqueInfiniteComponent h) (u : uniqueInfiniteComponent h → ℝ),\n        (∀ x, componentLaplacian (uniqueInfiniteComponent h) u x = 0) ∧\n        componentSlopeAsymptotics (uniqueInfiniteComponent h) (Pi.single 0 1) u ∧\n        u o = 0 ∧ ∃ x y : uniqueInfiniteComponent h, u x ≠ u y",
         "meaning": "From exactly the classical and qualitative corrector inputs, derive a strictly supercritical parameter in dimension two, an actual unique infinite component, its basepoint and a normalized nonconstant harmonic plane with coordinate slope and uniform sublinear error."
+      }
+    },
+    {
+      "meaning": {
+        "name": "LatticeProb.External.SupercriticalBondGreenColumnExistence",
+        "module": "LatticeProb.External.GreenColumnExistence",
+        "kind": "ordinary_prop_definition",
+        "status": "FROZEN_ASSUMPTION_UNPROVED",
+        "assumption_policy": "Explicit consumer binder only; no theorem, axiom, instance or paper proof credit.",
+        "source": "LatticeProb/External/GreenColumnExistence.lean",
+        "source_sha256": "1d3f5f4305328a859044fcd4c27a74efc4cc426e7bca5b986d783ed1b81a5609",
+        "command": "def SupercriticalBondGreenColumnExistence : Prop :=\n  ∀ (d : ℕ) [NeZero d] (hd : 2 ≤ d) (p : unitInterval),\n    criticalProbability d < (p : ℝ) → (p : ℝ) < 1 →\n    ∀ y : Vertex d, ∀ᵐ ω ∂latticeBondLaw d p,\n      ∀ h : HasUniqueInfiniteOpenComponent ω,\n        ∀ hy : y ∈ (uniqueInfiniteComponent h).supp,\n          ∃! g : uniqueInfiniteComponent h → ℝ,\n            IsGreenColumn d hd (uniqueInfiniteComponent h) ⟨y, hy⟩ g",
+        "body": "  ∀ (d : ℕ) [NeZero d] (hd : 2 ≤ d) (p : unitInterval),\n    criticalProbability d < (p : ℝ) → (p : ℝ) < 1 →\n    ∀ y : Vertex d, ∀ᵐ ω ∂latticeBondLaw d p,\n      ∀ h : HasUniqueInfiniteOpenComponent ω,\n        ∀ hy : y ∈ (uniqueInfiniteComponent h).supp,\n          ∃! g : uniqueInfiniteComponent h → ℝ,\n            IsGreenColumn d hd (uniqueInfiniteComponent h) ⟨y, hy⟩ g",
+        "imports": [
+          "LatticeProb.Prob.Percolation.GreenColumn",
+          "LatticeProb.Prob.Percolation.LatticeUniqueCluster",
+          "LatticeProb.Prob.Percolation.LatticeBondCritical"
+        ],
+        "bibliography": [
+          {
+            "authors": [
+              "Paul Dario",
+              "Chenlin Gu"
+            ],
+            "title": "Quantitative homogenization of the parabolic and elliptic Green’s functions on percolation clusters",
+            "arxiv": "1909.10439v4",
+            "url": "https://arxiv.org/abs/1909.10439v4",
+            "pdf_url": "https://arxiv.org/pdf/1909.10439v4",
+            "pdf_sha256": "59f346cc443107f909f1a499817772f78451609d6e4990cab7971f72fdaf8bd4",
+            "locators": [
+              "pages 2 and 4, around (1.8)"
+            ]
+          }
+        ],
+        "semantic_unit": {
+          "policy": "Literal whole-component Green predicate is inseparable from the cited input.",
+          "predicate": {
+            "name": "LatticeProb.Percolation.IsGreenColumn",
+            "source": "LatticeProb/Prob/Percolation/GreenColumn.lean",
+            "source_sha256": "9b6f8e4b2e81d44901c77bba9c331284fecdcfcdf94b106108b19cb18cca17b8",
+            "command": "def IsGreenColumn (d : ℕ) (_hd : 2 ≤ d) {ω : Configuration d}\n    (C : OpenComponent ω) (y : C) (g : C → ℝ) : Prop :=\n  (∀ x : C, -componentLaplacian C g x = if x = y then 1 else 0) ∧\n  (d = 2 → g y = 0 ∧\n    ∀ ε : ℝ, 0 < ε → ∃ R : ℝ, 0 < R ∧\n      ∀ x : C, R ≤ ‖latticeEuclideanEmbedding x.val‖ →\n        |g x| ≤ ε * ‖latticeEuclideanEmbedding x.val‖) ∧\n  (3 ≤ d → ∀ ε : ℝ, 0 < ε → ∃ R : ℝ, 0 < R ∧\n    ∀ x : C, R ≤ ‖latticeEuclideanEmbedding x.val‖ → |g x| ≤ ε)"
+          }
+        },
+        "carrier_dependencies": {
+          "LatticeProb/External/GreenColumnExistence.lean": "1d3f5f4305328a859044fcd4c27a74efc4cc426e7bca5b986d783ed1b81a5609",
+          "LatticeProb/Graph/Basic.lean": "555e258922083599e9a8d05b03c3e97426ebe585951cd6fa030e1e14eb183502",
+          "LatticeProb/Graph/Green.lean": "c25a6e9a9cce99e4a16d3f18ba1f029cba5ebccc8e6956fd78830075875454b8",
+          "LatticeProb/Graph/HeatBasic.lean": "67eab50f4212eb491c4a1bab82105067aa22a749f0e43dd3cec421aaa6ba5e42",
+          "LatticeProb/Graph/Odometer.lean": "b525c1b4a88477270729e2db62bd9a465a7d8566b64a0739f55cb57871bbb070",
+          "LatticeProb/Graph/Recursion.lean": "d77a56872d18569967e0b27e2ff7ff8192dcc6ad1a3be5b23af1e6283c487aaf",
+          "LatticeProb/Graph/Representation.lean": "3c5ca94393a4c1e3b5cb89758a7b51ed95a43d3f1ff6d0149ab0b5f62143f5c4",
+          "LatticeProb/Graph/Scenery.lean": "964bdd0101bc52807ce4b5515d21309f6f1a4a28761ed36760101d9ec94db18e",
+          "LatticeProb/Graph/Setting.lean": "e06ba09b39d6fba856b4ca6550351110e073ed63eaa6ed9b71b4c6e521e137df",
+          "LatticeProb/Graph/Walk.lean": "6203660fe3ecdf4b38d3d47c99eebea051f112f5548e569a5538a050b8cb516f",
+          "LatticeProb/Graph/WalkLemmas.lean": "f23162c0d1c4d6e0f57f290e64f2cf899a55c276c799f45dfd82fee2954dda14",
+          "LatticeProb/Graph/Zd.lean": "7d6f84a4b52c70c0d1dcc94acddc7975ccf88f0fc58dad9304ff94ee8d066ee4",
+          "LatticeProb/IID.lean": "7bc255a050f1c59524f439f333fd3e43f3d28348e2f4e34fac7392bfd02d4b32",
+          "LatticeProb/Network/Basic.lean": "70a02168c202da265405f69a18bdeb8694a305dc359d15f907765db37bae8c5a",
+          "LatticeProb/ParticleHole.lean": "bed7d3fef9a7750811a6579246b494d81a85666260c85f1365a49574850aa596",
+          "LatticeProb/ParticleHoleLemmas.lean": "beff96ed82cb9f6513d015c116568e212f1a3f3f7580f85ecfcb4125fc911686",
+          "LatticeProb/Prob/Percolation/GreenColumn.lean": "9b6f8e4b2e81d44901c77bba9c331284fecdcfcdf94b106108b19cb18cca17b8",
+          "LatticeProb/Prob/Percolation/LatticeBondCritical.lean": "66e99af411c74fb13388a81bb79be71842a7b3693ed47c8001e5e301a8e276bc",
+          "LatticeProb/Prob/Percolation/LatticeBondGraph.lean": "806b3885fc4afae019ceeae504f478cbb3df007e986ba57c393782e6c1edcdaf",
+          "LatticeProb/Prob/Percolation/LatticeBondInfiniteEvent.lean": "80af8d19079d3b0a3146c0b48e6d8ce0962696f3c7ff2c20e068f9491e698bc7",
+          "LatticeProb/Prob/Percolation/LatticeBondModel.lean": "affbd59a782c1c6d3bd6a160ca72380eaef3d5bb3ccb5f20e64b70d533639a77",
+          "LatticeProb/Prob/Percolation/LatticeBondProbability.lean": "29ff8969b92bda2bde5e4e40632b0f207c5cc95e955c1c4cd48f6f32000413b1",
+          "LatticeProb/Prob/Percolation/LatticeClusterBall.lean": "46377decb3a38b59891b9406337f453bd8fe3f330355e86bfd5c80522bdf6a49",
+          "LatticeProb/Prob/Percolation/LatticeUniqueCluster.lean": "9fc7c71ee9e59e2186b0c2fdab211093ec5a5a733679380367366e23b65b769f",
+          "LatticeProb/Rank.lean": "867c7149d465db2e11edb2c2f8d8dea591ee1423764a694794048c4af323f740",
+          "LatticeProb/Site.lean": "87024e1c0d31075088d73613a6e6fae5cbdf744fea669b31c3b532f2f38629fd",
+          "LatticeProb/Walk/Basic.lean": "2fbe0a72a3445576b42e65ace46de6a87d53683194d007bc9a515e74c53a250e",
+          "LatticeProb/Walk/SRW.lean": "6177b2b479fceb957946e27a7bda8b3153f2be9d604ead62cf74af62db7fb7b4",
+          "LatticeProb/Walk/Shells.lean": "0cbbbd314a0189f256270b2109c30ef66daee0dee653085dc66ad7bcf2c1413f"
+        },
+        "configuration": {
+          "lean-toolchain": "2773c517aa90b66ea8a2c52bddddf84393157797f8341be0df45294fff7fd32e",
+          "lakefile.lean": "9571fc70bc111ec40f5bc00c2cf3038dc00b86966887f32845c10b4e1b4b8e30",
+          "lake-manifest.json": "74189ffd9853a7b36415a40cc13eafcc994024ea9d961d8bf1be8fd6e5c7b2af"
+        },
+        "lean_toolchain": "leanprover/lean4:v4.32.0",
+        "mathlib_revision": "81a5d257c8e410db227a6665ed08f64fea08e997"
+      },
+      "conditional_consumer": {
+        "name": "LatticeProb.Percolation.ae_unique_green_column_for_all_poles",
+        "source": "LatticeProb/Prob/Percolation/GreenColumnEvent.lean",
+        "source_sha256": "96e60d7625ac42479fe98fa3750ec5676dea22427a04afd642697988829b352e",
+        "command": "theorem ae_unique_green_column_for_all_poles (hg : SupercriticalBondGreenColumnExistence)\n    (hu : SupercriticalBondUniqueness) (d : ℕ) [NeZero d] (hd : 2 ≤ d)\n    (p : unitInterval) (hp : criticalProbability d < (p : ℝ)) (hp1 : (p : ℝ) < 1) :\n    ∀ᵐ ω ∂latticeBondLaw d p,\n      ∃ _h : HasUniqueInfiniteOpenComponent ω,\n        ∀ h' : HasUniqueInfiniteOpenComponent ω,\n          ∀ y : uniqueInfiniteComponent h',\n            ∃! g : uniqueInfiniteComponent h' → ℝ,\n              IsGreenColumn d hd (uniqueInfiniteComponent h') y g := by\n  have huniq : ∀ᵐ ω ∂latticeBondLaw d p, HasUniqueInfiniteOpenComponent ω := by\n    apply (ae_mem_iff_measure_eq (measurableSet_uniqueInfiniteComponentEvent d).nullMeasurableSet).2\n    simpa using hu.2 d hd p hp hp1\n  have hcols := ae_all_iff.mpr (hg d hd p hp hp1)\n  filter_upwards [huniq, hcols] with ω hω hcolsω\n  refine ⟨hω, ?_⟩\n  intro h' y\n  simpa only using hcolsω y.val h' y.property",
+        "type": " (hg : SupercriticalBondGreenColumnExistence)\n    (hu : SupercriticalBondUniqueness) (d : ℕ) [NeZero d] (hd : 2 ≤ d)\n    (p : unitInterval) (hp : criticalProbability d < (p : ℝ)) (hp1 : (p : ℝ) < 1) :\n    ∀ᵐ ω ∂latticeBondLaw d p,\n      ∃ _h : HasUniqueInfiniteOpenComponent ω,\n        ∀ h' : HasUniqueInfiniteOpenComponent ω,\n          ∀ y : uniqueInfiniteComponent h',\n            ∃! g : uniqueInfiniteComponent h' → ℝ,\n              IsGreenColumn d hd (uniqueInfiniteComponent h') y g",
+        "meaning": "Common almost-sure event with an actual uniqueness witness and unique Green columns at all poles; explicitly conditional on both cited inputs."
+      }
+    },
+    {
+      "meaning": {
+        "name": "LatticeProb.External.ArmstrongDarioOrderZero",
+        "module": "LatticeProb.External.ArmstrongDarioOrderZero",
+        "kind": "ordinary_prop_definition",
+        "status": "FROZEN_ASSUMPTION_UNPROVED",
+        "assumption_policy": "Explicit consumer binder only; origin-centered cited specialization. No theorem, axiom, instance or paper proof credit. Formal general-model identification and literature discharge remain unproved.",
+        "source": "LatticeProb/External/ArmstrongDarioOrderZero.lean",
+        "source_sha256": "c8afffad61cea04209e37d6152d36e7a9e6fb24dcfd733368ec21dfbc999c239",
+        "command": "def ArmstrongDarioOrderZero : Prop :=\n  ∀ (d : ℕ) [NeZero d] (_hd : 2 ≤ d) (p : unitInterval),\n    criticalProbability d < (p : ℝ) → (p : ℝ) < 1 →\n    ∃ (s θ C : ℝ), 0 < s ∧ 0 < θ ∧ 0 < C ∧\n      ∃ X : Configuration d → ℝ,\n        Measurable X ∧ (∀ ω, 0 ≤ X ω) ∧\n        Integrable (fun ω => Real.exp (Real.rpow (X ω / θ) s)) (latticeBondLaw d p) ∧\n        (∫ ω, Real.exp (Real.rpow (X ω / θ) s) ∂latticeBondLaw d p) ≤ 2 ∧\n        ∀ᵐ ω ∂latticeBondLaw d p,\n          ∃ _h : HasUniqueInfiniteOpenComponent ω,\n            ∀ h' : HasUniqueInfiniteOpenComponent ω,\n              FiniteDimensional ℝ (harmonicGrowthSpace (uniqueInfiniteComponent h') 0) ∧\n              Module.finrank ℝ (harmonicGrowthSpace (uniqueInfiniteComponent h') 0) = 1 ∧\n              ∀ (R : ℝ), 2 * X ω ≤ R →\n                ∀ u : uniqueInfiniteComponent h' → ℝ,\n                  (∀ x ∈ componentEuclideanBall (uniqueInfiniteComponent h') 0 R,\n                    (∀ y : uniqueInfiniteComponent h',\n                      (componentGraph (uniqueInfiniteComponent h')).Adj x y →\n                        y ∈ componentEuclideanBall (uniqueInfiniteComponent h') 0 R) →\n                    componentLaplacian (uniqueInfiniteComponent h') u x = 0) →\n                  ∃ φ : uniqueInfiniteComponent h' → ℝ,\n                    φ ∈ harmonicGrowthSpace (uniqueInfiniteComponent h') 0 ∧\n                    ∀ r : ℝ, X ω ≤ r → r ≤ R / 2 →\n                      componentBallL2 (uniqueInfiniteComponent h') 0 r (u - φ) ≤\n                        C * (r / R) * componentBallL2 (uniqueInfiniteComponent h') 0 R u",
+        "body": "  ∀ (d : ℕ) [NeZero d] (_hd : 2 ≤ d) (p : unitInterval),\n    criticalProbability d < (p : ℝ) → (p : ℝ) < 1 →\n    ∃ (s θ C : ℝ), 0 < s ∧ 0 < θ ∧ 0 < C ∧\n      ∃ X : Configuration d → ℝ,\n        Measurable X ∧ (∀ ω, 0 ≤ X ω) ∧\n        Integrable (fun ω => Real.exp (Real.rpow (X ω / θ) s)) (latticeBondLaw d p) ∧\n        (∫ ω, Real.exp (Real.rpow (X ω / θ) s) ∂latticeBondLaw d p) ≤ 2 ∧\n        ∀ᵐ ω ∂latticeBondLaw d p,\n          ∃ _h : HasUniqueInfiniteOpenComponent ω,\n            ∀ h' : HasUniqueInfiniteOpenComponent ω,\n              FiniteDimensional ℝ (harmonicGrowthSpace (uniqueInfiniteComponent h') 0) ∧\n              Module.finrank ℝ (harmonicGrowthSpace (uniqueInfiniteComponent h') 0) = 1 ∧\n              ∀ (R : ℝ), 2 * X ω ≤ R →\n                ∀ u : uniqueInfiniteComponent h' → ℝ,\n                  (∀ x ∈ componentEuclideanBall (uniqueInfiniteComponent h') 0 R,\n                    (∀ y : uniqueInfiniteComponent h',\n                      (componentGraph (uniqueInfiniteComponent h')).Adj x y →\n                        y ∈ componentEuclideanBall (uniqueInfiniteComponent h') 0 R) →\n                    componentLaplacian (uniqueInfiniteComponent h') u x = 0) →\n                  ∃ φ : uniqueInfiniteComponent h' → ℝ,\n                    φ ∈ harmonicGrowthSpace (uniqueInfiniteComponent h') 0 ∧\n                    ∀ r : ℝ, X ω ≤ r → r ≤ R / 2 →\n                      componentBallL2 (uniqueInfiniteComponent h') 0 r (u - φ) ≤\n                        C * (r / R) * componentBallL2 (uniqueInfiniteComponent h') 0 R u",
+        "imports": [
+          "LatticeProb.Prob.Percolation.LatticeHarmonicGrowth",
+          "LatticeProb.Prob.Percolation.LatticeUniqueCluster",
+          "LatticeProb.Prob.Percolation.LatticeBondCritical",
+          "Mathlib.MeasureTheory.Integral.Bochner.Basic"
+        ],
+        "bibliography": [
+          {
+            "authors": [
+              "Scott Armstrong",
+              "Paul Dario"
+            ],
+            "title": "Elliptic regularity and quantitative homogenization on percolation clusters",
+            "arxiv": "1609.09431v2",
+            "url": "https://arxiv.org/abs/1609.09431v2",
+            "pdf_url": "https://arxiv.org/pdf/1609.09431v2",
+            "pdf_sha256": "14810adc63b6d0e3406ca7d58adbfe59454a71f82526abf4c1d68721c68cb1cb",
+            "locators": [
+              {
+                "location": "Theorem 2(iii) and following dimension consequence",
+                "pages": [
+                  8,
+                  9
+                ],
+                "role": "order-zero local approximation and dimension"
+              },
+              {
+                "location": "supercritical cluster setting",
+                "page": 5,
+                "role": "almost-sure unique infinite cluster background"
+              }
+            ]
+          }
+        ],
+        "carrier_dependencies": {
+          "LatticeProb/External/ArmstrongDarioOrderZero.lean": "c8afffad61cea04209e37d6152d36e7a9e6fb24dcfd733368ec21dfbc999c239",
+          "LatticeProb/Graph/Basic.lean": "555e258922083599e9a8d05b03c3e97426ebe585951cd6fa030e1e14eb183502",
+          "LatticeProb/Graph/Green.lean": "c25a6e9a9cce99e4a16d3f18ba1f029cba5ebccc8e6956fd78830075875454b8",
+          "LatticeProb/Graph/HeatBasic.lean": "67eab50f4212eb491c4a1bab82105067aa22a749f0e43dd3cec421aaa6ba5e42",
+          "LatticeProb/Graph/Odometer.lean": "b525c1b4a88477270729e2db62bd9a465a7d8566b64a0739f55cb57871bbb070",
+          "LatticeProb/Graph/Recursion.lean": "d77a56872d18569967e0b27e2ff7ff8192dcc6ad1a3be5b23af1e6283c487aaf",
+          "LatticeProb/Graph/Representation.lean": "3c5ca94393a4c1e3b5cb89758a7b51ed95a43d3f1ff6d0149ab0b5f62143f5c4",
+          "LatticeProb/Graph/Scenery.lean": "964bdd0101bc52807ce4b5515d21309f6f1a4a28761ed36760101d9ec94db18e",
+          "LatticeProb/Graph/Setting.lean": "e06ba09b39d6fba856b4ca6550351110e073ed63eaa6ed9b71b4c6e521e137df",
+          "LatticeProb/Graph/Walk.lean": "6203660fe3ecdf4b38d3d47c99eebea051f112f5548e569a5538a050b8cb516f",
+          "LatticeProb/Graph/WalkLemmas.lean": "f23162c0d1c4d6e0f57f290e64f2cf899a55c276c799f45dfd82fee2954dda14",
+          "LatticeProb/Graph/Zd.lean": "7d6f84a4b52c70c0d1dcc94acddc7975ccf88f0fc58dad9304ff94ee8d066ee4",
+          "LatticeProb/IID.lean": "7bc255a050f1c59524f439f333fd3e43f3d28348e2f4e34fac7392bfd02d4b32",
+          "LatticeProb/Network/Basic.lean": "70a02168c202da265405f69a18bdeb8694a305dc359d15f907765db37bae8c5a",
+          "LatticeProb/Network/HarmonicAlgebra.lean": "17da8e324ca7beeb161f252d8c8a265b3e2e72aa80d97d9ff1811529fec25746",
+          "LatticeProb/ParticleHole.lean": "bed7d3fef9a7750811a6579246b494d81a85666260c85f1365a49574850aa596",
+          "LatticeProb/ParticleHoleLemmas.lean": "beff96ed82cb9f6513d015c116568e212f1a3f3f7580f85ecfcb4125fc911686",
+          "LatticeProb/Prob/Percolation/LatticeBondCritical.lean": "66e99af411c74fb13388a81bb79be71842a7b3693ed47c8001e5e301a8e276bc",
+          "LatticeProb/Prob/Percolation/LatticeBondGraph.lean": "806b3885fc4afae019ceeae504f478cbb3df007e986ba57c393782e6c1edcdaf",
+          "LatticeProb/Prob/Percolation/LatticeBondInfiniteEvent.lean": "80af8d19079d3b0a3146c0b48e6d8ce0962696f3c7ff2c20e068f9491e698bc7",
+          "LatticeProb/Prob/Percolation/LatticeBondModel.lean": "affbd59a782c1c6d3bd6a160ca72380eaef3d5bb3ccb5f20e64b70d533639a77",
+          "LatticeProb/Prob/Percolation/LatticeBondProbability.lean": "29ff8969b92bda2bde5e4e40632b0f207c5cc95e955c1c4cd48f6f32000413b1",
+          "LatticeProb/Prob/Percolation/LatticeClusterBall.lean": "46377decb3a38b59891b9406337f453bd8fe3f330355e86bfd5c80522bdf6a49",
+          "LatticeProb/Prob/Percolation/LatticeClusterL2.lean": "ecfc865754da5bde91b88b9060f2e9a7307f11045d788ba801b4fc5d235678b4",
+          "LatticeProb/Prob/Percolation/LatticeClusterL2Triangle.lean": "d5ac4c599803ad5e8e0d7a6c769ade0f113f716d3f249e321ae2babacb28d423",
+          "LatticeProb/Prob/Percolation/LatticeHarmonicGrowth.lean": "64f6226bc88fc8866cd0b2c330c0d7273dd48c260407a84ac980f0b5af93dc93",
+          "LatticeProb/Prob/Percolation/LatticeUniqueCluster.lean": "9fc7c71ee9e59e2186b0c2fdab211093ec5a5a733679380367366e23b65b769f",
+          "LatticeProb/Rank.lean": "867c7149d465db2e11edb2c2f8d8dea591ee1423764a694794048c4af323f740",
+          "LatticeProb/Site.lean": "87024e1c0d31075088d73613a6e6fae5cbdf744fea669b31c3b532f2f38629fd",
+          "LatticeProb/Walk/Basic.lean": "2fbe0a72a3445576b42e65ace46de6a87d53683194d007bc9a515e74c53a250e",
+          "LatticeProb/Walk/SRW.lean": "6177b2b479fceb957946e27a7bda8b3153f2be9d604ead62cf74af62db7fb7b4",
+          "LatticeProb/Walk/Shells.lean": "0cbbbd314a0189f256270b2109c30ef66daee0dee653085dc66ad7bcf2c1413f"
+        },
+        "configuration": {
+          "lean-toolchain": "2773c517aa90b66ea8a2c52bddddf84393157797f8341be0df45294fff7fd32e",
+          "lakefile.lean": "9571fc70bc111ec40f5bc00c2cf3038dc00b86966887f32845c10b4e1b4b8e30",
+          "lake-manifest.json": "74189ffd9853a7b36415a40cc13eafcc994024ea9d961d8bf1be8fd6e5c7b2af"
+        },
+        "lean_toolchain": "leanprover/lean4:v4.32.0",
+        "mathlib_revision": "81a5d257c8e410db227a6665ed08f64fea08e997"
+      },
+      "conditional_consumer": {
+        "name": "LatticeProb.Percolation.exists_origin_constant_approximation",
+        "source": "LatticeProb/Prob/Percolation/LatticeOrderZeroApproximation.lean",
+        "source_sha256": "b17fa706a05f0337d06c5edfe891c06c880cd00763e22add96e0019a775d306f",
+        "command": "theorem exists_origin_constant_approximation (input : LatticeProb.External.ArmstrongDarioOrderZero)\n    (d : ℕ) [NeZero d] (hd : 2 ≤ d) (p : unitInterval)\n    (hp : criticalProbability d < (p : ℝ)) (hp1 : (p : ℝ) < 1) :\n    ∃ (s θ C : ℝ), 0 < s ∧ 0 < θ ∧ 0 < C ∧\n      ∃ X : Configuration d → ℝ,\n        Measurable X ∧ (∀ ω, 0 ≤ X ω) ∧\n        Integrable (fun ω => Real.exp (Real.rpow (X ω / θ) s)) (latticeBondLaw d p) ∧\n        (∫ ω, Real.exp (Real.rpow (X ω / θ) s) ∂latticeBondLaw d p) ≤ 2 ∧\n        ∀ᵐ ω ∂latticeBondLaw d p,\n          ∃ _h : HasUniqueInfiniteOpenComponent ω,\n            ∀ h' : HasUniqueInfiniteOpenComponent ω,\n              ∀ (R : ℝ), 2 * X ω ≤ R →\n                ∀ u : uniqueInfiniteComponent h' → ℝ,\n                  (∀ x ∈ componentEuclideanBall (uniqueInfiniteComponent h') 0 R,\n                    (∀ y : uniqueInfiniteComponent h',\n                      (componentGraph (uniqueInfiniteComponent h')).Adj x y →\n                        y ∈ componentEuclideanBall (uniqueInfiniteComponent h') 0 R) →\n                    componentLaplacian (uniqueInfiniteComponent h') u x = 0) →\n                  ∃ c : ℝ, ∀ r : ℝ, X ω ≤ r → r ≤ R / 2 →\n                    componentBallL2 (uniqueInfiniteComponent h') 0 r (u - fun _ => c) ≤\n                      C * (r / R) * componentBallL2 (uniqueInfiniteComponent h') 0 R u := by\n  obtain ⟨s, θ, C, hs, hθ, hC, X, hXmeas, hXnonneg, hXint, hXmoment, hAE⟩ :=\n    input d hd p hp hp1\n  refine ⟨s, θ, C, hs, hθ, hC, X, hXmeas, hXnonneg, hXint, hXmoment, ?_⟩\n  filter_upwards [hAE] with ω hω\n  obtain ⟨hex, hω⟩ := hω\n  refine ⟨hex, ?_⟩\n  intro h R hR u hu\n  obtain ⟨hfinite, hrank, happ⟩ := hω h\n  obtain ⟨φ, hφ, happrox⟩ := happ R hR u hu\n  obtain ⟨c, hc⟩ := harmonicGrowthSpace_zero_eq_const _ hfinite hrank φ hφ\n  refine ⟨c, ?_⟩\n  intro r hr hRr\n  simpa only [hc] using happrox r hr hRr",
+        "type": " (input : LatticeProb.External.ArmstrongDarioOrderZero)\n    (d : ℕ) [NeZero d] (hd : 2 ≤ d) (p : unitInterval)\n    (hp : criticalProbability d < (p : ℝ)) (hp1 : (p : ℝ) < 1) :\n    ∃ (s θ C : ℝ), 0 < s ∧ 0 < θ ∧ 0 < C ∧\n      ∃ X : Configuration d → ℝ,\n        Measurable X ∧ (∀ ω, 0 ≤ X ω) ∧\n        Integrable (fun ω => Real.exp (Real.rpow (X ω / θ) s)) (latticeBondLaw d p) ∧\n        (∫ ω, Real.exp (Real.rpow (X ω / θ) s) ∂latticeBondLaw d p) ≤ 2 ∧\n        ∀ᵐ ω ∂latticeBondLaw d p,\n          ∃ _h : HasUniqueInfiniteOpenComponent ω,\n            ∀ h' : HasUniqueInfiniteOpenComponent ω,\n              ∀ (R : ℝ), 2 * X ω ≤ R →\n                ∀ u : uniqueInfiniteComponent h' → ℝ,\n                  (∀ x ∈ componentEuclideanBall (uniqueInfiniteComponent h') 0 R,\n                    (∀ y : uniqueInfiniteComponent h',\n                      (componentGraph (uniqueInfiniteComponent h')).Adj x y →\n                        y ∈ componentEuclideanBall (uniqueInfiniteComponent h') 0 R) →\n                    componentLaplacian (uniqueInfiniteComponent h') u x = 0) →\n                  ∃ c : ℝ, ∀ r : ℝ, X ω ≤ r → r ≤ R / 2 →\n                    componentBallL2 (uniqueInfiniteComponent h') 0 r (u - fun _ => c) ≤\n                      C * (r / R) * componentBallL2 (uniqueInfiniteComponent h') 0 R u",
+        "meaning": "Explicitly consumes the cited input. Rank-one constancy is proved internally from actual constant membership. One constant precedes all eligible inner radii. No global harmonicity, translated event, gradient bound or density premise."
       }
     }
   ]
