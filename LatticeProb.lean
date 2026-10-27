@@ -1087,3 +1087,5 @@ import LatticeProb.Graph.MatedCRT.PathGraphExamples
 import LatticeProb.Prob.Percolation.LatticeAnnularSup
 
 import LatticeProb.Prob.Percolation.FiniteRegionMeasurable
+
+import LatticeProb.Network.LocalCaccioppoli
