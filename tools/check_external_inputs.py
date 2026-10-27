@@ -9,6 +9,7 @@ they do not change the literature proposition. No axiom policy is enlarged here.
 """
 from pathlib import Path
 import sys
+import hashlib
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -21,6 +22,10 @@ SCHEMA = "latticeprob-external-inputs-v1"
 # A change to this exact allowlist requires separate review of the complete input.
 # This freezes the reviewed formulation, never an authority to assert the proposition.
 EXACT_ALLOWLIST = {
+    "LatticeProb.External.SupercriticalBondGreenQuantitative": (
+        "464d0adf458e7add9a9f7a50a4ed015104e478c25acf256b5381b1702f0aa711",
+        "ef351dfbb820cfa9b4690f009e69f2a91b71042008da489caaa6fa4ebd779cb1",
+    ),
     "LatticeProb.External.SupercriticalBondUniqueness": (
         "86bea5ed061e21fc8636e65209581569709a1bb7e0315bf4fd8c57245ba324aa",
         "c627ff813699e1aab7a0b453e98e50b7e7d92f9c5a876fbdd550dfbf764f2bc9",
@@ -75,9 +80,15 @@ def check(root):
             if regular_hash(root, path) != expected:
                 raise GateError("external inputs: package/toolchain pin drift: " + path)
         for record, role in ((meaning, "input"), (consumer, "conditional consumer")):
-            if regular_hash(root, record["source"]) != record["source_sha256"]:
-                raise GateError("external inputs: exact " + role + " source drift")
-            if record["command"] not in (root / record["source"]).read_text():
+            if role == "conditional consumer" and record.get("source_kind") == "embedded_lean":
+                text = record["embedded_source"]
+                if hashlib.sha256(text.encode("utf-8")).hexdigest() != record["source_sha256"]:
+                    raise GateError("external inputs: embedded conditional consumer source drift")
+            else:
+                if regular_hash(root, record["source"]) != record["source_sha256"]:
+                    raise GateError("external inputs: exact " + role + " source drift")
+                text = (root / record["source"]).read_text()
+            if record["command"] not in text:
                 raise GateError("external inputs: missing exact " + role + " command")
         # The second reviewed meaning includes the existing proved full iff, even
         # though the input definition does not import the growth theorem directly.

@@ -27,8 +27,10 @@ class ExternalInputTests(unittest.TestCase):
         paths = {external.REGISTRY}
         for row in self.value["inputs"]:
             meaning = row["meaning"]
-            paths |= ({meaning["source"], row["conditional_consumer"]["source"]}
+            paths |= ({meaning["source"]}
                       | set(meaning["carrier_dependencies"]) | set(meaning["configuration"]))
+            if "source" in row["conditional_consumer"]:
+                paths.add(row["conditional_consumer"]["source"])
         for relative in paths:
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -56,7 +58,7 @@ class ExternalInputTests(unittest.TestCase):
         self.assertIn("(hclassical : SupercriticalBondUniqueness)", consumer["type"])
         self.assertIn("∃ p : unitInterval, criticalProbability d < (p : ℝ)", consumer["type"])
         self.assertNotIn("False", consumer["type"])
-        self.assertEqual(len(identity["inputs"]), 4)
+        self.assertEqual(len(identity["inputs"]), 5)
         self.assertEqual(identity["inputs"][1]["status"],
                          "FROZEN_ASSUMPTION_UNPROVED")
         second = self.value["inputs"][1]
@@ -69,7 +71,7 @@ class ExternalInputTests(unittest.TestCase):
         self.assertIn("∃ x y : uniqueInfiniteComponent h, u x ≠ u y", actual)
 
     def test_green_and_order_zero_consumers_keep_their_cited_inputs_explicit(self):
-        green, order_zero = self.value["inputs"][2:]
+        green, order_zero = self.value["inputs"][2:4]
         self.assertEqual(green["meaning"]["name"],
                          "LatticeProb.External.SupercriticalBondGreenColumnExistence")
         self.assertEqual(order_zero["meaning"]["name"],
@@ -83,6 +85,37 @@ class ExternalInputTests(unittest.TestCase):
         self.assertIn("(input : LatticeProb.External.ArmstrongDarioOrderZero)",
                       order_zero["conditional_consumer"]["type"])
         self.assertIn("∃ c : ℝ, ∀ r : ℝ", order_zero["conditional_consumer"]["type"])
+
+    def test_quantitative_green_consumption_and_drift(self):
+        row = self.value["inputs"][4]
+        meaning, consumer = row["meaning"], row["conditional_consumer"]
+        self.assertEqual(meaning["status"], "FROZEN_ASSUMPTION_UNPROVED")
+        for text in ("(hq : SupercriticalBondGreenQuantitative)",
+                     "(hg : SupercriticalBondGreenColumnExistence)",
+                     "(hu : SupercriticalBondUniqueness)",
+                     "theorem consume_two", "theorem consume_three"):
+            self.assertIn(text, consumer["embedded_source"])
+        original = copy.deepcopy(row)
+        meaning["status"] = "PROVED"
+        self.save()
+        with self.assertRaisesRegex(GateError, "meaning/citation/status"):
+            external.check(self.root)
+        self.value["inputs"][4] = copy.deepcopy(original)
+        self.value["inputs"][4]["conditional_consumer"]["embedded_source"] += "\n-- changed\n"
+        self.save()
+        with self.assertRaisesRegex(GateError, "conditional consumer identity"):
+            external.check(self.root)
+        self.value["inputs"][4] = copy.deepcopy(original)
+        meaning = self.value["inputs"][4]["meaning"]
+        self.change_source(meaning["source"], "∃ κ : ℝ", "∀ κ : ℝ")
+        changed = hashlib.sha256((self.root / meaning["source"]).read_bytes()).hexdigest()
+        meaning["source_sha256"] = changed
+        meaning["carrier_dependencies"][meaning["source"]] = changed
+        meaning["command"] = meaning["command"].replace("∃ κ : ℝ", "∀ κ : ℝ")
+        meaning["body"] = meaning["body"].replace("∃ κ : ℝ", "∀ κ : ℝ")
+        self.save()
+        with self.assertRaisesRegex(GateError, "meaning/citation/status"):
+            external.check(self.root)
 
     def test_new_input_status_body_and_citation_changes_are_rejected(self):
         for index in (2, 3):

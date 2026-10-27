@@ -1100,3 +1100,7 @@ import LatticeProb.Prob.Percolation.GreenColumn
 
 import LatticeProb.Prob.Percolation.LatticeOrderZeroTranslation
 import LatticeProb.Prob.Percolation.LatticeOrderZeroGradient
+
+import LatticeProb.Prob.Percolation.ContinuumGreen
+import LatticeProb.Prob.Percolation.ContinuumGreenBounds
+import LatticeProb.External.GreenQuantitative
