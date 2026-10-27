@@ -1089,3 +1089,8 @@ import LatticeProb.Prob.Percolation.LatticeAnnularSup
 import LatticeProb.Prob.Percolation.FiniteRegionMeasurable
 
 import LatticeProb.Network.LocalCaccioppoli
+import LatticeProb.External.GreenColumnExistence
+import LatticeProb.Prob.Percolation.GreenColumnEvent
+import LatticeProb.External.ArmstrongDarioOrderZero
+import LatticeProb.Prob.Percolation.LatticeOrderZeroApproximation
+import LatticeProb.Prob.Percolation.GreenColumn

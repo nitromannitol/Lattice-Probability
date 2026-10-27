@@ -29,6 +29,14 @@ EXACT_ALLOWLIST = {
         "6a555fffa16192ad6684309400918b4daf4b7a718d0db7e56e52aac732962111",
         "7d7e1ed2ef9cf1c1fbb48ec6c8b4508cd8506ad9215671c849b76bc4afd96916",
     ),
+    "LatticeProb.External.SupercriticalBondGreenColumnExistence": (
+        "c8bbef134c1b23e7a0f6389776620d83197e487ab50a05637b45a781f8ab81ff",
+        "77881d7b970c2a73ad504b2d302697f1845ca1ae9bc777b5801bb755e4a7ab6b",
+    ),
+    "LatticeProb.External.ArmstrongDarioOrderZero": (
+        "158093a1dde194a0b67161d12aeeecf97ef404a4ce9e1d7f2b9dcc23394b0090",
+        "4fcebd361b8e65e49371e932c1ccd3443ded65aea37863ec25ec852db55b96b3",
+    ),
 }
 
 
