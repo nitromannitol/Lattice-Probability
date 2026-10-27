@@ -1091,3 +1091,4 @@ import LatticeProb.Prob.Percolation.LatticeLocalGradient
 import LatticeProb.Prob.Percolation.FiniteRegionMeasurable
 
 import LatticeProb.Network.LocalCaccioppoli
+import LatticeProb.Prob.Percolation.LatticeRadialTail
