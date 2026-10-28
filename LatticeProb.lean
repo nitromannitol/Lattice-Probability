@@ -1109,6 +1109,9 @@ import LatticeProb.Prob.Percolation.LatticeCube
 import LatticeProb.Prob.Percolation.LatticeCubeConnectivity
 import LatticeProb.Prob.Percolation.AntalPisztoraEvent
 import LatticeProb.Prob.Percolation.AntalPisztoraGlue
+import LatticeProb.Prob.Percolation.LatticeBoxGeometry
+import LatticeProb.Prob.Percolation.AntalPisztoraBackbone
+import LatticeProb.Prob.Percolation.AntalPisztoraExit
 import LatticeProb.External.AntalPisztora
 
 import LatticeProb.Prob.FiniteTailMax
