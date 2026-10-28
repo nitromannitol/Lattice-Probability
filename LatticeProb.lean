@@ -1122,3 +1122,6 @@ import LatticeProb.Prob.Percolation.GreenLocalizationConsumer
 import LatticeProb.Prob.Percolation.GreenQuantitativeField
 import LatticeProb.Prob.Percolation.GreenDifferenceBounds
 import LatticeProb.Prob.Percolation.NeighborRadialScale
+
+import LatticeProb.Prob.Percolation.AntalPisztoraCentres
+import LatticeProb.Prob.Percolation.AntalPisztoraSmallComponents
