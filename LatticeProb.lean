@@ -1105,6 +1105,11 @@ import LatticeProb.Prob.Percolation.ContinuumGreen
 import LatticeProb.Prob.Percolation.ContinuumGreenBounds
 import LatticeProb.External.GreenQuantitative
 import LatticeProb.Prob.Percolation.LatticeRadialScale
+import LatticeProb.Prob.Percolation.LatticeCube
+import LatticeProb.Prob.Percolation.LatticeCubeConnectivity
+import LatticeProb.Prob.Percolation.AntalPisztoraEvent
+import LatticeProb.Prob.Percolation.AntalPisztoraGlue
+import LatticeProb.External.AntalPisztora
 
 import LatticeProb.Prob.FiniteTailMax
 import LatticeProb.Prob.CorrelatedGaussianProcess
