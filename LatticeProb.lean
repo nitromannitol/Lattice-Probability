@@ -1111,3 +1111,4 @@ import LatticeProb.Prob.CorrelatedGaussianProcess
 import LatticeProb.Prob.BrownianFourCopies
 import LatticeProb.Prob.TwoSidedBrownianPair
 import LatticeProb.Prob.CorrelatedTwoSidedBrownian
+import LatticeProb.Graph.MatedCRT.BrownianGraph
