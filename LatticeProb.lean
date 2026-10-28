@@ -1108,3 +1108,9 @@ import LatticeProb.Prob.Percolation.LatticeRadialScale
 
 import LatticeProb.Prob.FiniteTailMax
 import LatticeProb.Prob.CorrelatedGaussianProcess
+import LatticeProb.Prob.Percolation.GreenColumnHarmonic
+import LatticeProb.Prob.Percolation.GreenLocalizationGeometry
+import LatticeProb.Prob.Percolation.GreenLocalizationConsumer
+import LatticeProb.Prob.Percolation.GreenQuantitativeField
+import LatticeProb.Prob.Percolation.GreenDifferenceBounds
+import LatticeProb.Prob.Percolation.NeighborRadialScale
