@@ -1108,3 +1108,6 @@ import LatticeProb.Prob.Percolation.LatticeRadialScale
 
 import LatticeProb.Prob.FiniteTailMax
 import LatticeProb.Prob.CorrelatedGaussianProcess
+import LatticeProb.Prob.BrownianFourCopies
+import LatticeProb.Prob.TwoSidedBrownianPair
+import LatticeProb.Prob.CorrelatedTwoSidedBrownian
