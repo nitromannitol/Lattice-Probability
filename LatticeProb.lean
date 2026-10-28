@@ -1105,3 +1105,5 @@ import LatticeProb.Prob.Percolation.ContinuumGreen
 import LatticeProb.Prob.Percolation.ContinuumGreenBounds
 import LatticeProb.External.GreenQuantitative
 import LatticeProb.Prob.Percolation.LatticeRadialScale
+
+import LatticeProb.Prob.FiniteTailMax
