@@ -122,3 +122,7 @@ explicitly authorized by the source author. The source checkout supplied no
 separate LICENSE; this notice asserts no additional historical license grant.
 The destination library's existing LICENSE is unchanged. No new third-party
 source payload or package dependency is introduced.
+
+LatticeProb/Bonanno/ (branch lean-v4.35): copied from Leonardo Bonanno's lean-formalizations,
+https://github.com/leobon12/lean-formalizations, commit 31e7483e (module paths prefixed by LatticeProb.Bonanno; each file
+names its source module).

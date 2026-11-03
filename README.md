@@ -1224,6 +1224,14 @@ finite Dirichlet problems, couplings, Gaussian concentration and comparison, and
 motion, are adapted from Leonardo Bonanno's
 [`lean-formalizations`](https://github.com/leobon12/lean-formalizations); they are listed below.
 
+On the `lean-v4.35` branch (Lean v4.35.0-rc2), the tree `LatticeProb/Bonanno/` is copied from Leonardo Bonanno's
+[`lean-formalizations`](https://github.com/leobon12/lean-formalizations) at commit `31e7483`, under his original module
+paths with the prefix `LatticeProb.Bonanno`: the field and Gaussian free field statement layer, the mated-CRT map bundle with
+its random walk, Green function and harmonic-extension definitions, the cell-size lemmas (Gwynne–Miller–Sheffield, Lemmas 2.7
+and 2.8), and, as they are ported, his proofs of Gwynne–Miller Lemma 3.1, the GMC lower tail and no-atom results, and
+Gwynne–Miller–Sheffield Theorem 3.9. Every file names its source module and commit in its header, and lists any edit made
+for the port.
+
 <details>
 <summary>The modules adapted from Leonardo Bonanno's <code>lean-formalizations</code></summary>
 
