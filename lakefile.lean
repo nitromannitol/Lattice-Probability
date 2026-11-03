@@ -16,7 +16,7 @@ mated-CRT library, adapted from Leonardo Bonanno's lean-formalizations (each fil
 @[default_target]
 lean_lib «LatticeProbV435» where
   roots := #[`LatticeProb.V435]
-  globs := #[.andSubmodules `LatticeProb.LQG, .andSubmodules `LatticeProb.MatedCRT]
+  globs := #[.andSubmodules `LatticeProb.LQG, .andSubmodules `LatticeProb.MatedCRT, .andSubmodules `LatticeProb.Bonanno]
 
 /-- The comparator audit surface (`LatticeProbAudit/`): Mathlib-only challenges, their
 solutions, and the vocabulary and bridge modules the solutions use.  Not a default target: it
