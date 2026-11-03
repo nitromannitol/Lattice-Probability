@@ -1,6 +1,8 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
    source module MatedCRTHarmonic.Topology.PolarTemplate at commit 31e7483; only the module paths of local imports are changed.
-   v4.35 port: remove unused simp arguments and tactics, and replace unnecessary simpa. -/
+   v4.35 port: remove unused simp arguments.
+   v4.35 port: remove unused tactics.
+   v4.35 port: replace unnecessary simpa. -/
 import LatticeProb.Bonanno.MatedCRTHarmonic.Topology.PlanarCore
 import LatticeProb.Bonanno.LQGMetric.Topo.RectMeet
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
