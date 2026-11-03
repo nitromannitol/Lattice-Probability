@@ -5,11 +5,18 @@ package «lattice-probability» where
   leanOptions := #[⟨`autoImplicit, false⟩]
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4" @ "81a5d257c8e410db227a6665ed08f64fea08e997"
+  "https://github.com/leanprover-community/mathlib4" @ "065356127b1dc0016f66b7283ce0ce2c4055aa55"
 
-@[default_target]
+/-- On the `lean-v4.35` line the v4.32 modules of `LatticeProb` are not ported; this library is built only on demand. -/
 lean_lib «LatticeProb» where
   globs := #[.andSubmodules `LatticeProb]
+
+/-- The `lean-v4.35` line (Lean v4.35.0-rc2, the Mathlib of the harmonic-balls and mated-CRT formalizations): the LQG, GFF and
+mated-CRT library, adapted from Leonardo Bonanno's lean-formalizations (each file names its source module). -/
+@[default_target]
+lean_lib «LatticeProbV435» where
+  roots := #[`LatticeProb.V435]
+  globs := #[.andSubmodules `LatticeProb.LQG, .andSubmodules `LatticeProb.MatedCRT]
 
 /-- The comparator audit surface (`LatticeProbAudit/`): Mathlib-only challenges, their
 solutions, and the vocabulary and bridge modules the solutions use.  Not a default target: it
