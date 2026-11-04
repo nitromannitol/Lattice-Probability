@@ -1,6 +1,10 @@
 /-
 Birkhoff's pointwise ergodic theorem.
 
+v4.35 port: unfold pointwise function operations in Birkhoff sum proofs.
+v4.35 port: replace deprecated set membership lemma.
+v4.35 port: remove redundant finite-measure instance proof.
+
 Mathlib 4.32 has the Birkhoff sums and nothing else: no maximal ergodic theorem
 and no pointwise theorem.  `LatticeProb.maximal_ergodic` supplied the first;
 this file builds the second on it.
@@ -190,7 +194,7 @@ theorem bLimsup_comp {C : ℝ} (hC : 0 ≤ C) (hf : ∀ x, |f x| ≤ C) (x : Ω)
     have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
     have hn1 : ((n : ℝ) + 1) ≠ 0 := by positivity
     have hS : birkhoffSum T f n (T x) = birkhoffSum T f (n + 1) x - f x := by
-      rw [birkhoffSum_succ']; ring
+      rw [birkhoffSum_succ']; simp only [Pi.add_apply, Function.comp_apply]; ring
     rw [ha, hb]
     simp only [bAvg, hS]
     push_cast
@@ -266,7 +270,7 @@ theorem bLiminf_comp {C : ℝ} (hC : 0 ≤ C) (hf : ∀ x, |f x| ≤ C) (x : Ω)
     have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
     have hn1 : ((n : ℝ) + 1) ≠ 0 := by positivity
     have hS : birkhoffSum T f n (T x) = birkhoffSum T f (n + 1) x - f x := by
-      rw [birkhoffSum_succ']; ring
+      rw [birkhoffSum_succ']; simp only [Pi.add_apply, Function.comp_apply]; ring
     rw [ha, hb]
     simp only [bAvg, hS]
     push_cast
@@ -326,7 +330,6 @@ theorem integral_nonneg_of_covering [IsFiniteMeasure μ] (hT : MeasurePreserving
     {A : Set Ω} (hAm : MeasurableSet A) (hinv : T ⁻¹' A = A)
     (hcov : ∀ x ∈ A, ∃ n, 0 < birkhoffSum T g n x) :
     0 ≤ ∫ x in A, g x ∂μ := by
-  haveI : IsFiniteMeasure (μ.restrict A) := inferInstance
   have hTν : MeasurePreserving T (μ.restrict A) (μ.restrict A) :=
     measurePreserving_restrict hT hAm hinv
   have hgν : Integrable g (μ.restrict A) := hgi.restrict
@@ -346,7 +349,7 @@ theorem integral_nonneg_of_covering [IsFiniteMeasure μ] (hT : MeasurePreserving
     have hms : MeasurableSet {a : Ω | a ∉ ⋃ N, E N} := (MeasurableSet.iUnion hEm).compl
     have hempty : {a : Ω | a ∉ ⋃ N, E N} ∩ A = ∅ := by
       ext x
-      simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false,
+      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false,
         not_and]
       exact fun hnot hA => hnot (hcover hA)
     rw [Measure.restrict_apply hms, hempty, measure_empty]
@@ -373,7 +376,7 @@ theorem measure_gapSet_eq_zero [IsFiniteMeasure μ] (hT : MeasurePreserving T μ
       (measurableSet_lt measurable_const (measurable_bLimsup hT.measurable hfm))
   have hinv : T ⁻¹' A = A := by
     ext x
-    simp only [hA, gapSet, Set.mem_preimage, Set.mem_setOf_eq,
+    simp only [hA, gapSet, Set.mem_preimage, Set.mem_ofPred_eq,
       bLimsup_comp hC hfb, bLiminf_comp hC hfb]
   have hcob : ∀ x : Ω, IsCoboundedUnder (· ≤ ·) atTop (fun n => bAvg T f n x) := fun x =>
     (isBoundedUnder_ge_of fun n => (abs_le.mp (abs_bAvg_le hC hfb n x)).1).isCoboundedUnder_le
@@ -466,7 +469,7 @@ omit [MeasurableSpace Ω] in
 theorem not_cauchySeq_subset_iUnion_oscSet (T : Ω → Ω) (f : Ω → ℝ) :
     {x | ¬ CauchySeq fun n => bAvg T f n x} ⊆ ⋃ k : ℕ, oscSet T f (1 / (k + 1)) := by
   intro x hx
-  simp only [Set.mem_setOf_eq, Metric.cauchySeq_iff] at hx
+  simp only [Set.mem_ofPred_eq, Metric.cauchySeq_iff] at hx
   push Not at hx
   obtain ⟨ε, hε, hx⟩ := hx
   obtain ⟨k, hk⟩ := exists_nat_one_div_lt hε
@@ -481,7 +484,7 @@ theorem oscSet_subset {g r : Ω → ℝ} (hfgr : ∀ x, f x = g x + r x) {ε : �
       ∪ {x | ∃ n : ℕ, ε / 4 < |bAvg T r n x|} := by
   intro x hx
   by_contra hcon
-  simp only [Set.mem_union, not_or, Set.mem_setOf_eq, not_not] at hcon
+  simp only [Set.mem_union, not_or, Set.mem_ofPred_eq, not_not] at hcon
   obtain ⟨hg, hr⟩ := hcon
   have hrb : ∀ n : ℕ, |bAvg T r n x| ≤ ε / 4 := by
     intro n
@@ -698,7 +701,7 @@ theorem ae_bLimsup_comp [IsFiniteMeasure μ] (hT : MeasurePreserving T μ μ)
     have hn0 : ((n : ℝ)) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
     have hn1 : ((n : ℝ) + 1) ≠ 0 := by positivity
     have hS : birkhoffSum T f n (T x) = birkhoffSum T f (n + 1) x - f x := by
-      rw [birkhoffSum_succ']; ring
+      rw [birkhoffSum_succ']; simp only [Pi.add_apply, Function.comp_apply]; ring
     simp only [bAvg, hS]
     push_cast
     field_simp

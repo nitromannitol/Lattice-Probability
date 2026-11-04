@@ -1,6 +1,8 @@
 /-
 The maximal ergodic theorem.
 
+v4.35 port: unfold pointwise function operations before linarith.
+
 For a measure-preserving `T` and an integrable `f`, write `S_n` for the Birkhoff
 sums of `f` along `T` and `M_N` for the largest of `0, S_1, …, S_N`.  On the set
 where `M_N` is positive the integral of `f` is nonnegative.
@@ -74,6 +76,7 @@ theorem maxBirkhoff_le_add (T : Ω → Ω) (f : Ω → ℝ) (N : ℕ) (x : Ω)
   | succ N ih =>
       have hstep : birkhoffSum T f (N + 1) x ≤ f x + maxBirkhoff T f (N + 1) (T x) := by
         rw [birkhoffSum_succ']
+        simp only [Pi.add_apply, Function.comp_apply]
         linarith [birkhoffSum_le_maxBirkhoff T f (Nat.le_succ N) (T x)]
       rcases max_cases (maxBirkhoff T f N x) (birkhoffSum T f (N + 1) x) with
         ⟨hmax, hle⟩ | ⟨hmax, hlt⟩
