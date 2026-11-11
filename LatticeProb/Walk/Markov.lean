@@ -85,14 +85,14 @@ def truncInc (n : ℕ) (ξ : ℕ → Site d) : ℕ → Site d := fun i => if i <
 def shiftInc (n : ℕ) (ξ : ℕ → Site d) : ℕ → Site d := fun k => ξ (n + k)
 
 theorem measurable_truncInc (n : ℕ) : Measurable (truncInc (d := d) n) :=
-  measurable_pi_lambda _ fun i => by
+  Measurable.of_eval fun i => by
     by_cases h : i < n
     · simpa only [truncInc, if_pos h] using measurable_pi_apply i
     · simpa only [truncInc, if_neg h] using
         (measurable_const : Measurable fun _ : ℕ → Site d => (0 : Site d))
 
 theorem measurable_shiftInc (n : ℕ) : Measurable (shiftInc (d := d) n) :=
-  measurable_pi_lambda _ fun k => measurable_pi_apply (n + k)
+  Measurable.of_eval fun k => measurable_pi_apply (n + k)
 
 theorem shiftInc_eq_coordShift (n : ℕ) :
     shiftInc (d := d) n = coordShift fun k : ℕ => n + k := rfl
@@ -164,7 +164,7 @@ theorem integral_truncInc_shiftInc (d n : ℕ) [NeZero d]
   have hshift : Measure.map (shiftInc (d := d) n) μ = μ :=
     (measurePreserving_shiftInc d n).map_eq
   have hprodmeas : IsProbabilityMeasure (Measure.map (truncInc (d := d) n) μ) :=
-    Measure.isProbabilityMeasure_map (measurable_truncInc n).aemeasurable
+    inferInstance
   have hint : Integrable (Function.uncurry Φ)
       ((Measure.map (truncInc (d := d) n) μ).prod μ) :=
     Integrable.of_bound hΦ.aestronglyMeasurable C (Filter.Eventually.of_forall fun p => hC p.1 p.2)
@@ -193,22 +193,22 @@ noncomputable def siteWalkLaw (d : ℕ) (x : Site d) : Measure (ℕ → Site d) 
 def shiftPath (n : ℕ) (X : ℕ → Site d) : ℕ → Site d := fun k => X (n + k)
 
 theorem measurable_sitePath (x : Site d) : Measurable (sitePath x) :=
-  measurable_pi_lambda _ fun _ => by
+  Measurable.of_eval fun _ => by
     refine Measurable.const_add ?_ x
     exact Finset.measurable_sum _ fun j _ => measurable_pi_apply j
 
 theorem measurable_sitePath_uncurry :
     Measurable fun p : Site d × (ℕ → Site d) => sitePath p.1 p.2 :=
-  measurable_pi_lambda _ fun _ =>
+  Measurable.of_eval fun _ =>
     (measurable_fst).add (Finset.measurable_sum _ fun _ _ => measurable_snd.eval)
 
 theorem measurable_shiftPath (n : ℕ) : Measurable (shiftPath (d := d) n) :=
-  measurable_pi_lambda _ fun k => measurable_pi_apply (n + k)
+  Measurable.of_eval fun k => measurable_pi_apply (n + k)
 
 instance siteWalkLaw_isProbabilityMeasure (d : ℕ) [NeZero d] (x : Site d) :
     IsProbabilityMeasure (siteWalkLaw d x) := by
   rw [siteWalkLaw]
-  exact Measure.isProbabilityMeasure_map (measurable_sitePath x).aemeasurable
+  exact inferInstance
 
 theorem siteWalkLaw_eq (d : ℕ) [NeZero d] (x : Site d) :
     siteWalkLaw d x = (incPathLaw d).map (sitePath x) := rfl
@@ -260,7 +260,7 @@ theorem measurable_of_dependsUpTo {α : Type*} [MeasurableSpace α] {n : ℕ}
     refine (hf X _ fun k hk => ?_).symm ▸ rfl
     rw [dif_pos (by omega : k < n + 1)]
   rw [hfact]
-  exact (measurable_of_countable g).comp (measurable_pi_lambda _ fun i => measurable_pi_apply _)
+  exact (measurable_of_countable g).comp (Measurable.of_eval fun i => measurable_pi_apply _)
 
 /-- A bounded stopping time is settled by the positions up to its bound. -/
 theorem dependsUpTo_of_isWalkStopping {τ : (ℕ → Site d) → ℕ} (hτ : IsWalkStopping τ)
