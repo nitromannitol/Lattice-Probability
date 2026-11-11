@@ -28,8 +28,8 @@ theorem infinitePi_map_pi {ι α β : Type*} [MeasurableSpace α] [MeasurableSpa
       = Measure.infinitePi fun _ : ι => ν.map f := by
   classical
   have hF : Measurable (fun (η : ι → α) (i : ι) => f (η i)) :=
-    measurable_pi_lambda _ fun i => hf.comp (measurable_pi_apply i)
-  have : IsProbabilityMeasure (ν.map f) := Measure.isProbabilityMeasure_map hf.aemeasurable
+    Measurable.of_eval fun i => hf.comp (measurable_pi_apply i)
+  have : IsProbabilityMeasure (ν.map f) := (Measure.isProbabilityMeasure_map_iff hf.aemeasurable).2 inferInstance
   refine Measure.eq_infinitePi (fun _ : ι => ν.map f) fun s t ht => ?_
   have hpre : (fun (η : ι → α) (i : ι) => f (η i)) ⁻¹' (Set.pi ↑s t)
       = Set.pi ↑s (fun i => f ⁻¹' t i) := by
