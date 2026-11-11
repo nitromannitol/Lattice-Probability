@@ -106,8 +106,9 @@ structure IsMatingOfTreesCoupling (γ : ℝ) {Ω : Type} [MeasurableSpace Ω] (P
     Tendsto (ηL ω) (cocompact ℝ) (cocompact ℂ) ∧ ηL ω 0 = 0 ∧
     ∀ s t : ℝ, s ≤ t → volume (ηL ω '' Icc s t) = ENNReal.ofReal (t - s)
   /- (S6) parametrization by γ-LQG area (DMS; GHMS; [16]), stated for every
-  dyadic vague limit of the area approximations of `h`: the existence of that limit is SLE-free and is proved
-  . -/
+  dyadic vague limit `μ` of the area approximations of `h`. The clause is conditional: it binds only the vague
+  limits `μ` that exist (the structure does not assert that one exists; if none exists, the clause holds vacuously).
+  That existence is SLE-free and is not proved here. -/
   areaParam : ∀ᵐ ω ∂P,
     (∃ φ : ℝ ≃o ℝ, φ 0 = 0 ∧ ∀ t, η ω t = ηL ω (φ t)) ∧
       ∀ μ : Measure ℂ,

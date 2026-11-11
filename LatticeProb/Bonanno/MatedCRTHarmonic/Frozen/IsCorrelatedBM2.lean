@@ -9,8 +9,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTTwoSidedMin
 /-!
 # Frozen definition: `MatedCRT.IsCorrelatedBM2`
 
-Centred Gaussian coordinate process with covariance `lrCov γ i j · twoSidedMin s t` (.1); one semantic unit
-with `exists_isCorrelatedBM2` and `isCorrelatedBM2_unique`.
+Centred Gaussian coordinate process with covariance `lrCov γ i j · twoSidedMin s t` (.1). This file declares the predicate only:
+no existence or uniqueness theorem for such a process is declared here.
 -/
 
 set_option autoImplicit false
