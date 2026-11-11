@@ -119,7 +119,7 @@ theorem measurable_netFunctional {Ω : Type*} [MeasurableSpace Ω] {K : Set E} {
       ContinuousOn v K → ContinuousOn w K → (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ v - Φ w| ≤ ε) :
     Measurable fun ω => Φ (netApprox x η (fun k => F (x k) ω)) :=
   (continuous_netFunctional hnet hΦu).measurable.comp
-    (measurable_pi_lambda _ fun k => hFm (x k))
+    (Measurable.of_eval fun k => hFm (x k))
 
 /-- **The functional of the path is measurable**, for a process whose coordinates are measurable
 and whose paths are continuous on the compact set `K`.  It is the pointwise limit of the
