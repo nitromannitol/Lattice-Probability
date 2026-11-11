@@ -838,3 +838,5 @@ import LatticeProb.Analysis.RotationalAverage
 
 import LatticeProb.Bonanno.LQGMetric.Field.WholePlaneCov
 import LatticeProb.Bonanno.LQGMetric.Field.WholePlaneLateral
+import LatticeProb.Analysis.LogPotentialCircle
+import LatticeProb.Prob.GaussianShiftMoment
