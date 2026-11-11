@@ -69,14 +69,14 @@ theorem IsBrownianSpace.exists_continuousVersion {Ω : Type*} [MeasurableSpace �
       funext t
       rw [hcoord]
       exact hω t
-    · exact measurable_pi_lambda _ fun t => ((measurable_pi_apply t).sub_const _).const_mul _
+    · exact Measurable.of_eval fun t => ((measurable_pi_apply t).sub_const _).const_mul _
   refine ⟨C, fun t => ?_, fun ω => ?_, fun t => hae.mono fun ω hω => hω t, hae,
     fun i => ?_, hind⟩
   · have hfun : C t = (WithLp.toLp 2) ∘ fun ω i => D i t ω :=
       funext fun ω => hCdef t ω
     rw [hfun]
     exact (PiLp.continuous_toLp 2 (fun _ : Fin d => ℝ)).measurable.comp
-      (measurable_pi_lambda _ fun i => hDm i t)
+      (Measurable.of_eval fun i => hDm i t)
   · have hfun : (fun t => C t ω) = (WithLp.toLp 2) ∘ fun t i => D i t ω :=
       funext fun t => hCdef t ω
     rw [hfun]
@@ -90,7 +90,7 @@ theorem IsBrownianSpace.exists_continuousVersion {Ω : Type*} [MeasurableSpace �
 and coordinate `i`. -/
 lemma measurable_pathCoord {d : ℕ} (i : Fin d) :
     Measurable fun γ : BrownianPath d => fun t : ℝ≥0 => γ t i := by
-  refine measurable_pi_lambda _ fun t => ?_
+  refine Measurable.of_eval fun t => ?_
   have hev : Measurable fun v : Euc d => v i := by fun_prop
   exact hev.comp (ContinuousMapBorel.ContinuousMap.measurable_eval t)
 
@@ -113,7 +113,7 @@ theorem isStandardBrownianLaw_map_pathMap {d : ℕ} {Ω : Type*} [MeasurableSpac
     IsStandardBrownianLaw (P.map (pathMap C hC)) := by
   have hF : Measurable (pathMap C hC) := measurable_pathMap C hCm hC
   have hprob : IsProbabilityMeasure (P.map (pathMap C hC)) :=
-    Measure.isProbabilityMeasure_map hF.aemeasurable
+    inferInstance
   have hY := measurable_pathCoord (d := d)
   refine ⟨hprob, fun i => ?_, ?_⟩
   · have hΦ : ∀ I : Finset ℝ≥0,
@@ -123,13 +123,13 @@ theorem isStandardBrownianLaw_map_pathMap {d : ℕ} {Ω : Type*} [MeasurableSpac
       rfl⟩, Filter.Eventually.of_forall fun γ => ?_⟩
     exact (by fun_prop : Continuous fun v : Euc d => v i).comp γ.continuous
   · have hCi : ∀ i : Fin d, Measurable fun ω : Ω => fun t : ℝ≥0 => C t ω i := fun i =>
-      measurable_pi_lambda _ fun t => (by fun_prop : Measurable fun v : Euc d => v i).comp
+      Measurable.of_eval fun t => (by fun_prop : Measurable fun v : Euc d => v i).comp
         (hCm t)
     have hYF : ∀ i : Fin d, (P.map (pathMap C hC)).map
         (fun γ : BrownianPath d => fun t : ℝ≥0 => γ t i) =
           P.map (fun ω => fun t => C t ω i) := fun i => Measure.map_map (hY i) hF
     have hZ : Measurable fun γ : BrownianPath d => fun i : Fin d => fun t : ℝ≥0 => γ t i :=
-      measurable_pi_lambda _ fun i => hY i
+      Measurable.of_eval fun i => hY i
     rw [iIndepFun_iff_map_fun_eq_pi_map fun i => (hY i).aemeasurable, Measure.map_map hZ hF]
     simp only [hYF]
     exact (iIndepFun_iff_map_fun_eq_pi_map fun i => (hCi i).aemeasurable).mp hindep
