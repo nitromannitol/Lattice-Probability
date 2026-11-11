@@ -154,7 +154,7 @@ theorem isStoppingTime_continuousExitTime {d : ℕ} {U : Set (Euc d)}
     have hadd : Measurable fun x : Euc d ↦ z + x :=
       (continuous_const.add continuous_id).measurable
     have hmeas : Measurable (fun (γ : BrownianPath d) (s : Set.Iic t) ↦ z + γ (s : ℝ≥0)) := by
-      refine measurable_pi_lambda _ fun s ↦ ?_
+      refine Measurable.of_eval fun s ↦ ?_
       have hγ : Measurable (fun γ : BrownianPath d ↦ γ (s : ℝ≥0)) :=
         (comap_measurable (fun γ : BrownianPath d ↦ γ (s : ℝ≥0))).mono
           (le_iSup₂_of_le (s : ℝ≥0) (Set.mem_Iic.mp s.2) le_rfl) le_rfl
