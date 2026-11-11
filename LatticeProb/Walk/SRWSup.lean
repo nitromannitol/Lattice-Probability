@@ -31,7 +31,7 @@ lemma KS_le_prod (n : Fin d → ℕ) (x : Site d) :
     KS n x ≤ Real.sqrt 2 ^ d * ∏ i, (1 : ℝ) / Real.sqrt ((n i : ℝ) + 1) := by
   have hterm : KS n x ≤ ∏ i : Fin d, Real.sqrt 2 / Real.sqrt ((n i : ℝ) + 1) := by
     unfold KS
-    exact Finset.prod_le_prod (fun i _ => S1_nonneg (n i) (x i))
+    exact Finset.prod_le_prod₀ (fun i _ => S1_nonneg (n i) (x i))
       (fun i _ => srwHeat_one_le (n i) (x i))
   refine le_trans hterm (le_of_eq ?_)
   rw [Finset.prod_div_distrib, Finset.prod_div_distrib, Finset.prod_const,
