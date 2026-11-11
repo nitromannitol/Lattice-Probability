@@ -158,7 +158,7 @@ theorem iterate_delta0_zero_ge (hd : 0 < d) (r : ℕ) :
     rw [show ((Real.sqrt (4 * (r : ℝ) + 1))⁻¹) ^ d
         = ∏ _i : Fin d, (Real.sqrt (4 * (r : ℝ) + 1))⁻¹ by
       rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]]
-    refine Finset.prod_le_prod (fun i _ => by positivity) fun i _ => ?_
+    refine Finset.prod_le_prod₀ (fun i _ => by positivity) fun i _ => ?_
     have hle : (cnt c i : ℝ) ≤ (r : ℝ) := by exact_mod_cast cnt_le c i
     refine le_trans ?_ (inv_sqrt_le_P1_zero (cnt c i))
     have h3 : (0 : ℝ) < Real.sqrt (4 * (cnt c i : ℝ) + 1) := Real.sqrt_pos.mpr (by positivity)
