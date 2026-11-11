@@ -67,7 +67,7 @@ theorem finsetContract_determinantCoeff_eq_zero {n k : ℕ} (u : Fin n → ℝ)
         rw [mul_assoc, mul_left_comm]
     rw [finsetContract]
     simp only [hcoeff]
-    rw [LatticeProb.LinearAlgebra.sum_mul_det_update_row]
+    rw [LatticeProb.LinearAlgebra.sum_mul_det_update_row M 0 Finset.univ u V]
     have hz : (∑ i : Fin n, u i • V i) = 0 := by
       funext j
       simpa only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] using horth j
