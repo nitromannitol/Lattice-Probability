@@ -43,7 +43,11 @@ open scoped NNReal ENNReal
 /-- The four unit steps of the two-dimensional simple random walk. -/
 inductive Step
   | east | north | west | south
-  deriving DecidableEq, Fintype, Inhabited
+  deriving DecidableEq, Inhabited
+
+instance : Fintype Step where
+  elems := {.east, .north, .west, .south}
+  complete := fun x => by cases x <;> simp
 
 /-- The displacement of a step. -/
 def Step.vec : Step → ℤ × ℤ
@@ -440,7 +444,7 @@ theorem simpleRandomWalkRecurrent_of
     intro a b hab; simpa using hab
   have hsub : ∑' m : ℕ, ((srwKernel (2 * (m + 1)) : ℝ≥0) : ℝ≥0∞)
       ≤ ∑' n : ℕ, ((srwKernel n : ℝ≥0) : ℝ≥0∞) :=
-    ENNReal.tsum_comp_le_tsum_of_injective hinj _
+    ENNReal.tsum_comp_le_tsum_of_injective hinj (fun n : ℕ => ((srwKernel n : ℝ≥0) : ℝ≥0∞))
   have hterm : ∀ m : ℕ, ((1 / (4 * (m + 1)) : ℝ≥0) : ℝ≥0∞)
       ≤ ((srwKernel (2 * (m + 1)) : ℝ≥0) : ℝ≥0∞) := by
     intro m
