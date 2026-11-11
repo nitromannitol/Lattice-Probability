@@ -98,7 +98,7 @@ theorem K_gradient_term (n : Fin d → ℕ) (x : Site d) (i₀ : Fin d) :
       ≤ 8 / ((n i₀ : ℝ) + 1) * H i₀ := P1_gradient (n i₀) (x i₀)
   have htail : (∏ j ∈ Finset.univ.erase i₀, P1 (n j) (x j))
       ≤ ∏ j ∈ Finset.univ.erase i₀, (G j * H j) :=
-    Finset.prod_le_prod (fun j _ => P1_nonneg _ _) (fun j _ => P1_le_gauss (n j) (x j))
+    Finset.prod_le_prod₀ (fun j _ => P1_nonneg _ _) (fun j _ => P1_le_gauss (n j) (x j))
   have hstep : |P1 (n i₀) (x i₀) - P1 (n i₀) (x i₀ + 1)|
         * (∏ j ∈ Finset.univ.erase i₀, P1 (n j) (x j))
       ≤ (8 / ((n i₀ : ℝ) + 1) * H i₀) * ∏ j ∈ Finset.univ.erase i₀, (G j * H j) := by
