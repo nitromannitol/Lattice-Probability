@@ -53,26 +53,26 @@ theorem fourierInv_eq_setIntegral {d : ℕ} (ψ : 𝓢(Space d, ℂ)) {Λ : ℝ}
 private theorem norm_fourierPowSMulRight_band_le {d : ℕ} (ψ : 𝓢(Space d, ℂ))
     (k : ℕ) (ξ : Space d) :
     ‖VectorFourier.fourierPowSMulRight
-        ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k‖
+        ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k‖
       ≤ (2 * Real.pi) ^ k * ‖ξ‖ ^ k * ‖ψ ξ‖ := by
   refine (VectorFourier.norm_fourierPowSMulRight_le
-    ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k).trans ?_
-  have hL : ‖(-(innerSL ℝ) : Space d →L[ℝ] Space d →L[ℝ] ℝ)‖ ≤ 1 := by
+    ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k).trans ?_
+  have hL : ‖(-(innerSL ℝ) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ)‖ ≤ 1 := by
     apply ContinuousLinearMap.opNorm_le_bound _ (by norm_num)
     intro m
-    have h1 : ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ) m
-        = -(((innerSL ℝ) : Space d →L[ℝ] Space d →L[ℝ] ℝ) m) := by
+    have h1 : ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ) m
+        = -(((innerSL ℝ) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ) m) := by
       simp only [neg_apply]
     rw [h1, norm_neg]
     have h2 := (innerSL ℝ).le_opNorm m
     have h3 := norm_innerSL_le (𝕜 := ℝ) (E := Space d)
     nlinarith [norm_nonneg m, h2, h3]
-  have h1 : (2 * Real.pi * ‖(-(innerSL ℝ) : Space d →L[ℝ] Space d →L[ℝ] ℝ)‖) ^ k
+  have h1 : (2 * Real.pi * ‖(-(innerSL ℝ) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ)‖) ^ k
       ≤ (2 * Real.pi) ^ k := by
     apply pow_le_pow_left₀ (by positivity)
     nlinarith [Real.pi_pos,
-      norm_nonneg (-(innerSL ℝ) : Space d →L[ℝ] Space d →L[ℝ] ℝ)]
-  calc (2 * Real.pi * ‖(-(innerSL ℝ) : Space d →L[ℝ] Space d →L[ℝ] ℝ)‖) ^ k
+      norm_nonneg (-(innerSL ℝ) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ)]
+  calc (2 * Real.pi * ‖(-(innerSL ℝ) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ)‖) ^ k
         * ‖ξ‖ ^ k * ‖ψ ξ‖
       ≤ (2 * Real.pi) ^ k * ‖ξ‖ ^ k * ‖ψ ξ‖ := by
         apply mul_le_mul_of_nonneg_right _ (norm_nonneg _)
@@ -88,24 +88,24 @@ theorem norm_iteratedFDeriv_fourierInv_le_setIntegral {d : ℕ} (ψ : 𝓢(Space
           * ∫ ξ in Metric.ball (0 : Space d) (2 * Λ), ‖ψ ξ‖ := by
   have hfun : (fun y : Space d => 𝓕⁻ ψ y)
       = VectorFourier.fourierIntegral 𝐞 volume
-          ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ).toLinearMap₁₂
+          ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ).toLinearMap₁₂
           (fun ξ => ψ ξ) := by
     funext y
     rw [SchwartzMap.fourierInv_coe ψ, Real.fourierInv_eq]
     simp only [VectorFourier.fourierIntegral, ContinuousLinearMap.toLinearMap₁₂_apply,
-      neg_apply, innerSL_apply_apply, neg_neg]
+      neg_apply, innerSL_apply_apply, neg_neg, LinearMap.comp_apply, ContinuousLinearMap.coeLMₛₗ, ContinuousLinearMap.coe_coe, ContinuousLinearMap.coe_neg, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.neg_apply]
   rw [hfun]
   rw [VectorFourier.iteratedFDeriv_fourierIntegral
-    (L := (-(innerSL ℝ) : Space d →L[ℝ] Space d →L[ℝ] ℝ)) (f := fun ξ => ψ ξ)
+    (L := (-(innerSL ℝ) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ)) (f := fun ξ => ψ ξ)
     (μ := volume) (N := ⊤) (fun n _ => ψ.integrable_pow_mul volume n)
     (ψ.continuous.aestronglyMeasurable) (le_top : ((k : ℕ∞)) ≤ ⊤)]
   have hpt : ∀ ξ : Space d,
       ‖VectorFourier.fourierPowSMulRight
-          ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k‖
+          ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k‖
         ≤ (2 * Real.pi) ^ k * ‖ξ‖ ^ k * ‖ψ ξ‖ :=
     fun ξ => norm_fourierPowSMulRight_band_le ψ k ξ
   have h1 : ∫ ξ, ‖VectorFourier.fourierPowSMulRight
-        ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k‖
+        ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k‖
       ≤ ∫ ξ, (2 * Real.pi) ^ k * ‖ξ‖ ^ k * ‖ψ ξ‖ :=
     integral_mono_of_nonneg (Filter.Eventually.of_forall fun ξ => norm_nonneg _)
       (by simpa only [mul_assoc] using
@@ -151,11 +151,11 @@ theorem norm_iteratedFDeriv_fourierInv_le_setIntegral {d : ℕ} (ψ : 𝓢(Space
       _ = (2 * Real.pi) ^ k * (2 * Λ) ^ k * ∫ ξ in Metric.ball 0 (2 * Λ), ‖ψ ξ‖ :=
           integral_const_mul _ _
   calc ‖VectorFourier.fourierIntegral 𝐞 volume
-        ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ).toLinearMap₁₂
+        ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ).toLinearMap₁₂
         (fun v => VectorFourier.fourierPowSMulRight
-          ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) v k) x‖
+          ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) v k) x‖
       ≤ ∫ ξ, ‖VectorFourier.fourierPowSMulRight
-          ((-(innerSL ℝ)) : Space d →L[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k‖ :=
+          ((-(innerSL ℝ)) : Space d →L⋆[ℝ] Space d →L[ℝ] ℝ) (fun ξ => ψ ξ) ξ k‖ :=
         VectorFourier.norm_fourierIntegral_le_integral_norm _ _ _ _ _
     _ ≤ ∫ ξ, (2 * Real.pi) ^ k * ‖ξ‖ ^ k * ‖ψ ξ‖ := h1
     _ = ∫ ξ in Metric.ball 0 (2 * Λ), (2 * Real.pi) ^ k * ‖ξ‖ ^ k * ‖ψ ξ‖ := h2
