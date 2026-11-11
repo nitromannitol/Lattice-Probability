@@ -93,9 +93,6 @@ theorem exists_measurable_continuous_circleAvg_version {Ω : Type*} [MeasurableS
     rw [e1, e2, sub_zero]
     exact hg
 
-#print axioms LatticeProb.aemeasurable_continuousMap_of_evaluations
-#print axioms LatticeProb.exists_measurable_continuous_circleAvg_version
-
 end
 
 end LatticeProb

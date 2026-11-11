@@ -678,24 +678,3 @@ end RadialCovariance
 end LatticeProb
 
 end
-#print axioms LatticeProb.gffGreen_eq_wholePlaneCov
-#print axioms LatticeProb.circleAverage_gffGreen_eq_wholePlaneCov
-#print axioms LatticeProb.covariance_circleAvg_zero
-#print axioms LatticeProb.memLp_two_circleAvg
-#print axioms LatticeProb.integral_circleAvg_zero
-#print axioms LatticeProb.covariance_eq_integral_of_mean_zero
-#print axioms LatticeProb.integral_mul_circleAvg_zero
-#print axioms LatticeProb.exists_ae_circle_version
-#print axioms LatticeProb.measurable_circleVersion_joint
-#print axioms LatticeProb.measurable_radialIntegral_version
-#print axioms LatticeProb.ae_radialIntegral_eq
-#print axioms LatticeProb.memLp_two_radialPoint
-#print axioms LatticeProb.integral_sq_radialPoint
-#print axioms LatticeProb.integral_radialPoint_mul
-#print axioms LatticeProb.measurable_circleAvg_normalized
-#print axioms LatticeProb.integrable_radial_mul
-#print axioms LatticeProb.integrable_radial_mul_circle
-#print axioms LatticeProb.integrable_radial_one
-#print axioms LatticeProb.integral_radialIntegral_eq_zero
-#print axioms LatticeProb.integrable_radial_triple
-#print axioms LatticeProb.covariance_radialIntegral

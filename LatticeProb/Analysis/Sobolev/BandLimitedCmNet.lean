@@ -77,6 +77,3 @@ theorem exists_uniform_iteratedFDeriv_apply_le {d : ℕ} (Λ : ℝ) (hΛ : 0 < �
       (Finset.prod_nonneg fun i _ => norm_nonneg _))
 
 end LatticeProb.Sobolev
-
-#print axioms LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le
-#print axioms LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_apply_le
