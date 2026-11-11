@@ -199,7 +199,7 @@ theorem integrableOn_offBound (hd : 1 ≤ d) (n : ℕ) :
     fun i => Set.indicator_nonneg (fun _ _ => (Real.exp_pos _).le) (θ i)
   have hprod : ∏ i, Set.indicator {t : ℝ | Real.pi / 2 < |t|}
       (fun t => Real.exp (-(2 / (Real.pi ^ 2 * d)) * n * (Real.pi - |t|) ^ 2)) (θ i) ≤ 1 :=
-    Finset.prod_le_one (fun i _ => hg1 i) (fun i _ => hgle i)
+    Finset.prod_le_one₀ (fun i _ => hg1 i) (fun i _ => hgle i)
   have hsq : ∀ j, (Real.pi - |θ j|) ^ 2 ≤ Real.pi ^ 2 := by
     intro j
     rw [sq_le_sq, abs_of_nonneg (by linarith [hθabs j]), abs_of_pos Real.pi_pos]
@@ -365,7 +365,7 @@ private lemma integrableOn_offBound_summand (hd : 1 ≤ d) (b : ℝ) (hb : 0 ≤
       nlinarith [sq_nonneg (Real.pi - |θ i|)]
     · rw [Set.indicator_of_notMem (s := {t : ℝ | Real.pi / 2 < |t|}) h]; norm_num
   have hprod0 : 0 ≤ ∏ i, offFactor b (θ i) := Finset.prod_nonneg fun i _ => (hg i).1
-  have hprod1 : ∏ i, offFactor b (θ i) ≤ 1 := Finset.prod_le_one (fun i _ => (hg i).1)
+  have hprod1 : ∏ i, offFactor b (θ i) ≤ 1 := Finset.prod_le_one₀ (fun i _ => (hg i).1)
     (fun i _ => (hg i).2)
   have hsq : (Real.pi - |θ j|) ^ 2 ≤ Real.pi ^ 2 := by
     nlinarith [abs_nonneg (θ j), Real.pi_pos]
