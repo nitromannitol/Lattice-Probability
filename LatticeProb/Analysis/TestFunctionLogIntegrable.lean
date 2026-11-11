@@ -13,7 +13,7 @@ For a test function `φ` on `ℂ` (smooth with compact support) the logarithmic 
 integrable against `φ`: `x ↦ φ x * log ‖x‖` and `x ↦ |φ x| * (2 log max(‖x‖, 1) - log ‖x‖)` are integrable,
 and `y ↦ φ y * wholePlaneCov x y` is integrable for every `x`. The proof bounds `|log t|` on `(0, R]` by the
 integrable power `2 (1 + R) t^{-1/2}`, so that the singularity is dominated on a ball
-(Armitage-Gardiner, *Classical Potential Theory*, Section 3.1; Duplantier-Sheffield, *Liouville quantum gravity
+(Duplantier-Sheffield, *Liouville quantum gravity
 and KPZ*, Invent. Math. 185 (2011), arXiv:0808.1560, Section 3.1).
 -/
 

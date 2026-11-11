@@ -9,14 +9,14 @@ Circle averages over circles centred at `0` of the logarithmic kernel `w ↦ log
 covariance kernel `LatticeProb.wholePlaneCov`:
 
 * `circleAverage_log_norm_sub_eq`: the logarithmic potential of the circle `∂B_r(0)` at `z` is `log max(r, ‖z‖)`,
-  the mean value property of `log ‖· - z‖` (Armitage-Gardiner, *Classical Potential Theory*, Section 3.1);
+  the mean value property of `log ‖· - z‖`;
 * `circleAverage_wholePlaneCov`: the circle average of `wholePlaneCov z ·` over `∂B_r(0)`, for every `z ∈ ℂ`;
 * `circleAverage_circleAverage_wholePlaneCov`: the circle-circle covariance, the iterated circle average of
   `wholePlaneCov` over `∂B_r(0)` and `∂B_s(0)`;
 * `circleCovariance_comm`: symmetry of the circle-circle covariance kernel in the two radii.
 
 References: Duplantier-Sheffield, *Liouville quantum gravity and KPZ*, Invent. Math. 185 (2011), arXiv:0808.1560,
-Section 3.1, eq. (3.2); Armitage-Gardiner, *Classical Potential Theory*, Springer 2001, Section 3.1.
+Section 3.1, eq. (3.2).
 -/
 
 noncomputable section
@@ -25,8 +25,7 @@ namespace LatticeProb.LogPotentialCircle
 
 open MeasureTheory Filter Topology Set Metric
 
-/-- Average of `w ↦ log ‖w - z‖` over `∂B_r(0)`: the logarithmic mean value property, `log max(r, ‖z‖)`
-(Armitage-Gardiner, *Classical Potential Theory*, Section 3.1). -/
+/-- Average of `w ↦ log ‖w - z‖` over `∂B_r(0)`: the logarithmic mean value property, `log max(r, ‖z‖)`. -/
 lemma circleAverage_log_norm_sub_eq {r : ℝ} (hr : 0 < r) (z : ℂ) :
     Real.circleAverage (fun w : ℂ => Real.log ‖w - z‖) 0 r = Real.log (max r ‖z‖) := by
   have h := circleAverage_log_norm_sub_const_eq_log_radius_add_posLog (c := (0 : ℂ)) (a := z) hr.ne'

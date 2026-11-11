@@ -11,10 +11,9 @@ import Mathlib.Topology.DiscreteSubset
 /-!
 # Circle integrals of affine maps and of logarithmic singularities
 
-Elementary facts about circles in `ℂ` and about logarithmic kernels, in the form used for the whole-plane
-covariance kernel and for the circle averages of the radial processes of a quantum cone (Duplantier-Sheffield,
-*Liouville quantum gravity and KPZ*, Invent. Math. 185 (2011), Section 3.1, p. 16: the Green function
-`G(x,y) = -log|y-x| - G~_x(y)`; p. 17: the circle average `h_ε(z)`, eq. (12)).
+Elementary facts about circles in `ℂ` and about logarithmic kernels, as used for circle averages of the whole-plane
+covariance kernel (Duplantier-Sheffield, *Liouville quantum gravity and KPZ*, Invent. Math. 185 (2011), arXiv:0808.1560,
+Section 3.1, p. 16: the Green function `G(x,y) = -log|y-x| - G~_x(y)`; p. 17: the circle average `h_ε(z)`, eq. (12)).
 
 * Affine maps `u ↦ r u + z` with `r > 0` transport circle averages (`circleAverage_affine`) and integrals on `ℂ`
   (`integral_affine_change`, `integral_affine_pullback`).

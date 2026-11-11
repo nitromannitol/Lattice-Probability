@@ -11,7 +11,7 @@ set approximates ball masses from inside, and compactness reduces an infimum ove
 finite subcovers. The logarithmic kernel is lower semicontinuous in its second variable (Fatou's lemma), so its
 supremum over an open set is attained along a countable dense subset.
 
-Literature locators: Armitage-Gardiner, *Classical Potential Theory*, Sec. 3.1; Duplantier-Sheffield, arXiv:0808.1560,
+Literature locators: Duplantier-Sheffield, arXiv:0808.1560,
 Sec. 3.1.
 -/
 

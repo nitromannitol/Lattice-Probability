@@ -6,7 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.CirclePairing
 Facts about the test functions `TestC` and the mollified uniform measures `circBump k z r` on circles:
 
 * pointwise and functional identities for differences of test functions;
-* `circBump k z r` vanishes on a neighbourhood of a point at distance more than `2^{-k}` from the circle `∂B_r(z)`,
+* `circBump k z r` vanishes on a neighbourhood of the origin
+  when the origin is at distance more than `2^{-k}` from the circle `∂B_r(z)`,
   and its support lies in the closed ball `B̄(z, r + 2^{-k})`;
 * the integral of a difference of mollified circle measures vanishes;
 * integrability and integral identities for radial integrands `x ↦ R x` that are continuous away from the origin;
