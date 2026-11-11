@@ -840,7 +840,11 @@ import LatticeProb.Bonanno.LQGMetric.Field.WholePlaneCov
 import LatticeProb.Bonanno.LQGMetric.Field.WholePlaneLateral
 import LatticeProb.Analysis.LogPotentialCircle
 import LatticeProb.Prob.GaussianShiftMoment
+import LatticeProb.Prob.WeylMassMeasurable
+import LatticeProb.Prob.WeylSupMeasurable
 import LatticeProb.Analysis.LaplacianCalculus
 import LatticeProb.Analysis.LogKernel
 import LatticeProb.Analysis.RadialLocalIntegrability
 import LatticeProb.Gauss.GaussianClosure
+import LatticeProb.Gauss.GFFCovSymm
+import LatticeProb.Gauss.GFFExistence
