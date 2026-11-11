@@ -37,7 +37,7 @@ theorem lintegral_fin_nat_prod_eq_prod {n : ℕ} {X : Fin n → Type*}
             rw [← ((measurePreserving_piFinSuccAbove ν 0).symm).lintegral_comp hF]
             simp_rw [MeasurableEquiv.piFinSuccAbove_symm_apply, Fin.insertNthEquiv,
               Fin.prod_univ_succ, Fin.insertNth_zero, Equiv.coe_fn_mk, Fin.cons_succ,
-              Fin.zero_succAbove, cast_eq, Fin.cons_zero]
+              Fin.cons_zero]
             rfl
         _ = (∫⁻ x, f 0 x ∂(ν 0))
               * ∏ i : Fin n, ∫⁻ x, f (Fin.succ i) x ∂(ν i.succ) := by
