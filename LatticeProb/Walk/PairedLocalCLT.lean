@@ -211,8 +211,7 @@ theorem exists_abs_srwHeat_sub_le (hd : 1 ≤ d) :
     push_cast
     intro hc
     have h1 : (1 : ZMod 2) = 0 := by
-      have := congrArg (· - (n : ZMod 2)) hc
-      simpa using this.symm
+      linear_combination -hc
     exact absurd h1 (by decide)
   have h' := h n hn x
   rw [hzero, add_zero] at h'
