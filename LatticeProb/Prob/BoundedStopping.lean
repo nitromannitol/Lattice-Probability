@@ -223,7 +223,10 @@ theorem bounded_stopping_L1
   have hg : MemLp (stoppedValue M τ) 1 P := hui.memLp_of_ae_tendsto hconv
   refine ⟨fun n => memLp_one_iff_integrable.mp (hui.memLp n),
     memLp_one_iff_integrable.mp hg, ?_⟩
-  exact tendsto_Lp_finite_of_tendsto_ae le_rfl ENNReal.one_ne_top hui.1 hg hui.2.1 hconv
+  have hYm : ∀ n, AEStronglyMeasurable (Y n) P := fun n =>
+    ((stronglyMeasurable_condExp (m := (hσ n).measurableSpace)).mono
+      (hσ n).measurableSpace_le).aestronglyMeasurable.congr (he n).symm
+  exact tendsto_Lp_finite_of_tendsto_ae le_rfl ENNReal.one_ne_top hYm hg hui.1 hconv
 
 /-- Optional stopping of expectations at an arbitrary bounded real-time
 stopping time. The stopped value is proved integrable as part of the conclusion.
@@ -237,7 +240,7 @@ theorem bounded_stopping_integrable_and_integral_eq_terminal
     Integrable (stoppedValue M τ) P ∧
       (∫ ω, stoppedValue M τ ω ∂P) = ∫ ω, M T ω ∂P := by
   obtain ⟨hFi, hg, hL1⟩ := bounded_stopping_L1 hM hτ T hτT hr
-  have hlim := tendsto_integral_of_L1' (stoppedValue M τ) hg.1
+  have hlim := tendsto_integral_of_L1' (stoppedValue M τ)
     (Eventually.of_forall hFi) hL1
   have he : (fun n : ℕ => ∫ ω, stoppedValue M (boundedDyadicApprox τ T n) ω ∂P) =
       (fun _ : ℕ => ∫ ω, M T ω ∂P) := by
