@@ -35,7 +35,7 @@ lemma balancedProduct_fst {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
   by_cases hzero : α univ = 0
   · have hα : α = 0 := Measure.measure_univ_eq_zero.mp hzero
     simp [balancedProduct, hα]
-  · rw [balancedProduct, Measure.fst, Measure.map_smul, Measure.map_fst_prod,
+  · rw [balancedProduct, Measure.fst, Measure.map_smul _ measurable_fst.aemeasurable, Measure.map_fst_prod,
       hmass, smul_smul, ENNReal.inv_mul_cancel hzero (measure_ne_top α univ), one_smul]
 
 /-- The second marginal of `balancedProduct α β` is `β`, when `α` and `β` are finite
@@ -47,7 +47,7 @@ lemma balancedProduct_snd {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
   · have hα : α = 0 := Measure.measure_univ_eq_zero.mp hzero
     have hβ : β = 0 := Measure.measure_univ_eq_zero.mp (hmass.trans hzero)
     simp [balancedProduct, hα, hβ]
-  · rw [balancedProduct, Measure.snd, Measure.map_smul, Measure.map_snd_prod,
+  · rw [balancedProduct, Measure.snd, Measure.map_smul _ measurable_snd.aemeasurable, Measure.map_snd_prod,
       smul_smul, ENNReal.inv_mul_cancel hzero (measure_ne_top α univ), one_smul]
 
 /-- Completion of the partial coupling `ρ` of `μ` and `ν`: `ρ` plus the balanced
@@ -176,11 +176,11 @@ instance : IsFiniteMeasure exampleCoupling :=
 
 /-- The first marginal of `exampleCoupling` is `2⁻¹ • δ_true`. -/
 theorem exampleCoupling_fst : exampleCoupling.fst = (2⁻¹ : ℝ≥0∞) • Measure.dirac true := by
-  rw [exampleCoupling, Measure.fst, Measure.map_smul, Measure.map_dirac' measurable_fst]
+  rw [exampleCoupling, Measure.fst, Measure.map_smul _ measurable_fst.aemeasurable, Measure.map_dirac' measurable_fst]
 
 /-- The second marginal of `exampleCoupling` is `2⁻¹ • δ_true`. -/
 theorem exampleCoupling_snd : exampleCoupling.snd = (2⁻¹ : ℝ≥0∞) • Measure.dirac true := by
-  rw [exampleCoupling, Measure.snd, Measure.map_smul, Measure.map_dirac' measurable_snd]
+  rw [exampleCoupling, Measure.snd, Measure.map_smul _ measurable_snd.aemeasurable, Measure.map_dirac' measurable_snd]
 
 /-- The first marginal of `exampleCoupling` is below `exampleLeft`. -/
 theorem exampleCoupling_fst_le : exampleCoupling.fst ≤ exampleLeft := by
