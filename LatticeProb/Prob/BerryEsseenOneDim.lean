@@ -25,11 +25,11 @@ theorem sumLaw_map_const_mul {ι : Type*} [Fintype ι] (ν : ι → Measure ℝ)
     sumLaw (fun i => (ν i).map (fun z : ℝ => c * z)) = (sumLaw ν).map (fun z : ℝ => c * z) := by
   have hm : Measurable (fun z : ℝ => c * z) := measurable_const_mul c
   haveI : ∀ i, IsProbabilityMeasure ((ν i).map (fun z : ℝ => c * z)) := fun i =>
-    Measure.isProbabilityMeasure_map hm.aemeasurable
+    inferInstance
   have hsum : Measurable (fun y : ι → ℝ => ∑ i, y i) :=
     Finset.measurable_sum _ fun i _ => measurable_pi_apply i
   have hscale : Measurable (fun (x : ι → ℝ) (i : ι) => c * x i) :=
-    measurable_pi_lambda _ fun i => hm.comp (measurable_pi_apply i)
+    Measurable.of_eval fun i => hm.comp (measurable_pi_apply i)
   unfold sumLaw
   rw [← Measure.pi_map_pi (f := fun (_ : ι) (z : ℝ) => c * z) (fun i => hm.aemeasurable),
     Measure.map_map hsum hscale, Measure.map_map hm hsum]
@@ -125,7 +125,7 @@ theorem berryEsseen_oneDim_of_pos {ι : Type*} [Fintype ι] (ν : ι → Measure
   have hs : 0 < s := Real.sqrt_pos.2 hV
   have hsi : 0 < s⁻¹ := inv_pos.2 hs
   haveI : ∀ i, IsProbabilityMeasure ((ν i).map (fun z : ℝ => s⁻¹ * z)) := fun i =>
-    Measure.isProbabilityMeasure_map (measurable_const_mul s⁻¹).aemeasurable
+    inferInstance
   have hmean' : ∀ i, ∫ z, z ∂((ν i).map (fun z : ℝ => s⁻¹ * z)) = 0 := fun i => by
     rw [integral_id_map_const_mul, hmean i, mul_zero]
   have h3' : ∀ i, Integrable (fun z : ℝ => |z| ^ 3) ((ν i).map (fun z : ℝ => s⁻¹ * z)) :=
