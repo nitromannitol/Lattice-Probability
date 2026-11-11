@@ -23,8 +23,10 @@ theorem inducedMap_iterate (T : Ω → Ω) (A : Set Ω) (j : ℕ) (x : Ω) :
   induction j with
   | zero => simp
   | succ j ih =>
-    rw [Function.iterate_succ_apply', ih, birkhoffSum_succ, ih, inducedMap,
-      ← Function.iterate_add_apply, Nat.add_comm]
+    rw [Function.iterate_succ_apply', ih, birkhoffSum_succ, inducedMap,
+      ← Function.iterate_add_apply]
+    simp only [Pi.add_apply, Function.comp_apply, ih]
+    rw [add_comm]
 
 /-- For `μ`-a.e. `x ∈ A`, every iterate `(inducedMap T A)^[i] x` has a positive return time,
 by pulling `ae_retTime_pos` back along the quasi-measure-preserving iterates of
