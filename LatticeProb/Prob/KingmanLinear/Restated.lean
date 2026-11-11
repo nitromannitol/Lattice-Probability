@@ -129,9 +129,8 @@ theorem iterate_inducedMap_eq_iterate_birkhoffSum (T : Ω → Ω) (A : Set Ω) (
   induction j with
     | zero => simp [birkhoffSum]
     | succ n ih =>
-      rw [Function.iterate_succ_apply', inducedMap, birkhoffSum_succ,
-        Function.iterate_add_apply, ih, ← Function.iterate_add_apply,
-        ← Function.iterate_add_apply, Nat.add_comm]
+      rw [Function.iterate_succ_apply', inducedMap, birkhoffSum_succ_apply, Nat.add_comm,
+        Function.iterate_add_apply, ih]
 
 
 /-- Restates Kac's lemma `LatticeProb.kac_integrable`: the return time is integrable on `μ.restrict
