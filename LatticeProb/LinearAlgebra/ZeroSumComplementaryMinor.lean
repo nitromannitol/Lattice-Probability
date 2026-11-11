@@ -53,7 +53,7 @@ theorem det_groundInverseExtension_differences_mul_det {n : ℕ}
         exact Sum.inr.inj (e.injective h)
       · rintro rfl
         rfl
-    simp only [A, Matrix.submatrix_apply, T, hinv, he, t, sub_self]
+    simp only [A, Matrix.submatrix, T, hinv, he, t, sub_self, Matrix.of_apply]
   have hAd : A.det = (A.submatrix Fin.succ Fin.succ).det := by
     rw [Matrix.det_succ_row_zero]
     simp only [hrow, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
@@ -67,7 +67,7 @@ theorem det_groundInverseExtension_differences_mul_det {n : ℕ}
     have he : e (Sum.inr j.succ) ≠ r := by
       intro h
       exact Fin.succ_ne_zero j (Sum.inr.inj (e.injective h))
-    simp only [A, Matrix.submatrix_apply, T, hinv, he, if_false,
+    simp only [A, Matrix.submatrix, T, hinv, he, if_false,
       Matrix.transpose_apply, Matrix.of_apply]
   have hcomp : T.submatrix (fun i : m => e (Sum.inl i))
       (fun j : m => f (Sum.inl j)) =
