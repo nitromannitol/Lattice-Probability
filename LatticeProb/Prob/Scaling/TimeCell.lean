@@ -81,7 +81,7 @@ theorem step_eq_indicator {h : ℝ} (hh : 0 < h) (N : ℕ) (a : ℕ → ℝ) :
 
 /-- A step function in the first coordinate, multiplied by an integrable function of the
 second coordinate on each cell, is integrable on the product space. -/
-theorem integrable_step_prod {E : Type*} [MeasurableSpace E] (μ : Measure E)
+theorem integrable_step_prod {E : Type*} [MeasurableSpace E] (μ : Measure E) [SFinite μ]
     {h : ℝ} (N : ℕ) (f : ℕ → E → ℝ) (hf : ∀ n < N, Integrable (f n) μ) :
     Integrable (fun p : ℝ × E => step h N (fun n => f n p.2) p.1) (volume.prod μ) := by
   classical
