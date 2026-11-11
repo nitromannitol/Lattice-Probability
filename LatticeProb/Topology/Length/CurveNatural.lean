@@ -67,7 +67,7 @@ theorem continuousOn_variationOnFromTo {P : ℝ → X} {a b : ℝ} (hf : Bounded
       rw [variationOnFromTo.eq_of_ge _ _ hyx, eVariationOn.subsingleton _ hs]
       simp
   have hA := (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp
-    (hf.tendsto_eVariationOn_Icc_zero_right x ((hP x hx).mono inter_subset_left))
+    (hf.tendsto_eVariationOn_Icc_zero_right ((hP x hx).mono inter_subset_left))
   have hB := (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp
     (hf.tendsto_eVariationOn_Icc_zero_left (x := x) ((hP x hx).mono inter_subset_left))
   rw [ENNReal.toReal_zero] at hA hB
