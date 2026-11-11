@@ -40,7 +40,7 @@ theorem measurableSet_event (X : ∀ q, Ω → A q) (hX : ∀ q, Measurable (X q
     MeasurableSet B := by
   rw [event_eq_preimage_image X S B hB]
   exact (Set.to_countable _).measurableSet.preimage
-    (measurable_pi_lambda _ (fun q => hX q))
+    (Measurable.of_eval (fun q => hX q))
 
 /-- **Finite-cell factorization.** A finite-cell event and prescribed values on disjoint
 cells factor into the event mass and the product of the actual one-cell masses. -/
