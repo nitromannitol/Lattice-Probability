@@ -320,9 +320,9 @@ theorem map_revealed_dag (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasur
     intro a
     obtain ⟨i⟩ := nonempty_of_dagExploration μ idx a
     rw [← hlaw i]
-    exact Measure.isProbabilityMeasure_map (hg i).aemeasurable
+    exact inferInstance
   have hmeas : Measurable (revealedDag idx g) :=
-    measurable_pi_lambda _ fun a => measurable_revealedDag hidx.meas hg a
+    Measurable.of_eval fun a => measurable_revealedDag hidx.meas hg a
   refine Measure.eq_infinitePi (μ := fun _ : κ => ν) (hμ := hνprob) fun s t ht => ?_
   have hpre : revealedDag idx g ⁻¹' Set.pi (↑s) t = exploredDag idx g t s := by
     ext ω
