@@ -84,7 +84,7 @@ theorem exists_tendsto_starProjection_antitone (K : ℕ → Submodule ℝ E)
     ∃ y, Tendsto (fun n => (K n).starProjection x) atTop (𝓝 y) ∧ ∀ m, y ∈ K m := by
   let U : ℕ → Submodule ℝ E := fun n => (K n)ᗮ
   have hU : Monotone U := fun a b hab => Submodule.orthogonal_le (hK hab)
-  haveI : CompleteSpace (⨆ i, U i).topologicalClosure :=
+  have : CompleteSpace (⨆ i, U i).topologicalClosure :=
     (Submodule.isClosed_topologicalClosure _).completeSpace_coe
   have hlim := Submodule.starProjection_tendsto_closure_iSup U hU x
   have ht : Tendsto (fun n => (K n).starProjection x) atTop
@@ -109,11 +109,12 @@ variable {P : Measure Ω} [IsProbabilityMeasure P]
 /-- For `u ∈ L²(P)`, the `L¹` norm of `u` is at most its `L²` norm. -/
 lemma integral_abs_le_norm_Lp_two (u : Lp ℝ 2 P) : ∫ ω, |u ω| ∂P ≤ ‖u‖ := by
   have h1 : ∫ ω, |u ω| ∂P = (eLpNorm u 1 P).toReal := by
-    rw [eLpNorm_one_eq_lintegral_enorm, ← integral_norm_eq_lintegral_enorm (Lp.aestronglyMeasurable u)]
+    rw [eLpNorm_one_eq_lintegral_enorm (Lp.aestronglyMeasurable u),
+      ← integral_norm_eq_lintegral_enorm (Lp.aestronglyMeasurable u)]
     simp only [Real.norm_eq_abs]
   rw [h1, Lp.norm_def]
   exact ENNReal.toReal_mono (Lp.eLpNorm_ne_top u)
-    (eLpNorm_le_eLpNorm_of_exponent_le (by norm_num) (Lp.aestronglyMeasurable u))
+    (eLpNorm_le_eLpNorm_of_exponent_le (by norm_num))
 
 omit [IsProbabilityMeasure P] in
 /-- A function a.e. measurable w.r.t. every member of an antitone sequence of σ-algebras is a.e.
@@ -143,8 +144,8 @@ theorem tendsto_integral_abs_condExp_sub_of_memLp {𝒜 : ℕ → MeasurableSpac
     (hle : ∀ n, 𝒜 n ≤ mΩ) (hanti : Antitone 𝒜) (htriv : IsTrivialSigma (⨅ n, 𝒜 n) P)
     {f : Ω → ℝ} (hf : MemLp f 2 P) :
     Tendsto (fun n => ∫ ω, |(P[f | 𝒜 n]) ω - ∫ ω, f ω ∂P| ∂P) atTop (𝓝 0) := by
-  haveI : ∀ n, CompleteSpace (lpMeas ℝ ℝ (𝒜 n) 2 P) := fun n => by
-    haveI : Fact (𝒜 n ≤ mΩ) := ⟨hle n⟩; infer_instance
+  have : ∀ n, CompleteSpace (lpMeas ℝ ℝ (𝒜 n) 2 P) := fun n => by
+    have : Fact (𝒜 n ≤ mΩ) := ⟨hle n⟩; infer_instance
   set F : Lp ℝ 2 P := hf.toLp f
   have hKanti : Antitone (fun n => lpMeas ℝ ℝ (𝒜 n) 2 P) := by
     intro a b hab u hu
@@ -205,7 +206,7 @@ theorem tendsto_integral_abs_condExp_sub {𝒜 : ℕ → MeasurableSpace Ω}
   have hgi : Integrable (g : Ω → ℝ) P := hg2.integrable one_le_two
   have hδ : ∫ ω, |f ω - g ω| ∂P < ε / 3 := by
     have : ∫ ω, |f ω - g ω| ∂P = (eLpNorm (f - ⇑g) 1 P).toReal := by
-      rw [eLpNorm_one_eq_lintegral_enorm,
+      rw [eLpNorm_one_eq_lintegral_enorm (hf.sub hgi).aestronglyMeasurable,
         ← integral_norm_eq_lintegral_enorm ((hf.sub hgi).aestronglyMeasurable)]
       simp only [Pi.sub_apply, Real.norm_eq_abs]
     rw [this]; exact ENNReal.toReal_lt_of_lt_ofReal hfg

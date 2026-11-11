@@ -37,10 +37,10 @@ theorem map_path_eq_of_isPreBrownianReal
     (hX : IsPreBrownianReal X P) (hY : IsPreBrownianReal Y Q)
     (hXm : ∀ t, Measurable (X t)) (hYm : ∀ t, Measurable (Y t)) :
     P.map (fun ω t => X t ω) = Q.map (fun ω t => Y t ω) := by
-  have hmX : Measurable fun ω (t : ℝ≥0) => X t ω := measurable_pi_lambda _ hXm
-  have hmY : Measurable fun ω (t : ℝ≥0) => Y t ω := measurable_pi_lambda _ hYm
-  haveI : IsProbabilityMeasure (P.map fun ω (t : ℝ≥0) => X t ω) :=
-    Measure.isProbabilityMeasure_map hmX.aemeasurable
+  have hmX : Measurable fun ω (t : ℝ≥0) => X t ω := Measurable.of_eval hXm
+  have hmY : Measurable fun ω (t : ℝ≥0) => Y t ω := Measurable.of_eval hYm
+  have : IsProbabilityMeasure (P.map fun ω (t : ℝ≥0) => X t ω) :=
+    (Measure.isProbabilityMeasure_map_iff hmX.aemeasurable).2 inferInstance
   refine ext_of_generate_finite (measurableCylinders fun _ : ℝ≥0 => ℝ)
     generateFrom_measurableCylinders.symm isPiSystem_measurableCylinders ?_ ?_
   · rintro s hs
@@ -56,7 +56,7 @@ theorem IsBrownianSpace.map_coord_shift_eq {d : ℕ} {x : EuclideanSpace ℝ (Fi
     (hB : IsBrownianSpace d x B P) (hm : ∀ t, Measurable (B t)) (s : ℝ≥0) (i : Fin d) :
     P.map (fun ω (t : ℝ≥0) => Real.sqrt d * (B (s + t) ω i - B s ω i))
       = P.map (fun ω (t : ℝ≥0) => Real.sqrt d * (B (0 + t) ω i - B 0 ω i)) := by
-  haveI := hB.isProbabilityMeasure
+  have := hB.isProbabilityMeasure
   have hev : Measurable fun v : EuclideanSpace ℝ (Fin d) => v i := by fun_prop
   have hcoord : ∀ t : ℝ≥0, Measurable fun ω => B t ω i := fun t => hev.comp (hm t)
   have h1 : IsPreBrownianReal (fun t ω => Real.sqrt d * (B (s + t) ω i - B s ω i)) P := by
@@ -74,7 +74,7 @@ theorem IsBrownianSpace.map_shift_eq {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
     (hB : IsBrownianSpace d x B P) (hm : ∀ t, Measurable (B t)) (t₀ : ℝ≥0) :
     P.map (fun ω (t : ℝ≥0) => B (t₀ + t) ω - B t₀ ω)
       = P.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) := by
-  haveI := hB.isProbabilityMeasure
+  have := hB.isProbabilityMeasure
   set c : ℝ := Real.sqrt d with hc
   have hev : ∀ i : Fin d, Measurable fun v : EuclideanSpace ℝ (Fin d) => v i := fun i => by fun_prop
   have hcoord : ∀ (t : ℝ≥0) (i : Fin d), Measurable fun ω => B t ω i :=
@@ -82,13 +82,13 @@ theorem IsBrownianSpace.map_shift_eq {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
   have hmT : ∀ s : ℝ≥0, Measurable
       (fun ω (i : Fin d) => (fun t : ℝ≥0 => c * (B (s + t) ω i - B s ω i))) := by
     intro s
-    refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun t => ?_
+    refine Measurable.of_eval fun i => Measurable.of_eval fun t => ?_
     exact ((hcoord (s + t) i).sub (hcoord s i)).const_mul c
   have hindepT : ∀ s : ℝ≥0,
       iIndepFun (fun (i : Fin d) ω => (fun t : ℝ≥0 => c * (B (s + t) ω i - B s ω i))) P := by
     intro s
     refine (hB.shift s).indep.comp (fun _ (h : ℝ≥0 → ℝ) => fun t : ℝ≥0 => c * h t) (fun _ => ?_)
-    refine measurable_pi_lambda _ fun t => ?_
+    refine Measurable.of_eval fun t => ?_
     exact ((measurable_pi_apply t : Measurable fun h : ℝ≥0 → ℝ => h t)).const_mul c
   have hpi : ∀ s : ℝ≥0,
       P.map (fun ω (i : Fin d) => (fun t : ℝ≥0 => c * (B (s + t) ω i - B s ω i)))
@@ -96,7 +96,7 @@ theorem IsBrownianSpace.map_shift_eq {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
             P.map (fun ω (t : ℝ≥0) => c * (B (s + t) ω i - B s ω i))) := by
     intro s
     refine (hindepT s).map_fun_eq_pi_map (fun i => ?_)
-    exact (measurable_pi_lambda _ fun t =>
+    exact (Measurable.of_eval fun t =>
       ((hcoord (s + t) i).sub (hcoord s i)).const_mul c).aemeasurable
   have hT : P.map (fun ω (i : Fin d) => (fun t : ℝ≥0 => c * (B (t₀ + t) ω i - B t₀ ω i)))
       = P.map (fun ω (i : Fin d) => (fun t : ℝ≥0 => c * (B (0 + t) ω i - B 0 ω i))) := by
@@ -105,9 +105,9 @@ theorem IsBrownianSpace.map_shift_eq {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
   have hφ : Measurable fun u : Fin d → (ℝ≥0 → ℝ) => (fun t : ℝ≥0 =>
       ((EuclideanSpace.equiv (Fin d) ℝ).symm (fun i => c⁻¹ * u i t) :
         EuclideanSpace ℝ (Fin d))) := by
-    refine measurable_pi_lambda _ fun t => ?_
+    refine Measurable.of_eval fun t => ?_
     refine ((EuclideanSpace.equiv (Fin d) ℝ).symm.continuous).measurable.comp ?_
-    refine measurable_pi_lambda _ fun i => ?_
+    refine Measurable.of_eval fun i => ?_
     exact (((measurable_pi_apply t : Measurable fun h : ℝ≥0 → ℝ => h t)).comp
       ((measurable_pi_apply i : Measurable fun u : Fin d → (ℝ≥0 → ℝ) => u i))).const_mul c⁻¹
   have hsymm : ∀ (u : Fin d → ℝ) (i : Fin d),

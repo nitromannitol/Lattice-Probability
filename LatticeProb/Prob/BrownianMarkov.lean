@@ -63,7 +63,7 @@ theorem IsBrownianSpace.shift {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
     exact h
   indep := by
     have h := hB.indep.comp (fun (_ : Fin d) (g : ℝ≥0 → ℝ) => fun t : ℝ≥0 => g (t₀ + t) - g t₀)
-      (fun _ => measurable_pi_lambda _
+      (fun _ => Measurable.of_eval
         (fun t => (measurable_pi_apply (t₀ + t)).sub (measurable_pi_apply t₀)))
     exact h
 
@@ -124,7 +124,7 @@ theorem measurableSet_comap_exists_le_lt_norm {d : ℕ} (B : ℝ≥0 → Ω → 
   have hEq : {ω | ∃ s ≤ t, A < ‖B s ω - u‖}
       = ⋃ q ∈ D, {ω | A < ‖B (q : ℝ≥0) ω - u‖} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, exists_prop]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop]
     constructor
     · rintro ⟨s, hs, hsA⟩
       have hcont' : Continuous fun r : ↥(Set.Icc (0:ℝ≥0) t) => ‖B (r : ℝ≥0) ω - u‖ :=
@@ -152,7 +152,7 @@ theorem measurableSet_exists_le_lt_norm {d : ℕ} (B : ℝ≥0 → Ω → Euclid
     (u : EuclideanSpace ℝ (Fin d)) (A : ℝ) (t : ℝ≥0) :
     MeasurableSet {ω | ∃ s ≤ t, A < ‖B s ω - u‖} :=
   (Measurable.comap_le
-      (measurable_pi_lambda (fun ω (s : Set.Iic t) => B (s : ℝ≥0) ω)
+      (Measurable.of_eval (f := fun ω (s : Set.Iic t) => B (s : ℝ≥0) ω)
         (fun s => hm (s : ℝ≥0)))) _
     (measurableSet_comap_exists_le_lt_norm B hcont u A t)
 

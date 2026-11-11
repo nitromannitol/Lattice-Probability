@@ -59,7 +59,7 @@ theorem IsBrownianSpace.indepFun_shift {d : ℕ} {x : EuclideanSpace ℝ (Fin d)
     (hB : IsBrownianSpace d x B P) (hm : ∀ t, Measurable (B t)) (t₀ : ℝ≥0) :
     IndepFun (fun ω (t : ℝ≥0) => B (t₀ + t) ω - B t₀ ω)
       (fun ω (s : Set.Iic t₀) => B (s : ℝ≥0) ω) P := by
-  haveI := hB.isProbabilityMeasure
+  have := hB.isProbabilityMeasure
   set c : ℝ := Real.sqrt d with hc
   have hev : ∀ i : Fin d, Measurable fun v : EuclideanSpace ℝ (Fin d) => v i := by
     intro i; fun_prop
@@ -69,35 +69,35 @@ theorem IsBrownianSpace.indepFun_shift {d : ℕ} {x : EuclideanSpace ℝ (Fin d)
       (fun ω (i : Fin d) => (fun t : ℝ≥0 => c * (B (t₀ + t) ω i - B t₀ ω i)))
       (fun ω (i : Fin d) => (fun s : Set.Iic t₀ => c * (B (s : ℝ≥0) ω i - x i))) P := by
     refine indepFun_pi_of_pairs
-      (fun i => measurable_pi_lambda _ fun t => ((hcoord (t₀ + t) i).sub (hcoord t₀ i)).const_mul c)
-      (fun i => measurable_pi_lambda _ fun s => ((hcoord (s : ℝ≥0) i).sub measurable_const).const_mul c)
+      (fun i => Measurable.of_eval fun t => ((hcoord (t₀ + t) i).sub (hcoord t₀ i)).const_mul c)
+      (fun i => Measurable.of_eval fun s => ((hcoord (s : ℝ≥0) i).sub measurable_const).const_mul c)
       ?_ (fun i => hB.indepFun_coord_shift t₀ i)
     refine hB.indep.comp
       (fun (i : Fin d) (h : ℝ≥0 → ℝ) =>
         ((fun t : ℝ≥0 => c * (h (t₀ + t) - h t₀)),
           (fun s : Set.Iic t₀ => c * (h (s : ℝ≥0) - x i)))) (fun i => ?_)
     apply Measurable.prodMk
-    · refine measurable_pi_lambda _ fun t => ?_
+    · refine Measurable.of_eval fun t => ?_
       exact (((measurable_pi_apply (t₀ + t) : Measurable fun h : ℝ≥0 → ℝ => h (t₀ + t))).sub
         ((measurable_pi_apply t₀ : Measurable fun h : ℝ≥0 → ℝ => h t₀))).const_mul c
-    · refine measurable_pi_lambda _ fun s => ?_
+    · refine Measurable.of_eval fun s => ?_
       exact (((measurable_pi_apply ((s : Set.Iic t₀) : ℝ≥0) :
         Measurable fun h : ℝ≥0 → ℝ => h ((s : Set.Iic t₀) : ℝ≥0))).sub
           measurable_const).const_mul c
   have hφ : Measurable fun u : Fin d → (ℝ≥0 → ℝ) => (fun t : ℝ≥0 =>
       ((EuclideanSpace.equiv (Fin d) ℝ).symm (fun i => c⁻¹ * u i t) :
         EuclideanSpace ℝ (Fin d))) := by
-    refine measurable_pi_lambda _ fun t => ?_
+    refine Measurable.of_eval fun t => ?_
     refine ((EuclideanSpace.equiv (Fin d) ℝ).symm.continuous).measurable.comp ?_
-    refine measurable_pi_lambda _ fun i => ?_
+    refine Measurable.of_eval fun i => ?_
     exact (((measurable_pi_apply t : Measurable fun h : ℝ≥0 → ℝ => h t)).comp
       ((measurable_pi_apply i : Measurable fun u : Fin d → (ℝ≥0 → ℝ) => u i))).const_mul c⁻¹
   have hψ : Measurable fun v : Fin d → (Set.Iic t₀ → ℝ) => (fun s : Set.Iic t₀ =>
       ((EuclideanSpace.equiv (Fin d) ℝ).symm (fun i => c⁻¹ * v i s + x i) :
         EuclideanSpace ℝ (Fin d))) := by
-    refine measurable_pi_lambda _ fun s => ?_
+    refine Measurable.of_eval fun s => ?_
     refine ((EuclideanSpace.equiv (Fin d) ℝ).symm.continuous).measurable.comp ?_
-    refine measurable_pi_lambda _ fun i => ?_
+    refine Measurable.of_eval fun i => ?_
     exact ((((measurable_pi_apply s : Measurable fun h : Set.Iic t₀ → ℝ => h s)).comp
       ((measurable_pi_apply i : Measurable fun v : Fin d → (Set.Iic t₀ → ℝ) => v i))).const_mul
         c⁻¹).add_const _
@@ -140,7 +140,7 @@ theorem inter_eq_mem_filtration {m0 : MeasurableSpace Ω}
     hσ.measurableSet_eq_of_countable_range' hcount v
   have hset : {ω | σ ω = v} = {ω | ((σ ω : ℝ≥0) : ℝ≥0∞) = (v : ℝ≥0∞)} := by
     ext ω
-    simp only [Set.mem_setOf_eq, ENNReal.coe_inj]
+    simp only [Set.mem_ofPred_eq, ENNReal.coe_inj]
   rw [hset]
   exact (hσ.measurableSet_inter_eq_iff _ v).1 (hE.inter hv)
 
@@ -152,7 +152,7 @@ theorem IsBrownianSpace.restart_const {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
     {Γ : Set (ℝ≥0 → EuclideanSpace ℝ (Fin d))} (hΓ : MeasurableSet Γ) :
     P (A ∩ {ω | (fun t => B (v + t) ω - B v ω) ∈ Γ})
       = P A * P {ω | (fun t => B t ω - B 0 ω) ∈ Γ} := by
-  haveI := hB.isProbabilityMeasure
+  have := hB.isProbabilityMeasure
   have hmm : ∀ t, Measurable (B t) := fun t => (hm t).measurable
   have hind := (IndepFun_iff_Indep _ _ _).1 (hB.indepFun_shift hmm v)
   have hAc : MeasurableSet[MeasurableSpace.comap
@@ -163,9 +163,9 @@ theorem IsBrownianSpace.restart_const {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
       {ω | (fun t => B (v + t) ω - B v ω) ∈ Γ} := ⟨Γ, hΓ, rfl⟩
   have h1 := (Indep_iff _ _ _).1 hind _ _ hΓc hAc
   have hmshift : Measurable fun ω (t : ℝ≥0) => B (v + t) ω - B v ω :=
-    measurable_pi_lambda _ fun t => (hmm (v + t)).sub (hmm v)
+    Measurable.of_eval fun t => (hmm (v + t)).sub (hmm v)
   have hmshift0 : Measurable fun ω (t : ℝ≥0) => B t ω - B 0 ω :=
-    measurable_pi_lambda _ fun t => (hmm t).sub (hmm 0)
+    Measurable.of_eval fun t => (hmm t).sub (hmm 0)
   have h2 : P {ω | (fun t => B (v + t) ω - B v ω) ∈ Γ}
       = P {ω | (fun t => B t ω - B 0 ω) ∈ Γ} := by
     show P ((fun ω (t : ℝ≥0) => B (v + t) ω - B v ω) ⁻¹' Γ)
@@ -185,7 +185,7 @@ theorem IsBrownianSpace.restart_countable {d : ℕ} {x : EuclideanSpace ℝ (Fin
     {Γ : Set (ℝ≥0 → EuclideanSpace ℝ (Fin d))} (hΓ : MeasurableSet Γ) :
     P (E ∩ {ω | (fun t => B (σ ω + t) ω - B (σ ω) ω) ∈ Γ})
       = P E * P {ω | (fun t => B t ω - B 0 ω) ∈ Γ} := by
-  haveI := hB.isProbabilityMeasure
+  have := hB.isProbabilityMeasure
   classical
   have hmm : ∀ t, Measurable (B t) := fun t => (hm t).measurable
   have hRc : (Set.range σ).Countable := by
@@ -193,7 +193,7 @@ theorem IsBrownianSpace.restart_countable {d : ℕ} {x : EuclideanSpace ℝ (Fin
       (hcount.preimage ENNReal.coe_injective)
     rintro r ⟨ω, rfl⟩
     exact ⟨ω, rfl⟩
-  haveI : Countable ↥(Set.range σ) := hRc.to_subtype
+  have : Countable ↥(Set.range σ) := hRc.to_subtype
   set G : ↥(Set.range σ) → Set Ω := fun v => E ∩ {ω | σ ω = (v : ℝ≥0)} with hGdef
   set S : ↥(Set.range σ) → Set Ω :=
     fun v => {ω | (fun t => B ((v : ℝ≥0) + t) ω - B (v : ℝ≥0) ω) ∈ Γ} with hSdef
@@ -202,7 +202,7 @@ theorem IsBrownianSpace.restart_countable {d : ℕ} {x : EuclideanSpace ℝ (Fin
   have hGmeas : ∀ v, MeasurableSet (G v) :=
     fun v => (natFiltration B hm).le _ _ (hG𝔽 v)
   have hSmeas : ∀ v, MeasurableSet (S v) := fun v =>
-    (measurable_pi_lambda _ fun t => (hmm ((v : ℝ≥0) + t)).sub (hmm (v : ℝ≥0))) hΓ
+    (Measurable.of_eval fun t => (hmm ((v : ℝ≥0) + t)).sub (hmm (v : ℝ≥0))) hΓ
   have hdisjG : Pairwise (Function.onFun Disjoint G) := by
     intro v w hvw
     refine Set.disjoint_left.2 ?_
@@ -219,12 +219,12 @@ theorem IsBrownianSpace.restart_countable {d : ℕ} {x : EuclideanSpace ℝ (Fin
     · intro hω
       obtain ⟨v, ⟨hEω, hvω⟩, hΓω⟩ := Set.mem_iUnion.1 hω
       refine ⟨hEω, ?_⟩
-      simp only [Set.mem_setOf_eq] at hΓω ⊢
+      simp only [Set.mem_ofPred_eq] at hΓω ⊢
       rw [hvω]
       exact hΓω
   have hEunion : E = ⋃ v, G v := by
     ext ω
-    simp only [Set.mem_iUnion, hGdef, Set.mem_inter_iff, Set.mem_setOf_eq]
+    simp only [Set.mem_iUnion, hGdef, Set.mem_inter_iff, Set.mem_ofPred_eq]
     exact ⟨fun hEω => ⟨⟨σ ω, ω, rfl⟩, hEω, rfl⟩, fun ⟨_, hEω, _⟩ => hEω⟩
   rw [hunion, measure_iUnion hdisj (fun v => (hGmeas v).inter (hSmeas v))]
   have hterm : ∀ v, P (G v ∩ S v) = P (G v) * P {ω | (fun t => B t ω - B 0 ω) ∈ Γ} :=
@@ -255,7 +255,7 @@ theorem measurable_of_isStoppingTime {m0 : MeasurableSpace Ω} {𝔽 : Filtratio
   refine measurable_of_Iic (fun a => ?_)
   have h2 : ρ ⁻¹' Set.Iic a = {ω | ((ρ ω : ℝ≥0) : ℝ≥0∞) ≤ (a : ℝ≥0∞)} := by
     ext ω
-    simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_ofPred_eq]
     exact ENNReal.coe_le_coe.symm
   rw [h2]
   exact 𝔽.le a _ (hρ a)
@@ -267,7 +267,7 @@ theorem measurable_shift_apply {d : ℕ} {B : ℝ≥0 → Ω → EuclideanSpace 
     Measurable fun ω (t : ℝ≥0) => B (ρ ω + t) ω - B (ρ ω) ω := by
   have hjoint : StronglyMeasurable (Function.uncurry B) :=
     stronglyMeasurable_uncurry_of_continuous_of_stronglyMeasurable hcont hm
-  refine measurable_pi_lambda _ fun t => ?_
+  refine Measurable.of_eval fun t => ?_
   exact (hjoint.measurable.comp ((hρ.add measurable_const).prodMk measurable_id)).sub
     (hjoint.measurable.comp (hρ.prodMk measurable_id))
 
@@ -285,7 +285,7 @@ theorem IsBrownianSpace.map_shift_restrict_countable {d : ℕ} {x : EuclideanSpa
       = P E • Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P := by
   have hmm : ∀ t, Measurable (B t) := fun t => (hm t).measurable
   have hmshift0 : Measurable fun ω (t : ℝ≥0) => B t ω - B 0 ω :=
-    measurable_pi_lambda _ fun t => (hmm t).sub (hmm 0)
+    Measurable.of_eval fun t => (hmm t).sub (hmm 0)
   ext Γ hΓ
   rw [Measure.map_apply hmσ hΓ, Measure.restrict_apply (hmσ hΓ), Measure.smul_apply,
     Measure.map_apply hmshift0 hΓ, smul_eq_mul, Set.inter_comm]
@@ -306,12 +306,12 @@ theorem IsBrownianSpace.hasStrongMarkovRestart {d : ℕ} {x : EuclideanSpace ℝ
     HasStrongMarkovRestart B P (natFiltration B hm) where
   adapted := stronglyAdapted_natFiltration B hm
   restart := by
-    haveI := hB.isProbabilityMeasure
+    have := hB.isProbabilityMeasure
     intro τ hτ E hE Γ hΓ
     have hmm : ∀ t, Measurable (B t) := fun t => (hm t).measurable
     have hτm : Measurable τ := measurable_of_isStoppingTime hτ
     have hmshift0 : Measurable fun ω (t : ℝ≥0) => B t ω - B 0 ω :=
-      measurable_pi_lambda _ fun t => (hmm t).sub (hmm 0)
+      Measurable.of_eval fun t => (hmm t).sub (hmm 0)
     have hmshiftτ : Measurable fun ω (t : ℝ≥0) => B (τ ω + t) ω - B (τ ω) ω :=
       measurable_shift_apply hm hcont hτm
     have hσst : ∀ n : ℕ, IsStoppingTime (natFiltration B hm)
@@ -340,8 +340,8 @@ theorem IsBrownianSpace.hasStrongMarkovRestart {d : ℕ} {x : EuclideanSpace ℝ
         Set.preimage_univ, smul_eq_mul, measure_univ, mul_one]
     have hfinμ : μ Set.univ < ⊤ := by rw [hμuniv]; exact measure_lt_top _ _
     have hfinν : ν Set.univ < ⊤ := by rw [hνuniv]; exact measure_lt_top _ _
-    haveI : IsFiniteMeasure μ := ⟨hfinμ⟩
-    haveI : IsFiniteMeasure ν := ⟨hfinν⟩
+    have : IsFiniteMeasure μ := ⟨hfinμ⟩
+    have : IsFiniteMeasure ν := ⟨hfinν⟩
     have hμν : μ = ν := by
       refine ext_of_generate_finite _ generateFrom_measurableCylinders.symm
         isPiSystem_measurableCylinders ?_ (hμuniv.trans hνuniv.symm)
@@ -356,8 +356,8 @@ theorem IsBrownianSpace.hasStrongMarkovRestart {d : ℕ} {x : EuclideanSpace ℝ
         have hfin2 : (Measure.map J.restrict ν) Set.univ < ⊤ := by
           rw [Measure.map_apply hmr MeasurableSet.univ, Set.preimage_univ, hνuniv]
           exact measure_lt_top _ _
-        haveI : IsFiniteMeasure (Measure.map J.restrict μ) := ⟨hfin1⟩
-        haveI : IsFiniteMeasure (Measure.map J.restrict ν) := ⟨hfin2⟩
+        have : IsFiniteMeasure (Measure.map J.restrict μ) := ⟨hfin1⟩
+        have : IsFiniteMeasure (Measure.map J.restrict ν) := ⟨hfin2⟩
         refine ext_of_forall_integral_eq_of_IsFiniteMeasure fun f => ?_
         have hfm : Measurable (f : (∀ j : J, EuclideanSpace ℝ (Fin d)) → ℝ) :=
           f.continuous.measurable

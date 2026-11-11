@@ -117,7 +117,7 @@ theorem measure_ge_le_exp (hB : IsPreBrownianReal B P)
       = Real.exp ((T:ℝ) * lam ^ 2 / 2) := by
     have hm : ProbabilityTheory.mgf (B T) P lam
         = Real.exp (0 * lam + (T:ℝ) * lam ^ 2 / 2) :=
-      ProbabilityTheory.mgf_gaussianReal (hB.hasLaw_eval T).map_eq lam
+      ProbabilityTheory.mgf_gaussianReal (hB.hasLaw_eval T) lam
     have hm2 : ProbabilityTheory.mgf (B T) P lam
         = ∫ ω, Real.exp (lam * B T ω) ∂P := rfl
     rw [hm2] at hm
