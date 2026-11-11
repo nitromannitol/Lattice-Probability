@@ -2,27 +2,24 @@ import Mathlib
 import LatticeProb.LQG.LengthMetric
 
 /-!
-# Derived length-metric statements
+# Length-metric statements
 
 Two statements of the deterministic metric geometry of the γ-Liouville quantum gravity (LQG) metric, in the vocabulary of
-`LatticeProb/LQG/LengthMetric.lean`, each with the same binders, quantifiers and conclusion as its frozen source:
+`LatticeProb/LQG/LengthMetric.lean`, each with the same binders, quantifiers and conclusion as in its source:
 
 * `weylScaledEuclidean_derived`: the Weyl scaling `e^{ξ f} · D` of a Euclidean length metric `D` by a continuous
-  compactly supported `f` is a Euclidean length metric (Gwynne-Miller, arXiv:1905.00383, (1.7)-(1.8); the LP form of
-  `HarmonicBalls.WeylScaledEuclideanFrozen`, `HarmonicBalls/FirstPass/Frozen/S11g.lean`).
+  compactly supported `f` is a Euclidean length metric (Gwynne-Miller, arXiv:1905.00383, (1.7)-(1.8)).
 * `internalMetricClosedEqIInfThickening_derived`: for a closed set `C` and `x, y ∈ C`, the internal metric of `C` is the
-  infimum over `n` of the suprema over `k` of the internal metrics of `thickening ((k+1)⁻¹) (C ∩ closedBall 0 (n+1))`
-  (the LP form of `HarmonicBalls.InternalMetricClosedEqIInfThickeningFrozen`, `HarmonicBalls/FirstPass/Frozen/S11g.lean`).
+  infimum over `n` of the suprema over `k` of the internal metrics of `thickening ((k+1)⁻¹) (C ∩ closedBall 0 (n+1))`.
 
 Both statements are proved with no hypothesis added. The proofs use the arc-length reparametrization of a curve by its
 `D`-length (Burago-Burago-Ivanov length structures), the comparison bounds of the Weyl scaling, and concatenation and
 reversal of curves.
 
-Provenance (HarmonicBalls repository, branch main): the arc-length and Weyl comparison lemmas of
-`LatticeProb/LQG/WeylInternalClosed.lean` (provenance recorded there) are copied here, and so are the lemmas of
-`HarmonicBalls/Steps/Sec11/WeylLocalEdges.lean`, `WeylPathReverse.lean`, `WeylPathConcatenation.lean`,
-`WeylPathSegments.lean`, and the proofs of `HarmonicBalls/FirstPass/Phase2/WeylScaledEuclideanDerived.lean` and
-`InternalMetricClosedDerived.lean`, with namespace `LatticeProb.LQG`. The file imports only Mathlib and
+Provenance: the arc-length and Weyl comparison lemmas of `LatticeProb/LQG/WeylInternalClosed.lean` (provenance recorded
+there) are adapted here, together with the auxiliary path lemmas and the proofs of the Weyl scaling and of the internal
+metric of closed sets in the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity,
+arXiv:2208.11795], with namespace `LatticeProb.LQG`. The file imports only Mathlib and
 `LatticeProb.LQG.LengthMetric`. `LatticeProb/LQG/WeylInternalClosed.lean` imports this file and uses its declarations
 so the two modules can be imported together.
 -/
@@ -1420,7 +1417,7 @@ theorem internalMetric_closed_eq_iInf_sup {D : ℂ → ℂ → ℝ} (hD : IsEucl
     exact Metric.mem_closedBall.mpr (by linarith)
 end InternalMetricClosedDerived
 
-/-- **Derived**: the LP form of `HarmonicBalls.WeylScaledEuclideanFrozen` (`FirstPass/Frozen/S11g.lean`). The Weyl scaling
+/-- **Weyl scaling of a Euclidean length metric.** The Weyl scaling
 `e^{ξ f} · D` of a Euclidean length metric `D` by a continuous compactly supported `f` is a Euclidean length metric. No
 hypothesis is added. -/
 theorem weylScaledEuclidean_derived :
@@ -1510,8 +1507,7 @@ theorem weylScaledEuclidean_derived :
           _ = ε := hexp
   exact hEmetric
 
-/-- **Derived**: the LP form of `HarmonicBalls.InternalMetricClosedEqIInfThickeningFrozen`
-(`FirstPass/Frozen/S11g.lean`). For a Euclidean length metric `D`, a closed set `C` and `x, y ∈ C`, the internal metric of
+/-- **Internal metric of a closed set.** For a Euclidean length metric `D`, a closed set `C` and `x, y ∈ C`, the internal metric of
 `C` is the infimum over `n` of the suprema over `k` of the internal metrics of the thickenings of `C ∩ closedBall 0 (n+1)`.
 No hypothesis is added. -/
 theorem internalMetricClosedEqIInfThickening_derived :

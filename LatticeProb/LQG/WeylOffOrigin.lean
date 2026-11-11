@@ -3,18 +3,17 @@ import LatticeProb.Gauss.GFF
 import LatticeProb.LQG.LQGMeasure
 import LatticeProb.LQG.LQGMeasureDerived
 
-/-! # The Weyl relation off the origin: LP form
+/-! # The Weyl relation off the origin
 
-LP form of the frozen statement `LocalLQGInsertionWeylOffOrigin` (`HarmonicBalls/FirstPass/Frozen/S8c.lean:85`):
-same binders, quantifiers and conclusion, stated for the LP definitions `IsWholePlaneGFF`
+The statement `LocalLQGInsertionWeylOffOrigin` has the same binders, quantifiers and conclusion as the source. It is stated for the LP definitions `IsWholePlaneGFF`
 (`LatticeProb/Gauss/GFF.lean`), `IsLQGMeasureOfField`, `IsLQGLimit`, `lqgApprox`, `dyadicScale`, `lqgQ`
 (`LatticeProb/LQG/LQGMeasure.lean`) and `ProfileDerived.dyadicScale_pos` (`LatticeProb/LQG/LQGMeasureDerived.lean`).
 
-Proof: the derivation of `localLQGInsertionWeylOffOrigin_derived` (`HarmonicBalls/FirstPass/S8c/WeylOffOriginDerived.lean`),
-copied in LP form. The Weyl factor and its test identity are copied from `HarmonicBalls/FirstPass/S11i/SingularWeyl.lean`
-(lines 30-163), the Radon identification from `HarmonicBalls/FirstPass/S8c/WeylOffOriginRadon.lean`. The Riesz-Markov
+Proof: the derivation of the Weyl relation off the origin, adapted from the Lean formalization accompanying
+[Harmonic balls in Liouville quantum gravity, arXiv:2208.11795], with the LP names. The Weyl factor and its test identity, and the
+Radon identification, are taken from the same source. The Riesz-Markov
 uniqueness step is Mathlib's `MeasureTheory.Measure.ext_of_integral_eq_on_compactlySupported`, the call that
-`HarmonicBalls/FirstPass/S8d/RadonUnique.lean` also makes (here `radonUniqueLP`). No new mathematics: the steps are the
+the uniqueness argument of the source also makes (here `radonUniqueLP`). No new mathematics: the steps are the
 vague limits of the circle-average approximations (Duplantier-Sheffield 2011, Prop. 1.1), the identity
 `h_ε(z) = h^ℂ_ε(z) - α₀ log|z|` for `ε < |z|` (Jensen's formula for `log ‖·‖` on circles about `z`), which makes the
 approximating densities differ by the Weyl factor `‖z‖^{-γα₀}` off the origin, and the Riesz-Markov uniqueness of
@@ -23,8 +22,7 @@ Radon measures on `ℂ`. The almost-sure joint continuity of the circle averages
 Duplantier-Sheffield, *Liouville quantum gravity and KPZ* (2011), and Berestycki-Powell, *Gaussian free field, Liouville
 quantum gravity and Gaussian multiplicative chaos*.
 
-The statement and the proof use no Harmonic-balls object. The bridge to `HarmonicBalls.LocalLQGInsertionWeylOffOrigin` is
-`HarmonicBalls/FirstPass/LPBridge/WeylOffOrigin.lean`.
+The statement and the proof use only the LP objects named above.
 -/
 
 open MeasureTheory Filter Topology Metric Set
@@ -36,7 +34,7 @@ universe u
 
 namespace LatticeProb.LQG.WeylOffOriginDerived
 
-/-! ## Weyl factor and test identity (from `FirstPass/S11i/SingularWeyl.lean`, LP form) -/
+/-! ## Weyl factor and test identity -/
 
 /-- The Weyl factor `w(z) = exp (-(γ α) · log ‖z‖)`: equal to `‖z‖ ^ (-γ α)` for `z ≠ 0` and `1` at `0`
 (Lean's convention `Real.log 0 = 0`). Write-up Step 12, identity (1). -/
@@ -97,10 +95,10 @@ lemma measurable_fieldCircleAverage {α : ℝ} {hc : ℝ → ℂ → ℝ} {r : �
   rw [heq]
   exact hm.sub (measurable_const.mul hL)
 
-/-- **Dyadic circle averages are almost surely measurable in the centre (derived).** Under `IsWholePlaneGFF`,
+/-- **Dyadic circle averages are almost surely measurable in the centre.** Under `IsWholePlaneGFF`,
 almost surely the circle averages are jointly continuous on `(0, ∞) × ℂ` (`IsWholePlaneGFF.ae_continuousOn_circle`,
 Duplantier-Sheffield 2011, Prop. 3.1). For each dyadic radius `2^{-k} > 0` the map `z ↦ hcirc ω (2^{-k}) z` is then
-continuous, hence measurable. This replaces the retired frozen input `CircleAverageVersionMeasurableStmt`. -/
+continuous, hence measurable. -/
 lemma ae_measurable_dyadic_circleAverage {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} (hGFF : IsWholePlaneGFF P hC hcirc) :
     ∀ᵐ ω ∂P, ∀ k : ℕ, Measurable (fun z : ℂ => hcirc ω (dyadicScale k) z) := by
@@ -183,7 +181,7 @@ theorem radonUniqueLP (m m' : Measure ℂ) (hm : IsLocallyFiniteMeasure m) (hm' 
   exact Measure.ext_of_integral_eq_on_compactlySupported
     (fun g => h (g : ℂ → ℝ) g.continuous g.hasCompactSupport)
 
-/-! ## Weyl change off the origin: Radon identification (from `FirstPass/S8c/WeylOffOriginRadon.lean`, LP form) -/
+/-! ## Weyl change off the origin: Radon identification -/
 
 /-- The measure `μ` weighted by the (possibly non-measurable at `0`) density `ofReal ∘ w`. -/
 noncomputable def withDensityOffOrigin (μ : Measure ℂ) (w : ℂ → ℝ) : Measure ℂ :=
@@ -507,7 +505,7 @@ theorem eq_withDensity_offOrigin_of_integral_eq {m μ : Measure ℂ} [IsLocallyF
         exact withDensity_apply _ hs
 
 
-/-! ## The almost-sure identity of integrals and the Weyl relation (from `FirstPass/S8c/WeylOffOriginDerived.lean`) -/
+/-! ## The almost-sure identity of integrals and the Weyl relation -/
 
 /-- Steps 1-4 of the derivation of the Weyl relation off the origin (Duplantier-Sheffield 2011, vague limits
 of the LQG approximations). Almost surely, for every continuous compactly supported `f : ℂ → ℝ` vanishing on a ball
@@ -565,7 +563,7 @@ theorem ae_integral_eq_rpow_of_isLQGMeasureOfField {Ω : Type*} [MeasurableSpace
     _ = ∫ z, f z * ‖z‖ ^ (γ * α₀) ∂(μ ω) :=
         integral_congr_ae (Eventually.of_forall fun z => (hpt z).symm)
 
-/-- LP form of `LocalLQGInsertionWeylOffOrigin` (`HarmonicBalls/FirstPass/Frozen/S8c.lean:85`), with the same binders,
+/-- The Weyl relation off the origin, with the same binders,
 quantifiers and conclusion, for the LP definitions `IsWholePlaneGFF`, `IsLQGMeasureOfField` and `lqgQ`.
 Almost surely, the no-insertion LQG measure `lam` of the whole-plane GFF satisfies `lam = |z|^{γ α₀} μ` on the complement
 of `0`, where `μ` is the LQG measure of insertion `α₀` (`h = h^ℂ - α₀ log|·|`, so `μ_h = |z|^{-γ α₀} μ_H` off `0`).
@@ -579,11 +577,11 @@ def LocalLQGInsertionWeylOffOriginLP : Prop :=
     ∀ᵐ ω ∂P, ∀ s : Set ℂ, MeasurableSet s → (0 : ℂ) ∉ s →
       lam ω s = ∫⁻ z in s, ENNReal.ofReal (‖z‖ ^ (γ * α₀)) ∂(μ ω)
 
-/-- **Weyl relation off the origin, hypothesis-free (derived).** `LocalLQGInsertionWeylOffOrigin`
-(`FirstPass/Frozen/S8c.lean`) holds with no hypotheses. Almost surely, the no-insertion measure `lam` of the
+/-- **Weyl relation off the origin, hypothesis-free.** `LocalLQGInsertionWeylOffOrigin`
+holds with no hypotheses. Almost surely, the no-insertion measure `lam` of the
 whole-plane GFF satisfies `lam = |z|^{γ α₀} μ` on the complement of `0`, where `μ` has insertion `α₀`. Steps 1-4 are
-`ae_integral_eq_rpow_of_isLQGMeasureOfField`; Steps 5-6 are `eq_withDensity_offOrigin_of_integral_eq`
-(`FirstPass/S8c/WeylOffOriginRadon.lean`), applied for each ω in the common conull set (Step 7). -/
+`ae_integral_eq_rpow_of_isLQGMeasureOfField`; Steps 5-6 are `eq_withDensity_offOrigin_of_integral_eq`,
+applied for each ω in the common conull set (Step 7). -/
 theorem localLQGInsertionWeylOffOrigin_lp : LocalLQGInsertionWeylOffOriginLP.{u} := by
   intro Ω _ P _ γ α₀ _hC hcirc μ lam hGFF _hγ0 _hγ2 _hα hμ hlam
   have hμ' : ∀ᵐ ω ∂P, IsLQGLimit γ (fieldCircleAverage α₀ (hcirc ω)) (μ ω) := hμ

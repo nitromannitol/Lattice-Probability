@@ -9,9 +9,9 @@ import LatticeProb.LQG.LQGMetric
 `IsLQGMetric` (`LatticeProb/LQG/LQGMetric.lean`) quantifies its probability spaces over `Type` only. This file transports the
 axioms I-IV to a sample space in an arbitrary universe `Type u`, with no hypothesis beyond `IsLQGMetric`:
 
-* `LQGMetricSatisfiesAxiomsUnivLP`: LP form of `LQGMetricSatisfiesAxiomsUnivFrozen` (`FirstPass/Frozen/S11g.lean:31`),
-  proved as `lqgMetricSatisfiesAxiomsUniv`.
-* `LQGMetricLengthUnivLP`: LP form of `LQGMetricLengthUnivFrozen` (`FirstPass/Frozen/S11j.lean:133`), proved as
+* `LQGMetricSatisfiesAxiomsUnivLP`: the axioms I-IV of the γ-LQG metric in universe-transported form, proved as
+  `lqgMetricSatisfiesAxiomsUniv`.
+* `LQGMetricLengthUnivLP`: the γ-LQG metric is a length metric, in universe-transported form, proved as
   `lqgMetricLengthUniv`.
 
 Route (Duplantier-Sheffield circle process; Gwynne-Miller 2021, Section 1.2): a whole-plane GFF `hC` with a random
@@ -20,9 +20,9 @@ Type-0 sample space `UnivSample = CircleSample × ContShift`. The pushed-forward
 `IsLQGMetric` apply there, and each clause is pulled back along the sample map by `ae_of_ae_map`. The sample field is
 `addFunPairing (hC ω) (f ω)` exactly, so no pairing is changed.
 
-Copied (mechanical LP ports, with the LP names of `LatticeProb/Gauss/GFF.lean`, `LatticeProb/LQG/LQGMetric.lean` and
-`LatticeProb/LQG/LengthMetric.lean` reused, not redefined) from `FirstPass/S11aa.lean` (lines 28-107, 170-206, 252-258) and
-`FirstPass/Phase2/AxiomsUnivDerived.lean` (lines 37-203) and `FirstPass/Phase2/LengthUnivDerived.lean` (lines 19-39).
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]
+(mechanical ports, with the LP names of `LatticeProb/Gauss/GFF.lean`, `LatticeProb/LQG/LQGMetric.lean` and
+`LatticeProb/LQG/LengthMetric.lean` reused, not redefined).
 -/
 
 open MeasureTheory ProbabilityTheory Filter Set
@@ -291,7 +291,7 @@ lemma measurable_univSample_pairing {Ω : Type*} [MeasurableSpace Ω] {hC : Ω �
 
 /-! ### The LP universe-transport statements -/
 
-/-- **LP form of `LQGMetricSatisfiesAxiomsUnivFrozen`** (`FirstPass/Frozen/S11g.lean:31`): for every γ-LQG metric `𝔇` with
+/-- **Universal form of the LQG metric axioms (I-IV).** For every γ-LQG metric `𝔇` with
 Weyl exponent `ξ` (`IsLQGMetric`), every whole-plane GFF `hC` on a probability space in `Type u` with a random continuous
 shift `f`, the metric of `hC ω + f ω` satisfies the axioms I-IV (`SatisfiesLQGMetricAxioms`). -/
 def LQGMetricSatisfiesAxiomsUnivLP : Prop :=
@@ -301,7 +301,7 @@ def LQGMetricSatisfiesAxiomsUnivLP : Prop :=
     (∀ x, Measurable fun ω => f ω x) →
     SatisfiesLQGMetricAxioms P γ ξ 𝔇 (fun ω => addFunPairing (hC ω) (f ω))
 
-/-- **LP form of `LQGMetricLengthUnivFrozen`** (`FirstPass/Frozen/S11j.lean:133`): for every γ-LQG metric
+/-- **Universal form of the length property of the LQG metric.** For every γ-LQG metric
 `𝔇` with Weyl exponent `ξ` and every whole-plane GFF `hC` on a probability space in `Type u`, almost surely `𝔇 (hC ω)` is a
 Euclidean length metric (`IsEuclideanLengthMetric`). -/
 def LQGMetricLengthUnivLP : Prop :=

@@ -11,11 +11,9 @@ Gaussian free field or the LQG measure: the `D`-length of a curve and of a path,
 A metric is a function `D : ℂ → ℂ → ℝ`, as in the source definitions; the length metric axioms are the structure
 `IsEuclideanLengthMetric`. The random part (the LQG metric of a field, `IsLQGMetric`, `IsLQGMetricOfField`) is not here.
 
-Provenance (HarmonicBalls repository, branch main): `curveLength`, `pathLength`, `internalMetric`,
-`IsEuclideanLengthMetric`, `IsLengthParametrized`, `weylScaling` are copies of `HarmonicBalls/Defs/LQGMetric.lean`;
-`internalDiam` is a copy of `HarmonicBalls/Draft/Section11.lean`; `weylShiftPair` is a copy of
-`HarmonicBalls/FirstPass/Frozen/S11c.lean`. Each copy has the same body as its source. Bridge theorems relating the two
-copies are in `HarmonicBalls/FirstPass/LPBridge/M5a.lean`.
+Provenance: the definitions `curveLength`, `pathLength`, `internalMetric`, `IsEuclideanLengthMetric`,
+`IsLengthParametrized`, `weylScaling`, `internalDiam` and `weylShiftPair` are adapted from the Lean formalization
+accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]. Each has the same body as in the source.
 
 Terminology: the length of a curve is the supremum of inscribed sums, as in the length structures of Burago-Burago-Ivanov;
 the internal metric of a set is the infimum of lengths of paths in the set; the Weyl scaling is the one of Gwynne-Miller

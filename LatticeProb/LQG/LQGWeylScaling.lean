@@ -4,17 +4,15 @@ import LatticeProb.LQG.LQGMeasure
 import LatticeProb.LQG.LQGMeasureDerived
 import LatticeProb.LQG.MassFunctional
 
-/-! # Weyl scaling of the γ-LQG measure: LP form
+/-! # Weyl scaling of the γ-LQG measure
 
-LP form of the Proposed statement `LQGMeasureWeylScaling` (`HarmonicBalls/Proposed/LQG.lean:107`, Fact 2.1 III of
-arXiv:2208.11795, p. 9): almost surely, `e^{γ f} · μ_h = μ_{h+f}` for every continuous `f : ℂ → ℝ`, where `μ_{h+f}` is
+Fact 2.1 III of [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795], p. 9: almost surely, `e^{γ f} · μ_h = μ_{h+f}` for every continuous `f : ℂ → ℝ`, where `μ_{h+f}` is
 the vague limit of `ε^{γ²/2} e^{γ (h+f)_ε(z)} dz` along `ε = 2^{-k}`. The statement is the same expression, stated for
 the LP definitions `IsWholePlaneGFF`, `IsLQGMeasureOfField`, `IsLQGLimit`, `addCircleAverage`, `fieldCircleAverage`
 and `lqgQ`.
 
-Proof: the derivation `lqgMeasureWeylScaling` of `HarmonicBalls/Proofs/Sec6/LQGWeylScaling.lean`, copied in LP form
-with its vague-convergence helpers (`HarmonicBalls/Proofs/Sec6/VagueUniformTests.lean`,
-`HarmonicBalls/Proofs/Sec6/ContinuousWeylCircleAverage.lean`, `HarmonicBalls/Proofs/Sec8/VagueMassConvergence.lean`).
+Proof: adapted from the derivation `lqgMeasureWeylScaling` in the Lean formalization accompanying
+[Harmonic balls in Liouville quantum gravity, arXiv:2208.11795], with its vague-convergence helpers.
 The argument is deterministic once the circle averages are continuous at the dyadic radii: the exponential weight
 `e^{γ f_ε}` converges to `e^{γ f}` uniformly on compact sets (Duplantier-Sheffield 2011, Prop. 1.1; Berestycki-Powell),
 and the vague convergence of the regularized measures passes to the weighted limit. No new mathematics and no new input;
@@ -30,8 +28,7 @@ open LatticeProb.Gauss.Section6 (continuous_circleAverage_radius_center)
 
 namespace LatticeProb.LQG.LQGWeylScalingDerived
 
-/-! ## Vague convergence with uniform test functions (copied from `VagueMassConvergence`, `ContinuousWeylCircleAverage`,
-`VagueUniformTests`, LP names) -/
+/-! ## Vague convergence with uniform test functions -/
 
 /-- Vague convergence of locally finite measures gives the upper
 portmanteau bound on compact sets. -/
@@ -161,7 +158,7 @@ theorem tendsto_integral_of_uniformOn_compact
   funext n
   rw [integral_sub (hgi n) (hf.integrable_of_hasCompactSupport hfc), sub_add_cancel]
 
-/-! ## Weyl scaling of the regularized measures (copied from `Proofs/Sec6/LQGWeylScaling.lean`, LP names) -/
+/-! ## Weyl scaling of the regularized measures -/
 
 /-- The regularized measure of a perturbed field is the original regularized
 measure weighted by the exponential of the perturbation's circle average. -/
@@ -283,7 +280,7 @@ theorem ae_continuous_fieldCircleAverage_of_isWholePlaneGFF {Ω : Type*} [Measur
   unfold fieldCircleAverage
   exact hc.sub (continuous_const.mul (continuous_circleAverage_log_norm hr))
 
-/-- **Fact 2.1 III (Weyl scaling), LP form** (`HarmonicBalls/Proposed/LQG.lean:107`). For a whole-plane GFF `hC`, `hcirc`
+/-- **Fact 2.1 III (Weyl scaling).** For a whole-plane GFF `hC`, `hcirc`
 and a γ-LQG measure `μ` of `h^ℂ - α₀ log|·|` (`IsLQGMeasureOfField`), almost surely, for every continuous `f : ℂ → ℝ`,
 the LQG measure of `h + f` (the vague limit with circle averages `addCircleAverage`) is `e^{γ f} · μ`
 (`IsLQGLimit`). Intended for `0 < γ < 2` and `α₀ < lqgQ γ`. Source: Duplantier-Sheffield 2011, Prop. 1.1;
@@ -295,7 +292,7 @@ def LQGMeasureWeylScalingLP {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (
       IsLQGLimit γ (addCircleAverage (fieldCircleAverage α₀ (hcirc ω)) f)
         ((μ ω).withDensity fun x => ENNReal.ofReal (Real.exp (γ * f x)))
 
-/-- The LP form of the Weyl scaling statement `LQGMeasureWeylScalingLP` holds with no hypotheses on the field.
+/-- The Weyl scaling statement `LQGMeasureWeylScalingLP` holds with no hypotheses on the field.
 Proof: the almost-sure continuity at the dyadic radii, then `isLQGLimit_addCircleAverage` for each `ω`. -/
 theorem lqgMeasureWeylScaling_lp {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (γ α₀ : ℝ)
     (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) : LQGMeasureWeylScalingLP P γ α₀ hC hcirc := by

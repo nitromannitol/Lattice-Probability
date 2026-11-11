@@ -2,24 +2,25 @@ import Mathlib
 import LatticeProb.LQG.LengthMetric
 
 /-!
-# Joint continuity of the internal metric of a Euclidean length metric (LQG metric; support for `LQGInternalDiamInnerMeasurableFrozen`)
+# Joint continuity of the internal metric of a Euclidean length metric
 
-deterministic half. Ports into `LatticeProb.LQG` the
-metric-geometry lemmas that the HB proof of `lqgInternalDiamInnerMeasurable_derived`
-(`FirstPass/Phase2/InnerMeasurableDerived.lean:78`) takes from `Steps/Sec11`:
+Deterministic half of the measurability argument for the inner LQG metric. It ports into `LatticeProb.LQG` the
+metric-geometry lemmas used in the proof of the measurability of the inner internal diameter
+(`LatticeProb/LQG/LQGMetricMeasurable2.lean`):
 
-* `IsEuclideanLengthMetric.continuous_left` (`Steps/Sec11/PinchInequalities.lean:18`);
-* `IsEuclideanLengthMetric.exists_pathLength_lt`, `ofReal_two_segment_le_pathLength` (`Steps/Sec11/ApproximatePaths.lean:17,29`);
+* `IsEuclideanLengthMetric.continuous_left`;
+* `IsEuclideanLengthMetric.exists_pathLength_lt`, `ofReal_two_segment_le_pathLength`;
 * `IsEuclideanLengthMetric.pathLength_symm`, `pathLength_trans_le`, `internalMetric_symm`, `internalMetric_triangle`
-  (`Steps/Sec11/InternalMetricPaths.lean`), with the variation lemmas `eVariationOn_unitInterval_reverse`, `eVariationOn_concat_le`;
+  with the variation lemmas `eVariationOn_unitInterval_reverse`, `eVariationOn_concat_le`;
 * `IsEuclideanLengthMetric.internalMetric_eq_of_near`, `continuousAt_internalMetric_self`
-  (`Steps/Sec11/InternalMetricNear.lean`, with `path_stays_in_open_of_short`, `eventually_internalMetric_eq`);
+  (with `path_stays_in_open_of_short`, `eventually_internalMetric_eq`);
 * `IsEuclideanLengthMetric.internalMetric_self_of_mem_open`, `continuousAt_internalMetric`, `continuousOn_internalMetric`,
-  `continuousAt_internalMetric_pair`, `continuousOn_internalMetric_pair` (`Steps/Sec11/InternalMetricContinuity.lean`).
+  `continuousAt_internalMetric_pair`, `continuousOn_internalMetric_pair`.
 
-The statements and proofs are those of the HB sources with the namespace changed to `LatticeProb.LQG`; the definitions
-(`pathLength`, `internalMetric`, `IsEuclideanLengthMetric`) are the LP copies of `LatticeProb/LQG/LengthMetric.lean`, with the same
-bodies as the HB copies in `HarmonicBalls/Defs/LQGMetric.lean`. Only Mathlib and `LatticeProb/LQG/LengthMetric.lean` are imported.
+The statements and proofs are adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum
+gravity, arXiv:2208.11795], with the namespace changed to `LatticeProb.LQG`; the definitions (`pathLength`, `internalMetric`,
+`IsEuclideanLengthMetric`) are those of `LatticeProb/LQG/LengthMetric.lean`, with the same bodies as in the source. Only Mathlib
+and `LatticeProb/LQG/LengthMetric.lean` are imported.
 Terminology: length metric, internal metric and internal distance as in Burago-Burago-Ivanov and Armstrong-Kuusi-Mourrat.
 -/
 
@@ -28,8 +29,8 @@ namespace LatticeProb.LQG
 open MeasureTheory Metric Set Filter Topology
 open scoped ENNReal NNReal
 
-/-- The internal metric decreases when the set grows: `D(z, w; V) ≤ D(z, w; U)` for `U ⊆ V`. Copy of
-`HarmonicBalls/Defs/LQGMetric.lean:216` (`internalMetric_anti`). -/
+/-- The internal metric decreases when the set grows: `D(z, w; V) ≤ D(z, w; U)` for `U ⊆ V`. Adapted from the
+source of [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]. -/
 theorem internalMetric_anti (D : ℂ → ℂ → ℝ) {U V : Set ℂ} (hUV : U ⊆ V) (z w : ℂ) :
     internalMetric D V z w ≤ internalMetric D U z w :=
   iInf_mono fun _ => iInf_mono' fun hP => ⟨fun t => hUV (hP t), le_rfl⟩

@@ -5,8 +5,9 @@ import LatticeProb.Gauss.CircleAverageApprox2
 
 /-! # Measurability of the γ-LQG mass of a closed set as a functional of the field
 
-LP form of the statement `LQGMassFunctionalMeasurableFrozen` (`HarmonicBalls/FirstPass/Frozen/S11d.lean:155`):
-same binders, quantifiers and conclusion, stated for the LP definitions of `LatticeProb/Gauss/GFF.lean`
+Statement: the measurability of the γ-LQG mass of a closed set as a functional of the field (the literature input of
+Duplantier-Sheffield 2011 and Fact 2.1 of [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]), with the same
+binders, quantifiers and conclusion, stated for the LP definitions of `LatticeProb/Gauss/GFF.lean`
 (`IsWholePlaneGFF`, `addFunPairing`, `distributionMeasurableSpace`, `LatticeProb.Gauss`) and
 `LatticeProb/LQG/LQGMeasure.lean` (`lqgQ`, `IsLQGMeasureOfField`, `LatticeProb.LQG`).
 
@@ -16,7 +17,7 @@ Proposition 1.1). The proof is a mechanical LP transcription of the decoder argu
 many circle averages, the envelope, dyadic approximating measures and Radon identities for open and closed sets). The a.s.
 convergence of the explicit annular approximants is `LatticeProb.Gauss.ae_tendsto_circleApprox`
 (`LatticeProb/Gauss/CircleAverageApprox2.lean`); the continuity of circle averages is in `LatticeProb.Gauss.Section6`
-below (transcribed from `Proofs/Sec6/ContinuousWeylCircleAverage.lean`).
+below (adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]).
 -/
 
 noncomputable section
@@ -59,11 +60,11 @@ end LatticeProb.Gauss.Section6
 
 namespace LatticeProb.LQG.MassFunctionalDerived
 
-/-- The LP form of `LQGMassFunctionalMeasurableFrozen` (`FirstPass/Frozen/S11d.lean:155`). For a whole-plane GFF
+/-- The measurability of the γ-LQG mass of a closed set as a functional of the field. For a whole-plane GFF
 `hC` with circle averages `hcirc` and a γ-LQG measure `μ` of `h^ℂ - α₀ log|·|` (`IsLQGMeasureOfField`), and a closed
 set `S`, there is a `distributionMeasurableSpace`-measurable functional `F` on distributions such that
 `F (h^ℂ + f) = μ(S)` almost surely, for every continuous `f` vanishing on `S`. Intended for `0 < γ < 2` and
-`α₀ < lqgQ γ`; the hypotheses are the ones of the HB frozen statement. -/
+`α₀ < lqgQ γ`; the hypotheses are the ones of the source statement. -/
 def LQGMassFunctionalMeasurableLP : Prop :=
   ∀ (γ α₀ : ℝ) (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
     (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) (μ : Ω → Measure ℂ),
@@ -72,7 +73,7 @@ def LQGMassFunctionalMeasurableLP : Prop :=
       ∀ f : ℂ → ℝ, Continuous f → (∀ x ∈ S, f x = 0) →
         ∀ᵐ ω ∂P, F (addFunPairing (hC ω) f) = μ ω S
 
-/-- The dyadic scales `2^{-k}` are positive (LP form; the same fact is `dyadicScale_pos` in `LQGMeasureDerived`). -/
+/-- The dyadic scales `2^{-k}` are positive (the same fact is `dyadicScale_pos` in `LatticeProb/LQG/LQGMeasureDerived.lean`). -/
 theorem dyadicScale_pos (k : ℕ) : 0 < dyadicScale k := pow_pos (by norm_num) k
 
 open MeasureTheory Filter Topology Set Metric
@@ -664,7 +665,7 @@ theorem tendsto_lintegral_shift {γ : ℝ} {hε : ℝ → ℂ → ℝ} {μ : Mea
   simp only [e1]
   exact ENNReal.tendsto_ofReal hreal
 
-/-! ### The mass identity on the good event, and the derived input -/
+/-! ### The mass identity on the good event, and the auxiliary input -/
 
 /-- On the good event, the decoder of `T + f` (`f` continuous, `f = 0` on the closed set `S`) is the mass of `S`.
 The approximating densities of the shifted field are those of the field times `e^{γ · circleAverage f}`
@@ -754,7 +755,7 @@ theorem massDecoder_addFun_eq {q : ℕ → ℝ × ℂ} (hq : ∀ m, 0 < (q m).1)
 
 /-- **Derivation of `LQGMassFunctionalMeasurableLP`** Decoder: `massDecoder` built from countably many circle averages
 (a dense sequence `q`), the envelope, the dyadic approximating measures, and Radon identities for open and closed sets.
-No hypothesis is added: the statement is the frozen def, as typed. -/
+No hypothesis is added: the statement is the def, as typed. -/
 theorem lqgMassFunctionalMeasurable_lp : LQGMassFunctionalMeasurableLP.{u} := by
   intro γ α₀ Ω _ P _ hC hcirc μ hGFF _ _ _ hμ S hS
   have hμ' : ∀ᵐ ω ∂P, IsLQGLimit γ (fieldCircleAverage α₀ (hcirc ω)) (μ ω) := hμ

@@ -12,12 +12,10 @@ proves it with no hypothesis added. The argument: a path in `U` is reparametrize
 each sub-arc is a competitor in the infimum defining `weylScaling`, with weighted cost at most `e^B` times its length;
 telescoping over a partition bounds the `E`-length of the path. The proof uses only that the path lies in `U`.
 
-Provenance (HarmonicBalls repository, branch main, commit da14a3bf): the arclength reparametrization lemmas are adapted from
-`HarmonicBalls/Steps/Sec11/ArcLengthInterval.lean` (lines 14-81), `WeylPathConcatenation.lean` (14-62), `WeylPathSegments.lean` (14-36), `WeylPathReverse.lean`
-(14-68), `MetricArcLength.lean` (11-100) and `CurveLengthReparam.lean` (10-110), with the namespace changed to
-`LatticeProb.LQG` and the imports changed to Mathlib and `LatticeProb.LQG.LengthMetric`. The Weyl comparison
-lemmas are from `HarmonicBalls/FirstPass/Phase2/WeylInternalClosedDerived.lean`. The arclength and curve-length lemmas
-they use are the `LatticeProb.LQG` declarations of `LatticeProb/LQG/LengthMetricDerived.lean`, imported here
+Provenance: the arclength reparametrization lemmas are adapted from the Lean formalization accompanying
+[Harmonic balls in Liouville quantum gravity, arXiv:2208.11795], with the namespace changed to `LatticeProb.LQG` and the
+imports changed to Mathlib and `LatticeProb.LQG.LengthMetric`. The Weyl comparison lemmas are adapted from the same
+source. The arclength and curve-length lemmas they use are the `LatticeProb.LQG` declarations of `LatticeProb/LQG/LengthMetricDerived.lean`, imported here
 -/
 
 namespace LatticeProb.LQG
@@ -33,7 +31,7 @@ def WeylInternalClosed : Prop :=
     (∀ x y, 0 ≤ E x y) → (∀ x y, ENNReal.ofReal (E x y) = weylScaling D ξ f x y) → IsClosed U →
     (∀ z ∈ U, ξ * f z ≤ B) → ∀ x y, internalMetric E U x y ≤ ENNReal.ofReal (Real.exp B) * internalMetric D U x y
 
-/-- **Derived**: the closed-set Weyl comparison `WeylInternalClosed` holds, with no hypothesis added. -/
+/-- **Closed-set Weyl comparison.** The statement `WeylInternalClosed` holds, with no hypothesis added. -/
 theorem weylInternalClosed_derived : WeylInternalClosed := by
   intro D E ξ B f U hD _hEnn hscale _hclosed hweight x y
   have hc0 : ENNReal.ofReal (Real.exp B) ≠ 0 := (ENNReal.ofReal_pos.mpr (Real.exp_pos B)).ne'

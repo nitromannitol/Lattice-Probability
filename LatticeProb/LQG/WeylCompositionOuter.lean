@@ -5,11 +5,11 @@ import LatticeProb.LQG.LengthMetricDerived
 /-!
 # Weyl composition for the outer scaling, LP
 
-LP copy, in the names of `LatticeProb.LQG`, of the auxiliary Weyl-scaling lemmas used by the row-56 derivation
+LP copy, in the names of `LatticeProb.LQG`, of the auxiliary Weyl-scaling lemmas used by the derivation
 `LatticeProb.LQG.weylMetricCompositionContinuousOuter_lp` (`LatticeProb/LQG/WeylCompositionOuter2.lean`): the inner distance
 `innerDist` of a length metric and a weight, its topology (`weylScaling_nhds`), the exit-time, chain and iterated-scaling
-lemmas, ending with `weylScaling_le_iterated`. Ported from `HarmonicBalls/FirstPass/Phase2/WeylCompositionOuterDerived.lean`
-lines 32-707 with the namespace changed and the statements unchanged. The Euclidean length metric lemmas already in
+lemmas, ending with `weylScaling_le_iterated`. Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+with the namespace changed and the statements unchanged. The Euclidean length metric lemmas already in
 `LatticeProb/LQG/LengthMetric.lean` and `LatticeProb/LQG/LengthMetricDerived.lean` are imported, not copied.
 -/
 

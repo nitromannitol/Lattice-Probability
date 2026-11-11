@@ -2,15 +2,14 @@ import Mathlib
 import LatticeProb.LQG.LQGMeasureLocality2
 
 /-!
-# Inner measurability of the LQG mass (`LQGMassInnerMeasurableFrozen`)
+# Inner measurability of the LQG mass
 
 .
 
-* `LatticeProb.LQG.fieldSigmaAlgebra_mono_of_subset`: `σ(h|_U) ≤ σ(h|_O)` for `U ⊆ O` (LP form of
-  `HarmonicBalls.fieldSigmaAlgebra_mono_of_subset`, `FirstPass/Phase2/InnerMeasurableDerived.lean:29`).
-* `LatticeProb.LQG.lqgMassInnerMeasurable_of_gff`: LP form of `LQGMassInnerMeasurableFrozen`
-  (`FirstPass/Frozen/S11k.lean:66`; HB proof `lqgMassInnerMeasurable_derived`, `FirstPass/Phase2/InnerMeasurableDerived.lean:39`).
-  The locality input is the unconditional LP locality `lqgLocality_of_gff` (`LatticeProb/LQG/LQGMeasureLocality2.lean`).
+* `LatticeProb.LQG.fieldSigmaAlgebra_mono_of_subset`: `σ(h|_U) ≤ σ(h|_O)` for `U ⊆ O`.
+* `LatticeProb.LQG.lqgMassInnerMeasurable_of_gff`: measurability of the inner LQG mass, which follows from the locality
+  of the LQG measure (Fact 2.1 II of [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]).
+  The locality input is the unconditional locality `lqgLocality_of_gff` (`LatticeProb/LQG/LQGMeasureLocality2.lean`).
 -/
 
 open MeasureTheory ProbabilityTheory Filter Set Metric Topology
@@ -27,7 +26,7 @@ theorem fieldSigmaAlgebra_mono_of_subset {Ω : Type*} (α₀ : ℝ) (hC : Ω →
   obtain ⟨h1, h2, h3⟩ := hφ
   exact le_iSup₂_of_le φ (show IsTestFunction O φ from ⟨h1, h2, h3.trans hUO⟩) le_rfl
 
-/-- **Inner measurability of the LQG mass (LP form of `LQGMassInnerMeasurableFrozen`).** For an open `O`
+/-- **Inner measurability of the LQG mass.** For an open `O`
 containing the closure of a bounded open `U`, the mass `μ ω U` is a.s. equal to a `σ(h|_O)`-measurable variable: it is
 `σ(h|_U)`-measurable by the unconditional locality `lqgLocality_of_gff`, and `σ(h|_U) ≤ σ(h|_O)`. -/
 theorem lqgMassInnerMeasurable_of_gff {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]

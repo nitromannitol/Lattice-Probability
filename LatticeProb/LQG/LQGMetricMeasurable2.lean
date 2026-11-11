@@ -6,18 +6,16 @@ import LatticeProb.LQG.LQGMetricMeasurable
 /-!
 # Inner measurability of the LQG metric (PointwiseAE and internal diameter)
 
-second half. LP forms of the two HB frozen Props
-that the HB proofs derive from the single literature input `LQGMetricFieldAxioms` (Fact 2.2 I-II):
+second half of the measurability argument. The two statements below are derived from the single literature input
+`LQGMetricFieldAxioms` (Fact 2.2 I-II):
 
-* `LatticeProb.LQG.LQGMetricPointwiseAEMeasurableLP`: LP form of `LQGMetricPointwiseAEMeasurableFrozen`
-  (`HarmonicBalls/FirstPass/Frozen/S11e.lean:27`), with the same binders and conclusion;
-  proof `lqgMetricPointwiseAEMeasurable_lp`, copied from `HarmonicBalls/FirstPass/Phase2/SquareMeasurableDerived.lean:57`.
-* `LatticeProb.LQG.LQGInternalDiamInnerMeasurableLP`: LP form of `LQGInternalDiamInnerMeasurableFrozen`
-  (`HarmonicBalls/FirstPass/Frozen/S11k.lean:89`); proof `lqgInternalDiamInnerMeasurable_lp`,
-  copied from `HarmonicBalls/FirstPass/Phase2/InnerMeasurableDerived.lean:78`.
+* `LatticeProb.LQG.LQGMetricPointwiseAEMeasurableLP`: pointwise a.e. measurability of the LQG metric, with the binders and
+  conclusion of the source; proof `lqgMetricPointwiseAEMeasurable_lp`.
+* `LatticeProb.LQG.LQGInternalDiamInnerMeasurableLP`: measurability of the inner internal diameter of an LQG metric set;
+  proof `lqgInternalDiamInnerMeasurable_lp`.
 
-The only hypothesis of each proof is the LP input `LQGMetricFieldAxioms` (`LatticeProb/LQG/LQGMetric.lean:117`), quantified
-over the carriers as in the HB derivations. The deterministic inputs are `LatticeProb/LQG/LQGMetricMeasurable.lean` (continuity of
+The only hypothesis of each proof is the LP input `LQGMetricFieldAxioms` (`LatticeProb/LQG/LQGMetric.lean`), quantified
+over the carriers. The deterministic inputs are `LatticeProb/LQG/LQGMetricMeasurable.lean` (continuity of
 the internal metric on `O × O`) and `LatticeProb/LQG/LQGMassInner.lean` (monotonicity of the field σ-algebra in the open set).
 Terminology: LQG metric, internal metric, internal diameter (Gwynne-Miller arXiv:1905.00383 Sec. 1.2; Bou-Rabee-Gwynne
 arXiv:2208.11795 Fact 2.2).
@@ -57,7 +55,7 @@ theorem iSup_iSup_compact_eq_countable {F : ℂ → ℂ → ℝ≥0∞} {A Q : S
   · refine iSup_le fun x => iSup_le fun y => ?_
     exact le_iSup₂_of_le (x : ℂ) (hQA x.2) (le_iSup₂_of_le (y : ℂ) (hQA y.2) le_rfl)
 
-/-- LP form of `LQGMetricPointwiseAEMeasurableFrozen` (`HarmonicBalls/FirstPass/Frozen/S11e.lean:27`): for a whole-plane
+/-- Pointwise a.e. measurability of the LQG metric: for a whole-plane
 GFF realization `(hC, hcirc)` with `γ ∈ (0, 2)` and a realized LQG metric `D` of the field with zero exponent
 (`IsLQGMetricOfField P γ ξ 0 hC D`), every evaluation `ω ↦ D ω x y` is almost everywhere measurable. -/
 def LQGMetricPointwiseAEMeasurableLP : Prop :=
@@ -66,7 +64,7 @@ def LQGMetricPointwiseAEMeasurableLP : Prop :=
     IsWholePlaneGFF P hC hcirc → 0 < γ → γ < 2 → IsLQGMetricOfField P γ ξ 0 hC D →
     ∀ x y : ℂ, AEMeasurable (fun ω => D ω x y) P
 
-/-- LP form of `LQGInternalDiamInnerMeasurableFrozen` (`HarmonicBalls/FirstPass/Frozen/S11k.lean:89`): for
+/-- Measurability of the inner internal diameter: for
 `O = thickening δ A` with `A` compact, the internal diameter `internalDiam (D ω) δ A` is almost surely equal to a random
 variable measurable for `fieldSigmaAlgebra α₀ hC O`. -/
 def LQGInternalDiamInnerMeasurableLP : Prop :=
@@ -78,7 +76,7 @@ def LQGInternalDiamInnerMeasurableLP : Prop :=
       ∀ᵐ ω ∂P, internalDiam (D ω) δ A = g ω
 
 /-- **LP proof of `LQGMetricPointwiseAEMeasurableLP`.** Input: `hFA`, the LP input `LQGMetricFieldAxioms`
-(Fact 2.2 I-II) in its universally quantified form. Written argument (as in `lqgMetricPointwiseAEMeasurable_derived`):
+(Fact 2.2 I-II) in its universally quantified form. Written argument:
 the metric `D_h` is finite a.s. (I); locality (II) with `U = ℂ` gives `G ω x y`, measurable for `σ(h|_ℂ)`, a.s. equal to
 the internal metric of `D_h` over `ℂ`; a length metric satisfies `ofReal D = internalMetric D univ`, so `D_h = G` a.s.;
 the pairings are measurable, so `σ(h|_ℂ)` lies in the ambient σ-algebra. -/
@@ -109,7 +107,7 @@ theorem lqgMetricPointwiseAEMeasurable_lp
   exact hGmeas.ennreal_toReal.aemeasurable.congr hEq.symm
 
 /-- **LP proof of `LQGInternalDiamInnerMeasurableLP`.** Input: `hFA`, the LP input `LQGMetricFieldAxioms` (Fact 2.2 I-II).
-Written argument (as in `lqgInternalDiamInnerMeasurable_derived`): the internal metric over `O = thickening δ A` is a.s.
+Written argument: the internal metric over `O = thickening δ A` is a.s.
 given by a family `G` of `σ(h|_O)`-measurable functions (II); `D` is a.s. a Euclidean length metric, whose internal metric
 is continuous on `O × O` (`IsEuclideanLengthMetric.continuousOn_internalMetric_pair`); so `internalDiam D δ A` is a.s. the
 supremum of `G` over a countable dense subset of `A`, which is `σ(h|_O)`-measurable. -/

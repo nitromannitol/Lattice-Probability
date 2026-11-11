@@ -17,13 +17,13 @@ the whole-plane field layer (`LatticeProb/Gauss/GFF.lean`, namespace `LatticePro
   `h^ℂ - α₀ log |·|`, where `h^ℂ` has pairings `hC`.
 * `LatticeProb.LQG.LQGMetricFieldAxioms P γ ξ α₀ hC hcirc`: an INPUT Prop, not a theorem. It is the literature
   statement of the axioms I-IV for the metric of the logarithmically shifted field (Dubédat-Falconet-Gwynne-Pfeffer-Sun
-  2020; Gwynne-Miller 2021). It is taken from the Proposed module `HarmonicBalls/Proposed/LQG.lean` and remains
-  PENDING (source check); nothing in this file proves or assumes it.
+  2020; Gwynne-Miller 2021). It is not proved here. Its statement is that of
+  Fact 2.2 of [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]. Nothing in this file proves or assumes it.
 
-Provenance. Copies of `SatisfiesLQGMetricAxioms` (Defs/LQGMetric.lean), `IsLQGMetric` (Defs/LQGMetric.lean),
-`IsLQGMetricOfField` (Defs/LQGMetric.lean) and `LQGMetricFieldAxioms` (Proposed/LQG.lean) of Bou-Rabee and Gwynne,
-*Harmonic balls in Liouville quantum gravity* (arXiv:2208.11795). No statement, hypothesis or conclusion of the source is
-changed. The bridge lemmas (HB definition ↔ LP definition) are in `HarmonicBalls/FirstPass/LPBridge/M5b.lean`.
+Provenance. Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity,
+arXiv:2208.11795] (Bou-Rabee and Gwynne): the definitions `SatisfiesLQGMetricAxioms`, `IsLQGMetric` and
+`IsLQGMetricOfField`, and the input `LQGMetricFieldAxioms` (Fact 2.2). No statement, hypothesis or conclusion of the
+source is changed.
 
 Helper declarations: the only auto-generated declaration inside a body is `LQGMetricFieldAxioms._proof_1 : (1 + 1).AtLeastTwo`
 (the instance proof of the numeral `2` in `γ < 2`); it is not a mathematical helper and is not restated. The other three

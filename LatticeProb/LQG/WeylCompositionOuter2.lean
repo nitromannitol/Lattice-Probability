@@ -4,10 +4,11 @@ import LatticeProb.LQG.WeylCompositionOuter
 /-!
 # Weyl composition for the outer scaling, LP
 
-Second part of the LP copy of `HarmonicBalls/FirstPass/Phase2/WeylCompositionOuterDerived.lean` (lines 708-1219): the
+Second part of the adaptation of the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity,
+arXiv:2208.11795] (outer Weyl composition): the
 arclength reparametrization by inner distance, the Riemann comparison `riemann_arc`, and the one-way-topology lemma
-`weylScaling_innerDist_le_direct`. The LP statement `LatticeProb.LQG.WeylMetricCompositionContinuousOuterLP` is the form of
-`WeylMetricCompositionContinuousOuterFrozen` (`FirstPass/Frozen/S11j.lean:117`),
+`weylScaling_innerDist_le_direct`. The statement `LatticeProb.LQG.WeylMetricCompositionContinuousOuterLP` is the form of the continuity of the Weyl-scaled
+metric composition in the outer variable (cf. Gwynne-Miller arXiv:1905.00383 and Gwynne-Pfeffer-Sun arXiv:1905.00380),
 and `LatticeProb.LQG.weylMetricCompositionContinuousOuter_lp` proves it with no hypothesis added.
 Source: Bou-Rabee-Gwynne (arXiv:2208.11795) Fact 2.2 III; Gwynne-Miller (1.8).
 -/
@@ -529,8 +530,8 @@ theorem IsEuclideanLengthMetric.weylScaling_innerDist_le_direct {D : ℂ → ℂ
   exact le_of_forall_ofReal_mul_le hCfin hρ
 
 
-/-- LP form of `WeylMetricCompositionContinuousOuterFrozen` (`FirstPass/Frozen/S11j.lean:117`): the same binders and
-conclusion, with the LP predicates `IsEuclideanLengthMetric` and `weylScaling` of `LatticeProb/LQG/LengthMetric.lean`. -/
+/-- Continuity of the Weyl-scaled metric composition in the outer variable: the same binders and
+conclusion as in the source, with the predicates `IsEuclideanLengthMetric` and `weylScaling` of `LatticeProb/LQG/LengthMetric.lean`. -/
 def WeylMetricCompositionContinuousOuterLP : Prop :=
   ∀ ξ : ℝ, 0 < ξ → ∀ (D : ℂ → ℂ → ℝ) (g f : ℂ → ℝ), IsEuclideanLengthMetric D →
     ContinuousOn g {z | z ≠ 0} → Continuous f →
@@ -538,8 +539,8 @@ def WeylMetricCompositionContinuousOuterLP : Prop :=
     ∀ x y, weylScaling (fun u v => (weylScaling D ξ g u v).toReal) ξ f x y =
       weylScaling D ξ (fun z => g z + f z) x y
 
-/-- **Derived**: the LP form `WeylMetricCompositionContinuousOuterLP` holds, with no hypothesis added (LP copy of
-`weylMetricCompositionContinuousOuter_derived`, `FirstPass/Phase2/WeylCompositionOuterDerived.lean:1221`). -/
+/-- The statement `WeylMetricCompositionContinuousOuterLP` holds, with no hypothesis added (proof adapted from
+the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). -/
 theorem weylMetricCompositionContinuousOuter_lp : WeylMetricCompositionContinuousOuterLP := by
   intro ξ _ D g f hD hg hf hfin x y
   apply le_antisymm
