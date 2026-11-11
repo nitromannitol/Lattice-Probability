@@ -54,11 +54,11 @@ theorem fieldEquivPlanar_toFun_apply (ω : PlanarCarrier → Bool) (z : LatticeP
   rfl
 
 theorem measurable_toSite2Field : Measurable fieldEquivPlanar.toFun := by
-  refine measurable_pi_lambda _ fun z => ?_
+  refine Measurable.of_eval fun z => ?_
   exact measurable_pi_apply (ofSite2 z)
 
 theorem measurable_ofSite2Field : Measurable fieldEquivPlanar.invFun := by
-  refine measurable_pi_lambda _ fun p => ?_
+  refine Measurable.of_eval fun p => ?_
   exact measurable_pi_apply (toSite2 p)
 
 /-! ### The finite-range dependence correspondence -/
@@ -98,7 +98,7 @@ theorem fieldEquivPlanar_oneSite (μ : Measure (PlanarCarrier → Bool))
 theorem measurable_imageRestrict (I : Finset (LatticeProb.Site 2)) :
     Measurable (fun f : (I.image ofSite2 → Bool) => fun a : I =>
       f ⟨ofSite2 a, Finset.mem_image.mpr ⟨a, a.2, rfl⟩⟩) :=
-  measurable_pi_lambda _ fun a =>
+  Measurable.of_eval fun a =>
     measurable_pi_apply
       (⟨ofSite2 a, Finset.mem_image.mpr ⟨a, a.2, rfl⟩⟩ : ↥(I.image ofSite2))
 
