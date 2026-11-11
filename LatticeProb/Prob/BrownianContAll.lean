@@ -67,7 +67,7 @@ theorem exists_isBrownianReal_modification_all {B : ℝ≥0 → Ω → ℝ}
     (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable (B t)) :
     ∃ C : ℝ≥0 → Ω → ℝ, (∀ t, Measurable (C t)) ∧ (∀ t, B t =ᵐ[P] C t) ∧ IsBrownianReal C P ∧
       ∀ ω, Continuous fun t => C t ω := by
-  haveI : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
   obtain ⟨C, hCm, hmod, hcont⟩ :=
     exists_continuous_modification_all (isKolmogorovProcess_of_isPreBrownianReal hB hm)
       (by norm_num)
@@ -92,7 +92,7 @@ theorem exists_isBrownianSpace_cont (d : ℕ) (x : EuclideanSpace ℝ (Fin d)) :
       (∀ t, @MeasureTheory.StronglyMeasurable _ _ _ mΩ (B t)) ∧
       ∀ ω, Continuous fun t => B t ω := by
   obtain ⟨Ω₀, mΩ₀, P₀, C, hCm, hC, hCcont⟩ := exists_isBrownianReal_cont
-  haveI : IsProbabilityMeasure P₀ := hC.isGaussianProcess.isProbabilityMeasure
+  have : IsProbabilityMeasure P₀ := hC.isGaussianProcess.isProbabilityMeasure
   refine ⟨Fin d → Ω₀, inferInstance, Measure.pi fun _ => P₀, dimBrownian d C x,
     ⟨?_, ?_, ?_⟩, ?_, ?_⟩
   · have hzero : ∀ i : Fin d, ∀ᵐ ω ∂(Measure.pi fun _ : Fin d => P₀), C 0 (ω i) = 0 := fun i =>
@@ -120,11 +120,11 @@ theorem exists_isBrownianSpace_cont (d : ℕ) (x : EuclideanSpace ℝ (Fin d)) :
           (fun ω₀ : Ω₀ => fun t : ℝ≥0 => x i + (Real.sqrt d)⁻¹ * C t ω₀) (ω i) := rfl
     rw [hrw]
     exact iIndepFun_pi fun i =>
-      (measurable_pi_lambda _ fun t => (hCm t).const_mul _ |>.const_add _).aemeasurable
+      (Measurable.of_eval fun t => (hCm t).const_mul _ |>.const_add _).aemeasurable
   · intro t
     refine Measurable.stronglyMeasurable ?_
     refine ((EuclideanSpace.equiv (Fin d) ℝ).symm.continuous.measurable).comp ?_
-    exact measurable_pi_lambda _ fun i =>
+    exact Measurable.of_eval fun i =>
       ((hCm t).comp (measurable_pi_apply i)).const_mul _ |>.const_add _
   · intro ω
     rw [continuous_induced_rng]
