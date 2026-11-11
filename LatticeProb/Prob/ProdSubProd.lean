@@ -30,7 +30,7 @@ theorem norm_prod_sub_prod_le_sum_max {ι : Type*} [DecidableEq ι] (s : Finset 
   | @insert j s hj ih =>
     have hA : ‖∏ k ∈ s, a k‖ ≤ ∏ k ∈ s, max ‖a k‖ ‖b k‖ := by
       rw [norm_prod]
-      exact Finset.prod_le_prod (fun k _ => norm_nonneg _) (fun k _ => le_max_left _ _)
+      exact Finset.prod_le_prod₀ (fun k _ => norm_nonneg _) (fun k _ => le_max_left _ _)
     have hsum : ∑ i ∈ s, ‖a i - b i‖ * ∏ k ∈ (insert j s).erase i, max ‖a k‖ ‖b k‖
         = max ‖a j‖ ‖b j‖ * ∑ i ∈ s, ‖a i - b i‖ * ∏ k ∈ s.erase i, max ‖a k‖ ‖b k‖ := by
       rw [Finset.mul_sum]
@@ -61,7 +61,7 @@ theorem norm_prod_sub_prod_le_sum_of_le {ι : Type*} [DecidableEq ι] (s : Finse
     ‖∏ i ∈ s, a i - ∏ i ∈ s, b i‖ ≤ ∑ i ∈ s, ‖a i - b i‖ * ∏ k ∈ s.erase i, c k := by
   refine (norm_prod_sub_prod_le_sum_max s a b).trans (Finset.sum_le_sum fun i _ => ?_)
   refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
-  exact Finset.prod_le_prod (fun k _ => le_trans (norm_nonneg _) (le_max_left _ _))
+  exact Finset.prod_le_prod₀ (fun k _ => le_trans (norm_nonneg _) (le_max_left _ _))
     (fun k hk => hc k (Finset.mem_of_mem_erase hk))
 
 /-- Exponential form: if `‖a k‖ ≤ exp (u k)` and `‖b k‖ ≤ exp (u k)` for all `k`, then
