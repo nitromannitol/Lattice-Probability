@@ -76,7 +76,7 @@ variable {α : Type*} [MeasurableSpace α]
 def prefixCoords (α : Type*) (n : ℕ) (x : ℕ → α) : Fin n → α := fun k => x (k : ℕ)
 
 theorem measurable_prefixCoords (n : ℕ) : Measurable (prefixCoords α n) :=
-  measurable_pi_lambda _ fun k => measurable_pi_apply (k : ℕ)
+  Measurable.of_eval fun k => measurable_pi_apply (k : ℕ)
 
 /-- The sigma-algebra of the first `n` coordinates of a sequence. -/
 @[reducible] def prefixAlg (α : Type*) [MeasurableSpace α] (n : ℕ) :
@@ -253,10 +253,10 @@ theorem condExp_revealed (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasur
   obtain ⟨i₀⟩ : Nonempty ι := nonempty_of_exploration μ idx
   haveI hν : IsProbabilityMeasure ν := by
     rw [← hlaw i₀]
-    exact Measure.isProbabilityMeasure_map (hg i₀).aemeasurable
+    exact inferInstance
   set P : Measure (Π i, X i) := Measure.infinitePi μ with hP
   set Φ : (Π i, X i) → (ℕ → α) := revealed idx g with hΦdef
-  have hΦ : Measurable Φ := measurable_pi_lambda _ fun k => measurable_revealed hidx.meas hg k
+  have hΦ : Measurable Φ := Measurable.of_eval fun k => measurable_revealed hidx.meas hg k
   have hmap : P.map Φ = Measure.infinitePi fun _ : ℕ => ν := map_revealed μ hidx hg hlaw
   have hcomap : MeasurableSpace.comap (revealedPrefix idx g n) inferInstance
       = MeasurableSpace.comap Φ (prefixAlg α n) := by
