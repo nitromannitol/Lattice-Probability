@@ -865,3 +865,7 @@ import LatticeProb.Bonanno.LQGMetric.Field.RadialPointRotation
 import LatticeProb.Analysis.TestFunctionLogIntegrable
 import LatticeProb.Analysis.CircleLogIntegrals
 import LatticeProb.Bonanno.LQGMetric.Field.CircleBumpRadial
+import LatticeProb.Analysis.CircleAverageLog
+import LatticeProb.Analysis.CompactSupportMeasure
+import LatticeProb.Prob.SecondMomentMethod
+import LatticeProb.Prob.ContinuousPathLaw
