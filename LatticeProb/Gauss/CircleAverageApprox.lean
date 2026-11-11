@@ -4,22 +4,14 @@ import LatticeProb.Gauss.CameronMartinDerived
 
 /-! # Circle-density approximants of the whole-plane GFF circle averages
 
-LP copy of the Section 8 circle-density chain of Bou-Rabee and Gwynne (arXiv:2208.11795): smooth annular bumps
-`circleDensity`, their local, radial and logarithmic-potential estimates. Source files:
-`Proofs/Sec8/CircleDensity.lean`, `CircleDensityLocal.lean`, `CircleDensityRadial.lean`, `CircleLogPotential.lean`.
-Mechanical transcription in the definitions of `HarmonicBalls/LPStage/GFF.lean` (namespace
-`LatticeProb.Gauss`); the test-function combination lemma is ported from `Proofs/SecA/Basic.lean`; the integrability
-lemmas come from `HarmonicBalls/LPStage/CameronMartinDerived.lean`. The Section 6 statement of
-`CircleDensityLocal.lean` (joint centred circle version) is not transcribed (not used by the approximant chain).
+Adapted from the Section 8 circle-density chain of Bou-Rabee and Gwynne in the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]: smooth annular bumps `circleDensity`, their local, radial and logarithmic-potential estimates. The definitions are transcribed from that formalization (namespace `LatticeProb.Gauss`); the test-function combination lemma is adapted from its basic test-function lemmas; the integrability lemmas come from `LatticeProb.Gauss.CameronMartinDerived`. The joint centred circle version of the local circle-density statement is not transcribed (it is not used by the approximant chain).
 -/
 
--- ===== Proofs/Sec8/CircleDensity
+-- ===== Circle density
 
 /-! # Smooth annular approximations
 
 Smooth radial bumps around a circle have positive, translation-invariant mass.
-The imported Section 8 argument uses Leonardo Bonanno's LatticeProb
-formalization of the ergodic theorem.
 -/
 
 open MeasureTheory Set Metric
@@ -179,14 +171,12 @@ theorem circleDensity_normalized_difference_test {r δ η : ℝ} (hr : 0 < r)
 
 end LatticeProb.Gauss
 
--- ===== Proofs/Sec8/CircleDensityLocal
+-- ===== Local circle density
 
 /-! # Local circle-density approximations
 
 A disk around the origin inherits the local containment of a disk of the same
-radius, and both disks can be enlarged by a common positive amount. The
-imported Section 8 argument uses Leonardo Bonanno's LatticeProb formalization
-of the ergodic theorem.
+radius, and both disks can be enlarged by a common positive amount.
 -/
 
 open MeasureTheory Set Metric Filter
@@ -298,13 +288,11 @@ noncomputable def circleDensityDifference (r η : ℝ) (hr : 0 < r) (hη : 0 < �
     (∫ y, circleDensity r δ hδ 0 y)⁻¹ * circleDensity r δ hδ 0 x
 end LatticeProb.Gauss
 
--- ===== Proofs/Sec8/CircleDensityRadial
+-- ===== Radial circle density
 
 /-! # Radial mass of annular approximations
 
 Polar coordinates identify the radial mass of the normalized annular bumps.
-The imported Section 8 argument uses Leonardo Bonanno's LatticeProb
-formalization of the ergodic theorem.
 -/
 
 open MeasureTheory Set Metric Filter Real
@@ -516,13 +504,11 @@ theorem integral_normalized_circleDensity_eq_circleAverage {r δ : ℝ} (hr : 0 
 
 end LatticeProb.Gauss
 
--- ===== Proofs/Sec8/CircleLogPotential
+-- ===== Logarithmic potential of circle densities
 
 /-! # Logarithmic potential of a circle
 
 Averaging the logarithmic kernel on a circle removes its point singularity.
-The imported Section 8 argument uses Leonardo Bonanno's LatticeProb
-formalization of the ergodic theorem.
 -/
 
 open MeasureTheory Set Metric Filter
@@ -708,7 +694,7 @@ theorem circleDensity_log_potential_excess_tendsto_zero {r η : ℝ}
 
 end LatticeProb.Gauss
 
--- ===== Proofs/Sec8/CircleDensityContinuousLimit (lemma circleDensityRadialWeight_integral_sub_le only)
+-- ===== Continuous limit of circle densities (lemma circleDensityRadialWeight_integral_sub_le only)
 open MeasureTheory Set Metric Filter Real
 open scoped Topology
 namespace LatticeProb.Gauss

@@ -4,11 +4,7 @@ import LatticeProb.Gauss.CameronMartinDerived2
 
 /-! # Circle-average approximants and their almost sure convergence
 
-LP copy of the approximant chain of the whole-plane GFF: the covariance kernel of an annular density against the
-logarithmic kernel `wholePlaneCov` (`FirstPass/S11u/Mixed.lean`, Duplantier-Sheffield 2011, Section 3.1), the variance
-of a pairing minus a circle average (`FirstPass/S11u/Variance.lean`), the annular approximants (`FirstPass/S11u.lean`,
-`FirstPass/S11at/Producers.lean`), ending with `ae_tendsto_circleApprox`: almost surely the pairings with the explicit
-annular approximants converge to the circle average. Mechanical transcription in the definitions of `LatticeProb.Gauss`.
+Adapted from the approximant chain of the whole-plane GFF in the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]: the covariance kernel of an annular density against the logarithmic kernel `wholePlaneCov` (Duplantier-Sheffield 2011, Section 3.1), the variance of a pairing minus a circle average, and the annular approximants, ending with `ae_tendsto_circleApprox`: almost surely the pairings with the explicit annular approximants converge to the circle average. Transcribed into the definitions of `LatticeProb.Gauss`.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Set Metric Topology
@@ -16,13 +12,13 @@ open scoped ENNReal NNReal
 
 namespace LatticeProb.Gauss
 
-/-- The whole-plane GFF lives on a probability space (LP form of `HarmonicBalls.isProbabilityMeasure`). -/
+/-- The whole-plane GFF lives on a probability space (adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). -/
 theorem IsWholePlaneGFF.isProbabilityMeasure {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} (hh : IsWholePlaneGFF P hC hcirc) : IsProbabilityMeasure P :=
   have : Nonempty GFFObservable.Admissible := ⟨⟨.circle 1 0, one_pos⟩⟩
   hh.isGaussianProcess.isProbabilityMeasure
 
-/-- Each circle average of positive radius is Gaussian (LP form of `HarmonicBalls.hasGaussianLaw_circle`). -/
+/-- Each circle average of positive radius is Gaussian (adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). -/
 theorem IsWholePlaneGFF.hasGaussianLaw_circle {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} (hh : IsWholePlaneGFF P hC hcirc) {r : ℝ} (hr : 0 < r) (z : ℂ) :
     HasGaussianLaw (fun ω => hcirc ω r z) P :=
@@ -30,14 +26,12 @@ theorem IsWholePlaneGFF.hasGaussianLaw_circle {Ω : Type*} [MeasurableSpace Ω] 
 
 end LatticeProb.Gauss
 
--- ===== Proofs/Sec8/CircleDensityPolarIntegrability
+-- ===== Polar integrability of annular densities
 
 /-! # Polar integrability for annular densities
 
 The change-of-variables theorem gives the integrability needed to apply
-Fubini even when an observable has a logarithmic singularity. The imported
-Section 8 argument uses Leonardo Bonanno's LatticeProb formalization of the
-ergodic theorem.
+Fubini even when an observable has a logarithmic singularity.
 -/
 
 open MeasureTheory Set Metric Filter Real
@@ -307,12 +301,12 @@ theorem circleDensity_log_potential_tendsto_uniformly {r η : ℝ}
 
 end LatticeProb.Gauss
 
--- ===== FirstPass/S11u/Kernel (part)
+-- ===== Kernel (part)
 
 /-!
 # Kernel identities for the whole-plane covariance on circles
 
-The whole-plane kernel `wholePlaneCov x y = log (max |x| 1 * max |y| 1 / |x - y|)` (Defs/GFF.lean) splits as
+The whole-plane kernel `wholePlaneCov x y = log (max |x| 1 * max |y| 1 / |x - y|)` splits as
 `a x + a y - log |x - y|` off the diagonal, with `a x = log max(|x|, 1)`. Averaging over a circle `∂B_ρ(z)` in the
 variable `y` gives the Jensen formula (Duplantier-Sheffield, Section 3.1; Armitage-Gardiner for the logarithmic
 potential). The diagonal `x = y` is handled by the codiscrete congruence of circle averages.
@@ -373,7 +367,7 @@ theorem circleAverage_wholePlaneCov {z x : ℂ} {ρ : ℝ} (hρ : 0 < ρ) :
 
 end LatticeProb.Gauss
 
--- ===== FirstPass/S11u/Mixed
+-- ===== Mixed kernel
 
 /-!
 # Mixed covariances of a unit annular density and a circle average
@@ -709,7 +703,7 @@ theorem abs_unitCircleDensity_covariance_combination {r δ η : ℝ} (hr : 0 < r
 
 end LatticeProb.Gauss
 
--- ===== FirstPass/S11u/Variance
+-- ===== Variance of a pairing minus a circle average
 
 /-!
 # Variance of a pairing minus a circle average, and a.s. convergence from summable second moments
@@ -804,12 +798,12 @@ theorem ae_tendsto_zero_of_summable_integral_sq {Ω : Type*} [MeasurableSpace Ω
 
 end LatticeProb.Gauss
 
--- ===== FirstPass/S11u (through log_add_sub_log_sub_le_four_mul)
+-- ===== Annular approximants (through log_add_sub_log_sub_le_four_mul)
 
 /-!
 # The circle-average limit derived from the whole-plane GFF
 
-`WholePlaneCircleAverageLimitFrozen` (Frozen/S11p.lean) is proved as the theorem
+The circle-average limit of the whole-plane GFF is proved as the theorem
 `wholePlaneCircleAverageLimit_derived`, from `IsWholePlaneGFF` alone. The unit-mass test functions are the normalized
 Section 8 annular bumps `unitCircleDensity r (r η) z` (support in `{| |x - z| - r | ≤ η}`, width `δ = r η`), with
 `η_j = η₀ 2^{-j}`. The second moment of `hC ψ_j - hcirc(r, z)` is the whole-plane kernel combination, bounded by
@@ -896,7 +890,7 @@ theorem log_add_sub_log_sub_le_four_mul {r η : ℝ} (hr : 0 < r) (hη : 0 < η)
 
 end LatticeProb.Gauss
 
--- ===== FirstPass/S11at/Producers (approximants and a.s. convergence)
+-- ===== Approximants and almost sure convergence
 namespace LatticeProb.Gauss
 
 /-- The annular width parameter `η_j = (r/4) (1/2)^j` of the `j`-th explicit approximant. -/
@@ -910,7 +904,7 @@ theorem approxEta_le {r : ℝ} (hr : 0 < r) (j : ℕ) : approxEta r j ≤ r / 4 
   exact mul_le_of_le_one_right (by positivity) (pow_le_one₀ (by norm_num) (by norm_num))
 
 /-- The explicit unit annular approximant `ψ_j` of the circle average at `(r, z)`: the density of
-`FirstPass/S11u` with annulus width `r * η_j`. -/
+`unitCircleDensity` with annulus width `r * η_j`. -/
 noncomputable def circleApprox {r : ℝ} (hr : 0 < r) (z : ℂ) (j : ℕ) : ℂ → ℝ :=
   unitCircleDensity r (r * approxEta r j) (mul_pos hr (approxEta_pos hr j)) z
 

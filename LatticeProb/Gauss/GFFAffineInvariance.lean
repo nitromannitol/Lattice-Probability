@@ -4,19 +4,11 @@ import LatticeProb.Gauss.CircleAverageApprox2
 
 /-! # Affine invariance of the whole-plane GFF: LP form
 
-LP form of the Proposed statement `WholePlaneGFFAffineInvariance` (`HarmonicBalls/Proposed/LQG.lean:56`, eq:gff-scaling,
-arXiv:2208.11795 line 369; Gwynne-Holden-Sun 2019, Section 3.2.2; Berestycki-Powell, Corollary 5.7 and Lemma 6.26): for
+LP form of the affine invariance of the whole-plane GFF (arXiv:2208.11795; Gwynne-Holden-Sun 2019, Section 3.2.2; Berestycki-Powell, Corollary 5.7 and Lemma 6.26): for
 `a ∈ ℂ ∖ {0}` and `b ∈ ℂ`, the transformed pairings `φ ↦ |a|⁻² hC(φ ∘ F⁻¹) - hcirc |a| b · ∫ φ` and circle averages
 `(r, z) ↦ hcirc (|a| r) (a z + b) - hcirc |a| b` (with `F z = a z + b`) again form a whole-plane GFF.
 
-The statement is the same expression, stated for the definitions of `HarmonicBalls/LPStage/GFF.lean`
-(`IsWholePlaneGFF`, `GFFObservable`, `wholePlaneCov`, `wholePlaneGFFCov`, `IsTestFunction`). The proof is the derivation
-of `wholePlaneGFFAffineInvariance_derived` (`HarmonicBalls/FirstPass/S11v/Affine.lean`), copied in LP form together with the
-closure of declarations it uses (`HarmonicBalls/FirstPass/S11v/AffineCore.lean`, `AffineKernel.lean`, `AffineAlg.lean`,
-`HarmonicBalls/FirstPass/S11u/Kernel.lean`, `HarmonicBalls/FirstPass/S11i/DilationMixing.lean`,
-`HarmonicBalls/Steps/Sec11/PairingCovarianceLinearity.lean`, `HarmonicBalls/Proofs/Sec8/CircleDensityDoubleLog.lean`,
-`HarmonicBalls/Proofs/Sec8/CircleLogPotential.lean`, `HarmonicBalls/Proofs/Potential/Fundamental.lean`) and the
-`IsWholePlaneGFF` lemmas of `HarmonicBalls/Defs/GFF.lean`. No new mathematics and no new input: the Gaussian, measurability,
+The statement is the same expression, stated for the definitions of this library (`IsWholePlaneGFF`, `GFFObservable`, `wholePlaneCov`, `wholePlaneGFFCov`, `IsTestFunction`). The proof is adapted from the derivation of the affine invariance in the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795], together with the closure of the auxiliary declarations it uses (the affine core, kernel and algebra lemmas, and the dilation-mixing, pairing-covariance, circle-density and Green-identity lemmas) and the `IsWholePlaneGFF` lemmas of that formalization. No new mathematics and no new input: the Gaussian, measurability,
 centring, covariance and continuity clauses are checked from `IsWholePlaneGFF` alone, with the covariance identity
 `cov_det_identity` and `cov(circle 1 0, ·) = 0` from `IsWholePlaneGFF.ae_circleAverage_one_zero`.
 -/
@@ -45,8 +37,8 @@ theorem circleAverage_wholePlaneCov_of_norm_eq_one {x : ℂ} (hx : ‖x‖ = 1) 
   have h0 := circleAverage_log_norm_sub_const₁ hx
   rw [Real.circleAverage_def] at h0
   rw [h, Real.circleAverage_def, intervalIntegral.integral_neg, smul_neg, h0, neg_zero]
-/-- The variance of the unit circle average `h^ℂ_1(0)` vanishes: the covariance `eq:cov-kernel` encodes the
-normalization `h^ℂ_1(0) = 0` (line 365). -/
+/-- The variance of the unit circle average `h^ℂ_1(0)` vanishes: the covariance kernel encodes the
+normalization `h^ℂ_1(0) = 0`. -/
 theorem wholePlaneGFFCov_circle_one_zero :
     wholePlaneGFFCov (.circle 1 0) (.circle 1 0) = 0 := by
   change Real.circleAverage (fun x => Real.circleAverage (fun y => wholePlaneCov x y) 0 1) 0 1 = 0
@@ -56,7 +48,7 @@ theorem wholePlaneGFFCov_circle_one_zero :
 namespace IsWholePlaneGFF
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {hC : Ω → (ℂ → ℝ) → ℝ}
   {hcirc : Ω → ℝ → ℂ → ℝ}
-/-- The normalization `h^ℂ_1(0) = 0` (line 365) holds a.s. -/
+/-- The normalization `h^ℂ_1(0) = 0` holds a.s. -/
 theorem ae_circleAverage_one_zero (hh : IsWholePlaneGFF P hC hcirc) : ∀ᵐ ω ∂P, hcirc ω 1 0 = 0 := by
   have := hh.isProbabilityMeasure
   have hG := hh.hasGaussianLaw_circle one_pos 0
@@ -862,7 +854,7 @@ theorem covariance_affine {P : Measure Ω} {hC : Ω → (ℂ → ℝ) → ℝ} {
   linear_combination hdet - (o.smear fun _ => 1) * hB
 end Affine
 
-/-- **Affine invariance of the whole-plane GFF, LP form** (`HarmonicBalls/Proposed/LQG.lean:56`). For a whole-plane GFF
+/-- **Affine invariance of the whole-plane GFF, LP form** (as in arXiv:2208.11795). For a whole-plane GFF
 `(hC, hcirc)` and `a ∈ ℂ ∖ {0}`, `b ∈ ℂ`, the pairings `φ ↦ |a|⁻² hC(φ ∘ F⁻¹) - hcirc |a| b · ∫ φ` and the circle
 averages `(r, z) ↦ hcirc (|a| r) (a z + b) - hcirc |a| b`, where `F z = a z + b`, again form a whole-plane GFF. -/
 def WholePlaneGFFAffineInvarianceLP {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
@@ -872,8 +864,7 @@ def WholePlaneGFFAffineInvarianceLP {Ω : Type*} [MeasurableSpace Ω] (P : Measu
       (fun ω φ => (‖a‖ ^ 2)⁻¹ * hC ω (fun y => φ ((y - b) / a)) - hcirc ω ‖a‖ b * ∫ x, φ x)
       (fun ω r z => hcirc ω (‖a‖ * r) (a * z + b) - hcirc ω ‖a‖ b)
 
-/-- **`WholePlaneGFFAffineInvarianceLP` is a theorem** (LP form of `wholePlaneGFFAffineInvariance_derived`,
-`HarmonicBalls/FirstPass/S11v/Affine.lean`). Derived from `IsWholePlaneGFF` alone, with no hypothesis beyond it. -/
+/-- **`WholePlaneGFFAffineInvarianceLP` is a theorem** (adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). Derived from `IsWholePlaneGFF` alone, with no hypothesis beyond it. -/
 theorem wholePlaneGFFAffineInvariance_lp {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) :
     WholePlaneGFFAffineInvarianceLP P hC hcirc := by

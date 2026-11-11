@@ -3,8 +3,7 @@ import Mathlib
 /-!
 # Kolmogorov extension theorem: real coordinates, arbitrary index set
 
-Statement: `LatticeProb.exists_isProjectiveLimit_real`, the body of `KolmogorovExtensionStmt`
-(`HarmonicBalls/LPStage/GFFExistence.lean`). Source: William J. Anderson, *Advanced Probability II Notes*,
+Statement: `LatticeProb.exists_isProjectiveLimit_real`, the Kolmogorov extension theorem for real coordinates and an arbitrary index set. Source: William J. Anderson, *Advanced Probability II Notes*,
 Theorem 6.0.6, p. 60. Mathlib states the theorem as absent (`Mathlib/MeasureTheory/Constructions/ProjectiveFamilyContent.lean`,
 module docstring); the content-level construction is Mathlib's `projectiveFamilyContent`.
 

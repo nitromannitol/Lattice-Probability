@@ -4,20 +4,20 @@ import LatticeProb.Gauss.GFF
 /-!
 # Cameron-Martin facts for the whole-plane GFF
 
-LP forms of the two derived Cameron-Martin facts of the Harmonic-balls draft, stated on the whole-plane GFF
-(`LatticeProb.Gauss.IsWholePlaneGFF`, `HarmonicBalls/LPStage/GFF.lean`):
+LP forms of the two Cameron-Martin facts of the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795], stated on the whole-plane GFF
+(`LatticeProb.Gauss.IsWholePlaneGFF`):
 
 * `LatticeProb.Gauss.CameronMartinGFFReweighting`: the Cameron-Martin theorem for the whole-plane GFF
-  (Miller-Sheffield, Imaginary Geometry IV, arXiv:1302.4738v2, Proposition 2.9). LP form of
-  `HarmonicBalls.S11aj.CameronMartinGFFReweighting` (`HarmonicBalls/FirstPass/Frozen/S11aj.lean:33`).
+  (Miller-Sheffield, Imaginary Geometry IV, arXiv:1302.4738v2, Proposition 2.9). LP form of the
+  corresponding statement of the formalization.
 * `LatticeProb.Gauss.CameronMartinGFFMutualAbsCont`: mutual absolute continuity of the shifted whole-plane GFF on
-  distribution-level events (Miller-Sheffield, Imaginary Geometry IV, Proposition 2.9). LP form of
-  `HarmonicBalls.CameronMartinGFFMutualAbsCont` (`HarmonicBalls/FirstPass/Frozen/S11d.lean:74`).
+  distribution-level events (Miller-Sheffield, Imaginary Geometry IV, Proposition 2.9). LP form of the
+  corresponding statement of the formalization.
 
-This file holds the statements, and the copied LP versions of the Gaussian-law helpers that the derivation of the second
+This file holds the statements, and the LP versions of the Gaussian-law helpers that the derivation of the second
 statement from the first uses (`gaussian_process_map_eq_of_mean_covariance`, `wholePlaneGFF_localFieldPairings_map_eq`,
-copied from `HarmonicBalls/Steps/Sec11/GaussianProcessLaw.lean:17` and `:68`). The derivation of
-`CameronMartinGFFReweighting` (`HarmonicBalls/FirstPass/Phase2/CameronMartinReweightingDerived2.lean:267`) is not copied
+adapted from the same formalization). The derivation of
+`CameronMartinGFFReweighting` is not included
 into this file. Neither statement is proved in this file yet.
 -/
 
@@ -27,19 +27,16 @@ open MeasureTheory ProbabilityTheory
 
 universe u
 
-/-- Test functions supported in `U`, as a subtype (LP copy of `HarmonicBalls.LocalFieldTest`,
-`HarmonicBalls/Steps/Sec11/LocalPairingLaw.lean:17`). -/
+/-- Test functions supported in `U`, as a subtype (adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). -/
 def LocalFieldTest (U : Set ℂ) := {φ : ℂ → ℝ // IsTestFunction U φ}
 
-/-- The process of local pairings of the log-singular field (LP copy of `HarmonicBalls.localFieldPairings`,
-`HarmonicBalls/Steps/Sec11/LocalPairingLaw.lean:20`). -/
+/-- The process of local pairings of the log-singular field (adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). -/
 noncomputable def localFieldPairings {Ω : Type*} (α₀ : ℝ)
     (hC : Ω → (ℂ → ℝ) → ℝ) (U : Set ℂ) (ω : Ω) : LocalFieldTest U → ℝ :=
   fun φ => fieldPairing α₀ (hC ω) φ.1
 
 /-- Real Gaussian processes with the same means and covariances have the same joint law. No countability assumption
-on the index set is needed (LP copy of `HarmonicBalls.gaussian_process_map_eq_of_mean_covariance`,
-`HarmonicBalls/Steps/Sec11/GaussianProcessLaw.lean:17`). -/
+on the index set is needed (adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). -/
 theorem gaussian_process_map_eq_of_mean_covariance
     {Ω Ω' T : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
     (P : Measure Ω) (Q : Measure Ω') (X : T → Ω → ℝ) (Y : T → Ω' → ℝ)
@@ -89,7 +86,7 @@ theorem gaussian_process_map_eq_of_mean_covariance
   exact hfinite.symm
 
 /-- Two whole-plane GFF realizations have identical joint laws for every collection of local test-function pairings
-(LP copy of `HarmonicBalls.wholePlaneGFF_localFieldPairings_map_eq`, `HarmonicBalls/Steps/Sec11/GaussianProcessLaw.lean:68`). -/
+(adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). -/
 theorem wholePlaneGFF_localFieldPairings_map_eq
     {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
     {P : Measure Ω} {Q : Measure Ω'}
@@ -126,16 +123,14 @@ theorem wholePlaneGFF_localFieldPairings_map_eq
   rw [Measure.map_map hF hPX, Measure.map_map hF hQY] at hmap
   exact hmap
 
-/-! ### The logarithmic kernel and the Laplacian of test functions (copied for `LatticeProb.Gauss`)
+/-! ### The logarithmic kernel and the Laplacian of test functions (adapted for `LatticeProb.Gauss`)
 
-Copies of `HarmonicBalls.newtonKernel` (`HarmonicBalls/Defs/Green.lean:43`) and of the Green identity of
-`HarmonicBalls/Proofs/Potential/Fundamental.lean` (copyright of the Harmonic-balls formalization, same author).
+Adapted from the Newton kernel and the Green identity of the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795].
 Only Mathlib is used. -/
 
 section GreenKernel
 
-/-- The Newtonian (logarithmic) kernel `N(x,y) = -(2π)⁻¹ log |x - y|` on the plane (copy of
-`HarmonicBalls.newtonKernel`, `HarmonicBalls/Defs/Green.lean:43`). -/
+/-- The Newtonian (logarithmic) kernel `N(x,y) = -(2π)⁻¹ log |x - y|` on the plane (adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]). -/
 noncomputable def newtonKernel (x y : ℂ) : ℝ :=
   -(2 * Real.pi)⁻¹ * Real.log ‖x - y‖
 
@@ -144,7 +139,7 @@ noncomputable def newtonKernel (x y : ℂ) : ℝ :=
 
 The Newtonian (logarithmic) kernel `N(x,y) = -(2π)⁻¹ log |x - y|` (`newtonKernel`) is a fundamental solution of
 `-Δ`: `ΔN(x,·) = -δ_x` in the sense of distributions (Proposition 2.3 of Bou-Rabee and Gwynne, *Harmonic balls in
-Liouville quantum gravity*, line 480; Armitage–Gardiner, Theorem 4.3.? for the Riesz decomposition). That is, for
+Liouville quantum gravity*, arXiv:2208.11795; Armitage–Gardiner, *Classical Potential Theory*, for the Riesz decomposition). That is, for
 every test function `φ`,
 `∫ N(x,y) Δφ(y) dy = -φ(x)` (`integral_newtonKernel_mul_laplacian`).
 
@@ -557,7 +552,7 @@ theorem integral_log_norm_sub_mul_laplacian {φ : ℂ → ℝ} (hφ : ContDiff �
 
 /-- **The Newtonian kernel is a fundamental solution of `-Δ`.** For every compactly supported `C²` function `φ` on
 the plane and every `x`, `∫ N(x,y) Δφ(y) dy = -φ(x)`, i.e. `ΔN(x,·) = -δ_x` in the sense of distributions
-(Proposition 2.3, line 482, for the whole plane). -/
+(Proposition 2.3 of Bou-Rabee and Gwynne, for the whole plane). -/
 theorem integral_newtonKernel_mul_laplacian {φ : ℂ → ℝ} (hφ : ContDiff ℝ 2 φ)
     (hc : HasCompactSupport φ) (x : ℂ) :
     ∫ y, newtonKernel x y * Δ φ y = -φ x := by
@@ -613,8 +608,7 @@ def CameronMartinGFFReweighting : Prop :=
 
 /-- **LP form of the mutual absolute continuity of the shifted whole-plane GFF.** For every whole-plane GFF `(P, hC,
 hcirc)` and smooth compactly supported `g` with zero unit-circle average, `hC` under `P` and `hC + g` have the same null
-sets among the events of `distributionMeasurableSpace` (the σ-algebra generated by the test pairings). LP form of
-`HarmonicBalls.CameronMartinGFFMutualAbsCont` (`HarmonicBalls/FirstPass/Frozen/S11d.lean:74`). Statement only; no proof
+sets among the events of `distributionMeasurableSpace` (the σ-algebra generated by the test pairings). LP form of the statement in the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]. Statement only; no proof
 yet. -/
 def CameronMartinGFFMutualAbsCont : Prop :=
   ∀ (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P] (hC : Ω → (ℂ → ℝ) → ℝ)

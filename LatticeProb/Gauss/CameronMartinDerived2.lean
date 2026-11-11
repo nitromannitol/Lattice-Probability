@@ -4,15 +4,10 @@ import LatticeProb.Gauss.CameronMartinDerived
 # Cameron-Martin derivations for the whole-plane GFF
 
 Proves the Cameron-Martin reweighting `cameronMartinGFFReweighting_derived` (for
-`LatticeProb.Gauss.CameronMartinGFFReweighting`, `HarmonicBalls/LPStage/CameronMartinDerived.lean`) and the mutual
-absolute continuity `cameronMartinGFFMutualAbsCont_derived` (for `LatticeProb.Gauss.CameronMartinGFFMutualAbsCont`).
+`LatticeProb.Gauss.CameronMartinGFFReweighting`) and the mutual absolute continuity
+`cameronMartinGFFMutualAbsCont_derived` (for `LatticeProb.Gauss.CameronMartinGFFMutualAbsCont`).
 
-The proofs are copies, with the names adapted to `LatticeProb.Gauss`, of the Harmonic-balls derivations
-`FirstPass/Phase2/CameronMartinReweightingDerived.lean` (test functions, Green identity, covariance identity and the
-Gaussian tilt), `FirstPass/Phase2/CameronMartinReweightingDerived2.lean` (law of the shifted family and the assembly of
-`IsWholePlaneGFF`) and `FirstPass/Phase2/CameronMartinMutualDerived.lean` (mutual absolute continuity). The mathematics is
-Miller-Sheffield, Imaginary Geometry IV, arXiv:1302.4738v2, Proposition 2.9, with the normalization of
-`HarmonicBalls/LPStage/GFF.lean`. Imports: `CameronMartinDerived` only.
+The proofs are adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795], with the names adapted to `LatticeProb.Gauss`: the test functions, the Green identity, the covariance identity and the Gaussian tilt; the law of the shifted family and the assembly of `IsWholePlaneGFF`; and the mutual absolute continuity. The mathematics is Miller-Sheffield, Imaginary Geometry IV, arXiv:1302.4738v2, Proposition 2.9, with the normalization of `LatticeProb.Gauss.IsWholePlaneGFF`. Imports: `CameronMartinDerived` only.
 -/
 
 namespace LatticeProb.Gauss
@@ -238,7 +233,7 @@ theorem cmTestFn_bounds {f : ℂ → ℝ} (hf : ContDiff ℝ (⊤ : ℕ∞) f) (
   linarith
 
 /-- **The covariance identity (1).** For `Av_{∂B_1(0)} f = 0`-free data: `∫ K(x,y) q_f(y) dy = f(x) - Av_{∂B_1} f`
-for every `x`, where `K = wholePlaneCov` is the whole-plane GFF covariance kernel (eq:cov-kernel). -/
+for every `x`, where `K = wholePlaneCov` is the whole-plane GFF covariance kernel. -/
 theorem integral_wholePlaneCov_mul_cmTestFn {f : ℂ → ℝ} (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hc : HasCompactSupport f)
     (x : ℂ) : ∫ y, wholePlaneCov x y * cmTestFn f y = f x - Real.circleAverage f 0 1 := by
   obtain ⟨M, R, hM0, hqM, hqR⟩ := cmTestFn_bounds hf hc
@@ -649,7 +644,7 @@ section Main
 /-- **Cameron-Martin reweighting of the whole-plane GFF, derived.** For every whole-plane GFF `(P, hC, hcirc)` and
 every smooth compactly supported `f` with zero unit-circle average, the measure `P' = exp(-X - Var X / 2) · P`, with
 `X = hC(-(2π)⁻¹ Δ f)`, is equivalent to `P` and under `P'` the shifted pairings and circle averages form a whole-plane
-GFF. This is the frozen input `CameronMartinGFFReweighting` (`FirstPass/Frozen/S11aj.lean:33`), exactly as typed. -/
+GFF. This is the input `CameronMartinGFFReweighting`, exactly as stated. -/
 theorem cameronMartinGFFReweighting_derived : CameronMartinGFFReweighting.{u} := by
   intro Ω _ P _ hC hcirc hGFF f hf hc hAv
   -- the observables as a Gaussian process indexed by the admissible observables

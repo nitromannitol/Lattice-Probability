@@ -3,8 +3,8 @@ import LatticeProb.Gauss.GFF
 
 /-! # The γ-Liouville quantum gravity area measure: general definitions
 
-General copies of the γ-LQG area measure definitions, at the generality of their source, stated over the
-whole-plane field layer of `LatticeProb/Gauss/GFF.lean` (namespace `LatticeProb.Gauss`).
+General adaptations of the γ-LQG area measure definitions, at the generality of their source, stated over the
+whole-plane field layer (namespace `LatticeProb.Gauss`).
 
 * `LatticeProb.LQG.lqgQ γ = 2/γ + γ/2`: the LQG constant `Q` (Duplantier-Sheffield 2011).
 * `LatticeProb.LQG.dyadicScale k = 2^{-k}`: the dyadic scales along which the limit is taken.
@@ -14,12 +14,9 @@ whole-plane field layer of `LatticeProb/Gauss/GFF.lean` (namespace `LatticeProb.
 * `LatticeProb.LQG.IsLQGMeasureOfField P γ α₀ hcirc μ`: `μ` is the γ-LQG measure of the field whose circle
   averages are `LatticeProb.Gauss.fieldCircleAverage α₀ (hcirc ω)`.
 
-Provenance. Copies of the definitions `dyadicScale`, `lqgApprox`, `IsLQGLimit`, `IsLQGMeasure`,
-`IsLQGMeasureOfField` (Defs/LQG.lean) and `lqgQ` (Defs/Notation.lean) of Bou-Rabee and Gwynne,
-*Harmonic balls in Liouville quantum gravity* (arXiv:2208.11795). No statement, hypothesis or conclusion of the
+Provenance. Adapted from the definitions `dyadicScale`, `lqgApprox`, `IsLQGLimit`, `IsLQGMeasure`, `IsLQGMeasureOfField` and `lqgQ` of the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795] (Bou-Rabee and Gwynne). No statement, hypothesis or conclusion of the
 source is changed. The terminology follows Duplantier-Sheffield, *Liouville quantum gravity and KPZ* (2011), and
-Berestycki-Powell, *Gaussian free field, Liouville quantum gravity and Gaussian multiplicative chaos*. The bridge
-lemmas (HB definition ↔ LP definition) are in `HarmonicBalls/FirstPass/LPBridge/M4.lean`.
+Berestycki-Powell, *Gaussian free field, Liouville quantum gravity and Gaussian multiplicative chaos*.
 
 Helper theorems inside the source bodies: none (the bodies contain no proof terms), so none is restated here.
 The sanity lemmas and uniqueness lemmas of the source (`dyadicScale_pos`, `lqgApprox_neg_log`, `isLQGLimit_volume`,

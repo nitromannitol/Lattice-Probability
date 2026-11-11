@@ -3,8 +3,7 @@ import Mathlib
 /-!
 # Removing a convex compact set from a connected plane domain keeps it preconnected
 
-General plane topology, no Harnack or LQG input. The frozen Prop `PlaneDomainMinusConvexCompactPreconnectedFrozen` (`FirstPass/Frozen/S11d.lean`)
-asserts: for open connected `V ⊆ ℂ`, compact convex `K ⊆ V`, the set `V \ K` is preconnected.
+General plane topology, no Harnack or LQG input. The statement below was used as a hypothesis in the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]; it asserts: for open connected `V ⊆ ℂ`, compact convex `K ⊆ V`, the set `V \ K` is preconnected.
 
 Main theorem `LatticeProb.Topology.isPreconnected_diff_of_convex_compact`. Route (all steps in Mathlib):
 

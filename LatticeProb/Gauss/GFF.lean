@@ -24,11 +24,7 @@ General definitions of the whole-plane Gaussian free field (GFF) on `ℂ` and of
 
 Test functions are smooth with compact support `tsupport φ ⊆ U`, as in the distributional sense.
 
-Provenance and credit. The definitions are general copies of the definitions of the Harmonic-Balls formalization
-(`HarmonicBalls/Defs/GFF.lean`, `Defs/Laplacian.lean`, `Defs/LQGMetric.lean`, `Defs/LQG.lean`, `Defs/Notation.lean`,
-and the general parts of `Proofs/GFF/*` and `Proofs/Sec11/ModConstPairingLaw.lean`). The whole-plane GFF statement
-layer of `LatticeProb/Bonanno` (Leonardo Bonanno, adapted from leobon12/lean-formalizations) was consulted for the
-naming of the same object; no code of it is imported or copied, and nothing here depends on it.
+Provenance and credit. The definitions are general adaptations of the definitions of the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]. The whole-plane GFF statement layer of Leonardo Bonanno's formalization (adapted from leobon12/lean-formalizations) was consulted for the naming of the same object; no code of it is imported or copied, and nothing here depends on it.
 
 Not included here (paper-specific Campbell–Palm observations of the rooted field, Section 11 of the Harmonic-Balls paper):
 `campbellMarkedObs`, `campbellReferenceObs`.
