@@ -6,7 +6,7 @@ import LatticeProb.Gauss.CircleAverageApprox2
 /-! # Measurability of the γ-LQG mass of a closed set as a functional of the field
 
 Statement: the measurability of the γ-LQG mass of a closed set as a functional of the field (the literature input of
-Duplantier-Sheffield 2011 and Fact 2.1 of [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]), with the same
+Duplantier-Sheffield 2011, Proposition 1.1; Bou-Rabee-Gwynne (arXiv:2208.11795) eq. (2.6) and Fact 2.1 I-II, p. 9), with the same
 binders, quantifiers and conclusion, stated for the LP definitions of `LatticeProb/Gauss/GFF.lean`
 (`IsWholePlaneGFF`, `addFunPairing`, `distributionMeasurableSpace`, `LatticeProb.Gauss`) and
 `LatticeProb/LQG/LQGMeasure.lean` (`lqgQ`, `IsLQGMeasureOfField`, `LatticeProb.LQG`).

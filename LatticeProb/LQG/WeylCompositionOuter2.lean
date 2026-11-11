@@ -8,7 +8,7 @@ Second part of the adaptation of the Lean formalization accompanying [Harmonic b
 arXiv:2208.11795] (outer Weyl composition): the
 arclength reparametrization by inner distance, the Riemann comparison `riemann_arc`, and the one-way-topology lemma
 `weylScaling_innerDist_le_direct`. The statement `LatticeProb.LQG.WeylMetricCompositionContinuousOuterLP` is the form of the continuity of the Weyl-scaled
-metric composition in the outer variable (cf. Gwynne-Miller arXiv:1905.00383 and Gwynne-Pfeffer-Sun arXiv:1905.00380),
+metric composition in the outer variable (cf. Gwynne-Miller arXiv:1905.00383 and Dubedat-Falconet-Gwynne-Pfeffer-Sun arXiv:1905.00380),
 and `LatticeProb.LQG.weylMetricCompositionContinuousOuter_lp` proves it with no hypothesis added.
 Source: Bou-Rabee-Gwynne (arXiv:2208.11795) Fact 2.2 III; Gwynne-Miller (1.8).
 -/

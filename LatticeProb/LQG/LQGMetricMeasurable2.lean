@@ -7,7 +7,7 @@ import LatticeProb.LQG.LQGMetricMeasurable
 # Inner measurability of the LQG metric (PointwiseAE and internal diameter)
 
 second half of the measurability argument. The two statements below are derived from the single literature input
-`LQGMetricFieldAxioms` (Fact 2.2 I-II):
+`LQGMetricFieldAxioms` (arXiv:2208.11795, Fact 2.2 I-II, p. 9):
 
 * `LatticeProb.LQG.LQGMetricPointwiseAEMeasurableLP`: pointwise a.e. measurability of the LQG metric, with the binders and
   conclusion of the source; proof `lqgMetricPointwiseAEMeasurable_lp`.
@@ -17,8 +17,8 @@ second half of the measurability argument. The two statements below are derived 
 The only hypothesis of each proof is the LP input `LQGMetricFieldAxioms` (`LatticeProb/LQG/LQGMetric.lean`), quantified
 over the carriers. The deterministic inputs are `LatticeProb/LQG/LQGMetricMeasurable.lean` (continuity of
 the internal metric on `O × O`) and `LatticeProb/LQG/LQGMassInner.lean` (monotonicity of the field σ-algebra in the open set).
-Terminology: LQG metric, internal metric, internal diameter (Gwynne-Miller arXiv:1905.00383 Sec. 1.2; Bou-Rabee-Gwynne
-arXiv:2208.11795 Fact 2.2).
+Terminology: LQG metric, internal metric, internal diameter (Gwynne-Miller arXiv:1905.00383 Sec. 1.2 and Axiom II
+(Locality), p. 6; Bou-Rabee-Gwynne arXiv:2208.11795, Fact 2.2 I-II, p. 9).
 -/
 
 open MeasureTheory Set Filter Topology Metric
@@ -76,7 +76,7 @@ def LQGInternalDiamInnerMeasurableLP : Prop :=
       ∀ᵐ ω ∂P, internalDiam (D ω) δ A = g ω
 
 /-- **LP proof of `LQGMetricPointwiseAEMeasurableLP`.** Input: `hFA`, the LP input `LQGMetricFieldAxioms`
-(Fact 2.2 I-II) in its universally quantified form. Written argument:
+(arXiv:2208.11795, Fact 2.2 I-II, p. 9) in its universally quantified form. Written argument:
 the metric `D_h` is finite a.s. (I); locality (II) with `U = ℂ` gives `G ω x y`, measurable for `σ(h|_ℂ)`, a.s. equal to
 the internal metric of `D_h` over `ℂ`; a length metric satisfies `ofReal D = internalMetric D univ`, so `D_h = G` a.s.;
 the pairings are measurable, so `σ(h|_ℂ)` lies in the ambient σ-algebra. -/
@@ -106,7 +106,7 @@ theorem lqgMetricPointwiseAEMeasurable_lp
     rw [← h1, ENNReal.toReal_ofReal hωD.1]
   exact hGmeas.ennreal_toReal.aemeasurable.congr hEq.symm
 
-/-- **LP proof of `LQGInternalDiamInnerMeasurableLP`.** Input: `hFA`, the LP input `LQGMetricFieldAxioms` (Fact 2.2 I-II).
+/-- **LP proof of `LQGInternalDiamInnerMeasurableLP`.** Input: `hFA`, the LP input `LQGMetricFieldAxioms` (arXiv:2208.11795, Fact 2.2 I-II, p. 9).
 Written argument: the internal metric over `O = thickening δ A` is a.s.
 given by a family `G` of `σ(h|_O)`-measurable functions (II); `D` is a.s. a Euclidean length metric, whose internal metric
 is continuous on `O × O` (`IsEuclideanLengthMetric.continuousOn_internalMetric_pair`); so `internalDiam D δ A` is a.s. the

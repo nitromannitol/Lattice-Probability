@@ -17,7 +17,7 @@ the whole-plane field layer of `LatticeProb/Gauss/GFF.lean` (namespace `LatticeP
   exponent tends to `1 / d`.
 * `LatticeProb.LQG.IsWholePlaneLQGDimension γ d`: `d > 0`, and for every whole-plane GFF realization with its γ-LQG
   measure `μ` (`α₀ = 0`), almost surely `IsLiouvilleGraphDimension (μ ω) 0 1 d`.
-* `LatticeProb.LQG.WholePlaneLQGGraphDimension`: the literature input of Ding and Gwynne, Theorem 1.4, equation (1.8),
+* `LatticeProb.LQG.WholePlaneLQGGraphDimension`: the literature input of Ding and Gwynne (arXiv:1807.01072), Theorem 1.4, equation (1.8),
   stated as a Prop only.
 
 Provenance. Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity,
@@ -73,7 +73,7 @@ def IsWholePlaneLQGDimension (γ dimension : ℝ) : Prop :=
 
 /-- **LQG graph-distance exponent (literature input, stated as a Prop).** Ding and Gwynne, *The fractal dimension of
 Liouville quantum gravity: universality, monotonicity, and bounds*, arXiv:1807.01072v3, Theorem 1.4, p. 6, equation
-(1.8), together with the positivity of the dimension in Theorem 1.1, p. 4. For every `γ ∈ (0, 2)` some dimension
+(1.8), together with the positivity of the dimension in Theorem 1.1, p. 4 (due to Ding-Zeitouni-Zhang, arXiv:1807.00422). For every `γ ∈ (0, 2)` some dimension
 satisfies `IsWholePlaneLQGDimension γ`. The statement restricts the full limit to dyadic mass scales and fixes the
 points `0` and `1`; the same deterministic dimension serves every realization of the normalized field.
 

@@ -8,7 +8,7 @@ import LatticeProb.LQG.LQGMeasureLocality2
 
 * `LatticeProb.LQG.fieldSigmaAlgebra_mono_of_subset`: `σ(h|_U) ≤ σ(h|_O)` for `U ⊆ O`.
 * `LatticeProb.LQG.lqgMassInnerMeasurable_of_gff`: measurability of the inner LQG mass, which follows from the locality
-  of the LQG measure (Fact 2.1 II of [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795]).
+  of the LQG measure (Harmonic balls in Liouville quantum gravity, arXiv:2208.11795, Fact 2.1 II, p. 9).
   The locality input is the unconditional locality `lqgLocality_of_gff` (`LatticeProb/LQG/LQGMeasureLocality2.lean`).
 -/
 
