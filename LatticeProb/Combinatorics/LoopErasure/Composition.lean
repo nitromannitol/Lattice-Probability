@@ -102,7 +102,7 @@ theorem prefixTo_comp_of_not_mem {a v : V} (L : Path a v) {u w : V} (r : Path v 
       show prefixTo ((L.comp r).cons f) w hw = L.comp (prefixTo (r.cons f) w hwr)
       by_cases hu : n = w
       · subst hu
-        rw [prefixTo_self, prefixTo_self]
+        rw [prefixTo_self (r.cons f) hwr, prefixTo_self ((L.comp r).cons f) hw]
         rfl
       · have hw0 : w ∈ ((L.comp r).cons f).vertices := hw
         have hw' : w ∈ (L.comp r).vertices :=
