@@ -6,6 +6,7 @@ import LatticeProb.Bonanno.LQGMetric.Field.WholePlaneCov
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgBridge
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgVersion
 import LatticeProb.Bonanno.LQGDimension.LFPP.OscillationAux
+import LatticeProb.Bonanno.LQGMetric.Field.MeasurableAvg
 
 /-!
 # Circle averages of the whole-plane covariance kernel
@@ -391,6 +392,134 @@ lemma integral_radialPoint_mul [IsProbabilityMeasure P] {h : Ω → DistC} (hh :
 
 end Normalized
 
+
+/-! ### Radial integrability and the mean of the radial integral -/
+
+section Radial
+
+open LQGMetric ProbabilityTheory
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+
+/-- Measurability in `ω` of the circle average of a normalized whole-plane GFF. -/
+lemma measurable_circleAvg_normalized {h : Ω → DistC} (hh : IsNormalizedWPGFF h P) (r : ℝ) (z : ℂ) :
+    Measurable fun ω => circleAvg (h ω) r z :=
+  (measurable_circleAvg_left r z).comp hh.1.measurable
+
+/-- The radial product `(ω, x) ↦ φ(x) F(ω)(|x|,0) Z(ω)` is integrable for `P ⊗ Leb`: it is dominated by
+`|φ(x)| (F(ω)(|x|,0)² + Z(ω)²)`, whose integral over `ω` is `|φ(x)| (2 log max(|x|,1) - log |x| + c)`. -/
+lemma integrable_radial_mul [IsProbabilityMeasure P] {h : Ω → DistC} (hh : IsNormalizedWPGFF h P)
+    {F : Ω → C(CircleParameter, ℝ)} (hF : Measurable F)
+    (hFae : ∀ᵐ ω ∂P, ∀ p : CircleParameter, F ω p = circleAvg (h ω) (p.1 : ℝ) p.2)
+    {φ : ℂ → ℝ} (hφ : IsTestFunction Set.univ φ) {Z : Ω → ℝ} (hZm : Measurable Z)
+    (hZ : MemLp Z 2 P) {c : ℝ} (hc : ∫ ω, Z ω ^ 2 ∂P = c) :
+    Integrable (fun q : Ω × ℂ => φ q.2 * F q.1 (radialPoint q.2) * Z q.1) (P.prod volume) := by
+  have hmF : Measurable (fun q : Ω × ℂ => F q.1 (radialPoint q.2)) :=
+    (measurable_circleVersion_joint hF).comp
+      (measurable_fst.prodMk (measurable_radialPoint.comp measurable_snd))
+  have hmY : Measurable (fun q : Ω × ℂ => Z q.1) := hZm.comp measurable_fst
+  have hmφ : Measurable (fun q : Ω × ℂ => φ q.2) := hφ.1.continuous.measurable.comp measurable_snd
+  set G : Ω × ℂ → ℝ := fun q => |φ q.2| * ((F q.1 (radialPoint q.2)) ^ 2 + (Z q.1) ^ 2)
+    with hG
+  have hGmeas : Measurable G := ((continuous_abs.measurable.comp hmφ)).mul ((hmF.pow_const 2).add (hmY.pow_const 2))
+  have hGnn : ∀ q, 0 ≤ G q := fun q =>
+    mul_nonneg (abs_nonneg _) (add_nonneg (sq_nonneg _) (sq_nonneg _))
+  have hGint : Integrable G (P.prod volume) := by
+    rw [integrable_prod_iff' hGmeas.aestronglyMeasurable]
+    constructor
+    · refine ae_of_all _ fun y => ?_
+      show Integrable (fun ω => |φ y| * ((F ω (radialPoint y)) ^ 2 + (Z ω) ^ 2)) P
+      exact (((memLp_two_radialPoint hh hFae y).integrable_sq.add hZ.integrable_sq).const_mul _)
+    · have hφabs : Integrable (fun y : ℂ => |φ y|) :=
+        (Continuous.integrable_of_hasCompactSupport hφ.1.continuous hφ.2.1).abs
+      have hsum := (integrable_abs_test_mul_diag hφ).add (hφabs.mul_const c)
+      have h0 : ∀ᵐ y ∂(volume : Measure ℂ), y ≠ 0 := by
+        rw [ae_iff]; simp
+      have key : ∀ᵐ y ∂(volume : Measure ℂ), ∫ ω, ‖G (ω, y)‖ ∂P =
+          |φ y| * ((2 * Real.log (max ‖y‖ 1) - Real.log ‖y‖) + c) := by
+        filter_upwards [h0] with y hy
+        have hnorm : ∀ ω, ‖G (ω, y)‖ = |φ y| * ((F ω (radialPoint y)) ^ 2 + (Z ω) ^ 2) := by
+          intro ω
+          rw [Real.norm_of_nonneg (hGnn _)]
+        have hFsq : ∫ ω, (F ω (radialPoint y)) ^ 2 ∂P = 2 * Real.log (max ‖y‖ 1) - Real.log ‖y‖ :=
+          integral_sq_radialPoint hh hFae hy
+        have hint : ∫ ω, ‖G (ω, y)‖ ∂P =
+            |φ y| * (∫ ω, (F ω (radialPoint y)) ^ 2 ∂P + ∫ ω, Z ω ^ 2 ∂P) := by
+          simp_rw [hnorm]
+          rw [integral_const_mul, integral_add ((memLp_two_radialPoint hh hFae y).integrable_sq)
+            hZ.integrable_sq]
+        rw [hint, hFsq, hc]
+      refine hsum.congr (key.mono fun y hy => ?_)
+      simp only [Pi.add_apply]
+      rw [hy]
+      ring
+  have hmeasf : AEStronglyMeasurable (fun q : Ω × ℂ => φ q.2 * F q.1 (radialPoint q.2) * Z q.1)
+      (P.prod volume) :=
+    (((hmφ.mul hmF).mul hmY)).aestronglyMeasurable
+  refine Integrable.mono' (hGint.div_const 2) hmeasf (ae_of_all _ fun q => ?_)
+  obtain ⟨ω, x⟩ := q
+  simp only [hG]
+  have hFY : |F ω (radialPoint x)| * |Z ω| ≤ (F ω (radialPoint x) ^ 2 + Z ω ^ 2) / 2 := by
+    nlinarith [sq_abs (F ω (radialPoint x)), sq_abs (Z ω),
+      sq_nonneg (|F ω (radialPoint x)| - |Z ω|)]
+  rw [Real.norm_eq_abs, abs_mul, abs_mul]
+  calc |φ x| * |F ω (radialPoint x)| * |Z ω|
+      = |φ x| * (|F ω (radialPoint x)| * |Z ω|) := by ring
+    _ ≤ |φ x| * ((F ω (radialPoint x) ^ 2 + Z ω ^ 2) / 2) :=
+        mul_le_mul_of_nonneg_left hFY (abs_nonneg _)
+    _ = |φ x| * (F ω (radialPoint x) ^ 2 + Z ω ^ 2) / 2 := by ring
+
+/-- The radial product with a circle average `h_r(0)`, `r > 0`: the case `Z = h_r(0)` of `integrable_radial_mul`. -/
+lemma integrable_radial_mul_circle [IsProbabilityMeasure P] {h : Ω → DistC} (hh : IsNormalizedWPGFF h P)
+    {F : Ω → C(CircleParameter, ℝ)} (hF : Measurable F)
+    (hFae : ∀ᵐ ω ∂P, ∀ p : CircleParameter, F ω p = circleAvg (h ω) (p.1 : ℝ) p.2)
+    {φ : ℂ → ℝ} (hφ : IsTestFunction Set.univ φ) {r : ℝ} (hr : 0 < r) :
+    Integrable (fun q : Ω × ℂ => φ q.2 * F q.1 (radialPoint q.2) * circleAvg (h q.1) r 0)
+      (P.prod volume) := by
+  have hYsq : ∫ ω, (circleAvg (h ω) r 0) ^ 2 ∂P = 2 * Real.log (max r 1) - Real.log r := by
+    have : ∫ ω, (circleAvg (h ω) r 0) ^ 2 ∂P = ∫ ω, circleAvg (h ω) r 0 * circleAvg (h ω) r 0 ∂P := by
+      simp only [sq]
+    rw [this, integral_mul_circleAvg_zero hh hr hr, max_self]
+    ring
+  exact integrable_radial_mul hh hF hFae hφ (measurable_circleAvg_normalized hh r 0)
+    (memLp_two_circleAvg hh hr 0) hYsq
+
+/-- The radial functional `(ω, x) ↦ φ(x) F(ω)(|x|,0)` is integrable for `P ⊗ Leb`. -/
+lemma integrable_radial_one [IsProbabilityMeasure P] {h : Ω → DistC} (hh : IsNormalizedWPGFF h P)
+    {F : Ω → C(CircleParameter, ℝ)} (hF : Measurable F)
+    (hFae : ∀ᵐ ω ∂P, ∀ p : CircleParameter, F ω p = circleAvg (h ω) (p.1 : ℝ) p.2)
+    {φ : ℂ → ℝ} (hφ : IsTestFunction Set.univ φ) :
+    Integrable (fun q : Ω × ℂ => φ q.2 * F q.1 (radialPoint q.2)) (P.prod volume) := by
+  have := integrable_radial_mul hh hF hFae hφ (Z := fun _ => (1 : ℝ)) measurable_const
+    (memLp_const 1) (c := 1) (by simp)
+  exact this.congr (ae_of_all _ fun q => by simp)
+
+/-- The mean of the radial integral vanishes (Fubini and `E h_r(0) = 0`). -/
+lemma integral_radialIntegral_eq_zero [IsProbabilityMeasure P] {h : Ω → DistC}
+    (hh : IsNormalizedWPGFF h P) {F : Ω → C(CircleParameter, ℝ)} (hF : Measurable F)
+    (hFae : ∀ᵐ ω ∂P, ∀ p : CircleParameter, F ω p = circleAvg (h ω) (p.1 : ℝ) p.2)
+    {φ : ℂ → ℝ} (hφ : IsTestFunction Set.univ φ) :
+    ∫ ω, ∫ x, φ x * F ω (radialPoint x) ∂volume ∂P = 0 := by
+  rw [integral_integral_swap (f := fun ω x => φ x * F ω (radialPoint x))
+    (integrable_radial_one hh hF hFae hφ)]
+  have h0 : ∀ᵐ x ∂(volume : Measure ℂ), x ≠ 0 := by
+    rw [ae_iff]; simp
+  have hx0 : ∀ᵐ x ∂(volume : Measure ℂ), ∫ ω, φ x * F ω (radialPoint x) ∂P = 0 := by
+    refine h0.mono fun x hx => ?_
+    have hrx : ((radialPoint x).1 : ℝ) = ‖x‖ := radialPoint_fst_of_ne hx
+    have hmean : ∫ ω, F ω (radialPoint x) ∂P = ∫ ω, circleAvg (h ω) ‖x‖ 0 ∂P := by
+      refine integral_congr_ae ?_
+      filter_upwards [hFae] with ω hω
+      have := hω (radialPoint x)
+      rw [hrx] at this
+      exact this
+    have hz : ∫ ω, circleAvg (h ω) ‖x‖ 0 ∂P = 0 :=
+      integral_circleAvg_zero hh (norm_pos_iff.2 hx)
+    rw [integral_const_mul, hmean, hz, mul_zero]
+  rw [integral_congr_ae hx0, integral_zero]
+
+end Radial
+
 end LatticeProb
 
 end
@@ -408,3 +537,8 @@ end
 #print axioms LatticeProb.memLp_two_radialPoint
 #print axioms LatticeProb.integral_sq_radialPoint
 #print axioms LatticeProb.integral_radialPoint_mul
+#print axioms LatticeProb.measurable_circleAvg_normalized
+#print axioms LatticeProb.integrable_radial_mul
+#print axioms LatticeProb.integrable_radial_mul_circle
+#print axioms LatticeProb.integrable_radial_one
+#print axioms LatticeProb.integral_radialIntegral_eq_zero
