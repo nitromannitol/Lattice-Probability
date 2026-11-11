@@ -105,6 +105,7 @@ theorem refLaw_neg (b c : ℝ) : (refLaw b c).map (fun x : ℝ => -x) = refLaw b
     show ((fun x : ℝ => -x) ∘ fun w : ℝ => -(b * w + c)) = fun w : ℝ => b * w + c by
       funext w; simp]
   exact add_comm _ _
+  all_goals exact measurable_neg.aemeasurable
 
 /-- A tail-domination hypothesis for the absolute value transfers, through any monotone `G`,
 to a domination of the superlevel sets of `G ∘ |·|`. -/
@@ -162,7 +163,7 @@ instance isProbabilityMeasure_symmLaw (μ : Measure ℝ) [IsProbabilityMeasure �
     IsProbabilityMeasure (symmLaw μ) := by
   unfold symmLaw
   have hm : Measurable fun p : ℝ × ℝ => p.1 - p.2 := measurable_fst.sub measurable_snd
-  exact Measure.isProbabilityMeasure_map hm.aemeasurable
+  exact inferInstance
 
 /-- The symmetrization of a law is symmetric under negation. -/
 theorem symmLaw_neg (μ : Measure ℝ) [IsProbabilityMeasure μ] :
