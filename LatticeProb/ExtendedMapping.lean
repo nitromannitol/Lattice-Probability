@@ -189,9 +189,9 @@ theorem tendsto_integral_comp_of_locally_uniform [MeasurableSpace E] [OpensMeasu
     (G : BoundedContinuousFunction ℝ ℝ) :
     Tendsto (fun n => ∫ x, G (fs n x) ∂(νs n)) atTop (𝓝 (∫ x, G (f x) ∂ν)) := by
   classical
-  let μ : ProbabilityMeasure ℝ := ⟨ν.map f, Measure.isProbabilityMeasure_map hf.aemeasurable⟩
+  let μ : ProbabilityMeasure ℝ := ⟨ν.map f, inferInstance⟩
   let μs : ℕ → ProbabilityMeasure ℝ := fun n =>
-    ⟨(νs n).map (fs n), Measure.isProbabilityMeasure_map (hfs n).aemeasurable⟩
+    ⟨(νs n).map (fs n), inferInstance⟩
   have hcoe : ∀ (n : ℕ) (s : Set ℝ), MeasurableSet s →
       (μs n : Measure ℝ) s = νs n (fs n ⁻¹' s) := by
     intro n s hs
