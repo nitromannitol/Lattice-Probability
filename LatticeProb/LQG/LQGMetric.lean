@@ -1,0 +1,138 @@
+import Mathlib
+import LatticeProb.Gauss.GFF
+import LatticeProb.LQG.LQGMeasure
+import LatticeProb.LQG.LengthMetric
+
+/-! # The γ-Liouville quantum gravity metric: random half
+
+General copies of the random-field definitions of the γ-LQG metric, at the generality of their source, stated over
+the whole-plane field layer (`LatticeProb/Gauss/GFF.lean`, namespace `LatticeProb.Gauss`), the γ-LQG constant
+`lqgQ` (`LatticeProb/LQG/LQGMeasure.lean`) and the deterministic length-metric layer
+(`LatticeProb/LQG/LengthMetric.lean`, namespace `LatticeProb.LQG`).
+
+* `LatticeProb.LQG.SatisfiesLQGMetricAxioms P γ ξ 𝔇 h`: axioms I-IV of the γ-LQG metric, for the metric
+  `𝔇 (h ω)` of a random generalized function `h` (Gwynne-Miller 2021, Section 1.2).
+* `LatticeProb.LQG.IsLQGMetric γ ξ 𝔇`: `𝔇` is a γ-LQG metric with Weyl exponent `ξ`.
+* `LatticeProb.LQG.IsLQGMetricOfField P γ ξ α₀ hC D`: `D` is the γ-LQG metric of the field
+  `h^ℂ - α₀ log |·|`, where `h^ℂ` has pairings `hC`.
+* `LatticeProb.LQG.LQGMetricFieldAxioms P γ ξ α₀ hC hcirc`: an INPUT Prop, not a theorem. It is the literature
+  statement of the axioms I-IV for the metric of the logarithmically shifted field (Dubédat-Falconet-Gwynne-Pfeffer-Sun
+  2020; Gwynne-Miller 2021). It is taken from the Proposed module `HarmonicBalls/Proposed/LQG.lean` and remains
+  PENDING (source check); nothing in this file proves or assumes it.
+
+Provenance. Copies of `SatisfiesLQGMetricAxioms` (Defs/LQGMetric.lean), `IsLQGMetric` (Defs/LQGMetric.lean),
+`IsLQGMetricOfField` (Defs/LQGMetric.lean) and `LQGMetricFieldAxioms` (Proposed/LQG.lean) of Bou-Rabee and Gwynne,
+*Harmonic balls in Liouville quantum gravity* (arXiv:2208.11795). No statement, hypothesis or conclusion of the source is
+changed. The bridge lemmas (HB definition ↔ LP definition) are in `HarmonicBalls/FirstPass/LPBridge/M5b.lean`.
+
+Helper declarations: the only auto-generated declaration inside a body is `LQGMetricFieldAxioms._proof_1 : (1 + 1).AtLeastTwo`
+(the instance proof of the numeral `2` in `γ < 2`); it is not a mathematical helper and is not restated. The other three
+definitions have none.
+-/
+
+open MeasureTheory Set
+open scoped ENNReal NNReal
+open LatticeProb.Gauss
+
+namespace LatticeProb.LQG
+
+/-- The axioms I-IV of the γ-LQG metric (Gwynne-Miller 2021, Section 1.2, p. 6) for the metric `D_h = 𝔇 (h ω)` of a
+random generalized function `h : Ω → (ℂ → ℝ) → ℝ` (a family of pairings) on `(Ω, P)`, given a map `𝔇 : h ↦ D_h`:
+* I (Euclidean topology and length metric): a.s. `D_h` is a length metric inducing the Euclidean topology;
+* II (locality): for each deterministic open `U`, the internal metric `D_h(·, ·; U)` is a.s. equal to a random function
+  `G` whose values are `σ(h|_U)`-measurable (`pairingSigmaAlgebra`);
+* III (Weyl scaling): a.s., for every continuous `f`, `D_{h+f} = e^{ξ f} · D_h`;
+* IV (coordinate change for scaling and translation): for each `r > 0` and `z ∈ ℂ`, a.s.
+  `D_h(r u + z, r v + z) = D_{h(r · + z) + Q log r}(u, v)` for all `u, v`, where `Q = lqgQ γ`. -/
+structure SatisfiesLQGMetricAxioms {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (γ ξ : ℝ)
+    (𝔇 : ((ℂ → ℝ) → ℝ) → ℂ → ℂ → ℝ) (h : Ω → (ℂ → ℝ) → ℝ) : Prop where
+  /-- I. Euclidean topology and length metric. -/
+  ae_isEuclideanLengthMetric : ∀ᵐ ω ∂P, IsEuclideanLengthMetric (𝔇 (h ω))
+  /-- II. Locality. -/
+  locality : ∀ U : Set ℂ, IsOpen U → ∃ G : Ω → ℂ → ℂ → ℝ≥0∞,
+    (∀ z w, Measurable[pairingSigmaAlgebra h U] fun ω => G ω z w) ∧
+      ∀ᵐ ω ∂P, ∀ z ∈ U, ∀ w ∈ U, internalMetric (𝔇 (h ω)) U z w = G ω z w
+  /-- III. Weyl scaling. -/
+  ae_weylScaling : ∀ᵐ ω ∂P, ∀ f : ℂ → ℝ, Continuous f → ∀ u v,
+    ENNReal.ofReal (𝔇 (addFunPairing (h ω) f) u v) = weylScaling (𝔇 (h ω)) ξ f u v
+  /-- IV. Coordinate change for scaling and translation. -/
+  coordChange : ∀ r : ℝ, 0 < r → ∀ z : ℂ, ∀ᵐ ω ∂P, ∀ u v : ℂ,
+    𝔇 (h ω) (r * u + z) (r * v + z) =
+      𝔇 (addFunPairing (affinePullbackPairing (h ω) r z) fun _ => lqgQ γ * Real.log r) u v
+
+/-- `𝔇 : h ↦ D_h` is a γ-LQG metric with Weyl exponent `ξ` (Gwynne-Miller 2021, Section 1.2; Fact 2.2 of the source):
+`𝔇` is measurable for `distributionMeasurableSpace`, and whenever `h = h^ℂ + f` with `h^ℂ` a whole-plane GFF
+(`IsWholePlaneGFF`) and `f` a random continuous function on the same probability space (measurable in `ω`), the metric
+`D_h` satisfies the axioms I-IV (`SatisfiesLQGMetricAxioms`). The whole-plane GFF in other normalizations is covered,
+since it differs from `h^ℂ` by a random constant.
+
+The Weyl exponent is a parameter. Gwynne-Miller 2021 fix `ξ = γ / d_γ`, where `d_γ` is the exponent of Ding-Gwynne 2018
+(the Hausdorff dimension of `(ℂ, D_h)`, Gwynne-Pfeffer 2019, Corollary 1.7). For `γ ∈ (0, 2)` such a map exists, and any
+two are a.s. equal up to a deterministic positive constant on every whole-plane GFF plus a continuous function (Gwynne-Miller
+2021, Theorem 1.2). -/
+structure IsLQGMetric (γ ξ : ℝ) (𝔇 : ((ℂ → ℝ) → ℝ) → ℂ → ℂ → ℝ) : Prop where
+  /-- `h ↦ D_h(z, w)` is measurable for the σ-algebra generated by the pairings with test functions. -/
+  measurable_apply : ∀ z w, Measurable[distributionMeasurableSpace] fun T => 𝔇 T z w
+  /-- The axioms I-IV hold for every whole-plane GFF plus a random continuous function. -/
+  satisfiesLQGMetricAxioms : ∀ (Ω : Type) [MeasurableSpace Ω] (P : Measure Ω) (hC : Ω → (ℂ → ℝ) → ℝ)
+    (hcirc : Ω → ℝ → ℂ → ℝ) (f : Ω → ℂ → ℝ), IsWholePlaneGFF P hC hcirc → (∀ ω, Continuous (f ω)) →
+    (∀ x, Measurable fun ω => f ω x) → SatisfiesLQGMetricAxioms P γ ξ 𝔇 fun ω => addFunPairing (hC ω) (f ω)
+
+/-- `D = D_h`, the γ-LQG metric of the field `h = h^ℂ - α₀ log |·|` (Gwynne-Miller 2021, Remark 1.5; Dubédat-Falconet-Gwynne-
+Pfeffer-Sun 2020, p. 9), where `hC ω` are the pairings of the whole-plane GFF `h^ℂ` (`IsWholePlaneGFF`): for some γ-LQG
+metric `𝔇` with Weyl exponent `ξ` (`IsLQGMetric`), a.s. `D_h = e^{-ξ α₀ log |·|} · D_{h^ℂ}`, i.e. for all `u, v`,
+`D_h(u, v) = inf_P ∫_0^{len(P; D_{h^ℂ})} |P(t)|^{-ξ α₀} dt` over paths `P` from `u` to `v` parametrized by
+`D_{h^ℂ}`-length, with `D_h ≥ 0`. The Weyl scaling formula is the definition of the metric of a whole-plane GFF plus a
+log singularity in the literature: `D_{h - α log |·|} = |·|^{-α ξ} · D_h` on `ℂ ∖ {0}`, extended to `ℂ` by infima of path
+lengths. The metric is finite a.s. for `α₀ < Q` (Dubédat-Falconet-Gwynne-Pfeffer-Sun 2020, Theorem 1.10), so statements
+using it assume `0 < γ < 2` and `α₀ < lqgQ γ`. By the uniqueness of `𝔇` (Gwynne-Miller 2021, Theorem 1.2), `D_h` is
+determined up to a deterministic positive multiplicative constant. For `α₀ = 0` it is `D_{h^ℂ} = 𝔇 (hC ω)`. -/
+def IsLQGMetricOfField {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (γ ξ α₀ : ℝ)
+    (hC : Ω → (ℂ → ℝ) → ℝ) (D : Ω → ℂ → ℂ → ℝ) : Prop :=
+  ∃ 𝔇 : ((ℂ → ℝ) → ℝ) → ℂ → ℂ → ℝ, IsLQGMetric γ ξ 𝔇 ∧ ∀ᵐ ω ∂P, ∀ u v, 0 ≤ D ω u v ∧
+    ENNReal.ofReal (D ω u v) = weylScaling (𝔇 (hC ω)) ξ (fun x => -α₀ * Real.log ‖x‖) u v
+
+/-- **Literature input, not a theorem: the axioms I-IV for the γ-LQG metric of the logarithmically shifted field.**
+Let `𝔇` be a γ-LQG metric with Weyl exponent `ξ`, and let `D_h` be the metric of the field
+`h = h^ℂ - α₀ log |·|` with `α₀ < Q`. The metric of `h + f` (`f` continuous, possibly `0`) is the Weyl scaling
+`e^{ξ (f - α₀ log |·|)} · D_{h^ℂ}` (`IsLQGMetricOfField`); write `D_h` for the case `f = 0`. Then:
+* I: a.s. `D_h` is finite, and it is a length metric inducing the Euclidean topology;
+* II: for each deterministic open `U`, `D_h(·, ·; U)` is a.s. equal to a `σ(h|_U)`-measurable random function;
+* III: a.s., for every continuous `f`, `D_{h+f} = e^{ξ f} · D_h`;
+* IV: for each `r > 0`, `z ∈ ℂ`, a.s. `D_h(r u + z, r v + z) = D_{h(r · + z) + Q log r}(u, v)` for all `u, v`, where
+  `h(r · + z) + Q log r = h^ℂ(r · + z) + Q log r - α₀ log |r · + z|` has metric
+  `e^{-ξ α₀ log |r · + z|} · D_{h^ℂ(r · + z) + Q log r}`.
+
+Source: for a whole-plane GFF plus a continuous function these are the axioms of Gwynne-Miller 2021, Section 1.2 (p. 6),
+verified in Ding-Dubédat-Dunlap-Falconet 2020, Dubédat-Falconet-Gwynne-Pfeffer-Sun 2020 and Gwynne-Miller 2021. For the log
+singularity `-α₀ log |·|`: Dubédat-Falconet-Gwynne-Pfeffer-Sun 2020 (arXiv:1905.00380), definition p. 9, Theorem 1.10
+(p. 10; finiteness for `α₀ < Q`) and Proposition 3.17 (p. 43; Euclidean topology); Gwynne-Miller 2021, Remark 1.5 (p. 8).
+III and IV for `h` follow from those for `h^ℂ` and the composition rule of Weyl scalings.
+
+Caveat on `ξ`: the Prop quantifies over every `ξ` for which `IsLQGMetric γ ξ 𝔇` holds. The literature constructs γ-LQG
+metrics only for `ξ = γ / d_γ`; if the axioms admitted another exponent, this Prop would assert Fact 2.2 for it as well.
+
+Truth: TRUE as typed (checked 2026-11-10, recorded in the source).
+-/
+def LQGMetricFieldAxioms {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (γ ξ α₀ : ℝ)
+    (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) : Prop :=
+  IsWholePlaneGFF P hC hcirc → 0 < γ → γ < 2 → α₀ < lqgQ γ → ∀ 𝔇 : ((ℂ → ℝ) → ℝ) → ℂ → ℂ → ℝ,
+    IsLQGMetric γ ξ 𝔇 →
+    let Dh : Ω → ℂ → ℂ → ℝ≥0∞ := fun ω => weylScaling (𝔇 (hC ω)) ξ fun x => -α₀ * Real.log ‖x‖
+    -- I. Finiteness, Euclidean topology and length metric.
+    (∀ᵐ ω ∂P, (∀ u v, Dh ω u v < ∞) ∧ IsEuclideanLengthMetric fun u v => (Dh ω u v).toReal) ∧
+    -- II. Locality.
+    (∀ U : Set ℂ, IsOpen U → ∃ G : Ω → ℂ → ℂ → ℝ≥0∞,
+      (∀ z w, Measurable[fieldSigmaAlgebra α₀ hC U] fun ω => G ω z w) ∧
+        ∀ᵐ ω ∂P, ∀ z ∈ U, ∀ w ∈ U, internalMetric (fun u v => (Dh ω u v).toReal) U z w = G ω z w) ∧
+    -- III. Weyl scaling.
+    (∀ᵐ ω ∂P, ∀ f : ℂ → ℝ, Continuous f → ∀ u v,
+      weylScaling (𝔇 (hC ω)) ξ (fun x => f x - α₀ * Real.log ‖x‖) u v =
+        weylScaling (fun u v => (Dh ω u v).toReal) ξ f u v) ∧
+    -- IV. Coordinate change for scaling and translation.
+    (∀ r : ℝ, 0 < r → ∀ z : ℂ, ∀ᵐ ω ∂P, ∀ u v : ℂ,
+      Dh ω (r * u + z) (r * v + z) =
+        weylScaling (𝔇 (addFunPairing (affinePullbackPairing (hC ω) r z) fun _ => lqgQ γ * Real.log r)) ξ
+          (fun x => -α₀ * Real.log ‖(r : ℂ) * x + z‖) u v)
+
+end LatticeProb.LQG
