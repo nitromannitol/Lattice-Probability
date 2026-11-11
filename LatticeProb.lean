@@ -835,3 +835,5 @@ import LatticeProb.Prob.PlanarBrownianGermZeroOne
 import LatticeProb.Prob.VagueLimitMeasurable
 
 import LatticeProb.Analysis.RotationalAverage
+
+import LatticeProb.Bonanno.LQGMetric.Field.WholePlaneCov

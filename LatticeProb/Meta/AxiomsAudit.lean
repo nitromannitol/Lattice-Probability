@@ -888,3 +888,10 @@ library.
 #print axioms LatticeProb.RotationalAverage.avgRot_test
 #print axioms LatticeProb.RotationalAverage.integral_avgRot_mul
 #print axioms LatticeProb.RotationalAverage.avgRot_eq_circleAverage
+#print axioms LatticeProb.wholePlaneCov_eq_of_ne
+#print axioms LatticeProb.continuous_log_max_norm
+#print axioms LatticeProb.integral_wholePlaneCov_mul
+#print axioms LatticeProb.integral_mul_add_const_of_integral_eq_zero
+#print axioms LatticeProb.integral_integral_wholePlaneCov_mul_eq_logCov
+#print axioms LatticeProb.integral_integral_wholePlaneCov_mul_eq_logCov_testC0
+#print axioms LatticeProb.testC0_contDiff_hasCompactSupport
