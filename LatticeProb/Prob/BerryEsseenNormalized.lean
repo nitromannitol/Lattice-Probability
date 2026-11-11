@@ -50,7 +50,7 @@ private theorem measurable_sum_coord {ι : Type*} [Fintype ι] :
 /-- The law of a sum of independent variables with probability laws is a probability measure. -/
 instance isProbabilityMeasure_sumLaw {ι : Type*} [Fintype ι] (ν : ι → Measure ℝ)
     [∀ i, IsProbabilityMeasure (ν i)] : IsProbabilityMeasure (sumLaw ν) :=
-  Measure.isProbabilityMeasure_map measurable_sum_coord.aemeasurable
+  by unfold sumLaw; infer_instance
 
 /-- The characteristic function of the law of a sum of independent variables is the product of
 the characteristic functions of the summands. -/
