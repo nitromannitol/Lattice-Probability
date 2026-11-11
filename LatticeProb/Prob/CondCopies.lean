@@ -118,7 +118,7 @@ theorem condCopyMeasure_map_triple (hX : Measurable X) (hY : Measurable Y) :
   have hku : Measurable fun x => κ x u := κ.measurable_coe hu
   have hf : Measurable fun q : α × β => κ q.1 u := hku.comp measurable_fst
   have hjoint : μ.map (fun ω => (X ω, Y ω)) = μ.map X ⊗ₘ κ :=
-    (compProd_map_condDistrib hY.aemeasurable).symm
+    (compProd_map_condDistrib hX.aemeasurable hY.aemeasurable).symm
   calc ∫⁻ ω in X ⁻¹' s ∩ Y ⁻¹' t, κ (X ω) u ∂μ
       = ∫⁻ q in s ×ˢ t, κ q.1 u ∂(μ.map (fun ω => (X ω, Y ω))) := by
         rw [setLIntegral_map (hs.prod ht) hf (hX.prodMk hY)]
@@ -213,7 +213,7 @@ conditional law of `Y` given `X` is a point mass at `g (X ω)`. -/
 theorem ae_eq_snd_of_comp {g : α → β} (hg : Measurable g) (hX : Measurable X) :
     (fun p : Ω × β => g (X p.1)) =ᵐ[condCopyMeasure (g ∘ X) X μ hX] Prod.snd := by
   have hae : ∀ᵐ ω ∂μ, ∀ᵐ b ∂(condCopyKernel (g ∘ X) X μ hX ω), b = g (X ω) := by
-    filter_upwards [ae_of_ae_map hX.aemeasurable (condDistrib_comp_self X hg)] with ω hω
+    filter_upwards [ae_of_ae_map hX.aemeasurable (condDistrib_comp_self hX.aemeasurable hg)] with ω hω
     rw [condCopyKernel, Kernel.comap_apply, hω, Kernel.deterministic_apply, ae_dirac_eq]
     exact eventually_pure.2 rfl
   have hm : MeasurableSet {p : Ω × β | g (X p.1) = p.2} :=
