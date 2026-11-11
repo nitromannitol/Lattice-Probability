@@ -371,7 +371,7 @@ theorem map_gaussIso_vector [Countable ι] {m : ℕ} (gs : Fin m → lp (fun _ :
     fun_prop
   haveI : IsProbabilityMeasure ((LatticeProb.gaussLaw ι).map
       (fun ω : ι → ℝ => (WithLp.toLp 2 (fun i => ⇑(LatticeProb.gaussIso (gs i)) ω) :
-        EuclideanSpace ℝ (Fin m)))) := Measure.isProbabilityMeasure_map hΦ.aemeasurable
+        EuclideanSpace ℝ (Fin m)))) := inferInstance
   refine Measure.ext_of_charFun (funext fun t => ?_)
   rw [charFun_apply, integral_map hΦ.aemeasurable (by fun_prop)]
   have hae : ∀ᵐ ω ∂(LatticeProb.gaussLaw ι),
