@@ -70,14 +70,15 @@ theorem instructionLaw_map_sub (v y : Site d) :
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Measure.map_add _ _ hmeas, Measure.map_dirac' hmeas, Measure.map_dirac' hmeas,
     show y + v + unit i - v = y + unit i by abel, show y + v - unit i - v = y - unit i by abel]
+  exact hmeas.aemeasurable
 
 theorem measurable_shiftStack (v : Site d) : Measurable (shiftStack (d := d) v) := by
   show Measurable fun σ : Site d × ℕ → Site d => fun q : Site d × ℕ => σ (q.1 + v, q.2) - v
-  exact measurable_pi_lambda _ fun q => (measurable_pi_apply (q.1 + v, q.2)).sub measurable_const
+  exact Measurable.of_eval fun q => (measurable_pi_apply (q.1 + v, q.2)).sub measurable_const
 
 theorem measurable_shiftRank (v : Site d) : Measurable (shiftRank (d := d) v) := by
   show Measurable fun r : Label d × ℕ → ℝ => fun q : Label d × ℕ => r (shiftLabel v q.1, q.2)
-  exact measurable_pi_lambda _ fun q => measurable_pi_apply (shiftLabel v q.1, q.2)
+  exact Measurable.of_eval fun q => measurable_pi_apply (shiftLabel v q.1, q.2)
 
 /-- The i.i.d. configuration law is translation invariant. -/
 theorem iidLaw_map_shiftConf {α : Type*} [MeasurableSpace α] (ν : Measure α)
