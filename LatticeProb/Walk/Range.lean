@@ -55,7 +55,7 @@ theorem rangeCard_eq_fin (X : ℕ → Site d) (t : ℕ) :
 theorem measurable_rangeCard (t : ℕ) :
     Measurable fun X : ℕ → Site d => rangeCard X t := by
   have h1 : Measurable fun X : ℕ → Site d => (fun j : Fin (t + 1) => X (j : ℕ)) :=
-    measurable_pi_lambda _ fun j => measurable_pi_apply _
+    Measurable.of_eval fun j => measurable_pi_apply _
   have h2 : Measurable fun v : Fin (t + 1) → Site d => (Finset.univ.image v).card :=
     measurable_from_countable' _
   have hcomp : (fun X : ℕ → Site d => rangeCard X t)
