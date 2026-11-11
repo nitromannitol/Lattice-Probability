@@ -81,8 +81,8 @@ theorem IsQuantile.of_tendstoInDistribution [L.NeBot] (h : TendstoInDistribution
     {qs : ι → ℝ} {q : ℝ} (hq : Tendsto qs L (𝓝 q))
     (hqs : ∀ᶠ i in L, IsQuantile ((P i).map (X i)) p (qs i)) : IsQuantile (P'.map Z) p q :=
   IsQuantile.of_tendsto
-    (μs := fun i => ⟨(P i).map (X i), Measure.isProbabilityMeasure_map (h.forall_aemeasurable i)⟩)
-    (μ := ⟨P'.map Z, Measure.isProbabilityMeasure_map h.aemeasurable_limit⟩) h.tendsto hq hqs
+    (μs := fun i => ⟨(P i).map (X i), (Measure.isProbabilityMeasure_map_iff (h.forall_aemeasurable i)).2 inferInstance⟩)
+    (μ := ⟨P'.map Z, (Measure.isProbabilityMeasure_map_iff h.aemeasurable_limit).2 inferInstance⟩) h.tendsto hq hqs
 
 end rv
 
