@@ -1102,7 +1102,7 @@ that is a reading.
 
 ## Size
 
-About 189,000 lines of Lean in 960 modules (`LatticeProb.lean` and `LatticeProb/`), of which
+About 291,600 lines of Lean in 1,485 modules (`LatticeProb.lean` and `LatticeProb/`), of which
 about 142,000 lines are code once comments and blank lines are removed, on top of mathlib.  The
 comparator surface under `LatticeProbAudit/` is not counted.
 
