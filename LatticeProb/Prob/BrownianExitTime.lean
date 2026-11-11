@@ -141,7 +141,7 @@ theorem measurableSet_exists_le_le_norm [MeasurableSpace Ω] {d : ℕ}
     (u : EuclideanSpace ℝ (Fin d)) (A : ℝ) (t : ℝ≥0) :
     MeasurableSet {ω | ∃ s ≤ t, A ≤ ‖B s ω - u‖} := by
   refine (Measurable.comap_le
-    (measurable_pi_lambda (fun ω (s : Set.Iic t) => B (s : ℝ≥0) ω)
+    (Measurable.of_eval (f := fun ω (s : Set.Iic t) => B (s : ℝ≥0) ω)
       (fun s => hmB (s : ℝ≥0)))) _ ?_
   exact measurableSet_comap_exists_le_le_norm B hcont u A t
 
