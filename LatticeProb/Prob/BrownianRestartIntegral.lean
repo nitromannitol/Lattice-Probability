@@ -47,7 +47,7 @@ theorem HasStrongMarkovRestart.map_prod [IsProbabilityMeasure P] {d : ℕ}
     ⟨by rw [Measure.map_apply hYm MeasurableSet.univ, Set.preimage_univ]
         exact measure_lt_top _ _⟩
   haveI : IsProbabilityMeasure (Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P) :=
-    Measure.isProbabilityMeasure_map hmshift0.aemeasurable
+    inferInstance
   refine (Measure.prod_eq fun s t hs ht => ?_).symm
   have hW : Measurable fun ω => (Y ω, fun t : ℝ≥0 => B (τ ω + t) ω - B (τ ω) ω) :=
     hYm.prodMk hmshift
@@ -86,7 +86,7 @@ theorem HasStrongMarkovRestart.setIntegral_restart [IsProbabilityMeasure P] {d :
     ⟨by rw [Measure.map_apply hYm MeasurableSet.univ, Set.preimage_univ]
         exact measure_lt_top _ _⟩
   haveI : IsProbabilityMeasure (Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P) :=
-    Measure.isProbabilityMeasure_map hmshift0.aemeasurable
+    inferInstance
   have hint : Integrable F
       ((Measure.map Y (P.restrict E)).prod
         (Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P)) :=
