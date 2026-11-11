@@ -72,7 +72,7 @@ theorem tendsto_integral_of_tendstoInDistribution
     (h : TendstoInDistribution X l Z P Q) (F : BoundedContinuousFunction E ℝ) :
     Tendsto (fun i => ∫ ω, F (X i ω) ∂(P i)) l (𝓝 (∫ ω, F (Z ω) ∂Q)) := by
   have hconv := h.tendsto
-  rw [ProbabilityMeasure.tendsto_iff_forall_integral_tendsto] at hconv
+  replace hconv := ProbabilityMeasure.tendsto_iff_forall_integral_tendsto.1 hconv
   have hF := hconv F
   simp only [MeasureTheory.ProbabilityMeasure.coe_mk] at hF
   have heq1 : ∀ i, ∫ x, F x ∂((P i).map (X i)) = ∫ ω, F (X i ω) ∂(P i) := fun i =>
