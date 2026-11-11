@@ -176,22 +176,22 @@ theorem f0_bsucc {K : Finset Site} {e : Site × Site} (he : e ∈ bdry K) :
     have hd : d = b := by omega
     subst hc hd
     unfold bsucc; simp only [rotL', Prod.mk_sub_mk, Prod.mk_add_mk]
-    split_ifs <;> simp [f0, f1, leftFace, rightFace, dirOf, dirVec]
+    split_ifs <;> (try simp [f0, f1, leftFace, rightFace, dirOf, dirVec]) <;> (try split_ifs) <;> (try simp_all [f0, f1, leftFace, rightFace, dirOf, dirVec]) <;> (try omega)
   · have hc : c = a - 1 := by omega
     have hd : d = b := by omega
     subst hc hd
     unfold bsucc; simp only [rotL', Prod.mk_sub_mk, Prod.mk_add_mk]
-    (split_ifs <;> simp [f0, f1, leftFace, rightFace, dirOf, dirVec]); omega
+    split_ifs <;> (try simp [f0, f1, leftFace, rightFace, dirOf, dirVec]) <;> (try split_ifs) <;> (try simp_all [f0, f1, leftFace, rightFace, dirOf, dirVec]) <;> (try omega)
   · have hc : c = a := by omega
     have hd : d = b + 1 := by omega
     subst hc hd
     unfold bsucc; simp only [rotL', Prod.mk_sub_mk, Prod.mk_add_mk]
-    split_ifs <;> simp [f0, f1, leftFace, rightFace, dirOf, dirVec] <;> omega
+    split_ifs <;> (try simp [f0, f1, leftFace, rightFace, dirOf, dirVec]) <;> (try split_ifs) <;> (try simp_all [f0, f1, leftFace, rightFace, dirOf, dirVec]) <;> (try omega)
   · have hc : c = a := by omega
     have hd : d = b - 1 := by omega
     subst hc hd
     unfold bsucc; simp only [rotL', Prod.mk_sub_mk, Prod.mk_add_mk]
-    (split_ifs <;> simp [f0, f1, leftFace, rightFace, dirOf, dirVec]); omega
+    split_ifs <;> (try simp [f0, f1, leftFace, rightFace, dirOf, dirVec]) <;> (try split_ifs) <;> (try simp_all [f0, f1, leftFace, rightFace, dirOf, dirVec]) <;> (try omega)
 
 /-- The outer normals over an invariant set of boundary edges sum to zero. -/
 theorem sum_bdry_eq_zero (K : Finset Site) (S : Finset (Site × Site)) (hS : S ⊆ bdry K)
