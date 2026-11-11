@@ -43,7 +43,7 @@ theorem norm_prod_sub_prod_le_sum {ι : Type*} (s : Finset ι) (f g : ι → ℂ
     have hg' : ∀ j ∈ s, ‖g j‖ ≤ 1 := fun j hj => hg j (Finset.mem_insert_of_mem hj)
     have hprod : ‖∏ j ∈ s, g j‖ ≤ 1 := by
       calc ‖∏ j ∈ s, g j‖ = ∏ j ∈ s, ‖g j‖ := norm_prod _ _
-        _ ≤ ∏ _j ∈ s, (1 : ℝ) := Finset.prod_le_prod (fun j _ => norm_nonneg _) hg'
+        _ ≤ ∏ _j ∈ s, (1 : ℝ) := Finset.prod_le_prod₀ (fun j _ => norm_nonneg _) hg'
         _ = 1 := by simp
     rw [Finset.prod_insert hi, Finset.prod_insert hi, Finset.sum_insert hi]
     have he : f i * (∏ j ∈ s, f j) - g i * (∏ j ∈ s, g j) =
@@ -275,7 +275,7 @@ theorem weighted_iid_central_limit_pick {d : ℕ} (ν : Measure ℝ) [IsProbabil
     rfl
   have hclt := weighted_iid_central_limit ν hsq hmean N a hsmall Q hQ
   refine ⟨fun n => (hm n).aemeasurable, measurable_id.aemeasurable, ?_⟩
-  convert hclt.tendsto using 2 with n
-  exact Subtype.ext (hmap n)
+  refine Filter.Tendsto.congr (fun n => ?_) hclt.tendsto
+  exact Subtype.ext (hmap n).symm
 
 end LatticeProb
