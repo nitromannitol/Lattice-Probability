@@ -82,7 +82,7 @@ theorem thinPlanar_of_dense {p ε : ℝ} (hε : 0 ≤ ε)
     (hinc : StrassenAux.IsIncreasingSet A) :
     μ A ≤ bernoulliFieldPlanar (1 / 8) one_eighth_le_one A := by
   haveI : IsProbabilityMeasure (μ.map bitCompl) :=
-    Measure.isProbabilityMeasure_map measurable_bitCompl.aemeasurable
+    inferInstance
   have hKDν : KDependentPlanar 2 (μ.map bitCompl) := kDependentPlanar_map_bitCompl 2 hKD
   have hsiteν : ∀ s : PlanarCarrier,
       ENNReal.ofReal p ≤ (μ.map bitCompl) {ω | ω s = true} :=
