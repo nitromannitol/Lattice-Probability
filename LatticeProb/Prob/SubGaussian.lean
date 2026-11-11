@@ -199,7 +199,7 @@ theorem integral_exp_weighted_sum_le {N : ℕ} (ν : Measure ℝ) [IsProbability
     _ = ∏ i : Fin N, ∫ z : ℝ, Real.exp (lam * ℓ i * z) ∂ν :=
         integral_fintype_prod_eq_prod (fun i z => Real.exp (lam * ℓ i * z))
     _ ≤ ∏ i : Fin N, Real.exp (c * (lam * ℓ i) ^ 2) := by
-        refine Finset.prod_le_prod (fun i _ => ?_) (fun i _ => ?_)
+        refine Finset.prod_le_prod₀ (fun i _ => ?_) (fun i _ => ?_)
         · exact integral_nonneg fun z => (Real.exp_pos _).le
         · exact (hSG (lam * ℓ i) (hlam i)).2
     _ = Real.exp (c * lam ^ 2 * ∑ i : Fin N, ℓ i ^ 2) := by
