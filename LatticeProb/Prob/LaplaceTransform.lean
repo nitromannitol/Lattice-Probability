@@ -43,7 +43,8 @@ theorem ofReal_exp_neg_le_series (T μ : ℝ) (_hT : 0 ≤ T) (hμ : 0 ≤ μ) (
       rw [Set.indicator_of_mem hmem, mul_one]
       refine ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr ?_)
       nlinarith
-    refine le_trans hterm (le_trans (ENNReal.le_tsum k₀) le_add_self)
+    refine le_trans hterm (le_trans (ENNReal.le_tsum (f := fun k : ℕ => ENNReal.ofReal (Real.exp (μ * (T + (k : ℝ) + 1))) *
+          (Set.Iic (-(T + (k : ℝ)))).indicator (fun _ => (1 : ℝ≥0∞)) z) k₀) le_add_self)
 
 /-- Young's inequality in the absorbing form `μ x ≤ ε x^γ + K μ^{γ/(γ-1)}`. -/
 theorem exists_young_absorb (γ ε : ℝ) (hγ : 1 < γ) (hε : 0 < ε) :
