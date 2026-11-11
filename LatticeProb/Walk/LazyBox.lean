@@ -98,7 +98,7 @@ lemma iterate_delta0_le_sched (hd : 0 < d) (r : ℕ) (x : Site d) :
     positivity
   rw [iterate_delta0_eq hd r x, div_le_div_iff_of_pos_right hdR]
   refine Finset.sum_le_sum fun c _ => ?_
-  refine Finset.prod_le_prod (fun i _ => P1_nonneg _ _) fun i _ => ?_
+  refine Finset.prod_le_prod₀ (fun i _ => P1_nonneg _ _) fun i _ => ?_
   exact le_trans (P1_le_max _ _) (P1_zero_le_inv_sqrt _)
 
 /-- The total variation of the `r`-step kernel along one coordinate, over a box
