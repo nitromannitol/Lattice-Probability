@@ -55,7 +55,7 @@ theorem measurable_bool_not : Measurable (fun b : Bool => !b) :=
   fun _ _ => MeasurableSet.of_discrete
 
 theorem measurable_bitCompl : Measurable (bitCompl : (S → Bool) → (S → Bool)) := by
-  refine measurable_pi_lambda _ fun s => ?_
+  refine Measurable.of_eval fun s => ?_
   exact measurable_bool_not.comp (measurable_pi_apply s)
 
 /-- Membership in the complement image is membership in the preimage under the involution. -/
@@ -137,11 +137,11 @@ def KDependent {d : ℕ} (k : ℕ) (μ : Measure (LatticeProb.Site d → Bool)) 
 
 theorem measurable_finsetRestrict {d : ℕ} (I : Finset (LatticeProb.Site d)) :
     Measurable (fun ω : LatticeProb.Site d → Bool => fun i : I => ω i) :=
-  measurable_pi_lambda _ fun i => measurable_pi_apply (i : LatticeProb.Site d)
+  Measurable.of_eval fun i => measurable_pi_apply (i : LatticeProb.Site d)
 
 theorem measurable_finsetCompl {d : ℕ} (I : Finset (LatticeProb.Site d)) :
     Measurable (fun f : I → Bool => fun i : I => !(f i)) :=
-  measurable_pi_lambda _ fun i => measurable_bool_not.comp (measurable_pi_apply i)
+  Measurable.of_eval fun i => measurable_bool_not.comp (measurable_pi_apply i)
 
 /-- Independence transfers across a measurable carrier map: `X` and `Y` are independent under
 `μ.map T` exactly when their pullbacks are independent under `μ`. -/
@@ -344,7 +344,7 @@ theorem thinUpper_of_transported_dense {d : ℕ} (p : ℝ)
     (hsite : ∀ s : LatticeProb.Site d, ENNReal.ofReal p ≤ μ {ω | ω s = false}) :
     ThinUpper (bitProduct (1 / 8) one_eighth_le_one (LatticeProb.Site d)) μ := by
   haveI : IsProbabilityMeasure (μ.map bitCompl) :=
-    Measure.isProbabilityMeasure_map measurable_bitCompl.aemeasurable
+    inferInstance
   have hKDν : KDependent 2 (μ.map bitCompl) := kDependent_map_bitCompl 2 hKD
   have hsiteν : ∀ s : LatticeProb.Site d,
       ENNReal.ofReal p ≤ (μ.map bitCompl) {ω | ω s = true} := by
