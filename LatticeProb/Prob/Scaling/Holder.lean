@@ -27,13 +27,13 @@ imported) so this module stays Mathlib-only. -/
 def rMoment (μ : Measure Ω) (r : ℝ) (f : Ω → ℝ) : ℝ := (∫ ω, |f ω| ^ r ∂μ) ^ (1 / r)
 
 /-- A finite `r`-th absolute moment gives a finite `L^r` seminorm, for `r ≥ 1`. -/
-theorem eLpNorm_ne_top_of_rpow_integrable (μ : Measure Ω) {r : ℝ} (hr : 1 ≤ r) (f : Ω → ℝ)
+theorem eLpNorm_ne_top_of_rpow_integrable (μ : Measure Ω) {r : ℝ} (hr : 1 ≤ r) (f : Ω → ℝ) (hfm : AEStronglyMeasurable f μ)
     (hint : Integrable (fun ω => |f ω| ^ r) μ) :
     eLpNorm f (ENNReal.ofReal r) μ ≠ ⊤ := by
   have hr0 : (0 : ℝ) < r := lt_of_lt_of_le zero_lt_one hr
   have hp0 : ENNReal.ofReal r ≠ 0 := by
     simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]; exact hr0
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 ENNReal.ofReal_ne_top,
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 ENNReal.ofReal_ne_top hfm,
     ENNReal.toReal_ofReal hr0.le]
   have hlint : ∫⁻ ω, ‖f ω‖ₑ ^ r ∂μ = ENNReal.ofReal (∫ ω, |f ω| ^ r ∂μ) := by
     rw [ofReal_integral_eq_lintegral_ofReal hint
@@ -77,7 +77,7 @@ theorem integral_indicator_le_measureReal_rpow_mul_rMoment (μ : Measure Ω) [Is
         · simp [f, Set.indicator_of_mem hω]
         · simp [f, Set.indicator_of_notMem hω]))
   have hgmem : MemLp g (ENNReal.ofReal r) μ :=
-    ⟨hgm, (eLpNorm_ne_top_of_rpow_integrable μ hr.le g hgi).lt_top⟩
+    (eLpNorm_ne_top_of_rpow_integrable μ hr.le g hgm hgi).lt_top
   have hmain := integral_mul_le_Lp_mul_Lq_of_nonneg hpq hf_nonneg hg0 hfmem hgmem
   rw [← hfg] at hmain
   have hfpow : (∫ ω, f ω ^ q ∂μ) = μ.real S := by
