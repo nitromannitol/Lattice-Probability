@@ -83,7 +83,7 @@ theorem thinLSS_bridge_site2 {p : ℝ} (hp : p < 1)
   intro μ hμ hKD hsite A hA hinc
   haveI := hμ
   haveI : IsProbabilityMeasure (μ.map fieldEquivPlanar.toFun) :=
-    Measure.isProbabilityMeasure_map measurable_toSite2Field.aemeasurable
+    inferInstance
   have hKD2 : KDependent 2 (μ.map fieldEquivPlanar.toFun) :=
     kDependentPlanar_map_fieldEquivPlanar 2 hKD
   have hsite2 : ∀ s : LatticeProb.Site 2,
