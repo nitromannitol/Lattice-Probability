@@ -14,7 +14,8 @@ discrete cells that a path meets near such a shell:
 * the frontier of the `t`-thickening of a compact set is the level set `{infDist · K = t}`;
 * arithmetic of radii, of enlarged balls, and of sparse counts for the choice of scales;
 * a compact set inside a ball has its level sets inside a larger ball, and the rational points are dense in an
-  interval.
+  interval;
+* a bound on a conditional expectation that holds almost everywhere on an event transfers to any smaller event.
 -/
 
 open Set Metric
@@ -314,6 +315,17 @@ theorem mem_closure_ratInt_image {a b t : ℝ} (hab : a < b) (ht : t ∈ Icc a b
   refine ⟨(q : ℝ), ⟨q, ⟨hq1'.le, hq2'.le⟩, rfl⟩, ?_⟩
   rw [Real.dist_eq, abs_sub_lt_iff]
   constructor <;> linarith
+
+/-! ### Conditional bounds along an inclusion of events -/
+
+open MeasureTheory in
+/-- If `P ⊆ G` and the bound `μ[1_F | 𝓖] ≤ 1 - q` holds almost everywhere on `G`, then it holds almost everywhere
+on `P`. -/
+lemma ae_condExp_indicator_le_of_subset {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    {𝓖 : MeasurableSpace Ω} {F P G : Set Ω} {q : ℝ} (hPG : P ⊆ G)
+    (hS5 : ∀ᵐ ω ∂μ, ω ∈ G → μ[F.indicator (fun _ => (1 : ℝ)) | 𝓖] ω ≤ 1 - q) :
+    ∀ᵐ ω ∂μ, ω ∈ P → μ[F.indicator (fun _ => (1 : ℝ)) | 𝓖] ω ≤ 1 - q :=
+  hS5.mono fun _ h hω => h (hPG hω)
 
 end ShellGeometry
 
