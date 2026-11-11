@@ -33,7 +33,7 @@ theorem ae_tendsto_of_L2_geometric_approx {Ω : Type*} [MeasurableSpace Ω] (P :
   have ht : ∑' n, eLpNorm (fun ω => (F n - f) ω) 2 P ≠ ∞ := by
     simpa only [← Lp.enorm_def] using tsum_enorm_ne_top_iff_summable_norm.mpr hs
   have ha := summable_norm_of_tsum_eLpNorm_ne_top (by norm_num : (1 : ℝ≥0∞) ≤ 2)
-    (fun n => Lp.aestronglyMeasurable (F n - f)) ht
+    ht
   filter_upwards [ha, ae_all_iff.mpr (fun n => Lp.coeFn_sub (F n) f)] with ω hω heq
   rw [tendsto_iff_dist_tendsto_zero]
   simpa only [dist_eq_norm, heq, Pi.sub_apply] using hω.tendsto_atTop_zero
