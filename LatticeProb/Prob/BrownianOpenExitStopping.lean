@@ -41,7 +41,7 @@ theorem measurableSet_comap_exists_lt {d : ℕ} {Ω : Type*} [MeasurableSpace Ω
   obtain ⟨D, hDcount, hDdense⟩ := TopologicalSpace.exists_countable_dense ↥(Set.Icc (0 : ℝ≥0) t)
   have hEq : {ω | ∃ s ≤ t, g (B s ω) < c} = ⋃ q ∈ D, {ω | g (B (q : ℝ≥0) ω) < c} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, exists_prop]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop]
     constructor
     · rintro ⟨s, hs, hsc⟩
       have hcont' : Continuous fun r : ↥(Set.Icc (0 : ℝ≥0) t) ↦ g (B (r : ℝ≥0) ω) :=
@@ -73,7 +73,7 @@ theorem measurableSet_comap_exists_not_mem {d : ℕ} {Ω : Type*} [MeasurableSpa
   · have hEq : {ω | ∃ s ≤ t, B s ω ∉ U}
         = {ω | ∀ n : ℕ, ∃ s ≤ t, Metric.infDist (B s ω) Uᶜ < 1 / ((n : ℝ) + 1)} := by
       ext ω
-      simp only [mem_setOf_eq]
+      simp only [mem_ofPred_eq]
       constructor
       · rintro ⟨s, hs, hout⟩ n
         exact ⟨s, hs, by rw [Metric.infDist_zero_of_mem hout]; positivity⟩
@@ -94,7 +94,7 @@ theorem measurableSet_comap_exists_not_mem {d : ℕ} {Ω : Type*} [MeasurableSpa
         have hmem : B s₀ ω ∈ closure Uᶜ := (Metric.mem_closure_iff_infDist_zero hne).mpr h0
         rw [hU.isClosed_compl.closure_eq] at hmem
         exact ⟨s₀, hs₀.2, hmem⟩
-    rw [hEq, setOf_forall]
+    rw [hEq, ofPred_forall]
     exact MeasurableSet.iInter fun n ↦
       measurableSet_comap_exists_lt hcont (Metric.continuous_infDist_pt Uᶜ) _ t
   · rw [Set.not_nonempty_iff_eq_empty] at hne
@@ -139,7 +139,7 @@ theorem isStoppingTime_openExitTime {d : ℕ} {Ω : Type*} [MeasurableSpace Ω]
   intro t
   have hset : {ω | openExitTime B U ω ≤ (t : ℝ≥0∞)} = {ω | ∃ s ≤ t, B s ω ∉ U} := by
     ext ω
-    rw [mem_setOf_eq, openExitTime_le_iff_not_mapsTo hU (hcont ω) t]
+    rw [mem_ofPred_eq, openExitTime_le_iff_not_mapsTo hU (hcont ω) t]
     constructor
     · intro h
       by_contra hno
@@ -162,13 +162,13 @@ theorem measurable_openExitTime {d : ℕ} {Ω : Type*} [MeasurableSpace Ω]
   have hle : ∀ t : ℝ≥0, MeasurableSet {ω | openExitTime B U ω ≤ (t : ℝ≥0∞)} := fun t ↦
     (natFiltration B hm).le t _ (isStoppingTime_openExitTime hm hcont hU t)
   obtain ⟨S, hSc, hSd, _, hStop⟩ := ENNReal.exists_countable_dense_no_zero_top
-  letI : Countable S := hSc.to_subtype
+  let : Countable S := hSc.to_subtype
   apply measurable_of_Iio
   intro a
   have heq : openExitTime B U ⁻¹' Iio a =
       ⋃ r : S, ⋃ (_ : r.1 < a), {ω | openExitTime B U ω ≤ r.1} := by
     ext ω
-    simp only [mem_preimage, mem_Iio, mem_iUnion, mem_setOf_eq]
+    simp only [mem_preimage, mem_Iio, mem_iUnion, mem_ofPred_eq]
     constructor
     · intro hω
       obtain ⟨⟨t, ht⟩, hta⟩ := iInf_lt_iff.mp hω

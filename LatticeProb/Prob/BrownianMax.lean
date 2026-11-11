@@ -71,14 +71,14 @@ theorem measure_abs_ge_le_exp (hB : IsPreBrownianReal B P)
     P {ω | a ≤ |B T ω|} ≤ 2 * ENNReal.ofReal (Real.exp (-(a ^ 2 / (2 * T)))) := by
   have h1 : {ω : Ω | a ≤ |B T ω|} ⊆ {ω : Ω | a ≤ B T ω} ∪ {ω : Ω | a ≤ (-B) T ω} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω
+    simp only [Set.mem_ofPred_eq] at hω
     rcases abs_cases (B T ω) with ⟨he, _⟩ | ⟨he, _⟩
     · left
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       rw [he] at hω
       exact hω
     · right
-      simp only [Set.mem_setOf_eq, Pi.neg_apply]
+      simp only [Set.mem_ofPred_eq, Pi.neg_apply]
       rw [he] at hω
       exact hω
   have h2 := measure_ge_le_exp hB hT ha
@@ -97,7 +97,7 @@ theorem measure_abs_sub_ge_le (hB : IsPreBrownianReal B P) {s t : ℝ≥0} (hst 
   rcases eq_or_lt_of_le hst with rfl | hlt
   · have hempty : {ω : Ω | a ≤ |B s ω - B s ω|} = (∅ : Set Ω) := by
       ext ω
-      simp only [sub_self, abs_zero, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_le]
+      simp only [sub_self, abs_zero, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_le]
       exact ha
     rw [hempty, measure_empty]
     exact zero_le
@@ -194,7 +194,7 @@ theorem measure_grid_max_le [IsProbabilityMeasure P]
     intro j k hjk
     rw [Set.disjoint_left]
     rintro ω ⟨hωj, hωj'⟩ ⟨hωk, hωk'⟩
-    simp only [Set.mem_iInter, Set.mem_setOf_eq] at hωj' hωk' hωj hωk
+    simp only [Set.mem_iInter, Set.mem_ofPred_eq] at hωj' hωk' hωj hωk
     rcases lt_or_gt_of_ne hjk with h | h
     · exact absurd hωj (not_le.2 (hωk' j (Finset.mem_range.2 h)))
     · exact absurd hωk (not_le.2 (hωj' k (Finset.mem_range.2 h)))
@@ -205,13 +205,13 @@ theorem measure_grid_max_le [IsProbabilityMeasure P]
     have hk0le : Nat.find hex ≤ k := Nat.find_le hk
     refine Set.mem_biUnion (Finset.mem_range.2 (Nat.lt_succ_of_le (le_trans hk0le hkN))) ?_
     refine ⟨hk0, ?_⟩
-    simp only [Set.mem_iInter, Set.mem_setOf_eq]
+    simp only [Set.mem_iInter, Set.mem_ofPred_eq]
     intro j hj
     exact not_le.1 (Nat.find_min hex (Finset.mem_range.1 hj))
   have hsub : ∀ k, k ≤ N → A k ∩ G k ⊆ {ω | α ≤ |S N ω|} := by
     rintro k hk ω ⟨⟨hωA, -⟩, hωG⟩
     have hωG' : |B (t N) ω - B (t k) ω| < α := hωG
-    simp only [Set.mem_setOf_eq] at hωA ⊢
+    simp only [Set.mem_ofPred_eq] at hωA ⊢
     have hdiff : S N ω - S k ω = B (t N) ω - B (t k) ω := by simp [hS]
     have h1 : |S k ω| - |S N ω - S k ω| ≤ |S N ω| := by
       have h0 := abs_sub_abs_le_abs_sub (S k ω) (S N ω)
@@ -228,7 +228,7 @@ theorem measure_grid_max_le [IsProbabilityMeasure P]
     intro k hk
     have hcompl : (G k)ᶜ = {ω | α ≤ |B (t N) ω - B (t k) ω|} := by
       ext ω
-      simp only [hG, Set.mem_compl_iff, Set.mem_setOf_eq, not_lt]
+      simp only [hG, Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt]
     have h1 : P ((G k)ᶜ) ≤ 2 * x := by
       rw [hcompl]
       exact measure_abs_sub_ge_le hB (hmono hk) hα (hspank k hk)

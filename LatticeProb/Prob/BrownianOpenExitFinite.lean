@@ -41,7 +41,7 @@ private lemma standardGaussian_measure_shrinking_interval_tendsto_zero
       (by exact_mod_cast Nat.add_le_add_right hnm 1))
   have hinter : (⋂ n, S n) = {0} := by
     ext x
-    simp only [mem_iInter, S, mem_setOf_eq, mem_singleton_iff]
+    simp only [mem_iInter, S, mem_ofPred_eq, mem_singleton_iff]
     constructor
     · intro hx
       by_contra hxzero
@@ -53,7 +53,7 @@ private lemma standardGaussian_measure_shrinking_interval_tendsto_zero
       nlinarith
     · rintro rfl n
       simpa only [abs_zero] using div_nonneg hR (by positivity : 0 ≤ (n : ℝ) + 1)
-  letI : NullSingletonClass (gaussianReal 0 1) := nullSingletonClass_gaussianReal (by norm_num)
+  let : NullSingletonClass (gaussianReal 0 1) := nullSingletonClass_gaussianReal (by norm_num)
   have hlim := tendsto_measure_iInter_atTop
     (fun n ↦ (hmeas n).nullMeasurableSet (μ := gaussianReal 0 1)) hanti
     ⟨0, measure_ne_top _ _⟩
@@ -75,7 +75,7 @@ theorem gaussian_square_time_measure_bounded_tendsto_zero {R : ℝ} (hR : 0 ≤ 
       (isClosed_le continuous_abs continuous_const).measurableSet]
     congr 1
     ext x
-    simp only [mem_preimage, mem_setOf_eq, abs_mul, abs_of_pos hc, le_div_iff₀ hc]
+    simp only [mem_preimage, mem_ofPred_eq, abs_mul, abs_of_pos hc, le_div_iff₀ hc]
     rw [mul_comm]
   simp_rw [heq]
   exact standardGaussian_measure_shrinking_interval_tendsto_zero hR

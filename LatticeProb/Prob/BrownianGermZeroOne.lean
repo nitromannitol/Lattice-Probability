@@ -108,7 +108,7 @@ lemma measurable_bmFuture {t₀ t : ℝ≥0} (ht : t₀ ≤ t) :
 Brownian motion with measurable coordinates is trivial. -/
 theorem isTrivialSigma_iInf_bmPast (hB : IsBrownianReal B P) (hBm : ∀ t, Measurable (B t)) :
     IsTrivialSigma (⨅ n, bmPast B (epsSeq n)) P := by
-  haveI : IsProbabilityMeasure P := hB.toIsPreBrownianReal.isGaussianProcess.isProbabilityMeasure
+  have : IsProbabilityMeasure P := hB.toIsPreBrownianReal.isGaussianProcess.isProbabilityMeasure
   have hℱle : ∀ n, bmFuture B (epsSeq n) ≤ mΩ := fun n =>
     (measurable_pi_of (g := fun ω (s : ℝ≥0) => B (epsSeq n + s) ω - B (epsSeq n) ω)
       fun s => (hBm _).sub (hBm _)).comap_le
@@ -173,7 +173,7 @@ theorem isTrivialSigma_iInf_bmPast_of (hB : IsPreBrownianReal B P)
     (hBm : ∀ t, Measurable (B t)) (h0 : ∀ᵐ ω ∂P, B 0 ω = 0)
     (hlim : ∀ᵐ ω ∂P, Tendsto (fun n => B (epsSeq n) ω) atTop (𝓝 0)) :
     IsTrivialSigma (⨅ n, bmPast B (epsSeq n)) P := by
-  haveI : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
   have hℱle : ∀ n, bmFuture B (epsSeq n) ≤ mΩ := fun n =>
     (measurable_pi_of (g := fun ω (s : ℝ≥0) => B (epsSeq n + s) ω - B (epsSeq n) ω)
       fun s => (hBm _).sub (hBm _)).comap_le

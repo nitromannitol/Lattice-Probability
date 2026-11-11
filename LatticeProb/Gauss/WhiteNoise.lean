@@ -29,7 +29,7 @@ theorem countable_of_orthonormal {E : Type*} [NormedAddCommGroup E] [InnerProduc
     (hw : Orthonormal ℝ ((↑) : w → E)) : w.Countable := by
   classical
   obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense E
-  haveI : Countable ↥D := hDc.to_subtype
+  have : Countable ↥D := hDc.to_subtype
   have hpick : ∀ x : w, ∃ y : ↥D, dist (x : E) (y : E) < 1 / 2 := by
     intro x
     obtain ⟨y, hy, hd⟩ := Metric.mem_closure_iff.mp (hDd (x : E)) (1 / 2) (by norm_num)
@@ -83,7 +83,10 @@ def toLpOrZero (μ : Measure X) (f : X → ℝ) : Lp ℝ 2 μ := by
 theorem toLpOrZero_of_memLp {f : X → ℝ} (hf : MemLp f 2 μ) :
     toLpOrZero μ f = hf.toLp f := by
   classical
-  rw [toLpOrZero, dif_pos hf]
+  rw [toLpOrZero]
+  split_ifs with h2
+  · rfl
+  · exact absurd hf h2
 
 theorem coeFn_toLpOrZero {f : X → ℝ} (hf : MemLp f 2 μ) :
     (⇑(toLpOrZero μ f) : X → ℝ) =ᵐ[μ] f := by
@@ -152,7 +155,7 @@ noise exists on every separable measure space. -/
 theorem exists_countable_hilbertBasis_L2 {X : Type*} [MeasurableSpace X] (μ : Measure X)
     [MeasureTheory.IsSeparable μ] :
     ∃ v : Set (Lp ℝ 2 μ), v.Countable ∧ Nonempty (HilbertBasis v ℝ (Lp ℝ 2 μ)) := by
-  haveI : Fact ((2 : ℝ≥0∞) ≠ ⊤) := ⟨by norm_num⟩
+  have : Fact ((2 : ℝ≥0∞) ≠ ⊤) := ⟨by norm_num⟩
   exact exists_countable_hilbertBasis _
 
 
