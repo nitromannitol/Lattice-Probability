@@ -895,3 +895,6 @@ library.
 #print axioms LatticeProb.integral_integral_wholePlaneCov_mul_eq_logCov
 #print axioms LatticeProb.integral_integral_wholePlaneCov_mul_eq_logCov_testC0
 #print axioms LatticeProb.testC0_contDiff_hasCompactSupport
+#print axioms LatticeProb.circleAverage_log_norm_sub_eq
+#print axioms LatticeProb.circleAverage_wholePlaneCov
+#print axioms LatticeProb.circleAverage_circleAverage_wholePlaneCov
