@@ -187,9 +187,10 @@ noncomputable def ramp :
 /-- `ramp` is nonzero: its value at the vertex `1` is `1`. -/
 example : ramp ≠ 0 := by
   intro h
-  have h1 := congrArg (fun f : ConductanceGraph.Example.path3.DirichletSpace path3_connected 0 =>
-    f 1) h
-  simp [ramp] at h1
+  have h1 : ramp 1 = 0 := by rw [h]; rfl
+  have h2 : ramp 1 = ((1 : ℕ) : ℝ) := rfl
+  rw [h2] at h1
+  norm_num at h1
 
 end ConductanceGraph.DirichletSpace.Example
 
