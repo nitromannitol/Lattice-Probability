@@ -36,7 +36,7 @@ theorem KS_gaussian_of
       ≤ ∏ i, (3 / Real.sqrt ((n i : ℝ) + 1)
           * Real.exp (-((x i : ℝ)) ^ 2 / (8 * ((n i : ℝ) + 2)))) := by
     unfold KS
-    refine Finset.prod_le_prod (fun i _ => S1_nonneg _ _) (fun i _ => hS (n i) (x i))
+    refine Finset.prod_le_prod₀ (fun i _ => S1_nonneg _ _) (fun i _ => hS (n i) (x i))
   have hsplit : ∀ i : Fin d, (3 : ℝ) / Real.sqrt ((n i : ℝ) + 1)
       = 3 * ((1 : ℝ) / Real.sqrt ((n i : ℝ) + 1)) := fun i => by ring
   have hfac : ∏ i, (3 : ℝ) / Real.sqrt ((n i : ℝ) + 1)
