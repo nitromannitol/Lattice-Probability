@@ -104,8 +104,10 @@ lemma sum_adj_eq_sum_dir (A : Finset (Site d)) (g : Site d → ℝ)
     ext y
     simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and, Adj]
     constructor
-    · rintro ⟨a, ha, rfl⟩; exact ⟨ha, a, rfl⟩
-    · rintro ⟨hy, a, rfl⟩; exact ⟨a, hy, rfl⟩
+    · rintro ⟨a, ha, rfl⟩; exact Finset.mem_filter.mpr ⟨ha, a, rfl⟩
+    · intro hy
+      obtain ⟨hy, a, rfl⟩ := Finset.mem_filter.mp hy
+      exact ⟨a, hy, rfl⟩
   rw [← himg, Finset.sum_image hinj, Finset.sum_filter]
   refine Finset.sum_congr rfl fun a _ => ?_
   by_cases hA : x + dirVec a ∈ A
