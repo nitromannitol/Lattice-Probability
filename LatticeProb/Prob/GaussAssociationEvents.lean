@@ -69,7 +69,7 @@ theorem measureReal_mul_le_inter {X : Ω → ι → ℝ} (hX : HasGaussianLaw X 
     (hV : IsUpperSet V) :
     (P.map X).real U * (P.map X).real V ≤ (P.map X).real (U ∩ V) := by
   have := hX.isProbabilityMeasure
-  have : IsProbabilityMeasure (P.map X) := Measure.isProbabilityMeasure_map hX.aemeasurable
+  have : IsProbabilityMeasure (P.map X) := inferInstance
   set μ := P.map X
   refine le_of_forall_pos_le_add fun ε hε => ?_
   obtain ⟨WU, hWUc, hWU, hWUU, hμU⟩ := exists_closed_upper_approx μ hUm hU (half_pos hε)
@@ -102,7 +102,7 @@ theorem prod_prob_le_biInter {κ : Type*} {X : Ω → ι → ℝ} (hX : HasGauss
     ∏ a ∈ s, P.real (X ⁻¹' U a) ≤ P.real (⋂ a ∈ s, X ⁻¹' U a) := by
   classical
   have := hX.isProbabilityMeasure
-  have : IsProbabilityMeasure (P.map X) := Measure.isProbabilityMeasure_map hX.aemeasurable
+  have : IsProbabilityMeasure (P.map X) := inferInstance
   have key : ∏ a ∈ s, (P.map X).real (U a) ≤ (P.map X).real (⋂ a ∈ s, U a) := by
     induction s using Finset.induction_on with
     | empty => simp
@@ -138,7 +138,7 @@ theorem exists_measure_compl_ge_of_prod_le [IsProbabilityMeasure P] {κ : Type*}
   have hprod : m ^ Fintype.card κ ≤ P.real (⋂ i, A i) := by
     refine le_trans ?_ hass
     rw [← Finset.card_univ, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun _ _ => hm) fun i _ => hi₀ i (Finset.mem_univ _)
+    exact Finset.prod_le_prod₀ (fun _ _ => hm) fun i _ => hi₀ i (Finset.mem_univ _)
   have hroot : m ≤ (P.real (⋂ i, A i)) ^ (1 / (Fintype.card κ : ℝ)) := by
     calc m = (m ^ Fintype.card κ) ^ ((Fintype.card κ : ℝ)⁻¹) :=
           (Real.pow_rpow_inv_natCast hm hk).symm
