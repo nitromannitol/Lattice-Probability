@@ -13,8 +13,8 @@ import Mathlib.Topology.DiscreteSubset
 
 Elementary facts about circles in `ℂ` and about logarithmic kernels, in the form used for the whole-plane
 covariance kernel and for the circle averages of the radial processes of a quantum cone (Duplantier-Sheffield,
-*Liouville quantum gravity and KPZ*, Invent. Math. 185 (2011), Section 3.1; Armitage-Gardiner, *Classical Potential
-Theory*, Springer 2001, Section 3.1).
+*Liouville quantum gravity and KPZ*, Invent. Math. 185 (2011), Section 3.1, p. 16: the Green function
+`G(x,y) = -log|y-x| - G~_x(y)`; p. 17: the circle average `h_ε(z)`, eq. (12)).
 
 * Affine maps `u ↦ r u + z` with `r > 0` transport circle averages (`circleAverage_affine`) and integrals on `ℂ`
   (`integral_affine_change`, `integral_affine_pullback`).
@@ -25,8 +25,9 @@ Theory*, Springer 2001, Section 3.1).
 * Integrability of logarithmic singularities on circles. The modulus of `circleMap z r ·` is bounded below by
   `|‖z‖ - r|` and above by `‖z‖ + r` (`abs_norm_sub_le_norm_circleMap`, `norm_circleMap_le_add`). For a circle through
   the origin, `‖z‖ = r`, the modulus is `2 r |cos((θ - α)/2)|` (`norm_circleMap_tangent`), and `log |cos|` is interval
-  integrable (`intervalIntegrable_log_cos_affine`). Consequently `θ ↦ 1_{‖circleMap z r θ‖ ≤ 1} (-log ‖circleMap z r θ‖)`
-  is integrable on `(0, 2π]` (`integrableOn_log_small_circleMap`), with the tangent case isolated in
+  integrable (`intervalIntegrable_log_cos_affine`). Consequently
+  `θ ↦ 1_{‖circleMap z r θ‖ ≤ 1} (-log ‖circleMap z r θ‖)` is integrable on `(0, 2π]`
+  (`integrableOn_log_small_circleMap`), with the tangent case isolated in
   `integrableOn_log_small_tangent`.
 -/
 
