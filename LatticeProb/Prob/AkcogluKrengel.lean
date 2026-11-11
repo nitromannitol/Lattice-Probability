@@ -124,7 +124,7 @@ private theorem pow_card_mul_prod_update_le_core {d : ℕ} (S : Finset (Fin d)) 
     calc ∏ x ∈ (Finset.univ \ {i} : Finset (Fin d)),
           (if x ∈ S then (q : ℝ) * (m : ℝ) else (n : ℝ))
         ≤ ∏ _x ∈ (Finset.univ \ {i} : Finset (Fin d)), (n : ℝ) :=
-          Finset.prod_le_prod
+          Finset.prod_le_prod₀
             (fun x _ => by
               by_cases hx : x ∈ S <;> simp only [hx, if_true, if_false] <;> positivity)
             (fun x _ => by
