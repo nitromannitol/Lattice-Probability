@@ -136,8 +136,8 @@ instance supportedLaw_isProbability (μ : Measure α) [IsProbabilityMeasure μ]
     IsProbabilityMeasure (supportedLaw μ S hS) := by
   let d := chosenSupportedLawData μ S hS
   unfold supportedLaw conullCoreLaw
-  exact Measure.isProbabilityMeasure_map
-    (measurable_conullCoreMap S d.core d.core_subset d.default d.measurable_core).aemeasurable
+  exact (Measure.isProbabilityMeasure_map_iff
+    (measurable_conullCoreMap S d.core d.core_subset d.default d.measurable_core).aemeasurable).2 inferInstance
 
 /-- The pushforward of the supported law along the subtype inclusion is `μ`. -/
 theorem map_supportedLaw (μ : Measure α) [IsProbabilityMeasure μ]
