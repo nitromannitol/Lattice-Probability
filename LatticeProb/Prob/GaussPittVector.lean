@@ -141,7 +141,8 @@ theorem exists_gram_map_eq {X : Ω → ι → ℝ} (hX : HasGaussianLaw X P) :
   have hYmap : γ.map Y = (γ.map (gramCLM v)).map (fun y => m + y) := by
     rw [Measure.map_map (by fun_prop) (by fun_prop)]; rfl
   have : IsGaussian (γ.map Y) := by rw [hYmap]; infer_instance
-  have hYG : HasGaussianLaw Y γ := IsGaussian.hasGaussianLaw
+  have hYm : Measurable Y := by rw [hY]; fun_prop
+  have hYG : HasGaussianLaw Y γ := IsGaussian.hasGaussianLaw hYm.aemeasurable
   refine Measure.ext_of_charFunDual (funext fun L => ?_)
   rw [hX.charFunDual_map_eq_fun, hYG.charFunDual_map_eq_fun]
   have hint : ∀ i, Integrable (fun ω => X ω i) P := fun i =>
