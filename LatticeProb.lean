@@ -848,3 +848,10 @@ import LatticeProb.Analysis.RadialLocalIntegrability
 import LatticeProb.Gauss.GaussianClosure
 import LatticeProb.Gauss.GFFCovSymm
 import LatticeProb.Gauss.GFFExistence
+import LatticeProb.Gauss.GFFCovPSD1
+import LatticeProb.Gauss.GFFCovPSD2
+import LatticeProb.Gauss.GFFCovPSD3
+import LatticeProb.Gauss.GFFCovPSD4
+import LatticeProb.Gauss.GFFCovPSD5
+import LatticeProb.Gauss.GFFCovPSD6
+import LatticeProb.Gauss.GFFCovPSD7

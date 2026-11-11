@@ -13,7 +13,7 @@ Ingredients (labels B1-B4 are used in the statements below):
 * B1 (`KolmogorovExtensionStmt`): Kolmogorov extension on an arbitrary index set with the product σ-algebra. Absent
   from pinned Mathlib; discharged below as `kolmogorovExtensionStmt_proved`.
 * B2 (`WholePlaneCovPSDStmt`): positive semidefiniteness of the whole-plane covariance on admissible observables.
-  Only a sketch exists; a named hypothesis, pending source check.
+  It is now proved in LP as `wholePlaneCovPSD_proved` (module `LatticeProb.Gauss.GFFCovPSD7`); the sketch below is kept as written.
 * B4: the moment bound. Its elementary real-analysis core is `two_log_max_add_sub_log_le` below (proved). The covariance
   identity `Var(h_r(z) - h_s(w)) = -log r - log s + 2 ∫ log max(|x - w|, s) dρ_{z,r}(x)` is not yet formalized.
 * B3: continuity. `LatticeProb.exists_continuous_modification_spaceTime_all` (`LatticeProb.Prob.ChentsovPiModification`)
@@ -47,7 +47,8 @@ theorem kolmogorovExtensionStmt_proved : KolmogorovExtensionStmt :=
 admissible observables `o_i` and real `c_i`, `∑ c_i c_j wholePlaneGFFCov o_i o_j ≥ 0`.
 Sketch (not a written proof): with `σ = ∑ c_i σ_i` (signed smearing measures), `m = σ(ℂ)` and `ν = σ - m ρ` (ρ the uniform
 probability on the unit circle), the form equals `-∬ log|x - y| dν dν = (2π)⁻¹ ∫ |∇U|²` with `U = -log|·| * ν`. The limit from smooth regularizations is not written out.
-Named hypothesis, pending source check: no consumer is unconditional until it is sourced. -/
+Proved in LP as `wholePlaneCovPSD_proved` (module `LatticeProb.Gauss.GFFCovPSD7`); the consumers below take it as an
+explicit argument, which that theorem supplies. -/
 def WholePlaneCovPSDStmt : Prop :=
   ∀ (n : ℕ) (o : Fin n → GFFObservable.Admissible) (c : Fin n → ℝ),
     0 ≤ ∑ i, ∑ j, c i * c j * wholePlaneGFFCov (o i).1 (o j).1

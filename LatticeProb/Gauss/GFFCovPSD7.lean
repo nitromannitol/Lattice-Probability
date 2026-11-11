@@ -98,7 +98,7 @@ lemma family_sum_eq {n : ℕ} (o : Fin n → GFFObservable.Admissible) (c : Fin 
   rw [Finset.sum_add_distrib, hsum]
   ring
 
-/-- Row 29, the whole-plane covariance is positive semidefinite (`LatticeProb.Gauss.WholePlaneCovPSDStmt`). -/
+/-- The whole-plane covariance is positive semidefinite (`LatticeProb.Gauss.WholePlaneCovPSDStmt`). -/
 theorem wholePlaneCovPSD_proved : WholePlaneCovPSDStmt := by
   intro n o c
   obtain ⟨m, hm⟩ : ∃ m : ℝ, m = ∑ k, c k * (famRep o (some k)).mass := ⟨_, rfl⟩
