@@ -63,7 +63,7 @@ theorem measurable_netFunctional {Ω : Type*} [MeasurableSpace Ω] {K : Set E} {
       dist a b ≤ δ → (∀ z ∈ K, |v z - w z| ≤ δ) → |Φ a v - Φ b w| ≤ ε) :
     Measurable fun ω => Φ (V ω) (netApprox x η (fun k => F (x k) ω)) :=
   (continuous_netFunctional hnet hΦu).measurable.comp
-    (hVm.prodMk (measurable_pi_lambda _ fun k => hFm (x k)))
+    (hVm.prodMk (Measurable.of_eval (f := fun ω k => F (x k) ω) fun k => hFm (x k)))
 
 /-- The continuous limit field admits a fine net with small expectation error, jointly
 with the block. -/
@@ -299,7 +299,7 @@ theorem tendstoInDistribution_block_functional
       (fun ω => (Vlim ω, H (fun z => g z ω))) P Q := by
   refine ⟨fun i => ((hVm i).prodMk (hfHm i)).aemeasurable,
     (hVlimm.prodMk hgHm).aemeasurable, ?_⟩
-  rw [tendsto_iff_forall_lipschitz_integral_tendsto]
+  refine tendsto_iff_forall_lipschitz_integral_tendsto.2 ?_
   intro F hFb hFlip
   obtain ⟨M, hM⟩ := hFb
   obtain ⟨LF, hLF⟩ := hFlip
@@ -445,7 +445,7 @@ theorem measurable_netFunctional2 {Ω : Type*} [MeasurableSpace Ω] {K : Set E} 
       (∀ j, |v1 j - v2 j| ≤ δ) → (∀ z ∈ K, |w1 z - w2 z| ≤ δ) → |Φ v1 w1 - Φ v2 w2| ≤ ε) :
     Measurable fun ω => Φ (V ω) (LatticeProb.netApprox x η (fun k => F (x k) ω)) :=
   (continuous_netFunctional2 hnet hΦu).measurable.comp
-    (hVm.prodMk (measurable_pi_lambda _ fun k => hFm (x k)))
+    (hVm.prodMk (Measurable.of_eval (f := fun ω k => F (x k) ω) fun k => hFm (x k)))
 
 /-- **The interpolation error in expectation, with the block held exact.**  Off the event that
 `F` varies by more than `δ` between two points of `K` at distance less than `η`, the
