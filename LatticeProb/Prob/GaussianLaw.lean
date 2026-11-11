@@ -54,9 +54,9 @@ theorem MeasureTheory.Measure.ext_of_map_restrict_eq
     (h : ∀ I : Finset T, P.map (fun ω => I.restrict (X · ω))
       = Q.map (fun ω => I.restrict (Y · ω))) :
     P.map (fun ω u => X u ω) = Q.map (fun ω u => Y u ω) := by
-  have hX' := ProbabilityTheory.isProjectiveLimit_map (P := P) (measurable_pi_lambda _ hmX).aemeasurable
+  have hX' := ProbabilityTheory.isProjectiveLimit_map (P := P) (Measurable.of_eval hmX).aemeasurable
   simp_rw [h] at hX'
-  exact hX'.unique (ProbabilityTheory.isProjectiveLimit_map (P := Q) (measurable_pi_lambda _ hmY).aemeasurable)
+  exact hX'.unique (ProbabilityTheory.isProjectiveLimit_map (P := Q) (Measurable.of_eval hmY).aemeasurable)
 
 
 /-- Centred Gaussian processes with equal covariance have the same finite-dimensional distributions. -/
