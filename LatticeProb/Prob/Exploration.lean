@@ -266,9 +266,9 @@ theorem map_revealed (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeasure (�
   have hνprob : IsProbabilityMeasure ν := by
     obtain ⟨i⟩ := hne
     rw [← hlaw i]
-    exact Measure.isProbabilityMeasure_map (hg i).aemeasurable
+    exact inferInstance
   have hmeas : Measurable (revealed idx g) :=
-    measurable_pi_lambda _ fun n => measurable_revealed hidx.meas hg n
+    Measurable.of_eval fun n => measurable_revealed hidx.meas hg n
   refine Measure.eq_infinitePi _ fun s t ht => ?_
   obtain ⟨N, hN⟩ := s.exists_nat_subset_range
   set B : ℕ → Set α := fun k => if k ∈ s then t k else Set.univ with hBdef
@@ -301,9 +301,9 @@ theorem map_revealed_apply (μ : ∀ i, Measure (X i)) [∀ i, IsProbabilityMeas
     (Measure.infinitePi μ).map (fun ω => revealed idx g ω n) = ν := by
   obtain ⟨i₀⟩ : Nonempty ι := nonempty_of_exploration μ idx
   haveI : IsProbabilityMeasure ν := by
-    rw [← hlaw i₀]; exact Measure.isProbabilityMeasure_map (hg i₀).aemeasurable
+    rw [← hlaw i₀]; exact inferInstance
   have hmeas : Measurable (revealed idx g) :=
-    measurable_pi_lambda _ fun k => measurable_revealed hidx.meas hg k
+    Measurable.of_eval fun k => measurable_revealed hidx.meas hg k
   have : (fun ω : Π i, X i => revealed idx g ω n)
       = (fun f : ℕ → α => f n) ∘ revealed idx g := rfl
   rw [this, ← Measure.map_map (measurable_pi_apply n) hmeas,
