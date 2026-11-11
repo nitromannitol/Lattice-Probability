@@ -866,3 +866,20 @@ library.
 #print axioms LatticeProb.condIndepEv_condCopy
 #print axioms LatticeProb.aeDeterminedBy_of_condCopy_ae_eq
 #print axioms LatticeProb.MetricGeometry.internalEDist_eq_of_isLocalIsometryOn
+
+#print axioms LatticeProb.IsOpen.isConnected_diff_singleton
+#print axioms LatticeProb.SuperMeanValueOn.strong_minimum_principle
+#print axioms LatticeProb.SuperMeanValueOn.strong_minimum_principle_of_nonneg
+#print axioms LatticeProb.SuperMeanValueOn.minimum_principle_of_frontier
+#print axioms LatticeProb.gaussianProcess_map_eq_of_mean_cov
+#print axioms LatticeProb.gaussianProcess_map_eq_of_mean_cov_of_countable
+#print axioms LatticeProb.map_eq_of_tendsto_ae
+#print axioms LatticeProb.indepFun_of_tendsto_ae
+#print axioms LatticeProb.AnalyticSet.nullMeasurableSet
+#print axioms LatticeProb.ae_frequently_pos_of_isBrownianReal
+#print axioms LatticeProb.ae_frequently_pos_of_isBrownianReal_blumenthal
+#print axioms LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun
+#print axioms LatticeProb.PlanarBrownian.ae_frequently_excursion
+#print axioms LatticeProb.PlanarBrownian.isTrivialSigma_iInf_pathSigmaTo_planar
+#print axioms LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun_of_coordinates
+#print axioms LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun_planar

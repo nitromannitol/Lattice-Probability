@@ -1048,6 +1048,31 @@ introduce no arc-straightening axiom or drawing-specific conclusion.
   volume of the Euclidean unit ball of `EuclideanSpace ℝ (Fin d)` is
   `unitBallVolume d`.
 
+**Plane topology and superharmonic functions.**  Connectedness of a planar set minus a point, and the minimum principles for superharmonic functions in the plane (Armitage and Gardiner, *Classical Potential Theory*, §3.2).
+
+* `LatticeProb.IsOpen.isConnected_diff_singleton`: for an open connected `U ⊆ ℂ` and any `z`, `U \ {z}` is connected.
+* `LatticeProb.SuperMeanValueOn.strong_minimum_principle`: if `U` is open and connected, `f` is continuous and super-mean-value on `U`, and `f` attains its infimum over `U` at a point of `U`, then `f` is constant on `U`.
+* `LatticeProb.SuperMeanValueOn.strong_minimum_principle_of_nonneg`: if `f ≥ 0` on the open connected set `U` and `f x₀ = 0` at some `x₀ ∈ U`, then `f = 0` on `U`.
+* `LatticeProb.SuperMeanValueOn.minimum_principle_of_frontier`: if `U` is open and bounded, `f` is continuous on `closure U` and super-mean-value on `U`, and `f ≥ 0` on the frontier of `U`, then `f ≥ 0` on `U`.
+
+**Gaussian processes and almost sure limits.**  Laws of Gaussian processes and of almost sure limits of random variables.
+
+* `LatticeProb.gaussianProcess_map_eq_of_mean_cov`: Gaussian processes with equal means and covariances have the same law on the product σ-algebra, when their joint maps are a.e. measurable.
+* `LatticeProb.gaussianProcess_map_eq_of_mean_cov_of_countable`: the countable-index case of the previous statement.
+* `LatticeProb.map_eq_of_tendsto_ae`: an almost sure limit of identically distributed random variables has their common law.
+* `LatticeProb.indepFun_of_tendsto_ae`: independence passes to almost sure limits of two sequences.
+* `LatticeProb.AnalyticSet.nullMeasurableSet`: every analytic subset of a metrizable Hausdorff space is null-measurable for each finite Borel measure (Lusin; Kechris, *Classical Descriptive Set Theory*, Thm 21.10).
+
+**Brownian motion: positivity at small times and germ laws.**  Positivity of Brownian motion along sequences of small times, and the zero-one law for the germ σ-algebra of planar Brownian motion.
+
+* `LatticeProb.ae_frequently_pos_of_isBrownianReal`: a real Brownian motion with measurable coordinates is positive at arbitrarily small times almost surely, given Blumenthal's zero-one law as the hypothesis `hBlum` (Mörters–Peres, *Brownian Motion*, Theorem 2.7).
+* `LatticeProb.ae_frequently_pos_of_isBrownianReal_blumenthal`: the same conclusion without `hBlum`, the germ law being supplied by `isTrivialSigma_iInf_bmPast`.
+* `LatticeProb.PlanarBrownian.isTrivialSigma_iInf_pathSigmaTo_planar`: the germ σ-algebra of a planar Brownian motion is trivial when the germ σ-algebras of its two coordinates are (Mörters–Peres, Theorem 2.7 with `d = 2`).
+* `LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun`: if `N ≠ 0` almost surely and `N` is independent of a planar Brownian motion `W`, then almost surely `⟪N, W_s⟫ > 0` for arbitrarily small `s`, given `hBlum`.
+* `LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun_of_coordinates`: the coordinate form of the previous statement, with the coordinate germ laws of `W` assumed trivial.
+* `LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun_planar`: the unconditional form of the previous statement.
+* `LatticeProb.PlanarBrownian.ae_frequently_excursion`: outward excursion at a stopping time (planar form): if `B_τ ≠ z` almost surely, then almost surely `⟪B_τ - z, B_t - B_τ⟫ > 0` for arbitrarily small `t - τ > 0` (Mörters–Peres, Theorem 2.16).
+
 ## Guarantees
 
 - **No `sorry`.** The library has none. The five comparator challenges under
@@ -1216,9 +1241,11 @@ This library is built on [Lean 4](https://lean-lang.org) and
 of `LatticeProb/Prob/` are adapted from the percolation library of
 [`anthropics/formal-math`](https://github.com/anthropics/formal-math), the
 modules of `LatticeProb/Lattice/Planar/` from
-[`rotor-23`](https://github.com/nitromannitol/rotor-23), and sixteen continuum
+[`rotor-23`](https://github.com/nitromannitol/rotor-23), sixteen continuum
 modules from
-[`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness);
+[`Parking-Sharpness`](https://github.com/nitromannitol/Parking-Sharpness), and
+`LatticeProb/Prob/AnalyticUniversalMeasurable.lean` from
+[`subdiffusive-process`](https://github.com/nitromannitol/subdiffusive-process);
 [`NOTICE`](NOTICE) lists the files and the commits.  113 modules, among them those on curve spaces and curve length, optional stopping,
 finite Dirichlet problems, couplings, Gaussian concentration and comparison, and Brownian
 motion, are adapted from Leonardo Bonanno's

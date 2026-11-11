@@ -126,3 +126,10 @@ source payload or package dependency is introduced.
 LatticeProb/Bonanno/ (branch lean-v4.35): copied from Leonardo Bonanno's lean-formalizations,
 https://github.com/leobon12/lean-formalizations, commit 31e7483e (module paths prefixed by LatticeProb.Bonanno; each file
 names its source module).
+
+LatticeProb/Prob/AnalyticUniversalMeasurable.lean is adapted from
+https://github.com/nitromannitol/subdiffusive-process, file
+SubdiffusiveProcess/Paper/prop_quenched_convergence.lean, commit
+c14a982f42e4bc206d88ef2f80dd4bf3cb79aea8, under the Apache License,
+Version 2.0 (see LICENSE). The module header states that the capacitability
+argument is the part adapted from that file.
