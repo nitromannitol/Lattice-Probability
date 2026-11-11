@@ -898,3 +898,8 @@ library.
 #print axioms LatticeProb.circleAverage_log_norm_sub_eq
 #print axioms LatticeProb.circleAverage_wholePlaneCov
 #print axioms LatticeProb.circleAverage_circleAverage_wholePlaneCov
+#print axioms LatticeProb.abs_log_le_rpow_neg_half
+#print axioms LatticeProb.integrable_test_mul_log_norm
+#print axioms LatticeProb.diag_nonneg
+#print axioms LatticeProb.integrable_abs_test_mul_diag
+#print axioms LatticeProb.measurable_radialPoint
