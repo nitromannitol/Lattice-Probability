@@ -48,9 +48,9 @@ theorem sum_mul_det_bordered_matrix [Fintype E]
       borderedMatrix M top (row e) (corner e) := by
     ext i j
     cases i with
-    | inl i => cases j <;> simp [B, lastRow, borderedMatrix, Matrix.updateRow_apply]
+    | inl i => cases j <;> simp [B, lastRow, borderedMatrix, Matrix.updateRow_apply, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂] <;> rfl
     | inr i => cases i; cases j <;>
-        simp [B, lastRow, borderedMatrix, Matrix.updateRow_apply]
+        simp [B, lastRow, borderedMatrix, Matrix.updateRow_apply, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂] <;> rfl
   have hsum : (∑ e, c e • lastRow e) =
       Sum.elim (0 : I → R) (fun _ => ∑ e, c e * corner e) := by
     funext j
@@ -68,9 +68,9 @@ theorem sum_mul_det_bordered_matrix [Fintype E]
       congr 1
       ext i j
       cases i with
-      | inl i => cases j <;> simp [B, borderedMatrix, Matrix.updateRow_apply]
+      | inl i => cases j <;> simp [B, borderedMatrix, Matrix.updateRow_apply, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂] <;> rfl
       | inr i => cases i; cases j <;>
-          simp [B, borderedMatrix, Matrix.updateRow_apply]
+          simp [B, borderedMatrix, Matrix.updateRow_apply, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂, Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂] <;> rfl
     _ = M.det * ∑ e, c e * corner e := by
       calc
         _ = M.det * (Matrix.of fun (_ _ : Unit) => ∑ e, c e * corner e).det :=
