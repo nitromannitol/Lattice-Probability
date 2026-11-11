@@ -486,7 +486,7 @@ private theorem const_div_pow_le_prod_P1 (hd : 1 ≤ d) (c₁ : ℝ) (hc₁ : 0 
     rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
   unfold K
   rw [← hconst]
-  refine Finset.prod_le_prod (fun i _ => ?_) (fun i _ => hprod i)
+  refine Finset.prod_le_prod₀ (fun i _ => ?_) (fun i _ => hprod i)
   exact div_nonneg hc₁.le (le_of_lt (mul_pos (Real.sqrt_pos.mpr (by norm_num)) hsR))
 
 
