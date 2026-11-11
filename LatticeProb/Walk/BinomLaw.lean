@@ -216,13 +216,14 @@ theorem conv_zero_eq (l : ℕ) : conv l 0 = (Nat.centralBinom l : ℝ) / 4 ^ l :
       simp only [Finset.mem_Icc, Finset.mem_map, Finset.mem_range, Function.Embedding.coeFn_mk]
       constructor
       · rintro ⟨h1, h2⟩
-        exact ⟨j.toNat, by omega, by omega⟩
+        exact ⟨j.toNat, by omega, Int.toNat_of_nonneg h1⟩
       · rintro ⟨i, hi, rfl⟩
-        omega]
+        exact ⟨Int.natCast_nonneg i, (Nat.cast_le (α := ℤ)).mpr (by omega)⟩]
     rw [Finset.sum_map]
     refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [Function.Embedding.coeFn_mk, add_zero, binomLaw,
-      if_pos (Int.natCast_nonneg i), Int.toNat_natCast]
+    show binomLaw l (i : ℤ) * binomLaw l ((i : ℤ) + 0) = ((Nat.choose l i : ℝ) / 2 ^ l) ^ 2
+    rw [add_zero]
+    simp only [binomLaw, if_pos (Int.natCast_nonneg i), Int.toNat_natCast]
     ring
   rw [hmap]
   have h4 : (4 : ℝ) ^ l = (2 ^ l) ^ 2 := by
