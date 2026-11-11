@@ -3,6 +3,8 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 import LatticeProb.Analysis.DistributionalLaplacian
 import LatticeProb.Bonanno.LQGMetric.Field.WholePlaneCov
+import LatticeProb.Analysis.RotationalAverage
+import LatticeProb.Analysis.LogPotentialCircle
 
 /-!
 # Logarithmic integrability of test functions on the plane
@@ -17,7 +19,7 @@ and KPZ*, Invent. Math. 185 (2011), arXiv:0808.1560, Section 3.1).
 
 noncomputable section
 
-namespace LatticeProb
+namespace LatticeProb.TestFunctionLogIntegrable
 
 open MeasureTheory Filter Topology Set Metric
 
@@ -147,6 +149,31 @@ lemma integrable_test_mul_wholePlaneCov {ψ : ℂ → ℝ} (hψ : IsTestFunction
     Real.log_mul (max_norm_pos x).ne' (max_norm_pos y).ne']
   ring
 
-end LatticeProb
+/-- Rotational averaging of the logarithmic kernel: for a radial test function `ψ` and every `x`,
+`∫ ψ(y) wholePlaneCov(x,y) dy = ∫ ψ(y) (log max(|x|,1) + log max(|y|,1) - log max(|x|,|y|)) dy`. -/
+lemma integral_test_mul_wholePlaneCov {ψ : ℂ → ℝ} (hψ : IsTestFunction Set.univ ψ)
+    (hψr : ∀ (θ : ℝ) (x : ℂ), ψ (LatticeProb.RotationalAverage.rot θ x) = ψ x) (x : ℂ) :
+    ∫ y, ψ y * wholePlaneCov x y = ∫ y, ψ y *
+      (Real.log (max ‖x‖ 1) + Real.log (max ‖y‖ 1) - Real.log (max ‖x‖ ‖y‖)) := by
+  have hm : Measurable (fun y : ℂ => wholePlaneCov x y) := by
+    unfold wholePlaneCov
+    fun_prop
+  have h := LatticeProb.RotationalAverage.integral_avgRot_mul (Φ := fun y => wholePlaneCov x y) (g := ψ) hm
+    hψ.1.continuous.measurable hψr
+    (by simpa only [mul_comm] using integrable_test_mul_wholePlaneCov hψ x)
+  have hne0 : ∀ᵐ y ∂(volume : Measure ℂ), y ≠ 0 := by
+    rw [ae_iff]
+    simp
+  calc ∫ y, ψ y * wholePlaneCov x y = ∫ y, wholePlaneCov x y * ψ y := by
+        simp only [mul_comm]
+    _ = ∫ y, LatticeProb.RotationalAverage.avgRot (fun w => wholePlaneCov x w) y * ψ y := h.symm
+    _ = ∫ y, ψ y * (Real.log (max ‖x‖ 1) + Real.log (max ‖y‖ 1) - Real.log (max ‖x‖ ‖y‖)) := by
+        refine integral_congr_ae ?_
+        filter_upwards [hne0] with y hy
+        rw [LatticeProb.RotationalAverage.avgRot_eq_circleAverage,
+          LatticeProb.LogPotentialCircle.circleAverage_wholePlaneCov (norm_pos_iff.mpr hy), mul_comm,
+          max_comm ‖y‖ ‖x‖]
+
+end LatticeProb.TestFunctionLogIntegrable
 
 end
