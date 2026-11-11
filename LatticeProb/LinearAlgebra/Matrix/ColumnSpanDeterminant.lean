@@ -51,9 +51,9 @@ theorem det_fromCols_ordered_roots {R : Type*} [CommRing R] {d k : ℕ}
     ext x j
     cases j with
     | inl j => simp only [fromCols_apply_inl, submatrix_apply, finSumFinEquiv_apply_left,
-        appendRootColumns_castAdd, id_eq]
+        appendRootColumns_castAdd, id_eq] <;> rfl
     | inr r => simp only [fromCols_apply_inr, submatrix_apply, finSumFinEquiv_apply_right,
-        appendRootColumns_natAdd]
+        appendRootColumns_natAdd] <;> rfl
   rw [hm, det_submatrix_equiv_self]
 
 /-- **Determinants under column additions.** Matched root differences in the integer edge span determine the actual augmentation sign. -/
