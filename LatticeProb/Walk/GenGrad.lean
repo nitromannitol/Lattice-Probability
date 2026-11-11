@@ -113,7 +113,7 @@ theorem sum_block_le {i j : Fin d} (hij : i ≠ j) (n : Fin d → ℕ) (f h : �
   have hnn : ∀ l ∈ E, (0 : ℝ) ≤ ∑ c ∈ F.image (fun w : Site d => w l), g l c :=
     fun l _ => Finset.sum_nonneg fun c _ => hgnn l c
   have hprodle : (∏ l ∈ E, ∑ c ∈ F.image (fun w : Site d => w l), g l c) ≤ 1 :=
-    Finset.prod_le_one hnn hbound
+    Finset.prod_le_one₀ hnn hbound
   have hfle : (∑ c ∈ F.image (fun w : Site d => w i), f c) ≤ ∑' s : ℤ, f s :=
     Summable.sum_le_tsum _ (fun c _ => hf c) hfs
   have hhle : (∑ c ∈ F.image (fun w : Site d => w j), h c) ≤ ∑' t : ℤ, h t :=
