@@ -49,10 +49,10 @@ theorem tendstoInDistribution_of_forall_inner {Ω Ω' : Type*} [MeasurableSpace 
         (fun ω => (inner ℝ (Z ω) t : ℝ)) (fun _ => P) Q) :
     TendstoInDistribution X atTop Z (fun _ => P) Q := by
   refine ⟨hX, hZ, ?_⟩
-  rw [MeasureTheory.ProbabilityMeasure.tendsto_iff_tendsto_charFun]
+  apply (MeasureTheory.ProbabilityMeasure.tendsto_iff_tendsto_charFun).2
   intro t
   have h1 := (h t).tendsto
-  rw [MeasureTheory.ProbabilityMeasure.tendsto_iff_tendsto_charFun] at h1
+  replace h1 := (MeasureTheory.ProbabilityMeasure.tendsto_iff_tendsto_charFun).1 h1
   have h2 := h1 1
   have hgoal : (fun n : ℕ => charFun (P.map (X n)) t)
       = fun n : ℕ => charFun (P.map fun ω => (inner ℝ (X n ω) t : ℝ)) 1 := by
