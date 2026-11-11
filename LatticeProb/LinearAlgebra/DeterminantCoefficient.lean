@@ -104,7 +104,8 @@ theorem det_X_add_C_coeff_one_add_row_add_column {k : ℕ}
   cases k with
   | zero => simp only [Matrix.det_fin_zero, Polynomial.coeff_one, one_ne_zero, if_false]
   | succ n =>
-    rw [det_X_add_C_coeff_one, det_X_add_C_coeff_one]
+    have h1 := det_X_add_C_coeff_one (fun i j => M i j + u i + v j)
+    rw [h1, det_X_add_C_coeff_one M]
     congr 1
     ext i j
     simp only [Matrix.of_apply]
