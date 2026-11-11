@@ -196,7 +196,7 @@ theorem exists_convReal_derivative_bound {d : ℕ} {D : Set (Space d)}
       rw [rellichDirectionalKernel_convReal hφ hρ k w]
       rfl
     have hprod : (1 : ℝ) ≤ ∏ i, ‖w i‖ := by
-      apply Finset.one_le_prod
+      apply Finset.one_le_prod₀
       intro i hi
       simpa using hwlow i
     calc ‖q w‖ = |∫ t, φ t * g (⟨x, hx⟩, ⟨w, hwV⟩) t| := by
