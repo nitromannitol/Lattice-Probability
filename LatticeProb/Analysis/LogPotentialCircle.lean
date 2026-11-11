@@ -26,7 +26,7 @@ namespace LatticeProb.LogPotentialCircle
 open MeasureTheory Filter Topology Set Metric
 
 /-- Average of `w ↦ log ‖w - z‖` over `∂B_r(0)`: the logarithmic mean value property, `log max(r, ‖z‖)`
-(Armitage-Gardiner, Section 3.1). -/
+(Armitage-Gardiner, *Classical Potential Theory*, Section 3.1). -/
 lemma circleAverage_log_norm_sub_eq {r : ℝ} (hr : 0 < r) (z : ℂ) :
     Real.circleAverage (fun w : ℂ => Real.log ‖w - z‖) 0 r = Real.log (max r ‖z‖) := by
   have h := circleAverage_log_norm_sub_const_eq_log_radius_add_posLog (c := (0 : ℂ)) (a := z) hr.ne'
@@ -50,8 +50,8 @@ lemma circleAverage_log_norm_sub_eq {r : ℝ} (hr : 0 < r) (z : ℂ) :
     ring
 
 /-- The circle average of the covariance kernel `wholePlaneCov z ·` over `∂B_r(0)`, for every `z ∈ ℂ`
-(Duplantier-Sheffield 2011, Section 3.1; the mean value property of `log |· - z|`). The point `w = z` of the
-circle, where `wholePlaneCov` takes the junk value `0`, is a single point of the codiscrete filter and does not
+(Duplantier-Sheffield, arXiv:0808.1560, Section 3.1; the mean value property of `log |· - z|`). The point `w = z` of
+the circle, where `wholePlaneCov` takes the junk value `0`, is a single point of the codiscrete filter and does not
 contribute. -/
 lemma circleAverage_wholePlaneCov {r : ℝ} (hr : 0 < r) (z : ℂ) :
     Real.circleAverage (fun w : ℂ => wholePlaneCov z w) 0 r =
@@ -85,7 +85,8 @@ lemma circleAverage_wholePlaneCov {r : ℝ} (hr : 0 < r) (z : ℂ) :
   rw [key, Real.circleAverage_const, circleAverage_log_norm_sub_eq hr z]
 
 /-- The circle-circle covariance of the whole-plane covariance kernel: the circle average over `∂B_s(0)` of the
-circle averages of `wholePlaneCov · ` over `∂B_r(0)`, for `r, s > 0` (Duplantier-Sheffield 2011, eq. (3.2)). -/
+circle averages of `wholePlaneCov · ` over `∂B_r(0)`, for `r, s > 0`
+(Duplantier-Sheffield, arXiv:0808.1560, eq. (3.2)). -/
 lemma circleAverage_circleAverage_wholePlaneCov {r s : ℝ} (hr : 0 < r) (hs : 0 < s) :
     Real.circleAverage (fun z : ℂ => Real.circleAverage (fun w : ℂ => wholePlaneCov z w) 0 r) 0 s =
       Real.log (max s 1) + Real.log (max r 1) - Real.log (max r s) := by
@@ -99,7 +100,7 @@ lemma circleAverage_circleAverage_wholePlaneCov {r s : ℝ} (hr : 0 < r) (hs : 0
   rw [Real.circleAverage_congr_sphere hc, Real.circleAverage_const]
 
 /-- Symmetry of the circle-circle covariance kernel `log max(s,1) + log max(t,1) - log max(s,t)` in the two radii
-(Duplantier-Sheffield 2011, eq. (3.2)). -/
+(Duplantier-Sheffield, arXiv:0808.1560, eq. (3.2)). -/
 lemma circleCovariance_comm (s t : ℝ) :
     Real.log (max s 1) + Real.log (max t 1) - Real.log (max s t)
       = Real.log (max t 1) + Real.log (max s 1) - Real.log (max t s) := by
