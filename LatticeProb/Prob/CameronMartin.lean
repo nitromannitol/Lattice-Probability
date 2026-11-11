@@ -118,7 +118,8 @@ lemma gauss_exp {Z : Ω → ℝ} (hZ : HasGaussianLaw Z P) (hm : P[Z] = 0) :
   haveI := hX.isProbabilityMeasure
   have hlaw : P.map Z = gaussianReal 0 Var[Z; P].toNNReal := by
     rw [hZ.map_eq_gaussianReal, hm]
-  have hm1 := mgf_gaussianReal hlaw 1
+  have hLaw : HasLaw Z (gaussianReal 0 Var[Z; P].toNNReal) P := ⟨hZ.aemeasurable, hlaw⟩
+  have hm1 := mgf_gaussianReal hLaw 1
   have hv : (Var[Z; P].toNNReal : ℝ) = Var[Z; P] := Real.coe_toNNReal _ (variance_nonneg _ _)
   constructor
   · have : 0 < mgf Z P 1 := by rw [hm1]; positivity
