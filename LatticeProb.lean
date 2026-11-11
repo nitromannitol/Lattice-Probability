@@ -833,3 +833,5 @@ import LatticeProb.Prob.CameronMartinEquivalence
 import LatticeProb.Prob.FiniteMeasureStandardBorel
 import LatticeProb.Prob.PlanarBrownianGermZeroOne
 import LatticeProb.Prob.VagueLimitMeasurable
+
+import LatticeProb.Analysis.RotationalAverage

@@ -883,3 +883,8 @@ library.
 #print axioms LatticeProb.PlanarBrownian.isTrivialSigma_iInf_pathSigmaTo_planar
 #print axioms LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun_of_coordinates
 #print axioms LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun_planar
+#print axioms LatticeProb.RotationalAverage.contDiff_intervalIntegral_param
+#print axioms LatticeProb.RotationalAverage.contDiff_avgRot
+#print axioms LatticeProb.RotationalAverage.avgRot_test
+#print axioms LatticeProb.RotationalAverage.integral_avgRot_mul
+#print axioms LatticeProb.RotationalAverage.avgRot_eq_circleAverage
