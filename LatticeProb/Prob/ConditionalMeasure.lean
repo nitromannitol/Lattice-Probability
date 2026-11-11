@@ -31,6 +31,7 @@ theorem LatticeProb.setLIntegral_conditionalMeasure {X : Type*} {m : MeasurableS
     (∫⁻ x in B, condExpKernel Q m x A ∂Q) = Q (A ∩ B) := by
   rw [← setLIntegral_trim hm (measurable_condExpKernel hA) hB,
     ← Measure.compProd_apply_prod hB hA, compProd_trim_condExpKernel hm,
+    show (Function.diag : X → X × X) = (fun x => (id x, id x)) from rfl,
     Measure.map_apply ((measurable_id'' hm).prodMk measurable_id) (hB.prod hA)]
   change Q (B ∩ A) = Q (A ∩ B)
   rw [Set.inter_comm]
@@ -113,7 +114,8 @@ theorem LatticeProb.compProd_conditionalMeasure_map {X : Type*} {m : MeasurableS
   rw [Measure.compProd_map hT.measurable, compProd_trim_condExpKernel hm]
   have hd : @Measurable X (X × X) mX (m.prod mX) (fun x => (id x, id x)) :=
     (measurable_id'' hm).prodMk measurable_id
-  rw [Measure.map_map (measurable_id.prodMap hT.measurable) hd]
+  rw [show (Function.diag : X → X × X) = (fun x => (id x, id x)) from rfl,
+    Measure.map_map (measurable_id.prodMap hT.measurable) hd]
   apply Measure.ext_prod
   intro B A hB hA
   rw [Measure.map_apply ((measurable_id.prodMap hT.measurable).comp hd) (hB.prod hA),
