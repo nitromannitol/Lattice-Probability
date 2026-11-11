@@ -77,7 +77,7 @@ theorem reflectAt_apply (j k : ℕ) (ξ : ℕ → Site d) :
   by_cases h : k < j <;> simp [h]
 
 theorem measurable_reflectAt (j : ℕ) : Measurable (reflectAt (d := d) j) := by
-  refine measurable_pi_lambda _ fun k => ?_
+  refine Measurable.of_eval fun k => ?_
   by_cases h : k < j
   · simp only [reflectAt, if_pos h]
     exact measurable_pi_apply k
