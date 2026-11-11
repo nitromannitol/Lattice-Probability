@@ -862,3 +862,6 @@ import LatticeProb.Bonanno.LQGMetric.Field.CirclePairing
 import LatticeProb.Bonanno.LQGMetric.Field.LQGMeasureFieldMeasurableAmbient
 import LatticeProb.Bonanno.LQGMetric.Field.RadialPointIntegrals
 import LatticeProb.Bonanno.LQGMetric.Field.RadialPointRotation
+import LatticeProb.Analysis.TestFunctionLogIntegrable
+import LatticeProb.Analysis.CircleLogIntegrals
+import LatticeProb.Bonanno.LQGMetric.Field.CircleBumpRadial
