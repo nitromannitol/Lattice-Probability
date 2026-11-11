@@ -62,21 +62,43 @@ theorem sobolevNormSq_eq_lintegral_weight_sq {d : ℕ} (s : ℝ) (f : Space d �
 
 /-- **The `eLpNorm` square conversion.**  For `ℝ≥0∞`-valued `g`,
 `(eLpNorm g 2 μ)² = ∫⁻ ξ, ‖g ξ‖ₑ ^ 2`; with `‖g ξ‖ₑ = g ξ` this is the `H^s`-norm realisation. -/
-theorem sq_eLpNorm_two_eq_lintegral {d : ℕ} (g : Space d → ℝ≥0∞) :
+theorem sq_eLpNorm_two_eq_lintegral {d : ℕ} (g : Space d → ℝ≥0∞)
+    (hg : AEStronglyMeasurable g volume) :
     (eLpNorm g 2 volume) ^ 2 = ∫⁻ ξ, (‖g ξ‖ₑ) ^ (2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (μ := volume) (p := 2) (by norm_num) (by norm_num)]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (μ := volume) (p := 2) (by norm_num) (by norm_num) hg]
   simp only [ENNReal.toReal_ofNat]
   rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
   rw [show (1 / 2 : ℝ) * ((2 : ℕ) : ℝ) = 1 by norm_num, ENNReal.rpow_one]
+
+/-- The Fourier transform `𝓕 (f : ℝ → ℂ)` of a real function is Borel measurable on `Space d`.
+If `f` is integrable, `𝓕 f` is continuous (`VectorFourier.fourierIntegral_continuous`, the
+Riemann-Lebesgue regime); otherwise the integrand `ξ`-by-`ξ` is not integrable
+(`VectorFourier.fourierIntegral_convergent_iff`), so `𝓕 f` vanishes identically (Bochner
+convention `integral_undef`). -/
+theorem measurable_fourier_ofReal {d : ℕ} (f : Space d → ℝ) :
+    Measurable (fun ξ : Space d => 𝓕 (fun x => (f x : ℂ)) ξ) := by
+  by_cases hf : Integrable (fun x => (f x : ℂ)) volume
+  · exact (VectorFourier.fourierIntegral_continuous Real.continuous_fourierChar
+      (innerSL ℝ).continuous₂ hf).measurable
+  · have h0 : (fun ξ : Space d => 𝓕 (fun x => (f x : ℂ)) ξ) = fun _ => 0 := by
+      funext ξ
+      refine integral_undef fun h => hf ?_
+      exact (VectorFourier.fourierIntegral_convergent_iff Real.continuous_fourierChar
+        (innerSL ℝ).continuous₂ ξ).1 h
+    rw [h0]
+    exact measurable_const
 
 /-- **The `H^s`-realisation bridge (proved).**  `SobolevNormBesselBridge` holds: combining
 `sobolevNormSq_eq_lintegral_weight_sq` with `sq_eLpNorm_two_eq_lintegral`. -/
 theorem sobolevNormBesselBridge : SobolevNormBesselBridge := by
   intro d s f
   rw [sobolevNormSq_eq_lintegral_weight_sq s f]
-  rw [sq_eLpNorm_two_eq_lintegral (fun ξ : Space d =>
-    ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ (s / 2)) *
-      ENNReal.ofReal ‖𝓕 (fun x => (f x : ℂ)) ξ‖)]
+  have hmeas : Measurable (fun ξ : Space d =>
+      ENNReal.ofReal ((1 + (2 * Real.pi * ‖ξ‖) ^ 2) ^ (s / 2)) *
+        ENNReal.ofReal ‖𝓕 (fun x => (f x : ℂ)) ξ‖) :=
+    (Measurable.ennreal_ofReal (by fun_prop)).mul
+      (measurable_fourier_ofReal f).norm.ennreal_ofReal
+  rw [sq_eLpNorm_two_eq_lintegral _ hmeas.aestronglyMeasurable]
   refine lintegral_congr fun ξ => ?_
   rw [enorm_eq_self]
   exact (ENNReal.rpow_natCast _ 2).symm
@@ -88,9 +110,10 @@ inequality `enorm_integral_le_lintegral_enorm` transported to the `eLpNorm 1` se
 theorem eLpNorm_one_integral_le {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
     {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
     [MeasurableSpace G] [BorelSpace G] [SecondCountableTopology G]
-    (g : β → α → G) (ν : Measure β) (μ : Measure α) :
+    (g : β → α → G) (ν : Measure β) (μ : Measure α)
+    (hmeas : AEStronglyMeasurable (fun ξ => ∫ t, g t ξ ∂ν) μ) :
     eLpNorm (fun ξ => ∫ t, g t ξ ∂ν) 1 μ ≤ ∫⁻ ξ, ∫⁻ t, ‖g t ξ‖ₑ ∂ν ∂μ := by
-  rw [eLpNorm_one_eq_lintegral_enorm]
+  rw [eLpNorm_one_eq_lintegral_enorm hmeas]
   refine lintegral_mono fun ξ => ?_
   exact enorm_integral_le_lintegral_enorm (fun t => g t ξ)
 
