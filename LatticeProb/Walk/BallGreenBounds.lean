@@ -1067,6 +1067,8 @@ theorem exists_annulus_gradient_le :
         have hbad := hxB.2.2
         rw [hzero] at hbad
         simp [supNorm] at hbad
+        have hsup : (Finset.univ : Finset (Fin 4)).sup (fun _ => (0 : ℕ)) = 0 := by simp
+        rw [hsup, Nat.cast_zero] at hbad
         have hpos : (0 : ℝ) < (R : ℝ) / 8 := by positivity
         linarith
       exact killedGreen_netLaplacian_eq_zero r hxr hx0
