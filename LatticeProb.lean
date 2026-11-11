@@ -869,3 +869,8 @@ import LatticeProb.Analysis.CircleAverageLog
 import LatticeProb.Analysis.CompactSupportMeasure
 import LatticeProb.Prob.SecondMomentMethod
 import LatticeProb.Prob.ContinuousPathLaw
+import LatticeProb.Analysis.ShellGeometry
+import LatticeProb.Analysis.GeometricShellSums
+import LatticeProb.Analysis.AffineScaleRotation
+import LatticeProb.Analysis.MetricRescaling
+import LatticeProb.Analysis.CircleAverageUniformLimit
