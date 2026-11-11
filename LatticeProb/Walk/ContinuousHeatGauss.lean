@@ -95,7 +95,7 @@ private lemma abs_prod_le {n : ℕ} {A : ℝ} (a m : Fin n → ℝ)
   rw [Finset.abs_prod]
   calc
     ∏ i : Fin n, |a i| ≤ ∏ i : Fin n, A * m i :=
-      Finset.prod_le_prod (fun i _ => abs_nonneg _) (fun i _ => ha i)
+      Finset.prod_le_prod₀ (fun i _ => abs_nonneg _) (fun i _ => ha i)
     _ = (∏ _i : Fin n, A) * ∏ i : Fin n, m i := Finset.prod_mul_distrib
     _ = A ^ n * ∏ i : Fin n, m i := by
           rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
