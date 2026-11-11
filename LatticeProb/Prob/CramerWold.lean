@@ -106,7 +106,7 @@ theorem tendstoInDistribution_pi_atTop_of_forall_dot {m : ℕ} {Ω Ω' : Type*}
         (fun ω => ∑ i, Z ω i * t i) (fun _ => P) Q) :
     TendstoInDistribution X atTop Z (fun _ => P) Q := by
   refine ⟨hX, hZ, ?_⟩
-  rw [Filter.tendsto_iff_seq_tendsto]
+  refine Filter.tendsto_iff_seq_tendsto.2 ?_
   intro u hu
   exact (tendstoInDistribution_pi_of_forall_dot (fun n => X (u n)) Z P Q
     (fun n => hX (u n)) hZ (fun t => ⟨fun n => (h t).forall_aemeasurable (u n),
@@ -124,6 +124,8 @@ theorem tendstoInDistribution_of_map_eq {ι F : Type*} {l : Filter ι} {Ω Ω' :
   refine ⟨h.forall_aemeasurable, hY, ?_⟩
   have h2 : Q.map Y = μ'.map id := by rw [MeasureTheory.Measure.map_id]; exact hmap
   convert h.tendsto using 2
-  exact Subtype.ext h2
+  congr 1
+  apply MeasureTheory.ProbabilityMeasure.toMeasure_injective
+  exact h2
 
 end LatticeProb.CramerWold
