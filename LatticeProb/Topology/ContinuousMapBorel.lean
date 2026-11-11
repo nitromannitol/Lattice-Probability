@@ -194,7 +194,7 @@ def continuousMapToFun : C(X, Y) ≃ᵐ {f : X → Y // Continuous f} where
   left_inv f := rfl
   right_inv f := rfl
   measurable_toFun :=
-    .subtype_mk (measurable_pi_lambda _ fun x ↦ (continuous_eval_const x).measurable)
+    .subtype_mk (Measurable.of_eval fun x ↦ (continuous_eval_const x).measurable)
   measurable_invFun :=
     ContinuousMap.measurable_iff_eval.2 fun x ↦ by simpa using measurable_subtype_coe.eval
 
