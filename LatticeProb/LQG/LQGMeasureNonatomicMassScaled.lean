@@ -6,8 +6,9 @@ import LatticeProb.LQG.LQGMeasureNonatomicMassPoly
 # The multiscale ball-mass bound for `h^ℂ` around the origin
 
 Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
-Lemma 2.4: the union bound over the dyadic scales of Berestycki and Gwynne 2020, Lemma A.1 (and of Ding and Gwynne 2020,
-Lemma 3.8, for the rescaled fields). The steps of Lemma 2.4, `WholePlaneScaledBallMassStep`, `RescaledBallMassUniformStep`
+Lemma 2.4: the union bound over the dyadic scales of Berestycki and Gwynne, Random walks on mated-CRT planar maps and
+Liouville Brownian motion, arXiv:2003.10320, Lemma A.1, p. 66 of v2 (and of Ding and Gwynne 2020,
+Lemma 3.8, for the rescaled fields). The steps of arXiv:2208.11795, Lemma 2.4, `WholePlaneScaledBallMassStep`, `RescaledBallMassUniformStep`
 and the event `rescaledBallMassEvent`, are stated as definitions with the names of this library. Nothing is assumed: the
 reduction `wholePlaneScaledBallMassStep_of_uniform_lp` takes the steps as hypotheses, and the reduction itself is proved here.
 -/
@@ -40,7 +41,7 @@ def RescaledBallMassUniformStepLP : Prop :=
     ∃ p : ℝ, 0 < p ∧ ∃ C : ℝ, ∃ r₀ > 0, ∀ k : ℕ, ∀ r : ℝ, 0 < r → r < r₀ →
       P (rescaledBallMassEvent γ hcirc μ₀ R βplus βminus k r)ᶜ ≤ ENNReal.ofReal (C * ((k : ℝ) + 1) ^ 2 * r ^ p)
 
-/-- The multiscale ball-mass step of Lemma 2.4: the multiscale ball bound for `h^ℂ` around the origin, with
+/-- The multiscale ball-mass step of arXiv:2208.11795, Lemma 2.4: the multiscale ball bound for `h^ℂ` around the origin, with
 polynomially high probability. A definition; proved in the module `LatticeProb.LQG.LQGMeasureNonatomicMassRescaled`. -/
 def WholePlaneScaledBallMassStepLP : Prop :=
   ∀ γ : ℝ, 0 < γ → γ < 2 →

@@ -7,12 +7,13 @@ import LatticeProb.LQG.LQGMeasureNonatomicMassScaled
 import LatticeProb.LQG.LQGMeasureNonatomicMassWeight
 
 /-!
-# The ball clause of Lemma 2.4 from the multiscale bound, part A
+# The ball clause of arXiv:2208.11795, Lemma 2.4 from the multiscale bound, part A
 
 Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
 Lemma 2.4: the per-sample reduction of the ball-mass bounds, `ballMass_upper_of_scaled` (the upper bound of the
 ball-volume estimate) and `ballMass_lower_of_scaled` (the lower bound), from the scaled multiscale bound `ScaledBallBound`
-at the scales `ε` and `ε/4` and the power weight `μ_h = |x|^e μ₀` off `0` (Berestycki and Gwynne 2020, Lemma A.1).
+at the scales `ε` and `ε/4` and the power weight `μ_h = |x|^e μ₀` off `0` (Berestycki and Gwynne, Random walks on
+mated-CRT planar maps and Liouville Brownian motion, arXiv:2003.10320, Lemma A.1, p. 66 of v2).
 The weight relation is taken as the hypothesis `hW`.
 -/
 
@@ -68,7 +69,7 @@ theorem exists_away_from_zero (z : ℂ) {ε : ℝ} (hε : 0 < ε) :
 
 variable {m m₀ : Measure ℂ} {e G βp₀ βm₀ ζ R R₁ ε : ℝ}
 
-/-- Upper bound in the ball-volume estimate of Lemma 2.4, for one sample: `μ_h(B_ε(z)) ≤ max(C₁ ε^{β⁺₀-ζ}, C₂ ε^{(1-ζ)(G₁+e)})`. -/
+/-- Upper bound in the ball-volume estimate of arXiv:2208.11795, Lemma 2.4, for one sample: `μ_h(B_ε(z)) ≤ max(C₁ ε^{β⁺₀-ζ}, C₂ ε^{(1-ζ)(G₁+e)})`. -/
 theorem ballMass_upper_of_scaled
     (hW : m.restrict {0}ᶜ = (m₀.withDensity fun x => ENNReal.ofReal (‖x‖ ^ e)).restrict {0}ᶜ)
     (h0 : m {0} = 0) (hε : 0 < ε) (hε1 : ε < 1) (hζ1 : ζ < 1) (hR₁ : R ≤ R₁) (h1R₁ : 1 ≤ R₁)
@@ -173,7 +174,7 @@ theorem ballMass_upper_of_scaled
                 gcongr
             _ = _ := by ring
 
-/-- Lower bound in the ball-volume estimate of Lemma 2.4, for one sample:
+/-- Lower bound in the ball-volume estimate of arXiv:2208.11795, Lemma 2.4, for one sample:
 `μ_h(B_ε(z)) ≥ min(c₁ ε^{β⁻₀+ζ}, (ε/4)^{max(e,0) + (1-ζ)G + ζβ⁻₀ + ζ})`. -/
 theorem ballMass_lower_of_scaled
     (hW : m.restrict {0}ᶜ = (m₀.withDensity fun x => ENNReal.ofReal (‖x‖ ^ e)).restrict {0}ᶜ)
@@ -276,13 +277,13 @@ theorem ballMass_lower_of_scaled
       _ ≤ m (ball w (ε / 4)) := le_measure_of_le_rpow_norm hW measurableSet_ball h0A hweight
       _ ≤ m (ball z ε) := measure_mono hsub
 
-/-! ### The reduction of Lemma 2.4 (ball clause), of volume growth and of full support, to the scaled step -/
+/-! ### The reduction of arXiv:2208.11795, Lemma 2.4 (ball clause), of volume growth and of full support, to the scaled step -/
 
 section Scaled
 
 open LatticeProb.Gauss LatticeProb.LQG.LQGMeasureNonatomicMass
 
-/-- Reduction for Lemma 2.4: `LiouvilleBallMassBoundStepLP` (the ball-volume estimate on every `B_R`, with the exponent
+/-- Reduction for arXiv:2208.11795, Lemma 2.4: `LiouvilleBallMassBoundStepLP` (the ball-volume estimate on every `B_R`, with the exponent
 ranges of its statement) from the multiscale ball
 bound for `h^ℂ` (`WholePlaneScaledBallMassStepLP`, hypothesis `hS`), the singular weight `μ_h = |x|^{-γα₀} μ_{h^ℂ}` off `0`
 (`singularWeightStep_lp`, proved), the existence of `μ_{h^ℂ}` on the same probability space (`hE`, at `α₀ = 0`) and
