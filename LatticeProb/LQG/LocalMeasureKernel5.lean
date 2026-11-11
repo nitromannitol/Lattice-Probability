@@ -5,8 +5,8 @@ import LatticeProb.LQG.LocalMeasureKernel4
 
 The two statements of the local decoder in the LatticeProb predicates, with the same binders and conclusions:
 `LocalMeasureKernelStmtLP`, the kernel of the local mean-zero observation (unrooted and rooted clauses), and
-`LocalLQGDecoderCommonFrozenLP`, the common local decoder. Their proofs are `localMeasureKernelStmt_lp` and
-`localLQGDecoderCommonFrozen_lp`. The rooted clause 2 is proved for `rootedMeanZeroObs`.
+`LocalLQGDecoderCommon`, the common local decoder. Their proofs are `localMeasureKernelStmt_lp` and
+`localLQGDecoderCommon`. The rooted clause 2 is proved for `rootedMeanZeroObs`.
 -/
 
 open MeasureTheory Set Metric Filter Topology
@@ -45,7 +45,7 @@ def LocalMeasureKernelStmtLP (γ : ℝ) (c₁ c₂ : ℂ) (r₁ r₂ : ℝ) : Pr
             ENNReal.ofReal a • (μz ω).restrict (ball c₂ r₂))
 
 /-- The LatticeProb form of the common local decoder statement, with the same binders and conclusion. -/
-def LocalLQGDecoderCommonFrozenLP : Prop :=
+def LocalLQGDecoderCommon : Prop :=
   ∀ (γ : ℝ), 0 < γ → γ < 2 → ∀ (c₂ : ℂ) (r₂ : ℝ), 0 < r₂ → (0 : ℂ) ∉ closedBall c₂ r₂ →
   ∃ K : ProbabilityTheory.Kernel ({φ : ℂ → ℝ // IsTestFunction (ball c₂ r₂) φ ∧ ∫ x, φ x = 0} → ℝ) ℂ,
     ProbabilityTheory.IsSFiniteKernel K ∧
@@ -355,9 +355,9 @@ theorem kernelMeas_eq_restrict {Y : Type*} [MeasurableSpace Y] (γ : ℝ) {c : �
     rw [hpre, measure_empty, smul_zero]
   exact (Measure.restrict_eq_self_of_ae_mem (ae_iff.2 hzero)).symm
 
-/-- For `LocalLQGDecoderCommonFrozenLP`: the single kernel `κ` (the same as in
+/-- For `LocalLQGDecoderCommon`: the single kernel `κ` (the same as in
 `localMeasureKernelStmt_lp`) satisfies both clauses (unrooted and rooted) and is finite. -/
-theorem localLQGDecoderCommonFrozen_lp : LocalLQGDecoderCommonFrozenLP := by
+theorem localLQGDecoderCommon : LocalLQGDecoderCommon := by
   intro γ _ _ c₂ r₂ hr₂ h0
   have h0b : (0 : ℂ) ∉ ball c₂ r₂ := fun h => h0 (ball_subset_closedBall h)
   obtain ⟨d, decode, hdm, hdec⟩ := exists_localDecoder c₂ hr₂
@@ -385,6 +385,12 @@ theorem localLQGDecoderCommonFrozen_lp : LocalLQGDecoderCommonFrozenLP := by
     change kernelMeas (γ := γ) hKs T (fun y => decode (fun n => localCoord c₂ hr₂ (d n) y))
       (rootedMeanZeroObs α₀ γ (ball c₂ r₂) z (hC ω)) = _
     rw [kernelMeas_eq_restrict, hres]
+
+@[deprecated LocalLQGDecoderCommon (since := "2026-11-11")]
+alias LocalLQGDecoderCommonFrozenLP := LocalLQGDecoderCommon
+
+@[deprecated localLQGDecoderCommon (since := "2026-11-11")]
+alias localLQGDecoderCommonFrozen_lp := localLQGDecoderCommon
 
 end Rooted2
 
