@@ -41,7 +41,7 @@ theorem integrableOn_rpow_neg_mul_exp_neg_div {p a : ℝ} (hp : 1 < p) (ha : 0 <
   have hp' : (-1 : ℝ) ≠ 0 := by norm_num
   have hbase : IntegrableOn (fun x : ℝ => x ^ (p - 2) * Real.exp (-(a * x))) (Set.Ioi 0) := by
     have h := integrableOn_rpow_mul_exp_neg_mul_rpow (p := (1 : ℝ)) (s := p - 2) (b := a)
-      (by linarith) (le_refl 1) ha
+      (by linarith) zero_lt_one ha
     simpa only [Real.rpow_one, neg_mul] using h
   have hsub : IntegrableOn
       (fun x : ℝ => (|-1| * x ^ ((-1 : ℝ) - 1))
@@ -379,7 +379,7 @@ private lemma integral_le_split {p c r : ℝ} (hp : 1 < p) (hc : 0 < c) (hr : 1 
     · filter_upwards [ae_restrict_mem measurableSet_Ioi] with t ht
       exact mul_nonneg (Real.rpow_nonneg ht.le _) (Real.exp_nonneg _)
     · filter_upwards with t ht
-      exact zero_lt_one.trans ht
+      exact Set.mem_Ioi.mpr (zero_lt_one.trans (Set.mem_Ioi.mp ht))
   linarith [hmono, hle0, hconst, hadd]
 
 /-- There is `K > 0` with `exp (-c r/2) ≤ K r^(2-2p)` for all `r ≥ 1`. -/
