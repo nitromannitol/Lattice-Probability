@@ -86,7 +86,7 @@ theorem exists_weak_limit (P : Measure Ω) [IsProbabilityMeasure P] (X : ℕ →
         Tendsto (fun n => ∫ ω, F (X n ω) ∂P) atTop (𝓝 (∫ x, F x ∂L)) := by
   classical
   set μs : ℕ → ProbabilityMeasure ℝ := fun n =>
-    ⟨P.map (X n), Measure.isProbabilityMeasure_map (hX n).aemeasurable⟩ with hμs
+    ⟨P.map (X n), (Measure.isProbabilityMeasure_map_iff (hX n).aemeasurable).2 inferInstance⟩ with hμs
   have hmapint : ∀ (n : ℕ) (g : ℝ → ℝ), Continuous g →
       ∫ x, g x ∂(μs n : Measure ℝ) = ∫ ω, g (X n ω) ∂P := by
     intro n g hg
