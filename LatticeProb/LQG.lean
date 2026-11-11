@@ -33,8 +33,14 @@ import LatticeProb.LQG.LQGWeylScaling
 import LatticeProb.LQG.LengthMetric
 import LatticeProb.LQG.LengthMetricDerived
 import LatticeProb.LQG.LiouvilleGraph
+import LatticeProb.LQG.LocalMeasureKernel
+import LatticeProb.LQG.LocalMeasureKernel2
+import LatticeProb.LQG.LocalMeasureKernel3
+import LatticeProb.LQG.LocalMeasureKernel4
+import LatticeProb.LQG.LocalMeasureKernel5
 import LatticeProb.LQG.MassFunctional
 import LatticeProb.LQG.WeylCompositionOuter
 import LatticeProb.LQG.WeylCompositionOuter2
 import LatticeProb.LQG.WeylInternalClosed
 import LatticeProb.LQG.WeylOffOrigin
+import LatticeProb.LQG.WeylShiftedMass
