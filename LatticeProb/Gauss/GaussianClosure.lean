@@ -6,7 +6,8 @@ import LatticeProb.Gauss.Limit
 
 A family of real random variables is a *centred Gaussian space* if each of its elements is measurable and centred
 Gaussian. Such a space is closed under almost sure limits, as the Gaussian Hilbert space of a Gaussian process
-(Duplantier-Sheffield, arXiv:0808.1560, Sec. 3.1):
+(Duplantier-Sheffield, arXiv:0808.1560, Sec. 3.1, p. 16: the random variables `(h,f)_∇`, `f ∈ H(D)`, form a Hilbert
+space under the covariance inner product; the closure itself is proved below):
 
 * `exists_map_eq_gaussianReal_of_tendsto_ae`: an almost sure limit of centred Gaussians is a centred Gaussian. No
   hypothesis on the variances is needed: the characteristic functions `exp(-σ_n t²/2)` converge, and a limit `0` at
@@ -16,8 +17,7 @@ Gaussian. Such a space is closed under almost sure limits, as the Gaussian Hilbe
   `isCentredGaussianSpace_sup_span_range`: adjoining almost sure limits of elements of a centred Gaussian linear space
   keeps it a centred Gaussian linear space.
 * `tendsto_variance_of_tendsto_ae`, `tendsto_covariance_of_tendsto_ae`: variances and covariances are continuous along
-  almost sure limits in a centred Gaussian space; covariances are polarized variances (Armitage-Gardiner, Classical
-  Potential Theory, Sec. 3.1, for the bilinear calculus used here).
+  almost sure limits in a centred Gaussian space; covariances are polarized variances.
 -/
 
 noncomputable section

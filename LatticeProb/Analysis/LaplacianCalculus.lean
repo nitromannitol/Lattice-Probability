@@ -12,9 +12,6 @@ elementary properties of this operator on functions of class `C²`:
 * continuity of `Δ f`;
 * vanishing of `Δ f` outside the topological support of `f`;
 * commutation of `Δ` with translations of the argument.
-
-Literature locators: Duplantier-Sheffield, arXiv:0808.1560, Sec. 3.1; Armitage-Gardiner,
-*Classical Potential Theory*, Sec. 3.1.
 -/
 
 namespace LatticeProb.LaplacianCalculus

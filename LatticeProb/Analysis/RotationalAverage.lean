@@ -6,7 +6,7 @@ import Mathlib
 For `Φ : ℂ → ℝ` the rotational average `avgRot Φ x = (2π)⁻¹ ∫_0^{2π} Φ (e^{iθ} x) dθ` is invariant under
 rotations about `0`, smooth with compact support when `Φ` is, and pairs with rotation-invariant functions as `Φ`
 does: `∫ avgRot Φ · g = ∫ Φ · g` for every rotation-invariant `g`. This is the averaging over the rotation
-group `SO(2)` (Armitage-Gardiner, *Classical Potential Theory*, Section 1.4, spherical and circular means).
+group `SO(2)` (Armitage-Gardiner, *Classical Potential Theory*, spherical and circular means).
 -/
 
 open MeasureTheory Set Filter Topology Real

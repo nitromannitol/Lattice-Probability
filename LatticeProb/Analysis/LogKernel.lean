@@ -13,9 +13,8 @@ Further statements: a measure with `μ (ball z r) ≤ r ^ β` on a closed ball i
 (`measure_ball_lt_top_of_vol`); a union bound over dyadic scales (`measure_compl_iInter_le`); and the absorption
 `(log (1 / δ) + 1) δ ^ (β / 2) → 0` as `δ → 0⁺` in the form `exists_pos_log_rpow_le`.
 
-Literature: the logarithmic kernel and its potentials are those of Armitage-Gardiner, *Classical Potential Theory*,
-Sec. 3.1, and of the logarithmic-correlation normalisation of the Gaussian free field in Duplantier-Sheffield,
-arXiv:0808.1560, Sec. 3.1.
+Literature: the logarithmic-correlation normalisation of the Gaussian free field in Duplantier-Sheffield,
+arXiv:0808.1560, Sec. 3.1, p. 16 (Green's function `G(x,y) = -log|y-x| - G~_x(y)`).
 -/
 
 namespace LatticeProb.LogKernel

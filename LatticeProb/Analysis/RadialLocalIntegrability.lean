@@ -7,9 +7,9 @@ import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 /-!
 # Local integrability of radial functions with logarithmic growth at zero
 
-The logarithmic kernel `log ‖z‖` of the planar Gaussian free field is locally
-integrable on `ℂ` (Duplantier–Sheffield, arXiv:0808.1560, Sec. 3.1; Armitage–Gardiner,
-*Classical Potential Theory*, Sec. 3.1). The statements below are general: a
+The logarithmic kernel `log ‖z‖` of the planar Gaussian free field, the kernel of Duplantier–Sheffield,
+arXiv:0808.1560, Sec. 3.1, p. 16 (`G(x,y) = -log|y-x| - G~_x(y)`; the covariance formula (9) integrates `ρ₁ G ρ₂`),
+is locally integrable on `ℂ`. The statements below are general: a
 radial function `z ↦ g ‖z‖` (or `z ↦ h (-log ‖z‖)`) is locally integrable under
 a logarithmic bound at the origin.
 

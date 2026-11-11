@@ -8,9 +8,8 @@ The radial point `radialPoint x = (|x|, 0)` of the parameter space `CircleParame
 averages depends only on the modulus `‖x‖`, with the value `(1, 0)` at the origin. Rotations about the origin
 preserve the modulus and fix the origin, so the radial point is invariant under them.
 
-Circle averages and the radial parametrisation follow Duplantier-Sheffield, arXiv:0808.1560, Section 3.1; the
-mean value property of the logarithmic potential of a circle is in Armitage-Gardiner, *Classical Potential
-Theory*, Section 3.1.
+Circle averages follow Duplantier-Sheffield, arXiv:0808.1560, Section 3.1, p. 17 (the circle average `h_ε(z)`;
+Proposition 3.2: the covariance is the mean value of `ξ` on a circle).
 -/
 
 namespace LatticeProb

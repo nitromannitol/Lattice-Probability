@@ -6,8 +6,8 @@ import Mathlib
 For the centred Gaussian law `N(0, t)` on `ℝ` and a real shift `c`, the first absolute moment of `x + c`
 is at most `(1 + t)/2 + |c|`. The proof combines the pointwise bound `|x| ≤ (1 + x²)/2` with the second
 moment `t` of `N(0, t)`. The Gaussian setting is that of circle averages of a log-correlated Gaussian field
-(Duplantier-Sheffield, arXiv:0808.1560, Section 3.1; the logarithmic potential of a circle is treated in
-Armitage-Gardiner, *Classical Potential Theory*, Section 3.1).
+(Duplantier-Sheffield, arXiv:0808.1560, Section 3.1, p. 17: the circle average `h_ε(z)` has variance
+`-log ε + log C(z;D)`, eq. (12)).
 -/
 
 open MeasureTheory ProbabilityTheory Filter
