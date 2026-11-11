@@ -151,7 +151,7 @@ theorem orthantFourierFactor_zero {m : ℕ} (σ : ℝ) :
 /-- The Fourier factor is at most `1`. -/
 theorem orthantFourierFactor_le_one {m : ℕ} (σ : ℝ) (t : Fin m → ℝ) :
     orthantFourierFactor σ t ≤ 1 :=
-  Finset.prod_le_one (fun j _ => (gaussFourier1_pos σ (t j)).le)
+  Finset.prod_le_one₀ (fun j _ => (gaussFourier1_pos σ (t j)).le)
     (fun j _ => gaussFourier1_le_one σ (t j))
 
 /-- **The one-dimensional smoothed half-line kernel**: `x ↦ N(0, v)(Iic (c - x))`, the `v`-smoothed
