@@ -240,7 +240,7 @@ theorem cubePayoffs_nonempty {d : ℕ} (B : NNReal → Ω → EuclideanSpace ℝ
     (cubePayoffs B hB P h T L u).Nonempty := by
   refine ⟨∫ ω, -h (T - 0) (B 0 ω) ∂P, ?_⟩
   refine ⟨fun _ => (0 : NNReal), ?_, ?_, ?_, rfl⟩
-  · rw [IsBrownianStopping, IsStoppingTime]
+  · rw [IsBrownianStopping]
     intro t
     simp
   · intro ω; simpa using hT
