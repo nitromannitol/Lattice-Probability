@@ -46,10 +46,14 @@ theorem unifIntegrable_one_of_sq_integral_le [IsProbabilityMeasure P] {f : ℕ �
     UnifIntegrable f 1 P := by
   refine unifIntegrable_of le_rfl ENNReal.one_ne_top (fun n => (hf n).aestronglyMeasurable) ?_
   intro ε hε
-  obtain ⟨C, hCpos, hCK⟩ : ∃ C : ℝ, 0 < C ∧ K / C ≤ ε := by
-    refine ⟨(|K| + 1) / ε, div_pos (by positivity) hε, ?_⟩
-    have h : ε * ((|K| + 1) / ε) = |K| + 1 := by field_simp
-    rw [div_le_iff₀ (div_pos (by positivity) hε), h]
+  rcases eq_or_ne ε ⊤ with hεt | hεt
+  · exact ⟨1, fun n => by rw [hεt]; exact le_top⟩
+  obtain ⟨ε', hε'pos, rfl⟩ : ∃ δ : ℝ, 0 < δ ∧ ε = ENNReal.ofReal δ :=
+    ⟨ε.toReal, ENNReal.toReal_pos hε.ne' hεt, (ENNReal.ofReal_toReal hεt).symm⟩
+  obtain ⟨C, hCpos, hCK⟩ : ∃ C : ℝ, 0 < C ∧ K / C ≤ ε' := by
+    refine ⟨(|K| + 1) / ε', div_pos (by positivity) hε'pos, ?_⟩
+    have h : ε' * ((|K| + 1) / ε') = |K| + 1 := by field_simp
+    rw [div_le_iff₀ (div_pos (by positivity) hε'pos), h]
     linarith [le_abs_self K]
   refine ⟨⟨C, hCpos.le⟩, fun n => ?_⟩
   have hpt : ∀ x, ‖{x : Ω | (⟨C, hCpos.le⟩ : ℝ≥0) ≤ ‖f n x‖₊}.indicator (f n) x‖ₑ ≤
@@ -67,14 +71,20 @@ theorem unifIntegrable_one_of_sq_integral_le [IsProbabilityMeasure P] {f : ℕ �
     · simp
   have hint : Integrable (fun ω => ‖f n ω‖ ^ 2 / C) P :=
     ((memLp_two_iff_integrable_sq_norm (hf n).aestronglyMeasurable).1 (hf n)).div_const C
+  have hmInd : AEStronglyMeasurable ({x : Ω | (⟨C, hCpos.le⟩ : ℝ≥0) ≤ ‖f n x‖₊}.indicator (f n)) P := by
+    obtain ⟨g, hg, hfg⟩ := (hf n).aestronglyMeasurable
+    refine ⟨{x : Ω | (⟨C, hCpos.le⟩ : ℝ≥0) ≤ ‖g x‖₊}.indicator g,
+      hg.indicator (hg.measurable.nnnorm measurableSet_Ici), ?_⟩
+    filter_upwards [hfg] with x hx
+    simp only [Set.indicator_apply, Set.mem_setOf_eq, hx]
   calc eLpNorm ({x : Ω | (⟨C, hCpos.le⟩ : ℝ≥0) ≤ ‖f n x‖₊}.indicator (f n)) 1 P
       = ∫⁻ x, ‖{x : Ω | (⟨C, hCpos.le⟩ : ℝ≥0) ≤ ‖f n x‖₊}.indicator (f n) x‖ₑ ∂P :=
-        eLpNorm_one_eq_lintegral_enorm
+        eLpNorm_one_eq_lintegral_enorm hmInd
     _ ≤ ∫⁻ ω, ENNReal.ofReal (‖f n ω‖ ^ 2 / C) ∂P := lintegral_mono hpt
     _ = ENNReal.ofReal (∫ ω, ‖f n ω‖ ^ 2 / C ∂P) :=
         (ofReal_integral_eq_lintegral_ofReal hint
           (Filter.Eventually.of_forall fun ω => by positivity)).symm
-    _ ≤ ENNReal.ofReal ε := by
+    _ ≤ ENNReal.ofReal ε' := by
         refine ENNReal.ofReal_le_ofReal ?_
         rw [integral_div]
         exact (div_le_div_of_nonneg_right (hK n) hCpos.le).trans hCK
@@ -187,8 +197,7 @@ theorem tendsto_integral_mul_of_bdd {Ω : Type*} {mΩ : MeasurableSpace Ω} {P :
       simp only [Pi.add_apply]
       ring
     rw [heq]
-    exact hUI1.add hUI3 le_rfl (fun n => (hTm n).mul (hUm n))
-      (fun n => ((hTm n).const_mul a).neg)
+    exact hUI1.add hUI3 le_rfl
   -- Vitali's theorem in `L¹`, then convergence of the integrals.
   have hVit := tendsto_Lp_finite_of_tendstoInMeasure (μ := P) (p := 1) le_rfl ENNReal.one_ne_top
     (f := fun n ω => T n ω * (U n ω - a)) (g := fun _ => 0)
@@ -196,7 +205,14 @@ theorem tendsto_integral_mul_of_bdd {Ω : Type*} {mΩ : MeasurableSpace Ω} {P :
   have hZ : Filter.Tendsto (fun n => ∫ ω, T n ω * (U n ω - a) ∂P) Filter.atTop (nhds 0) := by
     have hF : Filter.Tendsto (fun n => ∫⁻ ω, ‖T n ω * (U n ω - a) - 0‖ₑ ∂P) Filter.atTop
         (nhds 0) := by
-      simpa only [eLpNorm_one_eq_lintegral_enorm, Pi.sub_apply, sub_zero] using hVit
+      refine hVit.congr fun n => ?_
+      have hm : AEStronglyMeasurable (fun ω => T n ω * (U n ω - a)) P :=
+        (hTm n).mul ((hUm n).sub aestronglyMeasurable_const)
+      have h0 : ((fun ω => T n ω * (U n ω - a)) - fun _ => (0 : ℂ)) =
+          fun ω => T n ω * (U n ω - a) := by
+        funext ω; simp
+      rw [h0, eLpNorm_one_eq_lintegral_enorm hm]
+      simp only [sub_zero]
     simpa using tendsto_integral_of_L1 (fun _ => (0 : ℂ)) aestronglyMeasurable_const
       (Filter.Eventually.of_forall hZint) hF
   -- `∫ T U = ∫ T (U - a) + a ∫ T` and `∫ T → 1`.
