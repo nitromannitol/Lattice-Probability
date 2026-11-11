@@ -206,7 +206,8 @@ example : |ramp 1| ≤
 
 /-- `evalCLM` at the vertex `1` applied to `ramp` is the value `1`. -/
 example : ConductanceGraph.Example.path3.evalCLM path3_connected 0 1 ramp = 1 := by
-  simp [evalCLM_apply, ramp]
+  have h2 : ramp 1 = ((1 : ℕ) : ℝ) := rfl
+  simp [evalCLM_apply, h2]
 
 /-- The zero element of the Dirichlet space lies in `zeroOn` for the set `A = {2}`. -/
 example : (0 : ConductanceGraph.Example.path3.DirichletSpace path3_connected 0) ∈
