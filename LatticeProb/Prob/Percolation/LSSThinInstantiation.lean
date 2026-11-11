@@ -28,11 +28,11 @@ abbrev PlanarCarrier := ℤ × ℤ
 
 theorem measurable_finsetRestrict_planar (I : Finset PlanarCarrier) :
     Measurable (fun ω : PlanarCarrier → Bool => fun i : I => ω i) :=
-  measurable_pi_lambda _ fun i => measurable_pi_apply (i : PlanarCarrier)
+  Measurable.of_eval fun i => measurable_pi_apply (i : PlanarCarrier)
 
 theorem measurable_finsetCompl_planar (I : Finset PlanarCarrier) :
     Measurable (fun f : I → Bool => fun i : I => !(f i)) :=
-  measurable_pi_lambda _ fun i => measurable_bool_not.comp (measurable_pi_apply i)
+  Measurable.of_eval fun i => measurable_bool_not.comp (measurable_pi_apply i)
 
 /-- The complement image of an increasing planar event is decreasing. -/
 theorem isDecreasingSet_bitCompl_image_planar {A : Set (PlanarCarrier → Bool)}
@@ -110,7 +110,7 @@ theorem thinUpper_of_transported_dense_planar (p : ℝ)
     (hsite : ∀ s : PlanarCarrier, ENNReal.ofReal p ≤ μ {ω | ω s = false}) :
     ThinUpper (bitProduct (1 / 8) one_eighth_le_one PlanarCarrier) μ := by
   haveI : IsProbabilityMeasure (μ.map bitCompl) :=
-    Measure.isProbabilityMeasure_map measurable_bitCompl.aemeasurable
+    inferInstance
   have hKDν : KDependentPlanar 2 (μ.map bitCompl) := kDependentPlanar_map_bitCompl 2 hKD
   have hsiteν : ∀ s : PlanarCarrier,
       ENNReal.ofReal p ≤ (μ.map bitCompl) {ω | ω s = true} := by
