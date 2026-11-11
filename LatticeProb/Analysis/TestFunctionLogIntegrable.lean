@@ -176,4 +176,8 @@ lemma integral_test_mul_wholePlaneCov {ψ : ℂ → ℝ} (hψ : IsTestFunction S
 
 end LatticeProb.TestFunctionLogIntegrable
 
+@[deprecated LatticeProb.TestFunctionLogIntegrable.integrable_test_mul_wholePlaneCov (since := "2026-11-11")]
+alias LatticeProb.integrable_test_mul_wholePlaneCov :=
+  LatticeProb.TestFunctionLogIntegrable.integrable_test_mul_wholePlaneCov
+
 end
