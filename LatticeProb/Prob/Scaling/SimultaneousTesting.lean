@@ -2,7 +2,7 @@
 
 Moved from Parking-Sharpness.
 -/
-import Mathlib.MeasureTheory.Measure.MeasureSpace
+import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 import Mathlib.Topology.Separation.Hausdorff
 import Mathlib.Topology.Bases
 
