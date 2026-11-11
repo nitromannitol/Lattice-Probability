@@ -40,7 +40,7 @@ theorem gaussianHerbstBound_all (n : ℕ) : GaussianHerbstBound n := by
   -- The sup-metric Lipschitz constant `L` is also a Euclidean one, since `ofLp` is 1-Lipschitz.
   have hg : LipschitzWith ⟨L, hL.le⟩ (fun x : EuclideanSpace ℝ (Fin n) => f (WithLp.ofLp x)) := by
     have := hf.comp (PiLp.lipschitzWith_ofLp 2 (fun _ : Fin n => ℝ))
-    rwa [mul_one] at this
+    exact this.weaken (le_of_eq (NNReal.eq (mul_one L)))
   have h := GaussConc.mgf_le_of_lipschitz hg lam
   have hc := hpush f hf.continuous
   have hcont : Continuous fun y => Real.exp (lam * (f y -
