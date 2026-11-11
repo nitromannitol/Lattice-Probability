@@ -27,7 +27,7 @@ private theorem subadditiveAlong_indG {g : ℕ → Ω → ℝ} {T : Ω → Ω}
     SubadditiveAlong (inducedMap T A) (indG g T A) := by
   intro m n x
   simp only [indG, retSum]
-  rw [birkhoffSum_add (inducedMap T A) (retTime T A) m n x]
+  rw [birkhoffSum_add_right_apply (inducedMap T A) (retTime T A) m n x]
   have h := hsub (birkhoffSum (inducedMap T A) (retTime T A) m x)
       (birkhoffSum (inducedMap T A) (retTime T A) n ((inducedMap T A)^[m] x)) x
   rw [← iterate_inducedMap_eq_iterate_birkhoffSum T A m x] at h
