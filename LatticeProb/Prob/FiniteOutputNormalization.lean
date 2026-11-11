@@ -3,7 +3,7 @@ Normalization of equal masses on a finite output carrier. A unit total mass and
 equality of the individual masses determine each mass as the inverse cardinality.
 For measurable disjoint events, finite measure additivity produces the total mass.
 -/
-import Mathlib.MeasureTheory.Measure.MeasureSpace
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 import Mathlib.Data.ENNReal.Inv
 
 set_option autoImplicit false
