@@ -123,7 +123,7 @@ theorem exists_closedBall_subset_of_compact {D K : Set ℂ} (hD : IsOpen D) (hK 
     linarith)
 
 /-- Measurability in `z` of a zero-boundary circle average, from its continuity on admissible circles and its
-vanishing on non-admissible ones (`IsDirichletGFF.continuous_circle` plus the zero-outside convention). -/
+vanishing on non-admissible ones (the zero-outside convention). -/
 theorem measurable_zeroBoundary_circle {D : Set ℂ} (hD : IsOpen D) {ε : ℝ} (hε : 0 < ε)
     {g : ℝ → ℂ → ℝ} (hzero : ∀ r z, ¬ Metric.closedBall z r ⊆ D → g r z = 0)
     (hcont : ContinuousOn (fun p : ℝ × ℂ => g p.1 p.2) {p | 0 < p.1 ∧ Metric.closedBall p.2 p.1 ⊆ D}) :

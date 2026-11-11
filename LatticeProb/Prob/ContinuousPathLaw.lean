@@ -11,10 +11,9 @@ continuous-map space `C(ℝ≥0, ℝ)` in place of a path type.
 * Path space: a finite measure on `C(ℝ≥0, ℝ)` is determined by the law of its
   coordinate process, and an almost surely continuous measurable coordinate
   process has a measurable continuous-path version.
-* Last zero: for a path tending to `+∞`, the last zero
-  `MatedCRTHarmonic.MatedCRT.lastZeroR` is the supremum of the nonnegative
-  zeros, and it is the supremum of the rational levels at which the path is
-  nonpositive at or after that level.
+* Last zero: for a path `c` tending to `+∞`, the last zero `sup {s ≥ 0 : c s = 0}`
+  is also the supremum of the rational levels at which the path is nonpositive
+  at or after that level.
 * Analytic limits: right-hand limits of quotients of functions vanishing at
   the origin, and the entrance-density limit of the killed drifted Brownian
   transition formula, for a centred Gaussian density of variance `t`.
@@ -225,9 +224,9 @@ theorem exp_sSup_level_eq_sSup_positive_level (f : ℝ → ℝ) (c : ℝ)
     Real.exp_monotone hne hbounded, himage]
 
 open scoped Classical in
-/-- For a path tending to `+∞`, the last zero `lastZeroR c` is the supremum of the rational levels
-`q ≥ 0` at which `c` is nonpositive somewhere at or after `q`; the supremum over an empty family is
-`0`, matching Lean's convention in `lastZeroR`. -/
+/-- For a path tending to `+∞`, the last zero `sup {s ≥ 0 : c s = 0}` is the supremum of the rational
+levels `q ≥ 0` at which `c` is nonpositive somewhere at or after `q`; the supremum over an empty family
+is `0`. -/
 theorem lastZeroR_eq_iSup_rat {c : ℝ → ℝ} (hc : Continuous c)
     (htend : Tendsto c atTop atTop) :
     (⨆ q : ℚ, if (0 : ℝ) ≤ (q : ℝ) ∧ ∃ u, (q : ℝ) ≤ u ∧ c u ≤ 0 then (q : ℝ) else 0) =
