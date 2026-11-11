@@ -40,7 +40,7 @@ theorem berryEsseen_oneDim_indep {Ω ι : Type*} [MeasurableSpace Ω] [Fintype �
       ≤ 100 * (∑ i, ∫ ω, |Y i ω| ^ 3 ∂P) /
           (∑ i, variance (Y i) P) ^ ((3 : ℝ) / 2) := by
   haveI hprob : ∀ i, IsProbabilityMeasure (P.map (Y i)) := fun i =>
-    Measure.isProbabilityMeasure_map (hmeas i).aemeasurable
+    inferInstance
   have hf : Measurable fun ω => fun i => Y i ω := measurable_pi_iff.mpr hmeas
   have hg : Measurable fun y : ι → ℝ => ∑ i, y i :=
     Finset.measurable_sum _ fun i _ => measurable_pi_apply i
