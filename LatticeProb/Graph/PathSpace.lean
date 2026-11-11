@@ -66,15 +66,15 @@ theorem measurable_walkPath_apply (x : V) (k : ℕ) :
         (Measurable.prodMk (ih x) (measurable_pi_apply k))
 
 theorem measurable_walkPath (x : V) : Measurable (walkPath G x) :=
-  measurable_pi_lambda _ fun k => measurable_walkPath_apply x k
+  Measurable.of_eval fun k => measurable_walkPath_apply x k
 
 instance walkLaw_isProbabilityMeasure (x : V) : IsProbabilityMeasure (walkLaw G x) := by
   rw [walkLaw]
-  exact Measure.isProbabilityMeasure_map (measurable_walkPath x).aemeasurable
+  exact inferInstance
 
 omit [MeasurableSingletonClass V] [Countable V] in
 theorem measurable_cons (x : V) : Measurable (cons (V := V) x) :=
-  measurable_pi_lambda _ fun k => by
+  Measurable.of_eval fun k => by
     cases k with
     | zero => exact measurable_const
     | succ k => exact measurable_pi_apply k
@@ -295,7 +295,7 @@ variable [DecidableEq V]
 omit [DecidableEq V] in
 theorem measurable_walkPath_pair :
     Measurable fun p : V × (ℕ → ℝ) => walkPath G p.1 p.2 :=
-  measurable_pi_lambda _ fun k =>
+  Measurable.of_eval fun k =>
     measurable_from_prod_countable_right fun y => measurable_walkPath_apply y k
 
 /-- **The first-step decomposition of the law of the walk**: the head of the
@@ -353,7 +353,7 @@ theorem integral_walkLaw_firstStep (x : V) (hx : 0 < G.degree x)
   have hint : ∀ y : V, Integrable f ((walkLaw G y).map (cons x)) := by
     intro y
     haveI : IsProbabilityMeasure ((walkLaw G y).map (cons x)) :=
-      Measure.isProbabilityMeasure_map (measurable_cons x).aemeasurable
+      inferInstance
     exact Integrable.mono' (integrable_const C) hfm.aestronglyMeasurable
       (Filter.Eventually.of_forall hC)
   rw [walkLaw_firstStep x hx, integral_smul_measure,
@@ -416,7 +416,7 @@ theorem measurable_of_dependsUpTo {α : Type*} [MeasurableSpace α] {n : ℕ}
     refine (hf X _ fun k hk => ?_).symm ▸ rfl
     rw [dif_pos (by omega : k < n + 1)]
   rw [hfact]
-  exact Measurable.of_discrete.comp (measurable_pi_lambda _ fun i => measurable_pi_apply _)
+  exact Measurable.of_discrete.comp (Measurable.of_eval fun i => measurable_pi_apply _)
 
 /-- The path shifted by `n`. -/
 def shiftPath (n : ℕ) (X : ℕ → V) : ℕ → V := fun k => X (n + k)
@@ -424,7 +424,7 @@ def shiftPath (n : ℕ) (X : ℕ → V) : ℕ → V := fun k => X (n + k)
 omit [DecidableEq V] in
 omit [MeasurableSingletonClass V] [Countable V] in
 theorem measurable_shiftPath (n : ℕ) : Measurable (shiftPath (V := V) n) :=
-  measurable_pi_lambda _ fun k => measurable_pi_apply (n + k)
+  Measurable.of_eval fun k => measurable_pi_apply (n + k)
 
 /-- The expectation of a bounded measurable functional of the path, as a
 function of the starting vertex. -/
