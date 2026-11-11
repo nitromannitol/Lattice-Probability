@@ -11,7 +11,7 @@ Gaussian. Such a space is closed under almost sure limits, as the Gaussian Hilbe
 * `exists_map_eq_gaussianReal_of_tendsto_ae`: an almost sure limit of centred Gaussians is a centred Gaussian. No
   hypothesis on the variances is needed: the characteristic functions `exp(-σ_n t²/2)` converge, and a limit `0` at
   `t = 1` would make the characteristic function of the limit vanish on `{1/(m+1)}`, against its continuity at `0`.
-  The case of convergent variances is `LatticeProb.map_eq_gaussianReal_of_tendsto_ae` (LatticeProb/Gauss/Limit.lean).
+  The case of convergent variances is `LatticeProb.map_eq_gaussianReal_of_tendsto_ae`.
 * `isCentredGaussianSpace_sup_span`, `isCentredGaussianSpace_sup_span_finset`,
   `isCentredGaussianSpace_sup_span_range`: adjoining almost sure limits of elements of a centred Gaussian linear space
   keeps it a centred Gaussian linear space.

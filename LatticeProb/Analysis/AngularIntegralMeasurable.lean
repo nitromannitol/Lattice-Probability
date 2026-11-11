@@ -40,8 +40,9 @@ strong measurability of parametric integrals (`StronglyMeasurable.integral_prod_
 proof. A Riemann sum in `θ` takes the value of the family at the singular angle whenever a grid point
 hits that angle, so it is not used.
 
-Names follow Armitage-Gardiner (radial means and circle averages of potential theory) and
-Duplantier-Sheffield (radial parts of the Liouville field).
+Names follow Armitage-Gardiner, *Classical Potential Theory* (Springer, 2001), Section 1.4 (spherical and circular
+means), for radial means and circle averages, and Duplantier-Sheffield, *Liouville quantum gravity and KPZ*,
+Invent. Math. 185 (2011), arXiv:0808.1560, for radial parts of the Liouville field.
 -/
 
 open MeasureTheory Set Filter Topology Complex
