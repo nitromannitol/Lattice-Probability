@@ -33,9 +33,9 @@ lemma standardBrownianLaw_indepFun_shiftedPath {d : ℕ}
     {μ : Measure (BrownianPath d)} (hμ : IsStandardBrownianLaw μ) (t : ℝ≥0) :
     IndepFun (shiftedBrownianPath t)
       (fun (ω : BrownianPath d) (s : Iic t) ↦ ω s) μ := by
-  have hgen : (LatticeProb.continuousMapMeasurableSpace : MeasurableSpace (BrownianPath d)) =
+  have hgen : (ContinuousMap.measurableSpace : MeasurableSpace (BrownianPath d)) =
       MeasurableSpace.comap (fun (ω : BrownianPath d) (s : ℝ≥0) ↦ ω s) inferInstance :=
-    ContinuousMapBorel.ContinuousMap.measurableSpace_eq_iSup_comap_eval.trans
+    ContinuousMap.measurableSpace_eq_iSup_comap_eval.trans
       (MeasurableSpace.comap_process_pi (fun s (ω : BrownianPath d) ↦ ω s)).symm
   apply (IndepFun_iff _ _ _).mpr
   intro S A hS hA
