@@ -47,7 +47,7 @@ theorem tendstoInDistribution_of_tendsto_integral {E : Type*} [NormedAddCommGrou
       Tendsto (fun i => ∫ ω, F (X i ω) ∂μ'') l (𝓝 (∫ ω', F (Z ω') ∂μ'))) :
     TendstoInDistribution X l Z (fun _ : ι => μ'') μ' := by
   refine ⟨hXm, hZm, ?_⟩
-  rw [ProbabilityMeasure.tendsto_iff_forall_integral_tendsto]
+  refine ProbabilityMeasure.tendsto_iff_forall_integral_tendsto.2 ?_
   intro F
   simp only [ProbabilityMeasure.coe_mk]
   have heq1 : ∀ i, ∫ x, F x ∂(μ''.map (X i)) = ∫ ω, F (X i ω) ∂μ'' := fun i =>
