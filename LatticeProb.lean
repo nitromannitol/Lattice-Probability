@@ -855,3 +855,10 @@ import LatticeProb.Gauss.GFFCovPSD4
 import LatticeProb.Gauss.GFFCovPSD5
 import LatticeProb.Gauss.GFFCovPSD6
 import LatticeProb.Gauss.GFFCovPSD7
+import LatticeProb.Analysis.AngularIntegralMeasurable
+import LatticeProb.Analysis.CircleAverageRadialContinuity
+import LatticeProb.Analysis.LogKernelMeasurable
+import LatticeProb.Bonanno.LQGMetric.Field.CirclePairing
+import LatticeProb.Bonanno.LQGMetric.Field.LQGMeasureFieldMeasurableAmbient
+import LatticeProb.Bonanno.LQGMetric.Field.RadialPointIntegrals
+import LatticeProb.Bonanno.LQGMetric.Field.RadialPointRotation
