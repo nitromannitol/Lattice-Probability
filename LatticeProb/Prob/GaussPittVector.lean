@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: LQGMetric/Gaussian/PittVector.lean.
 -/
 import Mathlib.Analysis.InnerProductSpace.GramMatrix
 import Mathlib.LinearAlgebra.Pi

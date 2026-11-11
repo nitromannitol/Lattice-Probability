@@ -8,8 +8,7 @@ predicate `KDependent` at range `2` and the one-site probability of a field.  It
 lemma that connects the planar instantiation of the complement bridge to the `Site d`
 formulation of the bridge.
 
-The domination half is never touched; no `Prop` is frozen, no cited statement is assumed, and
-nothing is claimed about `Rotor.External.LSS`.
+The domination half is not treated here, and no unconditional claim is made.
 -/
 
 import LatticeProb.Prob.Percolation.LSSThinInstantiation

@@ -13,8 +13,7 @@ by it; integrating and evaluating the moment generating function of the
 
 This is the single-time building block of the maximal estimate
 `LatticeProb.IsBrownianReal.measure_exists_le_abs_le` (the reflection
-principle / dyadic chaining bound), which the sandpile paper's localization
-lemma quotes.
+principle / dyadic chaining bound).
 -/
 import Mathlib
 

@@ -1,44 +1,9 @@
 /-
-Moved from nitromannitol/Divisible-Sandpile-Percolation, Apache-2.0; copyright
-2026 Ahmed Bou-Rabee and Yuval Peres.  Sources:
+Box-path counts, arithmetic estimates for the Russo–Seymour–Welsh amplification, bounded-reach and
+bottleneck lemmas, and monotonicity of planar crossing values.
 
-* `Sandpile/Support/BoxPathCount.lean` (`boxWalkLists` through
-  `measure_boxPathEvent_le`); `card_boxFinset` is proved fresh below rather
-  than imported from `Sandpile/Support/IncrementBall.lean` (where the source
-  states it, at line 169 of an otherwise heavily odometer-specific 700+ line
-  file that this module must not depend on): the statement and its four-line
-  proof are unchanged, only the file it lives in.  `Sandpile.boxFinset`/
-  `boxDist`/`mem_boxFinset` (`Sandpile/Support/Kernel.lean`) are not moved:
-  `Sandpile.boxFinset` is byte-identical to the already-existing
-  `LatticeProb.boxFinset` (`LatticeProb/ParticleHole.lean`), so the hypothesis
-  of `walk_support_mem_boxWalkLists` below is restated with the library's own
-  `boxFinset`/`mem_boxFinset_iff` in place of `Sandpile.boxDist`;
-* `Sandpile/Support/RswArithmetic.lean` (`eventually_rpow_neg_le`,
-  `card_double_square_le_cube`);
-* `Sandpile/Support/BoundedBottleneck.lean`, only its opening section
-  (`BoundedReach` through `finiteMaximum_mem`).  That file also imports
-  `Sandpile.Support.SoftComposition` for a second, later section
-  (`abs_softMaximum_sub_finiteMaximum` onward, smooth/softmax approximation of
-  `finiteMaximum` along a bisected walk), which is not moved here: nothing in
-  the section taken below uses it (confirmed by reading every declaration),
-  and it is a companion to the separate `LatticeProb.Analysis.SoftMaximum`
-  harvest of `Sandpile/Support/SoftMaximum.lean`.
-
-`Sandpile/Support/RectangleMonotonicity.lean`'s `crossingValue_width_height_
-mono`/`measurableSet_planarCrossingEvent`/`planarCrossingEvent_width_height_
-mono`, and the deeper `RectangleDuality`/`RectangleComparison`/
-`RectangleTranspose`/`RectangleIntersection`/`GridReachability`/`GridDuality`/
-`GridCorners`/`RswHardStep`/`RswMeanLower`/`RswSquareHalf(Scale)`/`RswTail`
-files the original harvest survey listed alongside these, are **not** moved:
-reading their transitive imports shows every one of them reaches, through
-`Sandpile/Support/CrossingWitness.lean`, `RectangleBottleneck.lean`,
-`KernelPermutation.lean`, `PlanarLaw.lean`, `GaussianIncrement.lean` or
-`FarOscillation.lean`, into the paper's own Gaussian continuum-field
-comparison and increment-bound machinery, contrary to the survey's claim that
-the family depends "on Mathlib (`SimpleGraph`, `Finset`, `MeasurableSet`)
-only". Extracting them would need a substantial, non-mechanical rewrite
-against a cleaner set of hypotheses, which is out of scope for this move; see
-the harvest report for the full dependency trace.
+Adapted from `nitromannitol/Divisible-Sandpile-Percolation` (Apache-2.0); copyright 2026 Ahmed
+Bou-Rabee and Yuval Peres.
 -/
 import LatticeProb.ParticleHoleLemmas
 import LatticeProb.Prob.Percolation.Crossing

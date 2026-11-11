@@ -1,6 +1,6 @@
 /-
-Adapted from https://github.com/anthropics/formal-math, percolation subdirectory,
-commit 795efb86, file percolation/Percolation/Literature/ZeroOneLaw.lean,
+Adapted from https://github.com/anthropics/formal-math,
+commit 795efb86,
 used under the Apache License 2.0.  Only the two general sections are taken, the
 abstract mixing criterion and its application to the coordinate shifts of a
 product measure; namespaces have been changed to `LatticeProb` and the

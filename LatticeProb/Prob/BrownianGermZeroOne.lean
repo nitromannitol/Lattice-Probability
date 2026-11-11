@@ -1,8 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: QuantumZipper/Proofs/Probability/GermZeroOne.lean.
-Source: QuantumZipper/Proofs/Probability/TailTrivial.lean.
 -/
 import LatticeProb.Prob.TrivialSigmaJoin
 import LatticeProb.Prob.BrownianContAll

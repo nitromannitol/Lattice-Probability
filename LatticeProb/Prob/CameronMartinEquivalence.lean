@@ -10,8 +10,7 @@ direction is the covariance function `j ↦ cov[∑ σ_i X_i, X_j]` (`covShift`)
 `X + covShift X P σ` on `I → ℝ` (product σ-algebra) is mutually absolutely continuous with the law of `X`.
 
 Proof. The Cameron–Martin tilt `tiltMeasure X P σ` has the strictly positive density
-`exp (∑ σ_i X_i - Var/2)` with respect to `P`, so it is equivalent to `P`. Its image under `X` is the shifted law
-(`QuantumZipper.CameronMartin.map_tiltMeasure_path`). Image measures of absolutely continuous measures under a
+`exp (∑ σ_i X_i - Var/2)` with respect to `P`, so it is equivalent to `P`. Its image under `X` is the shifted law. Image measures of absolutely continuous measures under a
 measurable map are absolutely continuous (`map_absolutelyContinuous_of_absolutelyContinuous`).
 
 Literature locator: the Cameron–Martin theorem for Gaussian measures (Bogachev, *Gaussian Measures*, AMS 1998,

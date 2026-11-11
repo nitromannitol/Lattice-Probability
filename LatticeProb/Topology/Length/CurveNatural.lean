@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: LQGMetric/Metric/CurveNatural.lean.
 -/
 import Mathlib.Analysis.ConstantSpeed
 import LatticeProb.Topology.Length.LengthSpace

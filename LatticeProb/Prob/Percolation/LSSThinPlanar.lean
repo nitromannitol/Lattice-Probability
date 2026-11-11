@@ -8,7 +8,7 @@ density `7/8`, every measurable increasing event `A` satisfies
 `μ A ≤ bernoulliField(1/8) A`.
 
 The dense half is an explicit hypothesis, quantified uniformly over the field law; no domination
-statement is proved here, no `Prop` is frozen, and nothing is claimed about `Rotor.External.LSS`.
+statement is proved here, and no unconditional claim is made.
 -/
 
 import LatticeProb.Prob.Percolation.LSSThinIsIncreasing

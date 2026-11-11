@@ -12,8 +12,8 @@ analytic sets, Thm 30.13). The compact inner approximation is the input; no prop
 
 Analytic subsets of a metrizable Hausdorff space (continuous images of the Baire space `ℕ → ℕ`) are null-measurable
 for every finite Borel measure (Lusin; Kechris, Thm 21.10 and Thm 30.13). The capacitability argument below is
-adapted from `SubdiffusiveProcess/Paper/prop_quenched_convergence.lean` (Apache-2.0,
-https://github.com/nitromannitol/subdiffusive-process).
+adapted from the Apache-2.0 subdiffusive-process formalization
+(https://github.com/nitromannitol/subdiffusive-process).
 -/
 
 open MeasureTheory Set Filter Topology

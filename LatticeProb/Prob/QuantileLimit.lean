@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: LQGMetric/Prob/QuantileLimit.lean.
 -/
 import LatticeProb.Prob.Quantile
 import Mathlib.MeasureTheory.Measure.Portmanteau

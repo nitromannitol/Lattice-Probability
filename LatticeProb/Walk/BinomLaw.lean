@@ -564,7 +564,7 @@ theorem binomLaw_eq_binomPMF (m : ℕ) (j : ℤ) (_hj : j ≡ (m : ℤ) [ZMOD 2]
     omega
   rw [if_pos h3]
 
-/-- The binomial local CLT in the form the paper uses: for the fair binomial law indexed by the
+/-- The binomial local CLT in the form needed here: for the fair binomial law indexed by the
 position `j` of the walk, `sqrt m * P(S_m = j)` is within `C/m` of `2 * gaussianDensity (j/sqrt m)`,
 for `j` of the parity of `m` with `|j| ≤ m`. -/
 theorem exists_binomLaw_localCLT :

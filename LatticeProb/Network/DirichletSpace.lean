@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: ReflectedWalk/DirichletSpace.lean.
 -/
 import LatticeProb.Network.DirichletForm
 import Mathlib.Analysis.InnerProductSpace.Basic

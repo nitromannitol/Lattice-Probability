@@ -1,15 +1,9 @@
 /-
 # Pólya's recurrence theorem for the simple random walk on `ℤ²`
 
-Moved from `manhattan-formalization`
-(`Manhattan.Paper.Ergodic.{Recurrence,Rotation,Factorize,OneD,CentralBinom,
-Harmonic,Assemble,Polya}`), where it was the one named input,
-`SimpleRandomWalkRecurrent`, that the paper's own reduction of an alternating
-directed environment to the plain simple random walk did not prove, because
-Mathlib has no recurrence theorem for random walks. Only the part of the
-source files with no reference to that paper's directed-lattice model is
-ported here; the reduction itself (halving coordinates on the alternating
-environment) stays behind.
+Adapted from `manhattan-formalization`.  Mathlib has no recurrence theorem for random walks; the
+recurrence of the simple random walk on `ℤ²` is proved here.  The reduction of an alternating directed
+environment to that walk (halving coordinates) is not included.
 
 The proof has four steps.
 

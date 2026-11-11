@@ -1,9 +1,7 @@
 /-
 # Stability of killed optimal-stopping values
 
-A bounded start on `Sandpile.External.CubeStoppingStability`, the cited input of
-`rem:dlt4-killed-scaling` (`sandpile.tex:1929-1950`) and of the two nodes that carry it
-(`rem-dlt4-killed-scaling` and `thm-d23-critical-level-percolation`).  The paper cites it to
+A bounded start on the cube stopping-stability statement.  The literature cites it to
 Coquet and Toldo, *Convergence of values in optimal stopping and convergence of optimal
 stopping times*, EJP 12 (2007), Theorem 3 and Corollary 4: the stability of optimal-stopping
 values under uniform convergence of bounded rewards, together with the invariance principle
@@ -27,7 +25,7 @@ for the stopped walk, applied with both problems killed on exiting a cube.
    the two bounded-above hypotheses from pointwise bounds on the rewards.
 
 3. **The target statement.**  `LatticeProb.CubeStopping.CubeStoppingStability` is the library
-   analogue of the frozen `Sandpile.External.CubeStoppingStability`, with the discrete side read
+   analogue of the cube stopping-stability statement, with the discrete side read
    through `killedRewardValue` on `lattice d` and the continuum side through the cube-killed
    Brownian discount `cubeDiscount` introduced in this file over `EuclideanSpace ℝ (Fin d)` and
    `IsBrownianSpace`.
@@ -68,8 +66,7 @@ Coquet-Toldo, and this file deliberately stops there.
   bound of its payoff set (`isLUB_cubePayoffs_of_continuous`, `cubeDiscount_genuine_in_context`).
   Nothing further is needed for well-posedness.
 
-The frozen `Sandpile.External.CubeStoppingStability` and every frozen statement of the paper
-repository are untouched: this file only states the library analogue and proves the sub-lemma.
+This file states the library analogue and proves the sub-lemma.
 -/
 
 import LatticeProb.Graph.Killed
@@ -383,12 +380,12 @@ theorem cubeDiscount_genuine_in_context {d : ℕ}
   cubeDiscount_genuine_of_continuous (hBsm x) ((hBrown x).cont) G hG T L M hT x hGM
 
 
-/-- The lattice box `Q(⌊Rx⌋,R)` of the paper, as the ball of radius `R` for the
+/-- The lattice box `Q(⌊Rx⌋,R)`, as the ball of radius `R` for the
 `ℓ^∞` metric about a lattice site. -/
 def latticeBox {d : ℕ} (x : Site d) (R : ℝ) : Set (Site d) :=
   {y | ∀ i, |(y i : ℝ) - (x i : ℝ)| ≤ R}
 
-/-- The site `⌊Rx⌋` of the paper: the coordinatewise floor of `R x`. -/
+/-- The site `⌊Rx⌋`: the coordinatewise floor of `R x`. -/
 noncomputable def floorSite {d : ℕ} (R : ℝ) (x : EuclideanSpace ℝ (Fin d)) : Site d :=
   fun i => ⌊R * x i⌋
 

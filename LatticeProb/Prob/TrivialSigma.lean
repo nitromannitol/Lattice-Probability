@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: QuantumZipper/Proofs/Probability/GermZeroOne.lean.
 -/
 import Mathlib.Probability.BrownianMotion.Basic
 import Mathlib.Probability.Independence.ZeroOne

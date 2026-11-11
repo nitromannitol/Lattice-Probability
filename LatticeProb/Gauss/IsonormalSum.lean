@@ -1,9 +1,9 @@
 /-
 Almost sure convergence of the partial sums of the isonormal process.
 
-`eq:dgt4-infinite-green-field` reads the Gaussian field
-`V_∞(x) = ∑_z G(x,z)ζ(z)` as the limit of its partial sums over an exhausting
-sequence of finite sets, and the human ruling of 2026-09-10 fixes that reading.
+The Gaussian field
+`V_∞(x) = ∑_z G(x,z)ζ(z)` is the limit of its partial sums over an exhausting
+sequence of finite sets.
 The series is not absolutely convergent: `∑_z G(x,z) = ∞`, and only
 `∑_z G(x,z)^2 < ∞` holds.  What makes the box limit exist is that the difference
 between the sum of the series and its partial sum over a finite set `s` is
@@ -11,7 +11,7 @@ again a centred Gaussian, of variance the tail `∑_{z ∉ s} G(x,z)^2`, so that
 Chernoff's bound and Borel-Cantelli give the convergence as soon as the tails
 decay at a polynomial rate.  That is what is proved here, for an arbitrary
 square-summable family of coefficients and an arbitrary exhaustion with tails
-`O(1/n)`; the Green-function instance is in `Support/LinGaussField.lean`.
+`O(1/n)`; the Green-function instance is not treated here.
 -/
 import LatticeProb.Gauss.Isonormal
 

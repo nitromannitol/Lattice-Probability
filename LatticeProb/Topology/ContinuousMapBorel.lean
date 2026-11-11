@@ -1,5 +1,5 @@
 /-
-Adapted from Mathlib's `Mathlib/MeasureTheory/Constructions/BorelSpace/ContinuousMap.lean` (commit a4c8ef0a), which is not in the Mathlib version LP pins.
+Adapted from Mathlib's `MeasureTheory.Constructions.BorelSpace.ContinuousMap` (commit a4c8ef0a).
 Copyright (c) 2025 Etienne Marion. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Etienne Marion, Rémy Degenne

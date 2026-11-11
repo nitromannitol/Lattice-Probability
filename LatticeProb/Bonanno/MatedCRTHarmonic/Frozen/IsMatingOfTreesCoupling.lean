@@ -1,5 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module MatedCRTHarmonic.Frozen.IsMatingOfTreesCoupling at commit 31e7483; only the module paths of local imports are changed. -/
+   commit 31e7483. -/
 import Mathlib
 import LatticeProb.Bonanno.LQGMetric.Statement.GFF
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTPath2
@@ -26,7 +26,7 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTDegInner
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTDegOuter
 
 /-!
-# Frozen definition: `MatedCRT.IsMatingOfTreesCoupling`
+# `IsMatingOfTreesCoupling`
 
 The coupling records laws, independence and measurability together with SLE/LQG properties of the
 field and curves. `areaParam` and `areaParam₀` quantify over every dyadic vague limit of the area
@@ -78,13 +78,13 @@ structure IsMatingOfTreesCoupling (γ : ℝ) {Ω : Type} [MeasurableSpace Ω] (P
   indep_curve : IndepFun (fun ω => (hIG₀ ω, U ω))
     (fun ω => (X ω, (fun t => B t ω), (fun t => B' t ω), X₀ ω, (fun t => B₀ t ω), (fun t => B₀' t ω))) P
   measurable_curves : Measurable ηL ∧ Measurable η ∧ Measurable η₀ ∧ Measurable bm
-  /- (S6) whole-plane space-filling SLE ∞ → ∞ as a function of the IG field: [18] (MS17 Thm 1.16 and
+  /- whole-plane space-filling SLE ∞ → ∞ as a function of the IG field: [18] (MS17 Thm 1.16 and
   DMS footnote 4, DMS); IG1, (1.4) = IG4, (1.2) (flow lines of `h ∘ ψ − χ arg ψ′` are
   `ψ⁻¹` of those of `h`); whole-plane flow lines: IG4 Theorems 1.1–1.2 (IG4). -/
   igMap : ∃ Φ : (ℝ → ℂ → ℝ) → C(ℝ, ℂ), Measurable Φ ∧
     /-  `Φ` reads only the circle averages at positive radii: the IG field
-    determines the curve and its positive-radius circle averages determine the field (S1Z §A), so one witness `Φ`
-    ignores every radius `ρ ≤ 0` (the junk coordinate of IA5's counterexample, `IGLaw/OCounter.lean`). -/
+    determines the curve and its positive-radius circle averages determine the field, so one witness `Φ`
+    ignores every radius `ρ ≤ 0`. -/
     (∀ K K' : ℝ → ℂ → ℝ, (∀ ρ : ℝ, 0 < ρ → K ρ = K' ρ) → Φ K = Φ K') ∧
     (∀ᵐ ω ∂P, ηL ω = Φ (fun ρ w => LQGMetric.circleAvg (hIG₀ ω) ρ w + U ω)) ∧
     /- coordinate change (1.4), IG1, for `ψ w = z₀ + s e^{iφ} w`, whole-plane form; the curve is re-rooted at
@@ -93,19 +93,19 @@ structure IsMatingOfTreesCoupling (γ : ℝ) {Ω : Type} [MeasurableSpace Ω] (P
     (∀ (z₀ : ℂ) (s φ : ℝ), 0 < s → ∀ᵐ ω ∂P,
       Φ (igPullback γ z₀ s φ (fun ρ w => LQGMetric.circleAvg (hIG₀ ω) ρ w + U ω)) =
         affineReroot z₀ s φ (ηL ω)) ∧
-    /- (S7) locality, [18] Lemma 2.4: `h^IG|_{B_δ(U)}` determines the excursion segments in `U` -/
+    /- locality, [18] Lemma 2.4: `h^IG|_{B_δ(U)}` determines the excursion segments in `U` -/
     (∀ (V : Set ℂ), IsOpen V → Bornology.IsBounded V → ∀ δ : ℝ, 0 < δ →
       ∃ g : (ℝ → ℂ → ℝ) → (ℚ × ℚ → ℝ → ℂ), Measurable g ∧ ∀ᵐ ω ∂P, ∀ q : ℚ × ℚ,
         ((q.1 : ℂ) + (q.2 : ℂ) * Complex.I) ∈ V →
           excursionSegment (ηL ω) V ((q.1 : ℂ) + (q.2 : ℂ) * Complex.I) =
             g (restrictCircles (thickening δ V)
               (fun ρ w => LQGMetric.circleAvg (hIG₀ ω) ρ w + U ω)) q)
-  /- (S6) continuous (by type), surjective, transient (DMS Lemma 8.11, DMS), rooted at `0`,
+  /- continuous (by type), surjective, transient (DMS Lemma 8.11, DMS), rooted at `0`,
   parametrized by Lebesgue measure ([18]; [20]). -/
   spaceFilling : ∀ᵐ ω ∂P, Function.Surjective (ηL ω) ∧
     Tendsto (ηL ω) (cocompact ℝ) (cocompact ℂ) ∧ ηL ω 0 = 0 ∧
     ∀ s t : ℝ, s ≤ t → volume (ηL ω '' Icc s t) = ENNReal.ofReal (t - s)
-  /- (S6) parametrization by γ-LQG area (DMS; GHMS; [16]), stated for every
+  /- parametrization by γ-LQG area (DMS; GHMS; [16]), stated for every
   dyadic vague limit `μ` of the area approximations of `h`. The clause is conditional: it binds only the vague
   limits `μ` that exist (the structure does not assert that one exists; if none exists, the clause holds vacuously).
   That existence is SLE-free and is not proved here. -/
@@ -114,7 +114,7 @@ structure IsMatingOfTreesCoupling (γ : ℝ) {Ω : Type} [MeasurableSpace Ω] (P
       ∀ μ : Measure ℂ,
         IsVagueLimitC (lqgAreaApprox γ (coneField (X ω) (coneRadial γ γ (fun u => B u ω) (fun u => B' u ω)))) μ →
           ∀ s t : ℝ, s ≤ t → μ (η ω '' Icc s t) = ENNReal.ofReal (t - s)
-  /- (S6) the same for the 0-cone. -/
+  /- the same for the 0-cone. -/
   areaParam₀ : ∀ᵐ ω ∂P,
     (∃ φ : ℝ ≃o ℝ, φ 0 = 0 ∧ ∀ t, η₀ ω t = ηL ω (φ t)) ∧
       ∀ μ : Measure ℂ,

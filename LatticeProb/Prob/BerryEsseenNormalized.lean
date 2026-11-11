@@ -1,6 +1,6 @@
 /- # Normalised Berry-Esseen for non-identically distributed summands
 
-This file is route A4 of the multivariate Berry-Esseen chain (`scratch/pk/mvbe-route.md`).  For a
+This file gives the normalised Berry-Esseen bound for a finite family of independent summands.  For a
 finite family of centred probability laws `ν i` on `ℝ` with finite third absolute moments and
 total variance `∑ σ_i² = 1`, write `ρ = ∑ ∫ |z|³ dν_i`.  The law of the sum of independent
 variables with laws `ν i` is `sumLaw ν`, the image of the product measure under the coordinate

@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: QuantumZipper/Proofs/Probability/CameronMartin.lean.
 -/
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic

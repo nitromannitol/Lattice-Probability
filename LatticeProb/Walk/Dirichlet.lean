@@ -1,39 +1,36 @@
 /-
 The deterministic lattice objects of Bou-Rabee--Peres, *Once-reinforced random
 walk on `ℤ^d` has range exponent at least `d/(d+1)`*, Section 2, "The insertion
-inequality" (`sec:insertion`), the paper.
+inequality".
 
 The section fixes continuous-time simple random walk on `ℤ^d` with rate `1`
 along each edge and, for a finite `A ⊂ ℤ^d`, introduces the Dirichlet Laplacian
-`Δ_A`, the mean exit time `u_A`, the quantity `h_A` of `eq:h-def`, the total
-mass `T(A)` of `eq:torsion-def`, and the effective resistance appearing in
-`eq:schur`.  This file encodes those objects; nothing probabilistic is used.
+`Δ_A`, the mean exit time `u_A`, the quantity `h_A`, the total
+mass `T(A)`, and the effective resistance appearing in
+the Schur identity.  This file encodes those objects; nothing probabilistic is used.
 
-Modelling decisions.  The labels `L-001` to `L-004` are the entries of the
-correspondence table of the ORRW formalization (`nitromannitol/ORRW-Lower-Bound`,
-`CORRESPONDENCE.md`), where these conventions were fixed.
+Modelling decisions.  The conventions below fix the linear-algebra presentation of the objects.
 
-* Convention L-001 (`u` is linear algebra, not a probabilistic expectation).  The
-  paper defines `u_A(x) := E_x τ_A` and then records `u_A = -Δ_A^{-1} 1`.  We
+* Convention (`u` is linear algebra, not a probabilistic expectation).  Bou-Rabee--Peres define `u_A(x) := E_x τ_A` and then records `u_A = -Δ_A^{-1} 1`.  We
   take the linear-algebra formula as the definition, so that Section 2 is
   purely deterministic and no continuous-time process has to be built.
 
-* Convention L-002 (`Reff` is defined by the Schur identity).  The paper defines
-  `Reff(x ↔ (A⁺)^c)` as an effective resistance and proves in `eq:schur` that
+* Convention (`Reff` is defined by the Schur identity).  Bou-Rabee--Peres define
+  `Reff(x ↔ (A⁺)^c)` as an effective resistance and prove that
   it equals `-Δ_{A⁺}^{-1}(x,x)`.  We take that identity as the definition, and
   so `Reff A x` below is the resistance from `x` to the complement of
-  `insert x A`.  The electrical-network content of `eq:schur` is therefore not
-  formalized; the two remaining assertions of `lem:schur` are.
+  `insert x A`.  The electrical-network content of the Schur identity is therefore not
+  formalized; the two remaining assertions of the cited lemma are.
 
-* Convention L-003 (`extendZero`).  Functions on `A` are extended by zero to all of
-  `ℤ^d`, as the paper does ("with `u_A = 0` off `A`"), through the auxiliary
+* Convention (`extendZero`).  Functions on `A` are extended by zero to all of
+  `ℤ^d`, as Bou-Rabee--Peres do ("with `u_A = 0` off `A`"), through the auxiliary
   definition `extendZero`.
 
 * Convention L-004 (`Matrix.inv` junk value).  Mathlib's `Matrix.inv` is `0` on a
   singular matrix, so `u`, `T` and `Reff` would be identically zero if `Δ_A`
   were singular and every bound of this section would hold vacuously.
   `dirichletLaplacian_isUnit` below rules this out for `d ≥ 1`, by the
-  maximum-principle form of the paper's negative-definiteness argument.
+  maximum-principle form of the negative-definiteness argument of Bou-Rabee--Peres.
 -/
 import Mathlib
 import LatticeProb.Walk.Lazy
@@ -163,7 +160,7 @@ lemma sum_sq_shift (x : Site d) (i : Fin d) :
 
 /-! ## The Dirichlet Laplacian -/
 
-/-- The Dirichlet Laplacian of a finite set, the paper:
+/-- The Dirichlet Laplacian of a finite set:
 
   "`(Δ_A f)(x) := ∑_{y ∈ A, y ∼ x} f(y) - 2d f(x)`  `(x ∈ A)`,
 
@@ -187,7 +184,7 @@ lemma extendZero_of_notMem (A : Finset (Site d)) (v : A → ℝ) {y : Site d} (h
     extendZero A v y = 0 := by
   simp [extendZero, hy]
 
-/-- `Δ_A` is invertible for `d ≥ 1`, the paper:
+/-- `Δ_A` is invertible for `d ≥ 1`:
 
   "Extending a function `f` supported in `A` by zero and summing over the
    undirected edges of `ℤ^d`, `⟨f, Δ_A f⟩ = -∑_{{x,y}} (f(x) - f(y))^2`, and
@@ -293,7 +290,7 @@ theorem dirichletLaplacian_isUnit (hd : 0 < d) (A : Finset (Site d)) :
 
 /-! ## Mean exit time, `h`, total mass, effective resistance -/
 
-/-- The mean exit time `u_A`, the paper:
+/-- The mean exit time `u_A`:
 
   "`u_A(x) := E_x τ_A`  `(x ∈ A)` ... By the first-step analysis, `u_A` solves
    the Dirichlet problem `Δ_A u_A = -1_A` on `A`, with `u_A = 0` off `A`, so
@@ -303,19 +300,19 @@ Defined by the linear-algebra formula (convention L-001), extended by zero. -/
 noncomputable def u (A : Finset (Site d)) : Site d → ℝ :=
   extendZero A ((-(dirichletLaplacian A)⁻¹) *ᵥ (fun _ => 1))
 
-/-- `h_A`, the paper (`eq:h-def`):
+/-- `h_A`:
 
   "For `x ∉ A` define `h_A(x) := 1 + ∑_{y ∈ A, y ∼ x} u_A(y)`." -/
 noncomputable def h (A : Finset (Site d)) (x : Site d) : ℝ :=
   1 + ∑ y ∈ A with Adj y x, u A y
 
-/-- The total mass `T(A)`, the paper (`eq:torsion-def`):
+/-- The total mass `T(A)`:
 
   "`T(A) := ∑_{x ∈ A} u_A(x)`", with `T(∅) := 0`. -/
 noncomputable def T (A : Finset (Site d)) : ℝ := ∑ x ∈ A, u A x
 
 /-- The effective resistance from `x` to the grounded complement of
-`A⁺ = A ∪ {x}`, the paper (`eq:schur`):
+`A⁺ = A ∪ {x}`:
 
   "`Reff(x ↔ (A⁺)^c) = -Δ_{A⁺}^{-1}(x,x) ≥ 1/(2d)`".
 

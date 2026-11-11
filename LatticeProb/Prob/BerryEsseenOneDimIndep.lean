@@ -2,8 +2,7 @@
 # The one-dimensional Berry--Esseen theorem in random-variable form
 
 `BerryEsseenOneDim.lean` states `berryEsseen_oneDim` for a family of probability **laws**
-`ν : ι → Measure ℝ`, through the law `sumLaw ν` of a sum of independent variables.  The route
-`scratch/pk/mvbe-route.md`, step A4, states the same theorem for independent real **random
+`ν : ι → Measure ℝ`, through the law `sumLaw ν` of a sum of independent variables.  The same theorem is stated for independent real **random
 variables** `Y : ι → Ω → ℝ` on a probability space `(Ω, P)`, as
 `P {ω | ∑ i, Y i ω ≤ x}`.  This file assembles that form from the law form:
 
@@ -15,7 +14,7 @@ variables** `Y : ι → Ω → ℝ` on a probability space `(Ω, P)`, as
 * `variance_id_map`, `integral_map` and `integrable_map_measure` transport the variance, the third
   absolute moment and its integrability across the pushforward `P.map (Y i)`.
 
-The conclusion is the route's A4 statement with the explicit constant `100`.
+The conclusion is the statement with the explicit constant `100`.
 -/
 import Mathlib
 import LatticeProb.Prob.BerryEsseenOneDim

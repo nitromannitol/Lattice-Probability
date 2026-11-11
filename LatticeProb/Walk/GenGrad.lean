@@ -2,7 +2,7 @@
 The same-parity total-variation gradient of the simple random walk, in every
 dimension.
 
-`ssec:green-estimates` asks for `∑_y |p_n(x,y) - p_n(w,y)| ≤ C |x-w| n^{-1/2}`
+The Green-function estimate asks for `∑_y |p_n(x,y) - p_n(w,y)| ≤ C |x-w| n^{-1/2}`
 when `x` and `w` have the same parity.  `LatticeProb/Walk/ShiftGrad.lean` reduces
 that to the shift by a SUM OF TWO signed unit vectors, and this file proves the
 bound for such a shift.
@@ -548,7 +548,7 @@ every dimension.**  For a shift `u` of even `ℓ¹` norm,
 
     ∑_w |p_n(w) - p_n(w + u)| ≤ C |u|_1 n^{-1/2} .
 
-This is the second display of `ssec:green-estimates` up to the comparison of the
+This is the second display of the Green-function estimate up to the comparison of the
 `ℓ¹` and Euclidean norms of `u`.  The linear factor is the number of generators
 in `LatticeProb.tsum_abs_srwHeat_shift_le_of_even`, and the rate is the block
 average of the one-dimensional gradient. -/

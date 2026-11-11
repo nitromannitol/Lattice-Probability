@@ -1,5 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module MatedCRTHarmonic.Frozen.IsCorrelatedBM2 at commit 31e7483; only the module paths of local imports are changed. -/
+   commit 31e7483. -/
 import Mathlib
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTPath2
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTLrCoord
@@ -7,7 +7,7 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTLrCov
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTTwoSidedMin
 
 /-!
-# Frozen definition: `MatedCRT.IsCorrelatedBM2`
+# `IsCorrelatedBM2`
 
 Centred Gaussian coordinate process with covariance `lrCov γ i j · twoSidedMin s t` (.1). This file declares the predicate only:
 no existence or uniqueness theorem for such a process is declared here.

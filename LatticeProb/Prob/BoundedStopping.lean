@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: ReflectedGMS/Limit/{FiniteStopping,StoppingApproximation,BoundedStopping}.lean.
 -/
 import Mathlib.Probability.Martingale.OptionalSampling
 import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real

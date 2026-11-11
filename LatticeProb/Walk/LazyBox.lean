@@ -1,6 +1,6 @@
 /-
 Sums of the product kernel over a box, and the two per-step estimates of
-`lem:green` that follow from them.
+the Green-function bounds that follow from them.
 
 Everything in Section 8 is supported in a finite originBox, so a sum "over all of
 `ℤ^d`" is a `Finset` sum over `LatticeProb.originBox d L` for any `L` large enough, and the

@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: ReflectedGMS/MeasureTheory/AENullSet.lean and ReflectedGMS/MeasureTheory/SupportedLaw.lean.
 -/
 import Mathlib.MeasureTheory.Measure.Dirac
 import Mathlib.MeasureTheory.Measure.Map

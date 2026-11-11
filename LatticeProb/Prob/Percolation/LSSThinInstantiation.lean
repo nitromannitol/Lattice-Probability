@@ -10,8 +10,7 @@ probability transport, and the pushforward of the concrete Bernoulli product fie
 the full bridge with the dense half entering as an explicit transported hypothesis.
 
 No domination statement is proved here; the dense half is an explicit hypothesis of
-`thinUpper_of_transported_dense_planar`.  No `Prop` is frozen and nothing is claimed about
-`Rotor.External.LSS`.
+`thinUpper_of_transported_dense_planar`.  No unconditional claim is made.
 -/
 
 import LatticeProb.Prob.Percolation.LSSThinComplement

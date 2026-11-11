@@ -13,8 +13,7 @@ A companion statement transports the same result to the two-dimensional lattice 
 `Fin 2 → ℤ` through the coordinate identification, so that the bridge can be consumed on either
 carrier.
 
-No domination statement is proved here, no `Prop` is frozen, no rotor file is touched, and
-nothing is claimed unconditionally about `Rotor.External.LSS`.
+No domination statement is proved here, and no unconditional claim is made.
 -/
 
 import LatticeProb.Prob.Percolation.LSSThinOneSite

@@ -20,7 +20,7 @@ the optimal `λ = t/(B² + Mt/3)`, at which `1 - λM/3 = B²/(B² + Mt/3)` and t
 collapses to `-t²/(2(B² + Mt/3))`.  The two-sided form applies the one-sided one to
 `-Y` as well.
 
-This is the Bernstein inequality quoted for part (c) of `lem:fuk-nagaev` in `rwrs.tex`.
+This is the Bernstein inequality.
 -/
 import Mathlib
 

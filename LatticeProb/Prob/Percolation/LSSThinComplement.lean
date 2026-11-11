@@ -25,8 +25,6 @@ parameter arithmetic is `1 - 7/8 = 1/8`.  The module proves every deterministic 
 * the measure-complement inequality: dense domination on increasing events bounds every
   decreasing set from above;
 * the parameter arithmetic `1 - 7/8 = 1/8`.
-
-No `Prop` is frozen, no cited statement is assumed, and `Rotor.External.LSS` is not claimed.
 -/
 
 import LatticeProb.Prob.Percolation.BondPercolation

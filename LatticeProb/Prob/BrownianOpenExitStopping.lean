@@ -1,7 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: BouRabeeGwynne/BrownianExitStoppingTime.lean and BouRabeeGwynne/StoppedBrownianMeasurable.lean.
 -/
 
 import LatticeProb.Prob.BrownianOpenExit

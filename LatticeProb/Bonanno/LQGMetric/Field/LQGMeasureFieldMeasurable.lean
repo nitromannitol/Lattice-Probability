@@ -7,8 +7,7 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.GMSLemma27.GMCInterfaces
 For a family of random measures `ν n : Ω → Measure ℂ` whose integrals against continuous compactly supported
 functions are measurable, the vague limit is a measurable function of `ω` on the event where it exists
 (`LatticeProb.VagueWholePlane.exists_measurable_vagueLimit`). The construction uses a countable dense family of test
-functions (`exists_denseTestFamilyC`), the Riesz–Markov–Kakutani existence of vague limits on `ℂ`
-(`QuantumZipper.VagueOpen.exists_isVagueLimitOn_of_tendsto_open`), and the continuous cutoffs of open sets.
+functions (`exists_denseTestFamilyC`), the Riesz–Markov–Kakutani existence of vague limits on `ℂ`, and the continuous cutoffs of open sets.
 
 Applied to the approximations `ε^{γ²/2} e^{γ h_ε(z)} dz`, `ε = 2^{-k}`, of the γ-LQG area measure of a whole-plane
 Gaussian free field with jointly measurable, locally continuous circle averages `h_ε(z)` (Duplantier–Sheffield 2011,

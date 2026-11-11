@@ -64,7 +64,7 @@ theorem sq_le_exp_mul (a : ℝ) (ha : 0 < a) (r : ℝ) (hr : 0 ≤ r) :
   rw [div_mul_eq_mul_div, le_div_iff₀ ha2]
   nlinarith [h3, ha2]
 
-/-- The one-variable input to `lem:weighted-exp-conc`: a centred law with an
+/-- The one-variable input to the weighted exponential concentration bound: a centred law with an
 exponential moment has a Gaussian moment generating function on the range
 `|s| ≤ θ₀/2`. -/
 theorem integral_exp_mul_le (ν : Measure ℝ) [IsProbabilityMeasure ν] (θ₀ K₀ : ℝ)

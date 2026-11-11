@@ -1,8 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: LQGMetric/Gaussian/AssociationEvents.lean.
-Source: LQGMetric/Gaussian/AssociationSqrt.lean.
 -/
 import LatticeProb.Prob.GaussAssociationSets
 import Mathlib.Analysis.SpecialFunctions.Pow.Real

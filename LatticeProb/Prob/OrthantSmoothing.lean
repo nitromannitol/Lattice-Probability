@@ -1,7 +1,7 @@
 /-
-# The orthant smoothing kernel: the Gaussian-smoothed orthant indicator (mvbe C1)
+# The orthant smoothing kernel: the Gaussian-smoothed orthant indicator
 
-Route C1 needs the orthant smoothing kernel.  Unlike the one-dimensional `∏ sin(t_j)/t_j`, an
+The orthant smoothing kernel is needed.  Unlike the one-dimensional `∏ sin(t_j)/t_j`, an
 orthant of `ℝ^m` is not an integrable difference of boxes when `m > 1`, so the smoothing must be a
 **Gaussian-smoothed orthant indicator**.  This module lands that kernel and its elementary facts:
 

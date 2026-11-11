@@ -159,8 +159,8 @@ def pObservables (ω : PData d) :
    fun tx => pHoleCount (toPDriver ω) tx.1 tx.2,
    fun ti => (pState (toPDriver ω) ti.1).active ti.2)
 
-/-- **The two constructions have the same law.**  `parking.tex:630` asserts it
-without proof, and the divisible-sandpile papers use the same passage between
+/-- **The two constructions have the same law.**  The divisible-sandpile literature states it
+without proof, and uses the same passage between
 the two constructions.  It is what carries the pathwise couplings of the
 particle-driven construction over to the odometer, the activity and the hole
 counts of the stack process, in terms of which the papers' quantities are
@@ -171,7 +171,7 @@ def ConstructionsAgree : Prop :=
 
 /-! ### Transporting a differently coded displacement family
 
-A repository whose particle-driven construction codes the displacement as a
+A particle-driven construction that codes the displacement as a
 signed coordinate, or in any other way, uses the law above through this: any
 family of displacements whose one-step law pushes forward to
 `displacementLaw d` gives `pDataLaw d ν` after the pushforward. -/

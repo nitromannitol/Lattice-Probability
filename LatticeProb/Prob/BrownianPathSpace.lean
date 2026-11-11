@@ -1,9 +1,6 @@
 /-
 Adapted from Leonardo Bonanno’s formalizations:
 https://github.com/leobon12/lean-formalizations
-Source: BouRabeeGwynne/StoppedCurveLaws.lean, BouRabeeGwynne/ContinuousExitProperties.lean,
-BouRabeeGwynne/BrownianExitStoppingTime.lean, BouRabeeGwynne/StoppedBrownianMeasurable.lean,
-BouRabeeGwynne/BrownianFiniteExit.lean.
 -/
 
 import LatticeProb.Topology.ContinuousMapBorel

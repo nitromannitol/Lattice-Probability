@@ -1,11 +1,7 @@
 /-
-Moved from nitromannitol/rotor-23, `Rotor/Support/FiniteProduct.lean` (the
-`FiniteProduct` section, lines 1-266), Apache-2.0; copyright 2026 Ahmed
-Bou-Rabee and Yuval Peres.  There the file is introduced as Lemma 5.3
-(`lem:square-constrained-bonds`), part 1, of the rotor-routing termination
-paper, but every declaration in the section quoted here is stated for a bare
-finite index type `ι` and never mentions the rotor mechanism, so it is moved
-here unchanged, with only the namespace renamed.
+Adapted from `nitromannitol/rotor-23` (the `FiniteProduct` section), Apache-2.0; copyright 2026 Ahmed
+Bou-Rabee and Yuval Peres.  The declarations are stated for a bare finite index type `ι` and do not
+mention the rotor mechanism.
 -/
 import Mathlib
 

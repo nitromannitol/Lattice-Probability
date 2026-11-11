@@ -1,12 +1,11 @@
 /-
-The three estimates of `lem:green` (`orrw.tex`).
+The three estimates for the lazy-walk Green function: sup, oscillation and total variation.
 
-The sup bound is proved without Fourier analysis: the schedule decomposition of
-`ORRW/Support/LazyDecomp.lean` bounds `Q^r(0,x)` by the schedule average of
-`∏_i (N_i+1)^{-1/2}`, and a Chernoff estimate for the multinomial counts
-(`ORRW/Support/LazyMoment.lean`) shows that average is `O(r^{-d/2})`.  The
+The sup bound is proved without Fourier analysis: the schedule decomposition
+bounds `Q^r(0,x)` by the schedule average of
+`∏_i (N_i+1)^{-1/2}`, and a Chernoff estimate for the multinomial counts shows that average is `O(r^{-d/2})`.  The
 oscillation bound is that estimate summed over `0 ≤ r < R`.  The total variation
-bound is the paper's own argument, with the constant `4 d^{3/2} √R` unchanged.
+bound follows the source argument, with the constant `4 d^{3/2} √R` unchanged.
 -/
 import Mathlib
 import LatticeProb.Walk.LazyBox
@@ -83,10 +82,10 @@ lemma sched_prod_bound {r : ℕ} (c : Fin r → Fin d) (a : ℕ) :
 
 /-! ### Real-power conversions
 
-The frozen statement uses `Real.rpow`; the proofs below work with `Real.sqrt`
+The statements use `Real.rpow`; the proofs below work with `Real.sqrt`
 and natural powers, and these two lemmas are the only bridge needed. -/
 
-/-- Technical rewrite lemma identifying a power of a natural number with the corresponding real exponentiation, used to state the three green-estimate bounds in the form the paper uses. -/
+/-- Technical rewrite lemma identifying a power of a natural number with the corresponding real exponentiation, used to state the three green-estimate bounds in the form needed here. -/
 lemma rpow_neg_half_eq (d R : ℕ) :
     (R : ℝ) ^ (-(d : ℝ) / 2) = ((Real.sqrt (R : ℝ)) ^ d)⁻¹ := by
   have hR0 : (0 : ℝ) ≤ (R : ℝ) := Nat.cast_nonneg _
@@ -107,7 +106,7 @@ lemma rpow_three_halves (d : ℕ) : (d : ℝ) ^ ((3 : ℝ) / 2) = (d : ℝ) * Re
 
 /-! ### The constant -/
 
-/-- The constant of `lem:green`, explicit. -/
+/-- The constant of the Green-function estimates, explicit. -/
 noncomputable def greenConst (d : ℕ) : ℝ :=
   (Real.sqrt (4 * (d : ℝ))) ^ d + (d : ℝ) * (Nat.factorial d : ℝ) * (4 * (d : ℝ)) ^ d
 
@@ -233,7 +232,7 @@ lemma tail_le (hd : 0 < d) {R : ℕ} (hR : 1 ≤ R) :
     _ ≤ ((d : ℝ) * (Nat.factorial d : ℝ) * (4 * (d : ℝ)) ^ d) * ((Real.sqrt (R : ℝ)) ^ d)⁻¹ :=
         mul_le_mul_of_nonneg_left hinvle hpos
 
-/-- `‖Q^R(0,·)‖_∞ ≤ C R^{-d/2}` (`orrw.tex`). -/
+/-- `‖Q^R(0,·)‖_∞ ≤ C R^{-d/2}` -/
 theorem iterate_delta0_sup_bound (hd : 0 < d) {R : ℕ} (hR : 1 ≤ R) (x : Site d) :
     Q^[R] (delta0 : Site d → ℝ) x ≤ greenConst d * (R : ℝ) ^ (-(d : ℝ) / 2) := by
   have hdR : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
@@ -274,7 +273,7 @@ lemma gR_le (hd : 0 < d) {R : ℕ} (hR : 1 ≤ R) (x : Site d) :
   rw [hsplit, Finset.sum_insert hnot]
   exact add_le_add h0 (Finset.sum_le_sum hrest)
 
-/-- `osc(g_R) ≤ C log(R+1)` for `d = 2` and `≤ C` for `d ≥ 3` (`orrw.tex`). -/
+/-- `osc(g_R) ≤ C log(R+1)` for `d = 2` and `≤ C` for `d ≥ 3` -/
 theorem gR_osc_bound (hd : 2 ≤ d) {R : ℕ} (hR : 1 ≤ R) (x y : Site d) :
     gR R x - gR R y
       ≤ (2 + 3 * greenConst d) * (if d = 2 then Real.log ((R : ℝ) + 1) else 1) := by
@@ -417,7 +416,7 @@ lemma gR_grad_eq_zero_of_notMem {R : ℕ} {p : Site d × Fin d}
   rw [h1, h2]
   norm_num
 
-/-- `∑_{{x,y}} |g_R(y) - g_R(x)| ≤ 4 d^{3/2} √R` (`orrw.tex`). -/
+/-- `∑_{{x,y}} |g_R(y) - g_R(x)| ≤ 4 d^{3/2} √R` -/
 theorem gR_tv_bound (hd : 0 < d) (R : ℕ) :
     (∑' p : Site d × Fin d, |gR R (p.1 + dirVec (p.2, true)) - gR R p.1|)
       ≤ 4 * (d : ℝ) ^ ((3 : ℝ) / 2) * Real.sqrt (R : ℝ) := by

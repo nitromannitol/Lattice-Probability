@@ -452,7 +452,7 @@ theorem integrable_of_lip (ν : Measure ℝ) [IsProbabilityMeasure ν]
 
 /-! ### The exponential concentration inequality -/
 
-/-- Part (d) of `lem:weighted-exp-conc`, by induction on the coordinates: the
+/-- Part (d) of the weighted exponential concentration bound, by induction on the coordinates: the
 first coordinate is split off, the inner integral is bounded uniformly by the
 inductive hypothesis, and what remains is a centred Lipschitz function of one
 coordinate. -/
