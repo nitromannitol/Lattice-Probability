@@ -46,7 +46,7 @@ private lemma prod_one_add_sq_le_exp (Y : ℕ → Ω → ℝ) (t : ℝ) (n : ℕ
     ∏ k ∈ Finset.range n, (1 + t ^ 2 * Y k ω ^ 2) ≤
       Real.exp (t ^ 2 * ∑ k ∈ Finset.range n, Y k ω ^ 2) := by
   rw [Finset.mul_sum, Real.exp_sum]
-  refine Finset.prod_le_prod (fun k _ => by positivity) fun k _ => ?_
+  refine Finset.prod_le_prod₀ (fun k _ => by positivity) fun k _ => ?_
   linarith [Real.add_one_le_exp (t ^ 2 * Y k ω ^ 2)]
 
 /-- The squared modulus of the product is at most `exp (t ^ 2 ∑ Y k ^ 2)`. -/
