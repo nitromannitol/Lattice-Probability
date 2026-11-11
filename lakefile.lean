@@ -12,7 +12,7 @@ lean_lib «LatticeProb» where
   globs := #[.andSubmodules `LatticeProb]
 
 /-- The `lean-v4.35` line (Lean v4.35.0-rc2, the Mathlib of the harmonic-balls and mated-CRT formalizations): the LQG, GFF and
-mated-CRT library, adapted from Leonardo Bonanno's lean-formalizations (each file names its source module). -/
+mated-CRT library, adapted from Leonardo Bonanno's lean-formalizations (each copied file names its source module). -/
 @[default_target]
 lean_lib «LatticeProbV435» where
   roots := #[`LatticeProb.V435]

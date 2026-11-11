@@ -124,8 +124,12 @@ The destination library's existing LICENSE is unchanged. No new third-party
 source payload or package dependency is introduced.
 
 LatticeProb/Bonanno/ (branch lean-v4.35): copied from Leonardo Bonanno's lean-formalizations,
-https://github.com/leobon12/lean-formalizations, commit 31e7483e (module paths prefixed by LatticeProb.Bonanno; each file
-names its source module).
+https://github.com/leobon12/lean-formalizations, commit 31e7483e (module paths prefixed by LatticeProb.Bonanno; each copied
+file names its source module in its header). The following modules under LatticeProb/Bonanno/LQGMetric/Field/ are original
+to this library: CircleAvgVersion, CircleBumpRadial, CirclePairing, CircleParameter, LQGMeasureFieldMeasurable,
+LQGMeasureFieldMeasurableAmbient, RadialPointIntegrals, RadialPointRotation, WholePlaneCov, WholePlaneLateral. Apart from
+Mathlib, they build only on the copied modules, on one another, and on the original modules
+LatticeProb.Analysis.RotationalAverage and LatticeProb.Analysis.DistributionalLaplacian.
 
 LatticeProb/Prob/AnalyticUniversalMeasurable.lean is adapted from
 https://github.com/nitromannitol/subdiffusive-process, file
