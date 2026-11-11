@@ -292,7 +292,7 @@ theorem fpw_le_of_agree {par : ι → ℝ} (hpar : IsParam par) (J : Finset ι) 
   have hin : ∏ j ∈ J, (if ω j then par j else 1 - par j) ≤
       ρ ^ J.card * ∏ j ∈ J, (if ω' j then par j else 1 - par j) := by
     rw [← Finset.prod_const, ← Finset.prod_mul_distrib]
-    refine Finset.prod_le_prod (fun j _ => by split_ifs; exacts [(hpar j).1, by linarith [(hpar j).2]])
+    refine Finset.prod_le_prod₀ (fun j _ => by split_ifs; exacts [(hpar j).1, by linarith [(hpar j).2]])
       (fun j hj => ?_)
     obtain ⟨h1, h2⟩ := hlow j hj
     have hp0 : 0 < par j := by
@@ -337,7 +337,7 @@ theorem fpw_le_of_par {par par' : ι → ℝ} (hpar : IsParam par) (hpar' : IsPa
   have hin : ∏ j ∈ J, (if ω j then par j else 1 - par j) ≤
       ρ ^ J.card * ∏ j ∈ J, (if ω j then par' j else 1 - par' j) := by
     rw [← Finset.prod_const, ← Finset.prod_mul_distrib]
-    refine Finset.prod_le_prod (fun j _ => by split_ifs; exacts [(hpar j).1, by linarith [(hpar j).2]])
+    refine Finset.prod_le_prod₀ (fun j _ => by split_ifs; exacts [(hpar j).1, by linarith [(hpar j).2]])
       (fun j hj => ?_)
     obtain ⟨h1, h2⟩ := hrat j hj
     split_ifs; exacts [h1, h2]
