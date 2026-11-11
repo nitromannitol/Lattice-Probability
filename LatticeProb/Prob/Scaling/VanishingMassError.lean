@@ -68,7 +68,7 @@ theorem tendsto_measure_add_gt_zero {ι Ω : Type*} [MeasurableSpace Ω]
       by_contra hn
       simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_lt] at hn
       have ht := abs_add_le (f i ω) (g i ω)
-      dsimp only [Set.mem_setOf_eq] at hω
+      have hω' : a < |f i ω + g i ω| := hω
       linarith [hn.1, hn.2]
     have ht := ENNReal.toReal_mono
       (ENNReal.add_ne_top.mpr ⟨measure_ne_top μ _, measure_ne_top μ _⟩)
