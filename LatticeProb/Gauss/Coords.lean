@@ -54,10 +54,10 @@ Gaussians.** -/
 theorem map_gaussSum (c : ι → ℝ) (s : Finset ι) :
     (gaussLaw ι).map (gaussSum c s) = gaussianReal 0 (∑ i ∈ s, c i ^ 2).toNNReal := by
   classical
-  haveI : IsProbabilityMeasure ((gaussLaw ι).map (gaussSum c s)) :=
-    Measure.isProbabilityMeasure_map (measurable_gaussSum c s).aemeasurable
+  have : IsProbabilityMeasure ((gaussLaw ι).map (gaussSum c s)) :=
+    (Measure.isProbabilityMeasure_map_iff (measurable_gaussSum c s).aemeasurable).2 inferInstance
   set T : (ι → ℝ) → (↥s → ℝ) := fun ω i => ω (i : ι) with hT
-  have hTmeas : Measurable T := measurable_pi_lambda _ fun i => measurable_pi_apply (i : ι)
+  have hTmeas : Measurable T := Measurable.of_eval fun i => measurable_pi_apply (i : ι)
   have hTmap : (gaussLaw ι).map T = Measure.pi fun _ : ↥s => (gaussianReal 0 1 : Measure ℝ) := by
     rw [gaussLaw]
     exact infinitePi_map_comp _ (fun i : ↥s => (i : ι)) Subtype.val_injective

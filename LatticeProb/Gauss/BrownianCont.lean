@@ -28,7 +28,7 @@ theorem gaussFourth_lt_top : gaussFourth < ∞ := by
   have h := memLp_id_gaussianReal (μ := 0) (v := 1) (4 : ℝ≥0)
   have := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
     (p := ((4 : ℝ≥0) : ℝ≥0∞)) (f := (id : ℝ → ℝ)) (μ := gaussianReal 0 1)
-    (by simp) (by simp) h.2
+    (by simp) (by simp) h
   simpa [gaussFourth] using this
 
 theorem gaussFourth_ne_top : gaussFourth ≠ ∞ := gaussFourth_lt_top.ne
@@ -142,7 +142,7 @@ theorem exists_isBrownian (d : ℕ) (x : EuclideanSpace ℝ (Fin d)) :
       @ProbabilityTheory.iIndepFun Ω (Fin d) mΩ (fun _ => ℝ≥0 → ℝ) _
         (fun (i : Fin d) (ω : Ω) => fun t : ℝ≥0 => B t ω i) P := by
   obtain ⟨Ω₀, mΩ₀, P₀, C, hCm, hC⟩ := exists_isBrownianReal
-  haveI : IsProbabilityMeasure P₀ := hC.isGaussianProcess.isProbabilityMeasure
+  have : IsProbabilityMeasure P₀ := hC.isGaussianProcess.isProbabilityMeasure
   refine ⟨Fin d → Ω₀, inferInstance, Measure.pi fun _ => P₀, dimBrownian d C x, ?_, ?_, ?_⟩
   · have hzero : ∀ i : Fin d, ∀ᵐ ω ∂(Measure.pi fun _ : Fin d => P₀), C 0 (ω i) = 0 := fun i =>
       (measurePreserving_eval (fun _ : Fin d => P₀) i).quasiMeasurePreserving.ae
@@ -169,7 +169,7 @@ theorem exists_isBrownian (d : ℕ) (x : EuclideanSpace ℝ (Fin d)) :
           (fun ω₀ : Ω₀ => fun t : ℝ≥0 => x i + (Real.sqrt d)⁻¹ * C t ω₀) (ω i) := rfl
     rw [this]
     exact iIndepFun_pi fun i =>
-      (measurable_pi_lambda _ fun t => (hCm t).const_mul _ |>.const_add _).aemeasurable
+      (Measurable.of_eval fun t => (hCm t).const_mul _ |>.const_add _).aemeasurable
 
 end Dim
 

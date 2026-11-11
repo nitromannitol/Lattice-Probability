@@ -37,7 +37,7 @@ theorem map_isoProc [Countable ι] (b : HilbertBasis ι ℝ H) (h : H) :
 theorem memLp_isoProc [Countable ι] (b : HilbertBasis ι ℝ H) (h : H) :
     MemLp (isoProc b h) 2 (gaussLaw ι) := by
   have hg : HasGaussianLaw (isoProc b h) (gaussLaw ι) := by
-    refine ⟨?_⟩
+    refine ⟨(measurable_isoProc b h).aemeasurable, ?_⟩
     rw [map_isoProc]
     infer_instance
   exact hg.memLp_two
@@ -110,9 +110,10 @@ is one value at a linear combination of the indices. -/
 theorem isGaussianProcess_isoProc [Countable ι] (b : HilbertBasis ι ℝ H) :
     IsGaussianProcess (isoProc b) (gaussLaw ι) := by
   classical
-  refine ⟨fun I => ⟨?_⟩⟩
+  refine ⟨fun I => ?_⟩
   have hvecm : Measurable (fun ω : ι → ℝ => I.restrict (fun t => isoProc b t ω)) :=
-    measurable_pi_lambda _ fun t => measurable_isoProc b _
+    Measurable.of_eval fun t => measurable_isoProc b _
+  refine ⟨hvecm.aemeasurable, ?_⟩
   refine isGaussian_of_map_eq_gaussianReal fun L => ?_
   set c : ↥I → ℝ := fun t => L (fun j => if t = j then (1 : ℝ) else 0) with hc
   have hL : ∀ x : ↥I → ℝ, L x = ∑ t, x t * c t := by

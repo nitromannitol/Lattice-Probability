@@ -29,7 +29,7 @@ theorem map_eq_gaussianReal_of_tendsto_ae {Ω : Type*} [MeasurableSpace Ω] {P :
     (hae : ∀ᵐ ω ∂P, Tendsto (fun n => X n ω) atTop (𝓝 (Y ω)))
     (hσ : Tendsto (fun n => ((σ n : ℝ≥0) : ℝ)) atTop (𝓝 ((s : ℝ≥0) : ℝ))) :
     P.map Y = gaussianReal 0 s := by
-  haveI : IsProbabilityMeasure (P.map Y) := Measure.isProbabilityMeasure_map hYm.aemeasurable
+  have : IsProbabilityMeasure (P.map Y) := (Measure.isProbabilityMeasure_map_iff hYm.aemeasurable).2 inferInstance
   refine Measure.ext_of_charFun ?_
   funext t
   -- the characteristic function of the limit is the limit of the characteristic functions

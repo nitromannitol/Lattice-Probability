@@ -30,13 +30,13 @@ theorem map_eval_gaussLaw (n : ι) :
 
 theorem hasGaussianLaw_eval (n : ι) :
     HasGaussianLaw (fun ω : ι → ℝ => ω n) (gaussLaw ι) := by
-  refine ⟨?_⟩
+  refine ⟨(measurable_pi_apply n).aemeasurable, ?_⟩
   rw [map_eval_gaussLaw n]
   infer_instance
 
 theorem hasGaussianLaw_gaussSum (c : ι → ℝ) (s : Finset ι) :
     HasGaussianLaw (gaussSum c s) (gaussLaw ι) := by
-  refine ⟨?_⟩
+  refine ⟨(measurable_gaussSum c s).aemeasurable, ?_⟩
   rw [map_gaussSum c s]
   infer_instance
 
@@ -90,7 +90,7 @@ theorem integral_eval_mul_eval {n m : ι} (h : n ≠ m) :
         ∂(Measure.pi fun _ : Fin 2 => (gaussianReal 0 1 : Measure ℝ))
       = ∫ ω, ω n * ω m ∂(gaussLaw ι) := by
     rw [← hmap, integral_map
-      (measurable_pi_lambda _ fun j => measurable_pi_apply (v j)).aemeasurable hfm]
+      (Measurable.of_eval fun j => measurable_pi_apply (v j)).aemeasurable hfm]
     rfl
   rw [← h1]
   have h2 : ∀ x : Fin 2 → ℝ, x 0 * x 1 = ∏ i : Fin 2, x i := fun x => (Fin.prod_univ_two x).symm
@@ -170,7 +170,7 @@ theorem exists_finset_exhaustion (ι : Type*) [Countable ι] :
   rw [Set.Finite.mem_toFinset]
   have hle : e i ≤ (b.image e).sup id :=
     Finset.le_sup (f := id) (Finset.mem_image_of_mem e hi)
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   omega
 
 /-- **The law of the isonormal process.**  The image of a square-summable family
