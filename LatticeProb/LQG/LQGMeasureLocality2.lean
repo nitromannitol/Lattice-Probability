@@ -6,20 +6,20 @@ import LatticeProb.LQG.LQGMeasureSquare
 /-!
 # The circle-average link from the whole-plane GFF, and unconditional locality of the LQG measure
 
-(the circle-average chain is imported from the
-modules `LatticeProb/Gauss/CircleAverageApprox.lean` and `LatticeProb/Gauss/CircleAverageApprox2.lean`, not copied).
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Fact 2.1 II. The circle-average chain is imported from the modules `LatticeProb.Gauss.CircleAverageApprox` and
+`LatticeProb.Gauss.CircleAverageApprox2`.
 
-* `LatticeProb.Gauss.IsWholePlaneGFF.wholePlaneCircleAverageLimit`: LP form of `WholePlaneCircleAverageLimitFrozen`
-  (`FirstPass/Frozen/S11p.lean:29`; HB proof `wholePlaneCircleAverageLimit_derived`, `FirstPass/S11u.lean:93`).
+* `LatticeProb.Gauss.IsWholePlaneGFF.wholePlaneCircleAverageLimit`: the whole-plane circle-average limit.
   Unit-mass test functions supported in an arbitrary open `O ⊇ sphere z r` whose pairings converge almost surely to the
   circle average. The test functions are the annular densities `unitCircleDensity r (r η₀ (1/2)^j)` with
   `η₀ ≤ min (r/4) (δ₀/2)`, `δ₀` a thickening radius of the sphere inside `O`. The only new ingredient with respect to
-  `ae_tendsto_circleApprox` (`CircleAverageApprox2.lean`) is the width `η₀`, which keeps the annuli inside `O`.
-* `LatticeProb.LQG.lqgCircleAverageLink_of_gff`: `LQGCircleAverageLink` under the whole-plane GFF premise. Port of
-  `HarmonicBalls.lqgCircleAverageLocalityLink_derived` (`FirstPass/Phase2/CircleAverageLocalityLinkDerived.lean:58`).
-* `LatticeProb.LQG.lqgLocality_of_gff`: LP locality of the LQG area measure (Fact 2.1 II), with no circle-average link
+  `ae_tendsto_circleApprox` (module `LatticeProb.Gauss.CircleAverageApprox2`) is the width `η₀`, which keeps the annuli inside `O`.
+* `LatticeProb.LQG.lqgCircleAverageLink_of_gff`: `LQGCircleAverageLink` under the whole-plane GFF premise.
+* `LatticeProb.LQG.lqgLocality_of_gff`: locality of the LQG area measure (Fact 2.1 II), with no circle-average link
   hypothesis.
-* `LatticeProb.LQG.aemeasurable_lqgMeasure_closedDyadicSquare_of_gff`: LP square statement, with no locality hypothesis.
+* `LatticeProb.LQG.aemeasurable_lqgMeasure_closedDyadicSquare_of_gff`: the measurability statement for closed dyadic
+  squares, with no locality hypothesis.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Set Metric Topology
@@ -113,9 +113,7 @@ theorem ae_tendsto_circleApproxW {Ω : Type*} [MeasurableSpace Ω] {P : Measure 
     (fun j ω => hC ω (circleApproxW hr hη₀ z j) - hcirc ω r z) hD _ hsum hbound] with ω hω
   exact tendsto_sub_nhds_zero_iff.mp hω
 
-/-- **LP form of the whole-plane circle-average limit** (`WholePlaneCircleAverageLimitFrozen`,
-`FirstPass/Frozen/S11p.lean:29`; HB derivation `wholePlaneCircleAverageLimit_derived`, `FirstPass/S11u.lean:93`).
-For an open `O` containing the circle `sphere z r`, there are unit-mass test functions supported in `O` whose pairings
+/-- **The whole-plane circle-average limit.** For an open `O` containing the circle `sphere z r`, there are unit-mass test functions supported in `O` whose pairings
 converge almost surely to the circle average `hcirc ω r z`. -/
 theorem IsWholePlaneGFF.wholePlaneCircleAverageLimit {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} (hGFF : IsWholePlaneGFF P hC hcirc)
@@ -142,8 +140,7 @@ namespace LatticeProb.LQG
 
 open LatticeProb.Gauss
 
-/-- **Circle-average link under the whole-plane GFF premise** (LP form of `lqgCircleAverageLocalityLink_derived`,
-`FirstPass/Phase2/CircleAverageLocalityLinkDerived.lean:58`). For an open `U` and a closed ball `closedBall z r ⊆ U`,
+/-- **Circle-average link under the whole-plane GFF premise.** For an open `U` and a closed ball `closedBall z r ⊆ U`,
 the circle average `fieldCircleAverage α₀ (hcirc ω) r z` is a.s. equal to a `σ(h|_U)`-measurable function. Route: the
 test functions `ψ j` of `wholePlaneCircleAverageLimit` are supported in `U`, so `ω ↦ hC ω (ψ j)` is `σ(h|_U)`-measurable
 (`measurable_gff_pairing`); their limit is measurable (`StronglyMeasurable.limUnder`) and equals the circle average up
@@ -166,14 +163,14 @@ theorem lqgCircleAverageLink_of_gff {Ω : Type*} [MeasurableSpace Ω] (P : Measu
     simp only [fieldCircleAverage]
     rw [hω.limUnder_eq]
 
-/-- **Locality of the LQG area measure, unconditional (LP form; Fact 2.1 II).** Same statement as
+/-- **Locality of the LQG area measure, unconditional (Fact 2.1 II).** Same statement as
 `lqgLocality_of_circleLink` with the circle-average link discharged by `lqgCircleAverageLink_of_gff`. -/
 theorem lqgLocality_of_gff {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (γ α₀ : ℝ)
     (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) :
     LQGLocality P γ α₀ hC hcirc :=
   lqgLocality_of_circleLink P γ α₀ hC hcirc (fun hGFF => lqgCircleAverageLink_of_gff P α₀ hC hcirc hGFF)
 
-/-- **Square measurability, unconditional (LP form).** `aemeasurable_lqgMeasure_closedDyadicSquare` with the locality
+/-- **Square measurability, unconditional.** `aemeasurable_lqgMeasure_closedDyadicSquare` with the locality
 hypothesis discharged by `lqgLocality_of_gff`. -/
 theorem aemeasurable_lqgMeasure_closedDyadicSquare_of_gff {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {γ α₀ : ℝ} {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} {μ : Ω → Measure ℂ}

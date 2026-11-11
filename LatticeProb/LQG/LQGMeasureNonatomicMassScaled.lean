@@ -3,14 +3,13 @@ import LatticeProb.LQG.LQGMeasureNonatomicMassTail
 import LatticeProb.LQG.LQGMeasureNonatomicMassPoly
 
 /-!
-# The multiscale ball-mass bound for `h^ℂ` around the origin: LP form
+# The multiscale ball-mass bound for `h^ℂ` around the origin
 
-LP copy of `HarmonicBalls/Proofs/Sec2/ScaledBallMass.lean` (288 lines): the union bound over the dyadic scales of
-Berestycki-Powell (Lemma A.1 of the BG20 reference in the HB docstring; Ding-Gwynne 2020, Lemma 3.8, for the rescaled fields).
-The Steps `WholePlaneScaledBallMassStep` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:261`),
-`RescaledBallMassUniformStep` (`:313`) and the event `rescaledBallMassEvent` (`:297`) are copied as definitions with the
-LP names. Nothing is assumed: the reduction `wholePlaneScaledBallMassStep_of_uniform_lp` takes the Steps as hypotheses
-only as the HB reduction does (the reduction itself is proved here).
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 2.4: the union bound over the dyadic scales of Berestycki and Gwynne 2020, Lemma A.1 (and of Ding and Gwynne 2020,
+Lemma 3.8, for the rescaled fields). The steps of Lemma 2.4, `WholePlaneScaledBallMassStep`, `RescaledBallMassUniformStep`
+and the event `rescaledBallMassEvent`, are stated as definitions with the names of this library. Nothing is assumed: the
+reduction `wholePlaneScaledBallMassStep_of_uniform_lp` takes the steps as hypotheses, and the reduction itself is proved here.
 -/
 
 universe u
@@ -21,7 +20,7 @@ open MeasureTheory ProbabilityTheory Metric Filter Set Topology LatticeProb.Gaus
 open scoped ENNReal
 open LatticeProb.LQG.ProfileDerived (dyadicScale_pos)
 
-/-- The rescaled ball-mass event `rescaledBallMassEvent` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:297`): for `τ = 2^{-k}`,
+/-- The rescaled ball-mass event `rescaledBallMassEvent`: for `τ = 2^{-k}`,
 `τ^{γQ} e^{γ h^ℂ_τ(0)} r^{β⁻} ≤ μ₀(B_{τr}(τw)) ≤ τ^{γQ} e^{γ h^ℂ_τ(0)} r^{β⁺}` for all `w ∈ closedBall 0 R`. -/
 def rescaledBallMassEvent {Ω : Type*} (γ : ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) (μ₀ : Ω → Measure ℂ)
     (R βplus βminus : ℝ) (k : ℕ) (r : ℝ) : Set Ω :=
@@ -31,8 +30,8 @@ def rescaledBallMassEvent {Ω : Type*} (γ : ℝ) (hcirc : Ω → ℝ → ℂ �
       μ₀ ω (ball ((dyadicScale k : ℂ) * w) (dyadicScale k * r)) ≤
         ENNReal.ofReal (dyadicScale k ^ (γ * lqgQ γ) * Real.exp (γ * hcirc ω (dyadicScale k) 0) * r ^ βplus)}
 
-/-- LP form of `RescaledBallMassUniformStep` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:313`), Ding-Gwynne Lemma 3.8 for the
-rescaled fields uniformly in the scale. A definition; proved in `LQGMeasureNonatomicMassRescaled.lean`. -/
+/-- The uniform rescaled ball-mass step, Ding-Gwynne Lemma 3.8 for the rescaled fields uniformly in the scale. A
+definition; proved in the module `LatticeProb.LQG.LQGMeasureNonatomicMassRescaled`. -/
 def RescaledBallMassUniformStepLP : Prop :=
   ∀ γ : ℝ, 0 < γ → γ < 2 →
   ∀ (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ)
@@ -41,8 +40,8 @@ def RescaledBallMassUniformStepLP : Prop :=
     ∃ p : ℝ, 0 < p ∧ ∃ C : ℝ, ∃ r₀ > 0, ∀ k : ℕ, ∀ r : ℝ, 0 < r → r < r₀ →
       P (rescaledBallMassEvent γ hcirc μ₀ R βplus βminus k r)ᶜ ≤ ENNReal.ofReal (C * ((k : ℝ) + 1) ^ 2 * r ^ p)
 
-/-- LP form of `WholePlaneScaledBallMassStep` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:261`): the multiscale ball bound for
-`h^ℂ` around the origin, with polynomially high probability. A definition; proved in `LQGMeasureNonatomicMassRescaled.lean`. -/
+/-- The multiscale ball-mass step of Lemma 2.4: the multiscale ball bound for `h^ℂ` around the origin, with
+polynomially high probability. A definition; proved in the module `LatticeProb.LQG.LQGMeasureNonatomicMassRescaled`. -/
 def WholePlaneScaledBallMassStepLP : Prop :=
   ∀ γ : ℝ, 0 < γ → γ < 2 →
   ∀ (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ)
@@ -53,7 +52,7 @@ def WholePlaneScaledBallMassStepLP : Prop :=
       ENNReal.ofReal (t ^ (γ * lqgQ γ) * (δ / t) ^ βminus * δ ^ ζ) ≤ μ₀ ω (ball z δ) ∧
         μ₀ ω (ball z δ) ≤ ENNReal.ofReal (t ^ (γ * lqgQ γ) * (δ / t) ^ βplus * δ ^ (-ζ))}
 
-/-- Polynomially high probability from an eventual bound `P[(E r)ᶜ] ≤ r^p` (LP copy of `PolyHighProb.of_eventually`). -/
+/-- Polynomially high probability from an eventual bound `P[(E r)ᶜ] ≤ r^p`. -/
 theorem polyHighProb_of_eventually {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {E : ℝ → Set Ω} {p : ℝ}
     (hp : 0 < p) (h : ∀ᶠ r in 𝓝[>] (0 : ℝ), P (E r)ᶜ ≤ ENNReal.ofReal (r ^ p)) : PolyHighProb P E := by
   obtain ⟨r₁, hr₁, h'⟩ := exists_pos_of_eventually_nhdsGT h
@@ -142,8 +141,7 @@ theorem scaledBallBound_of_good {Ω : Type*} {γ R βp βm ζ δ : ℝ} {hcirc :
       _ = t ^ G * (δ / t) ^ βp * (2 ^ G * X) := by ring
       _ ≤ t ^ G * (δ / t) ^ βp * δ ^ (-ζ) := by gcongr
 
-/-- Probability of the good event: the union bound over the dyadic scales `2^{-k} ≥ δ^{1-ζ}` (LP copy of
-`HarmonicBalls.scaledGoodEvent_polyHighProb`). -/
+/-- Probability of the good event: the union bound over the dyadic scales `2^{-k} ≥ δ^{1-ζ}`. -/
 theorem scaledGoodEvent_polyHighProb {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {γ R βp βm ζ : ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} {μ₀ : Ω → Measure ℂ} (hγ : 0 < γ) (hζ0 : 0 < ζ)
     {p C r₀ : ℝ} (hp : 0 < p) (hr₀ : 0 < r₀)
@@ -295,7 +293,7 @@ theorem scaledGoodEvent_polyHighProb {Ω : Type*} [MeasurableSpace Ω] {P : Meas
         rw [nsmul_eq_mul, ← ENNReal.ofReal_natCast, ← ENNReal.ofReal_mul (Nat.cast_nonneg _)]
     _ ≤ ENNReal.ofReal (δ ^ (q / 2)) := ENNReal.ofReal_le_ofReal hreal
 
-/-- **Reduction** (LP copy of `HarmonicBalls.wholePlaneScaledBallMassStep_of_uniform`): the multiscale ball bound for `h^ℂ`
+/-- **Reduction**: the multiscale ball bound for `h^ℂ`
 around the origin from the uniform rescaled bound (`RescaledBallMassUniformStepLP`) and the Gaussian tail of
 `h^ℂ_{2^{-k}}(0)` (`CircleAverageDyadicTailStepLP`). -/
 theorem wholePlaneScaledBallMassStep_of_uniform_lp (h1 : RescaledBallMassUniformStepLP.{u})

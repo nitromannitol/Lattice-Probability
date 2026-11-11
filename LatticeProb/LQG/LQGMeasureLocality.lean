@@ -6,28 +6,26 @@ import LatticeProb.Gauss.CameronMartinDerived2
 
 /-! # Locality of the γ-LQG area measure (conditional form)
 
-. The general LP statement of Fact 2.1 II (locality of the
-γ-Liouville quantum gravity area measure, Duplantier-Sheffield 2011; Berestycki-Powell), in the form
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Fact 2.1 II. The general statement is locality of the γ-Liouville quantum gravity area measure (Duplantier-Sheffield
+2011; Berestycki-Powell), in the form
 
-  `LatticeProb.LQG.lqgLocality_of_circleLink`: under the circle-average link `LQGCircleAverageLink` (LP form, with the
+  `LatticeProb.LQG.lqgLocality_of_circleLink`: under the circle-average link `LQGCircleAverageLink` (with the
   whole-plane GFF premise), `μ(U)` is a.s. equal to a `σ(h|_U)`-measurable variable for every open `U`.
 
-The link is a hypothesis of this file. Its unconditional proof (`LQGCircleAverageLink` for every whole-plane GFF) is NOT
-included here: the HB derivation `HarmonicBalls.lqgCircleAverageLocalityLink_derived`
-(`FirstPass/Phase2/CircleAverageLocalityLinkDerived.lean`) uses `wholePlaneCircleAverageLimit_derived`
-(`FirstPass/S11u.lean`), which is not copied here. Everything else is proved here.
+The link is a hypothesis of this file. Its unconditional proof (`LQGCircleAverageLink` for every whole-plane GFF) is
+not included here; it requires the whole-plane circle-average limit (see `LatticeProb.LQG.LQGMeasureLocality2`).
+Everything else is proved here.
 
 Contents: the definitions `LQGLocality` and `LQGCircleAverageLink`; the GFF pairing measurability `measurable_gff_pairing`;
-the joint measurability of a modification of the circle averages (`LatticeProb.Gauss.IsWholePlaneGFF.exists_jointlyMeasurable_circleAverage`,
-the LP copy of `IsWholePlaneGFF.exists_jointlyMeasurable_circleAverage`); the distance to the complement and
-the exhaustion by cut-offs; the dyadic grid and the density integrals; the locality proof.
+the joint measurability of a modification of the circle averages (`LatticeProb.Gauss.IsWholePlaneGFF.exists_jointlyMeasurable_circleAverage`);
+the distance to the complement and the exhaustion by cut-offs; the dyadic grid and the density integrals; the locality proof.
 
-Sources: `HarmonicBalls/FirstPass/Phase2/CircleAverageLocalityLinkDerived.lean` (`measurable_gff_pairing`,
-`lqgLocality_of_circleLink`), `HarmonicBalls/FirstPass/Phase2/LQGLocalityDerived.lean` (helpers),
-`HarmonicBalls/Proofs/Sec5/CircleAverageMeasurability.lean` (joint measurability). Definitions reused:
-`LatticeProb.LQG.IsLQGMeasureOfField` (`LatticeProb/LQG/LQGMeasure.lean`), `LatticeProb.Gauss.fieldSigmaAlgebra`
-(`LatticeProb/Gauss/GFF.lean`), `LatticeProb.LQG.ProfileDerived.dyadicScale_pos` and `continuous_circleAverage_log_norm`
-(`LatticeProb/LQG/LQGMeasureDerived.lean`).
+Sources: the pairing and locality arguments follow Fact 2.1 II of the source, and the joint measurability of the circle
+averages follows Section 5 of the source. Definitions reused: `LatticeProb.LQG.IsLQGMeasureOfField` (module
+`LatticeProb.LQG.LQGMeasure`), `LatticeProb.Gauss.fieldSigmaAlgebra` (module `LatticeProb.Gauss.GFF`), and
+`LatticeProb.LQG.ProfileDerived.dyadicScale_pos` and `continuous_circleAverage_log_norm` (module
+`LatticeProb.LQG.LQGMeasureDerived`).
 -/
 
 open MeasureTheory Set Filter Topology ProbabilityTheory
@@ -91,10 +89,10 @@ def LQGLocality {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (γ α₀ : �
     IsLQGMeasureOfField P γ α₀ hcirc μ → ∀ U : Set ℂ, IsOpen U →
       ∃ Y : Ω → ℝ≥0∞, Measurable[fieldSigmaAlgebra α₀ hC U] Y ∧ ∀ᵐ ω ∂P, μ ω U = Y ω
 
-/-- **Circle-average locality link** (LP form of the link of Fact 2.1 II). For every open `U` and every closed ball
+/-- **Circle-average locality link** (the link of Fact 2.1 II). For every open `U` and every closed ball
 `closedBall z r ⊆ U` with `r > 0`, the circle average `fieldCircleAverage α₀ (hcirc ω) r z` is a.s. equal to a
 `σ(h|_U)`-measurable random variable. Stated under the whole-plane GFF premise, which is needed: without it the claim is
-false (a counterexample, recorded in `HarmonicBalls/FirstPass/Phase2/LQGLocalityDerived.lean`). Hypothesis of
+false. Hypothesis of
 `lqgLocality_of_circleLink`; not proved in this file. -/
 def LQGCircleAverageLink {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (α₀ : ℝ)
     (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) : Prop :=
@@ -404,9 +402,8 @@ def densityIntegral {Ω : Type*} (γ : ℝ) (U : Set ℂ) (n k : ℕ) (Ψk : Ω 
     ENNReal.ofReal (exhaustFn U n z)
 
 
-/-- Fact 2.1 II (locality), with the circle-average link relativised to the whole-plane GFF premise. The proof is that of
-`lqgMeasureLocality_of_circleLink` (`LQGLocalityDerived.lean:321`); the only use of the link is at `hWk`,
-where `hGFF` is in scope. -/
+/-- Fact 2.1 II (locality), with the circle-average link relativised to the whole-plane GFF premise. The only use of
+the link is at `hWk`, where `hGFF` is in scope. -/
 theorem lqgLocality_of_circleLink {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     (γ α₀ : ℝ) (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ)
     (hlink : IsWholePlaneGFF P hC hcirc → LQGCircleAverageLink P α₀ hC hcirc) :

@@ -2,11 +2,11 @@ import Mathlib
 import LatticeProb.Gauss.GFFAffineInvariance
 
 /-!
-# Mixtures of whole-plane GFFs over the dyadic scales: LP form
+# Mixtures of whole-plane GFFs over the dyadic scales
 
-LP copy of `HarmonicBalls/Proofs/Sec2/Mixture.lean` (the mixing probability measure `ν{k} ∝ (k+1)⁻²` on `ℕ`, its slice
-bounds and its almost sure transfer) and of `HarmonicBalls/Proofs/Sec2/MixtureGFF.lean` (a mixture of whole-plane GFFs is a
-whole-plane GFF). The Step `WholePlaneGFFMixtureStep` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:335`) is copied as the
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 2.4: the mixing probability measure `ν{k} ∝ (k+1)⁻²` on `ℕ`, its slice bounds and its almost sure transfer, and
+the fact that a mixture of whole-plane GFFs is a whole-plane GFF. The mixture step of Lemma 2.4 is stated as the
 definition `WholePlaneGFFMixtureStepLP` and PROVED here (`wholePlaneGFFMixtureStep_lp`), not assumed.
 
 Argument: `IsWholePlaneGFF` determines every finite-dimensional law of the admissible observables (a centred Gaussian vector with
@@ -14,7 +14,6 @@ covariance `wholePlaneGFFCov`, Mathlib's `IsGaussian.ext_covarianceBilinDual`). 
 under `ν ⊗ P` has the same finite-dimensional laws as the field at `k = 0`, which is the device behind the uniform
 Ding-Gwynne Lemma 3.8 of Berestycki-Powell (*Gaussian free field, Liouville quantum gravity and Gaussian multiplicative chaos*)
 for the rescaled fields `h^{(k)} = h^ℂ(2^{-k} ·) - h^ℂ_{2^{-k}}(0)`.
-The statement and the proof use no Harmonic-balls object.
 -/
 
 universe u
@@ -140,7 +139,7 @@ def obsVector (I : Finset GFFObservable.Admissible) (hC : (ℂ → ℝ) → ℝ)
     I → ℝ :=
   I.restrict fun o : GFFObservable.Admissible => o.1.eval hC hcirc
 
-/-- `IsWholePlaneGFF` determines the finite-dimensional laws (LP copy of `IsWholePlaneGFF.map_restrict_eq`). -/
+/-- `IsWholePlaneGFF` determines the finite-dimensional laws. -/
 theorem isWholePlaneGFF_map_restrict_eq {hC hC' : Ω → (ℂ → ℝ) → ℝ} {hcirc hcirc' : Ω → ℝ → ℂ → ℝ}
     (h : IsWholePlaneGFF P hC hcirc) (h' : IsWholePlaneGFF P hC' hcirc')
     (I : Finset GFFObservable.Admissible) :
@@ -206,7 +205,7 @@ theorem ae_prod_nat_of_forall [SFinite P] {ν : Measure ℕ} {p : ℕ → Ω →
     exact mem_iUnion.2 ⟨k, mem_singleton k, subset_toMeasurable P _ hx⟩
   · rw [Measure.prod_prod, hN, mul_zero]
 
-/-- The LP form of `WholePlaneGFFMixtureStep` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:335`). If `(hC k, hcirc k)` is a
+/-- The mixture step of Lemma 2.4. If `(hC k, hcirc k)` is a
 whole-plane GFF under `P` for every `k : ℕ`, and `ν` is a probability measure on `ℕ`, then `(k, ω) ↦ (hC k ω, hcirc k ω)`
 is a whole-plane GFF under `ν ⊗ P`. A definition, proved below. -/
 def WholePlaneGFFMixtureStepLP : Prop :=
@@ -214,7 +213,7 @@ def WholePlaneGFFMixtureStepLP : Prop :=
     (ν : Measure ℕ), IsProbabilityMeasure ν → (∀ k, IsWholePlaneGFF P (hC k) (hcirc k)) →
     IsWholePlaneGFF (ν.prod P) (fun x => hC x.1 x.2) (fun x => hcirc x.1 x.2)
 
-/-- `WholePlaneGFFMixtureStepLP` is proved (LP copy of `wholePlaneGFFMixtureStep_holds`). -/
+/-- `WholePlaneGFFMixtureStepLP` is proved. -/
 theorem wholePlaneGFFMixtureStep_lp : WholePlaneGFFMixtureStepLP.{u} := by
   intro Ω _ P hC hcirc ν hν hG
   have hP := (hG 0).isProbabilityMeasure

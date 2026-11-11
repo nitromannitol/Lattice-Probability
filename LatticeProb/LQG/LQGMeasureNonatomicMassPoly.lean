@@ -2,14 +2,14 @@ import Mathlib
 import LatticeProb.Gauss.GFF
 
 /-!
-# Events with polynomially high probability: LP form
+# Events with polynomially high probability
 
-LP copy of `HarmonicBalls/Proofs/Sec2/PolyHighProb.lean` (221 lines) for the LP predicate `PolyHighProb`
-(`LatticeProb/Gauss/GFF.lean`). Elementary closure properties: monotonicity, finite intersections, linear and
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 2.4, for the predicate `PolyHighProb` (module `LatticeProb.Gauss.GFF`). Elementary closure properties: monotonicity, finite intersections, linear and
 power reparametrization of the scale, the Borel-Cantelli lemma along the dyadic scales `ε = 2^{-k}`, and the union bound
 over the dyadic scales below a power of `r` (Berestycki-Powell, *Gaussian free field, Liouville quantum gravity and
 Gaussian multiplicative chaos*, for the polynomial high-probability convention; Duplantier-Sheffield 2011 for the dyadic
-scales). The statements use no Harmonic-balls object. Dot-notation lemmas of the HB file are plain names here.
+scales).
 -/
 
 namespace LatticeProb.LQG.LQGMeasureNonatomicMass

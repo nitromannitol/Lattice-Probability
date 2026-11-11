@@ -2,16 +2,16 @@ import Mathlib
 import LatticeProb.LQG.LQGMeasureNonatomic
 
 /-!
-# The universal non-atomicity input, LP form
+# The universal non-atomicity statement
 
-LP form of the HB statement `LQGMeasureNonatomicAll` (`HarmonicBalls/FirstPass/S11n/MeasureDecoder.lean:39`): for every
-whole-plane GFF model `(Ω, P, hC, hcirc)` and every `γ, α₀`, the LQG measure has no atom at any point almost surely. It is the
-universal form of the LP Proposition `LQGMeasureNonatomicLP` (`LatticeProb/LQG/LQGMeasureNonatomic.lean`, Fact 2.1 I of
-Bou-Rabee-Gwynne, arXiv:2208.11795, p. 9).
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Fact 2.1 I, in universal form: for every whole-plane GFF model `(Ω, P, hC, hcirc)` and every `γ, α₀`, the LQG measure has
+no atom at any point almost surely. It is the universal form of `LQGMeasureNonatomicLP` (module
+`LatticeProb.LQG.LQGMeasureNonatomic`; Fact 2.1 I of Bou-Rabee and Gwynne, arXiv:2208.11795, p. 9).
 
-PROVED from the LP forms of the literature inputs (hypotheses only): `WholePlaneLQGBallMassBoundsLP` (Ding-Gwynne 2020,
-Lemma 3.8), `LQGMeasureCoordChangeLP` at `α₀ = 0` and `LQGMeasureExistenceLP` (`LatticeProb/LQG/LQGMeasureInputs.lean`). The HB
-derivation is `HarmonicBalls.lqgMeasureNonatomicAll_of_inputs` (`FirstPass/Phase2/DerivedInputs15.lean:57`).
+PROVED from the forms of the literature inputs (hypotheses only): `WholePlaneLQGBallMassBoundsLP` (Ding and Gwynne 2020,
+Lemma 3.8), `LQGMeasureCoordChangeLP` at `α₀ = 0` and `LQGMeasureExistenceLP` (module `LatticeProb.LQG.LQGMeasureInputs`).
+The universal form is derived from these inputs.
 -/
 
 universe u
@@ -20,13 +20,13 @@ namespace LatticeProb.LQG
 
 open MeasureTheory
 
-/-- LP form of `LQGMeasureNonatomicAll` (`HarmonicBalls/FirstPass/S11n/MeasureDecoder.lean:39`): the universal form of the
-non-atomicity of `LQGMeasureNonatomicLP` for every whole-plane GFF model and every `γ, α₀`. -/
+/-- The universal form of the non-atomicity of `LQGMeasureNonatomicLP`, for every whole-plane GFF model and every
+`γ, α₀`. -/
 def LQGMeasureNonatomicAllLP : Prop :=
   ∀ (γ α₀ : ℝ) (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) (hC : Ω → (ℂ → ℝ) → ℝ)
     (hcirc : Ω → ℝ → ℂ → ℝ), LQGMeasureNonatomicLP P γ α₀ hC hcirc
 
-/-- `LQGMeasureNonatomicAllLP` from the LP literature inputs (LP copy of `lqgMeasureNonatomicAll_of_inputs`). -/
+/-- `LQGMeasureNonatomicAllLP` from the literature inputs. -/
 theorem lqgMeasureNonatomicAll_lp
     (hDG : ∀ (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) (γ : ℝ) (hC : Ω → (ℂ → ℝ) → ℝ)
       (hcirc : Ω → ℝ → ℂ → ℝ), WholePlaneLQGBallMassBoundsLP P γ hC hcirc)

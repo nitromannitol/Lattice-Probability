@@ -5,15 +5,16 @@ import LatticeProb.LQG.LQGMeasureNonatomicMassPoly
 import LatticeProb.LQG.LQGMeasureInputs
 
 /-!
-# Non-atomicity of the LQG measure off the origin from the multiscale mass bound: LP form
+# Non-atomicity of the LQG measure off the origin from the multiscale mass bound
 
-LP copy of `HarmonicBalls/Proofs/Sec6/WholePlaneNonatomic.lean`, lines 1-100 (the two statements used by the chain:
-`ae_wholePlane_nonatomic_of_scaledBallMass` and `ae_singular_nonatomic_off_origin_of_scaledBallMass`). The upper multiscale
-ball-mass bound `WholePlaneScaledBallMassStepLP` (`LQGMeasureNonatomicMassScaled.lean`) implies that the LQG measure of the
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Fact 2.1 I: the two statements of the chain, `ae_wholePlane_nonatomic_of_scaledBallMass` and
+`ae_singular_nonatomic_off_origin_of_scaledBallMass`. The upper multiscale
+ball-mass bound `WholePlaneScaledBallMassStepLP` (module `LatticeProb.LQG.LQGMeasureNonatomicMassScaled`) implies that the LQG measure of the
 whole-plane GFF has no atoms (Berestycki-Powell, *Gaussian free field, Liouville quantum gravity and Gaussian multiplicative
 chaos*); the singular LQG measure `μ_h` of `h = h^ℂ - α₀ log|·|` has no atom away from `0` by the Weyl relation
 `μ_h = |x|^{-γα₀} μ₀` on `ℂ \ {0}` (`singularWeightStep_lp`). The existence input is `LQGMeasureExistenceLP` at `α₀ = 0`
-(hypothesis only). The statements use no Harmonic-balls object.
+(hypothesis only).
 -/
 
 universe u
@@ -23,8 +24,7 @@ namespace LatticeProb.LQG.LQGMeasureNonatomicMass
 open MeasureTheory Metric Filter Set LatticeProb.Gauss LatticeProb.LQG
 open scoped Topology ENNReal
 
-/-- The multiscale whole-plane ball-mass bound implies almost sure non-atomicity of the whole-plane LQG measure (LP copy of
-`HarmonicBalls.Section6.ae_wholePlane_nonatomic_of_scaledBallMass`). -/
+/-- The multiscale whole-plane ball-mass bound implies almost sure non-atomicity of the whole-plane LQG measure. -/
 theorem ae_wholePlane_nonatomic_of_scaledBallMass
     (hS : WholePlaneScaledBallMassStepLP.{u})
     {Ω : Type u} [MeasurableSpace Ω] (P : Measure Ω) (γ : ℝ)
@@ -77,8 +77,7 @@ theorem ae_wholePlane_nonatomic_of_scaledBallMass
   filter_upwards [hω n] with k hk
   exact (measure_mono (singleton_subset_iff.mpr (mem_ball_self (by positivity)))).trans (hk z hz)
 
-/-- The singular LQG measure has no atom away from the logarithmic singularity (LP copy of
-`HarmonicBalls.Section6.ae_singular_nonatomic_off_origin_of_scaledBallMass`). The whole-plane multiscale estimate and the
+/-- The singular LQG measure has no atom away from the logarithmic singularity. The whole-plane multiscale estimate and the
 punctured-plane Weyl identity (`singularWeightStep_lp`) give it; the existence input `LQGMeasureExistenceLP` is used at `α₀ = 0`
 only. -/
 theorem ae_singular_nonatomic_off_origin_of_scaledBallMass

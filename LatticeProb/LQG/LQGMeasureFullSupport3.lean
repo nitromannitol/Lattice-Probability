@@ -7,15 +7,13 @@ import LatticeProb.LQG.LQGMeasureNonatomicMassScaled
 import LatticeProb.LQG.LQGMeasureNonatomicMassWeight
 
 /-!
-# The ball clause of Lemma 2.4 from the multiscale bound: LP form, part A
+# The ball clause of Lemma 2.4 from the multiscale bound, part A
 
-LP copy of `HarmonicBalls/Proofs/Sec2/BallMassReduction.lean` lines 36-290: the per-sample reduction of the ball-mass
-bounds, `ballMass_upper_of_scaled` (eq:ball-volume, upper bound) and `ballMass_lower_of_scaled` (lower bound), from
-the scaled multiscale bound `ScaledBallBound` at the scales `ε` and `ε/4` and the power weight `μ_h = |x|^e μ₀` off `0`
-(Berestycki-Powell; Lemma A.1 of the BG20 reference). The weight relation is taken as the hypothesis `hW`, so the file
-depends on Mathlib and `LQGMeasureFullSupport2` only.
-
-The LP names of the HB helpers are `ScaledBallBound`, `rpow_mul_div_rpow_eq`, `scaled_rpow_eq`, `exists_away_from_zero`.
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 2.4: the per-sample reduction of the ball-mass bounds, `ballMass_upper_of_scaled` (the upper bound of the
+ball-volume estimate) and `ballMass_lower_of_scaled` (the lower bound), from the scaled multiscale bound `ScaledBallBound`
+at the scales `ε` and `ε/4` and the power weight `μ_h = |x|^e μ₀` off `0` (Berestycki and Gwynne 2020, Lemma A.1).
+The weight relation is taken as the hypothesis `hW`.
 -/
 
 namespace LatticeProb.LQG
@@ -70,7 +68,7 @@ theorem exists_away_from_zero (z : ℂ) {ε : ℝ} (hε : 0 < ε) :
 
 variable {m m₀ : Measure ℂ} {e G βp₀ βm₀ ζ R R₁ ε : ℝ}
 
-/-- Upper bound of eq:ball-volume for one sample: `μ_h(B_ε(z)) ≤ max(C₁ ε^{β⁺₀-ζ}, C₂ ε^{(1-ζ)(G₁+e)})`. -/
+/-- Upper bound in the ball-volume estimate of Lemma 2.4, for one sample: `μ_h(B_ε(z)) ≤ max(C₁ ε^{β⁺₀-ζ}, C₂ ε^{(1-ζ)(G₁+e)})`. -/
 theorem ballMass_upper_of_scaled
     (hW : m.restrict {0}ᶜ = (m₀.withDensity fun x => ENNReal.ofReal (‖x‖ ^ e)).restrict {0}ᶜ)
     (h0 : m {0} = 0) (hε : 0 < ε) (hε1 : ε < 1) (hζ1 : ζ < 1) (hR₁ : R ≤ R₁) (h1R₁ : 1 ≤ R₁)
@@ -175,7 +173,7 @@ theorem ballMass_upper_of_scaled
                 gcongr
             _ = _ := by ring
 
-/-- Lower bound of eq:ball-volume for one sample:
+/-- Lower bound in the ball-volume estimate of Lemma 2.4, for one sample:
 `μ_h(B_ε(z)) ≥ min(c₁ ε^{β⁻₀+ζ}, (ε/4)^{max(e,0) + (1-ζ)G + ζβ⁻₀ + ζ})`. -/
 theorem ballMass_lower_of_scaled
     (hW : m.restrict {0}ᶜ = (m₀.withDensity fun x => ENNReal.ofReal (‖x‖ ^ e)).restrict {0}ᶜ)
@@ -278,14 +276,14 @@ theorem ballMass_lower_of_scaled
       _ ≤ m (ball w (ε / 4)) := le_measure_of_le_rpow_norm hW measurableSet_ball h0A hweight
       _ ≤ m (ball z ε) := measure_mono hsub
 
-/-! ### The reduction of Lemma 2.4 (ball clause) and of I2, I1 to the scaled step -/
+/-! ### The reduction of Lemma 2.4 (ball clause), of volume growth and of full support, to the scaled step -/
 
 section Scaled
 
 open LatticeProb.Gauss LatticeProb.LQG.LQGMeasureNonatomicMass
 
-/-- Reduction for Lemma 2.4 (LP form of `HarmonicBalls/Proofs/Sec2/BallMassReduction.lean:290`):
-`LiouvilleBallMassBoundStepLP` (eq:ball-volume on every `B_R` with the exponent ranges of [C1]) from the multiscale ball
+/-- Reduction for Lemma 2.4: `LiouvilleBallMassBoundStepLP` (the ball-volume estimate on every `B_R`, with the exponent
+ranges of its statement) from the multiscale ball
 bound for `h^ℂ` (`WholePlaneScaledBallMassStepLP`, hypothesis `hS`), the singular weight `μ_h = |x|^{-γα₀} μ_{h^ℂ}` off `0`
 (`singularWeightStep_lp`, proved), the existence of `μ_{h^ℂ}` on the same probability space (`hE`, at `α₀ = 0`) and
 `μ_h({0}) = 0` (`hN`, `LQGMeasureNonatomicLP`). -/
@@ -382,7 +380,8 @@ theorem liouvilleBallMassBoundStep_of_scaled_lp
   · exact (ballMass_upper_of_scaled hWω h0ω hε.1 hε.2 hζ1 (by linarith) (by linarith) hp3.le hz3 hε₅ hε₆
       hF hFj hz).trans (ENNReal.ofReal_le_ofReal (max_le hε₁ hε₂))
 
-/-- I2 (`LQGVolumeGrowthAllScalesStmtLP`) from the scaled step `hS`, the existence `hE` and the non-atomicity `hN`. -/
+/-- Volume growth at all small scales (`LQGVolumeGrowthAllScalesStmtLP`) from the scaled step `hS`, the existence `hE`
+and the non-atomicity `hN`. -/
 theorem lqgVolumeGrowthAllScalesStmt_of_scaled_lp
     (hS : WholePlaneScaledBallMassStepLP.{u})
     (hE : ∀ (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) (γ : ℝ) (hC : Ω → (ℂ → ℝ) → ℝ)
@@ -392,9 +391,9 @@ theorem lqgVolumeGrowthAllScalesStmt_of_scaled_lp
     LQGVolumeGrowthAllScalesStmtLP.{u} :=
   lqgVolumeGrowthAllScalesStmt_of_ballMass_lp (liouvilleBallMassBoundStep_of_scaled_lp hS hE hN)
 
-/-- I1 (`LQGMeasureFullSupportStmtLP`, the LP form of the full-support statement) from the scaled step
-`hS`, the existence `hE` and the non-atomicity `hN`. The singular-weight input of the HB route
-(`hW : LQGMeasureWeylScaling`) is discharged by the proved `singularWeightStep_lp`, so it is not a hypothesis here. -/
+/-- Full support of the LQG measure (`LQGMeasureFullSupportStmtLP`) from the scaled step
+`hS`, the existence `hE` and the non-atomicity `hN`. The singular-weight (Weyl scaling) input of the source route is
+discharged by the proved `singularWeightStep_lp`, so it is not a hypothesis here. -/
 theorem lqgMeasureFullSupportStmt_of_scaled_lp
     (hS : WholePlaneScaledBallMassStepLP.{u})
     (hE : ∀ (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) (γ : ℝ) (hC : Ω → (ℂ → ℝ) → ℝ)

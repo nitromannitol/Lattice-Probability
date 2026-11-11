@@ -3,15 +3,12 @@ import LatticeProb.LQG.LQGMeasure
 import LatticeProb.Gauss.GFF
 
 /-!
-# LP derivation of the profile-decoder measurability 
+# Measurability of the LQG measure as a function of its circle-average profile
 
-LP copy of the binder-free derivation `HarmonicBalls.lqgMeasureOfProfileMeasurable_derived`
-(`HarmonicBalls/FirstPass/Phase2/ProfileDecoderDerived.lean:401`, with the auxiliary lemmas of
-`HarmonicBalls/FirstPass/Phase2/MassFunctionalDerived.lean`), for the LP definitions of
-`LatticeProb/Gauss/GFF.lean` and `LatticeProb/LQG/LQGMeasure.lean` only. The statement
-`LQGMeasureOfProfileMeasurableLP` is the LP form of `LQGMeasureOfProfileMeasurableFrozen`
-(`HarmonicBalls/FirstPass/Frozen/S8d.lean:33`): same binders, quantifiers and conclusion.
-The bridge to the HB Prop is in `HarmonicBalls/FirstPass/LPBridge/LQGMeasureDerived.lean`.
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity,
+arXiv:2208.11795], Fact 2.1. The argument uses only the definitions of `LatticeProb.Gauss.GFF`
+and `LatticeProb.LQG.LQGMeasure`. The statement `LQGMeasureOfProfileMeasurableLP` has the same
+binders, quantifiers and conclusion as the profile-decoder measurability statement of the source.
 -/
 
 noncomputable section
@@ -27,7 +24,8 @@ open LatticeProb.Gauss
 
 namespace ProfileDerived
 
-/-- The LP form of `LQGMeasureOfProfileMeasurableFrozen` (`FirstPass/Frozen/S8d.lean:33`). -/
+/-- Measurability of the LQG measure of a whole-plane Gaussian free field as a function of its circle-average
+profile: the measure is almost surely equal to `Dec` applied to the profile, for a measurable decoder `Dec`. -/
 def LQGMeasureOfProfileMeasurableLP : Prop :=
   ∀ (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P] (γ α : ℝ)
     (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) (μ : Ω → Measure ℂ)
@@ -248,7 +246,7 @@ def limFunctional (ν : ℕ → Measure ℂ) (hν : ∀ k, IsLocallyFiniteMeasur
 instance : LocallyCompactSpace (Set.Ioi (0 : ℝ)) :=
   isOpen_Ioi.locallyCompactSpace
 
-/-! ### Auxiliary lemmas (copied from `MassFunctionalDerived.lean`, LP names) -/
+/-! ### Auxiliary lemmas -/
 
 /-- The positive dyadic scale `2^{-k}`. -/
 theorem dyadicScale_pos (k : ℕ) : 0 < dyadicScale k := pow_pos (by norm_num) k
@@ -272,7 +270,7 @@ theorem isLocallyFiniteMeasure_lqgApprox (γ : ℝ) {hε : ℝ → ℂ → ℝ} 
   exact IsLocallyFiniteMeasure.withDensity_ofReal
     (continuous_const.mul (Real.continuous_exp.comp (continuous_const.mul hc)))
 
-/-- Uniqueness of the LQG limit (copy of `IsLQGLimit.unique`, `Defs/LQG.lean:107`). -/
+/-- Uniqueness of the LQG limit. -/
 theorem isLQGLimit_unique {γ : ℝ} {hε : ℝ → ℂ → ℝ} {m m' : Measure ℂ} (h : IsLQGLimit γ hε m)
     (h' : IsLQGLimit γ hε m') : m = m' := by
   have := h.isLocallyFiniteMeasure
@@ -281,7 +279,7 @@ theorem isLQGLimit_unique {γ : ℝ} {hε : ℝ → ℂ → ℝ} {m m' : Measure
   exact tendsto_nhds_unique (h.tendsto_integral f f.continuous f.hasCompactSupport)
     (h'.tendsto_integral f f.continuous f.hasCompactSupport)
 
-/-! ### Auxiliary lemmas from `Proofs/Sec5/OpenMeasureLaw.lean` (LP names) -/
+/-! ### Auxiliary lemmas on open measures -/
 
 theorem exists_open_mass_test_functions {U : Set ℂ} (hU : IsOpen U) :
     ∃ f : ℕ → ℂ → ℝ,
@@ -355,7 +353,7 @@ theorem measurable_measure_of_isOpen {Ω : Type*} [MeasurableSpace Ω]
   simp_rw [heq]
   exact Measurable.iSup fun n => (Measure.measurable_coe hS).comp (hres n)
 
-/-! ### Auxiliary lemmas from `Proofs/GFF/CommonContinuousCircleLQGVersion.lean` (LP names) -/
+/-! ### Auxiliary lemmas on circle averages -/
 
 theorem ae_circle_map_eq_raw
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
@@ -570,8 +568,7 @@ theorem isLQGLimit_decoder (T : TestFamily) (γ α : ℝ) {y : C(CircleParameter
     decoderFunctional_of_mem hy]
   exact tendsto_nhds_limUnder (conv_of_mem T γ α hy ⟨⟨f, hf⟩, hfc⟩)
 
-/-- The derivation of `LQGMeasureOfProfileMeasurableLP` (LP copy of `lqgMeasureOfProfileMeasurable_derived`,
-`FirstPass/Phase2/ProfileDecoderDerived.lean:401`). -/
+/-- Proof of `LQGMeasureOfProfileMeasurableLP`. -/
 theorem lqgMeasureOfProfileMeasurable_lp : LQGMeasureOfProfileMeasurableLP.{u} := by
   intro Ω _ P _ γ α hC hcirc μ F hh hμ hFm hF
   obtain ⟨T⟩ := exists_testFamily

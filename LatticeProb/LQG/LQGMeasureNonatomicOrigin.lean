@@ -3,12 +3,12 @@ import LatticeProb.LQG.LQGWeylScaling
 import LatticeProb.LQG.LQGMeasureInputs
 
 /-!
-# Non-atomicity at the logarithmic singularity: LP form (chain)
+# Non-atomicity at the logarithmic singularity (chain)
 
-LP copy of the origin part of the non-atomicity argument: `HarmonicBalls/Proofs/Sec6/SingularityOriginNonatomic.lean`
-(lines 1-93) and its comparison lemma `HarmonicBalls/Proofs/Sec6/LQGLimitComparison.lean` (lines 1-88), with the LP
-names `IsWholePlaneGFF`, `IsLQGLimit`, `IsLQGMeasureOfField`, `lqgApprox`, `fieldCircleAverage`, `addCircleAverage`,
-`dyadicScale`, `lqgQ`, `LQGMeasureExistenceLP` (`LatticeProb/LQG/LQGMeasureInputs.lean`).
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Fact 2.1 I: the origin part of the non-atomicity argument, together with its comparison lemma for vague limits. The
+statements use the names `IsWholePlaneGFF`, `IsLQGLimit`, `IsLQGMeasureOfField`, `lqgApprox`, `fieldCircleAverage`,
+`addCircleAverage`, `dyadicScale`, `lqgQ` and `LQGMeasureExistenceLP` (module `LatticeProb.LQG.LQGMeasureInputs`).
 
 Content: a locally finite vague limit with a stronger logarithmic singularity has no atom at `0`, so an LQG measure of
 strength `α` has no atom at `0` when existence holds at a strictly larger strength `β ∈ (α, Q)` (Duplantier-Sheffield 2011,
@@ -25,8 +25,7 @@ open LatticeProb.LQG.LQGWeylScalingDerived (isLQGLimit_addCircleAverage ae_conti
 
 namespace LatticeProb.LQG.LQGMeasureNonatomicOrigin
 
-/-- Local inequalities on nonnegative continuous test functions imply the same inequality for compact sets
-(LP copy of `HarmonicBalls.Section6.measure_compact_le_of_integral_le_of_tsupport_subset`). -/
+/-- Local inequalities on nonnegative continuous test functions imply the same inequality for compact sets. -/
 theorem measure_compact_le_of_integral_le_of_tsupport_subset
     {U : Set ℂ} (hU : IsOpen U) {ν ν' : Measure ℂ}
     [IsLocallyFiniteMeasure ν] [IsLocallyFiniteMeasure ν']
@@ -65,7 +64,7 @@ theorem measure_compact_le_of_integral_le_of_tsupport_subset
     _ ≤ ν' V := measure_mono inter_subset_left
 
 /-- If the regularized fields are eventually ordered on each compact subset of an open set, their vague-limit
-measures are ordered on compact subsets (LP copy of `HarmonicBalls.Section6.isLQGLimit_measure_compact_le`). -/
+measures are ordered on compact subsets. -/
 theorem isLQGLimit_measure_compact_le {γ : ℝ} (hγ : 0 ≤ γ)
     {hε hε' : ℝ → ℂ → ℝ} {m m' : Measure ℂ}
     (hm : IsLQGLimit γ hε m) (hm' : IsLQGLimit γ hε' m')
@@ -126,8 +125,7 @@ theorem fieldCircleAverage_eq_log (α₀ : ℝ) (hcirc : ℝ → ℂ → ℝ) {r
   rw [fieldCircleAverage, circleAverage_log_norm_eq hr, hmax]
 
 /-- A locally finite LQG limit with a stronger logarithmic singularity forces any weaker singularity, formed from the
-same circle averages, to have no atom at zero (LP copy of
-`HarmonicBalls.Section6.origin_nonatomic_of_stronger_singularity`). -/
+same circle averages, to have no atom at zero. -/
 theorem origin_nonatomic_of_stronger_singularity
     {γ α β : ℝ} (hγ : 0 < γ) (hαβ : α < β)
     (hcirc : ℝ → ℂ → ℝ) (μ ν : Measure ℂ)
@@ -191,7 +189,7 @@ theorem origin_nonatomic_of_stronger_singularity
   exact hz.resolve_right hmfin
 
 /-- Existence at any strictly larger subcritical singularity `β ∈ (α, Q)` removes the atom at zero of the LQG measure of
-strength `α` (LP copy of `HarmonicBalls.Section6.ae_origin_nonatomic_of_stronger_existence`). The existence input is
+strength `α`. The existence input is
 `LQGMeasureExistenceLP` at `β`, used only as a hypothesis. -/
 theorem ae_origin_nonatomic_of_stronger_existence
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (γ α β : ℝ)

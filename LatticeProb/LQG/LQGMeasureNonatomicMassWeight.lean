@@ -3,18 +3,17 @@ import LatticeProb.LQG.LQGMeasureNonatomicMassLocality
 import LatticeProb.LQG.LQGWeylScaling
 
 /-!
-# The log singularity of `h = h^ℂ - α₀ log |·|` off the origin: LP form
+# The log singularity of `h = h^ℂ - α₀ log |·|` off the origin
 
-LP copy of `HarmonicBalls/Proofs/Sec2/SingularWeight.lean` (99 lines). The Step `SingularWeightStep`
-(`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:277`) is copied as the definition `SingularWeightStepLP` and PROVED here
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 2.4. The singular weight step of Lemma 2.4 is stated as the definition `SingularWeightStepLP` and PROVED here
 (`singularWeightStep_lp`). The Weyl scaling of the LQG measure of `h^ℂ` (Fact 2.1 III, Duplantier-Sheffield 2011 and
-Berestycki-Powell) is the PROVED LP result `lqgMeasureWeylScaling_lp` (`LatticeProb/LQG/LQGWeylScaling.lean`), used with no
-hypothesis (the HB proof takes it as the Proposed input `LQGMeasureWeylScaling`).
+Berestycki-Powell) is the proved result `lqgMeasureWeylScaling_lp` (module `LatticeProb.LQG.LQGWeylScaling`), used with no
+hypothesis.
 
-Argument (as in the HB docstring): for `η > 0`, `f_η = -α₀ log max(|·|, η)` is continuous and equals `-α₀ log |·|` on
+Argument: for `η > 0`, `f_η = -α₀ log max(|·|, η)` is continuous and equals `-α₀ log |·|` on
 circles inside `{|x| > η}`; the circle averages of `h^ℂ + f_η` and of `h` agree on compacts of `{|x| > η}` at small scales, so
 the vague limits agree there (`isLQGLimit_restrict_eq`); on `{|x| > η}`, `e^{γ f_η(x)} = |x|^{-γα₀}`. Union over `η = 1/(n+1)`.
-The statements use no Harmonic-balls object.
 -/
 
 universe u
@@ -25,7 +24,7 @@ open MeasureTheory Filter Topology Set Metric LatticeProb.Gauss LatticeProb.LQG
 open LatticeProb.LQG.ProfileDerived (dyadicScale_pos)
 open LatticeProb.LQG.LQGWeylScalingDerived (lqgMeasureWeylScaling_lp)
 
-/-- LP form of `SingularWeightStep` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:277`). A definition; proved below. -/
+/-- The singular weight step of Lemma 2.4. A definition; proved below. -/
 def SingularWeightStepLP : Prop :=
   ∀ γ α₀ : ℝ, 0 < γ → γ < 2 → α₀ < lqgQ γ →
   ∀ (Ω : Type u) [MeasurableSpace Ω] (P : Measure Ω) (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ)
@@ -35,7 +34,7 @@ def SingularWeightStepLP : Prop :=
       ((μ₀ ω).withDensity fun x => ENNReal.ofReal (‖x‖ ^ (-(γ * α₀)))).restrict {0}ᶜ
 
 /-- Per sample: the Weyl-scaling identities for `μ₀` (all continuous `f`) and the defining vague limit of `μ_h` give
-`μ_h = |x|^{-γα₀} μ₀` on `ℂ \ {0}` (LP copy of `HarmonicBalls.restrict_compl_zero_eq_withDensity`). -/
+`μ_h = |x|^{-γα₀} μ₀` on `ℂ \ {0}`. -/
 theorem restrict_compl_zero_eq_withDensity {γ α₀ : ℝ} {hc : ℝ → ℂ → ℝ} {m m₀ : Measure ℂ}
     (hm : IsLQGLimit γ (fieldCircleAverage α₀ hc) m)
     (hW : ∀ f : ℂ → ℝ, Continuous f → IsLQGLimit γ (addCircleAverage (fieldCircleAverage 0 hc) f)
@@ -97,8 +96,7 @@ theorem restrict_compl_zero_eq_withDensity {γ α₀ : ℝ} {hc : ℝ → ℂ �
   rw [hcover]
   exact Measure.restrict_iUnion_congr.2 hU
 
-/-- `SingularWeightStepLP` is proved from the Weyl scaling `lqgMeasureWeylScaling_lp` for the field `h^ℂ` (`α₀ = 0`)
-(LP copy of `HarmonicBalls.singularWeightStep_of_weyl`, with no hypothesis). -/
+/-- `SingularWeightStepLP` is proved from the Weyl scaling `lqgMeasureWeylScaling_lp` for the field `h^ℂ` (`α₀ = 0`), with no hypothesis. -/
 theorem singularWeightStep_lp : SingularWeightStepLP.{u} := by
   intro γ α₀ hγ hγ2 hα₀ Ω _ P hC hcirc μ μ₀ hGFF hμ hμ₀
   have hQ : (0 : ℝ) < lqgQ γ := by unfold lqgQ; positivity

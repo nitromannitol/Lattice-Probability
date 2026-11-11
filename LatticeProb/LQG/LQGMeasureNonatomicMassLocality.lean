@@ -2,13 +2,13 @@ import Mathlib
 import LatticeProb.LQG.LQGMeasure
 
 /-!
-# Deterministic locality of the vague LQG limit: LP form
+# Deterministic locality of the vague LQG limit
 
-LP copy of `HarmonicBalls/Proofs/Sec2/LQGLimitLocality.lean` (111 lines). `IsLQGLimit γ hε m` is the deterministic vague-limit
-statement defining the LQG measure (Duplantier-Sheffield 2011, Prop. 1.1; `LatticeProb/LQG/LQGMeasure.lean`). Two elementary
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Fact 2.1 II. `IsLQGLimit γ hε m` is the deterministic vague-limit
+statement defining the LQG measure (Duplantier-Sheffield 2011, Prop. 1.1; module `LatticeProb.LQG.LQGMeasure`). Two elementary
 properties: if two circle-average families agree at all small dyadic scales on each compact subset of an open set `U`,
-then their vague limits agree on `U` (`isLQGLimit_restrict_eq`), and the measures of compact sets are ordered accordingly.
-The statements use no Harmonic-balls object.
+then their vague limits agree on `U` (`isLQGLimit_restrict_eq`), and the measures of compact sets are ordered accordingly..
 -/
 
 namespace LatticeProb.LQG.LQGMeasureNonatomicMass
@@ -16,7 +16,7 @@ namespace LatticeProb.LQG.LQGMeasureNonatomicMass
 open MeasureTheory Filter Topology Set
 
 /-- If `ν`, `ν'` are locally finite and agree on integrals of continuous compactly supported functions with `tsupport ⊆ U`,
-then `ν K ≤ ν' K` for compact `K ⊆ U` (LP copy of `HarmonicBalls.measure_le_of_integral_eq_of_tsupport_subset`). -/
+then `ν K ≤ ν' K` for compact `K ⊆ U`. -/
 theorem measure_le_of_integral_eq_of_tsupport_subset {U : Set ℂ} (hU : IsOpen U) {ν ν' : Measure ℂ}
     [IsLocallyFiniteMeasure ν] [IsLocallyFiniteMeasure ν']
     (h : ∀ f : ℂ → ℝ, Continuous f → HasCompactSupport f → tsupport f ⊆ U → ∫ x, f x ∂ν = ∫ x, f x ∂ν')
@@ -57,7 +57,7 @@ theorem measure_le_of_integral_eq_of_tsupport_subset {U : Set ℂ} (hU : IsOpen 
     _ ≤ ν' V := measure_mono inter_subset_left
 
 /-- Two locally finite measures on `ℂ` with the same integrals of the continuous compactly supported functions supported in an
-open set `U` agree on `U` (LP copy of `HarmonicBalls.restrict_eq_of_integral_eq_of_tsupport_subset`). -/
+open set `U` agree on `U`. -/
 theorem restrict_eq_of_integral_eq_of_tsupport_subset {U : Set ℂ} (hU : IsOpen U) {ν ν' : Measure ℂ}
     [IsLocallyFiniteMeasure ν] [IsLocallyFiniteMeasure ν']
     (h : ∀ f : ℂ → ℝ, Continuous f → HasCompactSupport f → tsupport f ⊆ U → ∫ x, f x ∂ν = ∫ x, f x ∂ν') :
@@ -83,7 +83,7 @@ theorem restrict_eq_of_integral_eq_of_tsupport_subset {U : Set ℂ} (hU : IsOpen
     rw [Measure.restrict_apply hV.measurableSet, Measure.restrict_apply hV.measurableSet]
     exact hopen V hV
 
-/-- **Locality of the LQG limit** (LP copy of `HarmonicBalls.IsLQGLimit.restrict_eq`). If two circle-average functions agree, at
+/-- **Locality of the LQG limit.** If two circle-average functions agree, at
 all small dyadic scales, on every compact subset of an open set `U`, then their vague limits agree on `U`. -/
 theorem isLQGLimit_restrict_eq {γ : ℝ} {hε hε' : ℝ → ℂ → ℝ} {m m' : Measure ℂ}
     (hm : IsLQGLimit γ hε m) (hm' : IsLQGLimit γ hε' m') {U : Set ℂ} (hU : IsOpen U)

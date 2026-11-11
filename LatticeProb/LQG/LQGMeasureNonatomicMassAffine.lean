@@ -2,17 +2,17 @@ import Mathlib
 import LatticeProb.LQG.LQGMeasureInputs
 
 /-!
-# The whole-plane GFF and its LQG measure under a complex affine map: LP form
+# The whole-plane GFF and its LQG measure under a complex affine map
 
-LP copy of `HarmonicBalls/Proofs/Sec2/AffineField.lean` (lines 1-97). For `a ∈ ℂ ∖ {0}` and `b ∈ ℂ`, the field
-`h^ℂ(a · + b) - h^ℂ_{|a|}(b)` is a whole-plane GFF (`wholePlaneGFFAffineInvariance_lp`, LatticeProb/Gauss/GFFAffineInvariance.lean).
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Fact 2.1 III and IV. For `a ∈ ℂ ∖ {0}` and `b ∈ ℂ`, the field
+`h^ℂ(a · + b) - h^ℂ_{|a|}(b)` is a whole-plane GFF (`wholePlaneGFFAffineInvariance_lp`, module `LatticeProb.Gauss.GFFAffineInvariance`).
 Its LQG measure is `e^{-γ (h^ℂ_{|a|}(b) + Q log |a|)} μ₀((· - b)/a)⁻¹` (the coordinate change of Duplantier-Sheffield 2011,
 Prop. 2.1, and Sheffield-Wang 2016, Theorem 1.1, as the literature hypothesis `LQGMeasureCoordChangeLP` at `α₀ = 0`;
 the additive constant of `IsLQGLimit`), and on balls it reads `e^{-γ (h^ℂ_{|a|}(b) + Q log |a|)} μ₀(B_{|a| r}(a w + b))`.
 These are the rescalings of Fact 2.1 IV used for Lemma 2.4 of Bou-Rabee-Gwynne.
 
-The only literature input is `LQGMeasureCoordChangeLP` (LatticeProb/LQG/LQGMeasureInputs.lean), used as a hypothesis.
-The statement and the proof use no Harmonic-balls object.
+The only literature input is `LQGMeasureCoordChangeLP` (module `LatticeProb.LQG.LQGMeasureInputs`), used as a hypothesis.
 -/
 
 namespace LatticeProb.LQG.LQGMeasureNonatomicMass
@@ -20,7 +20,7 @@ namespace LatticeProb.LQG.LQGMeasureNonatomicMass
 open MeasureTheory Metric Filter Set Topology LatticeProb.Gauss LatticeProb.LQG
 open scoped ENNReal
 
-/-- Adding a constant `c` to the circle averages multiplies the LQG limit by `e^{γc}` (LP copy of `IsLQGLimit.add_const`). -/
+/-- Adding a constant `c` to the circle averages multiplies the LQG limit by `e^{γc}`. -/
 theorem isLQGLimit_add_const {γ : ℝ} {hε : ℝ → ℂ → ℝ} {m : Measure ℂ} (h : IsLQGLimit γ hε m) (c : ℝ) :
     IsLQGLimit γ (fun ε z => hε ε z + c) (ENNReal.ofReal (Real.exp (γ * c)) • m) := by
   have hm := h.isLocallyFiniteMeasure
@@ -81,8 +81,7 @@ theorem affineMeasure_ball (γ : ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) (μ�
 theorem fieldCircleAverage_zero_lp (hcirc : ℝ → ℂ → ℝ) : fieldCircleAverage 0 hcirc = hcirc := by
   funext r z; simp [fieldCircleAverage]
 
-/-- The LQG measure of the affine image of the field (`α₀ = 0`), from the literature input `LQGMeasureCoordChangeLP`
-(LP copy of `HarmonicBalls.isLQGMeasureOfField_affine`). -/
+/-- The LQG measure of the affine image of the field (`α₀ = 0`), from the literature input `LQGMeasureCoordChangeLP`. -/
 theorem isLQGMeasureOfField_affine [MeasurableSpace Ω] {P : Measure Ω} {γ : ℝ} {hC : Ω → (ℂ → ℝ) → ℝ}
     {hcirc : Ω → ℝ → ℂ → ℝ} {μ₀ : Ω → Measure ℂ} (hCC : LQGMeasureCoordChangeLP P γ 0 hC hcirc)
     (hGFF : IsWholePlaneGFF P hC hcirc) (hγ : 0 < γ) (hγ2 : γ < 2)

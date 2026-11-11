@@ -6,15 +6,15 @@ import LatticeProb.LQG.LQGMeasureLocality
 
 /-! # Square measurability of the γ-Liouville quantum gravity area measure
 
-. General statement in LP and Mathlib terms of the
-measurability of the LQG area measure on closed dyadic squares (the HB Prop `LQGMeasureSquareMeasurableFrozen`,
-`HarmonicBalls/FirstPass/Frozen/S11c.lean:117`). The HB form is obtained in `HarmonicBalls/FirstPass/LPBridge/LQGMeasureSquare.lean` (bridges may import HB; LP files may not).
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 11.10 (the measurability of the LQG area measure on closed dyadic squares). The general statement is given in
+terms of this library and Mathlib.
 
-Route (the argument of `HarmonicBalls.lqgMeasureSquareMeasurable_derived`, `FirstPass/Phase2/SquareMeasurableDerived.lean`,
-restated without HB objects):
+Route (the argument of the source, restated in this library's terms):
 
 1. Locality of the γ-LQG measure (Duplantier-Sheffield 2011, Prop. 1.1 and the locality property of the Gaussian
-   multiplicative chaos; Berestycki-Powell, GFF/LQG/GMC notes): the input `LQGLocality` says that for every open `U`, the mass
+   multiplicative chaos; Berestycki-Powell, *Gaussian free field, Liouville quantum gravity and Gaussian multiplicative
+   chaos*): the input `LQGLocality` says that for every open `U`, the mass
    `μ(U)` is a.s. equal to a `σ(h|_U)`-measurable random variable. It is a hypothesis of the statements below.
 2. Hence the open-set masses are a.e. measurable in the ambient σ-algebra (`aemeasurable_lqgMeasure_open`).
 3. Pure measure theory, with no LQG content: for a random locally finite measure whose open-set masses are a.e.
@@ -22,9 +22,9 @@ restated without HB objects):
    open sets along a π-system, and monotone limits along balls `B(0, n)`).
 4. A closed dyadic square is closed, hence Borel (`isClosed_of_isClosedDyadicSquare`).
 
-No statement, hypothesis or conclusion of the source is changed. The γ-LQG definitions are those of
-`LatticeProb/LQG/LQGMeasure.lean` (`LatticeProb.LQG.IsLQGMeasureOfField`), the field layer those of
-`LatticeProb/Gauss/GFF.lean` (`LatticeProb.Gauss.IsWholePlaneGFF`, `fieldSigmaAlgebra`).
+The γ-LQG definitions are those of module `LatticeProb.LQG.LQGMeasure` (`LatticeProb.LQG.IsLQGMeasureOfField`),
+and the whole-plane field layer is that of module `LatticeProb.Gauss.GFF` (`LatticeProb.Gauss.IsWholePlaneGFF`,
+`fieldSigmaAlgebra`).
 -/
 
 open LatticeProb.Gauss
@@ -116,7 +116,7 @@ theorem aemeasurable_lqgMeasure_open {Ω : Type*} [MeasurableSpace Ω] {P : Meas
   exact ((hY.mono (fieldSigmaAlgebra_le_ambient hGFF α₀ U) le_rfl).aemeasurable.congr
     (heq.mono fun _ h => h.symm))
 
-/-- **LP general statement (Borel sets).** Under locality, the γ-LQG area measure `μ` of the field `h = h^ℂ - α₀ log |·|`
+/-- **General statement (Borel sets).** Under locality, the γ-LQG area measure `μ` of the field `h = h^ℂ - α₀ log |·|`
 gives an a.e. measurable mass `ω ↦ μ_ω(A)` to every Borel set `A ⊆ ℂ`. -/
 theorem aemeasurable_lqgMeasure_borel {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {γ α₀ : ℝ}
     {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} {μ : Ω → Measure ℂ}
@@ -136,8 +136,8 @@ theorem isClosed_of_isClosedDyadicSquare {S : Set ℂ} (hS : LatticeProb.Topolog
   unfold LatticeProb.Topology.closedDyadicSquare
   exact isClosed_Icc.reProdIm isClosed_Icc
 
-/-- **LP general statement (closed dyadic squares).** Under locality, the γ-LQG area measure gives an a.e. measurable
-mass `ω ↦ μ_ω(S)` to every closed dyadic square `S` (the LP form of `LQGMeasureSquareMeasurableFrozen`). -/
+/-- **General statement (closed dyadic squares).** Under locality, the γ-LQG area measure gives an a.e. measurable
+mass `ω ↦ μ_ω(S)` to every closed dyadic square `S`. -/
 theorem aemeasurable_lqgMeasure_closedDyadicSquare {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {γ α₀ : ℝ}
     {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} {μ : Ω → Measure ℂ}
     (hγ : 0 < γ) (hγ2 : γ < 2) (hα : α₀ < lqgQ γ)
@@ -148,9 +148,9 @@ theorem aemeasurable_lqgMeasure_closedDyadicSquare {Ω : Type*} [MeasurableSpace
 
 /-- **Square measurability without the locality hypothesis (circle-average link form).** The locality hypothesis of
 `aemeasurable_lqgMeasure_closedDyadicSquare` is replaced by the GFF-relativised circle-average link `hlink`
-(`LQGCircleAverageLink`, LP form), from which locality follows by `lqgLocality_of_circleLink`
-(`LatticeProb/LQG/LQGMeasureLocality.lean`). The unconditional link is NOT proved here: its HB derivation
-`HarmonicBalls.lqgCircleAverageLocalityLink_derived` needs `wholePlaneCircleAverageLimit_derived`, which is not copied here. -/
+(`LQGCircleAverageLink`), from which locality follows by `lqgLocality_of_circleLink` (module
+`LatticeProb.LQG.LQGMeasureLocality`). The unconditional link is NOT proved here; under the whole-plane GFF premise it is
+proved in the module `LatticeProb.LQG.LQGMeasureLocality2`. -/
 theorem aemeasurable_lqgMeasure_closedDyadicSquare_of_circleLink {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {γ α₀ : ℝ} {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} {μ : Ω → Measure ℂ}
     (hγ : 0 < γ) (hγ2 : γ < 2) (hα : α₀ < lqgQ γ)

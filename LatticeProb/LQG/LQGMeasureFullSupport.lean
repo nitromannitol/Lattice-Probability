@@ -4,16 +4,17 @@ import LatticeProb.LQG.LQGMeasure
 import LatticeProb.LQG.LQGMeasureNonatomicMassPoly
 
 /-!
-# Volume growth at all small scales and full support: LP form
+# Volume growth at all small scales and full support
 
-LP copy of `HarmonicBalls/Steps/Sec2/VolumeGrowth.lean` lines 60-260 (the ball-mass event of eq:ball-volume, its window
-lemma, I2 from the step `LiouvilleBallMassBoundStep` and I1 from I2), with the LP predicates `IsWholePlaneGFF`,
-`IsLQGMeasureOfField` and `PolyHighProb`.
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 2.4 and the full-support property of the LQG measure, which that paper states informally. The file covers the
+ball-mass event of the ball-volume estimate of Lemma 2.4 (with its window lemma), the volume growth at all small scales
+derived from the step of Lemma 2.4, and full support, with the predicates `IsWholePlaneGFF`, `IsLQGMeasureOfField` and
+`PolyHighProb`.
 
-* Steps (copied as definitions): `LiouvilleBallMassBoundStepLP` (`VolumeGrowth.lean:69`), with the event
-  `ballMassBoundEventLP` (`VolumeGrowth.lean:60`).
-* Statements (copied as definitions with LP predicates): `LQGVolumeGrowthAllScalesStmtLP` (I2, `Draft/Section2.lean`),
-  `LQGMeasureFullSupportStmtLP` (I1, `Draft/Section2.lean:109`, the LP form of the full-support statement).
+* Steps (stated as definitions): `LiouvilleBallMassBoundStepLP`, with the event `ballMassBoundEventLP`.
+* Statements (stated as definitions with these predicates): `LQGVolumeGrowthAllScalesStmtLP` (volume growth at all small
+  scales) and `LQGMeasureFullSupportStmtLP` (full support of the LQG measure).
 * Proved reductions: `lqgVolumeGrowthAllScalesStmt_of_ballMass_lp` (Borel-Cantelli along the dyadic scales) and
   `lqgMeasureFullSupportStmt_of_volumeGrowth_lp`. Nothing is assumed.
 -/
@@ -27,14 +28,13 @@ open LatticeProb.LQG.LQGMeasureNonatomicMass
 
 universe u
 
-/-- The event of eq:ball-volume (Lemma 2.4, line 501) on `B_R(0)` at scale `ε`, LP form:
+/-- The event of the ball-volume estimate of Lemma 2.4 on `B_R(0)` at scale `ε`:
 `ε^{β⁻} ≤ μ(B_ε(z)) ≤ ε^{β⁺}` for every `z ∈ B_R(0)`. -/
 def ballMassBoundEventLP {Ω : Type*} (μ : Ω → Measure ℂ) (R βplus βminus ε : ℝ) : Set Ω :=
   {ω | ∀ z ∈ ball (0 : ℂ) R,
     ENNReal.ofReal (ε ^ βminus) ≤ μ ω (ball z ε) ∧ μ ω (ball z ε) ≤ ENNReal.ofReal (ε ^ βplus)}
 
-/-- Step of Lemma 2.4, I1 and I2 (LP form of `LiouvilleBallMassBoundStep`, `HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:69`):
-eq:ball-volume for centres in every ball `B_R(0)`, with polynomially high probability as `ε → 0`, for each `R > 0`,
+/-- Step of Lemma 2.4: the ball-volume estimate for centres in every ball `B_R(0)`, with polynomially high probability as `ε → 0`, for each `R > 0`,
 `β⁺ ∈ (0, min {(2-γ)²/2, γ(Q-α₀)})` and `β⁻ > max {(2+γ)²/2, γ(Q-α₀)}`. A definition. -/
 def LiouvilleBallMassBoundStepLP : Prop :=
   ∀ γ α₀ : ℝ, 0 < γ → γ < 2 → α₀ < lqgQ γ →
@@ -44,8 +44,7 @@ def LiouvilleBallMassBoundStepLP : Prop :=
     max ((2 + γ) ^ 2 / 2) (γ * (lqgQ γ - α₀)) < βminus →
     PolyHighProb P (ballMassBoundEventLP μ R βplus βminus)
 
-/-- Input I2, LP form of `LQGVolumeGrowthAllScalesStmt` (`HarmonicBalls/Draft/Section2.lean`): for every `R > 0` and
-the exponent ranges of [C1], a.s. there is `r₀ > 0` with `r^{β⁻} ≤ μ_h(B_r(z)) ≤ r^{β⁺}` for all `r ∈ (0, r₀)` and
+/-- Volume growth at all small scales: for every `R > 0` and exponents in the ranges stated below, a.s. there is `r₀ > 0` with `r^{β⁻} ≤ μ_h(B_r(z)) ≤ r^{β⁺}` for all `r ∈ (0, r₀)` and
 `z ∈ B_R`. -/
 def LQGVolumeGrowthAllScalesStmtLP : Prop :=
   ∀ γ α₀ : ℝ, 0 < γ → γ < 2 → α₀ < lqgQ γ →
@@ -56,8 +55,7 @@ def LQGVolumeGrowthAllScalesStmtLP : Prop :=
     ∃ r₀ : ℝ, 0 < r₀ ∧ ∀ r : ℝ, 0 < r → r < r₀ → ∀ z ∈ ball (0 : ℂ) R,
       ENNReal.ofReal (r ^ βminus) ≤ μ ω (ball z r) ∧ μ ω (ball z r) ≤ ENNReal.ofReal (r ^ βplus)
 
-/-- Input I1, LP form of `LQGMeasureFullSupportStmt` (`HarmonicBalls/Draft/Section2.lean:109`), same binders and
-conclusion: almost surely `μ_h(U) > 0` for every nonempty open `U ⊆ ℂ`. -/
+/-- Full support of the LQG measure: almost surely `μ_h(U) > 0` for every nonempty open `U ⊆ ℂ`. -/
 def LQGMeasureFullSupportStmtLP : Prop :=
   ∀ γ α₀ : ℝ, 0 < γ → γ < 2 → α₀ < lqgQ γ →
   ∀ (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω) (hC : Ω → (ℂ → ℝ) → ℝ) (hcirc : Ω → ℝ → ℂ → ℝ)
@@ -65,8 +63,7 @@ def LQGMeasureFullSupportStmtLP : Prop :=
   ∀ᵐ ω ∂P, ∀ U : Set ℂ, IsOpen U → U.Nonempty → 0 < μ ω U
 
 /-- With slack in the exponents (`a < β⁺`, `b > β⁻`), the ball bounds at the two scales `ε` and `ε/2` give the
-bounds with exponents `(a, b)` at every radius `s ∈ [ε/2, ε]`, for small `ε` (LP form of
-`ballMassBoundEvent_window`, `VolumeGrowth.lean:130`). -/
+bounds with exponents `(a, b)` at every radius `s ∈ [ε/2, ε]`, for small `ε` (the window lemma `ballMassBoundEvent_window`). -/
 theorem ballMassBoundEventLP_window {Ω : Type*} (μ : Ω → Measure ℂ) {R a b βplus βminus : ℝ}
     (ha : 0 < a) (hab : a < βplus) (hb : 0 < b) (hba : βminus < b) :
     ∃ r₁ > 0, ∀ ε : ℝ, 0 < ε → ε < r₁ →
@@ -99,7 +96,7 @@ theorem ballMassBoundEventLP_window {Ω : Type*} (μ : Ω → Measure ℂ) {R a 
       _ ≤ ENNReal.ofReal (ε ^ βplus) := (hω₁ z hz).2
       _ ≤ ENNReal.ofReal (s ^ a) := ENNReal.ofReal_le_ofReal hle
 
-/-- I2 (`LQGVolumeGrowthAllScalesStmtLP`) from `LiouvilleBallMassBoundStepLP`: Borel-Cantelli along the dyadic scales,
+/-- Volume growth at all small scales (`LQGVolumeGrowthAllScalesStmtLP`) from `LiouvilleBallMassBoundStepLP`: Borel-Cantelli along the dyadic scales,
 over the countable family of radii `R = n + 1` and rational exponents. -/
 theorem lqgVolumeGrowthAllScalesStmt_of_ballMass_lp (h : LiouvilleBallMassBoundStepLP.{u}) :
     LQGVolumeGrowthAllScalesStmtLP.{u} := by
@@ -154,7 +151,7 @@ theorem lqgVolumeGrowthAllScalesStmt_of_ballMass_lp (h : LiouvilleBallMassBoundS
   exact ⟨le_trans (ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow_of_exponent_ge hr0 hr1.le hbβ.le)) h1,
     h2.trans (ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow_of_exponent_ge hr0 hr1.le hβa.le))⟩
 
-/-- I1 (`LQGMeasureFullSupportStmtLP`) from I2: every nonempty open set contains a small ball, whose mass is at
+/-- Full support (`LQGMeasureFullSupportStmtLP`) from volume growth: every nonempty open set contains a small ball, whose mass is at
 least `r^{β⁻} > 0`. -/
 theorem lqgMeasureFullSupportStmt_of_volumeGrowth_lp (h : LQGVolumeGrowthAllScalesStmtLP.{u}) :
     LQGMeasureFullSupportStmtLP.{u} := by

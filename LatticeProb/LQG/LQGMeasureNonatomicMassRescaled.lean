@@ -8,15 +8,15 @@ import LatticeProb.LQG.LQGMeasureNonatomicMassScaled
 import LatticeProb.LQG.LQGMeasureInputs
 
 /-!
-# Ding-Gwynne Lemma 3.8 for the rescaled fields, uniformly in the scale: LP form
+# Ding-Gwynne Lemma 3.8 for the rescaled fields, uniformly in the scale
 
-LP copy of `HarmonicBalls/Proofs/Sec2/RescaledUniform.lean`. The Step `RescaledBallMassUniformStep`
-(`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:313`) is proved from the literature input `WholePlaneLQGBallMassBoundsLP`
-(Ding-Gwynne 2020, Lemma 3.8; `LatticeProb/LQG/LQGMeasureInputs.lean`, used as a hypothesis), the affine invariance
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 2.4. The uniform rescaled ball-mass step is proved from the literature input `WholePlaneLQGBallMassBoundsLP`
+(Ding-Gwynne 2020, Lemma 3.8; module `LatticeProb.LQG.LQGMeasureInputs`, used as a hypothesis), the affine invariance
 `wholePlaneGFFAffineInvariance_lp`, the coordinate change `LQGMeasureCoordChangeLP` at `α₀ = 0` (hypothesis), and the proved
 mixture `wholePlaneGFFMixtureStep_lp`.
 
-Argument (as in the HB docstring): (1) for `τ = 2^{-k}`, `h^{(k)} = h^ℂ(τ ·) - h^ℂ_τ(0)` is a whole-plane GFF with LQG measure
+Argument: (1) for `τ = 2^{-k}`, `h^{(k)} = h^ℂ(τ ·) - h^ℂ_τ(0)` is a whole-plane GFF with LQG measure
 `e^{-γ(h^ℂ_τ(0) + Q log τ)} μ₀(τ ·)`; (2) the mixture over `k` with weights `∝ (k+1)⁻²` is a whole-plane GFF; (3) its image
 under `x ↦ 2R x - R(1+i)`, which maps the unit square onto `[-R, R]² ⊇ closedBall 0 R`, satisfies Ding-Gwynne Lemma 3.8 on
 `closedBall 0 R`; (4) a slice `k` costs `ν{k}⁻¹ = S (k+1)²`.
@@ -109,8 +109,7 @@ theorem exists_square_preimage {R : ℝ} (hR : 0 < R) {w : ℂ} (hw : w ∈ clos
       ring
 
 
-/-- Ding-Gwynne Lemma 3.8 on `closedBall 0 R`, from the bound on the unit square for the affine image of the field
-(LP copy of `HarmonicBalls.polyHighProb_closedBall_of_square`). The additive constant `h_{2R}(-R(1+i))` is centred
+/-- Ding-Gwynne Lemma 3.8 on `closedBall 0 R`, from the bound on the unit square for the affine image of the field. The additive constant `h_{2R}(-R(1+i))` is centred
 Gaussian, so `e^{γ h_{2R}(-R(1+i))} ∈ [r^{γc₀}, r^{-γc₀}]` with polynomially high probability; the slack `β⁺ < β⁺'`,
 `β⁻' < β⁻` absorbs it and the constants. -/
 theorem polyHighProb_closedBall_of_square {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
@@ -279,8 +278,8 @@ theorem rescaledMeas_ball (γ : ℝ) (hcirc : Ω → ℝ → ℂ → ℝ) (μ₀
 
 end Rescaled
 
-/-- **Reduction** (LP copy of `HarmonicBalls.rescaledBallMassUniformStep_of_DG`): `RescaledBallMassUniformStepLP` from the
-literature inputs `WholePlaneLQGBallMassBoundsLP` (Ding-Gwynne 2020, Lemma 3.8; `LatticeProb/LQG/LQGMeasureInputs.lean`) and
+/-- **Reduction**: `RescaledBallMassUniformStepLP` from the
+literature inputs `WholePlaneLQGBallMassBoundsLP` (Ding-Gwynne 2020, Lemma 3.8; module `LatticeProb.LQG.LQGMeasureInputs`) and
 `LQGMeasureCoordChangeLP` at `α₀ = 0` (Duplantier-Sheffield 2011, Prop. 2.1; Sheffield-Wang 2016, Thm. 1.1), used only as
 hypotheses. The whole-plane affine invariance is PROVED (`wholePlaneGFFAffineInvariance_lp`), and the mixture
 `wholePlaneGFFMixtureStep_lp` is proved, so neither is a hypothesis here. -/

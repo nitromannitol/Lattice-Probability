@@ -3,18 +3,17 @@ import LatticeProb.Gauss.GFFAffineInvariance
 import LatticeProb.LQG.LQGMeasureDerived
 
 /-!
-# Gaussian tail of the circle average of the whole-plane GFF at the origin: LP form
+# Gaussian tail of the circle average of the whole-plane GFF at the origin
 
-LP copy of `HarmonicBalls/Proofs/Sec2/CircleAverageTail.lean` (lines 1-100). The Step
-`CircleAverageDyadicTailStep` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:324`) is copied as the definition
-`CircleAverageDyadicTailStepLP` with the LP names, and it is PROVED here, not assumed.
+Adapted from the Lean formalization accompanying [Harmonic balls in Liouville quantum gravity, arXiv:2208.11795],
+Lemma 2.4. The dyadic tail step of Lemma 2.4 is stated as the definition `CircleAverageDyadicTailStepLP` with the
+names of this library, and it is PROVED here, not assumed.
 
-Argument (as in the HB docstring): for `r ∈ (0, 1]` the covariance kernel of the whole-plane GFF normalized at
+Argument: for `r ∈ (0, 1]` the covariance kernel of the whole-plane GFF normalized at
 `|z| = 1` is `-log |x - y|` on `∂B_r(0) × ∂B_r(0)` (`wholePlaneCov_eq_neg_log`, Duplantier-Sheffield 2011); the average of
 `log |· - x|` over `∂B_r(0)` is `log r` for `|x| = r` (Jensen's formula); hence `Var h^ℂ_r(0) = log (1/r)`, the variable
 `h^ℂ_{2^{-k}}(0)` is centred Gaussian with variance `k log 2`, and the Chernoff bound for a Gaussian moment generating
 function gives the tail (Berestycki-Powell, *Gaussian free field, Liouville quantum gravity and Gaussian multiplicative chaos*).
-The statement and the proof use no Harmonic-balls object.
 -/
 
 universe u
@@ -26,7 +25,7 @@ open scoped ENNReal
 open LatticeProb.Gauss LatticeProb.LQG
 open LatticeProb.LQG.ProfileDerived (dyadicScale_pos)
 
-/-- LP form of `CircleAverageDyadicTailStep` (`HarmonicBalls/Steps/Sec2/VolumeGrowth.lean:324`). For the whole-plane GFF
+/-- The dyadic tail step of Lemma 2.4. For the whole-plane GFF
 normalized by `h^ℂ_1(0) = 0`, `h^ℂ_{2^{-k}}(0)` is centred Gaussian with variance `k log 2`, so
 `P[|h^ℂ_{2^{-k}}(0)| ≥ L] ≤ 2 exp(-L² / (2 (k+1) log 2))` for `L ≥ 0`. A definition, proved below. -/
 def CircleAverageDyadicTailStepLP : Prop :=
@@ -56,7 +55,7 @@ theorem wholePlaneGFFCov_circle_zero_lp {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) :
   rw [Real.circleAverage_def] at h0 ⊢
   rw [intervalIntegral.integral_neg, smul_neg, h0]
 
-/-- `CircleAverageDyadicTailStepLP` is proved from `IsWholePlaneGFF` (LP copy of `circleAverageDyadicTailStep_holds`). -/
+/-- `CircleAverageDyadicTailStepLP` is proved from `IsWholePlaneGFF`. -/
 theorem circleAverageDyadicTailStep_lp : CircleAverageDyadicTailStepLP.{u} := by
   intro Ω _ P hC hcirc hh k L hL
   have hP := hh.isProbabilityMeasure
