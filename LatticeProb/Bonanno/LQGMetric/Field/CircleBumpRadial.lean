@@ -120,7 +120,7 @@ lemma radius_pos_lt {ρ : ℝ} (hρ : 0 < ρ) (n : ℕ) :
 
 /-- An almost-everywhere limit of `m`-measurable real random variables is almost everywhere equal to an
 `m`-measurable one. -/
-lemma exists_measurable_ae_eq_of_ae_tendsto {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+lemma exists_measurable_ae_eq_of_ae_tendsto {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
     (m : MeasurableSpace Ω) {f : ℕ → Ω → ℝ} {g : Ω → ℝ}
     (hf : ∀ k, Measurable[m] (f k)) (hfg : ∀ᵐ ω ∂P, Tendsto (fun k => f k ω) atTop (𝓝 (g ω))) :
     ∃ D : Ω → ℝ, Measurable[m] D ∧ g =ᵐ[P] D := by
