@@ -30,11 +30,12 @@ theorem stepLaw_map_dirVec (d : ℕ) [NeZero d] :
         rw [← Measure.sum_fintype, Measure.sum_smul_dirac]
       _ = _ := by simp only [stepLaw_singleton, Finset.smul_sum]
   have hmeas : Measurable (dirVec : Dir d → Site d) := measurable_of_countable _
-  rw [huniform, Measure.map_smul, Measure.map_finset_sum' hmeas.aemeasurable]
+  rw [huniform, Measure.map_smul, Measure.map_finset_sum' (show AEMeasurable (dirVec : Dir d → Site d) (∑ a : Dir d, Measure.dirac a) from hmeas.aemeasurable)]
   simp only [Measure.map_dirac' hmeas, Fintype.sum_prod_type, Fintype.sum_bool,
     dirVec_eq_unit, dirVec_eq_neg_unit]
   rw [incLaw, instructionLaw]
   simp only [zero_add, zero_sub, Nat.cast_mul, Nat.cast_ofNat]
+  exact hmeas.aemeasurable
 
 /-- Independent uniform directions give independent increments with the
 specified increment law. -/
@@ -50,7 +51,7 @@ theorem pathLaw_map_sitePath (d : ℕ) [NeZero d] (x : Site d) :
     (pathLaw d).map (fun ξ n => x + ∑ j ∈ Finset.range n, dirVec (ξ j)) =
       siteWalkLaw d x := by
   have hmeas : Measurable (fun ξ : ℕ → Dir d => fun n => dirVec (ξ n)) :=
-    measurable_pi_lambda _ fun n => (measurable_of_countable dirVec).comp
+    Measurable.of_eval fun n => (measurable_of_countable dirVec).comp
       (measurable_pi_apply n)
   change (pathLaw d).map (sitePath x ∘ (fun ξ n => dirVec (ξ n))) = _
   rw [← Measure.map_map (measurable_sitePath x) hmeas, pathLaw_map_dirVec]
@@ -174,7 +175,7 @@ theorem pathLaw_two_dim_hit_site (x a : Site 2) :
     pathLaw 2 {ξ | ∃ n : ℕ, x + ∑ j ∈ Finset.range n, dirVec (ξ j) = a} = 1 := by
   have hmeas : Measurable (fun ξ : ℕ → Dir 2 => fun n =>
       x + ∑ j ∈ Finset.range n, dirVec (ξ j)) :=
-    (measurable_sitePath x).comp (measurable_pi_lambda _ fun n =>
+    (measurable_sitePath x).comp (Measurable.of_eval fun n =>
       (measurable_of_countable dirVec).comp (measurable_pi_apply n))
   have h := siteWalkLaw_two_dim_hit_site x a
   rw [← pathLaw_map_sitePath 2 x,
