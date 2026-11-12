@@ -21,6 +21,10 @@ reaches a level from below or from above is a stopping time of the natural filtr
   exit time truncated at a horizon `N` (bounded stopping time on real time), with expectation `1`.
 * `ae_exitStrip_lt_top`: for `c > 0` the strip is left in finite time almost surely
   (Markov's inequality for the exponential martingale of parameter `c / 2`).
+* `topFirst B c a b`, `measurableSet_topFirst`: the event that the upper level is reached strictly
+  before the lower one is measurable.
+* `measureReal_topFirst`: for `c > 0`, `P(topFirst) (1 - e^{-2c(a+b)}) = 1 - e^{-2cb}`, by dominated
+  convergence in the optional stopping identity at the truncated exit times.
 -/
 
 open MeasureTheory ProbabilityTheory Filter
@@ -394,6 +398,106 @@ theorem ae_exitStrip_lt_top (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable
     exact (measureReal_eq_zero_iff (measure_ne_top P _)).1 h0
   rw [ae_iff]
   simpa [not_lt, top_le_iff] using h00
+
+/-! ### Which level is reached first -/
+
+omit mΩ in
+/-- A stopping time of a filtration indexed by `ℝ≥0`, with values in `ℝ≥0∞`, is measurable for the
+ambient σ-algebra. -/
+theorem measurable_of_isStoppingTime_enn {m : MeasurableSpace Ω} {F : Filtration ℝ≥0 m}
+    {τ : Ω → ℝ≥0∞} (hτ : IsStoppingTime F τ) : Measurable τ := by
+  refine measurable_of_Iic fun x => ?_
+  induction x using ENNReal.recTopCoe with
+  | top => simp
+  | coe t => exact F.le t _ (hτ.measurableSet_le t)
+
+omit mΩ in
+/-- The event that the drifted motion `B s + c s` reaches the level `a` strictly before the level
+`-b`. -/
+def topFirst (B : ℝ≥0 → Ω → ℝ) (c a b : ℝ) : Set Ω :=
+  {ω | hitDrift B c a ω < hitDrift (fun t ω => -B t ω) (-c) b ω}
+
+/-- The event that the upper level is reached first is measurable. -/
+theorem measurableSet_topFirst (hm : ∀ t, Measurable (B t))
+    (hcont : ∀ ω, Continuous fun s => B s ω) (c a b : ℝ) :
+    MeasurableSet (topFirst B c a b) :=
+  measurableSet_lt (measurable_of_isStoppingTime_enn (isStoppingTime_hitDrift_brownian hm hcont c a))
+    (measurable_of_isStoppingTime_enn (isStoppingTime_hitDrift_neg_brownian hm hcont c b))
+
+/-- **Probability of leaving the strip through the top.**  For `c > 0`,
+`P(upper level first) (1 - e^{-2c(a+b)}) = 1 - e^{-2cb}`, by dominated convergence in the
+optional stopping identity for the exponential martingale at the truncated exit times. -/
+theorem measureReal_topFirst (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable (B t))
+    (hcont : ∀ ω, Continuous fun s => B s ω) {c : ℝ} (hc : 0 < c) {a b : ℝ} (ha : 0 < a)
+    (hb : 0 < b) :
+    P.real (topFirst B c a b) * (1 - Real.exp (-(2 * c * (a + b)))) =
+      1 - Real.exp (-(2 * c * b)) := by
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  set F : ℕ → Ω → ℝ := fun n ω => Real.exp (-(2 * c) *
+    (B (exitTrunc B c a b (n : ℝ≥0) ω) ω + c * (exitTrunc B c a b (n : ℝ≥0) ω))) with hF
+  set k : ℝ := Real.exp (-(2 * c) * a) - Real.exp (2 * c * b) with hk
+  set U : Ω → ℝ := fun ω => Real.exp (2 * c * b) +
+    (topFirst B c a b).indicator (fun _ => k) ω with hU
+  have hmeas := measurableSet_topFirst hm hcont c a b
+  have hint : ∀ n, Integrable (F n) P ∧ ∫ ω, F n ω ∂P = 1 := fun n =>
+    integrable_and_integral_exp_exitTrunc hB hm hcont c a b (n : ℝ≥0)
+  have hbound : ∀ n, ∀ᵐ ω ∂P, ‖F n ω‖ ≤ Real.exp (2 * c * b) := by
+    intro n
+    filter_upwards [hB.eval_zero_ae_eq_zero] with ω h0
+    have := (exitTrunc_value_mem hcont c ha hb (n : ℝ≥0) ω h0).1
+    rw [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+    refine Real.exp_le_exp.mpr ?_
+    nlinarith
+  have hlim : ∀ᵐ ω ∂P, Tendsto (fun n => F n ω) atTop (nhds (U ω)) := by
+    filter_upwards [hB.eval_zero_ae_eq_zero, ae_exitStrip_lt_top hB hm hcont hc a b] with ω h0 hlt
+    have hval := exitStrip_value hcont c ha hb ω h0 hlt
+    have hev : ∀ᶠ n : ℕ in atTop, F n ω =
+        Real.exp (-(2 * c) * (B (exitStrip B c a b ω).toNNReal ω +
+          c * (exitStrip B c a b ω).toNNReal)) := by
+      filter_upwards [eventually_ge_atTop ⌈(exitStrip B c a b ω).toNNReal⌉₊] with n hn
+      have hle : (exitStrip B c a b ω).toNNReal ≤ (n : ℝ≥0) := by
+        have := Nat.le_ceil (exitStrip B c a b ω).toNNReal
+        exact this.trans (by exact_mod_cast hn)
+      have hT : exitTrunc B c a b (n : ℝ≥0) ω = (exitStrip B c a b ω).toNNReal := by
+        unfold exitTrunc
+        rw [inf_eq_left.mpr]
+        rw [← ENNReal.coe_toNNReal hlt.ne]
+        exact_mod_cast hle
+      simp only [hF, hT]
+    refine Tendsto.congr' (EventuallyEq.symm hev) ?_
+    by_cases hω : ω ∈ topFirst B c a b
+    · have h1 := hval.1 hω
+      have : U ω = Real.exp (-(2 * c) * a) := by
+        simp [hU, hω, hk]
+      rw [this, h1]
+      exact tendsto_const_nhds
+    · have h2 := hval.2 hω
+      have : U ω = Real.exp (2 * c * b) := by
+        simp [hU, hω]
+      rw [this, h2]
+      have : -(2 * c) * -b = 2 * c * b := by ring
+      rw [this]
+      exact tendsto_const_nhds
+  have hDCT := tendsto_integral_of_dominated_convergence (fun _ => Real.exp (2 * c * b))
+    (fun n => (hint n).1.aestronglyMeasurable) (integrable_const _) hbound hlim
+  have h1 : ∫ ω, U ω ∂P = 1 := by
+    have := tendsto_nhds_unique hDCT (tendsto_const_nhds.congr (fun n => (hint n).2.symm))
+    exact this
+  have h2 : ∫ ω, U ω ∂P = Real.exp (2 * c * b) + P.real (topFirst B c a b) * k := by
+    simp only [hU]
+    rw [integral_add (integrable_const _) ((integrable_const k).indicator hmeas),
+      integral_const, integral_indicator_const k hmeas]
+    simp
+  have hA : Real.exp (-(2 * c * (a + b))) =
+      Real.exp (-(2 * c) * a) * Real.exp (-(2 * c * b)) := by
+    rw [← Real.exp_add]; congr 1; ring
+  have he : Real.exp (-(2 * c * b)) * Real.exp (2 * c * b) = 1 := by
+    rw [← Real.exp_add]; simp
+  rw [h2] at h1
+  rw [hA]
+  simp only [hk] at h1
+  linear_combination (-(Real.exp (-(2 * c * b)))) * h1 +
+    (1 - P.real (topFirst B c a b)) * he
 
 end LatticeProb
 
