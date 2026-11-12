@@ -393,6 +393,80 @@ theorem abs_stayAboveAvg_sub_le (hB : IsBrownianReal B P) (hm : ∀ t, Measurabl
   rw [hrw, abs_div, abs_of_pos hm0, div_le_iff₀ hm0]
   exact key
 
+
+/-- Real estimate behind the slow variation of the conditioned averages in the depth. -/
+theorem ratio_le {c ε l l' : ℝ} (hc : 0 < c) (hε : 0 < ε) (hl : ε ≤ l) (hll' : l ≤ l') :
+    ((1 - Real.exp (-(2 * c * l'))) - (1 - Real.exp (-(2 * c * l)))) /
+        (1 - Real.exp (-(2 * c * l'))) ≤ (1 + 2 * c * ε) * (l' - l) / ε := by
+  have hx : 0 < 2 * c * ε := by positivity
+  have hl'pos : 0 < l' := hε.trans_le (hl.trans hll')
+  have he1 : Real.exp (-(2 * c * l)) ≤ 1 := Real.exp_le_one_iff.2 (by nlinarith)
+  have he0 : 0 < Real.exp (-(2 * c * l)) := Real.exp_pos _
+  have hN : Real.exp (-(2 * c * l)) - Real.exp (-(2 * c * l')) ≤ 2 * c * (l' - l) := by
+    have h1 := Real.add_one_le_exp (-(2 * c * (l' - l)))
+    have h2 : Real.exp (-(2 * c * l')) =
+        Real.exp (-(2 * c * l)) * Real.exp (-(2 * c * (l' - l))) := by
+      rw [← Real.exp_add]; congr 1; ring
+    have h3 : 0 ≤ 2 * c * (l' - l) := by nlinarith
+    nlinarith [mul_le_mul_of_nonneg_left h1 he0.le, mul_le_mul_of_nonneg_right he1 h3]
+  have hD : 2 * c * ε ≤ (1 - Real.exp (-(2 * c * l'))) * (1 + 2 * c * ε) := by
+    have h1 : Real.exp (-(2 * c * l')) ≤ Real.exp (-(2 * c * ε)) :=
+      Real.exp_le_exp.2 (by nlinarith)
+    have h2 := Real.add_one_le_exp (2 * c * ε)
+    have h3 : Real.exp (-(2 * c * ε)) * Real.exp (2 * c * ε) = 1 := by
+      rw [← Real.exp_add]; simp
+    have h4 : Real.exp (-(2 * c * ε)) * (2 * c * ε + 1) ≤ 1 :=
+      calc _ ≤ Real.exp (-(2 * c * ε)) * Real.exp (2 * c * ε) :=
+            mul_le_mul_of_nonneg_left h2 (Real.exp_pos _).le
+        _ = 1 := h3
+    nlinarith [mul_le_mul_of_nonneg_right h1 (by positivity : (0 : ℝ) ≤ 1 + 2 * c * ε)]
+  have hDpos : 0 < 1 - Real.exp (-(2 * c * l')) := by
+    have : Real.exp (-(2 * c * l')) < 1 :=
+      Real.exp_lt_one_iff.2 (by nlinarith [mul_pos hc hl'pos])
+    linarith
+  rw [div_le_div_iff₀ hDpos hε]
+  nlinarith [mul_le_mul_of_nonneg_right hN hε.le, mul_le_mul_of_nonneg_right hD (sub_nonneg.2 hll')]
+
+/-- **The restarted average varies slowly with the depth.**  For `0 < ε ≤ l ≤ l'` and a
+measurable `Ψ` with values in `[0, 1]`,
+`|E[Ψ | G_l] - E[Ψ | G_{l'}]| ≤ (1 + 2 c ε) (l' - l) / ε`. -/
+theorem abs_stayAboveAvg_sub_stayAboveAvg_le (hB : IsBrownianReal B P)
+    (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun s => B s ω) {c : ℝ} (hc : 0 < c)
+    {ε l l' : ℝ} (hε : 0 < ε) (hl : ε ≤ l) (hll' : l ≤ l') {Ψ : Ω → ℝ} (hΨ : Measurable Ψ)
+    (h0 : ∀ ω, 0 ≤ Ψ ω) (h1 : ∀ ω, Ψ ω ≤ 1) :
+    |stayAboveAvg P B c l Ψ - stayAboveAvg P B c l' Ψ| ≤ (1 + 2 * c * ε) * (l' - l) / ε := by
+  obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense ℝ≥0
+  have hlpos : 0 < l := hε.trans_le hl
+  have hl'pos : 0 < l' := hlpos.trans_le hll'
+  have hae := ae_eq_stayAboveHat hB hm hcont hc hlpos hDc hDd
+  have hae' := ae_eq_stayAboveHat hB hm hcont hc hl'pos hDc hDd
+  have e1 : stayAboveAvg P B c l Ψ =
+      (∫ ω in stayAboveHat D B c l, Ψ ω ∂P) / P.real (stayAboveHat D B c l) := by
+    unfold stayAboveAvg
+    rw [setIntegral_congr_set hae, Measure.real, measure_congr hae]
+  have e2 : stayAboveAvg P B c l' Ψ =
+      (∫ ω in stayAboveHat D B c l', Ψ ω ∂P) / P.real (stayAboveHat D B c l') := by
+    unfold stayAboveAvg
+    rw [setIntegral_congr_set hae', Measure.real, measure_congr hae']
+  have hnn : ∀ x : ℝ, 0 < x → 0 ≤ 1 - Real.exp (-(2 * c * x)) := fun x hx =>
+    sub_nonneg.2 (Real.exp_le_one_iff.2 (by nlinarith [mul_pos hc hx]))
+  have hr1 : P.real (stayAboveHat D B c l) = 1 - Real.exp (-(2 * c * l)) := by
+    rw [Measure.real, measure_stayAboveHat hB hm hcont hc hlpos hDd,
+      ENNReal.toReal_ofReal (hnn l hlpos)]
+  have hr2 : P.real (stayAboveHat D B c l') = 1 - Real.exp (-(2 * c * l')) := by
+    rw [Measure.real, measure_stayAboveHat hB hm hcont hc hl'pos hDd,
+      ENNReal.toReal_ofReal (hnn l' hl'pos)]
+  have hpos : P (stayAboveHat D B c l) ≠ 0 := by
+    rw [measure_stayAboveHat hB hm hcont hc hlpos hDd]
+    refine (ENNReal.ofReal_pos.2 (sub_pos.2 ?_)).ne'
+    exact Real.exp_lt_one_iff.2 (by nlinarith [mul_pos hc hlpos])
+  have hnest := abs_setAverage_sub_setAverage_le P (measurableSet_stayAboveHat hm hDc c l)
+    (measurableSet_stayAboveHat hm hDc c l') (stayAboveHat_mono D B c hll') hpos hΨ h0 h1
+  rw [e1, e2]
+  refine hnest.trans ?_
+  rw [hr1, hr2]
+  exact ratio_le hc hε hl hll'
+
 end Approx
 
 end LatticeProb
