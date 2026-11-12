@@ -1,6 +1,7 @@
 import Mathlib
 import LatticeProb.Prob.UpcrossRenewalReturn
 import LatticeProb.Prob.UpcrossReturn
+import LatticeProb.Prob.ExpNegLtOne
 
 /-!
 # The Laplace transform of the return time after a down-crossing is below `1`
@@ -10,7 +11,6 @@ the integral `∫ e^{-q (return time)} dν` is strictly below `1`, because the r
 `upcrossReturn c v ≥ hitFrom (-c) 0 v` is strictly positive for every continuous path started at `0`.
 It is applied to the law of the Brownian path with drift.
 
-* `LatticeProb.expNeg_lt_one`;
 * `LatticeProb.lintegral_expNeg_upcrossReturn_lt_one`: general `ν`;
 * `LatticeProb.lintegral_expNeg_upcrossReturn_lt_one_brownian`: `ν` the law of Brownian motion with
   drift.
@@ -22,16 +22,6 @@ open scoped ENNReal NNReal
 noncomputable section
 
 namespace LatticeProb
-
-/-- `e^{-q r} < 1` for `q > 0` and `r ∈ (0, ∞]`. -/
-theorem expNeg_lt_one {q : ℝ} (hq : 0 < q) {r : ℝ≥0∞} (hr : 0 < r) : expNeg q r < 1 := by
-  by_cases h : r = ⊤
-  · rw [h, expNeg_top]; exact zero_lt_one
-  · simp only [expNeg, h, ↓reduceIte]
-    rw [ENNReal.ofReal_lt_one, ← Real.exp_zero]
-    apply Real.exp_lt_exp.2
-    have : 0 < r.toReal := ENNReal.toReal_pos hr.ne' h
-    nlinarith
 
 /-- For a probability measure `ν` on paths carried by paths started at `0`, the Laplace transform of
 the return time after the first down-crossing of `-c` is below `1`. -/
