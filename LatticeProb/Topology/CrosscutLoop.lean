@@ -20,7 +20,10 @@ interior point of an edge (`exists_closing_edge_separation`) forbids.
   from both sides.
 * `isPreconnected_union_image_diff`: a preconnected set containing both endpoints of an arc stays preconnected
   after adding the arc punctured at an interior point.
+* `false_of_isPreconnected_of_transverse`: the loop obstruction behind the next two results.
 * `not_isPreconnected_diff_arc_of_transverse`: the disconnection statement above.
+* `not_mem_closure_inter_closure_of_transverse`: a point off a continuum through the endpoints of `γ` is not a
+  common frontier point of open connected sets containing `q` and `p` respectively.
 -/
 import LatticeProb.Topology.PolygonalParityComplex
 import LatticeProb.Topology.SimplePolygonalChain
@@ -151,6 +154,49 @@ theorem isPreconnected_union_image_diff {X : Type*} [TopologicalSpace X] {K : Se
   refine IsPreconnected.union (f 1) (Or.inl h1) ⟨1, ⟨ht₀.2, le_rfl⟩, rfl⟩ ?_ hB
   exact IsPreconnected.union (f 0) h0 ⟨0, ⟨le_rfl, ht₀.1⟩, rfl⟩ hK hA
 
+/-- **The loop obstruction.** Let `γ = f([0,1])` be an arc whose endpoints lie in a preconnected set `H`, and let a
+segment `[p, q]` disjoint from `H` meet `γ` only at the point `f t₀` (`0 < t₀ < 1`) of its interior, where `γ`
+contains an open segment `(c, d)` through `f t₀` transverse to `[p, q]`. Then `p` and `q` do not both lie in an
+open preconnected set disjoint from `H ∪ γ`.
+
+Otherwise a polygonal chain from `q` to `p` inside that set, closed by `[p, q]`, would be a closed polygon which the
+preconnected set `H ∪ (γ \ {f t₀})` misses while reaching `f t₀` from both sides of `[p, q]`. -/
+theorem false_of_isPreconnected_of_transverse {Ω H : Set ℂ} {f : ℝ → ℂ} {t₀ : ℝ} {p q c d : ℂ}
+    (hΩ : IsOpen Ω) (hΩc : IsPreconnected Ω) (hpΩ : p ∈ Ω) (hqΩ : q ∈ Ω)
+    (hΩH : Disjoint Ω (H ∪ f '' Icc 0 1))
+    (hH : IsPreconnected H) (hf : ContinuousOn f (Icc 0 1)) (hfi : InjOn f (Icc 0 1))
+    (h0 : f 0 ∈ H) (h1 : f 1 ∈ H) (ht₀ : t₀ ∈ Ioo (0 : ℝ) 1)
+    (he : f t₀ ∈ openSegment ℝ p q) (hpqγ : segment ℝ p q ∩ f '' Icc 0 1 ⊆ {f t₀})
+    (hpqH : Disjoint (segment ℝ p q) H)
+    (hcd : f t₀ ∈ openSegment ℝ c d) (hcdγ : openSegment ℝ c d ⊆ f '' Icc 0 1)
+    (htrans : (conj (q - p) * (d - c)).im ≠ 0) : False := by
+  set γ := f '' Icc 0 1 with hγ
+  set e := f t₀ with he_def
+  have hpq : p ≠ q := by
+    rintro rfl
+    simp at htrans
+  obtain ⟨rest, hlast, hnd, hsub⟩ := exists_nondegenerate_polygonal_chain hΩ hΩc hqΩ hpΩ
+  have heL : e ∉ polygonalChain (q :: rest) := fun h =>
+    Set.disjoint_left.1 hΩH (hsub h) (Or.inr ⟨t₀, Ioo_subset_Icc_self ht₀, rfl⟩)
+  have hS : IsPreconnected (H ∪ (γ \ {e})) := isPreconnected_union_image_diff hH hf hfi ht₀ h0 h1
+  have hSP : Disjoint (H ∪ (γ \ {e})) (polygonalChain (q :: rest) ∪ segment ℝ p q) := by
+    rw [Set.disjoint_left]
+    rintro z (hzH | ⟨hzγ, hze⟩) (hzL | hzτ)
+    · exact Set.disjoint_left.1 hΩH (hsub hzL) (Or.inl hzH)
+    · exact Set.disjoint_left.1 hpqH hzτ hzH
+    · exact Set.disjoint_left.1 hΩH (hsub hzL) (Or.inr hzγ)
+    · exact hze (hpqγ ⟨hzτ, hzγ⟩)
+  -- points of the open segment `(c, d)` off `e` belong to `H ∪ (γ \ {e})`
+  have hside : ∀ s : Set ℂ, (∀ x ∈ s, x ≠ e) → openSegment ℝ c d ∩ s ⊆ (H ∪ (γ \ {e})) ∩ s :=
+    fun s hs x hx => ⟨Or.inr ⟨hcdγ hx.1, hs x hx.2⟩, hx.2⟩
+  have hne : ∀ x : ℂ, (conj (q - p) * (x - e)).im ≠ 0 → x ≠ e := by
+    rintro x hx rfl
+    simp at hx
+  obtain ⟨hpos, hneg⟩ := mem_closure_openSegment_inter_sides hcd htrans
+  exact not_mem_closure_both_sides_of_closing_edge hlast hnd hpq he heL hS hSP
+    (closure_mono (hside _ fun x hx => hne x hx.ne') hpos)
+    (closure_mono (hside _ fun x hx => hne x hx.ne) hneg)
+
 /-- **A transverse crossing disconnects.** Let `C ⊆ ℂ` be open and `K` preconnected and disjoint from `C`, and let
 `γ = f([0,1])` be an arc with both endpoints in `K`. Suppose a segment `[p, q] ⊆ C` meets `γ` only at the point
 `f t₀` (`0 < t₀ < 1`), which lies in its interior, and `γ` contains an open segment `(c, d)` through `f t₀`
@@ -176,26 +222,50 @@ theorem not_isPreconnected_diff_arc_of_transverse {C K : Set ℂ} {f : ℝ → �
   have hpe : p ≠ e := fun h => hpq (left_mem_openSegment_iff.1 (by rwa [← h] at he))
   have hqe : q ≠ e := fun h => hpq (right_mem_openSegment_iff.1 (by rwa [← h] at he))
   intro hpre
-  obtain ⟨rest, hlast, hnd, hsub⟩ := exists_nondegenerate_polygonal_chain (hC.sdiff hγc) hpre
-    (hend q (right_mem_segment ℝ p q) hqe) (hend p (left_mem_segment ℝ p q) hpe)
-  have heL : e ∉ polygonalChain (q :: rest) := fun h => (hsub h).2 ⟨t₀, Ioo_subset_Icc_self ht₀, rfl⟩
-  have hS : IsPreconnected (K ∪ (γ \ {e})) := isPreconnected_union_image_diff hK hf hfi ht₀ h0 h1
-  have hSP : Disjoint (K ∪ (γ \ {e})) (polygonalChain (q :: rest) ∪ segment ℝ p q) := by
-    rw [Set.disjoint_left]
-    rintro z (hzK | ⟨hzγ, hze⟩) (hzL | hzτ)
-    · exact Set.disjoint_left.1 hCK (hsub hzL).1 hzK
-    · exact Set.disjoint_left.1 hCK (hpqC hzτ) hzK
-    · exact (hsub hzL).2 hzγ
-    · exact hze (hpqγ ⟨hzτ, hzγ⟩)
-  -- points of the open segment `(c, d)` off `e` belong to `K ∪ (γ \ {e})`
-  have hside : ∀ s : Set ℂ, (∀ x ∈ s, x ≠ e) → openSegment ℝ c d ∩ s ⊆ (K ∪ (γ \ {e})) ∩ s :=
-    fun s hs x hx => ⟨Or.inr ⟨hcdγ hx.1, hs x hx.2⟩, hx.2⟩
-  have hne : ∀ x : ℂ, (conj (q - p) * (x - e)).im ≠ 0 → x ≠ e := by
-    rintro x hx rfl
-    simp at hx
-  obtain ⟨hpos, hneg⟩ := mem_closure_openSegment_inter_sides hcd htrans
-  exact not_mem_closure_both_sides_of_closing_edge hlast hnd hpq he heL hS hSP
-    (closure_mono (hside _ fun x hx => hne x hx.ne') hpos)
-    (closure_mono (hside _ fun x hx => hne x hx.ne) hneg)
+  refine false_of_isPreconnected_of_transverse (hC.sdiff hγc) hpre
+    (hend p (left_mem_segment ℝ p q) hpe) (hend q (right_mem_segment ℝ p q) hqe) ?_ hK hf hfi h0 h1 ht₀
+    he hpqγ (hCK.mono_left hpqC) hcd hcdγ htrans
+  rw [Set.disjoint_left]
+  rintro z ⟨hzC, hzγ⟩ (hzK | hzγ')
+  · exact Set.disjoint_left.1 hCK hzC hzK
+  · exact hzγ hzγ'
+
+/-- **No point off a continuum through the endpoints is a common frontier point of the two sides.** In the setting
+of `not_isPreconnected_diff_arc_of_transverse`, let `H` be closed, preconnected, disjoint from `C`, and contain both
+endpoints of `γ`. Let `U ∋ q` and `V ∋ p` be open preconnected subsets of `C \ γ`. Then no point `x ∉ H ∪ γ` lies
+in the closures of both `U` and `V`.
+
+A small ball at `x` misses `H ∪ γ` and meets both `U` and `V`, so `U ∪ ball ∪ V` contradicts the loop obstruction
+`false_of_isPreconnected_of_transverse`. -/
+theorem not_mem_closure_inter_closure_of_transverse {C H U V : Set ℂ} {f : ℝ → ℂ} {t₀ : ℝ} {p q c d x : ℂ}
+    (hH : IsPreconnected H) (hHc : IsClosed H) (hCH : Disjoint C H)
+    (hf : ContinuousOn f (Icc 0 1)) (hfi : InjOn f (Icc 0 1)) (h0 : f 0 ∈ H) (h1 : f 1 ∈ H)
+    (ht₀ : t₀ ∈ Ioo (0 : ℝ) 1)
+    (hpqC : segment ℝ p q ⊆ C) (he : f t₀ ∈ openSegment ℝ p q)
+    (hpqγ : segment ℝ p q ∩ f '' Icc 0 1 ⊆ {f t₀})
+    (hcd : f t₀ ∈ openSegment ℝ c d) (hcdγ : openSegment ℝ c d ⊆ f '' Icc 0 1)
+    (htrans : (conj (q - p) * (d - c)).im ≠ 0)
+    (hU : IsOpen U) (hUc : IsPreconnected U) (hUC : U ⊆ C \ f '' Icc 0 1) (hqU : q ∈ U)
+    (hV : IsOpen V) (hVc : IsPreconnected V) (hVC : V ⊆ C \ f '' Icc 0 1) (hpV : p ∈ V)
+    (hx : x ∉ H ∪ f '' Icc 0 1) :
+    x ∉ closure U ∩ closure V := by
+  rintro ⟨hxU, hxV⟩
+  have hγc : IsClosed (f '' Icc 0 1) := (isCompact_Icc.image_of_continuousOn hf).isClosed
+  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.1 (hHc.union hγc).isOpen_compl x hx
+  obtain ⟨v, hvB, hvU⟩ := mem_closure_iff.1 hxU _ Metric.isOpen_ball (Metric.mem_ball_self hr)
+  obtain ⟨w, hwB, hwV⟩ := mem_closure_iff.1 hxV _ Metric.isOpen_ball (Metric.mem_ball_self hr)
+  have hΩc : IsPreconnected (U ∪ Metric.ball x r ∪ V) :=
+    (hUc.union' ⟨v, hvU, hvB⟩ (convex_ball x r).isPreconnected).union' ⟨w, Or.inr hwB, hwV⟩ hVc
+  have hoff : ∀ {W : Set ℂ}, W ⊆ C \ f '' Icc 0 1 → ∀ z ∈ W, z ∉ H ∪ f '' Icc 0 1 := by
+    rintro W hW z hzW (hzH | hzγ)
+    · exact Set.disjoint_left.1 hCH (hW hzW).1 hzH
+    · exact (hW hzW).2 hzγ
+  refine false_of_isPreconnected_of_transverse ((hU.union Metric.isOpen_ball).union hV) hΩc
+    (Or.inr hpV) (Or.inl (Or.inl hqU)) ?_ hH hf hfi h0 h1 ht₀ he hpqγ (hCH.mono_left hpqC) hcd hcdγ htrans
+  rw [Set.disjoint_left]
+  rintro z ((hzU | hzB) | hzV)
+  · exact hoff hUC z hzU
+  · exact hball hzB
+  · exact hoff hVC z hzV
 
 end LatticeProb.Topology
