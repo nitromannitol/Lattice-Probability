@@ -93,6 +93,10 @@ import LatticeProb.Prob.ExponentialMoments
 import LatticeProb.Prob.WeightedConc
 import LatticeProb.Prob.GaussianConcentration
 import LatticeProb.External.GaussianLogSobolev
+import LatticeProb.External.GaussianLogSobolevProved
+import LatticeProb.Prob.GaussianLogSobolevMehler
+import LatticeProb.Prob.GaussianLogSobolevMehlerDeriv
+import LatticeProb.Prob.GaussianLogSobolevEntropy
 import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Prob.HerbstBound
 import LatticeProb.Prob.HerbstFromLSI

@@ -49,9 +49,12 @@ a cited result with their sources.
 ### Cited results taken as hypotheses
 
 The following results from the literature are stated as propositions in
-`LatticeProb/External/` and are not proved here: the Gaussian logarithmic Sobolev
-inequality and the Rellich-Kondrachov compact embedding in negative Sobolev
-order.  Janiszewski's theorem for polygonal sets, stated there as
+`LatticeProb/External/` and are not proved here: the Rellich-Kondrachov compact
+embedding in negative Sobolev order.  The Gaussian logarithmic Sobolev
+inequality, stated there as `LatticeProb.GaussianLogSobolev n`, is proved for
+every `n` (`LatticeProb.gaussianLogSobolev_holds`, by the Bakry-Emery semigroup
+argument along the Mehler interpolation, with the sharp constant, in
+`LatticeProb/Prob/GaussianLogSobolevEntropy.lean`).  Janiszewski's theorem for polygonal sets, stated there as
 `LatticeProb.PolygonalJaniszewski`, is proved
 (`LatticeProb.polygonalJaniszewski`, for any compact sets with preconnected
 intersection, from Janiszewski's theorem in the complex plane adapted from
@@ -447,6 +450,14 @@ the field with zero boundary values on a finite set `C` as
   bridge holds unconditionally and the general-`n` log-Sobolev and Herbst bounds rest only on
   the one-dimensional heat-flow contraction and the one-step tensorization
   (`LatticeProb/Prob/GaussianLogSobolevMollify.lean`).
+* `LatticeProb.GaussLSI.integral_mul_log_le_of_gradient`,
+  `LatticeProb.integral_mul_log_le_of_contDiff`, `LatticeProb.gaussianLogSobolev_holds`: the
+  Gaussian logarithmic Sobolev inequality with the sharp constant, `Ent(e^g) ≤ (K² / 2) E e^g`
+  for `g` with gradient bounded by `K`, by differentiating the entropy along the Mehler
+  interpolation `∫ e^{g (sin α u + cos α v)} dγ(v)`, rotating the product Gaussian and
+  integrating by parts; hence `GaussianLogSobolev n` for every `n`
+  (`LatticeProb/Prob/GaussianLogSobolevMehler.lean`, `GaussianLogSobolevMehlerDeriv.lean`,
+  `GaussianLogSobolevEntropy.lean`, `LatticeProb/External/GaussianLogSobolevProved.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
