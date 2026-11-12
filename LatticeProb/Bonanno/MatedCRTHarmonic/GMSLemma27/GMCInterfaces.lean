@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module MatedCRTHarmonic.GMSLemma27.GMCInterfaces at commit 31e7483; only the module paths of local imports are changed. -/
+   source module MatedCRTHarmonic.GMSLemma27.GMCInterfaces at commit 31e7483; only the module paths of local imports are changed.
+   Changed: docstring wording of GMCLowerTail. -/
 import LatticeProb.Bonanno.MatedCRTHarmonic.GMSLemma27.CellModel
 import LatticeProb.Bonanno.LQGDimension.Statement.Defs
 
@@ -64,7 +65,7 @@ whole-plane GFF, let `μ_h` be its `γ`-quantum area measure, and let `(h_ε)` b
 Stated for the circle average process `H` of a whole-plane GFF normalized by `h_1(0) = 0` and its LQG measure `μ`
 (`IsLQGAreaOf`), with `o^∞_δ(δ)` written out: for every `s ∈ ℝ` and `c > 0` there is `δ₀ > 0` with probability
 `≤ c δ^s` for all `δ ∈ (0, δ₀)`, `z ∈ ℂ`, `ε ∈ (0, 1)`. To be proved for `γ ∈ (0, 2)` (the standing range of
-[GHM15] and [18]); it is false for `γ ≥ 2`, where the vague limit is `μ = 0`. Producer: the SLE-free GMC construction
+[GHM15] and [18]; for `γ ≥ 2` the vague limit is `μ = 0`). Producer: the SLE-free GMC construction
 (whole-plane LQG measure; [DS11, Prop. 2.1, Lemma 4.5]; [GHM15, Lemma 3.11]). -/
 def GMCLowerTail (γ : ℝ) : Prop :=
   ∀ (Ω : Type) [MeasurableSpace Ω] (P : Measure Ω) (H : ℝ → ℂ → Ω → ℝ) (μ : Ω → Measure ℂ),
