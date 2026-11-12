@@ -25,6 +25,10 @@ reaches a level from below or from above is a stopping time of the natural filtr
   before the lower one is measurable.
 * `measureReal_topFirst`: for `c > 0`, `P(topFirst) (1 - e^{-2c(a+b)}) = 1 - e^{-2cb}`, by dominated
   convergence in the optional stopping identity at the truncated exit times.
+* `integrable_and_integral_brownian_exitTrunc`, `integrable_and_integral_drift_exitTrunc`: optional
+  stopping of `B` at the truncated exit time, so that `E[B s + c s at the exit] = c E[exit time]`.
+* `lintegral_exitStrip`: Wald's identity `c E[exit time] = (a + b) P(topFirst) - b` for `c > 0`
+  (dominated convergence for the stopped drifted motion, monotone convergence for the times).
 -/
 
 open MeasureTheory ProbabilityTheory Filter
@@ -498,6 +502,182 @@ theorem measureReal_topFirst (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurabl
   simp only [hk] at h1
   linear_combination (-(Real.exp (-(2 * c * b)))) * h1 +
     (1 - P.real (topFirst B c a b)) * he
+
+/-! ### The expected exit time (Wald's identity) -/
+
+/-- A Brownian motion has expectation zero at every time (martingale property from time `0`). -/
+theorem integral_brownian_eq_zero (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable (B t))
+    (t : ℝ≥0) : ∫ ω, B t ω ∂P = 0 := by
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  have h := (martingale_brownian hB hm).setIntegral_eq (zero_le : (0 : ℝ≥0) ≤ t) MeasurableSet.univ
+  simp only [Measure.restrict_univ] at h
+  rw [← h]
+  exact integral_eq_zero_of_ae (by
+    filter_upwards [hB.eval_zero_ae_eq_zero] with ω h0
+    simpa using h0)
+
+/-- **Optional stopping for the Brownian motion at the truncated exit time**: the stopped value is
+integrable and has expectation `0`. -/
+theorem integrable_and_integral_brownian_exitTrunc (hB : IsPreBrownianReal B P)
+    (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun s => B s ω) (c a b : ℝ) (N : ℝ≥0) :
+    Integrable (fun ω => B (exitTrunc B c a b N ω) ω) P ∧
+      ∫ ω, B (exitTrunc B c a b N ω) ω ∂P = 0 := by
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  have hM := martingale_brownian hB hm
+  have hτ := isStoppingTime_exitTrunc hm hcont c a b N
+  have hr : ∀ᵐ ω ∂P, ∀ t, ContinuousWithinAt (fun s : ℝ≥0 => B s ω) (Set.Ioi t) t :=
+    Filter.Eventually.of_forall fun ω t => (hcont ω).continuousWithinAt
+  have key := bounded_stopping_integrable_and_integral_eq_terminal hM hτ N
+    (fun ω => ENNReal.coe_le_coe.2 (exitTrunc_le B c a b N ω)) hr
+  rw [integral_brownian_eq_zero hB hm N] at key
+  exact key
+
+/-- The truncated exit time is a measurable function. -/
+theorem measurable_exitTrunc (hm : ∀ t, Measurable (B t))
+    (hcont : ∀ ω, Continuous fun s => B s ω) (c a b : ℝ) (N : ℝ≥0) :
+    Measurable (exitTrunc B c a b N) :=
+  measurable_of_isStoppingTime (isStoppingTime_exitTrunc hm hcont c a b N)
+
+/-- The truncated exit time is integrable: it is bounded by the horizon. -/
+theorem integrable_exitTrunc (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable (B t))
+    (hcont : ∀ ω, Continuous fun s => B s ω) (c a b : ℝ) (N : ℝ≥0) :
+    Integrable (fun ω => (exitTrunc B c a b N ω : ℝ)) P := by
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  refine Integrable.of_bound
+    (measurable_exitTrunc hm hcont c a b N).coe_nnreal_real.aestronglyMeasurable (N : ℝ) ?_
+  exact Filter.Eventually.of_forall fun ω => by
+    rw [Real.norm_of_nonneg (NNReal.coe_nonneg _)]
+    exact NNReal.coe_le_coe.2 (exitTrunc_le B c a b N ω)
+
+/-- **Wald's identity at the truncated exit time**: the drifted motion `B s + c s` stopped at the
+truncated exit time is integrable, with expectation `c` times the expected stopping time. -/
+theorem integrable_and_integral_drift_exitTrunc (hB : IsPreBrownianReal B P)
+    (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun s => B s ω) (c a b : ℝ) (N : ℝ≥0) :
+    Integrable (fun ω => B (exitTrunc B c a b N ω) ω + c * (exitTrunc B c a b N ω : ℝ)) P ∧
+      ∫ ω, (B (exitTrunc B c a b N ω) ω + c * (exitTrunc B c a b N ω : ℝ)) ∂P =
+        c * ∫ ω, (exitTrunc B c a b N ω : ℝ) ∂P := by
+  obtain ⟨h1, h2⟩ := integrable_and_integral_brownian_exitTrunc hB hm hcont c a b N
+  have h3 := integrable_exitTrunc hB hm hcont c a b N
+  refine ⟨h1.add (h3.const_mul c), ?_⟩
+  rw [integral_add h1 (h3.const_mul c), h2, integral_const_mul, zero_add]
+
+omit mΩ in
+/-- For a path leaving the strip in finite time, the truncation at the horizon `n` is eventually
+the exit time itself. -/
+theorem eventually_exitTrunc_eq (c a b : ℝ) (ω : Ω) (hlt : exitStrip B c a b ω < ⊤) :
+    ∀ᶠ n : ℕ in atTop, exitTrunc B c a b (n : ℝ≥0) ω = (exitStrip B c a b ω).toNNReal := by
+  filter_upwards [eventually_ge_atTop ⌈(exitStrip B c a b ω).toNNReal⌉₊] with n hn
+  have hle : (exitStrip B c a b ω).toNNReal ≤ (n : ℝ≥0) :=
+    (Nat.le_ceil _).trans (by exact_mod_cast hn)
+  unfold exitTrunc
+  rw [inf_eq_left.mpr]
+  rw [← ENNReal.coe_toNNReal hlt.ne]
+  exact_mod_cast hle
+
+omit mΩ in
+/-- The drifted motion stopped at the truncated exit times converges, along the horizons
+`n → ∞`, to `a` if the upper level is reached first and to `-b` otherwise. -/
+theorem tendsto_drift_exitTrunc (hcont : ∀ ω, Continuous fun s => B s ω) (c : ℝ) {a b : ℝ}
+    (ha : 0 < a) (hb : 0 < b) (ω : Ω) (h0 : B 0 ω = 0) (hlt : exitStrip B c a b ω < ⊤) :
+    Tendsto (fun n : ℕ => B (exitTrunc B c a b (n : ℝ≥0) ω) ω +
+        c * (exitTrunc B c a b (n : ℝ≥0) ω : ℝ)) atTop
+      (nhds (-b + (topFirst B c a b).indicator (fun _ => a + b) ω)) := by
+  have hval := exitStrip_value hcont c ha hb ω h0 hlt
+  have hev := eventually_exitTrunc_eq (B := B) c a b ω hlt
+  by_cases hω : ω ∈ topFirst B c a b
+  · have h1 := hval.1 hω
+    have hU : -b + (topFirst B c a b).indicator (fun _ => a + b) ω = a := by
+      rw [Set.indicator_of_mem hω]; ring
+    rw [hU]
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [hev] with n hn
+    simp only [hn]
+    exact h1.symm
+  · have h2 := hval.2 hω
+    have hU : -b + (topFirst B c a b).indicator (fun _ => a + b) ω = -b := by simp [hω]
+    rw [hU]
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [hev] with n hn
+    simp only [hn]
+    exact h2.symm
+
+/-- For `c > 0`, the expectation of the drifted motion stopped at the truncated exit time
+converges to `-b + P(upper level first) (a + b)` as the horizon tends to infinity (dominated
+convergence). -/
+theorem tendsto_integral_drift_exitTrunc (hB : IsPreBrownianReal B P)
+    (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun s => B s ω) {c : ℝ} (hc : 0 < c)
+    {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    Tendsto (fun n : ℕ => ∫ ω, (B (exitTrunc B c a b (n : ℝ≥0) ω) ω +
+        c * (exitTrunc B c a b (n : ℝ≥0) ω : ℝ)) ∂P) atTop
+      (nhds (-b + P.real (topFirst B c a b) * (a + b))) := by
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  have hmeas := measurableSet_topFirst hm hcont c a b
+  have hbound : ∀ n : ℕ, ∀ᵐ ω ∂P, ‖B (exitTrunc B c a b (n : ℝ≥0) ω) ω +
+      c * (exitTrunc B c a b (n : ℝ≥0) ω : ℝ)‖ ≤ a + b := by
+    intro n
+    filter_upwards [hB.eval_zero_ae_eq_zero] with ω h0
+    have := exitTrunc_value_mem hcont c ha hb (n : ℝ≥0) ω h0
+    rw [Real.norm_eq_abs, abs_le]
+    constructor <;> linarith [this.1, this.2]
+  have hlim : ∀ᵐ ω ∂P, Tendsto (fun n : ℕ => B (exitTrunc B c a b (n : ℝ≥0) ω) ω +
+      c * (exitTrunc B c a b (n : ℝ≥0) ω : ℝ)) atTop
+        (nhds (-b + (topFirst B c a b).indicator (fun _ => a + b) ω)) := by
+    filter_upwards [hB.eval_zero_ae_eq_zero, ae_exitStrip_lt_top hB hm hcont hc a b] with ω h0 hlt
+    exact tendsto_drift_exitTrunc hcont c ha hb ω h0 hlt
+  have hDCT := tendsto_integral_of_dominated_convergence (fun _ => a + b)
+    (fun n => (integrable_and_integral_drift_exitTrunc hB hm hcont c a b
+      (n : ℝ≥0)).1.aestronglyMeasurable) (integrable_const _) hbound hlim
+  have hI : ∫ ω, (-b + (topFirst B c a b).indicator (fun _ => a + b) ω) ∂P =
+      -b + P.real (topFirst B c a b) * (a + b) := by
+    rw [integral_add (integrable_const _) ((integrable_const _).indicator hmeas), integral_const,
+      integral_indicator_const _ hmeas]
+    simp
+  rwa [hI] at hDCT
+
+/-- **The expected exit time of a Brownian motion with positive drift from a strip**
+(Wald's identity): `c E[exit time] = (a + b) P(upper level first) - b`. -/
+theorem lintegral_exitStrip (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable (B t))
+    (hcont : ∀ ω, Continuous fun s => B s ω) {c : ℝ} (hc : 0 < c) {a b : ℝ} (ha : 0 < a)
+    (hb : 0 < b) :
+    ∫⁻ ω, exitStrip B c a b ω ∂P =
+      ENNReal.ofReal ((-b + P.real (topFirst B c a b) * (a + b)) / c) := by
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  set f : ℕ → Ω → ℝ≥0∞ := fun n ω => ((exitTrunc B c a b (n : ℝ≥0) ω : ℝ≥0) : ℝ≥0∞) with hf
+  have hfmeas : ∀ n, Measurable (f n) := fun n =>
+    (measurable_exitTrunc hm hcont c a b (n : ℝ≥0)).coe_nnreal_ennreal
+  have hfeq : ∀ n ω, f n ω = min (exitStrip B c a b ω) (n : ℝ≥0∞) := fun n ω => by
+    simp only [hf, coe_exitTrunc]
+    norm_cast
+  have hmono : Monotone f := fun n m hnm ω => by
+    rw [hfeq, hfeq]
+    exact min_le_min le_rfl (by exact_mod_cast hnm)
+  have hsup : ∀ ω, ⨆ n, f n ω = exitStrip B c a b ω := by
+    intro ω
+    refine le_antisymm (iSup_le fun n => by rw [hfeq]; exact min_le_left _ _) ?_
+    refine le_of_forall_lt fun r hr => ?_
+    obtain ⟨n, hn⟩ := ENNReal.exists_nat_gt (hr.trans_le le_top).ne
+    exact lt_of_lt_of_le (by rw [hfeq]; exact lt_min hr hn) (le_iSup (fun n => f n ω) n)
+  have h1 : ∫⁻ ω, exitStrip B c a b ω ∂P = ⨆ n, ∫⁻ ω, f n ω ∂P :=
+    (lintegral_congr fun ω => (hsup ω).symm).trans (lintegral_iSup hfmeas hmono)
+  have hx : ∀ n : ℕ, ∫⁻ ω, f n ω ∂P =
+      ENNReal.ofReal (∫ ω, (exitTrunc B c a b (n : ℝ≥0) ω : ℝ) ∂P) := by
+    intro n
+    rw [ofReal_integral_eq_lintegral_ofReal (integrable_exitTrunc hB hm hcont c a b (n : ℝ≥0))
+      (Filter.Eventually.of_forall fun ω => NNReal.coe_nonneg _)]
+    simp [hf]
+  have hxlim : Tendsto (fun n : ℕ => ∫ ω, (exitTrunc B c a b (n : ℝ≥0) ω : ℝ) ∂P) atTop
+      (nhds ((-b + P.real (topFirst B c a b) * (a + b)) / c)) := by
+    have := (tendsto_integral_drift_exitTrunc hB hm hcont hc ha hb).div_const c
+    refine this.congr fun n => ?_
+    rw [(integrable_and_integral_drift_exitTrunc hB hm hcont c a b (n : ℝ≥0)).2]
+    field_simp
+  have hmono' : Monotone fun n : ℕ => ∫⁻ ω, f n ω ∂P := fun n m hnm => lintegral_mono (hmono hnm)
+  have hT2 : Tendsto (fun n : ℕ => ∫⁻ ω, f n ω ∂P) atTop
+      (nhds (ENNReal.ofReal ((-b + P.real (topFirst B c a b) * (a + b)) / c))) := by
+    simp only [hx]
+    exact ENNReal.tendsto_ofReal hxlim
+  rw [h1]
+  exact tendsto_nhds_unique (tendsto_atTop_iSup hmono') hT2
 
 end LatticeProb
 
