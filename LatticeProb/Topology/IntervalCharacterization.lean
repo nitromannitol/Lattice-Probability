@@ -2,6 +2,9 @@ import Mathlib.Order.CountableDenseLinearOrder
 import Mathlib.Order.CompleteLatticeIntervals
 import Mathlib.Topology.Order.MonotoneContinuity
 import Mathlib.Topology.UnitInterval
+import Mathlib.Topology.Order.IntermediateValue
+import Mathlib.Topology.Order.Compact
+import Mathlib.Topology.Separation.Hausdorff
 
 /-!
 # The order characterisation of the unit interval
@@ -17,11 +20,19 @@ hence homeomorphic, to the unit interval `[0, 1]` (Cantor; see Kuratowski, *Topo
 * `nonempty_orderIso_of_separableSpace`: two nontrivial, densely ordered, complete linear orders with separable
   order topologies are order isomorphic.
 * `nonempty_orderIso_unitInterval`, `nonempty_homeomorph_unitInterval`: the case of `[0, 1]`.
+* `exists_isLUB_of_compactSpace`, `completeLinearOrderOfCompactSpace`: a compact linearly ordered space with its
+  order topology is a complete linear order.
+* `orderTopology_of_compactSpace`: a compact topology on a linear order in which all open rays are open is the
+  order topology.
+* `nonempty_homeomorph_unitInterval_of_compactSpace`, `nonempty_homeomorph_unitInterval_of_isOpen_rays`: a
+  nontrivial, compact, connected, separable linearly ordered space (with its order topology, or with a compact
+  topology in which the open rays are open) is homeomorphic to `[0, 1]`.
 -/
 
 namespace LatticeProb.Topology
 
 open Set
+open scoped _root_.Topology
 
 variable {α β : Type*}
 
@@ -138,5 +149,64 @@ theorem nonempty_homeomorph_unitInterval
     Nonempty (α ≃ₜ unitInterval) :=
   let ⟨e⟩ := nonempty_orderIso_unitInterval (α := α)
   ⟨e.toHomeomorph⟩
+
+/-- In a nonempty compact linearly ordered space with its order topology every set has a least upper bound. -/
+theorem exists_isLUB_of_compactSpace [LinearOrder α] [TopologicalSpace α] [OrderTopology α] [CompactSpace α]
+    [Nonempty α] (s : Set α) : ∃ x, IsLUB s x := by
+  obtain ⟨m, hm⟩ := isCompact_univ.exists_isGreatest (univ_nonempty (α := α))
+  have hcl : IsClosed (upperBounds s) := by
+    have h : upperBounds s = ⋂ a ∈ s, Ici a := by
+      ext x
+      simp [upperBounds]
+    rw [h]
+    exact isClosed_biInter fun a _ => isClosed_Ici
+  have hne : (upperBounds s).Nonempty := ⟨m, fun a _ => hm.2 (mem_univ a)⟩
+  exact hcl.isCompact.exists_isLeast hne
+
+/-- The complete linear order structure of a nonempty compact linearly ordered space with its order topology. -/
+noncomputable abbrev completeLinearOrderOfCompactSpace (α : Type*) [LinearOrder α] [TopologicalSpace α]
+    [OrderTopology α] [CompactSpace α] [Nonempty α] : CompleteLinearOrder α :=
+  letI : SupSet α := ⟨fun s => Classical.choose (exists_isLUB_of_compactSpace s)⟩
+  letI : CompleteLattice α :=
+    completeLatticeOfSup α fun s => Classical.choose_spec (exists_isLUB_of_compactSpace s)
+  { (inferInstance : LinearOrder α), LinearOrder.toBiheytingAlgebra α,
+    (inferInstance : CompleteLattice α) with }
+
+/-- The order topology of a linear order is Hausdorff. -/
+theorem t2Space_preorderTopology (α : Type*) [LinearOrder α] : @T2Space α (Preorder.topology α) :=
+  letI := Preorder.topology α
+  haveI : OrderTopology α := ⟨rfl⟩
+  inferInstance
+
+/-- A compact topology on a linear order in which every open ray is open is the order topology. -/
+theorem orderTopology_of_compactSpace [LinearOrder α] [t : TopologicalSpace α] [CompactSpace α]
+    (hIio : ∀ x : α, IsOpen (Iio x)) (hIoi : ∀ x : α, IsOpen (Ioi x)) : OrderTopology α := by
+  have hle : t ≤ Preorder.topology α := by
+    refine le_generateFrom ?_
+    rintro s ⟨a, rfl | rfl⟩
+    exacts [hIoi a, hIio a]
+  have hcl : ∀ s : Set α, IsClosed s → IsClosed[Preorder.topology α] s := fun s hs => by
+    have h := @Continuous.isClosedMap α α t (Preorder.topology α) _ (t2Space_preorderTopology α) id
+      (continuous_id_of_le hle)
+    simpa using h s hs
+  refine ⟨le_antisymm hle fun s hs => ?_⟩
+  exact (@isClosed_compl_iff α (Preorder.topology α) s).1 (hcl sᶜ hs.isClosed_compl)
+
+/-- **A compact connected separable linearly ordered space is an arc.** A nontrivial linear order whose order
+topology is compact, connected and separable is homeomorphic to the unit interval. -/
+theorem nonempty_homeomorph_unitInterval_of_compactSpace [LinearOrder α] [TopologicalSpace α]
+    [OrderTopology α] [CompactSpace α] [ConnectedSpace α] [TopologicalSpace.SeparableSpace α]
+    [Nontrivial α] : Nonempty (α ≃ₜ unitInterval) := by
+  have : DenselyOrdered α := denselyOrdered_of_preconnectedSpace
+  let : CompleteLinearOrder α := completeLinearOrderOfCompactSpace α
+  exact nonempty_homeomorph_unitInterval
+
+/-- A nontrivial linear order with a compact, connected, separable topology in which every open ray is open is
+homeomorphic to the unit interval. -/
+theorem nonempty_homeomorph_unitInterval_of_isOpen_rays [LinearOrder α] [TopologicalSpace α]
+    [CompactSpace α] [ConnectedSpace α] [TopologicalSpace.SeparableSpace α] [Nontrivial α]
+    (hIio : ∀ x : α, IsOpen (Iio x)) (hIoi : ∀ x : α, IsOpen (Ioi x)) : Nonempty (α ≃ₜ unitInterval) := by
+  have := orderTopology_of_compactSpace hIio hIoi
+  exact nonempty_homeomorph_unitInterval_of_compactSpace
 
 end LatticeProb.Topology
