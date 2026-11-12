@@ -21,8 +21,8 @@ and, once the `L^p` form of Doob's maximal inequality
   `∫ ∑_{i<n} |S i|^{p-2} v (i+1)
      ≤ (p/(p-1))^{p-2} (∫ V^{p/2})^{2/p} (∫ |S n|^p)^{(p-2)/p}`.
 
-The `L^p` Doob input is the one remaining genuine step (it is not the false
-`PinelisDoobStep`); it is carried as an explicit hypothesis of `crossTerm_le_variance_of_doob`
+The `L^p` Doob input is the one remaining genuine step; it is carried as an explicit hypothesis
+of `crossTerm_le_variance_of_doob`
 and is derivable from the `ε` form `doob_maximal_crossTerm` by the layer-cake formula.  All the
 Bochner integrals below are integrable by hypothesis, so no integral collapses to the junk `0`.
 
