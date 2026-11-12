@@ -1,52 +1,25 @@
 /-
-# The multiparameter `Lᵖ` maximal bound (`KrengelLpBall`): reduction and ℓ¹-ball geometry
+# The `ℓ¹`-ball maximal function and anchored-box geometry
 
-This file is the start of the library-side attack on the second named gap of
-`LatticeProb/Prob/AkcogluKrengelAE/BallMaximalLp.lean`, `KrengelLpBall d` (the multiparameter
-`Lᵖ` maximal bound for `ℓ¹`-ball averages).  It does two things.
+This file collects the finite-set geometry that compares `ℓ¹`-ball averages on `ℤ^d` with
+anchored-box averages, towards the multiparameter `Lᵖ` maximal bound `KrengelLpBall d`
+(`LatticeProb/Prob/AkcogluKrengelAE/BallMaximalLp.lean`).
 
-## 1. The Marcinkiewicz reduction
-
-`KrengelLpBall d` follows from a multiparameter **weak-type `(1,1)`** input for the `ℓ¹`-ball
-maximal, `KrengelLpBallWeakType d`, exactly as the one-parameter `BirkhoffLpMaximal` followed from
-its weak type.  The layer-cake / Tonelli / Hölder step is the dimension-agnostic
-`LatticeProb.marcinkiewicz_abstract` already proved in
-`LatticeProb/Prob/AkcogluKrengelAE/BirkhoffLpMaximalProved.lean`.
-
-## 2. The centred anchored-box maximal input and the ℓ¹-ball geometry
-
-The multiparameter weak-type input is intended to come from the **centred anchored-box** maximal
-inequality (`KrengelMaximalInputCentred` below).  The library's `AnchoredBoxMaximal`
-(`AnchoredBoxMean.lean:28`) is *false as stated* (landed errata `dcf09c9`, `4dee008`), because the
-anchored box `∏ᵢ [0, ⌈N cᵢ⌉)` has cardinality `∏ᵢ ⌈N cᵢ⌉`, which equals `N^d ∏ᵢ cᵢ` only
-asymptotically; the `N = 1` witness refutes it.  The centred form normalises by the *actual* box
-cardinality and subtracts the true mean `∫ h`, which removes the defect.
-
-`KrengelMaximalInputCentred` and `AnchoredBoxMaximalCentred` are distinct centred
-maximal-inequality interfaces. Their identification requires a single declaration of the
-input in `namespace LatticeProb`. The duplicate `AnchoredBoxMaximal` declarations at
-`AnchoredBoxMean.lean:28` and `AnchoredBoxMaximal.lean:37` require separate interface
-reconciliation; this conditional reduction does not resolve it.
-
-Note also that `AnchoredBoxMaximalCentred` is *named but not proved*: it is the open
-multiparameter strong-`Lᵖ` maximal theorem.  The reduction here names it (in the shape of its
-weak-type half) as the input, which is the right shape.
-
-The geometric content proved here is:
-
+* `l1BallMax` and `measurable_l1BallMax`: the `ℓ¹`-ball maximal function of a measure-preserving
+  additive action and its measurability;
 * `anchoredBox_subset_l1Ball`: an anchored box lies inside an `ℓ¹` ball;
 * `l1Ball_subset_boxFinset` / `card_l1Ball_le`: the `ℓ¹` ball lies inside the `ℓ∞` box
   `∏ᵢ [-⌈R⌉₊, ⌈R⌉₊]`, with cardinality at most `(2⌈R⌉₊+1)^d`;
 * `orthantBox` and `boxFinset_eq_biUnion_orthantBox`: the `ℓ∞` box is the union of the `2^d`
-  orthant boxes, each a translate of an anchored box, with total volume `(2⌈R⌉₊+1)^d`.
+  orthant boxes, each a translate of an anchored box;
+* `card_l1Ball_ge`, `avg_l1Ball_le_orthantBoxMax` and `l1BallMax_le_orthantBoxMax`: the volume lower
+  bound and the comparison of the `ℓ¹`-ball average with the orthant-box averages, with the constant
+  `(2d)^d`, independent of the radius;
+* `anchoredBox_smallC`: each orthant box is an anchored box with all side parameters at most `1`;
+* `tau_nsmul_one_eq_iterate`, `ae_eq_of_measurePreserving_idempotent` and `avg_map_addRight`: the
+  bookkeeping that passes between the action and translates of finite sets.
 
-The cover constant in the pass from box averages to ball averages is `2^d · d!` (the `2^d` orthant
-pieces times the simplex-to-cube volume ratio `d!`), independent of `R` and `N`; it is recorded in
-`L1BallCoverTransfer`, the stated geometric transfer.  The tiling-to-average comparison of the
-library's `UpperBound.lean:103` (`cubeRatio_le_gridAvg_add_defect`) is a *different* (grid)
-tiling and is not directly the cover used here.
-
-The geometry lemmas below are all fully proved; the only unproved inputs are the two named `Prop`s `KrengelMaximalInputCentred` and `L1BallCoverTransfer`.
+Every statement here is proved.
 -/
 import LatticeProb.Prob.AkcogluKrengelAE.BirkhoffLpMaximalProved
 import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
@@ -64,22 +37,11 @@ noncomputable section
 
 variable {Ω : Type*} [MeasurableSpace Ω] {d : ℕ}
 
-/-! ### The `ℓ¹`-ball maximal function and its weak type -/
+/-! ### The `ℓ¹`-ball maximal function -/
 
 /-- The `ℓ¹`-ball maximal function `Mf ω = ⨆_{1 ≤ R} avg (B¹_R(0)) (f ∘ T_·)(ω)`. -/
 noncomputable def l1BallMax (T : Site d → Ω → Ω) (f : Ω → ℝ≥0∞) (ω : Ω) : ℝ≥0∞ :=
   ⨆ (R : ℕ) (_ : 1 ≤ R), avg (l1Ball (0 : Site d) R) (fun y => f (T y ω))
-
-/-- The multiparameter **weak-type `(1,1)`** input for the `ℓ¹`-ball maximal. -/
-def KrengelLpBallWeakType (d : ℕ) : Prop :=
-  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω), IsProbabilityMeasure μ →
-    ∀ (T : Site d → Ω → Ω),
-      (∀ x, MeasurePreserving (T x) μ μ) →
-      (∀ x y, T (x + y) = T x ∘ T y) →
-      ∀ f : Ω → ℝ≥0∞, Measurable f →
-        ∀ t : ℝ, 0 < t →
-          ENNReal.ofReal t * μ {ω | ENNReal.ofReal t < l1BallMax T f ω} ≤
-            ∫⁻ ω, ({ω | ENNReal.ofReal t < l1BallMax T f ω}.indicator f) ω ∂μ
 
 /-- Measurability of the `ℓ¹`-ball maximal function. -/
 theorem measurable_l1BallMax {T : Site d → Ω → Ω} (hT : ∀ x, Measurable (T x))
@@ -87,41 +49,6 @@ theorem measurable_l1BallMax {T : Site d → Ω → Ω} (hT : ∀ x, Measurable 
   refine Measurable.iSup fun R => ?_
   refine Measurable.iSup_Prop (1 ≤ R) ?_
   exact measurable_const.mul (Finset.measurable_sum _ fun y _ => hf.comp (hT y))
-
-/-- **The Marcinkiewicz reduction.** -/
-theorem KrengelLpBall_of_weakType (hweak : KrengelLpBallWeakType d) : KrengelLpBall d := by
-  intro p hp
-  refine ⟨(p / (p - 1)) ^ p, by positivity, ?_⟩
-  intro Ω _ μ hprob T hT hadd f hf
-  exact marcinkiewicz_abstract μ (l1BallMax T f) f p hp
-    (measurable_l1BallMax (fun x => (hT x).measurable) hf) hf
-    (hweak μ hprob T hT hadd f hf)
-
-/-! ### The centred anchored-box maximal input -/
-
-/-- The centred anchored-box average: the uniform average of `h` over `∏ᵢ [0, ⌈N cᵢ⌉)`, minus the
-true mean `∫ h`. -/
-noncomputable def anchoredBoxAvgCentred {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    (h : Ω → ℝ) (τ : Site d → Ω → Ω) (c : Fin d → ℝ) (N : ℕ) (ω : Ω) : ℝ :=
-  (((anchoredBox c N).card : ℝ))⁻¹ * ∑ x ∈ anchoredBox c N, h (τ x ω) - ∫ ω, h ω ∂μ
-
-/-- **The centred anchored-box weak-type `(1,1)` input** (the true replacement for the false
-`AnchoredBoxMaximal`).  To be identified with, and later replaced by,
-`LatticeProb.AnchoredBoxMaximalCentred` (`AnchoredBoxMean.lean`, branch `ds-errata`) once both
-branches reach `main`. -/
-def KrengelMaximalInputCentred (d : ℕ) (c : Fin d → ℝ) : Prop :=
-  (∀ i, 0 ≤ c i) →
-  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (τ : Site d → Ω → Ω),
-    (∀ z, MeasurePreserving (τ z) μ μ) →
-    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
-    ∀ (h : Ω → ℝ), Measurable h → (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
-      ∀ t : ℝ, 0 < t →
-        ENNReal.ofReal t * μ {ω | ENNReal.ofReal t <
-            ⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgCentred μ h τ c N ω|} ≤
-          ∫⁻ ω, ({ω | ENNReal.ofReal t <
-            ⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgCentred μ h τ c N ω|}.indicator
-              (fun ω => ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|)) ω ∂μ
 
 /-! ### The `ℓ¹`-ball geometry against anchored boxes -/
 
@@ -477,9 +404,8 @@ theorem l1BallMax_eq_iSup_min (T : Site d → Ω → Ω) (f : Ω → ℝ≥0∞)
 omit [MeasurableSpace Ω] in
 /-- **The orthant box is an anchored box with all side parameters `≤ 1`.**  With `N = R + 1` and
 `cᵢ = 1` on the positive coordinates and `cᵢ = R/(R+1)` on the negative ones, `anchoredBox c N`
-is (up to the reflection `flip s`) the orthant box of radius `R`.  Every `cᵢ ≤ 1`, so the only case
-of `MultiParameterMaximalErgodicRestricted` needed for the `ℓ¹`-ball cover is the `cᵢ ≤ 1` one, in
-which `⌈N cᵢ⌉` sweeps a tail of `ℕ`. -/
+is (up to the reflection `flip s`) the orthant box of radius `R`.  Every `cᵢ ≤ 1`, so `⌈N cᵢ⌉`
+sweeps a tail of `ℕ`. -/
 theorem anchoredBox_smallC (s : Fin d → Bool) (R : ℕ) :
     anchoredBox (fun i => if s i then (1:ℝ) else (R:ℝ)/(R+1)) (R+1) =
       Fintype.piFinset (fun i => if s i then Finset.Ico (0:ℤ) (R+1) else Finset.Ico (0:ℤ) R) := by
@@ -548,33 +474,6 @@ theorem ae_eq_of_measurePreserving_idempotent {Ω : Type*} [MeasurableSpace Ω] 
   rw [this, measure_compl hBmeas (by rw [hB]; exact ENNReal.one_ne_top), measure_univ, hB,
     tsub_self]
 
-/-- **The multiparameter anchored-box (`Følner`) restricted maximal ergodic theorem** — the one
-missing ingredient of the transfer.  For `f : Ω → ℝ≥0∞` measurable and `t > 0`, the anchored-box
-level set satisfies the *restricted* weak type `t · μ{E_t} ≤ ∫_{E_t} f`, with the supremum over ALL
-`N` (the same index set as the level set and the restricted integral).
-
-**Proof shape (not Garsia).**  Garsia's argument needs a downward-closed index set and therefore
-does *not* apply to the anchored-box family when the box lengths `{⌈N cᵢ⌉}` form a proper
-subsequence of the naturals.  The correct proof is the **Følner maximal lemma** (the
-covering/overlap argument comparing the sum over the level set with the sum over its shift),
-iterated over the `d` coordinates; in `d = 1` the family is the interval family `[0, ⌈N c₀⌉)`, and
-for `c₀ = 1` it is the full interval family, so the claim then reduces to the library's
-one-parameter `LatticeProb.maximalSet_restricted_le`.  Together with the centred input
-`KrengelMaximalInputCentred` (whole-space weak type) and the pointwise domination
-`l1BallMax_le_orthantBoxMax`, it is what `L1BallCoverTransfer` needs. -/
-def MultiParameterMaximalErgodicRestricted (d : ℕ) : Prop :=
-  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω), IsProbabilityMeasure μ →
-    ∀ (τ : Site d → Ω → Ω),
-      (∀ z, MeasurePreserving (τ z) μ μ) →
-      (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
-      ∀ (c : Fin d → ℝ), (∀ i, 0 ≤ c i) →
-      ∀ (f : Ω → ℝ≥0∞), Measurable f →
-        ∀ t : ℝ, 0 < t →
-          ENNReal.ofReal t * μ {ω | ENNReal.ofReal t <
-              ⨆ N : ℕ, avg (anchoredBox c N) (fun y => f (τ y ω))} ≤
-            ∫⁻ ω, ({ω | ENNReal.ofReal t <
-              ⨆ N : ℕ, avg (anchoredBox c N) (fun y => f (τ y ω))}.indicator f) ω ∂μ
-
 omit [MeasurableSpace Ω] in
 /-- **Translation bookkeeping (finite sets).**  Averaging over a translate `B + z` is averaging
 the shifted function over `B`. -/
@@ -584,27 +483,6 @@ theorem avg_map_addRight (B : Finset (Site d)) (z : Site d) (f : Site d → ℝ�
   rw [Finset.card_map, Finset.sum_map]
   rfl
 
-
-/-! ### The stated geometric transfer -/
-
-/-- **The geometry transfer, stated.**  Assuming the centred anchored-box weak-type input for
-every side vector `c`, the `ℓ¹`-ball weak type holds.  The finite-set geometry is now fully proved:
-the cover `l1Ball 0 R ⊆ ⋃_s orthantBox s R` (`l1Ball_subset_boxFinset` +
-`boxFinset_eq_biUnion_orthantBox`), the volume lower bound `card_l1Ball_ge`, and the average
-comparison `avg_l1Ball_le_orthantBoxMax` with explicit constant `(2d)^d`, independent of the radius
-(so no `d!` is needed).  What remains isolated here is only the action/measure-theoretic step:
-replacing `f (x + z)` by `f (τ z ·)` via the measure-preserving additive action `τ`
-(`avg_map_addRight` is the finite-set core of that). -/
-def L1BallCoverTransfer (d : ℕ) : Prop :=
-  (∀ c : Fin d → ℝ, KrengelMaximalInputCentred d c) → KrengelLpBallWeakType d
-
-/-- **The full reduction.** -/
-theorem KrengelLpBall_of_centredBox (htransfer : L1BallCoverTransfer d)
-    (hbox : ∀ c : Fin d → ℝ, KrengelMaximalInputCentred d c) : KrengelLpBall d :=
-  KrengelLpBall_of_weakType (htransfer hbox)
-
-#print axioms KrengelLpBall_of_weakType
-#print axioms KrengelLpBall_of_centredBox
 #print axioms boxFinset_eq_biUnion_orthantBox
 #print axioms anchoredBox_subset_l1Ball
 #print axioms orthantBox_true_subset_l1Ball
