@@ -142,3 +142,9 @@ SubdiffusiveProcess/Paper/prop_quenched_convergence.lean, commit
 c14a982f42e4bc206d88ef2f80dd4bf3cb79aea8, under the Apache License,
 Version 2.0 (see LICENSE). The module header states that the capacitability
 argument is the part adapted from that file.
+
+LatticeProb/OpenAI/: copied from OpenAI's math repository, https://github.com/openai/math,
+commit 4eaee875 (the Lean library under lean/, namespace OAI), by OpenAI, under the Apache
+License, Version 2.0. The license is retained in licenses/OpenAI-math-Apache-2.0.txt. The source
+module OAI.<path> is copied as LatticeProb.OpenAI.<path>; declaration names are unchanged. Each
+copied file names its source file and the commit in its header and lists its changes.

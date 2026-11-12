@@ -1228,6 +1228,12 @@ without that repository. Every copied file names its source module and commit in
 for the port; where only some declarations of a source file are needed, the others are omitted, as the header states.
 [`NOTICE`](NOTICE) gives the details.
 
+The directory `LatticeProb/OpenAI/` contains code copied from OpenAI's [`math`](https://github.com/openai/math)
+repository (its Lean library `lean/`), at commit `4eaee875`, under the Apache License 2.0 (text in
+[`licenses/OpenAI-math-Apache-2.0.txt`](licenses/OpenAI-math-Apache-2.0.txt)). This code is copied source, not a
+dependency. The module `OAI.<path>` becomes `LatticeProb.OpenAI.<path>`; declaration names, statements and proofs are
+unchanged, and every copied file names its source file and commit in its header.
+
 ## Authors, citation, acknowledgements
 
 The Lean development is by **Ahmed Bou-Rabee**.  To cite it, use
