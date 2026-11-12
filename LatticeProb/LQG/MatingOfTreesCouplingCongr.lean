@@ -13,11 +13,11 @@ measurable.
 
 * `LQGMetric.IsWholePlaneGFF.congr_ae`: a measurable field which is almost surely equal to a
   whole-plane Gaussian free field is a whole-plane Gaussian free field.
-* `MatedCRTHarmonic.MatedCRT.isBrownianReal_congr_ae`: a process whose paths almost surely agree
+* `isBrownianReal_congr_ae`: a process whose paths almost surely agree
   with those of a standard Brownian motion is a standard Brownian motion.
-* `MatedCRTHarmonic.MatedCRT.IsMatingOfTreesCoupling.congr_ae`: the coupling property passes to
+* `IsMatingOfTreesCoupling.congr_ae`: the coupling property passes to
   almost surely equal data.
-* `MatedCRTHarmonic.MatedCRT.IsMatingOfTreesCoupling.congr_bm`: the special case in which only the
+* `IsMatingOfTreesCoupling.congr_bm`: the special case in which only the
   boundary-length pair is modified.
 -/
 
