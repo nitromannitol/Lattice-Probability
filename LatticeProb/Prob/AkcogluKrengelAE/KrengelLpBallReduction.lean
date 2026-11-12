@@ -89,8 +89,8 @@ theorem not_krengelMaximalInputCentred (hd : 0 < d) (c : Fin d → ℝ) :
   have hset : {ω : Unit | ENNReal.ofReal (1 / 2) < ⨆ N : ℕ, ENNReal.ofReal
       |anchoredBoxAvgCentred (Measure.dirac ()) (fun _ => (1 : ℝ)) (fun _ ω => ω) c N ω|}
       = Set.univ := by
-    ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_univ, iff_true]
+    refine Set.eq_univ_of_forall fun ω => ?_
+    show ENNReal.ofReal (1 / 2) < _
     refine lt_of_lt_of_le ?_ (le_iSup _ 0)
     simp [anchoredBoxAvgCentred, hbox]
   rw [hset] at key
