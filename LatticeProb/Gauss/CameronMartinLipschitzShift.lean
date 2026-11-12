@@ -1,7 +1,7 @@
 import Mathlib
 import LatticeProb.Gauss.CameronMartinLipschitz
 import LatticeProb.Gauss.CameronMartinBounded
-import LatticeProb.Analysis.LipschitzMollification
+import LatticeProb.Analysis.SmoothApproxLocallyLipschitz
 
 /-!
 # Absolute continuity of the whole-plane Gaussian free field under locally Lipschitz shifts
