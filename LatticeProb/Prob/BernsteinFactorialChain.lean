@@ -12,8 +12,6 @@ Bernstein mgf
 
 which is exactly the hypothesis consumed by `LatticeProb.moment_le_of_condMgf`
 (`Prob/BernsteinFactorialFinal.lean`) for the `r`-th moment bound `32(√(rv)+ra)`.
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinFactorialAssemble
 

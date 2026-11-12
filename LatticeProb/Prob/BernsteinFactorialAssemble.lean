@@ -12,8 +12,6 @@ from the per-increment conditional mgf bounds `E[e^{λ ξ_{i+1}} | F i] ≤ᵐ e
 is the step that the factorial-moment hypothesis feeds: `d_{i+1}` is the per-increment
 Bernstein exponent and `∑_{i<n} d_{i+1} ≤ λ²v/(2(1-aλ))`.  The final moment bound is then
 `LatticeProb.moment_le_of_condMgf`.
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinFactorialFull
 

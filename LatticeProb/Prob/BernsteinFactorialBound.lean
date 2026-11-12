@@ -12,8 +12,6 @@ from the mgf by Chernoff's bound at the optimal `λ = s/(v+as)`, and then applie
 factorial-Bernstein `r`-th moment bound
 
   `(∫ |S|^r dμ)^{1/r} ≤ 32 (√(r v) + r a)`.
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinFactorialClause
 
