@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S3.Defs at commit 31e7483; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S3.Defs at commit 31e7483; only the module paths of local imports are changed.
+   Changed: docstring wording of T4_2. -/
 import LatticeProb.Bonanno.LQGMetric.Blueprint.M2Defs
 import LatticeProb.Bonanno.LQGMetric.Blueprint.GMWeakUniqueness
 import Mathlib.Analysis.SpecialFunctions.Log.Base
@@ -229,7 +230,7 @@ has `𝕫, 𝕨 ∉ B_{λ₄ r}(z)` (GM's proof: `(z, r) ∈ 𝒵_k`, (4.3) l. 1
 `𝕨 ∉ B_{3λ₄ε𝕣}(𝓑^•_{t_k})`, l. 1902), which Prop 4.3 needs in Prop 6.1 Step 1 (l. 3590–3599).
 D79: the selector is invariant under additive constants (`D_{h+c} = e^{ξc}D_h` has the same
 geodesics; GM's `P^{𝕫,𝕨}` is "the" geodesic). D95: `0 < ε₀` (GM l. 1557, "a small number
-`ε₀ > 0`"; false without it). -/
+`ε₀ > 0`"). -/
 def T4_2 : Prop := ∀ {γ : ℝ} {D : DistC → ContMetric} {c : ℝ → ℝ}, 0 < γ → γ < 2 →
   IsWeakLQGMetric γ D c → ∀ (sel : ℂ → ℂ → DistC → C(unitInterval, ℂ)),
   (∀ (a b : ℂ) (g : DistC) (c : ℝ), sel a b (addConst g c) = sel a b g) →
