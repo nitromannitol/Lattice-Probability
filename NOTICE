@@ -135,6 +135,11 @@ of 31e7483e), from its directories BouRabeeGwynne, HigherDimLFPP, LQGDimension, 
 SupercriticalLQGUniqueness. Where only some declarations of a source file
 are used, the copied file keeps those in their source order, with statements and proofs unchanged, and its header states
 that the others are omitted; every edit made for Lean v4.35 is listed in the header of the file concerned.
+The modules under LatticeProb/Bonanno/MatedCRTHarmonic/Planar/Topology/Jordan/ are that repository's port of code by
+R. Kirov, https://github.com/rkirov/jordan_pick, commit b3c9b7cf7358bf81a077d78ad67e6e8247869ddd, files
+JordanPick/JordanCurve.lean, JordanPick/JordanCurve/Arcs.lean and JordanPick/JordanCurve/Brouwer.lean, under Apache-2.0 (see LICENSE). The module docstrings name the
+original file and the changes made (imports, namespaces, and edits forced by the Lean version); the assembly theorems
+jordan_curve_components and jordan_curve_components_complex are additions of that repository.
 
 LatticeProb/Prob/AnalyticUniversalMeasurable.lean is adapted from
 https://github.com/nitromannitol/subdiffusive-process, file
