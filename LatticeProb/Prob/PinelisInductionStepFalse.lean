@@ -1,8 +1,8 @@
 /-
-# `PinelisInductionStep` is false as stated
+# The Pinelis induction step without `L^p` hypotheses is false
 
-`LatticeProb.PinelisInductionStep` (`Prob/BernsteinInduction.lean`) asserts, for every `p ≥ 2`,
-a constant `K > 0` such that for every probability space, filtration, martingale-difference
+The cumulative induction step of Pinelis's martingale Rosenthal argument, stated without `L^p`
+hypotheses, asserts, for every `p ≥ 2`, a constant `K > 0` such that for every probability space, filtration, martingale-difference
 sequence `ξ` and conditional-variance sequence `v` satisfying only the conditional-moment
 hypotheses `E[ξ (i+1) | F i] = 0`, `E[ξ (i+1)² | F i] = v (i+1)` and the integrability of the
 cross terms `|S i|^{p-2} v (i+1)`, the cumulative bound
@@ -12,8 +12,9 @@ cross terms `|S i|^{p-2} v (i+1)`, the cumulative bound
 holds.  The statement has **no `L^p` hypothesis** on `ξ`.  Mathlib's Bochner integral of a
 non-integrable function is `0`, so when `E|S k|^p` and `E|ξ i|^p` are infinite both are read as
 `0`, the right-hand side collapses to `0`, and the (finite, positive) left-hand side violates it.
-This module proves `LatticeProb.not_pinelisInductionStep : ¬ PinelisInductionStep`, in every
-universe.
+This module proves the negation of that statement, `LatticeProb.not_pinelisInductionStep`, in
+every universe.  The route to the Rosenthal bound does not use it: the cross term is bounded by
+`crossTerm_le_variancePair` (`Prob/BernsteinVariancePair.lean`) under integrability hypotheses.
 
 **The counterexample** (`p = 4`, `k = 2`).  Take the trivial filtration `F i = ⊥`, so that
 `E[g | F i] = E g` is a constant (`condExp_bot`) and the hypotheses ask only `E ξ (i+1) = 0`
@@ -157,12 +158,12 @@ theorem integral_sq_pos_of_not_integrable_pow_four {Ω : Type*} [MeasurableSpace
     have hY0 : Y ω = 0 := pow_eq_zero_iff (two_ne_zero) |>.1 hω'
     simp [hY0]
 
-/-- `|x|^(4:ℝ) = x^4`: the real power in `PinelisInductionStep` at `p = 4`. -/
+/-- `|x|^(4:ℝ) = x^4`: the real power of the refuted statement at `p = 4`. -/
 theorem abs_rpow_four (x : ℝ) : |x| ^ (4 : ℝ) = x ^ 4 := by
   rw [show (4 : ℝ) = ((4 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
   exact (Even.pow_abs (by decide) x)
 
-/-- `|x|^(4 - 2 : ℝ) = x^2`: the exponent `p - 2` of `PinelisInductionStep` at `p = 4`. -/
+/-- `|x|^(4 - 2 : ℝ) = x^2`: the exponent `p - 2` of the refuted statement at `p = 4`. -/
 theorem abs_rpow_four_sub_two (x : ℝ) : |x| ^ ((4 : ℝ) - 2) = x ^ 2 := by
   rw [show (4 : ℝ) - 2 = 2 by norm_num, Real.rpow_two, sq_abs]
 
@@ -206,13 +207,25 @@ theorem partialSum_incr_two {Ω : Type*} (Y : Ω → ℝ) :
   simp [martingalePartialSum, hI, incr]
 
 /-- **The core of the refutation.**  A probability space carrying a mean-zero `Y` with `Y ∈ L²`
-and `Y ∉ L⁴` refutes `PinelisInductionStep` (at the universe of the space), with `p = 4`,
+and `Y ∉ L⁴` refutes the Pinelis induction step without `L^p` hypotheses (at the universe of
+the space), with `p = 4`,
 `k = 2`, the trivial filtration, `ξ 1 = ξ 2 = Y`, and `v 1 = v 2 = E Y²`. -/
 theorem not_pinelisInductionStep_of_heavyTail {Ω : Type u} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (Y : Ω → ℝ)
     (hY2 : Integrable (fun ω => Y ω ^ 2) μ)
     (hY4 : ¬ Integrable (fun ω => Y ω ^ 4) μ) (hY0 : ∫ ω, Y ω ∂μ = 0) :
-    ¬ PinelisInductionStep.{u} := by
+    ¬ ∀ p : ℝ, 2 ≤ p → ∃ K : ℝ, 0 < K ∧
+      ∀ {Ω : Type u} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] {m₀}
+        (F : Filtration ℕ m₀) (ξ v : ℕ → Ω → ℝ),
+        (∀ i, μ[ξ (i + 1) | F i] =ᵐ[μ] 0) →
+        (∀ i, μ[fun ω => ξ (i + 1) ω ^ 2 | F i] =ᵐ[μ] v (i + 1)) →
+        (∀ i, Integrable (fun ω => |martingalePartialSum ξ i ω| ^ (p - 2) * v (i + 1) ω) μ) →
+        ∀ k,
+          ∑ i ∈ Finset.range k,
+              (∫ ω, |martingalePartialSum ξ i ω| ^ (p - 2) * v (i + 1) ω ∂μ)
+            ≤ K * (∫ ω, (∑ i ∈ Finset.Icc 1 k, v i ω) ^ (p / 2) ∂μ) ^ (2 / p)
+                * (∫ ω, |martingalePartialSum ξ k ω| ^ p ∂μ) ^ ((p - 2) / p)
+              + K * ∑ i ∈ Finset.Icc 1 k, ∫ ω, |ξ i ω| ^ p ∂μ := by
   intro h
   obtain ⟨K, hK0, hK⟩ := h 4 (by norm_num)
   obtain ⟨c, hc⟩ : ∃ c : ℝ, ∫ ω, Y ω ^ 2 ∂μ = c := ⟨_, rfl⟩
@@ -292,13 +305,27 @@ theorem not_integrable_heavyY_pow_four : ¬ Integrable (fun n => heavyY n ^ 4) h
 end PinelisInductionStepFalse
 
 open PinelisInductionStepFalse in
-/-- **`PinelisInductionStep` is false as stated**, in every universe.  It carries no `L^p`
+/-- **The Pinelis induction step without `L^p` hypotheses is false**, in every universe.  The
+statement bounds the cumulative cross term `∑_{i<k} E[|S i|^{p-2} v (i+1)]` by
+`K (E V_k^{p/2})^{2/p} (E|S k|^p)^{(p-2)/p} + K ∑_{i≤k} E|ξ i|^p` and carries no `L^p`
 hypothesis, so for a mean-zero `Y ∈ L²` with `Y ∉ L⁴` (`ξ 1 = ξ 2 = Y`, `p = 4`, `k = 2`, the
 trivial filtration) the Bochner integrals `∫ |S 2|^4` and `∫ |ξ i|^4` of non-integrable
 functions are `0`, the right-hand side vanishes, and the left-hand side is `(E Y²)² > 0`.
 The repair is to assume `∀ i, MemLp (ξ i) (ENNReal.ofReal p) μ`.  The universe-`u` statement is
 obtained by transporting the example on `ℕ` along `ULift.up`. -/
-theorem not_pinelisInductionStep : ¬ PinelisInductionStep.{u} := by
+theorem not_pinelisInductionStep :
+    ¬ ∀ p : ℝ, 2 ≤ p → ∃ K : ℝ, 0 < K ∧
+      ∀ {Ω : Type u} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] {m₀}
+        (F : Filtration ℕ m₀) (ξ v : ℕ → Ω → ℝ),
+        (∀ i, μ[ξ (i + 1) | F i] =ᵐ[μ] 0) →
+        (∀ i, μ[fun ω => ξ (i + 1) ω ^ 2 | F i] =ᵐ[μ] v (i + 1)) →
+        (∀ i, Integrable (fun ω => |martingalePartialSum ξ i ω| ^ (p - 2) * v (i + 1) ω) μ) →
+        ∀ k,
+          ∑ i ∈ Finset.range k,
+              (∫ ω, |martingalePartialSum ξ i ω| ^ (p - 2) * v (i + 1) ω ∂μ)
+            ≤ K * (∫ ω, (∑ i ∈ Finset.Icc 1 k, v i ω) ^ (p / 2) ∂μ) ^ (2 / p)
+                * (∫ ω, |martingalePartialSum ξ k ω| ^ p ∂μ) ^ ((p - 2) / p)
+              + K * ∑ i ∈ Finset.Icc 1 k, ∫ ω, |ξ i ω| ^ p ∂μ := by
   have hemb : MeasurableEmbedding (ULift.up : ℕ → ULift.{u} ℕ) :=
     MeasurableEquiv.ulift.symm.measurableEmbedding
   refine not_pinelisInductionStep_of_heavyTail (heavyMeasure.map ULift.up)
