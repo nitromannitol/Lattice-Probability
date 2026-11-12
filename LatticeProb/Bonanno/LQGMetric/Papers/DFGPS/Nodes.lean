@@ -1,8 +1,8 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DFGPS.Nodes at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   source module LQGMetric.Papers.DFGPS.Nodes at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.Defs
+import LatticeProb.Bonanno.LQGMetric.Blueprint.DFGPSEstimatesF
+import LatticeProb.Bonanno.LQGMetric.Field.StandardBorelDistOn
 import LatticeProb.Bonanno.LQGMetric.Blueprint.DFGPSEstimates
 import LatticeProb.Bonanno.LQGMetric.Field.Measurable
 import Mathlib.Analysis.Distribution.TestFunction
@@ -92,9 +92,105 @@ def sqCentred (s : ℝ) (z : ℂ) : Set ℂ :=
 
 /-! ## §2 (LFPP part) -/
 
+/-- **DFGPS Lemma 1.3** (`lem-prob-conv`, T:381–385) -/
+def Lem1_3 : Prop :=
+  ∀ {Ω α β : Type} [MeasurableSpace Ω] [TopologicalSpace α] [MeasurableSpace α] [BorelSpace α]
+    [PolishSpace α] [MetricSpace β] [MeasurableSpace β] [BorelSpace β] [PolishSpace β]
+    (P : Measure Ω) [IsProbabilityMeasure P] (X : Ω → α) (Y : Ω → β) (Yn : ℕ → Ω → β),
+    Measurable X → Measurable Y → (∀ n, Measurable (Yn n)) →
+    (∀ φ : α × β → ℝ, Continuous φ → (∃ C, ∀ x, |φ x| ≤ C) →
+      Tendsto (fun n => ∫ ω, φ (X ω, Yn n ω) ∂P) atTop (𝓝 (∫ ω, φ (X ω, Y ω) ∂P))) →
+    AEDeterminedBy Y X P → TendstoInMeasure P Yn atTop Y
+
 -- DFGPS Lemma 2.6 (T:837–856) is proved: `DFGPS.lem2_6` (a.s. for a whole-plane GFF, with
 -- `h^r = affineComp r 0 h`) and `DFGPS.lem2_6_law` in `Papers/DFGPS/L2_6*.lean`. The earlier node
 -- form (`affineComp r⁻¹`, every `h : DistC`) was false (D54, DEV-DFGPS-B1a).
+
+/-- **DFGPS Lemma 2.12** (`lem-weyl-scaling`, T:1026–1031; factor `𝔞⁻¹` restored, DEV-DFGPS-3),
+for a Skorokhod coupling of the convergence along `εn` -/
+def Lem2_12 : Prop :=
+  ∀ γ : ℝ, 0 < γ → γ < 2 → ∀ {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P] (h : Ω → DistC) (Dh : Ω → ContMetric) (εn : ℕ → ℝ),
+    IsGFFPlusBddCont h P → (∀ n, 0 < εn n) → Tendsto εn atTop (𝓝 0) →
+    (∀ᵐ ω ∂P, ∀ R : ℝ, 0 < R → TendstoUniformlyOn
+      (fun n p => (aEpsDF (xiGamma γ) (εn n))⁻¹ * lfppDist (xiGamma γ) (εn n) (h ω) p)
+      (fun p => (Dh ω).1 p) atTop (Metric.closedBall 0 R ×ˢ Metric.closedBall 0 R)) →
+    ∀ᵐ ω ∂P, ∀ (fn : ℕ → C(ℂ, ℝ)) (f : C(ℂ, ℝ)) (M : ℝ), (∀ n z, |fn n z| ≤ M) →
+      (∀ z, |f z| ≤ M) →
+      (∀ R : ℝ, 0 < R → TendstoUniformlyOn (fun n => ⇑(fn n)) ⇑f atTop (Metric.closedBall 0 R)) →
+      ∀ R : ℝ, 0 < R → TendstoUniformlyOn
+        (fun n (p : ℂ × ℂ) => (aEpsDF (xiGamma γ) (εn n))⁻¹ *
+          lfppDist (xiGamma γ) (εn n) (addFun (h ω) (fn n)) p)
+        (fun p => (weylScale (xiGamma γ) f (Dh ω) p.1 p.2).toReal) atTop
+        (Metric.closedBall 0 R ×ˢ Metric.closedBall 0 R)
+
+/-- **DFGPS Lemma 2.14** (`lem-lfpp-constant`, T:1073–1098), in the form D78: for every sequence
+`εn → 0` there are constants `𝔠_r > 0`, each a cluster point of `r 𝔞_{εn/r}/𝔞_{εn}`, with the
+Λ-bounds (eqn-scaling-constant', T:1065–1066). The paper asserts the limit exists (T:1077); its
+argument (T:1080–1095) needs the median of the internal crossing of the limit metric, which is not
+a function of the limit (T:999–1000) and need not be unique (S8), and no consumer needs the limit
+(Lemma 2.13 only uses a subsequential limit of the ratio): DEC-78, DV-D78 -/
+def Lem2_14 : Prop :=
+  ∀ γ : ℝ, 0 < γ → γ < 2 → ∀ (εn : ℕ → ℝ), (∀ n, 0 < εn n) → Tendsto εn atTop (𝓝 0) →
+    ∃ (c : ℝ → ℝ) (Λ : ℝ), 1 < Λ ∧
+      (∀ r : ℝ, 0 < r → 0 < c r ∧ MapClusterPt (c r) atTop
+        (fun n => r * aEpsDF (xiGamma γ) (εn n / r) / aEpsDF (xiGamma γ) (εn n))) ∧
+      ∀ δ ∈ Ioo (0 : ℝ) 1, ∀ r : ℝ, 0 < r →
+        Λ⁻¹ * δ ^ Λ ≤ c (δ * r) / c r ∧ c (δ * r) / c r ≤ Λ * δ ^ (-Λ)
+
+/-- **DFGPS Lemma 2.13** (`lem-lfpp-coord`, T:1060–1071; proof T:1101–1119), D78: for a sequence
+`εn → 0` there are deterministic `𝔠_r` (those of `Lem2_14`) such that for every coupling of the
+normalized field `h` with a subsequential limit `D_h` of `(h, 𝔞_{εn}⁻¹ D^{εn}_h)` in law (joint
+convergence, the hypothesis of the paper's statement T:1062 and of `Lem2_17`, `Lem2_20`), the laws
+of `𝔠_r⁻¹ e^{−ξ h_r(0)} D_h(r·,r·)`, `r > 0`, are tight, their Prokhorov closure is carried by
+continuous metrics, and the Λ-bounds hold: Axiom V (`TightAcrossScales`) for normalized `h`. -/
+def Lem2_13 : Prop :=
+  ∀ γ : ℝ, 0 < γ → γ < 2 → ∀ (εn : ℕ → ℝ), (∀ n, 0 < εn n) → Tendsto εn atTop (𝓝 0) →
+    ∃ (c : ℝ → ℝ) (Λ : ℝ), 1 < Λ ∧
+      (∀ r : ℝ, 0 < r → 0 < c r ∧ MapClusterPt (c r) atTop
+        (fun n => r * aEpsDF (xiGamma γ) (εn n / r) / aEpsDF (xiGamma γ) (εn n))) ∧
+      (∀ δ ∈ Ioo (0 : ℝ) 1, ∀ r : ℝ, 0 < r →
+        Λ⁻¹ * δ ^ Λ ≤ c (δ * r) / c r ∧ c (δ * r) / c r ≤ Λ * δ ^ (-Λ)) ∧
+      ∀ {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+        (h : Ω → DistC) (Dh : Ω → ContMetric),
+        IsNormalizedWPGFF h P → Measurable Dh →
+        (∀ φ : (CoordJ → ℝ) × C(ℂ × ℂ, ℝ) → ℝ, Continuous φ → (∃ C, ∀ x, |φ x| ≤ C) →
+          Tendsto (fun n => ∫ ω, φ (pairJ ⊤ (h ω), toCMap fun p =>
+              (aEpsDF (xiGamma γ) (εn n))⁻¹ * lfppDist (xiGamma γ) (εn n) (h ω) p) ∂P) atTop
+            (𝓝 (∫ ω, φ (pairJ ⊤ (h ω), (Dh ω).1) ∂P))) →
+        let X : ℝ → Ω → C(ℂ × ℂ, ℝ) := fun r ω =>
+          ((c r)⁻¹ * Real.exp (-xiGamma γ * circleAvg (h ω) r 0)) • (Dh ω).1.comp (scaleArgs r)
+        IsTightMeasureSet {μ | ∃ r : ℝ, 0 < r ∧ μ = P.map (X r)} ∧
+        ∀ μ : ProbabilityMeasure C(ℂ × ℂ, ℝ),
+          μ ∈ closure {ν : ProbabilityMeasure C(ℂ × ℂ, ℝ) |
+            ∃ r : ℝ, 0 < r ∧ (ν : Measure C(ℂ × ℂ, ℝ)) = P.map (X r)} →
+          ∀ᵐ d ∂(μ : Measure C(ℂ × ℂ, ℝ)), IsContinuousMetric d
+
+/-- **DFGPS Lemma 2.20** (`lem-lfpp-msrble`, T:1297–1302), with **DFGPS Thm 2.21** = `LMCor1_8`:
+a subsequential limit `D_h` (coupled with `h`) is a.s. determined by `h` -/
+def Lem2_20 : Prop :=
+  ∀ γ : ℝ, 0 < γ → γ < 2 → ∀ {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P] (h : Ω → DistC) (Dh : Ω → ContMetric) (εn : ℕ → ℝ),
+    IsNormalizedWPGFF h P → Measurable Dh → (∀ n, 0 < εn n) → Tendsto εn atTop (𝓝 0) →
+    (∀ φ : (CoordJ → ℝ) × C(ℂ × ℂ, ℝ) → ℝ, Continuous φ → (∃ C, ∀ x, |φ x| ≤ C) →
+      Tendsto (fun n => ∫ ω, φ (pairJ ⊤ (h ω), toCMap fun p =>
+          (aEpsDF (xiGamma γ) (εn n))⁻¹ * lfppDist (xiGamma γ) (εn n) (h ω) p) ∂P) atTop
+        (𝓝 (∫ ω, φ (pairJ ⊤ (h ω), (Dh ω).1) ∂P))) →
+    AEDeterminedBy Dh h P ∧
+      TendstoInProbLU P (fun n ω => (aEpsDF (xiGamma γ) (εn n))⁻¹ •
+        lfppDist (xiGamma γ) (εn n) (h ω)) atTop (fun ω => (Dh ω).1)
+
+/-- **DFGPS Lemma 2.17** (`lem-lfpp-local`, T:1150–1155): the limit is a ξ-additive local metric
+(LM Def 1.5, through `LMLem2_3`) -/
+def Lem2_17 : Prop :=
+  ∀ γ : ℝ, 0 < γ → γ < 2 → ∀ {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P] (h : Ω → DistC) (Dh : Ω → ContMetric) (εn : ℕ → ℝ),
+    IsNormalizedWPGFF h P → Measurable Dh → (∀ n, 0 < εn n) → Tendsto εn atTop (𝓝 0) →
+    (∀ φ : (CoordJ → ℝ) × C(ℂ × ℂ, ℝ) → ℝ, Continuous φ → (∃ C, ∀ x, |φ x| ≤ C) →
+      Tendsto (fun n => ∫ ω, φ (pairJ ⊤ (h ω), toCMap fun p =>
+          (aEpsDF (xiGamma γ) (εn n))⁻¹ * lfppDist (xiGamma γ) (εn n) (h ω) p) ∂P) atTop
+        (𝓝 (∫ ω, φ (pairJ ⊤ (h ω), (Dh ω).1) ∂P))) →
+    IsXiAdditive1 (xiGamma γ) P h Dh
 
 /-! ## Assembly -/
 

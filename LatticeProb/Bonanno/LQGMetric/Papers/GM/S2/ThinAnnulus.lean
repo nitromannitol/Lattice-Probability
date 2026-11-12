@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S2.ThinAnnulus at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.GM.S2.ThinAnnulus at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightA
 import LatticeProb.Bonanno.LQGMetric.Blueprint.DFGPSEstimates
 import LatticeProb.Bonanno.LQGMetric.Blueprint.M2Defs
@@ -50,5 +49,47 @@ lemma xiGamma_pos {γ : ℝ} (hγ : 0 < γ) : 0 < xiGamma γ := by
     · exact h.choose_spec.1
     · norm_num
   exact div_pos hγ (div_pos two_pos hχ)
+
+/-- the identity process on `DistC` under the law of a whole-plane GFF is a whole-plane GFF -/
+theorem isWholePlaneGFF_map_id {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {h : Ω → DistC}
+    (hh : IsWholePlaneGFF h P) : IsWholePlaneGFF (fun g : DistC => g) (P.map h) := by
+  have hev : ∀ ψ : TestC, Measurable fun g : DistC => g ψ := fun ψ =>
+    (measurable_pi_apply ψ).comp (show Measurable fun (g : DistC) (φ : TestC) => g φ from
+      fun _ hs => ⟨_, hs, rfl⟩)
+  refine ⟨measurable_id, ⟨fun I => ?_⟩, fun φ => ?_, fun φ ψ => ?_⟩
+  · have hF : Measurable fun g : DistC => I.restrict (fun φ : TestC0 => g φ.1) :=
+      measurable_pi_iff.2 fun i => hev _
+    refine ⟨hF.aemeasurable, ?_⟩
+    rw [Measure.map_map hF hh.measurable]
+    exact (hh.gaussian.hasGaussianLaw I).isGaussian_map
+  · rw [integral_map hh.measurable.aemeasurable (hev _).aestronglyMeasurable]
+    exact hh.centered φ
+  · rw [covariance_map (hev _).aestronglyMeasurable (hev _).aestronglyMeasurable
+      hh.measurable.aemeasurable]
+    exact hh.covariance_eq φ ψ
+
+/-- **LM S-int (d) for translations.** If `D₁(u,v) = l · D₂(u+z, v+z)` then
+`D₂(u+z, v+z; V+z) = l⁻¹ · D₁(u,v;V)`. -/
+lemma internal_translate_eq {D₁ D₂ : ContMetric} {l : ℝ} (hl : 0 < l) (z : ℂ)
+    (hD : ∀ u v, D₁.1 (u, v) = l * D₂.1 (u + z, v + z)) (V : Set ℂ) (u v : ℂ) :
+    D₂.internal ((· + z) '' V) (u + z) (v + z) = ENNReal.ofReal l⁻¹ * D₁.internal V u v := by
+  let e : D₁.Space ≃ D₂.Space :=
+    { toFun := fun x => D₂.pt (D₁.unpt x + z)
+      invFun := fun x => D₁.pt (D₂.unpt x - z)
+      left_inv := fun x => by simp
+      right_inv := fun x => by simp }
+  have he : ∀ a b, edist (e a) (e b) = ENNReal.ofReal l⁻¹ * edist a b := by
+    intro a b
+    rw [edist_dist, edist_dist, ← ENNReal.ofReal_mul (inv_nonneg.2 hl.le)]
+    congr 1
+    show D₂.1 (D₁.unpt a + z, D₁.unpt b + z) = l⁻¹ * D₁.1 (D₁.unpt a, D₁.unpt b)
+    rw [hD, inv_mul_cancel_left₀ hl.ne']
+  have key := internalEDist_image_of_edist_eq e (ENNReal.ofReal_pos.2 (inv_pos.2 hl)).ne'
+    ENNReal.ofReal_ne_top he (D₁.pt '' V) (D₁.pt u) (D₁.pt v)
+  have hs : e '' (D₁.pt '' V) = D₂.pt '' ((· + z) '' V) := by
+    rw [Set.image_image, Set.image_image]; rfl
+  unfold ContMetric.internal
+  rw [← hs]
+  exact key
 
 end LQGMetric.GM

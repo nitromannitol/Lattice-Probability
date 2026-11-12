@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Dimension.GMCIdent3Vague at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Dimension.GMCIdent3Vague at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent3Law
 
 /-!
@@ -189,6 +188,45 @@ theorem ae_isVagueLimitOn_wn [IsProbabilityMeasure P] (hX : IsZeroBoundaryGFFOn 
     (qAreaMeasureOn γ (circExt v) openSquare)) (measurable_wnCircVec hW).aemeasurable ?_
   rw [← map_circVec_eq hX hW]
   exact ae_isVagueLimitOn_circExt hX hγ hγ2
+
+/-- **transfer of a.s. properties of `M_γ`** between any zero-boundary GFF `X` and the
+white-noise field, for events null-measurable under the circle law -/
+theorem ae_iff_wn (hX : IsZeroBoundaryGFFOn openSquare X P) (hW : IsWhiteNoise P' W) (γ : ℝ)
+    {Q : Measure ℂ → Prop}
+    (hQ : NullMeasurableSet {v | Q (qAreaMeasureOn γ (circExt v) openSquare)} (circLaw P X)) :
+    (∀ᵐ ω ∂P, Q (qAreaMeasureOn γ (X ω) openSquare)) ↔
+      ∀ᵐ ω ∂P', Q (qAreaMeasureOn γ (circExt (wnCircVec W ω)) openSquare) := by
+  set S := {v : CircIdx → ℝ | Q (qAreaMeasureOn γ (circExt v) openSquare)}
+  have hm : Measurable fun ω => circVec (X ω) := measurable_circVec.comp (measurable_field hX)
+  have hm' := measurable_wnCircVec hW
+  have hν := map_circVec_eq hX hW
+  set T := toMeasurable (circLaw P X) S
+  have hT : MeasurableSet T := measurableSet_toMeasurable _ _
+  have hST : ∀ᵐ v ∂(circLaw P X), (v ∈ S ↔ v ∈ T) := by
+    filter_upwards [hQ.toMeasurable_ae_eq] with v hv
+    exact (Iff.of_eq hv).symm
+  have h1 : ∀ᵐ ω ∂P, (circVec (X ω) ∈ S ↔ circVec (X ω) ∈ T) := ae_of_ae_map hm.aemeasurable hST
+  have h2 : ∀ᵐ ω ∂P', (wnCircVec W ω ∈ S ↔ wnCircVec W ω ∈ T) := by
+    refine ae_of_ae_map (p := fun v => (v ∈ S ↔ v ∈ T)) hm'.aemeasurable ?_
+    rw [← hν]; exact hST
+  have hXS : ∀ ω, Q (qAreaMeasureOn γ (X ω) openSquare) ↔ circVec (X ω) ∈ S := fun ω => by
+    simp only [S, mem_setOf_eq, qAreaMeasureOn_circExt]
+  have key : (∀ᵐ ω ∂P, circVec (X ω) ∈ T) ↔ ∀ᵐ ω ∂P', wnCircVec W ω ∈ T := by
+    rw [← ae_map_iff (p := fun v => v ∈ T) hm.aemeasurable hT,
+      ← ae_map_iff (p := fun v => v ∈ T) hm'.aemeasurable hT, hν]
+  constructor
+  · intro h
+    have : ∀ᵐ ω ∂P, circVec (X ω) ∈ T := by
+      filter_upwards [h, h1] with ω hω h1ω
+      exact h1ω.1 ((hXS ω).1 hω)
+    filter_upwards [key.1 this, h2] with ω hω h2ω
+    exact h2ω.2 hω
+  · intro h
+    have : ∀ᵐ ω ∂P', wnCircVec W ω ∈ T := by
+      filter_upwards [h, h2] with ω hω h2ω
+      exact h2ω.1 hω
+    filter_upwards [key.2 this, h1] with ω hω h1ω
+    exact (hXS ω).2 (h1ω.2 hω)
 
 end GMCIdent3
 end LQGMetric

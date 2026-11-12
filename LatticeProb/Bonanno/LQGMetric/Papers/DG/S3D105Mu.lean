@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DG.S3D105Mu at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.DG.S3D105Mu at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3MuHat
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent5Ind
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCSqExist
@@ -292,6 +291,65 @@ theorem ae_areaApprox_wnField_lt_top (hW : IsWhiteNoise P W) (γ : ℝ) :
     rw [← map_circVec_eq hX hW]; exact hν
   filter_upwards [hW'] with ω h _
   exact h
+
+/-- **the circle averages of `ĥ`, `h^𝕍` and `Y` are linked** (Fubini): a.s., for a.e. `z` with
+`B̄(z, 2·2^{-k}) ⊆ U ⊆ K`, any version `V` of `ĥ_{2^{-k}}` satisfies
+`V k z = h^𝕍_{2^{-k}}(z) − Y_{2^{-k}}(z)` -/
+theorem ae_ae_hatCirc_eq (hW : IsWhiteNoise P W) {K U : Set ℂ} (hUK : U ⊆ K)
+    (hKU : K ⊆ openSquare) {Y : ℂ → Ω → ℝ}
+    (hY : IsDGMod P K (fun z r ω => dgHU W z r ω - dgHat W z r ω) Y)
+    {V : ℕ → ℂ → Ω → ℝ} (hVm : ∀ k, Measurable fun p : ℂ × Ω => V k p.1 p.2)
+    (hV : ∀ k z, closedBall z (2 * (2 : ℝ)⁻¹ ^ k) ⊆ K →
+      V k z =ᵐ[P] dgHat W z ((2 : ℝ)⁻¹ ^ k))
+    (k : ℕ) :
+    ∀ᵐ ω ∂P, ∀ᵐ z ∂(volume : Measure ℂ), z ∉ dSet U k ∨
+      V k z ω = avgReg (wnField W ω) k z - ∫ x, Y x ω ∂(circleUnif z (radius k)) := by
+  have := hW.isProbabilityMeasure
+  obtain ⟨Ω₀, _, P₀, X, hP₀, hX⟩ := GMCIdent5.exists_zeroGFF_openSquare
+  have hmeas : MeasurableSet {q : ℂ × Ω | q.1 ∉ dSet U k ∨ V k q.1 q.2 =
+      avgReg (wnField W q.2) k q.1 - ∫ x, Y x q.2 ∂(circleUnif q.1 (radius k))} := by
+    refine ((measurableSet_dSet U k).compl.preimage measurable_fst).union
+      (measurableSet_eq_fun (hVm k) ?_)
+    refine Measurable.sub ?_ (measurable_circAvg hY.1 hY.2.1 _)
+    exact (measurable_avgReg k).comp ((measurable_circExt.comp
+      ((measurable_wnCircVec hW).comp measurable_snd)).prodMk measurable_fst)
+  refine (Measure.ae_ae_comm hmeas).1 (Eventually.of_forall fun z => ?_)
+  by_cases hz : z ∈ dSet U k
+  swap
+  · exact Eventually.of_forall fun _ => Or.inl hz
+  have hB := closedBall_subset_of_mem_dSet hz
+  have hB2 : closedBall z (2 * radius k) ⊆ openSquare := hB.trans (hUK.trans hKU)
+  have hBK : closedBall z (radius k) ⊆ K :=
+    (closedBall_subset_closedBall (by linarith [radius_pos k])).trans (hB.trans hUK)
+  filter_upwards [avgReg_ae_eq_wn hX hW hB2, hY.2.2.2 z (radius k) (radius_pos k) hBK,
+    hV k z (hB.trans hUK)] with ω h1 h2 h3
+  right
+  rw [h1, h2, h3]
+  simp only [dgHU, radius]
+  ring
+
+/-- a jointly measurable version of the circle averages `ĥ_{2^{-k}}` exists:
+`h^𝕍_{2^{-k}} − Y_{2^{-k}}` (so the hypotheses of `ae_isVagueLimitOn_muOfMod` are satisfiable) -/
+theorem exists_hatCircVer (hW : IsWhiteNoise P W) {K : Set ℂ} (hKU : K ⊆ openSquare)
+    {Y : ℂ → Ω → ℝ} (hY : IsDGMod P K (fun z r ω => dgHU W z r ω - dgHat W z r ω) Y) :
+    ∃ V : ℕ → ℂ → Ω → ℝ, (∀ k, Measurable fun p : ℂ × Ω => V k p.1 p.2) ∧
+      ∀ k z, closedBall z (2 * (2 : ℝ)⁻¹ ^ k) ⊆ K →
+        V k z =ᵐ[P] dgHat W z ((2 : ℝ)⁻¹ ^ k) := by
+  have := hW.isProbabilityMeasure
+  obtain ⟨Ω₀, _, P₀, X, hP₀, hX⟩ := GMCIdent5.exists_zeroGFF_openSquare
+  refine ⟨fun k z ω => avgReg (wnField W ω) k z - ∫ x, Y x ω ∂(circleUnif z (radius k)),
+    fun k => ?_, fun k z hB => ?_⟩
+  · refine Measurable.sub ?_ (measurable_circAvg hY.1 hY.2.1 _)
+    exact (measurable_avgReg k).comp ((measurable_circExt.comp
+      ((measurable_wnCircVec hW).comp measurable_snd)).prodMk measurable_fst)
+  · have hBK : closedBall z (radius k) ⊆ K :=
+      (closedBall_subset_closedBall (by
+        simp only [radius]; linarith [pow_pos (by norm_num : (0 : ℝ) < 2⁻¹) k])).trans hB
+    filter_upwards [avgReg_ae_eq_wn hX hW (hB.trans hKU),
+      hY.2.2.2 z (radius k) (radius_pos k) hBK] with ω h1 h2
+    rw [h1, h2]
+    simp only [dgHU, radius]
+    ring
 
 
 end DG

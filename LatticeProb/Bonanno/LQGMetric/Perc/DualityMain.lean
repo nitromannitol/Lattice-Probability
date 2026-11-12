@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Perc.DualityMain at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Perc.DualityMain at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Perc.Duality
 import Mathlib.Basic.Finite.Prod
 
@@ -163,5 +162,11 @@ theorem percGoodLR_or_percBadTB (K L : ℤ) (good : ℤ × ℤ → Prop) (hK : 1
     · omega
     · have := h2.2.2.1; omega
     · exact h3
+
+/-- If there is no left–right `4`-crossing of good sites, there is a top–bottom `*`-crossing of
+bad sites. -/
+theorem percBadTB_of_not_percGoodLR {K L : ℤ} {good : ℤ × ℤ → Prop} (hK : 1 ≤ K) (hL : 1 ≤ L)
+    (h : ¬ PercGoodLR K L good) : PercBadTB K L good :=
+  (percGoodLR_or_percBadTB K L good hK hL).resolve_left h
 
 end LQGMetric

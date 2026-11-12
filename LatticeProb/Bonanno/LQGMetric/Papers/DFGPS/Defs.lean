@@ -35,6 +35,8 @@ import Mathlib.Topology.MetricSpace.Bounded
 import Mathlib.Data.Countable.Basic
 import Mathlib.Data.Finset.Basic
 import LatticeProb.Bonanno.LQGMetric.Blueprint.CONFDefs
+import LatticeProb.Bonanno.LQGMetric.Blueprint.DFGPSInputsLM
+import LatticeProb.Bonanno.LQGMetric.LFPP.Dyadic
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Gaussian.ConcentrationDZZ at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Gaussian.ConcentrationDZZ at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Gaussian.ConcentrationLip
 
 set_option autoImplicit false
@@ -80,6 +79,60 @@ theorem borellTIS_finiteMax {n : ℕ} (hn : (Finset.univ : Finset (Fin n)).Nonem
   have h := ((lipschitzWith_sup' hn).comp (lipschitzWith_gramVec hv))
   rw [one_mul] at h
   exact tail_le_of_lipschitz h hu
+
+/-- **Ding–Zeitouni–Zhang, Lemma 2.1** (in the form of DFGPS Lemma 4.2), Gram form:
+for every `c > 0` there is `C ≥ 1` such that for every standard Gaussian vector `Z`, every
+`v : Fin n → E` with `‖v i‖ ≤ σ` and every `B ⊆ ℝⁿ` with `P(AZ ∈ B) ≥ c`, for `λ ≥ Cσ`,
+`P(inf_{x ∈ B} |AZ - x|_∞ ≥ λ) ≤ exp (-(λ - Cσ)² / (2σ²))`. -/
+theorem dzz_lemma21_gram (c : ℝ) (hc : 0 < c) :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ (E : Type) [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+      [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] (n : ℕ) (v : Fin n → E)
+      (σ : ℝ≥0), (∀ i, ‖v i‖ ≤ σ) → ∀ B : Set (Fin n → ℝ),
+      c ≤ (stdGaussian E).real {z | gramVec v z ∈ B} → ∀ lam : ℝ, C * σ ≤ lam →
+      (stdGaussian E).real {z | lam ≤ infDist (gramVec v z) B} ≤
+        exp (-(lam - C * σ) ^ 2 / (2 * (σ : ℝ) ^ 2)) := by
+  set C₀ := √(2 * Real.log (1 / c))
+  refine ⟨max 1 C₀, le_max_left _ _, ?_⟩
+  intro E _ _ _ _ _ n v σ hv B hB lam hlam
+  set μ := stdGaussian E
+  set d : E → ℝ := fun z => infDist (gramVec v z) B
+  have hd : LipschitzWith σ d := by
+    have := (lipschitz_infDist_pt B).comp (lipschitzWith_gramVec hv)
+    rwa [one_mul] at this
+  rcases eq_zero_or_pos σ with hσ | hσ
+  · rw [hσ]
+    simpa using measureReal_le_one (μ := μ)
+  have hσ' : (0 : ℝ) < σ := hσ
+  set m := ∫ z, d z ∂μ
+  have hm0 : 0 ≤ m := integral_nonneg fun z => infDist_nonneg
+  -- `P(d ≤ 0) ≥ c`.
+  have hc0 : c ≤ μ.real {z | d z - m ≤ -m} := by
+    refine hB.trans (measureReal_mono (fun z hz => ?_))
+    simp only [mem_setOf_eq] at hz ⊢
+    have : d z = 0 := infDist_zero_of_mem hz
+    linarith
+  -- The lower tail bounds the mean: `m ≤ σ C₀`.
+  have hmC : m ≤ σ * C₀ := by
+    have hlow := hc0.trans (lowerTail_le_of_lipschitz hd hm0)
+    have hlog : Real.log c ≤ -m ^ 2 / (2 * (σ : ℝ) ^ 2) := by
+      rw [← Real.exp_le_exp, Real.exp_log hc]; exact hlow
+    have hsq : m ^ 2 ≤ (σ : ℝ) ^ 2 * (2 * Real.log (1 / c)) := by
+      rw [one_div, Real.log_inv]
+      rw [le_div_iff₀ (by positivity)] at hlog
+      nlinarith
+    rw [show (σ : ℝ) * C₀ = √((σ : ℝ) ^ 2 * (2 * Real.log (1 / c))) by
+      rw [Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq hσ'.le]]
+    exact Real.le_sqrt_of_sq_le hsq
+  -- The upper tail.
+  have hCσ : σ * C₀ ≤ max 1 C₀ * σ := by
+    rw [mul_comm]; exact mul_le_mul_of_nonneg_right (le_max_right _ _) hσ'.le
+  have hu : 0 ≤ lam - max 1 C₀ * σ := by linarith
+  have hup := tail_le_of_lipschitz hd (u := lam - m) (by linarith)
+  refine (measureReal_mono (fun z hz => ?_)).trans (hup.trans ?_)
+  · simp only [mem_setOf_eq] at hz ⊢
+    linarith
+  · refine exp_le_exp.2 (div_le_div_of_nonneg_right ?_ (by positivity))
+    refine neg_le_neg (pow_le_pow_left₀ hu (by linarith) 2)
 
 end GaussConc
 

@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Field.GreenSquare2 at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Field.GreenSquare2 at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Field.GreenSquare
 
 set_option autoImplicit false
@@ -129,6 +128,12 @@ theorem zeroGFFTestCov_sqOpen_eq_heat_gen (hL : 0 < L) (ρ σ : BddOn (sqOpen a 
   obtain ⟨hm', ⟨C', hC'⟩, h0'⟩ := σ.2
   exact (zeroGFFTestCov_sqOpen_spectral hL ρ σ).unique
     (hasSum_heatGreen_spectral hL hm hC h0 hm' hC' h0')
+
+/-- **R1** (DDDF Prop. 29 input, handoff P2-DDDFP29): the square `(−1, 2)²`. -/
+theorem zeroGFFTestCov_sqOpen_eq_heat (ρ σ : BddOn (sqOpen (-1) 3)) :
+    zeroGFFTestCov (sqOpens (-1) 3) ρ.1 σ.1 =
+      π * ∫ s in Ioi 0, ∫ y', ∫ y, ρ.1 y' * sqDirKernel (-1) 3 s y' y * σ.1 y :=
+  zeroGFFTestCov_sqOpen_eq_heat_gen (by norm_num) ρ σ
 
 end HeatSq
 end LQGMetric

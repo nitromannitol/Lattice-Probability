@@ -353,6 +353,8 @@ import Mathlib.MeasureTheory.Constructions.UnitInterval
 import Mathlib.MeasureTheory.OuterMeasure.BorelCantelli
 import Mathlib.Probability.Martingale.Convergence
 import LatticeProb.Bonanno.LQGMetric.Field.KilledHeat
+import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3L35B8
+import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3D112N3
 
 /-!
 # GFF with boundary data

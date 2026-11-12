@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Field.HeatKernelSquareTheta at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Field.HeatKernelSquareTheta at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Field.HeatKernelSquareCK2
 import Mathlib.Analysis.SpecialFunctions.Gaussian.PoissonSummation
 
@@ -118,6 +117,85 @@ lemma summable_exp_neg_mul_int_sq' {l : ℝ} (hl : 0 < l) :
     (summable_geom_natAbs (Real.exp_pos _).le hr1)
   rw [← Real.exp_nat_mul]
   exact Real.exp_le_exp.mpr (by nlinarith [natAbs_le_sq k])
+
+/-- The constant of the large-time decay bound (times `s ≥ s₀`). -/
+def decayConst (L s₀ : ℝ) : ℝ :=
+  L⁻¹ * Real.exp (π ^ 2 / (2 * L ^ 2) * s₀) *
+    ∑' k : ℤ, Real.exp (-(π ^ 2 / (2 * L ^ 2) * s₀)) ^ k.natAbs
+
+lemma exp_neg_mul_sq_le {l s : ℝ} (hl0 : 0 < l) (hs : 1 ≤ s) {k : ℤ} (hk : k ≠ 0) :
+    Real.exp (-l * s * k ^ 2) ≤ Real.exp l * Real.exp (-l * s) * Real.exp (-l) ^ k.natAbs := by
+  have hk1 : (1 : ℝ) ≤ k.natAbs := Nat.one_le_cast.mpr (Int.natAbs_pos.mpr hk)
+  rw [← Real.exp_nat_mul, ← Real.exp_add, ← Real.exp_add]
+  apply Real.exp_le_exp.mpr
+  have h1 : 0 ≤ ((k.natAbs : ℝ) - 1) * (s * ((k.natAbs : ℝ) + 1) - 1) :=
+    mul_nonneg (by linarith) (by nlinarith)
+  have h2 : (k : ℝ) ^ 2 = (k.natAbs : ℝ) ^ 2 := by
+    rw [Nat.cast_natAbs, Int.cast_abs, sq_abs]
+  rw [h2]
+  nlinarith [mul_nonneg hl0.le h1]
+
+lemma abs_cos_sub_cos_term_le {l s : ℝ} (hl0 : 0 < l) (hs : 1 ≤ s) (α β : ℝ) (k : ℤ) :
+    |Real.exp (-l * s * k ^ 2) * Real.cos (k * α) - Real.exp (-l * s * k ^ 2) * Real.cos (k * β)|
+      ≤ 2 * Real.exp l * Real.exp (-l * s) * Real.exp (-l) ^ k.natAbs := by
+  by_cases hk : k = 0
+  · subst hk; simp only [Int.cast_zero, zero_mul, Real.cos_zero, sub_self, abs_zero]; positivity
+  rw [← mul_sub, abs_mul, abs_of_pos (Real.exp_pos _)]
+  have hc : |Real.cos (k * α) - Real.cos (k * β)| ≤ 2 := by
+    have := abs_sub (Real.cos (k * α)) (Real.cos (k * β))
+    linarith [Real.abs_cos_le_one (k * α), Real.abs_cos_le_one (k * β)]
+  calc Real.exp (-l * s * k ^ 2) * |Real.cos (k * α) - Real.cos (k * β)|
+      ≤ (Real.exp l * Real.exp (-l * s) * Real.exp (-l) ^ k.natAbs) * 2 :=
+        mul_le_mul (exp_neg_mul_sq_le hl0 hs hk) hc (abs_nonneg _) (by positivity)
+    _ = _ := by ring
+
+/-- The time rescaling `e^{−l s k²} = e^{−(l s₀)(s/s₀) k²}`. -/
+lemma exp_rescale (l s s₀ : ℝ) (hs₀ : 0 < s₀) (k : ℤ) :
+    Real.exp (-l * s * k ^ 2) = Real.exp (-(l * s₀) * (s / s₀) * k ^ 2) := by
+  congr 1; field_simp
+
+/-- **Large-time decay of the image kernel**: for `0 < s₀ ≤ s`,
+`|q_s(u,v)| ≤ C(L,s₀) e^{−π²s/(2L²)}`. -/
+theorem abs_intervalDirKernel_le_exp {a L s s₀ : ℝ} (hL : 0 < L) (hs₀ : 0 < s₀) (hs : s₀ ≤ s)
+    (u v : ℝ) :
+    |intervalDirKernel a L s u v| ≤ decayConst L s₀ * Real.exp (-(π ^ 2 / (2 * L ^ 2)) * s) := by
+  have hl0 : 0 < π ^ 2 / (2 * L ^ 2) := by positivity
+  have hl0' : 0 < π ^ 2 / (2 * L ^ 2) * s₀ := by positivity
+  have hs1 : 1 ≤ s / s₀ := (one_le_div hs₀).mpr hs
+  have hs0 : 0 < s := hs₀.trans_le hs
+  have hr01 : Real.exp (-(π ^ 2 / (2 * L ^ 2) * s₀)) < 1 := Real.exp_lt_one_iff.mpr (by linarith)
+  have hG : Summable (fun k : ℤ => Real.exp (-(π ^ 2 / (2 * L ^ 2)) * s * k ^ 2)) := by
+    have := summable_exp_neg_mul_int_sq' (l := π ^ 2 / (2 * L ^ 2) * s) (by positivity)
+    refine this.congr fun k => ?_
+    ring_nf
+  have hcos : ∀ α : ℝ, Summable (fun k : ℤ =>
+      Real.exp (-(π ^ 2 / (2 * L ^ 2)) * s * k ^ 2) * Real.cos (k * α)) :=
+    fun α => Summable.of_norm (Summable.of_nonneg_of_le (fun _ => norm_nonneg _) (fun k => by
+      rw [Real.norm_eq_abs, abs_mul, abs_of_pos (Real.exp_pos _)]
+      exact mul_le_of_le_one_right (Real.exp_pos _).le (Real.abs_cos_le_one _)) hG)
+  have hcosEq : ∀ c : ℝ, ∑' k : ℤ, Real.exp (-(π ^ 2 / (2 * L ^ 2)) * s * k ^ 2) *
+      Real.cos (π * k * c / L) = ∑' k : ℤ, Real.exp (-(π ^ 2 / (2 * L ^ 2)) * s * k ^ 2) *
+      Real.cos (k * (π * c / L)) := fun c => by
+    congr 1; funext k; congr 2; ring
+  rw [intervalDirKernel_eq_sub hs0 hL, tsum_gauss1_shift_eq_cos hs0 hL,
+    tsum_gauss1_shift_eq_cos hs0 hL, hcosEq, hcosEq, ← mul_sub,
+    ← (hcos _).tsum_sub (hcos _)]
+  have hh := (summable_geom_natAbs (Real.exp_pos _).le hr01).mul_left
+    (2 * Real.exp (π ^ 2 / (2 * L ^ 2) * s₀) *
+      Real.exp (-(π ^ 2 / (2 * L ^ 2) * s₀) * (s / s₀)))
+  have hd := (hcos (π * (u - v) / L)).sub (hcos (π * (u + v - 2 * a) / L))
+  have hb := (norm_tsum_le_tsum_norm hd.norm).trans (hd.norm.tsum_le_tsum
+    (fun k => by
+      rw [Real.norm_eq_abs, exp_rescale _ s s₀ hs₀ k]
+      exact (abs_cos_sub_cos_term_le hl0' hs1 _ _ k).trans_eq (by ring)) hh)
+  rw [Real.norm_eq_abs, tsum_mul_left] at hb
+  rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < (2 * L)⁻¹)]
+  refine (mul_le_mul_of_nonneg_left hb (by positivity)).trans_eq ?_
+  have e : -(π ^ 2 / (2 * L ^ 2) * s₀) * (s / s₀) = -(π ^ 2 / (2 * L ^ 2)) * s := by
+    field_simp
+  rw [e]
+  unfold decayConst
+  field_simp
 
 end HeatSq
 end LQGMetric

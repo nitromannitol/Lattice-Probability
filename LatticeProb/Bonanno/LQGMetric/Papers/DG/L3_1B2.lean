@@ -1,7 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DG.L3_1B2 at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   source module LQGMetric.Papers.DG.L3_1B2 at commit fdb5cad; only the module paths of local imports are changed. -/
+import LatticeProb.Bonanno.LQGMetric.Papers.DG.L3_1B
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.L3_1
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppAShell
 
@@ -114,6 +113,68 @@ theorem dg_lemma31_hU_hat_circ' (hW : IsWhiteNoise P W) {y : ℂ} {b : ℝ} (hb 
       Real.sqrt Real.pi * W (measKerL2 openSquare (Ioi 0) (circleUnif z r)) ω -
         Real.sqrt Real.pi * W (hatMeasKerL2 (circleUnif z r)) ω :=
   dg_lemma31_hU_hat_circ hW hb hK
+
+/-- **DG Lemma 3.1 for `(h^U, ĥ^tr)`, `U = 𝕍`** (circle-average form, `K` a box): from DG
+Lemma A.1 (`dg_lemmaA1_wn`), with `ĥ^tr(σ) = √π W(trMeasKerL2 σ)`. -/
+theorem dg_lemma31_hU_tr_circ (hW : IsWhiteNoise P W) {y : ℂ} {b : ℝ} (hb : 0 < b)
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ openSquare) :
+    DGCircMod P (ferniqueBox y b) fun z r ω =>
+      Real.sqrt Real.pi * W (measKerL2 openSquare (Ioi 0) (circleUnif z r)) ω -
+        Real.sqrt Real.pi * W (trMeasKerL2 (circleUnif z r)) ω := by
+  have hpi := Real.pi_pos
+  have hspi : 0 < Real.sqrt Real.pi := Real.sqrt_pos.2 hpi
+  set S := ferniqueBox y b with hSdef
+  have hSc : IsCompact S := isCompact_Icc.reProdIm isCompact_Icc
+  obtain ⟨Y, hYc, hYm, hYW, hT⟩ :=
+    dg_lemmaA1_wn hW isOpen_openSquare isBounded_openSquare hb hK
+  refine ⟨Y, hYc, hYm, hT, fun z r hr hB => ?_⟩
+  set σ := circleUnif z r
+  set k := dgA1Kernel openSquare
+  have hσS : σ Sᶜ = 0 :=
+    measure_mono_null (compl_subset_compl.2 hB) (circleUnif_compl_closedBall hr z)
+  have hSae : ∀ᵐ x ∂σ, x ∈ S := mem_ae_iff.2 hσS
+  obtain ⟨L, hL0, hL⟩ := dg_A1_var_box isOpen_openSquare isBounded_openSquare hb hK
+  have hkc : ContinuousOn k S := continuousOn_of_sq_le hL0 hL
+  obtain ⟨M, hM⟩ := hSc.exists_bound_of_continuousOn hkc
+  have hSm : MeasurableSet S := hSc.isClosed.measurableSet
+  have hkm : AEStronglyMeasurable k σ := by
+    have := hkc.aestronglyMeasurable (μ := σ) hSm
+    rwa [Measure.restrict_eq_self_of_ae_mem hSae] at this
+  have hki : Integrable k σ := Integrable.of_bound hkm M (hSae.mono fun x hx => hM x hx)
+  set Y' : ℂ → Ω → ℝ := fun x ω => Y x ω / Real.sqrt Real.pi
+  have hYW' : ∀ x ∈ S, Y' x =ᵐ[P] W (k x) := fun x hx => by
+    filter_upwards [hYW x hx] with ω h
+    simp only [Y', h]; field_simp
+  have hF := ae_integral_eq_wn hW hSc hσS hM (fun ω => (hYc ω).div_const _)
+    (fun x => (hYm x).div_const _) hYW' hki
+  have hBsq : Metric.closedBall z r ⊆ openSquare := fun x hx =>
+    (hK x (hB hx)) (Metric.mem_ball_self (by norm_num))
+  have hm1 := memLp_measKer_circle hr hBsq
+  have hI := integral_dgA1Kernel_ae_eq isOpen_openSquare (le_of_lt two_pos)
+    DZZ.openSquare_subset_ball σ (hSae.mono fun x hx => hK x hx) hki
+  have hm2 : MemLp (trMeasKer σ) 2 volume := by
+    refine (hm1.sub (Lp.memLp (∫ x, k x ∂σ))).ae_eq ?_
+    filter_upwards [hI] with p hp
+    rw [Pi.sub_apply, hp]; ring
+  have hkint : (∫ x, k x ∂σ) = measKerL2 openSquare (Ioi 0) σ - trMeasKerL2 σ := by
+    refine Lp.ext ?_
+    have e1 : (measKerL2 openSquare (Ioi 0) σ : ℝ × ℂ → ℝ) =ᵐ[volume]
+        measKer openSquare (Ioi 0) σ := by
+      rw [measKerL2, dite_eq_left_of_eq_true (eq_true hm1)]; exact hm1.coeFn_toLp
+    have e2 : (trMeasKerL2 σ : ℝ × ℂ → ℝ) =ᵐ[volume] trMeasKer σ := by
+      rw [trMeasKerL2, dite_eq_left_of_eq_true (eq_true hm2)]; exact hm2.coeFn_toLp
+    filter_upwards [hI, Lp.coeFn_sub (measKerL2 openSquare (Ioi 0) σ) (trMeasKerL2 σ), e1, e2]
+      with p h1 h2 h3 h4
+    rw [h1, h2, Pi.sub_apply, h3, h4]
+  rw [hkint] at hF
+  have hsub := hW.add_ae (measKerL2 openSquare (Ioi 0) σ) (-trMeasKerL2 σ)
+  have hneg := hW.smul_ae (-1) (trMeasKerL2 σ)
+  filter_upwards [hF, hsub, hneg] with ω h1 h2 h3
+  have e : ∫ x, Y x ω ∂σ = Real.sqrt Real.pi * ∫ x, Y' x ω ∂σ := by
+    rw [← integral_const_mul]; congr 1; funext x; simp only [Y']; field_simp
+  rw [neg_one_smul] at h3
+  rw [e, h1, sub_eq_add_neg (measKerL2 openSquare (Ioi 0) σ), h2, h3]
+  ring
 
 end DG
 end LQGMetric

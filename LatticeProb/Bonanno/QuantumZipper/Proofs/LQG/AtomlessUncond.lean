@@ -548,5 +548,13 @@ theorem ae_tsum_ne_top_of_moments [IsProbabilityMeasure P] {T : ℕ → Ω → �
 
 open AreaExist (aZ)
 
+/-- **Hypothesis: the area fractional-moment bound at an interior point `z`** (area analogue of
+M4-P3(b); the file `FiniteArea.lean` is not built): for every `p ∈ (0,1]` and all large `n`,
+`E (sup_{k ≥ n} μ_{2^{-k}}(B̄(z, 2^{-n})))^p ≤ C 2^{n(γ²p²/2 − p(2+γ²/2))}`. -/
+def P3bBoundArea (P : Measure Ω) (X : Ω → FieldSample) (γ R : ℝ) (z : ℂ) : Prop :=
+  ∀ p : ℝ, 0 < p → p ≤ 1 → ∃ C : ℝ≥0∞, C ≠ ⊤ ∧ ∃ n₀ : ℕ, ∀ n : ℕ, n₀ ≤ n →
+    ∫⁻ ω, annTC (areaApprox γ (aZ X R ω)) z n ^ p ∂P ≤
+      C * ENNReal.ofReal ((2 : ℝ) ^ ((n : ℝ) * (γ ^ 2 * p ^ 2 / 2 - p * (2 + γ ^ 2 / 2))))
+
 end AtomlessUncond
 end QuantumZipper

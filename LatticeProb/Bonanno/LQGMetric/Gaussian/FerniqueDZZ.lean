@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Gaussian.FerniqueDZZ at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Gaussian.FerniqueDZZ at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Gaussian.FerniqueFinite
 import LatticeProb.Bonanno.LQGMetric.Gaussian.SupTailField
 import Mathlib.Analysis.Complex.Basic
@@ -42,6 +41,8 @@ def ferniqueBox (x₀ : ℂ) (b : ℝ) : Set ℂ :=
 
 /-- The universal constant of DZZ Lemma 2.3 obtained from the chaining bound. -/
 def ferniqueCF : ℝ := 20 * √5 * √(3 * √2)
+
+lemma ferniqueCF_pos : 0 < ferniqueCF := by unfold ferniqueCF; positivity
 
 lemma isCompact_ferniqueBox (x₀ : ℂ) (b : ℝ) : IsCompact (ferniqueBox x₀ b) :=
   isCompact_Icc.reProdIm isCompact_Icc

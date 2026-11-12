@@ -6,6 +6,7 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3D105Mu
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.VagueUniqueOn
 import Mathlib.Analysis.Complex.Convex
 import Mathlib.Analysis.Convex.Measure
+import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3D105Mu2
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

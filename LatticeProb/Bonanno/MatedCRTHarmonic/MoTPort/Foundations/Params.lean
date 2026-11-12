@@ -31,6 +31,15 @@ namespace MatedCRTHarmonic.MoTPort
 
 open QuantumZipper Real
 
+/-- `χ = 2/γ − γ/2` as QuantumZipper's `chiC κ` at `κ = γ²`. -/
+abbrev chi (γ : ℝ) : ℝ := chiC (γ ^ 2)
+
+theorem chi_eq {γ : ℝ} (hγ : 0 < γ) : chi γ = 2 / γ - γ / 2 := by
+  simp [chi, chiC, Real.sqrt_sq hγ.le]
+
+theorem chi_eq' {γ : ℝ} (hγ : 0 < γ) : chi γ = (4 - γ ^ 2) / (2 * γ) := by
+  rw [chi_eq hγ]; field_simp; ring
+
 /-! ## Table 1.1: wedge parameters as functions of the weight `W` (DMS (1.4), Table 1.1) -/
 
 /-- `α = γ/2 + Q − W/γ` (DMS (1.4): `W = γ(γ/2 + Q − α)`). -/

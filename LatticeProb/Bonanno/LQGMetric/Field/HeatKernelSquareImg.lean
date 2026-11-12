@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Field.HeatKernelSquareImg at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Field.HeatKernelSquareImg at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Field.HeatKernelSquareCK
 
 set_option autoImplicit false
@@ -22,6 +21,45 @@ open MeasureTheory Real
 
 namespace LQGMetric
 namespace HeatSq
+
+/-- `q_s(·, v)` is `2L`-periodic. -/
+theorem intervalDirKernel_add_period {a L s : ℝ} (hs : 0 < s) (hL : 0 < L) (u v : ℝ) :
+    intervalDirKernel a L s (u + 2 * L) v = intervalDirKernel a L s u v := by
+  rw [intervalDirKernel_eq_sub hs hL, intervalDirKernel_eq_sub hs hL]
+  congr 1
+  · rw [← (Equiv.addRight (1 : ℤ)).tsum_eq (fun n : ℤ => gauss1 s (u - v + 2 * n * L))]
+    congr 1; funext n; congr 1; simp only [Equiv.coe_addRight]; push_cast; ring
+  · rw [← (Equiv.addRight (1 : ℤ)).tsum_eq (fun n : ℤ => gauss1 s (u + v - 2 * a + 2 * n * L))]
+    congr 1; funext n; congr 1; simp only [Equiv.coe_addRight]; push_cast; ring
+
+/-- `q_s(·, v)` is odd about `a`: `q_s(2a − u, v) = −q_s(u, v)`. -/
+theorem intervalDirKernel_reflect {a L s : ℝ} (hs : 0 < s) (hL : 0 < L) (u v : ℝ) :
+    intervalDirKernel a L s (2 * a - u) v = -intervalDirKernel a L s u v := by
+  rw [intervalDirKernel_eq_sub hs hL, intervalDirKernel_eq_sub hs hL]
+  have h1 : ∑' n : ℤ, gauss1 s (2 * a - u - v + 2 * n * L) =
+      ∑' n : ℤ, gauss1 s (u + v - 2 * a + 2 * n * L) := by
+    rw [← (Equiv.neg ℤ).tsum_eq]
+    congr 1; funext n; rw [← gauss1_neg]; congr 1; simp; ring
+  have h2 : ∑' n : ℤ, gauss1 s (2 * a - u + v - 2 * a + 2 * n * L) =
+      ∑' n : ℤ, gauss1 s (u - v + 2 * n * L) := by
+    rw [← (Equiv.neg ℤ).tsum_eq]
+    congr 1; funext n; rw [← gauss1_neg]; congr 1; simp; ring
+  rw [h1, h2]; ring
+
+/-- Dirichlet boundary condition at the left endpoint: `q_s(a, v) = 0`. -/
+theorem intervalDirKernel_left {a L s : ℝ} (hs : 0 < s) (hL : 0 < L) (v : ℝ) :
+    intervalDirKernel a L s a v = 0 := by
+  have := intervalDirKernel_reflect (a := a) (L := L) hs hL a v
+  rw [show 2 * a - a = a by ring] at this
+  linarith
+
+/-- Dirichlet boundary condition at the right endpoint: `q_s(a + L, v) = 0`. -/
+theorem intervalDirKernel_right {a L s : ℝ} (hs : 0 < s) (hL : 0 < L) (v : ℝ) :
+    intervalDirKernel a L s (a + L) v = 0 := by
+  have h1 := intervalDirKernel_reflect (a := a) (L := L) hs hL (a + L) v
+  have h2 := intervalDirKernel_add_period (a := a) (L := L) hs hL (2 * a - (a + L)) v
+  rw [show 2 * a - (a + L) + 2 * L = a + L by ring] at h2
+  linarith
 
 /-- Completing the square in one dimension. -/
 lemma gauss1_mul_gauss1_ck (s r : ℝ) (hs : 0 < s) (hr : 0 < r) (u w v : ℝ) :

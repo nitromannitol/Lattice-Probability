@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DFGPS.L3_19 at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.DFGPS.L3_19 at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.Nodes
 
 set_option autoImplicit false
@@ -52,5 +51,13 @@ def Lem3_19SqU : Prop :=
       ProbExpRateU K ((xiGamma γ * Q γ - s) ^ 2 / (2 * xiGamma γ ^ 2)) fun ε 𝕣 z => {g |
         internalDiam (D g) (sqCentred (ε * 𝕣) z) (sqCentred (ε * 𝕣) z) ≤
           ENNReal.ofReal (ε ^ s * scaleFac (xiGamma γ) c g 𝕣 0)}
+
+/-- **DFGPS Lemma 3.21** (`lem-ep-cross`, T:2337–2343), constants uniform in the field -/
+def Lem3_21U : Prop :=
+  ∀ γ : ℝ, 0 < γ → γ < 2 → ∀ (D : DistC → ContMetric) (c : ℝ → ℝ), IsWeakLQGMetric γ D c →
+    ∀ K : Set ℂ, IsCompact K → ∀ s : ℝ, xiGamma γ * Q γ < s →
+      ProbExpRateU K ((s - xiGamma γ * Q γ) ^ 2 / (2 * xiGamma γ ^ 2)) fun ε 𝕣 z => {g |
+        ENNReal.ofReal (ε ^ s * scaleFac (xiGamma γ) c g 𝕣 0) ≤
+          setDist (D g) (Metric.ball z (ε * 𝕣)) (Metric.sphere z (2 * ε * 𝕣))}
 
 end LQGMetric.DFGPS

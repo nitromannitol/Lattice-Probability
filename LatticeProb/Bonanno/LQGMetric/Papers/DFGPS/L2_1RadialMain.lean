@@ -1,9 +1,9 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DFGPS.L2_1RadialMain at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   source module LQGMetric.Papers.DFGPS.L2_1RadialMain at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_1RadialMeas
 import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_1PolarPt
+import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_1PolarJoint
+import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_1Polar
 import LatticeProb.Bonanno.LQGMetric.Field.HeatMollifyVar
 import LatticeProb.Bonanno.LQGMetric.Field.HeatMollifyCont
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
@@ -456,5 +456,26 @@ theorem lem2_1RadialPairing.{u} : Lem2_1RadialPairing.{u} := by
     rw [edist_eq_enorm_sub, hdiff n]
     exact enorm_integral_le_lintegral_enorm _
   exact tendsto_nhds_unique (tendsto_polar_circBump (g ω) φ z hrad) hconv
+
+/-- The polar formula at a fixed `(ε, z)`, unconditionally. -/
+theorem lem2_1PolarPoint.{u} : Lem2_1PolarPoint.{u} := lem2_1PolarPoint_of lem2_1RadialPairing
+
+/-- **The GFF case of DFGPS Lemma 2.1** (T:711–734), unconditionally. -/
+theorem lem2_1GffApprox.{u} : Lem2_1GffApprox.{u} :=
+  lem2_1GffApprox_of_polarDiff (lem2_1PolarDiff_of lem2_1PolarPoint lem2_1HeatJoint)
+
+/-- **DFGPS Lemma 2.1** (`lem-localized-approx`, T:688–699), without open hypotheses. -/
+theorem lem2_1_uncond.{u} {Ω : Type u} [MeasurableSpace Ω]
+    {P : Measure Ω} {h : Ω → DistC} (hh : IsGFFPlusBddCont h P) {U : Set ℂ}
+    (hU : Bornology.IsBounded U) (ξ : ℝ) :
+    ∀ᵐ ω ∂P,
+      ContinuousOn (fun p : ℝ × ℂ => if hp : 0 < p.1 then locMollify p.1 hp (h ω) p.2 else 0)
+        (Ioi 0 ×ˢ univ) ∧
+      (∀ δ : ℝ, 0 < δ → ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ hε : 0 < ε, ∀ z ∈ closure U,
+        |heatMollify ε (h ω) z - locMollify ε hε (h ω) z| ≤ δ) ∧
+      ∀ c : ℝ, 1 < c → ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ hε : 0 < ε, ∀ z w : ℂ,
+        lfppLocOn ξ ε hε (h ω) U z w ≤ ENNReal.ofReal c * lfppDOn ξ (heatMollify ε (h ω)) U z w ∧
+        lfppDOn ξ (heatMollify ε (h ω)) U z w ≤ ENNReal.ofReal c * lfppLocOn ξ ε hε (h ω) U z w :=
+  lem2_1 lem2_1GffApprox hh hU ξ
 
 end LQGMetric.DFGPS

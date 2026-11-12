@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S2L5Kernel at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.DZZ.S2L5Kernel at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L5Bridge
 import LatticeProb.Bonanno.LQGMetric.Field.KilledHeatMeas
 import LatticeProb.Bonanno.LQGMetric.Field.KilledHeatBound
@@ -98,18 +97,83 @@ theorem memLp_wndKernel {A : Set ℂ} (hA : IsOpen A) {c : ℂ} {R : ℝ} (hR : 
   rw [e, lintegral_wndKernel_mul hA hI hI0' v v]
   exact lintegral_killedHeat_lt_top hR hAR hc₀ hI0 v v
 
+lemma measurable_killedHeat_time {A : Set ℂ} (hA : IsOpen A) (u v : ℂ) :
+    Measurable fun s : ℝ => killedHeat A s.toNNReal u v := by
+  have hf : Measurable fun s : ℝ ↦ ((s.toNNReal, u, v) : ℝ≥0 × ℂ × ℂ) :=
+    measurable_real_toNNReal.prodMk measurable_const
+  exact Measurable.comp (g := fun x : ℝ≥0 × ℂ × ℂ ↦ killedHeat A x.1 x.2.1 x.2.2)
+    (measurable_killedHeat hA) hf
+
 open Classical in
 /-- The `L²` class of the kernel (junk `0` if it is not square integrable). -/
 def wndKernelL2 (A : Set ℂ) (I : Set ℝ) (v : ℂ) : WNSpace :=
   if h : MemLp (wndKernel A I v) 2 volume then h.toLp _ else 0
 
+/-- **(eq-cov-tildeh)**: `⟪K_u, K_v⟫ = ∫_I p_A(s; u, v) ds`. -/
+theorem inner_wndKernelL2 {A : Set ℂ} (hA : IsOpen A) {c : ℂ} {R : ℝ} (hR : 0 ≤ R)
+    (hAR : A ⊆ Metric.ball c R) {I : Set ℝ} (hI : MeasurableSet I) {c₀ : ℝ} (hc₀ : 0 < c₀)
+    (hI0 : I ⊆ Ioi c₀) (u v : ℂ) :
+    ⟪wndKernelL2 A I u, wndKernelL2 A I v⟫ = ∫ s in I, killedHeat A s.toNNReal u v := by
+  have hI0' : I ⊆ Ioi 0 := hI0.trans (Ioi_subset_Ioi hc₀.le)
+  have hu := memLp_wndKernel hA hR hAR hI hc₀ hI0 u
+  have hv := memLp_wndKernel hA hR hAR hI hc₀ hI0 v
+  rw [wndKernelL2, wndKernelL2, dite_eq_left_of_eq_true (eq_true hu), dite_eq_left_of_eq_true (eq_true hv), L2.inner_def]
+  have h1 : (fun p => ⟪(hu.toLp _ : ℝ × ℂ → ℝ) p, (hv.toLp _ : ℝ × ℂ → ℝ) p⟫) =ᵐ[volume]
+      fun p => wndKernel A I u p * wndKernel A I v p := by
+    filter_upwards [hu.coeFn_toLp, hv.coeFn_toLp] with p h1 h2
+    rw [h1, h2, real_inner_eq_re_inner, RCLike.inner_apply]
+    simp [mul_comm]
+  rw [integral_congr_ae h1, integral_eq_lintegral_of_nonneg_ae
+      (ae_of_all _ fun p => mul_nonneg (wndKernel_nonneg _ _ _ _) (wndKernel_nonneg _ _ _ _))
+      ((measurable_wndKernel hA hI u).mul (measurable_wndKernel hA hI v)).aestronglyMeasurable,
+    integral_eq_lintegral_of_nonneg_ae (ae_of_all _ fun s => killedHeat_nonneg _ _ _ _)
+      (measurable_killedHeat_time hA u v).aestronglyMeasurable]
+  simp_rw [ENNReal.ofReal_mul (wndKernel_nonneg _ _ _ _)]
+  rw [lintegral_wndKernel_mul hA hI hI0' u v]
+
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {W : WNSpace → Ω → ℝ}
+
+/-- The white-noise field `√π ∫ 1_I(s) p_A(s/2; v, w) W(dw, ds)`. -/
+def wnField (W : WNSpace → Ω → ℝ) (A : Set ℂ) (I : Set ℝ) (v : ℂ) (ω : Ω) : ℝ :=
+  Real.sqrt Real.pi * W (wndKernelL2 A I v) ω
+
+/-- **DZZ (eq:WND_decomposition)**: `h̃_δ^{δ'}(v)` for `0 < δ < δ'`. -/
+def tildeH (W : WNSpace → Ω → ℝ) (δ δ' : ℝ) (v : ℂ) (ω : Ω) : ℝ :=
+  wnField W openSquare (Ioo (δ ^ 2) (δ' ^ 2)) v ω
+
+/-- **DZZ (eq:WND_decomposition)** with `δ̃ = ∞`: `h̃_δ(v)`. -/
+def tildeHInf (W : WNSpace → Ω → ℝ) (δ : ℝ) (v : ℂ) (ω : Ω) : ℝ :=
+  wnField W openSquare (Ioi (δ ^ 2)) v ω
 
 lemma openSquare_subset_ball : openSquare ⊆ Metric.ball (0 : ℂ) 2 := by
   intro z ⟨h1, h2, h3, h4⟩
   rw [Metric.mem_ball, dist_zero_right]
   refine (Complex.norm_le_abs_re_add_abs_im z).trans_lt ?_
   rw [abs_of_pos h1, abs_of_pos h3]; linarith
+
+/-- **(eq-cov-tildeh)** for the general field. -/
+theorem cov_wnField (hW : IsWhiteNoise P W) {A : Set ℂ} (hA : IsOpen A) {c : ℂ} {R : ℝ}
+    (hR : 0 ≤ R) (hAR : A ⊆ Metric.ball c R) {I : Set ℝ} (hI : MeasurableSet I) {c₀ : ℝ}
+    (hc₀ : 0 < c₀) (hI0 : I ⊆ Ioi c₀) (u v : ℂ) :
+    cov[wnField W A I u, wnField W A I v; P] =
+      Real.pi * ∫ s in I, killedHeat A s.toNNReal u v := by
+  unfold wnField
+  rw [covariance_const_mul_left, covariance_const_mul_right, hW.cov_eq,
+    inner_wndKernelL2 hA hR hAR hI hc₀ hI0, ← mul_assoc, Real.mul_self_sqrt Real.pi_pos.le]
+
+/-- **DZZ l. 512**: `Var(F(u) − F(v)) = π∫_I (p(u,u) − p(u,v)) + π∫_I (p(v,v) − p(u,v))`, in the
+form `π(∫_I p(u,u) + ∫_I p(v,v) − 2∫_I p(u,v))`. -/
+theorem variance_wnField_sub (hW : IsWhiteNoise P W) {A : Set ℂ} (hA : IsOpen A) {c : ℂ} {R : ℝ}
+    (hR : 0 ≤ R) (hAR : A ⊆ Metric.ball c R) {I : Set ℝ} (hI : MeasurableSet I) {c₀ : ℝ}
+    (hc₀ : 0 < c₀) (hI0 : I ⊆ Ioi c₀) (u v : ℂ) :
+    Var[fun ω => wnField W A I u ω - wnField W A I v ω; P] =
+      Real.pi * ((∫ s in I, killedHeat A s.toNNReal u u) + (∫ s in I, killedHeat A s.toNNReal v v)
+        - 2 * ∫ s in I, killedHeat A s.toNNReal u v) := by
+  unfold wnField
+  rw [variance_sqrtPi_sub hW, @norm_sub_sq_real, ← real_inner_self_eq_norm_sq,
+    ← real_inner_self_eq_norm_sq, inner_wndKernelL2 hA hR hAR hI hc₀ hI0,
+    inner_wndKernelL2 hA hR hAR hI hc₀ hI0, inner_wndKernelL2 hA hR hAR hI hc₀ hI0]
+  ring
 
 end DZZ
 end LQGMetric

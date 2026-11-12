@@ -12,6 +12,7 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.CircleContinuity
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Measure.SeparableMeasure
 import Mathlib.Probability.BrownianMotion.Basic
+import LatticeProb.Bonanno.QuantumZipper.Proofs.NonVacuity
 
 /-!
 # Existence of Brownian motion

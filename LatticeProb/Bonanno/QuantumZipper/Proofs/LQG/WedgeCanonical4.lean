@@ -67,6 +67,10 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Existence
 import LatticeProb.Bonanno.QuantumZipper.LQG.WedgeProcess
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMExistence
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AllOffsetsModulus
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.CameronMartin
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSample
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FiniteArea
+import LatticeProb.Bonanno.QuantumZipper.Proofs.NonVacuity
 
 /-!
 # M4-A5-WEDGE (TASKS R23): assembly of (a), (b), (c) from the two analytic inputs

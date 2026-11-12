@@ -22,6 +22,7 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.CircleMeanValue
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.GFF
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WedgeRC3All2Basic
 import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.K3.GreenLower3
+import LatticeProb.Bonanno.LQGMetric.Field.MarkovGermVerPot
 
 /-!
 # W.field (1): `toFS` of a radial function with a logarithmic singularity

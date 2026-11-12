@@ -1,14 +1,13 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DG.S3MuHat at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   source module LQGMetric.Papers.DG.S3MuHat at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.L3_1B3
+import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3L2
+import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent3Wn
 import Mathlib.MeasureTheory.Measure.WithDensity
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Complex
 import Mathlib.Topology.Path
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Probability.Notation
-import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent3Wn
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
@@ -72,6 +71,38 @@ def IsDGMod (P : Measure Ω) (S : Set ℂ) (F : ℂ → ℝ → Ω → ℝ) (Y :
 def muOfMod (W : WNSpace → Ω → ℝ) (γ : ℝ) (K : Set ℂ) (Y : ℂ → Ω → ℝ) (ω : Ω) : Measure ℂ :=
   ((muHU W γ ω).restrict K).withDensity fun z => ENNReal.ofReal (Real.exp (γ * -Y z ω))
 
+/-- the modification of `h^𝕍 − ĥ` chosen from DG Lemma 3.1 -/
+def hatMod (hW : IsWhiteNoise P W) {y : ℂ} {b : ℝ} (hb : 0 < b)
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ openSquare) : ℂ → Ω → ℝ :=
+  (dg_lemma31_hU_hat_circ' hW hb hK).choose
+
+lemma hatMod_spec (hW : IsWhiteNoise P W) {y : ℂ} {b : ℝ} (hb : 0 < b)
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ openSquare) :
+    IsDGMod P (ferniqueBox y b) (fun z r ω => dgHU W z r ω - dgHat W z r ω)
+      (hatMod hW hb hK) :=
+  (dg_lemma31_hU_hat_circ' hW hb hK).choose_spec
+
+/-- the modification of `h^𝕍 − ĥ^tr` chosen from DG Lemma 3.1 -/
+def trMod (hW : IsWhiteNoise P W) {y : ℂ} {b : ℝ} (hb : 0 < b)
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ openSquare) : ℂ → Ω → ℝ :=
+  (dg_lemma31_hU_tr_circ hW hb hK).choose
+
+lemma trMod_spec (hW : IsWhiteNoise P W) {y : ℂ} {b : ℝ} (hb : 0 < b)
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ openSquare) :
+    IsDGMod P (ferniqueBox y b) (fun z r ω => dgHU W z r ω - dgTr W z r ω)
+      (trMod hW hb hK) :=
+  (dg_lemma31_hU_tr_circ hW hb hK).choose_spec
+
+/-- **`μ_ĥ` on the box `K = ferniqueBox y b`** (DG:984–986) -/
+def muHat (hW : IsWhiteNoise P W) (γ : ℝ) {y : ℂ} {b : ℝ} (hb : 0 < b)
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ openSquare) (ω : Ω) : Measure ℂ :=
+  muOfMod W γ (ferniqueBox y b) (hatMod hW hb hK) ω
+
+/-- **`μ_{ĥ^tr}` on the box `K = ferniqueBox y b`** (DG:984–986) -/
+def muTr (hW : IsWhiteNoise P W) (γ : ℝ) {y : ℂ} {b : ℝ} (hb : 0 < b)
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ openSquare) (ω : Ω) : Measure ℂ :=
+  muOfMod W γ (ferniqueBox y b) (trMod hW hb hK) ω
+
 /-! ### Basic properties -/
 
 omit [MeasurableSpace Ω] in
@@ -82,6 +113,16 @@ lemma muHU_lt_top (W : WNSpace → Ω → ℝ) (γ : ℝ) (ω : Ω) {K : Set ℂ
   split_ifs with h
   · exact h.choose_spec.2.1 K hK hKU
   · simp
+
+lemma isCompact_ferniqueBox (y : ℂ) (b : ℝ) : IsCompact (ferniqueBox y b) :=
+  isCompact_Icc.reProdIm isCompact_Icc
+
+lemma isClosed_ferniqueBox (y : ℂ) (b : ℝ) : IsClosed (ferniqueBox y b) :=
+  (isCompact_ferniqueBox y b).isClosed
+
+lemma ferniqueBox_subset {y : ℂ} {b : ℝ}
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ openSquare) :
+    ferniqueBox y b ⊆ openSquare := fun z hz => hK z hz (Metric.mem_ball_self (by norm_num))
 
 omit [MeasurableSpace Ω] in
 /-- `μ_ĥ = e^{−γY} μ_{h^𝕍}|_K` is a finite measure for every `ω` (`K` a compact subset of `𝕍`,
@@ -104,6 +145,41 @@ theorem muOfMod_univ_lt_top (W : WNSpace → Ω → ℝ) (γ : ℝ) {K : Set ℂ
     _ < ⊤ := by
         rw [lintegral_const, Measure.restrict_apply MeasurableSet.univ, univ_inter]
         exact ENNReal.mul_lt_top ENNReal.ofReal_lt_top (muHU_lt_top W γ ω hK hKU)
+
+omit [MeasurableSpace Ω] in
+/-- **Weyl relation** (DG:983, `dμ_{h+f} = e^{γ f} dμ_h`): replacing the modification `Y` of
+`h^𝕍 − h` by `Y − f` (the field `h + f`) multiplies the measure by `e^{γ f}` -/
+theorem muOfMod_sub_withDensity (W : WNSpace → Ω → ℝ) (γ : ℝ) (K : Set ℂ) {Y : ℂ → Ω → ℝ}
+    (hY : ∀ ω, Continuous fun z => Y z ω) {f : ℂ → ℝ} (hf : Continuous f) (ω : Ω) :
+    muOfMod W γ K (fun z ω => Y z ω - f z) ω =
+      (muOfMod W γ K Y ω).withDensity fun z => ENNReal.ofReal (Real.exp (γ * f z)) := by
+  unfold muOfMod
+  have h1 : Measurable fun z => ENNReal.ofReal (Real.exp (γ * -Y z ω)) :=
+    ENNReal.measurable_ofReal.comp (Real.continuous_exp.comp
+      (continuous_const.mul (hY ω).neg)).measurable
+  have h2 : Measurable fun z => ENNReal.ofReal (Real.exp (γ * f z)) :=
+    ENNReal.measurable_ofReal.comp (Real.continuous_exp.comp
+      (continuous_const.mul hf)).measurable
+  rw [← withDensity_mul _ h1 h2]
+  congr 1
+  funext z
+  simp only [Pi.mul_apply]
+  rw [← ENNReal.ofReal_mul (Real.exp_pos _).le, ← Real.exp_add]
+  congr 2; ring
+
+omit [MeasurableSpace Ω] in
+/-- `dμ_{h¹} = e^{γ(h¹−h²)} dμ_{h²}` for two fields of the coupling, `Yᵢ` modifications of
+`h^𝕍 − hⁱ` (so `h¹ − h² = Y₂ − Y₁`) -/
+theorem muOfMod_eq_withDensity (W : WNSpace → Ω → ℝ) (γ : ℝ) (K : Set ℂ) {Y₁ Y₂ : ℂ → Ω → ℝ}
+    (hY₁ : ∀ ω, Continuous fun z => Y₁ z ω) (hY₂ : ∀ ω, Continuous fun z => Y₂ z ω) (ω : Ω) :
+    muOfMod W γ K Y₁ ω = (muOfMod W γ K Y₂ ω).withDensity
+      fun z => ENNReal.ofReal (Real.exp (γ * (Y₂ z ω - Y₁ z ω))) := by
+  have e : muOfMod W γ K Y₁ ω =
+      muOfMod W γ K (fun z ω' => Y₂ z ω' - (Y₂ z ω - Y₁ z ω)) ω := by
+    unfold muOfMod; congr 1; funext z; congr 3; ring
+  rw [e]
+  exact muOfMod_sub_withDensity W γ K hY₂ (f := fun z => Y₂ z ω - Y₁ z ω)
+    ((hY₂ ω).sub (hY₁ ω)) ω
 
 /-! ### DG Lemma 3.2 for the white-noise fields -/
 

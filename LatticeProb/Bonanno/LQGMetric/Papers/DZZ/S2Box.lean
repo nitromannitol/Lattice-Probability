@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S2Box at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.DZZ.S2Box at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Gaussian.FerniqueDZZ
 
 /-!
@@ -94,6 +93,67 @@ theorem dzz_box_sup_abs_tail {X : ℂ → Ω → ℝ} (hX : IsGaussianProcess X 
   exact tail_iSup_abs_le_gaussian hXB (fun v => h0 v)
     (fun ω => continuousOn_iff_continuous_domRestrict.1 (hc ω)) hi1 hi2 hM1 hM2
     (fun v => hvar v v.2) hx
+
+/-- The sub-box of `ferniqueBox x₀ s` with lower-left corner `x₀ + (k s/m, l s/m)`. -/
+def subBox (x₀ : ℂ) (s : ℝ) (m k l : ℕ) : Set ℂ :=
+  ferniqueBox (x₀ + ⟨k * (s / m), l * (s / m)⟩) (s / m)
+
+/-- One-dimensional covering: `[0, s] = ⋃_{k < m} [k s/m, (k+1) s/m]`. -/
+lemma exists_fin_mem_Icc {s y : ℝ} (hs : 0 < s) {m : ℕ} (hm : 0 < m) (hy0 : 0 ≤ y)
+    (hys : y ≤ s) : ∃ k : Fin m, (k : ℝ) * (s / m) ≤ y ∧ y ≤ (k : ℝ) * (s / m) + s / m := by
+  have hm' : (0 : ℝ) < m := Nat.cast_pos.2 hm
+  have hh : 0 < s / m := div_pos hs hm'
+  by_cases hk : ⌊y / (s / m)⌋₊ < m
+  · refine ⟨⟨_, hk⟩, ?_, ?_⟩
+    · simp only
+      have := Nat.floor_le (div_nonneg hy0 hh.le)
+      rwa [le_div_iff₀ hh] at this
+    · simp only
+      have := Nat.lt_floor_add_one (y / (s / m))
+      rw [div_lt_iff₀ hh] at this
+      linarith
+  · push_neg at hk
+    refine ⟨⟨m - 1, Nat.sub_lt hm one_pos⟩, ?_, ?_⟩
+    · simp only
+      rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.2 hm.ne'), Nat.cast_one]
+      have h1 : (m : ℝ) ≤ y / (s / m) :=
+        le_trans (by exact_mod_cast hk) (Nat.floor_le (div_nonneg hy0 hh.le))
+      rw [le_div_iff₀ hh] at h1
+      nlinarith
+    · simp only
+      rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.2 hm.ne'), Nat.cast_one]
+      have : ((m : ℝ) - 1) * (s / m) + s / m = s := by field_simp; ring
+      linarith
+
+lemma exists_mem_subBox {x₀ v : ℂ} {s : ℝ} (hs : 0 < s) {m : ℕ} (hm : 0 < m)
+    (hv : v ∈ ferniqueBox x₀ s) : ∃ k l : Fin m, v ∈ subBox x₀ s m k l := by
+  obtain ⟨⟨h1, h2⟩, h3, h4⟩ := hv
+  obtain ⟨k, hk1, hk2⟩ :=
+    exists_fin_mem_Icc hs hm (sub_nonneg.2 h1) (by linarith : v.re - x₀.re ≤ s)
+  obtain ⟨l, hl1, hl2⟩ :=
+    exists_fin_mem_Icc hs hm (sub_nonneg.2 h3) (by linarith : v.im - x₀.im ≤ s)
+  refine ⟨k, l, ⟨⟨?_, ?_⟩, ?_, ?_⟩⟩ <;> simp only [Complex.add_re, Complex.add_im] <;> linarith
+
+lemma subBox_subset {x₀ : ℂ} {s : ℝ} (hs : 0 < s) {m : ℕ} (k l : Fin m) :
+    subBox x₀ s m k l ⊆ ferniqueBox x₀ s := by
+  have hm : 0 < m := Fin.pos k
+  have hm' : (0 : ℝ) < m := Nat.cast_pos.2 hm
+  have hh : 0 < s / m := div_pos hs hm'
+  have hk : (k : ℝ) * (s / m) + s / m ≤ s := by
+    have : ((k : ℕ) : ℝ) + 1 ≤ m := by exact_mod_cast k.2
+    calc (k : ℝ) * (s / m) + s / m = ((k : ℝ) + 1) * (s / m) := by ring
+      _ ≤ m * (s / m) := mul_le_mul_of_nonneg_right this hh.le
+      _ = s := by field_simp
+  have hl : (l : ℝ) * (s / m) + s / m ≤ s := by
+    have : ((l : ℕ) : ℝ) + 1 ≤ m := by exact_mod_cast l.2
+    calc (l : ℝ) * (s / m) + s / m = ((l : ℝ) + 1) * (s / m) := by ring
+      _ ≤ m * (s / m) := mul_le_mul_of_nonneg_right this hh.le
+      _ = s := by field_simp
+  have hk0 : 0 ≤ (k : ℝ) * (s / m) := by positivity
+  have hl0 : 0 ≤ (l : ℝ) * (s / m) := by positivity
+  rintro v ⟨⟨h1, h2⟩, h3, h4⟩
+  simp only [Complex.add_re, Complex.add_im] at h1 h2 h3 h4
+  exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
 
 end DZZ
 end LQGMetric

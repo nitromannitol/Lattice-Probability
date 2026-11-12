@@ -105,6 +105,30 @@ theorem dgCircMod_h0_hat :
     ae_circleAvg_eq_wn hW hh hae z hr] with ω h1 h2
   rw [h1, h2, dgHat]; ring
 
+include hW hh hae hb in
+/-- the random constant `h₀_1(0)` -/
+theorem dgCircMod_const :
+    DGCircMod P (ferniqueBox y b) fun _ _ ω => circleAvg (h₀ ω) 1 0 := by
+  have := hW.isProbabilityMeasure
+  set σ₀ := circleUnif 0 1
+  obtain ⟨g₀, hg₀⟩ : ∃ g₀ : WNSpace,
+      g₀ = Real.sqrt Real.pi • hatMeasKerL2 σ₀ + Real.sqrt Real.pi • ∫ u, largeKerL2 u ∂σ₀ :=
+    ⟨_, rfl⟩
+  have hspi : 0 < Real.sqrt Real.pi := Real.sqrt_pos.2 Real.pi_pos
+  have hc : (fun ω => circleAvg (h₀ ω) 1 0) =ᵐ[P] W g₀ := by
+    filter_upwards [ae_circleAvg_eq_wn hW hh hae 0 one_pos,
+      hW.add_ae (Real.sqrt Real.pi • hatMeasKerL2 σ₀) (Real.sqrt Real.pi • ∫ u, largeKerL2 u ∂σ₀),
+      hW.smul_ae (Real.sqrt Real.pi) (hatMeasKerL2 σ₀),
+      hW.smul_ae (Real.sqrt Real.pi) (∫ u, largeKerL2 u ∂σ₀)] with ω h1 h2 h3 h4
+    rw [h1, hg₀, h2, h3, h4]
+  obtain ⟨Y, hYc, hYm, hYW, hT⟩ := exists_box_modification_tail hW
+    (fun _ => (Real.sqrt Real.pi)⁻¹ • g₀) hb (L := 0) le_rfl fun x _ c _ => by simp
+  refine ⟨Y, hYc, hYm, hT, fun z r hr hB => ?_⟩
+  filter_upwards [ae_integral_box_modification hW continuous_const hYc hYm hYW hr hB,
+    hW.smul_ae (Real.sqrt Real.pi)⁻¹ g₀, hc] with ω h1 h2 h3
+  rw [h1, h3, integral_const, probReal_univ, one_smul, h2]
+  field_simp
+
 end Pairs
 
 end DG

@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Field.KilledHeatSqStop at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Field.KilledHeatSqStop at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Field.KilledHeatSqMarkov
 import LatticeProb.Bonanno.LQGMetric.Field.HeatKernelSquareCK2
 
@@ -47,6 +46,11 @@ lemma gridT_le {t : ℝ≥0} {n i : ℕ} (hi : i ≤ 2 ^ n) : gridT t n i ≤ t 
 lemma gridT_mono {t : ℝ≥0} {n i j : ℕ} (hij : i ≤ j) : gridT t n i ≤ gridT t n j := by
   unfold gridT
   gcongr
+
+lemma gridT_pow (t : ℝ≥0) (n : ℕ) : gridT t n (2 ^ n) = t := by
+  unfold gridT
+  push_cast
+  field_simp
 
 /-- In `Q` at the grid times `g_0, …, g_{m−1}`. -/
 def stayUpTo (Q : Set ℂ) (B : ℝ≥0 → Ω → ℂ) (z : ℂ) (t : ℝ≥0) (n m : ℕ) : Set Ω :=

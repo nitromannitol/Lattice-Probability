@@ -5,6 +5,19 @@
    Opens of namespaces with no copied declaration are removed (Positivity). -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.LocalRule
 import LatticeProb.Bonanno.QuantumZipper.LQG.Measures
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.CameronMartin
+import Mathlib.Probability.Kernel.Composition.IntegralCompProd
+import Mathlib.MeasureTheory.Measure.HasOuterApproxClosedProd
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.BoundaryExistence
+import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodSample
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSample
+import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.CircleMeanValue
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.Measurability
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceAS
+import Mathlib.Logic.Equiv.List
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FractionalMoments
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
 import Mathlib.Probability.Distributions.Gaussian.Real
@@ -14,20 +27,9 @@ import Mathlib.Probability.Moments.Variance
 import Mathlib.MeasureTheory.Constructions.Cylinders
 import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.Probability.Kernel.Composition.IntegralCompProd
-import Mathlib.MeasureTheory.Measure.HasOuterApproxClosedProd
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.BoundaryExistence
-import Mathlib.Topology.ContinuousMap.SecondCountableSpace
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodSample
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularClosure
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSampleKolmogorov
 import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Admissible
-import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.CircleMeanValue
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.Measurability
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceAS
-import Mathlib.Logic.Equiv.List
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FractionalMoments
 
 /-!
 # M4-P4: boundary log singularities of strength `α < Q`

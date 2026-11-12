@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Metric.InternalC at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Metric.InternalC at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Metric.InternalOps
 import LatticeProb.Bonanno.LQGMetric.Statement.Metric
 
@@ -37,6 +36,8 @@ namespace LQGMetric
 open MetricGeometry
 
 namespace ContMetric
+
+theorem dist_pt (D : ContMetric) (z w : ℂ) : dist (D.pt z) (D.pt w) = D.1 (z, w) := rfl
 
 /-- The identity `ℂ → D.Space` is continuous. -/
 theorem continuous_pt (D : ContMetric) : Continuous D.pt := by
@@ -93,6 +94,80 @@ theorem continuousOn_internal (D : ContMetric) (hD : D.IsLength) {V : Set ℂ} (
   have h2 : Continuous fun p : V ×ˢ V => (⟨p.1.2, (mem_prod.1 p.2).2⟩ : V) :=
     (continuous_snd.comp continuous_subtype_val).subtype_mk _
   exact hc.comp ((hf.comp h1).prodMk (hf.comp h2))
+
+/-- Key step of **GM S3.1 (a)**: if `D` and `D'` have the same internal metric on `V`, every
+`D`-path from `u ∈ V` to a point outside `V` has `D`-length at least `D'(u, ∂V)`. -/
+theorem infEDist_frontier_le_pathLength {D D' : ContMetric} {V : Set ℂ} (hV : IsOpen V) {u : ℂ}
+    (hu : u ∈ V) (heq : ∀ z ∈ V, ∀ w ∈ V, D.internal V z w = D'.internal V z w) {w : D.Space}
+    (hw : D.unpt w ∉ V) (γ : Path (D.pt u) w) :
+    Metric.infEDist (D'.pt u) (D'.pt '' frontier V) ≤ pathLength γ := by
+  set P : ℝ → D.Space := ⇑γ.extend with hPdef
+  have hA : IsClosed (D.pt '' V)ᶜ := (D.isOpen_image_pt hV).isClosed_compl
+  have hPc : Continuous P := γ.continuous_extend
+  have h1 : P 1 ∈ (D.pt '' V)ᶜ := by
+    rw [hPdef, Path.extend_one]
+    exact fun h => hw ((D.mem_image_pt (z := D.unpt w)).1 h)
+  obtain ⟨s, hs, hsA, hbefore⟩ := exists_first_hit hPc.continuousOn hA ⟨1, ⟨zero_le_one, le_rfl⟩, h1⟩
+  have hin : ∀ t ∈ Ico 0 s, P t ∈ D.pt '' V := fun t ht => not_not.1 (hbefore t ht)
+  have hP0 : P 0 = D.pt u := Path.extend_zero γ
+  have hs0 : 0 < s := by
+    rcases hs.1.eq_or_lt with h | h
+    · exfalso
+      rw [← h, hP0] at hsA
+      exact hsA ⟨u, hu, rfl⟩
+    · exact h
+  have hbound : ∀ t ∈ Ico 0 s, edist (D'.pt u) (D'.pt (D.unpt (P t))) ≤ pathLength γ := by
+    intro t ht
+    have hmaps : MapsTo P (Icc 0 t) (D.pt '' V) := fun r hr => hin r ⟨hr.1, hr.2.trans_lt ht.2⟩
+    have hPt : D.unpt (P t) ∈ V := D.mem_image_pt.1 (hin t ht)
+    calc edist (D'.pt u) (D'.pt (D.unpt (P t))) ≤ D'.internal V u (D.unpt (P t)) :=
+          edist_le_internalEDist _ _ _
+      _ = D.internal V u (D.unpt (P t)) := (heq u hu _ hPt).symm
+      _ ≤ curveLength P 0 t := by
+          have := internalEDist_le_curveLength ht.1 hPc.continuousOn hmaps
+          rw [hP0] at this
+          exact this
+      _ ≤ pathLength γ := curveLength_mono P le_rfl (ht.2.le.trans hs.2)
+  have hg : Continuous fun t => edist (D'.pt u) (D'.pt (D.unpt (P t))) :=
+    continuous_const.edist ((D'.continuous_pt.comp D.continuous_unpt).comp hPc)
+  have hne : (𝓝[Ico 0 s] s).NeBot := right_nhdsWithin_Ico_neBot hs0
+  have hgs : edist (D'.pt u) (D'.pt (D.unpt (P s))) ≤ pathLength γ :=
+    le_of_tendsto ((hg.tendsto s).mono_left nhdsWithin_le_nhds)
+      (eventually_nhdsWithin_of_forall hbound)
+  have hfr : D.unpt (P s) ∈ frontier V := by
+    refine ⟨mem_closure_of_tendsto
+      (((D.continuous_unpt.comp hPc).tendsto s).mono_left nhdsWithin_le_nhds)
+      (eventually_nhdsWithin_of_forall fun t ht => D.mem_image_pt.1 (hin t ht)), ?_⟩
+    rw [hV.interior_eq]
+    exact fun h => hsA (D.mem_image_pt.2 h)
+  exact (Metric.infEDist_le_edist_of_mem (s := D'.pt '' frontier V) ⟨_, hfr, rfl⟩).trans hgs
+
+/-- **GM S3.1 (a)** (GM tex:1197, 1351: "`D_h(u, ∂B_R(0))` is determined by the internal metric").
+If `D` is a length metric and `D(·,·;V) = D'(·,·;V)` on `V`, then `D'(u, ∂V) ≤ D(u, ∂V)` for
+`u ∈ V`. -/
+theorem infEDist_frontier_le_of_internal_eq {D D' : ContMetric} (hD : D.IsLength) {V : Set ℂ}
+    (hV : IsOpen V) {u : ℂ} (hu : u ∈ V)
+    (heq : ∀ z ∈ V, ∀ w ∈ V, D.internal V z w = D'.internal V z w) :
+    Metric.infEDist (D'.pt u) (D'.pt '' frontier V) ≤
+      Metric.infEDist (D.pt u) (D.pt '' frontier V) := by
+  refine le_trans ?_ (Metric.infEDist_anti (x := D.pt u) (s := D.pt '' frontier V)
+    (t := (D.pt '' V)ᶜ) ?_)
+  · refine Metric.le_infEDist.2 fun w hw => ENNReal.le_of_forall_pos_le_add fun ε hε _ => ?_
+    obtain ⟨γ, hγ⟩ := hD (D.pt u) w ε (by exact_mod_cast hε)
+    rw [ENNReal.ofReal_coe_nnreal] at hγ
+    exact (infEDist_frontier_le_pathLength hV hu heq (fun h => hw (D.mem_image_pt.2 h)) γ).trans hγ
+  · rintro _ ⟨z, hz, rfl⟩ ⟨z', hz', hzz⟩
+    exact hz.2 (by rw [hV.interior_eq]; exact (show z' = z from hzz) ▸ hz')
+
+/-- **GM S3.1 (a)**, symmetric form: for two length metrics with the same internal metric on
+`V`, `D(u, ∂V) = D'(u, ∂V)`. -/
+theorem infEDist_frontier_eq_of_internal_eq {D D' : ContMetric} (hD : D.IsLength)
+    (hD' : D'.IsLength) {V : Set ℂ} (hV : IsOpen V) {u : ℂ} (hu : u ∈ V)
+    (heq : ∀ z ∈ V, ∀ w ∈ V, D.internal V z w = D'.internal V z w) :
+    Metric.infEDist (D.pt u) (D.pt '' frontier V) =
+      Metric.infEDist (D'.pt u) (D'.pt '' frontier V) :=
+  le_antisymm (infEDist_frontier_le_of_internal_eq hD' hV hu fun z hz w hw => (heq z hz w hw).symm)
+    (infEDist_frontier_le_of_internal_eq hD hV hu heq)
 
 /-- Points `D`-closer to `u ∈ V` than `D(u, ∂V)` lie in `V`, and there `D(u, v) = D(u, v; V)`
 (LM tex:213–214 / GM tex:1197). -/

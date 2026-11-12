@@ -1,10 +1,12 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Metric.InternalLimitC at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   source module LQGMetric.Metric.InternalLimitC at commit fdb5cad; only the module paths of local imports are changed. -/
+import LatticeProb.Bonanno.LQGMetric.Metric.InternalLimit
+import LatticeProb.Bonanno.LQGMetric.Metric.InternalC
+import LatticeProb.Bonanno.LQGMetric.Metric.LengthLimit
+import Mathlib.Topology.UniformSpace.LocallyUniformConvergence
+import Mathlib.Topology.Order.Compact
 import LatticeProb.Bonanno.LQGMetric.Metric.InternalOps
 import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
-import LatticeProb.Bonanno.LQGMetric.Metric.InternalC
 import LatticeProb.Bonanno.LQGMetric.Metric.LengthSpace
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Topology.Order.IntermediateValue
@@ -12,8 +14,6 @@ import Mathlib.Topology.MetricSpace.Lipschitz
 import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Topology.UniformSpace.UniformConvergence
 import Mathlib.Analysis.Complex.Basic
-import Mathlib.Topology.UniformSpace.LocallyUniformConvergence
-import Mathlib.Topology.Order.Compact
 
 /-!
 # DFGPS Lemma 2.11: limits of internal metrics (`lem-internal-conv`)
@@ -46,10 +46,17 @@ namespace LQGMetric
 
 open MetricGeometry
 
+/-- The identity `MetricFunSpace d hd → X`. -/
+def metricFunSpaceVal {X : Type*} (d : X × X → ℝ) (hd : IsMetricFun d) :
+    MetricFunSpace d hd → X := id
+
 namespace ContMetric
 
 theorem edist_pt (D : ContMetric) (z w : ℂ) :
     edist (D.pt z) (D.pt w) = ENNReal.ofReal (D.1 (z, w)) := edist_dist _ _
+
+theorem nonneg (D : ContMetric) (z w : ℂ) : 0 ≤ D.1 (z, w) :=
+  (dist_nonneg : 0 ≤ dist (D.pt z) (D.pt w))
 
 end ContMetric
 
