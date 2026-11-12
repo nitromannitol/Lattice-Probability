@@ -106,9 +106,7 @@ theorem lTwoNorm_pos {N : ℕ} (ℓ : Fin N → ℝ) (_hℓ : ∀ i, 0 ≤ ℓ i
 /-! ### Part (d) -/
 
 /-- The exponential deviation bound for a coordinate-Lipschitz function of a
-product measure.  The existential over the constant that the original statement
-carried was vacuous, the constant appearing nowhere in the conclusion, so it is
-dropped here. -/
+product measure. -/
 theorem weighted_exp_conc_exp (θ₀ K₀ : ℝ) (hθ₀ : 0 < θ₀) :
       ∀ (N : ℕ) (ν : Measure ℝ), IsProbabilityMeasure ν →
         Integrable (fun z => Real.exp (θ₀ * |z|)) ν →
