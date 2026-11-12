@@ -131,7 +131,7 @@ LQGMeasureFieldMeasurableAmbient, RadialPointIntegrals, RadialPointRotation, Who
 Mathlib, they build only on the copied modules, on one another, and on the original modules
 LatticeProb.Analysis.RotationalAverage and LatticeProb.Analysis.DistributionalLaplacian.
 Further modules of LatticeProb/Bonanno/ are copied from the same repository at commit fdb5cad (its Lean sources are those
-of 31e7483e), from its directories HigherDimLFPP, LQGDimension, LQGMetric, MatedCRTHarmonic, QuantumZipper and
+of 31e7483e), from its directories BouRabeeGwynne, HigherDimLFPP, LQGDimension, LQGMetric, MatedCRTHarmonic, MeshOnly, QuantumZipper and
 SupercriticalLQGUniqueness. Where only some declarations of a source file
 are used, the copied file keeps those in their source order, with statements and proofs unchanged, and its header states
 that the others are omitted; every edit made for Lean v4.35 is listed in the header of the file concerned.
