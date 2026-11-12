@@ -27,4 +27,29 @@ theorem mul_neg_mul_log_norm_le_of_mem_shell {α ξ t : ℝ} (hξ : 0 ≤ ξ) (h
   have := mul_le_mul_of_nonneg_left hd hξ
   nlinarith [this]
 
+/-- **Shell weights against a linear drift.** For `ξ ≥ 0`, `s > 0` and `α ≤ α'` with `α' ≥ 0`
+there is a constant `c₀` such that for all `k`, with `ℓ = log (s / 2 ^ (k + 1))`,
+`max 0 (-α ξ ℓ + |α| ξ log 3) + (-(η k) + ξ α' ℓ) + ε k ≤ c₀ - (η - ε) k`. -/
+theorem eventually_shellWeight_add_le {α α' ξ η ε s : ℝ} (hξ : 0 ≤ ξ) (hs : 0 < s)
+    (hα : α ≤ α') (hα' : 0 ≤ α') :
+    ∃ c₀ : ℝ, ∀ k : ℕ, max 0 (-α * ξ * Real.log (s / 2 ^ (k + 1)) + |α| * ξ * Real.log 3) +
+      (-(η * k) + ξ * α' * Real.log (s / 2 ^ (k + 1))) + ε * k ≤ c₀ - (η - ε) * k := by
+  refine ⟨max (ξ * α' * Real.log s) (ξ * (α' - α) * Real.log s + |α| * ξ * Real.log 3),
+    fun k => ?_⟩
+  have h2k : (0 : ℝ) < 2 ^ (k + 1) := by positivity
+  have hl : Real.log (s / 2 ^ (k + 1)) ≤ Real.log s :=
+    Real.log_le_log (div_pos hs h2k) (div_le_self hs.le (one_le_pow₀ one_le_two))
+  have h1 : 0 ≤ ξ * α' := mul_nonneg hξ hα'
+  have h2 : 0 ≤ ξ * (α' - α) := mul_nonneg hξ (sub_nonneg.2 hα)
+  have hm1 := le_max_left (ξ * α' * Real.log s) (ξ * (α' - α) * Real.log s + |α| * ξ * Real.log 3)
+  have hm2 := le_max_right (ξ * α' * Real.log s)
+    (ξ * (α' - α) * Real.log s + |α| * ξ * Real.log 3)
+  have e1 := mul_le_mul_of_nonneg_left hl h1
+  have e2 := mul_le_mul_of_nonneg_left hl h2
+  rcases le_total 0 (-α * ξ * Real.log (s / 2 ^ (k + 1)) + |α| * ξ * Real.log 3) with h | h
+  · rw [max_eq_right h]
+    nlinarith [e2, hm2]
+  · rw [max_eq_left h]
+    nlinarith [e1, hm1]
+
 end LatticeProb.LQG
