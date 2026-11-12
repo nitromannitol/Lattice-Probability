@@ -13,14 +13,12 @@ This file performs the bounded assembly of the induction:
 * `iterateLeOfStep` — the telescoping of any such per-step recursion;
 * `martingaleOneStep_iterate` — the instantiation to `martingaleOneStep`, giving the cumulative
   bound `E |S k|^p ≤ C ∑_{i<k} (E[|S i|^{p-2} v (i+1)] + E |ξ (i+1)|^p)`;
-* `PinelisInductionStep` — **the single remaining induction step**, a named `Prop`: the control of
-  the cumulative cross term `∑_{i<k} E[|S i|^{p-2} v (i+1)]` by the Rosenthal quantities
-  `((E V_k^{p/2})^{2/p}, ∑ (E |ξ_i|^p)^{2/p})`;
-* `martingaleRosenthal_of_pinelis` — the assembly of the two into the martingale Rosenthal bound
+* `solve_rpow_le` and `rosenthal_of_crossTerm` — the arithmetic that turns the cumulative bound
+  `A ≤ C (B + V)` and a cross-term bound `B ≤ K W A^{(p-2)/p} + K V` into
 
-  `(E |S k|^p)^{2/p} ≤ K ( (E V_k^{p/2})^{2/p} + ∑_{i=1}^{k} (E |ξ_i|^p)^{2/p} )`.
+  `A^{2/p} ≤ max (2 C K W) ((2 C (K+1) V)^{2/p})`.
 
-Nothing here is conditional on `sorry`; the only hypothesis is the named `Prop`.
+Nothing here is conditional on `sorry` and nothing is assumed beyond the stated hypotheses.
 -/
 import LatticeProb.Prob.BernsteinOneStep
 
@@ -158,39 +156,14 @@ namespace LatticeProb
 
 variable {Ω : Type*} {m₀ : MeasurableSpace Ω} {μ : @Measure Ω m₀}
 
-/-- **The single remaining induction step of Pinelis**, as a named `Prop`.
-
-The cumulative one-step bound `martingaleOneStep_iterate` leaves the cross term
-`B = ∑_{i<k} E[|S i|^{p-2} v (i+1)]` to be controlled.  The missing step bounds it by the
-Rosenthal quantities `W = (E V_k^{p/2})^{2/p}` and `V = ∑_{i≤k} E|ξ_i|^p`:
-
-  `B ≤ K W (E|S k|^p)^{(p-2)/p} + K V`.
-
-This is Pinelis's cumulative induction; it is the only remaining research-level obligation and is
-carried as a hypothesis, never as an axiom.  The companion `rosenthal_of_crossTerm` turns it into
-the martingale Rosenthal bound once the one-step iteration has produced `A ≤ C(B + V)`. -/
-def PinelisInductionStep : Prop :=
-  ∀ p : ℝ, 2 ≤ p → ∃ K : ℝ, 0 < K ∧
-    ∀ {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] {m₀}
-      (F : Filtration ℕ m₀) (ξ v : ℕ → Ω → ℝ),
-      (∀ i, μ[ξ (i + 1) | F i] =ᵐ[μ] 0) →
-      (∀ i, μ[fun ω => ξ (i + 1) ω ^ 2 | F i] =ᵐ[μ] v (i + 1)) →
-      (∀ i, Integrable (fun ω => |martingalePartialSum ξ i ω| ^ (p - 2) * v (i + 1) ω) μ) →
-      ∀ k,
-        ∑ i ∈ Finset.range k,
-            (∫ ω, |martingalePartialSum ξ i ω| ^ (p - 2) * v (i + 1) ω ∂μ)
-          ≤ K * (∫ ω, (∑ i ∈ Finset.Icc 1 k, v i ω) ^ (p / 2) ∂μ) ^ (2 / p)
-              * (∫ ω, |martingalePartialSum ξ k ω| ^ p ∂μ) ^ ((p - 2) / p)
-            + K * ∑ i ∈ Finset.Icc 1 k, ∫ ω, |ξ i ω| ^ p ∂μ
-
 /-- **The Rosenthal assembly.**  Given the cumulative one-step bound `A ≤ C (B + V)` and the
 Pinelis cross-term bound `B ≤ K W A^{(p-2)/p} + K V`, the martingale Rosenthal bound follows:
 
   `A^{2/p} ≤ max (2 C K W) ((2 C (K+1) V)^{2/p})`.
 
-Composing with `martingaleOneStep_iterate` (which supplies `A ≤ C (B + V)` with `A = E|S k|^p`,
-`B` and `V` as above) and `PinelisInductionStep` (which supplies the cross-term bound) gives the
-martingale Rosenthal inequality. -/
+Composed with `martingaleOneStep_iterate`, which supplies `A ≤ C (B + V)` with `A = E|S k|^p`,
+`B` the cumulative cross term and `V = ∑_{i≤k} E|ξ_i|^p`, a cross-term bound of this shape gives
+the martingale Rosenthal inequality. -/
 theorem rosenthal_of_crossTerm {p A B V W : ℝ} (hp : 2 ≤ p) {C K : ℝ}
     (hA : 0 ≤ A) (hW : 0 ≤ W) (hC : 0 ≤ C) (hK : 0 ≤ K)
     (hiter : A ≤ C * (B + V))
