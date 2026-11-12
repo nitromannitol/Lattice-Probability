@@ -467,6 +467,100 @@ theorem abs_stayAboveAvg_sub_stayAboveAvg_le (hB : IsBrownianReal B P)
   rw [hr1, hr2]
   exact ratio_le hc hε hl hll'
 
+
+/-- **Cauchy estimate for the cylinder averages.**  For a measurable `Φ` with values in `[0, 1]`
+that is `K`-Lipschitz for the supremum distance of the values on a set `I ⊆ [0, T]`, and every
+`θ > 0`, there is `δ₀ > 0` such that the averages `E[Φ(B) | G_δ]` for `0 < δ ≤ δ' ≤ δ₀` differ by
+at most `θ / 2`. -/
+theorem exists_delta_abs_stayAboveAvg_sub_le (hB : IsBrownianReal B P)
+    (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun s => B s ω) {c : ℝ} (hc : 0 < c)
+    {Φ : (ℝ≥0 → ℝ) → ℝ} (hΦ : Measurable Φ) (h0 : ∀ g, 0 ≤ Φ g) (h1 : ∀ g, Φ g ≤ 1)
+    {I : Set ℝ≥0} {T : ℝ≥0} (hI : ∀ t ∈ I, t ≤ T) {K : ℝ} (hK : 0 ≤ K)
+    (hlip : ∀ g g' : ℝ≥0 → ℝ, ∀ r : ℝ, 0 ≤ r → (∀ t ∈ I, |g t - g' t| ≤ r) →
+      |Φ g - Φ g'| ≤ K * r) {θ : ℝ} (hθ : 0 < θ) :
+    ∃ δ₀ : ℝ, 0 < δ₀ ∧ ∀ δ δ' : ℝ, 0 < δ → δ ≤ δ' → δ' ≤ δ₀ →
+      |stayAboveAvg P B c δ (fun ω => Φ (fun t => B t ω)) -
+        stayAboveAvg P B c δ' (fun ω => Φ (fun t => B t ω))| ≤ θ / 2 := by
+  have hK1 : 0 < K + 1 := by linarith
+  set w : ℝ := θ / (16 * (K + 1)) with hw
+  have hwpos : 0 < w := by positivity
+  have hKw : K * w ≤ θ / 16 := by
+    rw [hw, ← mul_div_assoc, div_le_div_iff₀ (by positivity) (by norm_num)]; nlinarith
+  obtain ⟨ε₀, η₁, hε₀, hη₁, hunif⟩ :=
+    exists_uniform_modulus hB hm hcont hc (T + 1) hwpos (ρ := θ / 16) (by positivity)
+  set η : ℝ≥0 := min η₁ 1 with hηdef
+  have hη0 : 0 < η := lt_min hη₁ one_pos
+  have hηη : η ≤ η₁ := min_le_left _ _
+  have hη1 : η ≤ 1 := min_le_right _ _
+  have hη0' : (0 : ℝ) < η := by exact_mod_cast hη0
+  set ε : ℝ := min (min ε₀ 1) (min (η * θ / 64) (θ / (8 * (1 + 2 * c)))) with hεdef
+  have hεpos : 0 < ε := lt_min (lt_min hε₀ one_pos) (lt_min (by positivity) (by positivity))
+  have hε1 : ε ≤ 1 := (min_le_left _ _).trans (min_le_right _ _)
+  have hεε₀ : ε ≤ ε₀ := (min_le_left _ _).trans (min_le_left _ _)
+  have hε2 : ε ≤ η * θ / 64 := (min_le_right _ _).trans (min_le_left _ _)
+  have hε3 : ε ≤ θ / (8 * (1 + 2 * c)) := (min_le_right _ _).trans (min_le_right _ _)
+  have hε3' : (1 + 2 * c) * ε ≤ θ / 8 := by
+    rw [le_div_iff₀ (by positivity)] at hε3; nlinarith
+  have hΨ : Measurable fun ω => Φ (fun u => ε + B u ω) :=
+    hΦ.comp (measurable_pi_iff.2 fun u => measurable_const.add (hm u))
+  refine ⟨ε ^ 2, by positivity, fun δ δ' hδ hδδ' hδ' => ?_⟩
+  have hδ'pos : 0 < δ' := hδ.trans_le hδδ'
+  have hδ'ε : δ' ≤ ε := by nlinarith
+  have hsq : ∀ x : ℝ, 0 < x → x ≤ ε ^ 2 → (ε + x) ^ 2 / η ≤ θ / 16 := by
+    intro x hx hxε
+    have hxε' : x ≤ ε := by nlinarith
+    rw [div_le_iff₀ hη0']
+    nlinarith [mul_le_mul_of_nonneg_left hε2 hεpos.le,
+      mul_le_mul_of_nonneg_right hε1 (by positivity : (0 : ℝ) ≤ η * θ)]
+  have est : ∀ x : ℝ, 0 < x → x ≤ ε ^ 2 →
+      |stayAboveAvg P B c x (fun ω => Φ (fun t => B t ω)) -
+        stayAboveAvg P B c (ε + x) (fun ω => Φ (fun u => ε + B u ω))| ≤ 3 * θ / 16 := by
+    intro x hx hxε
+    have hxε' : x ≤ ε := by nlinarith
+    have := abs_stayAboveAvg_sub_le hB hm hcont hc hεpos hx hη0 hη1 hηη hΦ h0 h1 hI hK hlip
+      hwpos.le (ρ := θ / 16) (by positivity) (hunif x hx (hxε'.trans hεε₀))
+    linarith [hsq x hx hxε]
+  have hnest := abs_stayAboveAvg_sub_stayAboveAvg_le hB hm hcont hc hεpos (l := ε + δ)
+    (l' := ε + δ') (by linarith) (by linarith) hΨ (fun ω => h0 _) (fun ω => h1 _)
+  have hnest' : (1 + 2 * c * ε) * (ε + δ' - (ε + δ)) / ε ≤ θ / 8 := by
+    rw [div_le_iff₀ hεpos]
+    nlinarith [mul_le_mul_of_nonneg_left hε1 (by positivity : (0 : ℝ) ≤ c),
+      mul_nonneg hδ.le hεpos.le, mul_nonneg hεpos.le hεpos.le]
+  have e1 := est δ hδ (hδδ'.trans hδ')
+  have e2 := est δ' hδ'pos hδ'
+  calc _ ≤ |stayAboveAvg P B c δ (fun ω => Φ (fun t => B t ω)) -
+          stayAboveAvg P B c (ε + δ) (fun ω => Φ (fun u => ε + B u ω))| +
+        |stayAboveAvg P B c (ε + δ) (fun ω => Φ (fun u => ε + B u ω)) -
+          stayAboveAvg P B c δ' (fun ω => Φ (fun t => B t ω))| := abs_sub_le _ _ _
+    _ ≤ _ := by
+      have h3 := abs_sub_le (stayAboveAvg P B c (ε + δ) (fun ω => Φ (fun u => ε + B u ω)))
+        (stayAboveAvg P B c (ε + δ') (fun ω => Φ (fun u => ε + B u ω)))
+        (stayAboveAvg P B c δ' (fun ω => Φ (fun t => B t ω)))
+      rw [abs_sub_comm (stayAboveAvg P B c (ε + δ') _)] at h3
+      linarith
+
+/-- **Existence of the limit of the cylinder averages.**  For `Φ` as above, the conditional
+averages `E[Φ(B) | G_δ]` converge as `δ → 0+`. -/
+theorem exists_tendsto_stayAboveAvg (hB : IsBrownianReal B P) (hm : ∀ t, Measurable (B t))
+    (hcont : ∀ ω, Continuous fun s => B s ω) {c : ℝ} (hc : 0 < c) {Φ : (ℝ≥0 → ℝ) → ℝ}
+    (hΦ : Measurable Φ) (h0 : ∀ g, 0 ≤ Φ g) (h1 : ∀ g, Φ g ≤ 1) {I : Set ℝ≥0} {T : ℝ≥0}
+    (hI : ∀ t ∈ I, t ≤ T) {K : ℝ} (hK : 0 ≤ K)
+    (hlip : ∀ g g' : ℝ≥0 → ℝ, ∀ r : ℝ, 0 ≤ r → (∀ t ∈ I, |g t - g' t| ≤ r) →
+      |Φ g - Φ g'| ≤ K * r) :
+    ∃ a : ℝ, Tendsto (fun δ : ℝ => stayAboveAvg P B c δ (fun ω => Φ (fun t => B t ω)))
+      (𝓝[>] (0 : ℝ)) (𝓝 a) := by
+  rw [← cauchy_map_iff_exists_tendsto, Metric.cauchy_iff]
+  refine ⟨inferInstance, fun θ hθ => ?_⟩
+  obtain ⟨δ₀, hδ₀, hcore⟩ :=
+    exists_delta_abs_stayAboveAvg_sub_le hB hm hcont hc hΦ h0 h1 hI hK hlip hθ
+  refine ⟨(fun δ : ℝ => stayAboveAvg P B c δ (fun ω => Φ (fun t => B t ω))) '' Set.Ioc 0 δ₀,
+    Filter.image_mem_map (Ioc_mem_nhdsGT hδ₀), ?_⟩
+  rintro _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩
+  rw [Real.dist_eq]
+  rcases le_total x y with h | h
+  · have := hcore x y hx.1 h hy.2; linarith
+  · rw [abs_sub_comm]; have := hcore y x hy.1 h hx.2; linarith
+
 end Approx
 
 end LatticeProb
