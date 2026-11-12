@@ -40,10 +40,7 @@ def FrechetKolmogorovMollify : Prop :=
 /-- **Mollified compactness.**  Convolution with a fixed smooth compactly supported `ρ` maps a
 tight, integrable, `H^s`-bounded family into a totally bounded family, with centres the mollified
 members `g i ⋆ ρ` of the family.  This is the Arzelà–Ascoli half (the mollified family is
-`C^m`-bounded and compactly supported) followed by the `C^m → H^s` transfer.
-
-The centres are mollified as well: measuring `f ⋆ ρ` against an unmollified member `g i` would
-be false, for instance for `ρ = 0` and a family consisting of one nonzero bump. -/
+`C^m`-bounded and compactly supported) followed by the `C^m → H^s` transfer. -/
 def FrechetKolmogorovMollifiedCompact : Prop :=
   ∀ (d : ℕ) (K : Set (Space d)), IsCompact K → ∀ (s : ℝ) (S : Set (Space d → ℝ))
     (ρ : Space d → ℝ),

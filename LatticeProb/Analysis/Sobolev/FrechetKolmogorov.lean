@@ -1,10 +1,8 @@
 /-
 # Fréchet–Kolmogorov precompactness for the `H^s` unit ball of test functions
 
-The support-repair residuals `BandLimitedTestFnApproxOnDomain` and `BandCentreSupportRepair` are
-false (`LatticeProbAudit/RELLICH-LOWFREQ-SUPPORT-REPAIR.md`, `f73b92a`).  This module replaces them
-with the **sound** low-frequency residual `BandLimitedPrecompact`, which approximates the test
-function `φ` itself:
+This module states the low-frequency residual `BandLimitedPrecompact`, which approximates the
+test function `φ` itself:
 
   `∀ φ, IsTestFn D φ → sobolevNormSq d s φ ≤ 1 →
       ∃ i, sobolevNormSq d s₀ (fun x => φ x - ψ i x) ≤ ofReal δ`,
@@ -29,11 +27,10 @@ open scoped ENNReal FourierTransform Topology
 
 namespace LatticeProb.Sobolev
 
-/-- **The sound low-frequency residual.**  The `H^s` unit ball of test functions on `D` admits, for
+/-- **The low-frequency residual.**  The `H^s` unit ball of test functions on `D` admits, for
 every accuracy, a finite net of test functions on `D` in the `H^{s₀}` norm (`s₀ < s`).  This
 is the
-genuine Rellich–Kondrachov precompactness of `C_c^∞(D)`, replacing the false
-`BandLimitedTestFnApproxOnDomain` (which demanded approximation of the *projection*). -/
+genuine Rellich–Kondrachov precompactness of `C_c^∞(D)`. -/
 def BandLimitedPrecompact : Prop :=
   ∀ (d : ℕ) (D : Set (Space d)), IsDomain D → ∀ (s₀ s : ℝ), s₀ < s →
     ∀ δ : ℝ, 0 < δ →
@@ -43,12 +40,7 @@ def BandLimitedPrecompact : Prop :=
 
 /-- **Fréchet–Kolmogorov, `H^s` form.**  A family of integrable functions that is bounded in
 `H^s`, supported in a fixed compact set, and uniformly translation-continuous in `H^s` is totally
-bounded, with centres in the family.  This is the classical compactness theorem.
-
-The integrability hypothesis is necessary: `sobolevNormSq` is computed from the Fourier
-transform, which is the junk value `0` for a non-integrable function.  Without it, the family
-`u + n χ` (`u` not locally integrable, `χ` a fixed bump, `n ∈ ℕ`) has zero norms and zero
-translation increments, while its members are pairwise separated by `‖χ‖_{H^s}`. -/
+bounded, with centres in the family.  This is the classical compactness theorem. -/
 def FrechetKolmogorovH : Prop :=
   ∀ (d : ℕ) (K : Set (Space d)), IsCompact K → ∀ (s : ℝ) (S : Set (Space d → ℝ)),
     (∀ f ∈ S, tsupport f ⊆ K) →
