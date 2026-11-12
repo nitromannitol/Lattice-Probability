@@ -50,12 +50,16 @@ a cited result with their sources.
 
 The following results from the literature are stated as propositions in
 `LatticeProb/External/` and are not proved here: the Gaussian logarithmic Sobolev
-inequality, polygonal unicoherence, and the Rellich-Kondrachov compact embedding
-in negative Sobolev order.  Janiszewski's theorem for polygonal sets, stated
-there as `LatticeProb.PolygonalJaniszewski`, is proved
+inequality and the Rellich-Kondrachov compact embedding in negative Sobolev
+order.  Janiszewski's theorem for polygonal sets, stated there as
+`LatticeProb.PolygonalJaniszewski`, is proved
 (`LatticeProb.polygonalJaniszewski`, for any compact sets with preconnected
 intersection, from Janiszewski's theorem in the complex plane adapted from
-Leonardo Bonanno's formalizations).  A
+Leonardo Bonanno's formalizations).  Polygonal unicoherence, stated there as
+`LatticeProb.PolygonalUnicoherence`, is proved
+(`LatticeProb.polygonalUnicoherence`, for any closed connected plane set, from
+the connectedness of the frontier of a complementary component in
+`LatticeProb/Topology/Unicoherence.lean`).  A
 theorem that uses one of them takes it as an explicit hypothesis, so its
 statement shows what it rests on.  The Rellich-Kondrachov embedding is used by
 the compactness results of `LatticeProb/Analysis/Sobolev/`.  The Herbst bound

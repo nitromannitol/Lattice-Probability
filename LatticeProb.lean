@@ -120,6 +120,7 @@ import LatticeProb.Prob.GaussianConcentrationL2
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
 import LatticeProb.Topology.PolygonalJaniszewskiProved
+import LatticeProb.Topology.PolygonalUnicoherenceProved
 import LatticeProb.Analysis.NegSobolev
 import LatticeProb.Analysis.HeatStrongMinimum
 import LatticeProb.Analysis.SoftMaximum
