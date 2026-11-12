@@ -24,6 +24,9 @@ choice is measurable.
   σ-algebra on `Measure X`. The mass of an open set is the supremum of the integrals of an increasing sequence of
   continuous compactly supported functions, and a family of locally finite measures is measurable once its values on
   open sets are.
+* `measurable_vagueLimitOrZero_subtype` and `aemeasurable_vagueLimitOrZero`: no finiteness of the `m k ω` is needed on
+  the set where a vague limit exists. On that set (with the subspace σ-algebra) the chosen limit is measurable, and if
+  a vague limit exists almost surely, then the chosen limit is almost everywhere measurable.
 -/
 
 open MeasureTheory Filter Topology Set
@@ -142,6 +145,64 @@ theorem measurable_vagueLimitOrZero {m : ℕ → Ω → Measure X}
   rw [heq]
   exact Measurable.iSup fun n =>
     ENNReal.measurable_ofReal.comp (measurable_integral_vagueLimitOrZero hfin hmeas (hfc n) (hfs n))
+
+omit [Nonempty X] in
+/-- On the set where a vague limit exists, the chosen limit is measurable (for the subspace σ-algebra) as soon as the
+integrals `ω ↦ ∫ f d(m k ω)` against continuous compactly supported `f` are measurable; no finiteness of the
+measures `m k ω` on compacts is assumed. -/
+theorem measurable_vagueLimitOrZero_subtype {m : ℕ → Ω → Measure X}
+    (hmeas : ∀ k (f : X → ℝ), Continuous f → HasCompactSupport f →
+      Measurable fun ω => ∫ x, f x ∂(m k ω)) :
+    Measurable fun ω : {ω | ∃ μ, IsVagueLimit (fun k => m k ω) μ} =>
+      vagueLimitOrZero fun k => m k ω.1 := by
+  refine LatticeProb.LocalMeasureKernel.measurable_measure_of_isOpenX (fun _ => inferInstance)
+    fun U hU => ?_
+  obtain ⟨f, hfc, hfs, hmass⟩ := LatticeProb.LocalMeasureKernel.exists_open_mass_test_functionsX hU
+  have heq : (fun ω : {ω | ∃ μ, IsVagueLimit (fun k => m k ω) μ} =>
+      (vagueLimitOrZero fun k => m k ω.1) U) =
+      fun ω => ⨆ n, ENNReal.ofReal (∫ x, f n x ∂(vagueLimitOrZero fun k => m k ω.1)) :=
+    funext fun _ => hmass _ inferInstance
+  rw [heq]
+  refine Measurable.iSup fun n => ENNReal.measurable_ofReal.comp ?_
+  have hlim : Measurable fun ω : {ω | ∃ μ, IsVagueLimit (fun k => m k ω) μ} =>
+      limUnder atTop (fun k => ∫ x, f n x ∂(m k ω.1)) :=
+    (StronglyMeasurable.limUnder fun k =>
+      ((hmeas k (f n) (hfc n) (hfs n)).comp measurable_subtype_coe).stronglyMeasurable).measurable
+  convert hlim using 1
+  funext ω
+  exact (((isVagueLimit_vagueLimitOrZero ω.2).2 (f n) (hfc n) (hfs n)).limUnder_eq).symm
+
+omit [Nonempty X] in
+/-- **Almost sure vague limits are random measures.** If the integrals `ω ↦ ∫ f d(m k ω)` against continuous
+compactly supported `f` are measurable and `k ↦ m k ω` has a vague limit for `P`-almost every `ω`, then the chosen
+limit `ω ↦ vagueLimitOrZero (m · ω)` is `P`-almost everywhere measurable. -/
+theorem aemeasurable_vagueLimitOrZero {P : Measure Ω} {m : ℕ → Ω → Measure X}
+    (hmeas : ∀ k (f : X → ℝ), Continuous f → HasCompactSupport f →
+      Measurable fun ω => ∫ x, f x ∂(m k ω))
+    (hae : ∀ᵐ ω ∂P, ∃ μ, IsVagueLimit (fun k => m k ω) μ) :
+    AEMeasurable (fun ω => vagueLimitOrZero fun k => m k ω) P := by
+  classical
+  obtain ⟨N, hNsub, hNm, hN0⟩ := exists_measurable_superset_of_null (ae_iff.1 hae)
+  have hT : ∀ ω ∈ Nᶜ, ∃ μ, IsVagueLimit (fun k => m k ω) μ := fun ω hω => by
+    by_contra h
+    exact hω (hNsub h)
+  refine ⟨Nᶜ.piecewise (fun ω => vagueLimitOrZero fun k => m k ω) fun _ => 0, ?_, ?_⟩
+  · refine measurable_of_restrict_of_restrict_compl hNm.compl ?_ ?_
+    · have hinc : Measurable fun ω : (Nᶜ : Set Ω) =>
+          (⟨ω.1, hT ω.1 ω.2⟩ : {ω | ∃ μ, IsVagueLimit (fun k => m k ω) μ}) :=
+        measurable_subtype_coe.subtype_mk
+      convert (measurable_vagueLimitOrZero_subtype hmeas).comp hinc using 1
+      funext ω
+      show Nᶜ.piecewise (fun ω => vagueLimitOrZero fun k => m k ω) (fun _ => 0) ω.1 =
+        vagueLimitOrZero fun k => m k ω.1
+      exact piecewise_eq_of_mem _ _ _ ω.2
+    · convert (measurable_const : Measurable fun _ : ((Nᶜ)ᶜ : Set Ω) => (0 : Measure X)) using 1
+      funext ω
+      show Nᶜ.piecewise (fun ω => vagueLimitOrZero fun k => m k ω) (fun _ => 0) ω.1 = 0
+      exact piecewise_eq_of_notMem _ _ _ ω.2
+  · filter_upwards [measure_eq_zero_iff_ae_notMem.1 hN0] with ω hω
+    exact (Set.piecewise_eq_of_mem Nᶜ (fun ω => vagueLimitOrZero fun k => m k ω)
+      (fun _ => (0 : Measure X)) (show ω ∈ Nᶜ from hω)).symm
 
 end Measurable
 
