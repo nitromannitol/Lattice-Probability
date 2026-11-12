@@ -6,6 +6,8 @@ import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Analysis.Complex.Basic
 
 /-!
+# A Schur-test bound for integral operators (task P2-DG3B, Ding–Gwynne App. A)
+
 `lintegral_sq_integral_le`: if `|G(y, w)| ≤ K(y, w)` with `∫ K(y, w) dy ≤ 1` and
 `∫ K(y, w) dw ≤ 1`, then `∫ (∫ f(y) G(y, w) dy)² dw ≤ ∫ f²` (Schur's test; e.g. Folland, *Real
 Analysis*, 2nd ed., Theorem 6.18, here via Cauchy–Schwarz pointwise and Tonelli). Used for the

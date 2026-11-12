@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.ZoomRadialFinal
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.WedgeCanonical4
 
 /-!
+# C.meas, input (a): the cone field is a.e.-measurable
+
 `ConeMeas.coneRefMeas_of` (ConeMeasJoint.lean, MEAS-1) reduces node C.meas (`ConeRefMeas γ W`,
 Cone.lean) to (a) a.e.-measurability of `ω ↦ coneField (lateralPartC (X ω)) (A · ω) Q` and (b) the
 a.s. existence of the whole-plane area measure of the cone field (C.area-exist for the cone).

@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea4D
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgKolm
 
 /-!
+# Whole-plane LQG area, part 5: a continuous version of the radial part
+
 `ae_radial_version`: for a whole-plane GFF `X`, a.s. there is `R : ℝ → ℝ`, continuous on `(0,∞)`
 and measurable, with `X_{|z|}(0) = R(|z|)` for a.e. `z ∈ ℂ` (the first three conjuncts of statement (R2)).
 

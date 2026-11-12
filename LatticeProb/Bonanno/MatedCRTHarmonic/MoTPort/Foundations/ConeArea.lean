@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.VagueUniqueOn
 import Mathlib.Probability.ConditionalProbability
 
 /-!
+# Whole-plane LQG area and the canonical representative of plane-like surfaces
+
 DMS (arXiv:1409.7055v4) (the measure `μ_h = lim ε^{γ²/2} e^{γ h_ε(z)} dz`,
 Duplantier–Sheffield arXiv:0808.1560 Prop. 1.1 / (1.1)) on a plane domain.
 

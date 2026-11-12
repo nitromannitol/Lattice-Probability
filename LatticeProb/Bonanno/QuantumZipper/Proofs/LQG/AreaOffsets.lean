@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaOffsetsModulus
 
 /-!
+# Area analogue of M4-B4 (M4-A1 item 5), and almost sure goodness of the free field
+
 * `ae_hasAreaLimit`: for the free field, almost surely `HasAreaLimit γ (X ω) (qAreaMeasure γ (X ω))`
   (vague convergence on `ℍ`, uniformly in the offset `a ∈ [1,2]`). Same grid-plus-modulus
   argument as `AllOffsets.ae_hasBdryLimit`, on the compacts `K_n` of `ℍ`, at scales

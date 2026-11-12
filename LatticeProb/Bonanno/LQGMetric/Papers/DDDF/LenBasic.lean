@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGDimension.LFPP.TreeInequalityAux
 import Mathlib.Analysis.Complex.ReImTopology
 
 /-!
+# DDDF length observables, deterministic layer (task P2-DDDFLEN; blueprint DDDF.D2.len, S2.c)
+
 DDDF = Ding–Dubédat–Dunlap–Falconet, *Tightness of Liouville first passage percolation for
 γ ∈ (0,2)*, arXiv:1904.08021, `literature/src/1904.08021/tightness.tex`.
 

@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.9 for `p ≤ 0`
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.9 (`prop-diam-moment`) assuming Proposition 3.10, first sentence (T:1766):
 "For `p < 0`, the bound (eqn-diam-moment) follows from the lower bound of Proposition 3.1."

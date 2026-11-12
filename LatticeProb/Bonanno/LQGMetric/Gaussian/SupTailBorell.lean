@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Borell–TIS for suprema of Gaussian processes over countable index sets
+
 For a centered Gaussian process `X : T → Ω → ℝ` (`IsGaussianProcess X P`, `E X t = 0`) and a
 sequence of indices `u : ℕ → T`:
 

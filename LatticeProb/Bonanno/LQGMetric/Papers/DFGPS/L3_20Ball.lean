@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.20, first display, from Lemma 3.19 (task P2-DFA7)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), Lemma 3.20 (T:2317–2322), proof
 T:2327–2329: Lemma 3.19 (`eqn-ep-diam`) with `s = χ` at the scales `t_k` and the union bound
 over grid points and `k`. The exponent of L3.19 is `(ξQ − χ)²/(2ξ²) > 2` exactly because

@@ -5,6 +5,8 @@
 import LatticeProb.Bonanno.LQGMetric.Field.ExistSFub2
 
 /-!
+# Stochastic Fubini against a compactly supported finite measure (task P2-DG3D)
+
 For a white noise `W`, a family `k : ℂ → L²` bounded and Bochner integrable for a finite measure
 `μ` carried by a compact set `S`, and a version `Y` of `z ↦ W(k z)` on `S` continuous in `z`:
 

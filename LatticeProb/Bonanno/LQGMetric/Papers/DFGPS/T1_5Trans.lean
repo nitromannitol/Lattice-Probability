@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Theorem 1.5, Step 1: moving the centre of an event (law transfer without measurability)
+
 DFGPS (arXiv:1905.00380, "T"), proof of Theorem 1.5, Step 1 (T:1662–1670) applies Proposition 3.1
 "and a union bound over all `z ∈ (𝕣𝕊) ∩ (δ𝕣ℤ²)`": Prop 3.1 is stated at the centre `0`, and is
 used at the centres `z` through the translation invariance of the law of `h` (`h(· + z) - h_1(z)`

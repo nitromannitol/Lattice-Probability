@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppA1Main
 
 /-!
+# Ding–Gwynne Lemma 3.1 for the pair `(h^U, ĥ)` in white-noise form (task P2-DG3C)
+
 DG (`metric-comparison-final.tex`, proof of Lemma 3.1, DG:2243–2244): "Combine Lemmas 2.2, A.1
 and A.2." For the pair `(h^U, ĥ)` with all fields built from one white noise `W`:
 `h^U − ĥ = (h^U − ĥ^tr) − (ĥ − ĥ^tr)`, with kernel `dgA1Kernel U z − hatDiffKernel0 z`; its

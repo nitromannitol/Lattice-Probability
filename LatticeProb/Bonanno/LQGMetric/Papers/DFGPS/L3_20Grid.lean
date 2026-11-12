@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemmas 3.20 and 3.22: the union bound over scales and grid points (task P2-DFA7)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), proofs of Lemma 3.20 (T:2327–2330)
 and Lemma 3.22 (T:2375–2377): "… applied … with `2^{-k}ε` for `k ∈ ℕ₀` in place of `ε`, together
 with a union bound over all `z ∈ B_{ε𝕣}(K) ∩ (2^{-k-2}ε𝕣ℤ²)` and then over all `k ∈ ℕ₀`."

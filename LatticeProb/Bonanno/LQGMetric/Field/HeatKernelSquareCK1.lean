@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Chapman–Kolmogorov for the image-series interval kernel (task P2-DDDFP29, WP-110)
+
 `HeatSq.integral_intervalDirKernel_mul`: for `s, r > 0` and all `u, v`,
 `∫_a^{a+L} q_s(u,w) q_r(w,v) dw = q_{s+r}(u,v)` — the semigroup property of the Dirichlet heat
 kernel of `(a, a+L)` given by the method of images (Feller II §X.5). It is the input of DDDF's

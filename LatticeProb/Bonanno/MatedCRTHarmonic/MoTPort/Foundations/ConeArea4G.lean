@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeMeas2
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMLLN
 
 /-!
+# Cone area, part 7: local integrability of the cone profile
+
 **`ae_locallyIntegrable_coneProfile`**: for a cone process `A` (`IsConeProcess α Q A P`), a.s.
 `z ↦ Q(−log|z|) + A_{−log|z|}` is locally integrable on `ℂ` — radial integrability statement (R3), in the exact form of the hypothesis `hR3` of
 `ConeArea3.ae_isVagueLimitOn_coneField_punctured_of`.

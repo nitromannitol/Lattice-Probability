@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.11 (`lem-circle-avg-all`, T:1783–1841) (task P2-DFA0)
+
 Fix `R > 0`, `q > 2`. For `C > 1` and `𝕣 > 0`, with probability `1 − C^{−q−√(q²−4)+o_C(1)}`
 uniformly in `𝕣`, `|h_{2^{−n}𝕣}(w) − h_𝕣(0)| ≤ log(C 2^{qn})` for all `n ∈ ℕ₀` and
 `w ∈ B_{R𝕣}(0) ∩ 2^{−n−1}𝕣ℤ²` (`lem3_11`).

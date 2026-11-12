@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppA1SP2
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppAVar2
 
 /-!
+# Ding–Gwynne Lemma A.1: the increment bound (A.3) (task P2-DG3B)
+
 DG (`metric-comparison-final.tex`, proof of Lemma A.1, DG:2141–2232): for a bounded open `U`,
 `f_t(z) = h^U_{t,1}(z) − ĥ^tr_t(z) = √π ∫_{t²}^1 ∫ q_s(z, w) W(dw, ds)` with
 `q_s(z, ·) = p_U(s/2; z, ·) − p_{B_{1/10}(z)}(s/2; z, ·)`, and (A.3):

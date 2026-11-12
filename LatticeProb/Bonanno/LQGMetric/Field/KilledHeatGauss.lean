@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 5: Gaussian toolkit on `ℂ` (task P2-KILLED)
+
 * `map_eq_withDensity_heatKernel`: a complex random variable whose real and imaginary parts are
   independent `N(0, v)` has law `p_v(0, y) dy` (`heatKernel v 0 y`). Product of the two
   one-dimensional densities (mathlib `prod_withDensity`), transported by the volume-preserving

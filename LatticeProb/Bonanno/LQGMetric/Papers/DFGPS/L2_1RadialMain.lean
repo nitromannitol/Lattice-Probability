@@ -299,6 +299,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 2.1: the radial pairing formula, and Lemma 2.1 unconditionally
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`) T:715–717: for a test function `φ`
 radial about `z`, a.s. `⟨g, φ⟩ = ∫_0^∞ 2π r φ(z + r) g_r(z) dr` ("using the circle average
 process we may therefore write in polar coordinates").

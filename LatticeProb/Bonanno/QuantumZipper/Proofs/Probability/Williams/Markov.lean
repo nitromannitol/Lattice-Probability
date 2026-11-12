@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.StrongMarkov
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.WedgeTranslation
 
 /-!
+# W1: Markov wrappers for Brownian motion with drift
+
 Node W1 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), a step of the proof of L14
 (`WilliamsDriftDecomposition`, `Proofs/LQG/WedgeTranslation.lean`).
 

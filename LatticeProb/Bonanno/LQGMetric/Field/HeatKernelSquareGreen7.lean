@@ -11,6 +11,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Parseval for the sine modes of the square (task P2-KHSQ2, G4)
+
 For `f ∈ C_c^∞((a,a+L)²)` and `σ` bounded measurable vanishing off the square:
 
   `∑_p (4/L²) f̂_p σ̂_p = ∫ f σ`   (`HeatSq.hasSum_sqCoef_parseval`).

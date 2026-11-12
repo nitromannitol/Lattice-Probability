@@ -5,6 +5,8 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea5B
 
 /-!
+# Cone area, part 12: (b3) and `ConeRefMeas` from the whole-plane sup-moment bound
+
 The last input of (b3) is the whole-plane version at the origin of QZ's interior area
 fractional-moment bound `AtomlessUncond.P3bBoundArea` (proved for the free-boundary GFF on `ℍ` by
 QZ `AreaP3b.fracMoment_area_interior`; Duplantier–Sheffield, Invent. Math. 185 (2011), Prop. 3.3

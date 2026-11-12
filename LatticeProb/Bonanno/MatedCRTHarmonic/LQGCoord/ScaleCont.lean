@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.ScaleBump
 import LatticeProb.Bonanno.LQGMetric.Field.MeasurableAvg
 
 /-!
+# Continuity of the scale-`s` mollified field in the scale
+
 For a distribution `T` on `ℂ`, the mollified field `(s, x) ↦ T(bumpS s x)` is
 continuous on `{s > 0}` (`continuous_pair_bumpS_exp`, parametrized by `s = e^u`), and so is its
 circle average `(s, w, ρ) ↦ mollAvgS T s w ρ` (`continuous_mollAvgS_exp`). Proof: the family

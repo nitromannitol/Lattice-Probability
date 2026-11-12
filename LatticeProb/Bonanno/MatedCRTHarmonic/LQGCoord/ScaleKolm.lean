@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.ScaleCont
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.KolmN
 
 /-!
+# Circle averages of the whole-plane GFF along every mollifier scale, for every circle
+
 For a whole-plane GFF `X` (LQGMetric `IsWholePlaneGFF`),
 almost surely, simultaneously for every circle `∂B(w, ρ)`, `ρ > 0`:
 

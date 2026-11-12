@@ -24,6 +24,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WedgeRC3All2Basic
 import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.K3.GreenLower3
 
 /-!
+# W.field (1): `toFS` of a radial function with a logarithmic singularity
+
 For `g : ℝ → ℝ` measurable, continuous on `(0, ∞)` with `|g t| ≤ C (1 − log t)` on `(0, 1]`
 (the hypotheses of QuantumZipper's `F1.RC3Two` circle-smoothing lemmas, `WedgeRC3All2Basic.lean`),
 and `f = rp g = g ∘ ‖·‖`:

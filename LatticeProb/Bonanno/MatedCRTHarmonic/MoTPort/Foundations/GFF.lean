@@ -355,6 +355,8 @@ import Mathlib.Probability.Martingale.Convergence
 import LatticeProb.Bonanno.LQGMetric.Field.KilledHeat
 
 /-!
+# GFF with boundary data
+
 * `ofFunOn U f : FieldOn U`: the distribution `φ ↦ ∫ φ f` on `U` (mathlib `Distribution.ofFun`;
   junk `0` when `f` is not locally integrable on `U`), the `U`-version of LQGMetric's `ofCont`.
 * `IsGFFBoundary U 𝔥 X P`: `X` is a GFF on `U` with (random) harmonic boundary data `𝔥`, i.e.

@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Suprema of continuous Gaussian fields on compact index spaces (F.GTAIL)
+
 For a centered Gaussian process `X : T → Ω → ℝ` with continuous sample paths on a compact
 separable space `T`:
 

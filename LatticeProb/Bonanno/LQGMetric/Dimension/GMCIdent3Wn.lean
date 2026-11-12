@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent3Vague
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCSqExist
 
 /-!
+# Law transfer, part 3: inputs of the identification for the white-noise field (P2-GMCID3)
+
 The white-noise field `wnField W ω := circExt (wnCircVec W ω)` (the circles inside `𝕍` carry
 `√π W(K_σ)`, everything else `0`) is not a zero-boundary GFF, but by `map_circVec_eq` its circle
 family has the law of the circle family of any zero-boundary GFF `X`. The inputs of

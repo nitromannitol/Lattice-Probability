@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Statement.LQGMetric
 
 /-!
+# Blueprint: DFGPS Theorem 1.5 (optimal scaling of the constants 𝔠_r)
+
 Source: Dubédat–Falconet–Gwynne–Pfeffer–Sun, *Weak LQG metrics and Liouville first passage
 percolation*, arXiv:1905.00380 (DFGPS), `literature/src/1905.00380/lqg-metric-estimates-final.tex`,
 l. 426–436 (standing assumption l. 426: "we assume that D is a weak γ-LQG metric and h is a

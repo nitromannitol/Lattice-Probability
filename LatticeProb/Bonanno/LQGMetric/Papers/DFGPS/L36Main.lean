@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.6 from its lower bound and the upper bound at `𝕣 = 1`
+
 `DFGPS.Lem3_6` (T:1628–1650) = lower bound (proved, `lem3_6_lower`, from DG Thm 1.5 (1.5b) second
 half) ∧ upper bound; the upper bound reduces to `𝕣 = 1` (`lem3_6_upper_of_one`). The remaining
 open statement `Lem3_6UpperOne` is the upper half of (eqn-lfpp-dist-show), T:1645: w.p. → 1,

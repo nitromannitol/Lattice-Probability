@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.9: chaining the squares covering `K` (deterministic part)
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.9 assuming Proposition 3.10 (T:1767–1775): "We can cover `K` by finitely
 many Euclidean squares `S_1, …, S_n` which are contained in `U` … " and deduce the bound for

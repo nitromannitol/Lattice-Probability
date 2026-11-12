@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.L3_1C2
 
 /-!
+# DG Lemma 3.1, unconditional (task P2-DG105e, decision D109)
+
 DG (`metric-comparison-final.tex`, Lemma 3.1 `lem-gff-compare`, DG:966–976) only asserts the
 existence of a coupling of `h`, `h^U`, `ĥ`, `ĥ^tr`. We take the whole-plane GFF built from the
 same white noise `W` that defines `h^U`, `ĥ`, `ĥ^tr` (`Field/ExistGFF`: `h₀(φ) = W(kerFun φ)`),

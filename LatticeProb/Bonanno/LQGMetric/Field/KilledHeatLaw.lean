@@ -11,6 +11,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 1: laws of Gaussian processes and the "stay in `A`" event
 (task P2-KILLED, decision D-KHK1, `decisions/DEC-KHK.md`)
 
 * `KilledHeat.map_restrict_eq_of_gaussian`, `KilledHeat.map_eq_of_gaussian`: two real Gaussian

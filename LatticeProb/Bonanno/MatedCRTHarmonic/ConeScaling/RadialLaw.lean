@@ -10,6 +10,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WedgeShiftHit
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Wire5
 
 /-!
+# The radial part of DMS Proposition 4.13(i): re-centring at a last level preserves the law
+
 Let `W` be the radial path of the circle-average embedding of the γ-quantum cone (with
 `W t = h_{e^{-t}}(0) = CellScaling.coneRadial γ γ B B' t`), as a random element of `C(ℝ, ℝ)`. Then for
 every level `y ∈ ℝ` (`map_radShift_coneRadial`):

@@ -10,6 +10,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTIsLocallyFinite
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTGraph
 
 /-!
+# Frozen definition: `MatedCRT.IsCellCoupling`
+
 A proposition describing a mated-CRT Brownian motion and cellular embedding coupling.
 -/
 

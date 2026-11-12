@@ -5,6 +5,8 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea6
 
 /-!
+# Cone area, part 14: rate form of the step bound and the sup bound (abstract process)
+
 Copies of QZ `AreaP3b.integral_abs_massFunC_step_le_rate'` and
 `AreaP3b.lintegral_iSup_massFunC_inner_rpow_le` (`QuantumZipper/Proofs/LQG/AreaP3bSup.lean`) for
 the abstract inner process of `ConeArea6`, with a general constant `K` in place of

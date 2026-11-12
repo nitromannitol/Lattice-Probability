@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W4Main
 
 /-!
+# W4 (part 3): the time-integrated law of `Ŷ`, conditional on the last zero
+
 `lintegral_shift_postLast_of_ae`: node W4 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1) under the
 hypothesis `hgood` that almost surely `Y = dpath σ μ b` has a last zero after which it is positive.
 See `W4Main.lean` for the route and the sources; `hgood` is discharged in `W4Trans.lean`.

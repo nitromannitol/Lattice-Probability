@@ -12,6 +12,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.CircleContinuity
 import LatticeProb.Bonanno.QuantumZipper.LQG.Measures
 
 /-!
+# M4-B3, part 1: the two-radius lemma for the free field's approximating boundary measures
+
 Blueprint `M4_BLUEPRINT.md`, nodes M4-B2 (instantiation) and M4-B3.
 
 For the free field `X` (`IsFreeGFFModConstH X P`) and `R > 0` we work with the normalized field

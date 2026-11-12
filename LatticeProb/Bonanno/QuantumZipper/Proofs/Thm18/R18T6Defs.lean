@@ -351,6 +351,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# R18 T6 (R18-AREAREAD), part 1: the area read from the masked data
+
 Sheffield, arXiv:1012.4797, p. 17: "both `h` and `η` are determined by the pair" of surfaces cut
 out by `η`; in particular the quantum area of the pieces is a function of the field **off the
 curve** (the curve carries no area, p. 48). Here:

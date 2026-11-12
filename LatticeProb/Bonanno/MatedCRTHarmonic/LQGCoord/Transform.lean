@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3D105Sc4
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.VagueUniqueOn
 
 /-!
+# The deterministic coordinate change of the LQG area
+
 For a field `h` on `ℂ` define the
 area approximation at an arbitrary radius `s > 0`,
 `areaS γ h s = s^{γ²/2} e^{γ h_s(z)} dz` (so `lqgAreaApprox γ h k = areaS γ h 2^{-k}`).

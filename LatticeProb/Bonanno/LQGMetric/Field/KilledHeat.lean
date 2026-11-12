@@ -7,6 +7,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 2: planar Brownian bridges and the bridge-stay probability
 (task P2-KILLED, decision D-KHK1, `decisions/DEC-KHK.md`)
 
 Ding–Zeitouni–Zhang (arXiv:1807.00422, `LBM_LGDarXiv.tex` l. 467–469) write the killed heat kernel

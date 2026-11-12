@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.L3_1B3
 import LatticeProb.Bonanno.LQGMetric.Field.ExistKernelL2
 
 /-!
+# DG Lemma 3.1, the pair `(h, ĥ)`: the large-time kernel (task P2-DG105e, D109)
+
 With the whole-plane GFF built from the white noise `W` of `ĥ` (`Field/ExistGFF`,
 `h₀(φ) = W(kerFun φ)`, `kerFun g (t,y) = √π 1_{t>0} ∫ g(u)(p_{t/2}(u,y) − 1_{t>1} p_{t/2}(0,y)) du`),
 `h₀ − ĥ` is the large-time field with point kernel

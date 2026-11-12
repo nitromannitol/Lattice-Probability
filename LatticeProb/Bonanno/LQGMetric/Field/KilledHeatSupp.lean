@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 14: support (task P2-KILLED, D-KHK1)
+
 `killedHeat_eq_zero_of_not_mem_left/right`: `p_A(t; z, w) = 0` if `z ∉ A` or `w ∉ A` (`t > 0`,
 `A` open): the bridge starts at `z` (a planar bridge vanishes a.s. at time `0`).
 -/

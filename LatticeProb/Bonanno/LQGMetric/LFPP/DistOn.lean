@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Statement.LQGMetric
 import LatticeProb.Bonanno.LQGMetric.Statement.LFPP
 
 /-!
+# The LFPP distance with a general density, internal to a set
+
 Task P2-LFPP. For `φ : ℂ → ℝ` and `S ⊆ ℂ`, `lfppDOn ξ φ S z w` is the infimum of
 `∫₀¹ e^{ξ φ(P)} |P'|` over piecewise C¹ paths `P : z → w` staying in `S` (GM (1.4),
 `uniqueness-final.tex` l. 216–220, for `S = ℂ`; DFGPS l. 285, `lqg-metric-estimates-final.tex`,

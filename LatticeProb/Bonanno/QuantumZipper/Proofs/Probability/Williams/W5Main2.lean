@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Main1
 
 /-!
+# W5 (part 7): the killed occupation identity without integrability; `Ψ`; pathwise reversal
+
 Node W5(i), reversed side, of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1).
 
 * `lintegral_killed_occ_all`: `lintegral_killed_occ` (W5Dens) without the hypothesis

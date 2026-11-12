@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.9: comparing the normalizations of `𝕣S_k` and `𝕣K`
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.9 (T:1774–1775): "We apply the Gaussian tail bound to bound each of the
 Gaussian random variables `h_{𝕣ρ_k}(𝕣u_k) − h_𝕣(0)` (which have constant order variance) and

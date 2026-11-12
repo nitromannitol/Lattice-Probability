@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGDimension.Blueprint.Draft.LFPPPlan
 
 /-!
+# Records (node `R44`), auxiliary part 1: grids, polygons, local families
+
 * square grids of side `s` (`gridIdx`, `gridPt`) and the count of grid points in a ball;
 * polygons given by a vertex function `f : ℕ → ℂ` (the list `f 0, …, f m`): edges, length,
   normalized arclength average;

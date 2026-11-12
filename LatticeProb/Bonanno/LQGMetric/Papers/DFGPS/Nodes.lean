@@ -21,6 +21,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS: the exported nodes of the proof plan (`blueprint/DF.md` §3, §5)
+
 Statements of the DFGPS nodes that cross work packages (P3.1, L3.6, P3.9, P3.10, L3.19, L3.21,
 L4.5, L1.3, L2.6, L2.12, L2.13, L2.14, L2.17, L2.20) and the assembly types. A package that needs a node of
 an unfinished package takes it as an argument of exactly this type; the assembly discharges it.

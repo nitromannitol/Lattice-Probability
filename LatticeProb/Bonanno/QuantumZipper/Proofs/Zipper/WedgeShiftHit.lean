@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WedgeLawRef
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.Measurability
 
 /-!
+# WEDGE-SHIFT (1): a measurable first hitting time and re-centred path on path space
+
 Input of the translation step `F1.WedgeShiftLawStmt` of B4(c) (Duplantier–Miller–Sheffield,
 *Liouville quantum gravity as a mating of trees*, arXiv:1409.7055, proof of Prop. 4.7(i), p. 77:
 the radial part is re-centred at the first time it hits a level; Sheffield, arXiv:1012.4797,

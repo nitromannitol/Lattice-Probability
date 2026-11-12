@@ -9,6 +9,8 @@ import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 
 /-!
+# DDDF's truncated white-noise field `ψ` (task P2-DDDFPSI; blueprint DDDF.D2.psi)
+
 DDDF (arXiv:1904.08021, `tightness.tex` l. 350–358): fix a smooth radial bump `Φ` with
 `0 ≤ Φ ≤ 1`, `Φ = 1` on `B(0,1)`, `Φ = 0` off `B(0,2)`, small constants `r₀, ε₀ > 0`, and set
 `σ_t = r₀ √t |log t|^{ε₀}`, `p^{Tr}_{t/2} := p_{t/2} Φ(·/σ_t)`,

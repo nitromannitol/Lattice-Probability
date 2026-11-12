@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.20, first display (`eqn-holder-upper`) from Lemma 3.19 (task P2-DFA7)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), Lemma 3.20 (T:2317–2322) and its
 proof (T:2327–2329): "The bound (eqn-holder-upper) follows from (eqn-ep-diam), applied with
 `s = χ` and with `2^{-k}ε` for `k ∈ ℕ₀` in place of `ε`, together with a union bound over all

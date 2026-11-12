@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Probability bounds for the pieces of the left–right path (upper half of DFGPS Lemma 3.6)
+
 Decision D52; the fractional-moment bound `prob_sum_exp_gt_le` applied to a straight walk
 (`prob_walk_le`) and to the dyadic scale sum (`prob_scale_sum_le`), and the geometric sum of the
 box failure probabilities (`box_geom_le`). Variance bound `Var h_ρ(z) ≤ log ρ⁻¹ + 2 log 4`

@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MesoModel.MesoInterfaces
 import LatticeProb.Bonanno.MatedCRTHarmonic.CellScaling.ConeDefs
 
 /-!
+# The SLE/LQG cone realization of the unit-mesh model, and the named inputs of the scaling and cell-count estimates
+
 `MesoModel.MatedCRTUnitMesoModel γ` is an abstract unit-mesh model whose
 `radius ω k` is an arbitrary positive number. the scaling and cell-count estimates concern the **SLE/LQG cell model**:
 the field is the circle-average embedding `h` of a γ-quantum cone, `η` is an independent whole-plane

@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgCont
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgRate
 
 /-!
+# The circle-average process of a cone field
+
 DMS Def 4.10 (L2198): the average of the cone field on `∂B(0, e^{-s})` is the radial process.
 Deterministic form here: for any field `y` whose circle average at radius `r` about `0` exists
 (as the limit of LM's mollified averages), and any continuous `A` making the radial function

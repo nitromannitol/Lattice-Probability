@@ -14,6 +14,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel of the square, part 5: `p_Q = p^D_Q`
 (task P2-KHSQ4, target `KilledHeatSq.killedHeat_sqOpen`)
 
 * `integral_killedHeat_sqMode` (K): `∫ p_Q(t; z, w) φ_p(w) dw = e^{−λ_p t/2} φ_p(z)` for `z ∈ Q`,

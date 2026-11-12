@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.20 (`Blueprint.DFGPSLem3_20`) from Lemma 3.19 (task P2-DFA7)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), Lemma 3.20 (T:2317–2325) and
 its proof (T:2327–2330). Second display: Lemma 3.19's square estimate (`eqn-ep-diam-square`) with
 `s = (χ + ξ(Q−2))/2` for every open dyadic square of side `ε2^{-ℓ}𝕣` with corner in

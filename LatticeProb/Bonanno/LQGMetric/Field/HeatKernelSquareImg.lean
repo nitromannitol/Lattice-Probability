@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Structure of the image-series interval kernel (task P2-DDDFP29, WP-110)
+
 Ingredients of the Chapman–Kolmogorov identity for the Dirichlet kernel of `(a, a+L)` by the
 method of images (Feller, *An Introduction to Probability Theory and its Applications* II,
 §X.5): the image series `q_s(·, v)` is `2L`-periodic and odd about `a` (so it vanishes at the

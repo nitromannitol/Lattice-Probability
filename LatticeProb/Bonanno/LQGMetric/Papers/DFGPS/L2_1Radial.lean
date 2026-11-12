@@ -11,6 +11,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 2.1: pairing a distribution with a radial test function (deterministic part)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`) T:715–717: "Using the circle average
 process we may therefore write in polar coordinates …". For every distribution `T` and every test
 function `φ` radial about `z`:

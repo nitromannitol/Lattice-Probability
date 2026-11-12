@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.Defs
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.WedgeTranslation
 
 /-!
+# W0: reduction of L14 to good versions, and bridging identities
+
 Node W0 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1).
 
 * `lastZero_eq_lastPass`, `hitTime_eq_hitLevel`: the real-indexed `lastZero` / first-passage

@@ -5,6 +5,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AllOffsetsModulus
 
 /-!
+# M4-B4: the boundary measure along all offsets `a 2^{-k}` simultaneously; M4-T2
+
 Blueprint `M4_BLUEPRINT.md`, nodes M4-B4 and M4-T2.
 
 * `ae_hasBdryLimit`: for the free field (any additive-constant convention), almost surely

@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.GFFLaw
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.LocalRule
 
 /-!
+# Whole-plane LQG area, part 3: law transfer to every whole-plane GFF
+
 `ae_areaGood_U₀`: for **every** whole-plane GFF `X` (LM `IsWholePlaneGFF`, defined modulo an
 additive constant) and `0 < γ < 2`, a.s. `areaApproxC γ X` has a vague limit on the window `U₀`
 and is eventually finite on its compacts.

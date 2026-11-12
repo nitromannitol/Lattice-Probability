@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Rev
 
 /-!
+# W5 (part 6): the reversed side, Markov steps
+
 Node W5(i), reversed side, of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1). For `X = dpath σ (-μ) b`,
 `c > 0` and `T_c = hitLevel X (-c)`:
 

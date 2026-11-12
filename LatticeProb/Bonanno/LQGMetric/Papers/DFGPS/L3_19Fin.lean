@@ -11,6 +11,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.19: the moment bound (3.31) and Chebyshev
+
 DFGPS arXiv:1905.00380, `lqg-metric-estimates-final.tex` ("T"), proof of Lemma 3.19,
 T:2274–2297.
 

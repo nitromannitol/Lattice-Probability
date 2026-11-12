@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.1: Step 2, the upper bound (task P2-DFA3)
+
 DFGPS (arXiv:1905.00380, "T"), proof of Proposition 3.1, Step 2 ((3.12), T:1547–1556): the path
 of Lemma 3.5 from `𝕣K₁` to `𝕣K₂` lies in the union of the good circles `∂B_r(w)`,
 `w ∈ B_{ε𝕣}(𝕣U) ∩ (ε²𝕣/4)ℤ²`, `r ∈ [ε²𝕣, ε𝕣] ∩ {2^{-k}𝕣}`; there are at most

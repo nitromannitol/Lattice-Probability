@@ -5,6 +5,8 @@ import Mathlib
 import LatticeProb.Bonanno.LQGMetric.Statement.GFF
 
 /-!
+# Radial symmetrization of test functions
+
 For a test function `φ` on `ℂ`, its rotation average `φ̄(w) = (2π)⁻¹ ∫_0^{2π} φ(e^{iθ} w) dθ` (`rotSymm`) is again a
 test function (`symmTest`), it is radial (`symmTest_radial`: `φ̄(w) = φ̄(|w|)`), and it has the same integral against
 every radial locally integrable function (`integral_rotSymm_mul`). This is the projection of the proof of DMS Lemma

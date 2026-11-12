@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Theorem 1.5, Step 1: Proposition 3.1 at every centre, uniformly in the centre
+
 DFGPS (arXiv:1905.00380, "T"), proof of Theorem 1.5, Step 1 (T:1662–1670): "By Proposition 3.1
 and a union bound over all `z ∈ (𝕣𝕊) ∩ (δ𝕣ℤ²)` …". Proposition 3.1 is stated at the centre `0`;
 DFGPS use it at the centres `z` through translation invariance (Axiom IV′ of a weak LQG metric,

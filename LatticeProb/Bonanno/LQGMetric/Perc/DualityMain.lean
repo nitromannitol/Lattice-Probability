@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.LQGMetric.Perc.Duality
 import Mathlib.Basic.Finite.Prod
 
 /-!
+# Planar duality for site percolation in a rectangle: the main statement
+
 `percGoodLR_or_percBadTB`: in the `K × L` rectangle of sites (`K, L ≥ 1`), for every colouring
 there is a left–right `4`-crossing of good sites or a top–bottom `*`-crossing of bad sites.
 `percBadTB_of_not_percGoodLR` is the form used in the Peierls argument (Ding–Gwynne,

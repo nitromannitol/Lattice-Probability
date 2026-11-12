@@ -10,6 +10,8 @@ import Mathlib.MeasureTheory.Integral.DominatedConvergence
 set_option autoImplicit true
 
 /-!
+# W3: the occupation measure of drift Brownian motion
+
 Node W3 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), a step of the proof of L14
 (`WilliamsDriftDecomposition`). For `Y = dpath σ μ b` (a Brownian motion with diffusion `σ` and
 drift `μ`, started at `0`), the occupation measure `occ σ μ`

@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W6Meas
 
 /-!
+# W6 (part 3): the level cocycle of the reversed hitting path
+
 Node W6 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), cocycle. With `X = dpath σ (-μ) b`,
 `X' = dpath σ (-μ) b'` independent, and `X̂` the path that follows `X'` up to its hitting time
 `T'_d` of `-d` and then continues with `-d + X(· - T'_d)`:

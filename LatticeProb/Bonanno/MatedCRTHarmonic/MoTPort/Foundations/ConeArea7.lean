@@ -9,6 +9,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_3Tail
 import Mathlib.MeasureTheory.Constructions.HaarToSphere
 
 /-!
+# Cone area, part 18: the lateral part kills radial test functions
+
 DMS (arXiv:1409.7055v4) Lemma `lem::c_spaces_orthogonal` (L2187) and Section
 4.1: the whole-plane GFF splits as `h = h_{|·|}(0) + (h − h_{|·|}(0))`, the second summand (the
 projection onto `H₂(ℂ)`, our `lateralPartC`) having mean zero on every circle about `0`. Paired

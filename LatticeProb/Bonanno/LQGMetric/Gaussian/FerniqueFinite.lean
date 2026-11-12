@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Fernique–Dudley chaining bound for finite Gaussian families
+
 If the points of a finite family carry parameters `p i ∈ ℝ^d` (sup norm) of diameter `≤ a` and
 the increments satisfy `E (X_i - X_j)² ≤ L² ‖p i - p j‖`, then for a centered Gaussian vector
 `E max_i X_i ≤ 20 √5 · L √((d + 1) a)` (`integral_iSup_finVec_le`); the same for finite

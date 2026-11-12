@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Main2
 
 /-!
+# W5 (part 8): the killed finite-dimensional identity W5(i)
+
 Node W5(i) of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1). For `Y = dpath σ μ b`, `Ŷ = postLast Y 0`,
 `X = dpath σ (-μ) b`, `c > 0`, times `u₁, …, uₙ ≤ U`, measurable `g ≥ 0` and `r ≥ 0`:
 

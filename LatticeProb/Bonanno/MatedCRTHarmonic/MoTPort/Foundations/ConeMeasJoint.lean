@@ -10,6 +10,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.MeasurableAvg
 import LatticeProb.Bonanno.LQGMetric.Field.GFFInvariance
 
 /-!
+# C.meas (part 2): joint measurability of rotation and dilation; `surfMapC` is a.e.-measurable
+
 * `measurable_rotateField_joint`: `(θ, h) ↦ rotateField θ h` is measurable on `ℝ × Field`;
 * `measurable_affineComp_joint`: `(s, h) ↦ affineComp s 0 h` is measurable on `ℝ × Field`;
 * `aemeasurable_canonicalC`, `aemeasurable_surfMapC`: for an a.e.-measurable random field `Y`

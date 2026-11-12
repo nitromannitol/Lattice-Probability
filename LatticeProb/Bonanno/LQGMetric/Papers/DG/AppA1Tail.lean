@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppA1SP2
 
 /-!
+# Ding–Gwynne Lemma A.1: the large-time part `h^U_{1,∞}` (task P2-DG3B)
+
 DG (`metric-comparison-final.tex`, DG:2144–2162): `h^U = h^U_{1,∞} + lim_{t→0} h^U_{t,1}` and
 `(h^U − ĥ^tr)|_K = h^U_{1,∞} + f`, with `h^U_{1,∞}(z) = √π ∫_1^∞ ∫ p_U(s/2; z, w) W(dw, ds)`
 ("easily checked using the Kolmogorov continuity criterion", DG:2145). The kernel increments:

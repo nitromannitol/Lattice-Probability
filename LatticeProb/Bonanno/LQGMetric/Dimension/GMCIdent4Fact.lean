@@ -44,6 +44,8 @@ import Mathlib.Probability.Process.FiniteDimensionalLaws
 import LatticeProb.Bonanno.LQGMetric.Gaussian.FerniqueDZZ
 
 /-!
+# The DZZ factorization `M_γ = e^{γ h̃_δ − γ²/2 Var h̃_δ} M̃_{γ,δ}` (P2-GMCID4, item 4b)
+
 DZZ (arXiv:1807.00422, `LBM_LGDarXiv.tex` (eq-def-tilde-M), l. 676–683):
 `M̃_{γ,δ}(B) = lim_n ∫_B e^{γ h̃^δ_{2^{-n}}(z) − γ²/2 Var h̃^δ_{2^{-n}}(z)} dz`. For `δ = 2^{-m}`
 and the white-noise field:

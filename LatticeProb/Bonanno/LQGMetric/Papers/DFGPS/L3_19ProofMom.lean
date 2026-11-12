@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.19, step 2: Prop 3.9 at every centre (general probability space)
+
 DFGPS T:2282–2283 apply "Proposition 3.9 (with `ε𝕣` in place of `𝕣`)" at the centre `z`. Prop 3.9
 (`Prop3_9`) is stated at the centre `0`; as in `P3_9Trans.diam_square_tail` we move it to `z`
 with the field `T_z h = h(· + z) − h_1(z)` (Axiom IV′ and Axiom III, `ae_transField_ident`),

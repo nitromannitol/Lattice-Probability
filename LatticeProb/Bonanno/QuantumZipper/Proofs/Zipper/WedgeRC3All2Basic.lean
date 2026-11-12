@@ -257,6 +257,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WedgeAddConstLat
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Wire5
 
 /-!
+# WEDGE-RC3ALL2 (1): circle smoothing of radial profiles with a logarithmic singularity
+
 Deterministic input for `F1.WedgeRC3AllStmt` on folded circles through `0`.
 
 Let `g : ℝ → ℝ` be measurable, continuous on `(0, ∞)`, with `|g t| ≤ C (1 − log t)` on `(0, 1]`,

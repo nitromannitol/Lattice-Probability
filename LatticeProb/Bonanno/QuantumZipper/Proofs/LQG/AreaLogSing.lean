@@ -14,6 +14,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.TwoRadiusTilt
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AtomlessUncond
 
 /-!
+# M4-P3(b), area version, part 6: fractional moments of the interior area mass
+
 Discharges `AtomlessUncond.P3bBoundArea` (TASKS.md R14, first theorem; handoff
 `handoff/M4-AREA-P3B.md`, "Remaining" item 4).
 

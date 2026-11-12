@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.6, lower bound, uniformly in `𝕣`
+
 DFGPS Lemma 3.6 (arXiv:1905.00380, T:1628–1650), lower half: w.p. → 1 as `δ → 0`, uniformly in
 `𝕣 > 0`, `D̃^{δ𝕣}_h(∂_L(𝕣𝕊), ∂_R(𝕣𝕊); 𝕣𝕊) ≥ δ^{−ξQ+ζ} e^{ξ h_𝕣(0)}`.
 The reduction to `𝕣 = 1` follows T:1640–1644 (`L36Scale`): `h' = h(𝕣·) − h_𝕣(0)` has the law of `h`

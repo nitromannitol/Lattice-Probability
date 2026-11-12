@@ -9,6 +9,8 @@ import Mathlib.Data.Set.Finite.Lattice
 import Mathlib.Tactic.Ring
 
 /-!
+# Planar duality for site percolation in a rectangle of boxes
+
 `percGoodLR_or_percBadTB`: for every colouring `good : ℤ × ℤ → Prop` of the sites of the
 `K × L` rectangle (`K, L ≥ 1`), there is a left–right crossing by a `4`-path of good sites or a
 top–bottom crossing by a `*`-path of bad sites. This is the "planar duality" used by Ding–Gwynne
@@ -16,6 +18,8 @@ top–bottom crossing by a `*`-path of bad sites. This is the "planar duality" u
 Ding–Dunlap (arXiv:1812.06921, proof of Prop. 4.2, `tightness-gg.tex` line 2716, there with the
 roles of `4` and `*` exchanged; a `4`-path is a `*`-path so our good crossing is also a king path)
 and by DDDF (arXiv:1904.08021, proof of Prop. 4.18 step 1, `tightness.tex` line 895).
+
+## Proof (exploration path)
 
 We follow the classical exploration-path proof of the Hex theorem (D. Gale, *The game of Hex
 and the Brouwer fixed-point theorem*, Amer. Math. Monthly 86 (1979), §2; for site percolation on

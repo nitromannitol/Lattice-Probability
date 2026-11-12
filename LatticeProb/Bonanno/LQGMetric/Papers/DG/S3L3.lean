@@ -10,6 +10,8 @@ import Mathlib.Probability.Notation
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
+# DG Lemma 3.3, deterministic part: (3.6) ⇒ (3.7) (task P2-DG3A, WP-118)
+
 Ding–Gwynne, arXiv:1807.01072, `metric-comparison-final.tex`, Lemma 3.3 (`lem-measure-scale`,
 DG:1014–1032). (3.6): a.s. `μ_ĥ(X) = δ^{2+γ²/2} ∫_{δ⁻¹(X−b)} e^{γ ĥ_δ(δ·+b)} dμ_{(ĥ−ĥ_δ)(δ·+b)}`
 for all Borel `X`. (3.7): with `T̄ := δ^{−2−γ²/2} exp(−max_U ĥ_δ)`,

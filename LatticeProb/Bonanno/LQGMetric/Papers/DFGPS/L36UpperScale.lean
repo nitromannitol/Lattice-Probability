@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DG Proposition 3.21 at a scaled box (upper half of DFGPS Lemma 3.6)
+
 Decision D52: the boundary layer of DFGPS Lemma 3.6 (T:1645–1650) is covered by boxes
 `c + r B(a, R)`; in each, DG Proposition 3.21 (`Blueprint.DGProp3_21`) applied to the rescaled
 field `h(c + r·) − h_r(c)` (a normalized whole-plane GFF, `CircleAvg.map_affine_sub_circleAvg`,

@@ -6,8 +6,12 @@ import Mathlib.MeasureTheory.Integral.Bochner.Set
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 /-!
+# W7: path laws from finite-dimensional laws, and de-integration
+
 Node W7 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), together with the de-integration lemma of
 W5(ii). Both are steps of the proof of `WilliamsDriftDecomposition` (L14).
+
+## Path laws from finite-dimensional laws
 
 `map_eq_of_forall_finset`: if `P` on `Ω` and `P'` on `Ω'` are finite measures and
 `X : Ω → (ℝ≥0 → ℝ)`, `X' : Ω' → (ℝ≥0 → ℝ)` are a.e. measurable path-valued maps, then
@@ -25,6 +29,8 @@ limit of its finite-dimensional distributions) together with
 (`Mathlib/MeasureTheory/Constructions/Projective.lean`: the projective limit of a family of
 *finite* measures is unique). The one-space version is
 `ProbabilityTheory.map_eq_iff_forall_finset_map_restrict_eq`. Nothing here is original.
+
+## De-integration
 
 `eqOn_of_setIntegral_Ioc_eq`: a function `f : ℝ → ℝ` that is right-continuous at every `x ≥ 0`
 (continuity within `[x, ∞)`) is determined on `[0, ∞)` by the values `∫_{(r,r']} f` of its

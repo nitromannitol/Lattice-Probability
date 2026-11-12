@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W4Pos
 
 /-!
+# W4 (part 2): the time-integrated law of `Ŷ`, given the last zero
+
 Node W4 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), in the form conditional on the almost sure
 existence of a last zero of `Y = dpath σ μ b` after which `Y > 0` (`hgood`; this transience input
 is proved in `W4Trans.lean`).

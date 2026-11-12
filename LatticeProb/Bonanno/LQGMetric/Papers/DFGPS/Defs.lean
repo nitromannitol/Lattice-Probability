@@ -40,6 +40,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS: definitions shared by the work packages (DF-A0)
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, *Weak LQG metrics and Liouville first passage percolation*
 (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"). Code from `blueprint/DF.md` §5 (type-checked by P2-BP-DF, 2026-10-01): `setDistIn` (D(A,B;V)),
 `SuperPolyHighProbA` (T:607), `rS` (𝕣𝕊), the 8-neighbour graph LFPP `graphLFPP` (T:1606–1612) and

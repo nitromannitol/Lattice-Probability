@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 8: ingredients of Chapman–Kolmogorov (task P2-KILLED, D-KHK1)
+
 * `measurableSet_cEvent_param`, `measurable_bridgeStay_left/right`: measurability of the bridge
   probability in its endpoints.
 * `bridgeEvent_split`: pathwise, the bridge from `z` to `w` of length `t + s` stays in `A` iff its

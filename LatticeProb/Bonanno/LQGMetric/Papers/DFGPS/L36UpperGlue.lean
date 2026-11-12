@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Gluing graph paths (upper half of DFGPS Lemma 3.6)
+
 Concatenation and reversal of graph paths of `𝕊 ∩ δℤ²` (DFGPS (eq:graph), T:1606), the chain of
 box paths, straight walks between grid points of `𝕊`, and the corner vertices `δ(1,1)` (leftmost)
 and `δ(⌈1/δ⌉ − 1, 1)` (rightmost). Elementary (D52).

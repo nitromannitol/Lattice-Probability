@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Hat
 
 /-!
+# W5 (part 2): the density of the killed occupation measure
+
 Preparation for W5(i), reversed side, of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1). The blueprint
 identifies the density of the killed occupation measure of `X + c` (`X = dpath σ (-μ) b`, killed at
 `T_c`) with `C · χ_c(z)`, `C = occDens σ μ 0`, via

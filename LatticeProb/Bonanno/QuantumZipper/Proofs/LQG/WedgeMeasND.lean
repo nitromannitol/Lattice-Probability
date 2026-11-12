@@ -79,6 +79,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMExistence
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AllOffsetsModulus
 
 /-!
+# WEDGE-MEAS: wedge data are a.e.-measurable, wedges are a.s. good, R23 (c)
+
 At the pinned mathlib, `Measure.map f P` for a non-a.e.-measurable `f` and `P ≠ 0` is a Dirac
 mass (`Measure.map_of_not_aemeasurable_of_ne_zero`). So `IsQuantumWedge` forces the data map of
 `Y` to be a.e.-measurable as soon as the **reference wedge law is not a Dirac mass**

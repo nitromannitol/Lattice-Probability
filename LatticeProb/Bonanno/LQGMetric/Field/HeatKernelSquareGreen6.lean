@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Gradient features of the square modes (task P2-KHSQ2, G1–G2)
+
 On `U = (a, a+L)²` let `g_p = gradFeat U φ_p ∈ GradSpace U` (`φ_p = HeatSq.sqMode a L p`, i.e.
 `(2π)^{-1/2} ∇φ_p`). Then:
 

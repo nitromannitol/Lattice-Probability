@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.L3_1
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppAShell
 
 /-!
+# Ding–Gwynne Lemma 3.1 for the pairs `(h^U, ĥ^tr)` and `(ĥ, ĥ^tr)`, `U = 𝕍` (task P2-DG3E)
+
 DG (`metric-comparison-final.tex`, Lemma 3.1 `lem-gff-compare`, DG:966–974; proof DG:2243–2244
 "Combine Lemmas 2.2, A.1 and A.2"), circle-average reading D100, all fields from one white noise
 `W` ("`ĥ` and `ĥ^tr` are defined using the same white noise", DG:974):

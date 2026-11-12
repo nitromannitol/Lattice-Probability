@@ -8,6 +8,9 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Gaussian concentration for centered Gaussian vectors: DZZ Lemma 2.1, DFGPS Lemma 4.2,
+# Borell–TIS for finite maxima
+
 Random-vector forms of `GaussConc.dzz_lemma21_gram` and `GaussConc.borellTIS_finiteMax`.
 A centered Gaussian vector `X : Ω → (Fin n → ℝ)` (`HasGaussianLaw X P`, `E X_i = 0`) has the law
 of `(⟪v i, Z⟫)_i` with `Z` standard Gaussian and `‖v i‖² = Var X_i`

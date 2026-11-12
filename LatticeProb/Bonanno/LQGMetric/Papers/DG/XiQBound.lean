@@ -126,6 +126,8 @@ import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
 import Mathlib.Probability.Moments.SubGaussian
 
 /-!
+# DG exponent monotonicity (DG.S2-mono) and GM's `ξQ − 1 − ξ²/2 < 0` (GM.S2.5, route B)
+
 * `dg_exponent_mono` (DG eqn-exponent-mono, `metric-comparison-final.tex` l. 770–776): "By
   Theorem 1.5 and Lemma 2.5, for `γ₁, γ₂ ∈ (0,2)`, `γ₁/d_{γ₁} ≤ γ₂/d_{γ₂}` ⇒
   `1 − 2/d_{γ₁} − γ₁²/(2d_{γ₁}) + γ₁²/(2d_{γ₁}²) ≤ 1 − 2/d_{γ₂} − γ₂²/(2d_{γ₂}) + γ₂²/(2d_{γ₂}²)`".

@@ -12,6 +12,8 @@ import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import Mathlib.Analysis.Calculus.Deriv.Basic
 
 /-!
+# Unconditional atomlessness, the `Γ⁰` log singularity, and interior log singularities
+
 * (1) `ae_noAtoms_free'`, `ae_noAtoms_zField'`, `ae_noAtoms_add_ofFun'`: the M4-P5 results of
   `Atomless.lean` with the hypothesis `LogSingNoAtom` discharged by `LogSing.logSingNoAtom`.
 * (2) `ae_gamma0_logSingularity`: for `κ ∈ (0,4)`, `γ = √κ`, the field `ofFun (h0rev κ) + X` has

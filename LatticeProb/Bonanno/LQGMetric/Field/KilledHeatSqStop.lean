@@ -8,6 +8,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel of the square, part 2: optional stopping on a dyadic grid
 (task P2-KHSQ3, target `killedHeat_sqOpen`)
 
 Grid times `g_i = i t / 2ⁿ`. Let `E_m` be the event that `z + B` is in `Q` at the grid times

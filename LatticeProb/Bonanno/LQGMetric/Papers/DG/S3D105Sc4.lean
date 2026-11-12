@@ -24,6 +24,8 @@ import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 import Mathlib.MeasureTheory.Integral.CircleIntegral
 
 /-!
+# D105 packet P7, part 2: deterministic vague-limit transfer under `y ↦ δy + c`
+
 Deterministic core of DG Lemma 3.3 (3.6) (`lem-measure-scale`, DG:1014–1036) in the D105 form
 (decisions/DEC-105.md §1 item 3–4, §3 N6): DG's proof is "the coordinate change formula
 [DS Prop 2.1] … (this is also easy to see directly from the circle average … approximations of

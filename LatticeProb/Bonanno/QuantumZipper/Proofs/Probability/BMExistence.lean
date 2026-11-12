@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Measure.SeparableMeasure
 import Mathlib.Probability.BrownianMotion.Basic
 
 /-!
+# Existence of Brownian motion
+
 We prove `NonVacuity.BrownianMotionExists`.
 
 1. **Gaussian process with covariance `min s t`.** The vectors `bmVec t = 𝟙_{(0,t]}` in

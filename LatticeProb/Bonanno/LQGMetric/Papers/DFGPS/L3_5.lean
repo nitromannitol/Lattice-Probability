@@ -12,6 +12,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.5: a path from `𝕣K₁` to `𝕣K₂` in a union of good circles (task P2-DFA2, DF-A2)
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, *Weak LQG metrics and Liouville first passage percolation*
 (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), Lemma 3.5 (`lem-connected`,
 T:1573–1596), used in the upper bound of Proposition 3.1 (T:1549).

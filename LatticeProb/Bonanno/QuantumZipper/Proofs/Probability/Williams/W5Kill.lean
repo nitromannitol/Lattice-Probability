@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Chi
 
 /-!
+# W5 (part 3): splitting the occupation measure at a hitting time
+
 Preparation for W5(i), reversed side, of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1): the killed
 occupation measure of a drift Brownian motion `Y` killed at its hitting time `τ_a` of `a`
 satisfies (strong Markov property at `τ_a`)

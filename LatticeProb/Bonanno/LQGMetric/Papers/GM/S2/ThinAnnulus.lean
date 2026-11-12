@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Metric.InternalOps
 import LatticeProb.Bonanno.LQGMetric.Metric.InternalC
 
 /-!
+# GM Lemma 2.11: internal distances across a thin annulus are large (task P2-M2C, WP-M2c)
+
 GM (arXiv:1905.00383v3, `uniqueness-final.tex` l. 1062–1072), Lemma 2.11 (`lem-attained-long`):
 for `S > s > 0` and `p ∈ (0,1)` there is `α_* ∈ (1/2, 1)` such that for `α ∈ [α_*, 1)`, every
 `z` and `𝕣 > 0`, with probability `≥ p`, every `u, v ∈ A_{α𝕣,𝕣}(z)` with

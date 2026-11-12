@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.TopoDegree
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-!
+# GM §4.3: the global regularity event `ℰ_𝕣` (WP-M2h)
+
 Source: Gwynne–Miller, *Existence and uniqueness of the LQG metric for γ ∈ (0,2)*,
 arXiv:1905.00383v3, `literature/src/1905.00383/uniqueness-final.tex` (GM), §4.3 "Global regularity
 event", l. 1940–1990. Inventory: `blueprint/GM_B.md` rows GM.Def-ℰ, GM.S4.4 (Remark 4.10),

@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.1: the deterministic Steps 1 and 2 (task P2-DFA3)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), proof of Proposition 3.1,
 T:1522–1568, on the event `F^ε_𝕣 ∩ {(3.10)}` (T:1532–1535), with `ν = 1`:
 

@@ -8,6 +8,8 @@ import Mathlib.Analysis.Calculus.Deriv.CompMul
 import Mathlib.Topology.Piecewise
 
 /-!
+# Piecewise C¹ paths: breakpoint form, affine reparametrization, reversal, concatenation
+
 Task P2-LFPP (WP-45 / DFGPS.S5 groundwork). The paths of GM (1.4)
 (`literature/src/1905.00383/uniqueness-final.tex` l. 216–220, "piecewise continuously
 differentiable paths") are `IsPiecewiseC1Path` (Statement/LFPP.lean, FROZEN). To build new paths

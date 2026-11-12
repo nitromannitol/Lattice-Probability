@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.LQGMetric.Metric.InternalOps
 import LatticeProb.Bonanno.LQGMetric.Statement.Metric
 
 /-!
+# Internal metrics of continuous metrics on `ℂ` (LM Lemma 1.1, GM S3.1 (a))
+
 For `D : ContMetric` (FOUNDATIONS §4–5; `D.Space` is `ℂ` with the metric `D`):
 
 * `ContMetric.ptHomeomorph`: the identity `ℂ → D.Space` is a homeomorphism (from

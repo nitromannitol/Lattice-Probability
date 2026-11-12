@@ -84,6 +84,8 @@ import LatticeProb.Bonanno.LQGMetric.Blueprint.DFGPSEstimates
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-!
+# Blueprint: the DG results DFGPS Lemma 3.6 cites (task P2-BP-DF)
+
 Source: DG = Ding–Gwynne, *The fractal dimension of Liouville quantum gravity: universality,
 monotonicity, and bounds*, arXiv:1807.01072, `literature/src/1807.01072/metric-comparison-final.tex`
 (cited `DG:`). Consumer: DFGPS (arXiv:1905.00380, cited `T:`) Lemma 3.6 (T:1628–1650): "by

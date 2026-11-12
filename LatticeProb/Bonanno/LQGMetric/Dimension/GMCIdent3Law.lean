@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.WedgeRestriction
 import Mathlib.MeasureTheory.Constructions.Projective
 
 /-!
+# Law transfer for the circle-average LQG measure, part 1: the circle family (P2-GMCID3, D85)
+
 * `CircIdx`: the circles `∂B(z,r)` with `r > 0`, `B̄(z,r) ⊆ 𝕍 = (0,1)²`.
 * `circVec x = (x(σ_{z,r}))_{(z,r)}` (`σ_{z,r}` = `foldedCircle z r`, the uniform measure on the
   circle) and `wnCircVec W = (√π W(K_{σ_{z,r}}))_{(z,r)}`.

@@ -12,6 +12,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.1 from Lemma 3.2 (task P2-DFA3, package DF-A3)
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, *Weak LQG metrics and Liouville first passage percolation*
 (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), Proposition 3.1
 (`prop-two-set-dist`, T:1414–1420), proof T:1522–1568, followed step by step:

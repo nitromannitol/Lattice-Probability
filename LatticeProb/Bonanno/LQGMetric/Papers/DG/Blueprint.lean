@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Basic
 import LatticeProb.Bonanno.LQGMetric.Statement.Dimension
 
 /-!
+# Ding–Gwynne: LFPP distances and DG Theorem 1.5 (cited result, explicit hypothesis)
+
 Source: J. Ding, E. Gwynne, *The fractal dimension of Liouville quantum gravity: universality,
 monotonicity, and bounds*, arXiv:1807.01072, `literature/src/1807.01072/metric-comparison-final.tex`
 (cited `DG:`).

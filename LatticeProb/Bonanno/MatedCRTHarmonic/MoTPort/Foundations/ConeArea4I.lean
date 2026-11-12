@@ -5,6 +5,8 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea4H
 
 /-!
+# Cone area, part 9: (b2) away from the origin; `ConeRefMeas` from tightness alone
+
 * `eventually_lt_top_add_ofFunC` (deterministic): if the approximations of `x` are eventually
   finite on compacts and `g` is locally integrable and continuous off `0`, then the
   approximations of `x + g` are eventually finite on every compact `K ∌ 0` (on `K`, at small

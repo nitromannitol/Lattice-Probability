@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Complex
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
 /-!
+# DG scale invariance of `ĥ`, part 2: kernel covariance (task P2-DG105c, D105 N5)
+
 Ding–Gwynne arXiv:1807.01072 (`metric-comparison-final.tex`): `ĥ = √π ∫_0^1 ∫ p_{s/2}(·, w)
 W(dw, ds)` (DG (3.1), DG:907–917), `ĥ_t = √π ∫_{t²}^1 …` (DG:907), and the scale invariance
 DG:1010 ("`(ĥ − ĥ_δ)(δ·+b)` has the same law as `ĥ`") made pathwise (DEC-105 §1 item 3, §2):

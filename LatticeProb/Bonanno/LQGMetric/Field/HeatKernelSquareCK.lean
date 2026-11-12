@@ -8,6 +8,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Chapman–Kolmogorov for the planar heat kernel; measurability and symmetry of the image kernel
 (task P2-DDDFP29, WP-110)
 
 * `HeatSq.integral_heatKernel_mul_heatKernel_ck`: `∫ p_t(x,y') p_s(y',y) dy' = p_{t+s}(x,y)`,

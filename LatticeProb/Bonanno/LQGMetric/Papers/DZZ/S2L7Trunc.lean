@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L5Kernel
 import LatticeProb.Bonanno.LQGMetric.Field.KilledHeatMeas
 
 /-!
+# DZZ (eq-variance-truncation), first steps (task P2-DZZPRE, WP-112)
+
 Ding–Zeitouni–Zhang (arXiv:1807.00422, `LBM_LGDarXiv.tex`), proof of Lemma 2.7, l. 554–559:
 "`Var Δ_i(v) = O(1) P(τ_i ≤ 2^{-2i}) = O(1) e^{−Ω(i²)}`", where `τ_i` is the exit time of the
 bridge from a ball. Here:

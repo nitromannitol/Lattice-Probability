@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.L3_1B2
 
 /-!
+# Ding–Gwynne Lemma 3.1: assembly with the whole-plane field `h` (task P2-DG3E)
+
 DG (`metric-comparison-final.tex`, Lemma 3.1 `lem-gff-compare`, DG:966–974; proof DG:2243–2244:
 "Combine Lemmas 2.2, A.1, and A.2"), circle-average reading D100, `U = 𝕍`, `K` a box with
 `B(z,1/10) ⊆ 𝕍`.

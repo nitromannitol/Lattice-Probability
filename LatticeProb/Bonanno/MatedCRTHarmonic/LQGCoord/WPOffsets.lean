@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.WPModulus
 import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.ScaleKolm
 
 /-!
+# The whole-plane area approximations along all radii: grid plus modulus
+
 For a window `(S, δ)` and a test
 function `f`, with `L` the dyadic limit of the normalized masses (`WMassLimit`):
 

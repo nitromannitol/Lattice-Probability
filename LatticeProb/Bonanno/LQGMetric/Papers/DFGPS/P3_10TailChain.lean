@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.10, Step 2: stringing together the crossings at all scales
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.10, Step 2 (T:1895–1904): "each point of `X_S` can be joined to `X_{S'}` by
 a path in `S` of `D_h`-length at most …"; "since the metric `D_h` is a continuous function …

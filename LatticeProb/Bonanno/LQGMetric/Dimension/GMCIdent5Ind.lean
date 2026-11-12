@@ -34,6 +34,8 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L7
 
 /-!
+# Independence of `M̃_{γ,δ}` from `h̃_δ` (P2-GMCID5, item 1)
+
 DZZ (arXiv:1807.00422, `LBM_LGDarXiv.tex` (eq-def-tilde-M), l. 676–683) define
 `M̃_{γ,δ}(B) = lim_n ∫_B e^{γ h̃^δ_{2^{-n}}(z) − γ²/2 Var h̃^δ_{2^{-n}}(z)} dz`; the band fields
 `h̃^δ_{2^{-n}} = √π ∫_{(4^{-n}, δ²) × 𝕍} p_𝕍(s/2; z, w) W(dw, ds)` only use the white noise on the

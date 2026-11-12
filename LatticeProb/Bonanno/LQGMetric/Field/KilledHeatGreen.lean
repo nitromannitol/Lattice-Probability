@@ -8,6 +8,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 16: the killed Green function `G_A = π ∫₀^∞ p_A(s; ·, ·) ds`
 (task P2-KILLED, D-KHK1)
 
 DZZ (`LBM_LGDarXiv.tex` l. 400–403, eq. (eq:Green_fxn)) and Berestycki–Powell (arXiv:2404.16642

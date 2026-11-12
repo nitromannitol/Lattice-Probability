@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.10 from its tail bound
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 Proposition 3.10 (`prop-internal-moment`, T:1757–1762). Its proof (T:1871–1916) has two parts:
 

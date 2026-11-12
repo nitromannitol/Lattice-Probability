@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppAVar2
 
 /-!
+# Ding–Gwynne Lemma A.2 at `t = 0`: the field `f = ĥ − ĥ^tr` (task P2-DG3B)
+
 DG (`metric-comparison-final.tex`, DG:2150–2155, used verbatim for Lemma A.2, DG:2240): "`Var f_t(z)`
 converges as `t → 0` … the function `f(z) := lim_{t→0} f_t(z)` is a.s. defined … and is Gaussian".
 In kernel form, with `f_t(z) = (ĥ_t − ĥ^tr_t)(z) = √π W(k_t(z) − k^tr_t(z))`:

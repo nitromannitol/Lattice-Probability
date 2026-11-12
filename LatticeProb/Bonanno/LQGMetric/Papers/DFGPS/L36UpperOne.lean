@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The good event of the upper half of DFGPS Lemma 3.6 (D52)
+
 Failure events of the pieces of the left–right path (`boxBad`, `momBad`, `walkBad`, `oscBad`,
 `nullBad`) and the deterministic statement that off all of them the left–right graph distance
 is `≤ δ^{−ξQ−ζ} e^{ξ h_1(0)}` (`graphLFPP_le_of_good`).

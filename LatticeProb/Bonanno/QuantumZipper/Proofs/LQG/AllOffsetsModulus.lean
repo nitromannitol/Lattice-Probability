@@ -12,6 +12,8 @@ import LatticeProb.Bonanno.QuantumZipper.LQG.Measures
 import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 
 /-!
+# M4-B4, part 2: the modulus of the density in the offset (blueprint node B4a)
+
 Blueprint `M4_BLUEPRINT.md`, node M4-B4 ("Modulus part", B4a).
 
 At a fixed point `t` and scale `ε`, `d_{aε}(t) = d_{2ε}(t) · H(a)` with

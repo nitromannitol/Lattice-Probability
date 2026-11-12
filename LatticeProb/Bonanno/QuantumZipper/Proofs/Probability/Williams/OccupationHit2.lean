@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.GaussKernel
 set_option autoImplicit true
 
 /-!
+# W3 (third part): strong Markov at a first hitting time, and the shift identities
+
 Third part of node W3 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), towards the four remaining
 statements `occ_shift_neg`, `occ_shift_pos`, `occDens_nonneg_const` and `prob_hit_neg`.
 

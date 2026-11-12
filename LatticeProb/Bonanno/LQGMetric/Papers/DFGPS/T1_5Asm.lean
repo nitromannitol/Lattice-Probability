@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.1 and Theorem 1.5: assembly
+
 DFGPS (Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380): Proposition 3.1 (T:1414–1420) from
 Lemma 3.2 (`lem3_2`, which uses LM Lemma 3.1) and Theorem 1.5 (`Blueprint.DFGPSScaling`,
 T:1659–1723) from Proposition 3.1 and Lemma 3.6.

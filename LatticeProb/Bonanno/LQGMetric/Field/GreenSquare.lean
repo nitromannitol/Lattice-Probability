@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The zero-boundary GFF covariance on a square is `π ∫₀^∞ p^D_s ds` (task P2-KHSQ2, G5 + R1)
+
 On `U = (a,a+L)²`, with the normalized gradient features `e_k = g_{k+1}/‖g_{k+1}‖` of the
 Dirichlet modes (orthonormal by G2, in `gradClosure U (C_c^∞(U))` by G3) and
 `w_σ = ∑_k β_k(σ) e_k`, `β_k(σ) = (4/L²) σ̂ ‖g‖ 2π/λ`:

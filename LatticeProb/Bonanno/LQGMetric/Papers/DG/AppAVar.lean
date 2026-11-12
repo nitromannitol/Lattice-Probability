@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppASP2
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3L1Tr
 
 /-!
+# Ding–Gwynne Lemma A.2: the variance bound for `ĥ − ĥ^tr`, per time slice (task P2-DG3B)
+
 DG (`metric-comparison-final.tex`, DG:2236–2240, "the same argument as Lemma A.1", i.e. the
 proof of (A.3) at DG:2156–2232 with `U = ℂ`): the kernel of `(ĥ_t − ĥ^tr_t)(z)` at white-noise time
 `s` is `w ↦ p(s/2; z, w) − p_{B_{1/10}(z)}(s/2; z, w)`. For `|z₁ − z₂| = δ ≤ 1/40`:

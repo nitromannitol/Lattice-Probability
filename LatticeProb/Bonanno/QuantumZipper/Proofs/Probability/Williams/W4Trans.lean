@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W4Cond
 
 /-!
+# W4 (part 4): transience inputs
+
 Node W4 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1): `lintegral_shift_postLast`.
 
 This file discharges the hypothesis `hgood` of `lintegral_shift_postLast_of_ae` (`W4Cond.lean`):

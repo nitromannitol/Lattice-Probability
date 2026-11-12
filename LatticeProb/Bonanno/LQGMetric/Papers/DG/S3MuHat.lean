@@ -14,6 +14,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The LQG measures `μ_ĥ`, `μ_{ĥ^tr}` of the white-noise fields (DG:980–986)
+
 Ding–Gwynne, arXiv:1807.01072, `metric-comparison-final.tex`, DG:980–986: "Lemma 3.1 allows us
 to define … `μ_ĥ` and `μ_{ĥ^tr}` … If `h` is a GFF and `f` is a (possibly random) continuous
 function … `dμ_{h+f} = e^{γ f} dμ_h` a.s. Applying this with `f = ĥ − h` or `ĥ^tr − h`, when the

@@ -144,6 +144,8 @@ import Mathlib.Probability.Distributions.Gaussian.Multivariate
 import Mathlib.Probability.Process.FiniteDimensionalLaws
 
 /-!
+# Inputs for mesoscopic cell-model estimates
+
 The probabilistic inputs are stated at the unit-cell coupling and dyadic-mesh level.
 The event form of joint scaling below is the scale-transfer consequence of the equality in law of `(h_b, η^b)` with
 `(h, η)` and the resulting cell-configuration identity.

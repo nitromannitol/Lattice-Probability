@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgKolm
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgGP
 
 /-!
+# Cone area, part 15: the two-radius hypotheses for the whole-plane GFF
+
 For a whole-plane GFF `X` (LM `IsWholePlaneGFF`), a radius `δ > 0` and the inner process
 
   `wpU X δ k t = h_{2^{-k}}(t) − h_δ(0)` (LM `CircleAvg.cInc`),

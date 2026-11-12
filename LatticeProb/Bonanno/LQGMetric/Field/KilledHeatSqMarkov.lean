@@ -8,6 +8,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel of the square, part 1: the Markov step for the sine modes
 (task P2-KHSQ3, target `killedHeat_sqOpen`)
 
 For a planar Brownian motion `B` and `s ≤ t`, the increment `B_t − B_s` is independent of the

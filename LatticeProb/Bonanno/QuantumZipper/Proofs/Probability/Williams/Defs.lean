@@ -6,6 +6,8 @@ import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
+# Williams drift decomposition: shared definitions
+
 Definitions for nodes W0–W7 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.0), which prove
 `WilliamsDriftDecomposition` (L14, `Proofs/LQG/WedgeTranslation.lean`). The statement is due to
 D. Williams, *Path decomposition and continuity of local time for one-dimensional diffusions I*,

@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Chapman–Kolmogorov for the Dirichlet heat kernel of the square (task P2-DDDFP29, WP-110)
+
 `HeatSq.integral_sqDirKernel_mul`: on `D = (a, a+L)²`,
 `∫_D p^D_s(x, y') p^D_r(y', y) dy' = p^D_{s+r}(x, y)` for `s, r > 0` — the semigroup property
 of the killed heat kernel used in DDDF's covariance computation for `η_t`

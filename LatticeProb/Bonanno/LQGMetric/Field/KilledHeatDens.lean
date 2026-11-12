@@ -7,6 +7,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 6: `p_A` is the transition density of killed Brownian motion
 (task P2-KILLED, decision D-KHK1)
 
 Ding–Zeitouni–Zhang (arXiv:1807.00422, `LBM_LGDarXiv.tex` l. 404–411, eq. (eq:heat_kernel)) define

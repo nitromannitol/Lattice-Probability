@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.10 for `p ≤ 0`
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.10 (`prop-internal-moment`), first sentence (T:1872): "For `p < 0`, the
 bound (eqn-internal-moment) follows from the lower bound of Proposition 3.1."

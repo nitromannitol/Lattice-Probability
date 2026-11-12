@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.19, square part (`eqn-ep-diam-square`)
+
 DFGPS arXiv:1905.00380, `lqg-metric-estimates-final.tex` ("T"), Lemma 3.19 (T:2269–2272), "proven
 similarly but with Proposition 3.10 used in place of Proposition 3.9" (T:2300): `moment_sq`
 (with `ρ = ε𝕣`, `r = 𝕣`; the square `S^{ε𝕣}(z)` lies in `B̄_{ε𝕣}(z)`), Theorem 1.5,

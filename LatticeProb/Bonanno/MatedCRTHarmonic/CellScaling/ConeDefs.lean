@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Statement.GFF
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTPath2
 
 /-!
+# The γ-quantum cone, `R_b` and the rescalings of the joint-scaling identity (SLE-free definitions)
+
 These SLE-free definitions describe the cone field, its scale and its rescaling.
 They are definitionally equal to the corresponding `MatedCRT` definitions.
 The field is written as `LQGMetric.DistC`.

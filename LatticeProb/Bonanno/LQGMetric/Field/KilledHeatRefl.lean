@@ -9,6 +9,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 11: towards the reflection principle for the bridge maximum
 (task P2-KILLED, D-KHK1)
 
 DZZ (`LBM_LGDarXiv.tex` l. 491–499) use `P(max_{s ≤ t} (B_s − (s/t)B_t)_1 ≥ x) = e^{−2x²/t}`.

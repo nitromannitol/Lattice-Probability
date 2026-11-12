@@ -8,6 +8,8 @@ import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 import Mathlib.Analysis.Calculus.FDeriv.Measurable
 
 /-!
+# Adapter: DG Theorem 1.5 gives LQGDimension's LFPP exponent (node DIM.L-LD-exponent)
+
 Decision D12 = `decisions/DEC-A.md` D-A1, step 4: `λ = 1 − 2/d_γ − γ²/(2d_γ)` is an LFPP exponent at
 `ξ = γ/d_γ` in the sense of `LQGDimension.IsLFPPExponent` (paths `[0,1] → U = (−2,2)²` from `0`
 to `1`). Lower bound from DG (1.5a) (`D(0,1) ≤ D_LD(0,1)`, more paths), upper bound from DG (1.5b)

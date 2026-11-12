@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppASP
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L7Trunc
 
 /-!
+# Ding–Gwynne App. A: exit bounds for `a_x = p − p_D` (task P2-DG3B)
+
 Continuation of `AppASP`. With `eB ρ τ = (πτ)⁻¹ e^{−ρ²/(9τ)}`:
 
 * `lintegral_sq_compK_le` — if `B(x, ρ) ⊆ D` then `‖a_x(τ)‖₂² ≤ eB ρ τ`: pointwise

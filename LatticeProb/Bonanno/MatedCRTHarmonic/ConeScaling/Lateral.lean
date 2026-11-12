@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.GFFLaw
 import LatticeProb.Bonanno.LQGMetric.Field.GFFInvariance
 
 /-!
+# Dilation invariance of the law of the lateral part of a whole-plane GFF
+
 DMS Def 4.10 and Lemmas 4.2–4.4 : the lateral part
 `h − h_{|·|}(0)` of a whole-plane GFF is the projection onto `H₂(ℂ)` (functions with mean zero on circles
 about `0`); its law is invariant under every fixed dilation `z ↦ r z`. This is the lateral input of

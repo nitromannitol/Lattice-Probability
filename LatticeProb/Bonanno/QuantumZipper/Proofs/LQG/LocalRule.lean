@@ -25,6 +25,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceAS
 import LatticeProb.Bonanno.QuantumZipper.LQG.Local
 
 /-!
+# Local rule (5.1) along the dyadic radii
+
 The transformation rule for adding a continuous function, localized to an open set and along the
 dyadic radii `2^{-k}` only, **without** `IsLQGGood` (compare `GoodSample.qBoundaryMeasure_add_ofFun`,
 which needs the uniform-in-offset limits and the area limit).

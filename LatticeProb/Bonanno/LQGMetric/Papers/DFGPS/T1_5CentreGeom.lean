@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Theorem 1.5: the configurations to which Proposition 3.1 is applied
+
 DFGPS (arXiv:1905.00380, "T"), proof of Theorem 1.5 (T:1659–1723) applies Proposition 3.1
 (T:1414–1420) to squares/annuli around the grid points (Step 1) and, through Axiom V, to the
 distance between the sides of `𝕣𝕊` (Steps 2–3). We use closed boxes `[a,b] ×ℂ [c,d]` as `K₁, K₂`

@@ -30,6 +30,8 @@ import Mathlib.Logic.Equiv.List
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FractionalMoments
 
 /-!
+# M4-P4: boundary log singularities of strength `α < Q`
+
 Blueprint `M4_BLUEPRINT.md`, node M4-P4 (boundary part).
 
 For `s ∈ ℝ` and `α ∈ ℝ` let `ψ(v) = α (−log ‖v − s‖)` and `Y = Z + ofFun ψ`.

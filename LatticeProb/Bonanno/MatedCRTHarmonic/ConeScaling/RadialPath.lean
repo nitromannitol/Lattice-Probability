@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.ConeScaling.RadialLaw
 
 /-!
+# A measurable continuous version of the cone's radial path, independent of the GFF
+
 For the cell model's cone data (`CellScaling.ConeRealization`: a whole-plane GFF `X`, Brownian motions
 `B, B'` with `X ⊥ (B, B')`), the radial path `t ↦ coneRadial γ γ B B' t` (DMS Def 4.10,
 Rem 4.4) involves the last zero of `B'_u + (Q − γ)u`, which is not a measurable functional of the path

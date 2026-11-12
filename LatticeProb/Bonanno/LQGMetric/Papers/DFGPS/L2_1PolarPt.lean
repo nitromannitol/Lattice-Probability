@@ -297,6 +297,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 2.1: the polar formula at a fixed `(ε, z)`
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`) T:715–722: "The functions
 `w ↦ ψ_ε(z−w)` and `w ↦ p_{ε²/2}(z,w)` are each radially symmetric about `z` … Using the circle
 average process we may therefore write in polar coordinates

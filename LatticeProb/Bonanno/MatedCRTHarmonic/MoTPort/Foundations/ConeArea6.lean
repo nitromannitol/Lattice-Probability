@@ -5,6 +5,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaLogSing
 
 /-!
+# Cone area, part 13: the sup-moment bound for an abstract inner process
+
 A process-level version of QuantumZipper's interior sup-moment chain
 (`QuantumZipper/Proofs/LQG/AreaP3bMoment.lean`, `AreaP3bSup.lean`), with the free-boundary field
 `innerS X z δ D R` replaced by an arbitrary jointly measurable process `U : ℕ → ℂ → Ω → ℝ` (the
