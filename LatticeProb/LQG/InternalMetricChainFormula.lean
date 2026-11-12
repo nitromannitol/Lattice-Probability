@@ -27,10 +27,10 @@ theorem IsEuclideanLengthMetric.internalMetric_le_chainInf {D : ℂ → ℂ → 
     internalMetric D U x y ≤ chainInf D U x y := by
   refine le_iInf₂ fun c hc => ?_
   obtain ⟨hρ, hc⟩ := hc
-  have h := hD.internalMetric_chain_le_sum (U := U) (Nat.succ_pos c.1.length) (chainPoint x y c.1)
+  have h := hD.internalMetric_chain_le_sum (U := U) (Nat.succ_pos c.1.length) (listChainPoint x y c.1)
     (fun _ => (c.2 : ℝ)) (fun _ _ => by exact_mod_cast hρ) (fun i hi => (hc i hi).1)
     (fun i hi => (hc i hi).2.trans_le (hD.ratCircleInf_eq _ _).le)
-  rw [chainPoint_zero, chainPoint_length_succ] at h
+  rw [listChainPoint_zero, listChainPoint_length_succ] at h
   exact h
 
 /-- The chain formula: for a Euclidean length metric `D` and an open set `U`, `D(x, y; U) = chainInf D U x y`. -/

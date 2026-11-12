@@ -218,7 +218,7 @@ theorem IsLQGMetric.tendsto_measure_not_forall_internalMetric_weylScaling_corner
     intro k w hw
     obtain ⟨i, hi⟩ := mem_iUnion.1 hw
     obtain ⟨h1, h2⟩ := hQn k i w hi
-    have h := mul_neg_mul_log_norm_le (α := α) hξ.le (hrpos k) h1 h2
+    have h := mul_neg_mul_log_norm_le_annulus (α := α) hξ.le (hrpos k) h1 h2
     have h3 := mul_le_mul_of_nonpos_right (mul_le_mul_of_nonneg_left hααp hξ.le) (hlogr k)
     show ξ * (-α * Real.log ‖w‖) ≤ B k
     rw [hB k]

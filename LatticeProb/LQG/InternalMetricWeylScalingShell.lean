@@ -18,7 +18,7 @@ of the shell cell (of every level), the `E`-internal diameters are at most `ε`.
 
 ## Main statements
 
-* `LatticeProb.LQG.mul_neg_mul_log_norm_le`: the weight bound on an annulus `r ≤ |w| ≤ 3 r`.
+* `LatticeProb.LQG.mul_neg_mul_log_norm_le_annulus`: the weight bound on an annulus `r ≤ |w| ≤ 3 r`.
 * `LatticeProb.LQG.IsLQGMetric.tendsto_measure_not_forall_internalMetric_weylScaling_shell_le`: the probability that
   some subsquare of some shell cell of index `k ≥ K` has `E`-internal diameter larger than `ε` tends to `0`.
 -/
@@ -30,7 +30,7 @@ namespace LatticeProb.LQG
 
 /-- **The weight of a log singularity on an annulus.** If `r ≤ |w| ≤ 3 r` with `r > 0` and `ξ ≥ 0`, then
 `ξ (-α log |w|) ≤ -ξ α log r + ξ |α| log 3`. -/
-theorem mul_neg_mul_log_norm_le {ξ α r : ℝ} (hξ : 0 ≤ ξ) (hr : 0 < r) {w : ℂ} (h1 : r ≤ ‖w‖)
+theorem mul_neg_mul_log_norm_le_annulus {ξ α r : ℝ} (hξ : 0 ≤ ξ) (hr : 0 < r) {w : ℂ} (h1 : r ≤ ‖w‖)
     (h2 : ‖w‖ ≤ 3 * r) : ξ * (-α * Real.log ‖w‖) ≤ -(ξ * α * Real.log r) + ξ * |α| * Real.log 3 := by
   have hL0 : Real.log r ≤ Real.log ‖w‖ := Real.log_le_log hr h1
   have hL3 : Real.log ‖w‖ ≤ Real.log 3 + Real.log r := by
@@ -147,7 +147,7 @@ theorem IsLQGMetric.tendsto_measure_not_forall_internalMetric_weylScaling_shell_
       have hnorm : ‖((t / 2 ^ k : ℝ) : ℂ) * x + (2 ^ k : ℂ)⁻¹ * c‖ = ‖(t : ℂ) * x + c‖ / 2 ^ k := by
         rw [hw, norm_mul, norm_inv, norm_pow, h2, inv_mul_eq_div]
       have hpos : 0 < t / 2 ^ k := by positivity
-      refine mul_neg_mul_log_norm_le hξ.le hpos ?_ ?_
+      refine mul_neg_mul_log_norm_le_annulus hξ.le hpos ?_ ?_
       · rw [hnorm]; gcongr
       · rw [hnorm, ← mul_div_assoc]; gcongr
     refine (hpr k _ _ hB u v).trans ?_

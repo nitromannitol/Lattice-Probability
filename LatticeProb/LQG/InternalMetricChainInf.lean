@@ -34,7 +34,7 @@ noncomputable def ratPoint (q : ℚ × ℚ) : ℂ := ⟨q.1, q.2⟩
 
 /-- The points `x = z₀, z₁, …, z_m = y` of the chain with interior points `l`, where `m = |l| + 1`: `z₀ = x`,
 `z_i = l_{i-1}` for `0 < i ≤ |l|` and `z_i = y` for `i ≥ |l| + 1`. -/
-noncomputable def chainPoint (x y : ℂ) (l : List (ℚ × ℚ)) (i : ℕ) : ℂ :=
+noncomputable def listChainPoint (x y : ℂ) (l : List (ℚ × ℚ)) (i : ℕ) : ℂ :=
   if i = 0 then x else if l.length + 1 ≤ i then y else ratPoint (l.getD (i - 1) 0)
 
 /-- The infimum of `D(z, ·)` over the points `z + ρ e^{iθ}`, `θ ∈ ℚ`, of the circle `∂B(z, ρ)`. -/
@@ -44,44 +44,44 @@ noncomputable def ratCircleInf (D : ℂ → ℂ → ℝ) (z : ℂ) (ρ : ℝ) : 
 /-- `(l, ρ)` is an admissible rational chain from `x` to `y` in `U` for `D`: `ρ > 0`, and for every step `i ≤ |l|`
 the ball `B(z_i, ρ)` lies in `U` and `D(z_i, z_{i+1})` is strictly smaller than `ratCircleInf D z_i ρ`. -/
 def IsRatChain (D : ℂ → ℂ → ℝ) (U : Set ℂ) (x y : ℂ) (l : List (ℚ × ℚ)) (ρ : ℚ) : Prop :=
-  0 < ρ ∧ ∀ i < l.length + 1, ball (chainPoint x y l i) (ρ : ℝ) ⊆ U ∧
-    ENNReal.ofReal (D (chainPoint x y l i) (chainPoint x y l (i + 1))) <
-      ratCircleInf D (chainPoint x y l i) (ρ : ℝ)
+  0 < ρ ∧ ∀ i < l.length + 1, ball (listChainPoint x y l i) (ρ : ℝ) ⊆ U ∧
+    ENNReal.ofReal (D (listChainPoint x y l i) (listChainPoint x y l (i + 1))) <
+      ratCircleInf D (listChainPoint x y l i) (ρ : ℝ)
 
 /-- The `D`-length `∑_{i ≤ |l|} D(z_i, z_{i+1})` of the chain with interior points `l`. -/
 noncomputable def chainSum (D : ℂ → ℂ → ℝ) (x y : ℂ) (l : List (ℚ × ℚ)) : ℝ≥0∞ :=
   ∑ i ∈ Finset.range (l.length + 1),
-    ENNReal.ofReal (D (chainPoint x y l i) (chainPoint x y l (i + 1)))
+    ENNReal.ofReal (D (listChainPoint x y l i) (listChainPoint x y l (i + 1)))
 
 /-- The chain infimum: the infimum of the `D`-lengths of the admissible rational chains from `x` to `y` in `U`. -/
 noncomputable def chainInf (D : ℂ → ℂ → ℝ) (U : Set ℂ) (x y : ℂ) : ℝ≥0∞ :=
   ⨅ (c : List (ℚ × ℚ) × ℚ) (_ : IsRatChain D U x y c.1 c.2), chainSum D x y c.1
 
-theorem chainPoint_zero (x y : ℂ) (l : List (ℚ × ℚ)) : chainPoint x y l 0 = x := by
-  simp [chainPoint]
+theorem listChainPoint_zero (x y : ℂ) (l : List (ℚ × ℚ)) : listChainPoint x y l 0 = x := by
+  simp [listChainPoint]
 
-theorem chainPoint_length_succ (x y : ℂ) (l : List (ℚ × ℚ)) :
-    chainPoint x y l (l.length + 1) = y := by
-  simp [chainPoint]
+theorem listChainPoint_length_succ (x y : ℂ) (l : List (ℚ × ℚ)) :
+    listChainPoint x y l (l.length + 1) = y := by
+  simp [listChainPoint]
 
-/-- A chain `z 0 = x, …, z m = y`, `m > 0`, with rational interior points is `chainPoint x y l` on `[0, m]` for a
+/-- A chain `z 0 = x, …, z m = y`, `m > 0`, with rational interior points is `listChainPoint x y l` on `[0, m]` for a
 list `l` of length `m - 1`. -/
 theorem exists_list_chainPoint_eq {x y : ℂ} {m : ℕ} {z : ℕ → ℂ} (hm : 0 < m) (h0 : z 0 = x)
     (hmy : z m = y) (hrat : ∀ i, 0 < i → i < m → ∃ q : ℚ × ℚ, z i = ⟨q.1, q.2⟩) :
-    ∃ l : List (ℚ × ℚ), l.length + 1 = m ∧ ∀ i ≤ m, chainPoint x y l i = z i := by
+    ∃ l : List (ℚ × ℚ), l.length + 1 = m ∧ ∀ i ≤ m, listChainPoint x y l i = z i := by
   classical
   let q : ℕ → ℚ × ℚ := fun i => if h : 0 < i ∧ i < m then (hrat i h.1 h.2).choose else 0
   have hlen : ((List.range (m - 1)).map fun j => q (j + 1)).length + 1 = m := by
     simp only [List.length_map, List.length_range]; omega
   refine ⟨(List.range (m - 1)).map fun j => q (j + 1), hlen, fun i hi => ?_⟩
   rcases Nat.eq_zero_or_pos i with hi0 | hi0
-  · rw [hi0, chainPoint, ite_eq_left rfl, h0]
+  · rw [hi0, listChainPoint, ite_eq_left rfl, h0]
   rcases eq_or_lt_of_le hi with him | him
-  · rw [him, hmy, chainPoint, ite_eq_right hm.ne', ite_eq_left hlen.le]
+  · rw [him, hmy, listChainPoint, ite_eq_right hm.ne', ite_eq_left hlen.le]
   · have hnle : ¬ ((List.range (m - 1)).map fun j => q (j + 1)).length + 1 ≤ i := by omega
     have hlt : i - 1 < m - 1 := by omega
     have hq : q i = (hrat i hi0 him).choose := dite_eq_left ⟨hi0, him⟩
-    rw [chainPoint, ite_eq_right hi0.ne', ite_eq_right hnle, List.getD_eq_getElem?_getD, List.getElem?_map,
+    rw [listChainPoint, ite_eq_right hi0.ne', ite_eq_right hnle, List.getD_eq_getElem?_getD, List.getElem?_map,
       List.getElem?_range hlt]
     simp only [Option.map_some, Option.getD_some]
     rw [Nat.sub_add_cancel (by omega : 1 ≤ i), hq]
