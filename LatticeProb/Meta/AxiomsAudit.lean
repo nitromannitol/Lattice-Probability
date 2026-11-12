@@ -301,10 +301,8 @@ library.
 #print axioms LatticeProb.Sobolev.exists_sobolevNormSqHigh_le
 #print axioms LatticeProb.Sobolev.isBandLimited_mono
 #print axioms LatticeProb.Sobolev.rellichKondrachov_iff_rkLowFrequencyStatement
-#print axioms LatticeProb.Sobolev.rellichKondrachov_of_rkBandLimitedCmNet
 #print axioms LatticeProb.Sobolev.rellichKondrachov_of_rkLowFrequencyStatement
 #print axioms LatticeProb.Sobolev.rk_finite_net_of_Cm_net
-#print axioms LatticeProb.Sobolev.rkLowFrequencyStatement_of_rkBandLimitedCmNet
 #print axioms LatticeProb.Sobolev.rkResidual_diff_bound
 #print axioms LatticeProb.Sobolev.rkResidual_holds
 #print axioms LatticeProb.Sobolev.sobolevNormSqHigh_eq_zero_of_isBandLimited
@@ -571,8 +569,6 @@ library.
 
 /-! ### The sound low-frequency glue (domain-restricted) -/
 
-#print axioms LatticeProb.Sobolev.rkLowFreqNet_of_truncation_and_supportRepair
-#print axioms LatticeProb.Sobolev.rellichKondrachovNegSobolev_of_truncation_and_supportRepair
 #print axioms LatticeProb.Sobolev.lipschitz_of_norm_iteratedFDeriv_one_le
 #print axioms LatticeProb.Sobolev.exists_finite_supNet_of_uniformLip_of_proper
 #print axioms LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrunc

@@ -1,13 +1,5 @@
 /-
-# The falsity of the unrestricted low-frequency support repair: the analytic core
-
-`LatticeProb.Sobolev.BandLimitedTestFnApprox` (`RellichLowFreqGlue.lean`) ranges over *every*
-compactly supported `φ` while demanding a *fixed* net of test functions on the bounded domain `D`.
-It is false: a bump translated to infinity is not covered, because the projection of the translate
-keeps a fixed `H^{s₀}` size while its oscillatory pairing with any fixed `D`-supported test
-function tends to `0`.
-
-This module lands the three analytic facts the refutation rests on.
+# Translation invariance and an oscillation bound for the Fourier-side Sobolev norm
 
 * `sobolevNormSq_comp_sub`: the Fourier-side Sobolev norm is translation-invariant, because a
   translation multiplies the Fourier transform by a phase of modulus one.
@@ -17,14 +9,6 @@ This module lands the three analytic facts the refutation rests on.
   `p‖α‖²` integral minus the absolute value of the oscillatory pairing `∫ 2 p Re (α conj β)`.
   This is the algebraic lower bound that keeps the oscillation, so that the bound does not
   degrade with the size of the test function `β`.
-
-The remaining assembly is the fixed-data construction (`d = 1`, `D` a bounded domain, a fixed
-bump, the normalisation, and the choice of the accuracy below the fixed level), the identification
-of the Fourier transform of a translated projection through `fourier_bandProj` and
-`fourier_comp_add_right_lift`, the positivity of the fixed level, and the Riemann–Lebesgue limit
-`tendsto_integral_exp_inner_smul_cocompact` of the oscillatory pairing.  The pointwise-at-zero
-route is *not* enough: a test function on `D` may carry an arbitrarily large `L¹` norm and so can
-match the projection locally; it is the global oscillation of the translate that defeats the net.
 -/
 import LatticeProb.Analysis.Sobolev.FejerLimit
 import LatticeProb.Analysis.Sobolev.Scaling

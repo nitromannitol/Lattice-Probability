@@ -1,5 +1,5 @@
 /-
-# Rellich–Kondrachov: the low-frequency net, corrected
+# Rellich–Kondrachov: the low-frequency net
 
 The Rellich–Kondrachov argument on a bounded domain `D` has three steps:
 truncate in frequency, cover the band-limited remainder by a finite net, and
@@ -8,31 +8,12 @@ assemble with the triangle inequality.  The frequency-truncation step
 quantitative Fourier-decay residual that converts `C^m`-closeness into
 `H^{s₀}`-closeness (`rkResidual_holds`, `RellichEstimate.lean`) are proved.
 
-## Erratum: the `C^m`-net residual of `RellichBandLimited.lean` is false
-
-`rkBandLimitedCmNet` asserts that the whole unit ball of `H^s(D)` admits a finite
-`C^m`-net of test functions on `D`, for every `m`.  That is false for every
-`s < m`: the `H^s` unit ball is *not* `C^m`-bounded.  Take a fixed nonnegative
-`ρ ∈ C_c^∞(D)` with `ρ = 1` on a small ball and `∫ ρ ≠ 0`, and put
-`u_N(x) = N^{-M} sin (N x₁) ρ(x)`.  Its Fourier transform is concentrated at
-`‖ξ‖ ≈ N`, so `‖u_N‖_{H^s} ≈ N^{s - M} → 0` once `M > s`, while
-`‖∂₁^m u_N‖_∞ ≈ N^{m - M} → ∞` once `M < m`.  Choosing `s < M < m` gives an
-`H^s`-bounded family that is unbounded in `C^m`, so no finite `C^m`-net can
-exist.  (In particular the family need not be band-limited, and adding an
-`IsBandLimited` hypothesis does not repair the statement: a nonzero compactly
-supported function has an entire Fourier transform and cannot vanish on the open
-complement of a ball, so it would be band-limited only if it were zero.)
-
-The reduction `rkLowFrequencyStatement_of_rkBandLimitedCmNet` is therefore a
-valid implication from a false premise, and its docstring's claim that
-`rkBandLimitedCmNet` is "exactly the compactness input" is not correct.
-
-## The corrected residual
+## The low-frequency residual
 
 The content the classical proof actually needs is *low-frequency compactness*:
 once a cutoff `Λ` has made the high-frequency part of the `H^{s₀}` norm small,
 the remaining (low-frequency) part of the unit ball is totally bounded.  This is
-stated below as `rkLowFreqNet`, without the false `C^m` demand and without
+stated below as `rkLowFreqNet`, without any `C^m` demand and without
 requiring the net centres to be band-limited: the centres are test functions on
 `D`, and only the inputs of the finite net are constrained to have small
 high-frequency part.  `rkLowFrequencyStatement_of_rkLowFreqNet` is the glue: it
@@ -60,12 +41,11 @@ namespace LatticeProb.Sobolev
 at most `δ/2` is covered by finitely many `δ`-balls in the `H^{s₀}` norm, with
 centres that are test functions on `D`.
 
-This is the corrected form of the low-frequency step: the hypothesis bounds the
+This is the form of the low-frequency step: the hypothesis bounds the
 part of the norm that the truncation step discards, and the conclusion is exactly
 the low-frequency compactness that the finite-net assembly consumes.  It is
 strictly weaker than `rkLowFrequencyStatement` (the high-frequency smallness is
-an extra hypothesis) and it does not demand any `C^m` bound, so it is not
-refuted by the oscillating family that kills `rkBandLimitedCmNet`. -/
+an extra hypothesis) and it does not demand any `C^m` bound. -/
 def rkLowFreqNet : Prop :=
   ∀ (d : ℕ) (D : Set (Space d)), IsDomain D → ∀ (s₀ s : ℝ), s₀ < s →
     ∀ Λ : ℝ, 0 ≤ Λ → ∀ δ : ℝ, 0 < δ →

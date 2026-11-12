@@ -1,13 +1,8 @@
 /-
-# A different low-frequency compactness route: uniform translation-continuity
+# A low-frequency compactness route: uniform translation-continuity
 
-The support-repair residuals `BandLimitedTestFnApproxOnDomain` and
-`BandCentreSupportRepair` are **false** (`LatticeProbAudit/RELLICH-LOWFREQ-SUPPORT-REPAIR.md`,
-commit `f73b92a`): a nonzero band-limited projection is not `H^{s₀}`-close to a test
-function on a fixed bounded domain, because the latter vanishes off `D`.  The residual must
-approximate the test function `φ` **itself**.
-
-This module opens the classical **Fréchet–Kolmogorov** route to that statement: the
+The low-frequency residual approximates the test function `φ` itself.  This module opens the
+classical **Fréchet–Kolmogorov** route to that statement: the
 `H^s`-unit ball of `C_c^∞(D)` is relatively compact in `H^{s₀}(ℝ^d)` for `s₀ < s`, and the
 proof needs, besides boundedness and the fixed compact support,
 
