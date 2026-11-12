@@ -20,9 +20,7 @@ errors smaller than the accuracy.  The bounding step is the Young convolution in
 weighted `L²` norm, which Mathlib does not contain: the library records this absence at
 `LatticeProb/Analysis/Sobolev/BandLimitedCmBound.lean:187` and at
 `LatticeProb/Analysis/Sobolev/TestFnApprox.lean:45`.  Those two references are citations of the
-Mathlib gap only.  They are not a route, and this file does not mention or use
-`BandLimitedTestFnApproxOnDomain`, `BandCentreSupportRepair`, `rkUniformCmNet` or `BandLimitedCmNet`,
-all of which are refuted on the record; the hypotheses of this file are the uniform
+Mathlib gap only.  The hypotheses of this file are the uniform
 translation-continuity, which is already proved as `sobolevNormSq_translate_sub_le`, and the
 convolution structure of `convReal`.  This file registers nothing.
 -/

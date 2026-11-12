@@ -492,7 +492,6 @@ import LatticeProb.Analysis.Sobolev.HighFrequency
 import LatticeProb.Analysis.Sobolev.RellichEstimate
 import LatticeProb.Analysis.Sobolev.RellichEquiv
 import LatticeProb.Analysis.Sobolev.RellichNet
-import LatticeProb.Analysis.Sobolev.RellichBandLimited
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
 import LatticeProb.Analysis.Sobolev.RellichLowFreq
 import LatticeProb.Analysis.Sobolev.Truncation
@@ -525,7 +524,7 @@ import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyResidual
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyGap
 import LatticeProb.Analysis.Sobolev.BandProjectionConsume
 import LatticeProb.Analysis.Sobolev.ConvolutionStructure
-import LatticeProb.Analysis.Sobolev.SupportRepairFalsity
+import LatticeProb.Analysis.Sobolev.SobolevNormTranslation
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorov
 import LatticeProb.Analysis.Sobolev.FourierCharPhase
 import LatticeProb.Analysis.Sobolev.RellichCmNetSupply
@@ -547,7 +546,6 @@ import LatticeProb.Analysis.Sobolev.Compact
 import LatticeProb.Analysis.Sobolev.TightTransfer
 import LatticeProb.Analysis.Sobolev.RellichLowFreq
 import LatticeProb.Analysis.Sobolev.RellichMollify
-import LatticeProb.Analysis.Sobolev.RellichAssembly
 import LatticeProb.Analysis.Sobolev.RellichNonzeroConsumer
 import LatticeProb.Analysis.Sobolev.RellichCmNetReduction
 import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
