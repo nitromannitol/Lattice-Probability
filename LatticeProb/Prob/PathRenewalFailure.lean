@@ -9,7 +9,7 @@ import LatticeProb.Prob.StopFunctional
 Let `μ₀` be the law on path space of Brownian motion with drift `mu` started at `0`.  Let `ρ` be a
 stopping functional (the end of an *attempt*) which is finite `μ₀`-almost surely, and `S` an event
 decided by the path stopped at `ρ` (*success*).  Suppose a functional `F ≤ 1` satisfies
-`F w = F (shiftPath (ρ w) w)` on a failed attempt (after a failure the path restarts from `0`).
+`F w = F (shiftPath (ρ w) w)` on a failed attempt (for paths starting at `0`) (after a failure the path restarts from `0`).
 Then the strong Markov property at `ρ` gives the renewal equation
 `∫ F = ∫_S F + μ₀(Sᶜ) ∫ F`, that is
 `μ₀(S) · ∫ F dμ₀ = ∫_S F dμ₀`.
@@ -43,7 +43,8 @@ theorem driftLaw_mul_lintegral_eq_setLIntegral [IsProbabilityMeasure P]
     {S : Set C(ℝ≥0, ℝ)} (hS : MeasurableSet S)
     (hSρ : ∀ w, ρ w ≠ ⊤ → (stopAt (ρ w) w ∈ S ↔ w ∈ S))
     {F : C(ℝ≥0, ℝ) → ℝ≥0∞} (hF : Measurable F) (hF1 : ∀ w, F w ≤ 1)
-    (hfail : ∀ w, ρ w ≠ ⊤ → w ∉ S → F w = F (shiftPath (ρ w).toNNReal w)) :
+    (hfail : ∀ w : C(ℝ≥0, ℝ), w 0 = 0 → ρ w ≠ ⊤ → w ∉ S →
+      F w = F (shiftPath (ρ w).toNNReal w)) :
     driftLaw P B hcont mu S * ∫⁻ w, F w ∂(driftLaw P B hcont mu)
       = ∫⁻ w in S, F w ∂(driftLaw P B hcont mu) := by
   set μ := driftLaw P B hcont mu with hμ
@@ -86,15 +87,22 @@ theorem driftLaw_mul_lintegral_eq_setLIntegral [IsProbabilityMeasure P]
     simp [hAdef, this]
   have key := lintegral_mul_shift_restart hB hm hcont hXad hXc hXinc (τ' := ρ) hρm
     (isStoppingTime_of_isStopFun hXad hXc hρm hρ) hA hF hAstop hAtop
-  have hpt : ∀ w : C(ℝ≥0, ℝ), A w * F (shiftPath (ρ w).toNNReal w) = A w * F w := fun w => by
+  have hpt : ∀ w : C(ℝ≥0, ℝ), w 0 = 0 →
+      A w * F (shiftPath (ρ w).toNNReal w) = A w * F w := fun w hw0 => by
     by_cases h : w ∈ Sf
     · have h' := (hmemSf w).1 h
       simp only [hAdef, Set.indicator_of_mem h, Pi.one_apply, one_mul]
-      exact (hfail w h'.1 h'.2).symm
+      exact (hfail w hw0 h'.1 h'.2).symm
     · simp [hAdef, Set.indicator_of_notMem h]
+  have hB0 : ∀ᵐ ω ∂P, B 0 ω = 0 :=
+    hB.toIsPreBrownianReal.eval_zero_ae_eq_zero.mono fun ω h => h
   have e1 : ∫⁻ ω, A (pathMap X hXc ω) * F (shiftPath (ρ (pathMap X hXc ω)).toNNReal
       (pathMap X hXc ω)) ∂P = ∫⁻ w in Sf, F w ∂μ := by
-    simp_rw [hpt]
+    have hpt' : ∀ᵐ ω ∂P, A (pathMap X hXc ω) * F (shiftPath (ρ (pathMap X hXc ω)).toNNReal
+        (pathMap X hXc ω)) = A (pathMap X hXc ω) * F (pathMap X hXc ω) := by
+      filter_upwards [hB0] with ω h0
+      exact hpt _ (by simp [pathMap_apply, hX, h0])
+    rw [lintegral_congr_ae hpt']
     rw [htr (G := fun w => A w * F w) (hA.mul hF)]
     simp_rw [hAdef]
     rw [← lintegral_indicator hSfm]
