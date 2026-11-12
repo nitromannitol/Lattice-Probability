@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Dimension.GMCIdent3Law at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Dimension.GMCIdent3Law at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent2Circ
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCSqExist
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.WedgeRestriction
@@ -199,6 +198,23 @@ lemma eventually_integral_areaApprox_circExt (γ : ℝ) (x : FieldSample) {f : �
   obtain ⟨k₀, hk₀⟩ := exists_radius_le hs
   filter_upwards [eventually_ge_atTop k₀] with k hk
   exact integral_areaApprox_circExt γ (by linarith [hk₀ k hk, radius_pos k]) x hfS
+
+theorem isVagueLimitOn_circExt_iff (γ : ℝ) (x : FieldSample) (μ : Measure ℂ) :
+    IsVagueLimitOn openSquare (areaApprox γ (circExt (circVec x))) μ ↔
+      IsVagueLimitOn openSquare (areaApprox γ x) μ := by
+  unfold IsVagueLimitOn
+  refine and_congr Iff.rfl (and_congr Iff.rfl (forall_congr' fun f => ?_))
+  refine imp_congr_right fun _ => imp_congr_right fun hfc => imp_congr_right fun hfU => ?_
+  exact tendsto_congr' (eventually_integral_areaApprox_circExt γ x hfc hfU)
+
+/-- **(T2)** the LQG measure on `𝕍` depends on the field only through its circle family -/
+theorem qAreaMeasureOn_circExt (γ : ℝ) (x : FieldSample) :
+    qAreaMeasureOn γ (circExt (circVec x)) openSquare = qAreaMeasureOn γ x openSquare := by
+  have e : IsVagueLimitOn openSquare (areaApprox γ (circExt (circVec x))) =
+      IsVagueLimitOn openSquare (areaApprox γ x) :=
+    funext fun μ => propext (isVagueLimitOn_circExt_iff γ x μ)
+  unfold qAreaMeasureOn
+  rw [e]
 
 end GMCIdent3
 end LQGMetric

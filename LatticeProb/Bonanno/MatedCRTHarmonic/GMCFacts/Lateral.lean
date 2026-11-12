@@ -7,6 +7,7 @@ import LatticeProb.Bonanno.LQGMetric.Field.MarkovNorm
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.SpatialIndepCirc
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea7
 import LatticeProb.Bonanno.MatedCRTHarmonic.CellScaling.ConeDefs
+import LatticeProb.Bonanno.LQGMetric.Field.MarkovGermVerPot
 
 /-!
 # The lateral part of a whole-plane GFF paired with a test function

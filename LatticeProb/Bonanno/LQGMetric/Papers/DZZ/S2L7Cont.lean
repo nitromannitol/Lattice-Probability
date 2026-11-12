@@ -4,6 +4,7 @@
    Imports of copied modules that this file does not need are replaced by their own imports. -/
 import LatticeProb.Bonanno.LQGMetric.Field.WhiteNoisePsi
 import Mathlib.Analysis.Complex.ExponentialBounds
+import LatticeProb.Bonanno.LQGMetric.Field.WhiteNoisePsiCont
 
 /-!
 # Continuous versions of white-noise fields with `1/2`-Hölder kernels (P2-DZZPRE, WP-112)

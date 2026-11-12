@@ -1,7 +1,7 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S2.Bilip at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   source module LQGMetric.Papers.GM.S2.Bilip at commit fdb5cad; only the module paths of local imports are changed. -/
+import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.BilipLocal
+import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightA
 import LatticeProb.Bonanno.LQGMetric.Blueprint.M2Defs
 import LatticeProb.Bonanno.LQGMetric.Statement.LQGMetric
 import Mathlib.Analysis.SpecialFunctions.Log.Base
@@ -77,7 +77,6 @@ import Mathlib.Probability.CondVar
 import Mathlib.Probability.Moments.Variance
 import LatticeProb.Bonanno.LQGMetric.Field.Measurable
 import LatticeProb.Bonanno.LQGMetric.Metric.Internal
-import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightA
 
 /-!
 # GM Proposition 2.2: weak LQG metrics with the same scaling constants are bi-Lipschitz
@@ -171,7 +170,52 @@ lemma isBounded_annulus_zero (a b : ℝ) : Bornology.IsBounded (annulus 0 a b : 
   Metric.isBounded_ball.subset fun w hw => by
     rw [mem_ball_zero_iff]; simpa using hw.2
 
+lemma sphere_subset_annulus_zero {a ρ b : ℝ} (ha : a < ρ) (hb : ρ < b) :
+    Metric.sphere (0 : ℂ) ρ ⊆ (annulus 0 a b : Set ℂ) := fun w hw => by
+  rw [mem_sphere_zero_iff_norm] at hw
+  exact ⟨by rw [sub_zero, hw]; exact ha, by rw [sub_zero, hw]; exact hb⟩
+
 /-! ## Probability bookkeeping -/
+
+lemma ofReal_le_of_compl_le {Ω : Type} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {E : Set Ω} {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
+    (h : P Eᶜ ≤ ENNReal.ofReal (1 - q)) : ENNReal.ofReal q ≤ P E := by
+  have h1 : (1 : ℝ≥0∞) ≤ P E + P Eᶜ :=
+    calc (1 : ℝ≥0∞) = P univ := measure_univ.symm
+      _ = P (E ∪ Eᶜ) := by rw [union_compl_self]
+      _ ≤ P E + P Eᶜ := measure_union_le _ _
+  have h2 : ENNReal.ofReal q + ENNReal.ofReal (1 - q) = 1 := by
+    rw [← ENNReal.ofReal_add hq0 (by linarith), add_sub_cancel, ENNReal.ofReal_one]
+  refine (ENNReal.add_le_add_iff_right (ENNReal.ofReal_ne_top (r := 1 - q))).1 ?_
+  rw [h2]
+  exact h1.trans (add_le_add le_rfl h)
+
+lemma measurableSet_bilip {D D' : DistC → ContMetric} (hD : Measurable D) (hD' : Measurable D')
+    (C : ℝ) : MeasurableSet {g : DistC | ∀ u v : ℂ,
+      C⁻¹ * (D g).1 (u, v) ≤ (D' g).1 (u, v) ∧ (D' g).1 (u, v) ≤ C * (D g).1 (u, v)} := by
+  obtain ⟨Q, hQc, hQd⟩ := TopologicalSpace.exists_countable_dense (ℂ × ℂ)
+  have ev : ∀ E : DistC → ContMetric, Measurable E → ∀ p : ℂ × ℂ, Measurable fun g => (E g).1 p :=
+    fun E hE p => (continuous_eval_const p).measurable.comp (measurable_subtype_coe.comp hE)
+  have e : {g : DistC | ∀ u v : ℂ,
+      C⁻¹ * (D g).1 (u, v) ≤ (D' g).1 (u, v) ∧ (D' g).1 (u, v) ≤ C * (D g).1 (u, v)} =
+      ⋂ p ∈ Q, {g | C⁻¹ * (D g).1 p ≤ (D' g).1 p ∧ (D' g).1 p ≤ C * (D g).1 p} := by
+    ext g
+    simp only [mem_setOf_eq, mem_iInter]
+    constructor
+    · intro h p _
+      exact h p.1 p.2
+    · intro h u v
+      have hcl : IsClosed {p : ℂ × ℂ | C⁻¹ * (D g).1 p ≤ (D' g).1 p ∧
+          (D' g).1 p ≤ C * (D g).1 p} :=
+        (isClosed_le (continuous_const.mul (D g).1.continuous) (D' g).1.continuous).inter
+          (isClosed_le (D' g).1.continuous (continuous_const.mul (D g).1.continuous))
+      have := hcl.closure_subset_iff.2 fun p hp => h p hp
+      rw [hQd.closure_eq] at this
+      exact this (mem_univ (u, v))
+  rw [e]
+  exact MeasurableSet.biInter hQc fun p _ =>
+    (measurableSet_le ((ev D hD p).const_mul _) (ev D' hD' p)).inter
+      (measurableSet_le (ev D' hD' p) ((ev D hD p).const_mul _))
 
 /-! ## One direction on a fixed probability space (GM l. 927–936) -/
 

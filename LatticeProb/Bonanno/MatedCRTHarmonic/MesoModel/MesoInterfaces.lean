@@ -142,6 +142,11 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMExistence
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.IsCorrelatedBM2
 import Mathlib.Probability.Distributions.Gaussian.Multivariate
 import Mathlib.Probability.Process.FiniteDimensionalLaws
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.TopoJaniszewski
+import LatticeProb.Bonanno.LQGMetric.Complex.JordanMapCurve
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.KoebeDistortion
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Thm11.FrozenLocalDynkin
+import LatticeProb.Bonanno.QuantumZipper.Proofs.ItoLite.Dynkin
 
 /-!
 # Inputs for mesoscopic cell-model estimates

@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Gaussian.ConcentrationVector at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Gaussian.ConcentrationVector at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Gaussian.ConcentrationDZZ
 import LatticeProb.Bonanno.LQGMetric.Gaussian.PittVector
 
@@ -69,6 +68,32 @@ lemma measureReal_preimage_eq {v : Fin n → EuclideanSpace ℝ (Fin n)} (hX : H
     (continuous_pi fun i => continuous_const.inner continuous_id).measurable
   rw [measureReal_def, measureReal_def, ← Measure.map_apply_of_aemeasurable hX.aemeasurable hS,
     hmap, Measure.map_apply hg hS]
+
+/-- Strong form: `P(inf_{x∈B} |X - x|_∞ ≥ λ) ≤ exp (-(λ - Cσ)² / (2σ²))` with `C ≥ 1`. -/
+theorem dzz_lemma21_strong (c : ℝ) (hc : 0 < c) : ∃ C : ℝ, 1 ≤ C ∧ ∀ (Ω : Type)
+    [MeasurableSpace Ω] (P : Measure Ω) (n : ℕ) (X : Ω → Fin n → ℝ), HasGaussianLaw X P →
+    (∀ i, ∫ ω, X ω i ∂P = 0) → ∀ σ : ℝ, 0 ≤ σ → σ ^ 2 = (⨆ i, Var[fun ω => X ω i; P]) →
+    ∀ B : Set (Fin n → ℝ), c ≤ P.real {ω | X ω ∈ B} → ∀ lam : ℝ, C * σ ≤ lam →
+    P.real {ω | lam ≤ infDist (X ω) B} ≤ exp (-(lam - C * σ) ^ 2 / (2 * σ ^ 2)) := by
+  obtain ⟨C, hC1, hC⟩ := dzz_lemma21_gram c hc
+  refine ⟨C, hC1, ?_⟩
+  intro Ω _ P n X hX h0 σ hσ hσ2 B hB lam hlam
+  have := hX.isProbabilityMeasure
+  obtain ⟨v, hv, hmap⟩ := exists_gramVec_of_centered hX h0
+  have hvσ : ∀ i, ‖v i‖ ≤ ((⟨σ, hσ⟩ : ℝ≥0) : ℝ) := norm_le_of_sq_eq_iSup hv hσ hσ2
+  have hB' : c ≤ (stdGaussian (EuclideanSpace ℝ (Fin n))).real {z | gramVec v z ∈ closure B} := by
+    have h1 : P.real {ω | X ω ∈ B} ≤ P.real (X ⁻¹' closure B) :=
+      measureReal_mono (fun ω hω => subset_closure hω)
+    rw [measureReal_preimage_eq hX hmap isClosed_closure.measurableSet] at h1
+    exact hB.trans h1
+  have h := hC _ n v ⟨σ, hσ⟩ hvσ (closure B) hB' lam hlam
+  simp only [infDist_closure] at h
+  have hmeas : MeasurableSet {x : Fin n → ℝ | lam ≤ infDist x B} :=
+    measurableSet_le measurable_const (continuous_infDist_pt B).measurable
+  have e := measureReal_preimage_eq hX hmap hmeas
+  simp only [preimage_setOf_eq] at e
+  rw [e]
+  exact h
 
 /-- **Borell–TIS inequality for a centered Gaussian vector** (Adler–Taylor, Thm 2.1.1, finite
 `T`): with `σ² = max_i Var X_i` and `u ≥ 0`,

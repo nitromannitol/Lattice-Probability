@@ -3,9 +3,7 @@
    Declarations, examples and checks that the copied results do not use are omitted.
    Imports of copied modules that this file does not need are replaced by their own imports.
    Opens of namespaces with no copied declaration are removed (WedgeTK). -/
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularClosure
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSampleKolmogorov
-import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Admissible
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSample
 import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.CircleMeanValue
 import LatticeProb.Bonanno.QuantumZipper.GFF.Defs
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
@@ -32,6 +30,9 @@ import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceVague
 import Mathlib.MeasureTheory.Measure.HasOuterApproxClosed
 import Mathlib.Probability.Independence.Basic
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularClosure
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSampleKolmogorov
+import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Admissible
 
 /-!
 # WEDGE-ADDCONST (3): scale invariance of the lateral part under an independent random factor

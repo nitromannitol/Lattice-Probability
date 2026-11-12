@@ -1,8 +1,7 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Dimension.GMCIdent3Wn at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   source module LQGMetric.Dimension.GMCIdent3Wn at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent3Vague
+import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdentL1
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCSqExist
 
 /-!
@@ -88,6 +87,94 @@ theorem avgReg_ae_eq_wn [IsProbabilityMeasure P] (hX : IsZeroBoundaryGFFOn openS
   rfl
 
 /-! ## `L¹` data -/
+
+lemma exists_integral_areaApprox_circExt (γ : ℝ) {f : ℂ → ℝ} (hfc : HasCompactSupport f)
+    (hfU : tsupport f ⊆ openSquare) : ∃ k₁ : ℕ, ∀ k, k₁ ≤ k → ∀ x : FieldSample,
+      ∫ z, f z ∂(areaApprox γ (circExt (circVec x)) k) = ∫ z, f z ∂(areaApprox γ x k) := by
+  obtain ⟨s, hs, hTs⟩ := exists_sqIn_of_isCompact hfc.isCompact hfU
+  have hfS : ∀ z ∉ sqIn s, f z = 0 := fun z hz =>
+    image_eq_zero_of_notMem_tsupport fun h => hz (hTs h)
+  obtain ⟨k₀, hk₀⟩ := exists_radius_le hs
+  exact ⟨k₀, fun k hk x =>
+    integral_areaApprox_circExt γ (by linarith [hk₀ k hk, radius_pos k]) x hfS⟩
+
+lemma eLpNorm_comp_wn_eq (hX : IsZeroBoundaryGFFOn openSquare X P) (hW : IsWhiteNoise P' W)
+    {F : (CircIdx → ℝ) → ℝ} (hF : AEStronglyMeasurable F (circLaw P X)) (p : ℝ≥0∞) :
+    eLpNorm (fun ω => F (wnCircVec W ω)) p P' = eLpNorm (fun ω => F (circVec (X ω))) p P := by
+  have hm : Measurable fun ω => circVec (X ω) := measurable_circVec.comp (measurable_field hX)
+  have hF' : AEStronglyMeasurable F (P'.map (wnCircVec W)) := by
+    rw [← map_circVec_eq hX hW]; exact hF
+  have e1 : eLpNorm (fun ω => F (wnCircVec W ω)) p P' = eLpNorm F p (P'.map (wnCircVec W)) :=
+    (eLpNorm_map_measure hF' (measurable_wnCircVec hW).aemeasurable).symm
+  have e2 : eLpNorm F p (circLaw P X) = eLpNorm (fun ω => F (circVec (X ω))) p P :=
+    eLpNorm_map_measure hF hm.aemeasurable
+  rw [e1, ← map_circVec_eq hX hW]; exact e2
+
+lemma integrable_comp_wn_iff (hX : IsZeroBoundaryGFFOn openSquare X P) (hW : IsWhiteNoise P' W)
+    {F : (CircIdx → ℝ) → ℝ} (hF : AEStronglyMeasurable F (circLaw P X)) :
+    Integrable (fun ω => F (wnCircVec W ω)) P' ↔ Integrable (fun ω => F (circVec (X ω))) P := by
+  have hm : Measurable fun ω => circVec (X ω) := measurable_circVec.comp (measurable_field hX)
+  have hF' : AEStronglyMeasurable F (P'.map (wnCircVec W)) := by
+    rw [← map_circVec_eq hX hW]; exact hF
+  have e1 : Integrable (fun ω => F (wnCircVec W ω)) P' ↔ Integrable F (P'.map (wnCircVec W)) :=
+    (integrable_map_measure hF' (measurable_wnCircVec hW).aemeasurable).symm
+  have e2 : Integrable F (circLaw P X) ↔ Integrable (fun ω => F (circVec (X ω))) P :=
+    integrable_map_measure hF hm.aemeasurable
+  rw [e1, ← map_circVec_eq hX hW]; exact e2
+
+lemma aestronglyMeasurable_integral_qArea [IsProbabilityMeasure P]
+    (hX : IsZeroBoundaryGFFOn openSquare X P) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2) {f : ℂ → ℝ}
+    (hf : Continuous f) (hfc : HasCompactSupport f) (hfU : tsupport f ⊆ openSquare) :
+    AEStronglyMeasurable (fun v => ∫ z, f z ∂(qAreaMeasureOn γ (circExt v) openSquare))
+      (circLaw P X) := by
+  have hΦ : ∀ k, StronglyMeasurable fun v : CircIdx → ℝ =>
+      ∫ z, f z ∂(areaApprox γ (circExt v) k) := fun k =>
+    ((measurable_integral_areaApprox_cpt γ k hf hfc hfU).comp measurable_circExt).stronglyMeasurable
+  refine ⟨fun v => limUnder atTop fun k => ∫ z, f z ∂(areaApprox γ (circExt v) k),
+    StronglyMeasurable.limUnder hΦ, ?_⟩
+  filter_upwards [ae_isVagueLimitOn_circExt hX hγ hγ2] with v h
+  exact ((h.2.2 f hf hfc hfU).limUnder_eq).symm
+
+/-- **`L¹` convergence for the white-noise field** (transfer of `tendsto_eLpNorm_areaApprox_sub`) -/
+theorem tendsto_eLpNorm_areaApprox_sub_wn [IsProbabilityMeasure P]
+    (hX : IsZeroBoundaryGFFOn openSquare X P) (hW : IsWhiteNoise P' W) {γ : ℝ} (hγ : 0 < γ)
+    (hγ2 : γ < 2) {f : ℂ → ℝ} (hf : Continuous f) (hfc : HasCompactSupport f)
+    (hfU : tsupport f ⊆ openSquare) :
+    ∃ k₀ : ℕ, (∀ k, k₀ ≤ k →
+        Integrable (fun ω => ∫ z, f z ∂(areaApprox γ (wnField W ω) k)) P') ∧
+      Integrable (fun ω => ∫ z, f z ∂(qAreaMeasureOn γ (wnField W ω) openSquare)) P' ∧
+      Tendsto (fun k => eLpNorm ((fun ω => ∫ z, f z ∂(areaApprox γ (wnField W ω) (k₀ + k))) -
+        fun ω => ∫ z, f z ∂(qAreaMeasureOn γ (wnField W ω) openSquare)) 1 P') atTop (𝓝 0) := by
+  obtain ⟨k₀, hint, hYl, hL1⟩ := tendsto_eLpNorm_areaApprox_sub hX hγ hγ2 hf hfc hfU
+  obtain ⟨k₁, hk₁⟩ := exists_integral_areaApprox_circExt γ hfc hfU
+  set Φ : ℕ → (CircIdx → ℝ) → ℝ := fun k v => ∫ z, f z ∂(areaApprox γ (circExt v) k)
+  set Ψ : (CircIdx → ℝ) → ℝ := fun v => ∫ z, f z ∂(qAreaMeasureOn γ (circExt v) openSquare)
+  have hΦm : ∀ k, AEStronglyMeasurable (Φ k) (circLaw P X) := fun k =>
+    ((measurable_integral_areaApprox_cpt γ k hf hfc hfU).comp measurable_circExt).aestronglyMeasurable
+  have hΨm : AEStronglyMeasurable Ψ (circLaw P X) :=
+    aestronglyMeasurable_integral_qArea hX hγ hγ2 hf hfc hfU
+  have eX : ∀ k, k₁ ≤ k → (fun ω => Φ k (circVec (X ω))) =
+      fun ω => ∫ z, f z ∂(areaApprox γ (X ω) k) := fun k hk => funext fun ω => hk₁ k hk (X ω)
+  have eXl : (fun ω => Ψ (circVec (X ω))) =
+      fun ω => ∫ z, f z ∂(qAreaMeasureOn γ (X ω) openSquare) :=
+    funext fun ω => by simp only [Ψ, qAreaMeasureOn_circExt]
+  set K := max k₀ k₁
+  refine ⟨K, fun k hk => ?_, ?_, ?_⟩
+  · refine (integrable_comp_wn_iff hX hW (hΦm k)).2 ?_
+    rw [eX k (le_trans (le_max_right _ _) hk)]
+    exact hint k (le_trans (le_max_left _ _) hk)
+  · refine (integrable_comp_wn_iff hX hW hΨm).2 ?_
+    rw [eXl]; exact hYl
+  · have e : ∀ k, eLpNorm ((fun ω => ∫ z, f z ∂(areaApprox γ (wnField W ω) (K + k))) -
+        fun ω => ∫ z, f z ∂(qAreaMeasureOn γ (wnField W ω) openSquare)) 1 P' =
+        eLpNorm ((fun ω => ∫ z, f z ∂(areaApprox γ (X ω) (k₀ + (k + (K - k₀))))) -
+        fun ω => ∫ z, f z ∂(qAreaMeasureOn γ (X ω) openSquare)) 1 P := by
+      intro k
+      have h := eLpNorm_comp_wn_eq hX hW ((hΦm (K + k)).sub hΨm) 1
+      have hk' : k₀ + (k + (K - k₀)) = K + k := by omega
+      rw [hk', ← eX _ (by omega), ← eXl]
+      exact h
+    exact ((tendsto_add_atTop_iff_nat (K - k₀)).2 hL1).congr fun k => (e k).symm
 
 end GMCIdent3
 end LQGMetric

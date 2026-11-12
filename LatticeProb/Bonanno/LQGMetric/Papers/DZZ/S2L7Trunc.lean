@@ -1,7 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S2L7Trunc at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   source module LQGMetric.Papers.DZZ.S2L7Trunc at commit fdb5cad; only the module paths of local imports are changed. -/
+import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L7Eta
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L5Kernel
 import LatticeProb.Bonanno.LQGMetric.Field.KilledHeatMeas
 
@@ -98,7 +97,55 @@ theorem killedHeat_sub_inter_ball_le {t : ℝ≥0} (ht : t ≠ 0) (A : Set ℂ) 
   rw [killedHeat, killedHeat, hh, ← mul_sub]
   exact mul_le_mul_of_nonneg_left hq hh0
 
+lemma integral_sq_eq_of_lintegral {f : ℝ × ℂ → ℝ} (hf : Measurable f) (hf0 : ∀ x, 0 ≤ f x)
+    {g : ℝ → ℝ} (hg : Measurable g) (hg0 : ∀ s, 0 ≤ g s) {I : Set ℝ}
+    (h : ∫⁻ x, ENNReal.ofReal (f x) * ENNReal.ofReal (f x) = ∫⁻ s in I, ENNReal.ofReal (g s)) :
+    ∫ x, f x ^ 2 = ∫ s in I, g s := by
+  rw [integral_eq_lintegral_of_nonneg_ae (ae_of_all _ fun x => sq_nonneg (f x))
+      (hf.pow_const 2).aestronglyMeasurable,
+    integral_eq_lintegral_of_nonneg_ae (ae_of_all _ hg0) hg.aestronglyMeasurable]
+  congr 1
+  simp_rw [sq, ENNReal.ofReal_mul (hf0 _)]
+  exact h
+
+lemma measurable_killedHeat_eta_time (v : ℂ) :
+    Measurable fun s : ℝ => killedHeat (openSquare ∩ Metric.ball v (etaRad s)) s.toNNReal v v :=
+  measurable_killedHeat_inter_ball (c := fun _ => v) (z := fun _ => v) (w := fun _ => v)
+    LQGMetric.isOpen_openSquare measurable_real_toNNReal measurable_const measurable_etaRad
+    measurable_const measurable_const
+
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {W : WNSpace → Ω → ℝ}
+
+/-- First step of **(eq-variance-truncation)**:
+`Var(h̃_I(v) − η_I(v)) ≤ π ∫_I (p_𝕍(s; v, v) − p_{𝕍 ∩ B(v, r(s))}(s; v, v)) ds`. -/
+theorem variance_wnField_sub_etaField_le (hW : IsWhiteNoise P W) {I : Set ℝ}
+    (hI : MeasurableSet I) {c₀ : ℝ} (hc₀ : 0 < c₀) (hI0 : I ⊆ Ioi c₀) (v : ℂ) :
+    Var[fun ω => wnField W openSquare I v ω - etaField W I v ω; P] ≤
+      Real.pi * ((∫ s in I, killedHeat openSquare s.toNNReal v v) -
+        ∫ s in I, killedHeat (openSquare ∩ Metric.ball v (etaRad s)) s.toNNReal v v) := by
+  have hI0' : I ⊆ Ioi 0 := hI0.trans (Ioi_subset_Ioi hc₀.le)
+  have hu := memLp_wndKernel LQGMetric.isOpen_openSquare (by norm_num : (0 : ℝ) ≤ 2)
+    openSquare_subset_ball hI hc₀ hI0 v
+  have he := memLp_etaKernel hI hc₀ hI0 v
+  unfold wnField etaField
+  rw [variance_sqrtPi_sub hW, wndKernelL2, etaKernelL2, dite_eq_left_of_eq_true (eq_true hu),
+    dite_eq_left_of_eq_true (eq_true he), sq_norm_toLp_sub hu he]
+  refine mul_le_mul_of_nonneg_left ?_ Real.pi_pos.le
+  have hku := (memLp_two_iff_integrable_sq hu.aestronglyMeasurable).1 hu
+  have hke := (memLp_two_iff_integrable_sq he.aestronglyMeasurable).1 he
+  have h1 := integral_sq_eq_of_lintegral (measurable_wndKernel LQGMetric.isOpen_openSquare hI v)
+    (wndKernel_nonneg _ _ _) (measurable_killedHeat_time LQGMetric.isOpen_openSquare v v)
+    (fun s => killedHeat_nonneg _ _ _ _)
+    (lintegral_wndKernel_mul LQGMetric.isOpen_openSquare hI hI0' v v)
+  have h2 := integral_sq_eq_of_lintegral (measurable_etaKernel hI v) (etaKernel_nonneg _ _)
+    (measurable_killedHeat_eta_time v) (fun s => killedHeat_nonneg _ _ _ _)
+    (lintegral_etaKernel_sq hI hI0' v)
+  rw [← h1, ← h2, ← integral_sub hku hke]
+  refine integral_mono ((hu.sub he).integrable_sq) (hku.sub hke) fun p => ?_
+  have a0 := etaKernel_nonneg I v p
+  have a1 := etaKernel_le I v p
+  simp only [Pi.sub_apply]
+  nlinarith
 
 end DZZ
 end LQGMetric

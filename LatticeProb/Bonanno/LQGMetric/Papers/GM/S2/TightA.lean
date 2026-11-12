@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S2.TightA at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.GM.S2.TightA at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightLaw
 
 /-!
@@ -63,6 +62,10 @@ lemma isCompact_near_diag {K : Set ℂ} (hK : IsCompact K) (b : ℝ) :
     IsCompact {p : ℂ × ℂ | p ∈ K ×ˢ K ∧ ‖p.1 - p.2‖ ≤ b} :=
   (hK.prod hK).inter_right (isClosed_le (continuous_fst.sub continuous_snd).norm continuous_const)
 
+lemma isCompact_far_diag {K : Set ℂ} (hK : IsCompact K) (b : ℝ) :
+    IsCompact {p : ℂ × ℂ | p ∈ K ×ˢ K ∧ b ≤ ‖p.1 - p.2‖} :=
+  (hK.prod hK).inter_right (isClosed_le continuous_const (continuous_fst.sub continuous_snd).norm)
+
 /-- Crossing lower bound from `tight_mapsTo` with `U n = (1/(n+1), ∞)`, on any compact `A`
 avoiding the diagonal. -/
 theorem tight_lower_of_offDiag (hD : IsWeakLQGMetric γ D c) {A : Set (ℂ × ℂ)}
@@ -102,6 +105,23 @@ theorem gm_S2_4a (hD : IsWeakLQGMetric γ D c) {K₁ K₂ : Set ℂ} (hK₁ : Is
     (H P h hh r hr z)⟩
   exact fun hall => hω fun u hu v hv => hall (u, v) ⟨hu, hv⟩
 
+/-- **GM.S2.4a, separated points** (D-A3; the inverse modulus of GM l. 1071). -/
+theorem gm_S2_4a_sep (hD : IsWeakLQGMetric γ D c) {K : Set ℂ} (hK : IsCompact K) {b : ℝ}
+    (hb : 0 < b) {ε : ℝ≥0∞} (hε : 0 < ε) :
+    ∃ s : ℝ, 0 < s ∧ ∀ {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+      (h : Ω → DistC), IsWholePlaneGFF h P → ∀ r : ℝ, 0 < r → ∀ z : ℂ,
+      P {ω | ¬ ∀ u ∈ K, ∀ v ∈ K, b ≤ ‖u - v‖ →
+        s * c r * Real.exp (xiGamma γ * circleAvg (h ω) r z) <
+        (D (h ω)).1 ((r : ℂ) * u + z, (r : ℂ) * v + z)} < ε := by
+  obtain ⟨s, hs, H⟩ := tight_lower_of_offDiag hD (isCompact_far_diag hK b)
+    (fun p hp heq => by
+      have := hp.2
+      rw [heq, sub_self, norm_zero] at this
+      linarith) hε
+  refine ⟨s, hs, fun P _ h hh r hr z => lt_of_le_of_lt (measure_mono fun ω hω => ?_)
+    (H P h hh r hr z)⟩
+  exact fun hall => hω fun u hu v hv huv => hall (u, v) ⟨⟨hu, hv⟩, huv⟩
+
 /-- **GM.S2.4b** (D-A3): uniform modulus of continuity. -/
 theorem gm_S2_4b (hD : IsWeakLQGMetric γ D c) {K : Set ℂ} (hK : IsCompact K) {s : ℝ}
     (hs : 0 < s) {ε : ℝ≥0∞} (hε : 0 < ε) :
@@ -135,6 +155,28 @@ theorem gm_S2_4b (hD : IsWeakLQGMetric γ D c) {K : Set ℂ} (hK : IsCompact K) 
   refine hω fun u hu v hv huv => ?_
   have := hmaps (show (u, v) ∈ {p : ℂ × ℂ | p ∈ K ×ˢ K ∧ ‖p.1 - p.2‖ ≤ 1 / (n + 1)} from
     ⟨⟨hu, hv⟩, huv⟩)
+  simp only [mem_Iio, scaledField_apply] at this
+  exact (scaled_lt_iff (hD.tightness.1 r hr) _ _ _ _).1 this
+
+/-- **GM.S2.4b′** (D-A3): tightness of the rescaled `D_h`-diameter of `rK + z`. -/
+theorem gm_S2_4b' (hD : IsWeakLQGMetric γ D c) {K : Set ℂ} (hK : IsCompact K)
+    {ε : ℝ≥0∞} (hε : 0 < ε) :
+    ∃ S : ℝ, 0 < S ∧ ∀ {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+      (h : Ω → DistC), IsWholePlaneGFF h P → ∀ r : ℝ, 0 < r → ∀ z : ℂ,
+      P {ω | ¬ ∀ u ∈ K, ∀ v ∈ K,
+        (D (h ω)).1 ((r : ℂ) * u + z, (r : ℂ) * v + z) <
+          S * c r * Real.exp (xiGamma γ * circleAvg (h ω) r z)} < ε := by
+  obtain ⟨n, hn⟩ := tight_mapsTo hD (A := fun _ => K ×ˢ K) (fun _ => hK.prod hK)
+    (fun _ _ _ => le_rfl) (U := fun n => Iio ((n : ℝ) + 1)) (fun _ => isOpen_Iio)
+    (fun m n hmn => Iio_subset_Iio (by exact_mod_cast Nat.succ_le_succ hmn))
+    (fun d _ x _ => by
+      obtain ⟨n, hn⟩ := exists_nat_gt (d x)
+      exact ⟨n, show d x < (n : ℝ) + 1 by linarith⟩) hε
+  refine ⟨n + 1, by positivity, fun P _ h hh r hr z => ?_⟩
+  refine lt_of_le_of_lt (measure_mono fun ω hω => ?_) (hn P h hh r hr z)
+  intro hmaps
+  refine hω fun u hu v hv => ?_
+  have := hmaps (show (u, v) ∈ K ×ˢ K from ⟨hu, hv⟩)
   simp only [mem_Iio, scaledField_apply] at this
   exact (scaled_lt_iff (hD.tightness.1 r hr) _ _ _ _).1 this
 

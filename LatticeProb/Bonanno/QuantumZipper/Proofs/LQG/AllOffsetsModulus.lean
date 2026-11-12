@@ -3,13 +3,14 @@
    Declarations, examples and checks that the copied results do not use are omitted.
    Imports of copied modules that this file does not need are replaced by their own imports.
    Opens of namespaces with no copied declaration are removed (GaussTK). -/
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularClosure
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSampleKolmogorov
-import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Admissible
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSample
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodSample
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.BoundaryExistence
 import LatticeProb.Bonanno.QuantumZipper.LQG.Measures
 import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularClosure
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSampleKolmogorov
+import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Admissible
 
 /-!
 # M4-B4, part 2: the modulus of the density in the offset (blueprint node B4a)

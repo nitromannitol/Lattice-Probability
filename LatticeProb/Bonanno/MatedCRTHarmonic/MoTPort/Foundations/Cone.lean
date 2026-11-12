@@ -168,6 +168,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_1RadialMain
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S1.FieldAux
 import Mathlib.MeasureTheory.Integral.Indicator
+import LatticeProb.Bonanno.QuantumZipper.Proofs.NonVacuity
+import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_17Core2H
 
 /-!
 # Quantum cones (DMS Def 4.10)

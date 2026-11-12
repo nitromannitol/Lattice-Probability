@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Dimension.GMCIdentCirc at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Dimension.GMCIdentCirc at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdentBoch
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCSqReg
 
@@ -47,6 +46,16 @@ lemma measurable_measKer {A : Set ℂ} (hA : IsOpen A) {I : Set ℝ} (hI : Measu
 lemma measKer_nonneg (A : Set ℂ) (I : Set ℝ) (μ : Measure ℂ) (p : ℝ × ℂ) :
     0 ≤ measKer A I μ p :=
   integral_nonneg fun _ => wndKernel_nonneg _ _ _ _
+
+lemma foldedCircle_compl_closedBall {z : ℂ} {r : ℝ} (hr : 0 < r)
+    (hB : closedBall z r ⊆ openSquare) : foldedCircle z r (closedBall z r)ᶜ = 0 := by
+  rw [foldedCircle_eq_of_inSq (inSq_of_closedBall hr hB) hr]
+  exact circleUnif_compl_closedBall hr z
+
+lemma variance_sqrtPi_wn (hW : IsWhiteNoise P W) (g : WNSpace) :
+    Var[fun ω => Real.sqrt Real.pi * W g ω; P] = Real.pi * ‖g‖ ^ 2 := by
+  rw [variance_const_mul, (hW.hasLaw_single g).variance_eq, variance_id_gaussianReal,
+    Real.sq_sqrt Real.pi_pos.le, Real.coe_toNNReal _ (sq_nonneg _)]
 
 end GMCIdent
 end LQGMetric

@@ -16,6 +16,7 @@ import LatticeProb.Bonanno.LQGMetric.Field.HeatMollifyCont
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.Moments.Variance
 import Mathlib.Analysis.SpecialFunctions.Exp
+import LatticeProb.Bonanno.LQGMetric.Field.HeatMollifyPoint
 
 /-!
 # Bounded boundary data; fields modulo `cℤ`; lateral part

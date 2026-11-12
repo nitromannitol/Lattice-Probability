@@ -255,6 +255,24 @@ import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import Mathlib.Analysis.Convex.Jensen
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WedgeAddConstLat
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Wire5
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSample
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WeldingUniqueness
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.CameronMartin
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Thm11.FrozenLocalDynkin
+import LatticeProb.Bonanno.QuantumZipper.Proofs.ItoLite.Dynkin
+import LatticeProb.Bonanno.QuantumZipper.Proofs.NonVacuity
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FiniteArea
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.TopoSep
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.CarLengthArea
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.CaraExt
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.CaraBdryFold
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.CaraBdrySurj
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.KoebeDistortion
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.KoebeCovering
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.TopoJaniszewski
+import LatticeProb.Bonanno.QuantumZipper.Blueprint.ComplexAnalysis
+import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.K3.MixedLocal
+import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.K3.HalfDiscMarkov
 
 /-!
 # WEDGE-RC3ALL2 (1): circle smoothing of radial profiles with a logarithmic singularity

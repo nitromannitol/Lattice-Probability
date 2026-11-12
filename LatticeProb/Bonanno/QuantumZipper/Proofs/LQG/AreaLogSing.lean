@@ -1,17 +1,17 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
    source module QuantumZipper.Proofs.LQG.AreaLogSing at commit fdb5cad; only the module paths of local imports are changed.
    Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports.
-   Opens of namespaces with no copied declaration are removed (FinArea). -/
+   Imports of copied modules that this file does not need are replaced by their own imports. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaP3bSup
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FiniteArea
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.TwoRadiusTilt
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AtomlessUncond
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FractionalMoments
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceAS
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodSample
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularClosure
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSampleKolmogorov
 import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Admissible
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.TwoRadiusTilt
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AtomlessUncond
 
 /-!
 # M4-P3(b), area version, part 6: fractional moments of the interior area mass
@@ -49,7 +49,7 @@ open scoped NNReal ENNReal ComplexConjugate
 namespace QuantumZipper
 namespace AreaP3b
 
-open GaussTK KernelId
+open GaussTK KernelId FinArea
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : Ω → FieldSample}
 

@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DG.AppA1Main at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.DG.AppA1Main at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppA1Tail
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppA1Var2
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3L1Tail
@@ -267,6 +266,22 @@ theorem exists_box_modification_tail (hW : IsWhiteNoise P W) (F : ℂ → WNSpac
       nlinarith [norm_nonneg (G v), norm_nonneg (G y), norm_nonneg (G v - G y),
         sq_nonneg (‖G y‖ - ‖G v - G y‖), mul_le_mul_of_nonneg_left h3 hL0]
     nlinarith [mul_le_mul_of_nonneg_left h4 hpi.le]
+
+/-- **DG Lemma A.1** (white-noise form, `K` a box): with `h^U := lim_{t→0} h^U_{t,∞}` built from
+the white noise `W` of `ĥ^tr` (DG:2142–2146), `(h^U − ĥ^tr)|_K = √π W(dgA1Kernel U ·)` has a
+continuous modification `Y` and `P[max_K |Y| > A] ≤ c₀ e^{−c₁ A²}` for all `A ≥ 0`. Here `K` is a
+box all of whose points are at distance `≥ 1/10` from `∂U` (DG: the whole set `K`; see
+DEVIATIONS DG3C-1). -/
+theorem dg_lemmaA1_wn (hW : IsWhiteNoise P W) {U : Set ℂ} (hU : IsOpen U)
+    (hUb : Bornology.IsBounded U) {y : ℂ} {b : ℝ} (hb : 0 < b)
+    (hK : ∀ z ∈ ferniqueBox y b, Metric.ball z (1 / 10) ⊆ U) :
+    ∃ Y : ℂ → Ω → ℝ, (∀ ω, Continuous fun z => Y z ω) ∧ (∀ z, Measurable (Y z)) ∧
+      (∀ z ∈ ferniqueBox y b, Y z =ᵐ[P] fun ω => Real.sqrt Real.pi * W (dgA1Kernel U z) ω) ∧
+      ∃ c₀ c₁ : ℝ, 0 < c₁ ∧ ∀ A : ℝ, 0 ≤ A →
+        P {ω | ¬ ∀ z ∈ ferniqueBox y b, |Y z ω| ≤ A} ≤
+          ENNReal.ofReal (c₀ * Real.exp (-c₁ * A ^ 2)) := by
+  obtain ⟨L, hL0, hL⟩ := dg_A1_var_box hU hUb hb hK
+  exact exists_box_modification_tail hW _ hb hL0 hL
 
 end DG
 end LQGMetric

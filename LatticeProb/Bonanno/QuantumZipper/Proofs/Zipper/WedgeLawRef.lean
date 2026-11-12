@@ -109,6 +109,13 @@ import Mathlib.MeasureTheory.Measure.Typeclasses.NullSingletonClass
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Measure.MeasuredSets
 import Mathlib.MeasureTheory.SetAlgebra
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Section5.Prop16MeasArea
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.CameronMartin
+import LatticeProb.Bonanno.QuantumZipper.Proofs.NonVacuity
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FiniteArea
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSample
+import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.K3.MixedLocal
+import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.K3.HalfDiscMarkov
 
 /-!
 # WEDGE-LAW (1): the reference law of a quantum wedge does not depend on the witness

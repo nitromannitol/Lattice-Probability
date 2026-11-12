@@ -30,6 +30,8 @@ import Mathlib.MeasureTheory.Measure.Portmanteau
 import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3L2
+import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3L4
 
 /-!
 # DG Lemma 3.1, last step: Gaussian tail of `max_K |h¹ − h²|` (task P2-DG3A, WP-118)

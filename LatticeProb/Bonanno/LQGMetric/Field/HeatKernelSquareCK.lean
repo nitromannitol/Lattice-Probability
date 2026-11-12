@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Field.HeatKernelSquareCK at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Field.HeatKernelSquareCK at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Field.HeatKernelSquare
 import Mathlib.MeasureTheory.Integral.Prod
 
@@ -106,6 +105,14 @@ lemma measurable_sqDirKernel {a L s : ℝ} (hs : 0 < s) (hL : 0 < L) :
     (Complex.measurable_re.comp measurable_snd)).mul
     (measurable_intervalDirKernel hs hL (Complex.measurable_im.comp measurable_fst)
       (Complex.measurable_im.comp measurable_snd))
+
+lemma measurable_sqDirKernel_left {a L s : ℝ} (hs : 0 < s) (hL : 0 < L) (y : ℂ) :
+    Measurable (fun y' => sqDirKernel a L s y' y) := by
+  unfold sqDirKernel
+  exact (measurable_intervalDirKernel (f := fun y' : ℂ => y'.re) (g := fun _ => y.re) hs hL
+    Complex.measurable_re measurable_const).mul
+    (measurable_intervalDirKernel (f := fun y' : ℂ => y'.im) (g := fun _ => y.im) hs hL
+      Complex.measurable_im measurable_const)
 
 lemma gauss1_neg (s z : ℝ) : gauss1 s (-z) = gauss1 s z := by
   unfold gauss1; rw [neg_sq]

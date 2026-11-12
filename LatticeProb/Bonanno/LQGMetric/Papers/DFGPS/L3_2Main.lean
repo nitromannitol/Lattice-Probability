@@ -15,6 +15,7 @@ import LatticeProb.Bonanno.LQGMetric.Blueprint.LMResults
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S1.FieldAux
 import Mathlib.Algebra.Order.Field.GeomSum
 import LatticeProb.Bonanno.LQGDimension.LFPP.RecordsAux1
+import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightE2Core
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false

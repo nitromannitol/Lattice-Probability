@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S2.TightC at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.GM.S2.TightC at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightA
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightChain
 import LatticeProb.Bonanno.LQGMetric.Metric.InternalC
@@ -41,6 +40,8 @@ namespace Tight
 /-- the homeomorphism `w ↦ r w + z` -/
 def affHomeo (r : ℝ) (hr : r ≠ 0) (z : ℂ) : ℂ ≃ₜ ℂ :=
   (Homeomorph.mulLeft₀ (r : ℂ) (Complex.ofReal_ne_zero.2 hr)).trans (Homeomorph.addRight z)
+
+lemma affHomeo_apply (r : ℝ) (hr : r ≠ 0) (z w : ℂ) : affHomeo r hr z w = (r : ℂ) * w + z := rfl
 
 /-- Deterministic chaining step of S2.4c. -/
 theorem internal_le_of_chain {D : ContMetric} (hlen : D.IsLength) {U L : Set ℂ} (hU : IsOpen U)

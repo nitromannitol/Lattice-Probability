@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DG.Blueprint at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module LQGMetric.Papers.DG.Blueprint at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.LQGDimension.Statement.Defs
 import LatticeProb.Bonanno.LQGMetric.Basic
 import LatticeProb.Bonanno.LQGMetric.Statement.Dimension
@@ -70,6 +69,27 @@ def dgDiam (ξ : ℝ) (φ : ℂ → ℝ) (U K : Set ℂ) : ℝ≥0∞ :=
 
 /-- DG's LFPP exponent `1 − 2/d_γ − γ²/(2d_γ)` (DG (1.5)). -/
 def dgLambda (γ : ℝ) : ℝ := 1 - 2 / dGamma γ - γ ^ 2 / (2 * dGamma γ)
+
+/-- **DG Theorem 1.5** (`thm-lfpp-compare`, DG:336–356), cited result taken as a hypothesis:
+for `γ ∈ (0,2)`, `ξ = γ/d_γ` and the circle-average process `hc` of a normalized whole-plane GFF,
+(1.5a) for `z ≠ w`, w.p. → 1 as `δ ↓ 0`, `D^δ(z,w) = δ^{λ + o(1)}`; (1.5b) for each bounded
+connected open `U` and compact `K ⊂ U` with two distinct points,
+`max_{z,w∈K} D^δ(z,w;U) = δ^{λ + o(1)}`, where `λ = 1 − 2/d_γ − γ²/(2d_γ)`. -/
+def DGThm1_5 : Prop :=
+  ∀ γ : ℝ, 0 < γ → γ < 2 →
+    ∀ {Ω : Type} [MeasurableSpace Ω] (P : Measure Ω) (hc : ℝ → ℂ → Ω → ℝ),
+      LQGDimension.IsGFFCircleAverage hc P →
+      (∀ z w : ℂ, z ≠ w → ∀ η : ℝ, 0 < η →
+        Tendsto (fun δ : ℝ => P {ω | ¬ (δ ^ (dgLambda γ + η) ≤
+            dgLFPP (xiGamma γ) (fun x => hc δ x ω) univ z w ∧
+          dgLFPP (xiGamma γ) (fun x => hc δ x ω) univ z w ≤ δ ^ (dgLambda γ - η))})
+          (𝓝[>] 0) (𝓝 0)) ∧
+      (∀ U K : Set ℂ, IsOpen U → IsConnected U → Bornology.IsBounded U → IsCompact K → K ⊆ U →
+        (∃ z ∈ K, ∃ w ∈ K, z ≠ w) → ∀ η : ℝ, 0 < η →
+        Tendsto (fun δ : ℝ => P {ω | ¬ (ENNReal.ofReal (δ ^ (dgLambda γ + η)) ≤
+            dgDiam (xiGamma γ) (fun x => hc δ x ω) U K ∧
+          dgDiam (xiGamma γ) (fun x => hc δ x ω) U K ≤ ENNReal.ofReal (δ ^ (dgLambda γ - η)))})
+          (𝓝[>] 0) (𝓝 0))
 
 end DG
 end LQGMetric

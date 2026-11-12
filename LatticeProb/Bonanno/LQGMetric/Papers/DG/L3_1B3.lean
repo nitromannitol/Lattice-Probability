@@ -43,5 +43,9 @@ def dgHU (W : WNSpace → Ω → ℝ) (z : ℂ) (r : ℝ) (ω : Ω) : ℝ :=
 def dgHat (W : WNSpace → Ω → ℝ) (z : ℂ) (r : ℝ) (ω : Ω) : ℝ :=
   Real.sqrt Real.pi * W (hatMeasKerL2 (circleUnif z r)) ω
 
+/-- `ĥ^tr` tested against `σ_{z,r}` -/
+def dgTr (W : WNSpace → Ω → ℝ) (z : ℂ) (r : ℝ) (ω : Ω) : ℝ :=
+  Real.sqrt Real.pi * W (trMeasKerL2 (circleUnif z r)) ω
+
 end DG
 end LQGMetric

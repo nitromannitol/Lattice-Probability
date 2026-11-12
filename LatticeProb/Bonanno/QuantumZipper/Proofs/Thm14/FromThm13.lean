@@ -44,6 +44,7 @@ import Mathlib.Analysis.Normed.Module.Connected
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Topology.Order.IntermediateValue
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WeldingUniqueness
 
 /-!
 # Theorem 1.4(a) from Theorem 1.3 (blueprint node C1, part (a))

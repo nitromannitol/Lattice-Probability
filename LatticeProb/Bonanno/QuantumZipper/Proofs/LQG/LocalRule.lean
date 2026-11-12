@@ -7,6 +7,12 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.BoundaryExistence
 import LatticeProb.Bonanno.QuantumZipper.LQG.Measures
 import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodSample
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSample
+import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.CameronMartin
+import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceAS
+import LatticeProb.Bonanno.QuantumZipper.LQG.Local
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularClosure
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.RegularSampleKolmogorov
 import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Admissible
@@ -19,10 +25,6 @@ import Mathlib.Probability.Moments.Variance
 import Mathlib.MeasureTheory.Constructions.Cylinders
 import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceAS
-import LatticeProb.Bonanno.QuantumZipper.LQG.Local
 
 /-!
 # Local rule (5.1) along the dyadic radii
