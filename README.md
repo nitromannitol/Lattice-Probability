@@ -1231,6 +1231,15 @@ models, tooling, cost and review status are disclosed in [`formalization.yaml`](
 following the [mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml)
 standard.
 
+## Copied code
+
+The directory `LatticeProb/Bonanno/` contains code copied from Leonardo Bonanno's
+[`lean-formalizations`](https://github.com/leobon12/lean-formalizations), at commit `31e7483` and, for the modules
+added later, at commit `fdb5cad` (same Lean sources). This code is copied source, not a dependency: the library builds
+without that repository. Every copied file names its source module and commit in its header and lists any edit made
+for the port; where only some declarations of a source file are needed, the others are omitted, as the header states.
+[`NOTICE`](NOTICE) gives the details.
+
 ## Authors, citation, acknowledgements
 
 The Lean development is by **Ahmed Bou-Rabee**.  To cite it, use
