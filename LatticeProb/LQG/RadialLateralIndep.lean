@@ -1,4 +1,5 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.ConeScaling.Lateral
+import LatticeProb.Bonanno.LQGMetric.Field.Green
 
 /-!
 # Independence of the radial and lateral parts of the whole-plane Gaussian free field
@@ -20,6 +21,11 @@ functions with mean zero on all circles about the origin are independent).
   function `φ` (with rotational symmetrization `φ̄`) and every rotation-invariant test function `ψ`.
 * `LatticeProb.LQG.indepFun_of_forall_ae_eq_apply`: independence from a real-valued process
   passes to any process that agrees with it almost surely at each fixed index.
+* `LatticeProb.LQG.IsWholePlaneGFF.indepFun_pairing_lateralPart_of_orth`: pairings with mean-zero
+  test functions `logCov`-orthogonal to all lateral test functions are independent of the lateral
+  part.
+* `LatticeProb.LQG.IsWholePlaneGFF.indepFun_cmTest_lateralPart`: the same for the Cameron–Martin
+  test functions `−Δρ/(2π)` of rotation-invariant test functions `ρ`.
 * `LatticeProb.LQG.IsWholePlaneGFF.indepFun_pairing_lateralPart`: for any family `ψ` of
   rotation-invariant mean-zero test functions, the pairings `(X(ψ i))ᵢ` are independent of the
   lateral part of `X`.
@@ -119,11 +125,11 @@ end Modification
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {X : Ω → DistC}
 
-/-- **Radial–lateral independence** (Duplantier–Miller–Sheffield, Lemma 4.9). For a whole-plane
-GFF `X` and any family `ψ` of rotation-invariant mean-zero test functions, the pairings
-`(X(ψ i))ᵢ` are independent of the lateral part of `X`. -/
-theorem IsWholePlaneGFF.indepFun_pairing_lateralPart (hX : IsWholePlaneGFF X P) {ι : Type*}
-    (ψ : ι → TestC0) (hψ : ∀ i, IsRotInv (ψ i).1) :
+/-- **Independence from the lateral part.** For a whole-plane GFF `X` and a family `ψ` of
+mean-zero test functions that are `logCov`-orthogonal to every lateral test function `φ − φ̄`, the
+pairings `(X(ψ i))ᵢ` are independent of the lateral part of `X`. -/
+theorem IsWholePlaneGFF.indepFun_pairing_lateralPart_of_orth (hX : IsWholePlaneGFF X P)
+    {ι : Type*} (ψ : ι → TestC0) (horth : ∀ i (φ : TestC), logCov ⇑(φ - symmTest φ) (ψ i).1 = 0) :
     IndepFun (fun ω i => X ω (ψ i).1)
       (fun ω => MatedCRTHarmonic.CellScaling.lateralPart (X ω)) P := by
   have := hX.gaussian.isProbabilityMeasure
@@ -138,7 +144,7 @@ theorem IsWholePlaneGFF.indepFun_pairing_lateralPart (hX : IsWholePlaneGFF X P) 
       (fun φ => (hev _).aemeasurable) fun i φ => by
         show cov[fun ω => X ω (ψ i).1, fun ω => X ω (latTest φ).1; P] = 0
         rw [covariance_comm, hX.covariance_eq]
-        exact logCov_sub_symmTest_eq_zero φ (hψ i)
+        exact horth i φ
   have hL : Measurable fun ω => MatedCRTHarmonic.CellScaling.lateralPart (X ω) :=
     measurable_lateralPart.comp hX.measurable
   have h2 : IndepFun (fun ω i => X ω (ψ i).1)
@@ -153,5 +159,41 @@ theorem IsWholePlaneGFF.indepFun_pairing_lateralPart (hX : IsWholePlaneGFF X P) 
     MeasurableSpace.comap_comp
   rw [IndepFun_iff_Indep, hc]
   exact (IndepFun_iff_Indep _ _ _).1 h2
+
+/-- **Radial–lateral independence** (Duplantier–Miller–Sheffield, Lemma 4.9). For a whole-plane
+GFF `X` and any family `ψ` of rotation-invariant mean-zero test functions, the pairings
+`(X(ψ i))ᵢ` are independent of the lateral part of `X`. -/
+theorem IsWholePlaneGFF.indepFun_pairing_lateralPart (hX : IsWholePlaneGFF X P) {ι : Type*}
+    (ψ : ι → TestC0) (hψ : ∀ i, IsRotInv (ψ i).1) :
+    IndepFun (fun ω i => X ω (ψ i).1)
+      (fun ω => MatedCRTHarmonic.CellScaling.lateralPart (X ω)) P :=
+  IsWholePlaneGFF.indepFun_pairing_lateralPart_of_orth hX ψ fun i φ =>
+    logCov_sub_symmTest_eq_zero φ (hψ i)
+
+/-- The Cameron–Martin test function `−Δρ/(2π)` of a rotation-invariant test function `ρ` is
+`logCov`-orthogonal to every lateral test function `φ − φ̄` (Green's identity
+`logCov ψ (−Δρ/(2π)) = ∫ ψ ρ`). -/
+theorem logCov_sub_symmTest_cmTest_eq_zero (φ : TestC) {ρ : TestC} (hρ : IsRotInv ρ) :
+    logCov ⇑(φ - symmTest φ) (cmTest ρ) = 0 := by
+  rw [logCov_cmTest_right]
+  have hint : ∀ g : TestC, Integrable (fun x => g x * ρ x) := fun g =>
+    (g.continuous.mul ρ.continuous).integrable_of_hasCompactSupport
+      (g.hasCompactSupport.mul_right)
+  have hsplit : (fun x => (φ - symmTest φ) x * ρ x) =
+      fun x => φ x * ρ x - symmTest φ x * ρ x := by
+    funext x
+    rw [show (φ - symmTest φ) x = φ x - symmTest φ x from rfl]
+    ring
+  rw [hsplit, integral_sub (hint φ) (hint _),
+    integral_symmTest_mul φ hρ ρ.continuous.locallyIntegrable, sub_self]
+
+/-- For rotation-invariant test functions `ρ i`, the pairings of a whole-plane GFF with the
+Cameron–Martin test functions `−Δ(ρ i)/(2π)` are independent of its lateral part. -/
+theorem IsWholePlaneGFF.indepFun_cmTest_lateralPart (hX : IsWholePlaneGFF X P) {ι : Type*}
+    (ρ : ι → TestC) (hρ : ∀ i, IsRotInv (ρ i)) :
+    IndepFun (fun ω i => X ω (cmTest (ρ i)))
+      (fun ω => MatedCRTHarmonic.CellScaling.lateralPart (X ω)) P :=
+  IsWholePlaneGFF.indepFun_pairing_lateralPart_of_orth hX (fun i => cmTest0 (ρ i)) fun i φ =>
+    logCov_sub_symmTest_cmTest_eq_zero φ (hρ i)
 
 end LatticeProb.LQG
