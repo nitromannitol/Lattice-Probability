@@ -1,22 +1,20 @@
 /-
-# Transfer lemmas for the Pinelis cross term
+# Transfer lemmas for the cumulative cross term
 
-The cumulative cross term of the martingale Rosenthal bound,
+For partial sums `S i = ∑_{j=1}^{i} ξ_j` of martingale differences with predictable quadratic
+variation increments `v (i+1) = E[ξ(i+1)² | F i]`, the cumulative cross term
 
-  `B = ∑_{i<k} E[|S i|^{p-2} v (i+1)]`,  `v (i+1) = E[ξ(i+1)² | F i]`,
+  `B = ∑_{i<k} E[|S i|^{p-2} v (i+1)]`
 
-may be read either in its `v`-form or in its `ξ²`-form.  This file proves the two transfer
-lemmas between them:
+may be read either in its `v`-form or in its `ξ²`-form.  This file proves the two facts behind
+that change of form:
 
 * `martingalePartialSum_stronglyMeasurable` — the **strongly-measurable transfer**: if each `ξ i` is
   `F i`-strongly-measurable then the partial sum `S i` is `F i`-strongly-measurable, hence so is
-  `|S i|^{p-2}`; this is what lets the `v`-form be read as the `ξ²`-form.
+  `|S i|^{p-2}`;
 * `crossTerm_pullOut` — the **pull-out identity** `E[|S i|^{p-2} v (i+1)] = E[|S i|^{p-2} ξ(i+1)²]`
   under that measurability and `v (i+1) =ᵐ E[ξ(i+1)² | F i]`, via `integral_rpow_mul_condExp_sq_eq`;
-  `crossTerm_sum_pullOut` sums it over `i < k`.
-
-The bound on the cross term itself is `crossTerm_le_variancePair`
-(`Prob/BernsteinVariancePair.lean`).
+* `crossTerm_sum_pullOut` — the same identity summed over `i < k`.
 -/
 import LatticeProb.Prob.BernsteinInduction
 
@@ -54,15 +52,8 @@ theorem crossTerm_pullOut [IsProbabilityMeasure μ] {m : MeasurableSpace Ω} {p 
     ∫ ω, |S ω| ^ (p - 2) * v ω ∂μ = ∫ ω, |S ω| ^ (p - 2) * ξ ω ^ 2 ∂μ :=
   (integral_rpow_mul_condExp_sq_eq hm hS hv hSξ2 hξ2).symm
 
-end LatticeProb
-
-namespace LatticeProb
-
-variable {Ω : Type*} {m₀ : MeasurableSpace Ω} {μ : @Measure Ω m₀}
-
 /-- **Summed pull-out.**  Under `F`-adaptation and `v (i+1) =ᵐ E[ξ(i+1)² | F i]`, the whole
-cumulative cross term `∑_{i<k} E[|S i|^{p-2} v (i+1)]` may be rewritten from its `v`-form to its
-`ξ²`-form. -/
+cumulative cross term may be rewritten from its `v`-form to its `ξ²`-form. -/
 theorem crossTerm_sum_pullOut [IsProbabilityMeasure μ] {p : ℝ} {F : Filtration ℕ m₀}
     {S ξ : ℕ → Ω → ℝ} {v : ℕ → Ω → ℝ}
     (hS : ∀ i, StronglyMeasurable[F i] (fun ω => |S i ω| ^ (p - 2)))

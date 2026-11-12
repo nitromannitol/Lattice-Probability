@@ -13,12 +13,12 @@ This file performs the bounded assembly of the induction:
 * `iterateLeOfStep` — the telescoping of any such per-step recursion;
 * `martingaleOneStep_iterate` — the instantiation to `martingaleOneStep`, giving the cumulative
   bound `E |S k|^p ≤ C ∑_{i<k} (E[|S i|^{p-2} v (i+1)] + E |ξ (i+1)|^p)`;
-* `solve_rpow_le` and `rosenthal_of_crossTerm` — the algebra that turns the cumulative bound
-  `A ≤ C (B + V)` and a cross-term bound `B ≤ K W A^{(p-2)/p} + K V` into the martingale Rosenthal
-  bound `A^{2/p} ≤ max (2 C K W) ((2 C (K+1) V)^{2/p})`.
+* `solve_rpow_le` and `rosenthal_of_crossTerm` — the arithmetic that turns the cumulative bound
+  `A ≤ C (B + V)` and a cross-term bound `B ≤ K W A^{(p-2)/p} + K V` into
 
-The cross-term bound itself is `crossTerm_le_variancePair` (`Prob/BernsteinVariancePair.lean`),
-and `martingaleRosenthalBound` (`Prob/BernsteinRosenthalBound.lean`) performs the assembly.
+  `A^{2/p} ≤ max (2 C K W) ((2 C (K+1) V)^{2/p})`.
+
+Nothing here is conditional on `sorry` and nothing is assumed beyond the stated hypotheses.
 -/
 import LatticeProb.Prob.BernsteinOneStep
 
@@ -161,8 +161,8 @@ Pinelis cross-term bound `B ≤ K W A^{(p-2)/p} + K V`, the martingale Rosenthal
 
   `A^{2/p} ≤ max (2 C K W) ((2 C (K+1) V)^{2/p})`.
 
-Composing with `martingaleOneStep_iterate` (which supplies `A ≤ C (B + V)` with `A = E|S k|^p`,
-`B = ∑_{i<k} E[|S i|^{p-2} v (i+1)]` and `V = ∑ E|ξ i|^p`) and a bound on the cross term `B` gives
+Composed with `martingaleOneStep_iterate`, which supplies `A ≤ C (B + V)` with `A = E|S k|^p`,
+`B` the cumulative cross term and `V = ∑_{i≤k} E|ξ_i|^p`, a cross-term bound of this shape gives
 the martingale Rosenthal inequality. -/
 theorem rosenthal_of_crossTerm {p A B V W : ℝ} (hp : 2 ≤ p) {C K : ℝ}
     (hA : 0 ≤ A) (hW : 0 ≤ W) (hC : 0 ≤ C) (hK : 0 ≤ K)

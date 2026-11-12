@@ -199,8 +199,6 @@ import LatticeProb.Prob.BernsteinFactorialBound
 import LatticeProb.Prob.BernsteinDoobMaximal
 import LatticeProb.Prob.BernsteinVariancePair
 import LatticeProb.Prob.BernsteinMaximalLayerCake
-import LatticeProb.Prob.PinelisDoobStepFalse
-import LatticeProb.Prob.PinelisInductionStepFalse
 import LatticeProb.Prob.IsNormalConcentration
 import LatticeProb.Prob.AeFatouLimit
 import LatticeProb.Prob.EsseenSmoothingGeneral
