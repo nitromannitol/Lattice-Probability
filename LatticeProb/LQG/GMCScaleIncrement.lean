@@ -12,6 +12,8 @@ supported weight `g` satisfies, for suitable `R`, `K` and `c > 0` and all `0 < �
 * `scaleIncrementL1Bound_of_isWholePlaneGFF`: the bound `ScaleIncrementL1Bound P γ hcirc` for every whole-plane
   Gaussian free field and every `0 < γ < 2`. The thick-point level is `α = 2γ` for `γ < 1` and `α = 2` for
   `1 ≤ γ < 2`, and the exponent is `c = min (b / 2) ((α - γ)² / 2)`, `b = 2 - γ² + (2γ - α)²/2`.
+* `IsWholePlaneGFF.exists_coordChange`: the coordinate change rule for the LQG measure under `x ↦ (x - z) / r`,
+  for one `r > 0` and one `z`, unconditionally.
 -/
 
 open MeasureTheory ProbabilityTheory Real Function
@@ -64,5 +66,24 @@ theorem scaleIncrementL1Bound_of_isWholePlaneGFF (hh : IsWholePlaneGFF P hC hcir
         add_le_add (mul_le_mul_of_nonneg_left (hpt b (min_le_left _ _) ε hε hε1) hA10)
           (mul_le_mul_of_nonneg_left (hpt d (min_le_right _ _) ε hε hε1) hA20)
     _ = _ := by ring
+
+namespace IsWholePlaneGFF
+
+/-- Dot-notation form of `scaleIncrementL1Bound_of_isWholePlaneGFF`. -/
+theorem scaleIncrementL1Bound (hh : IsWholePlaneGFF P hC hcirc) {γ : ℝ} (hγ0 : 0 < γ) (hγ2 : γ < 2) :
+    ScaleIncrementL1Bound P γ hcirc :=
+  scaleIncrementL1Bound_of_isWholePlaneGFF hh hγ0 hγ2
+
+/-- **Coordinate change of the γ-LQG measure under `x ↦ (x - z) / r`**, for one `r > 0` and one `z ∈ ℂ`, for every
+whole-plane Gaussian free field and `0 < γ < 2`: almost surely the pushforward of the LQG measure is a positive
+finite multiple of the LQG measure of another whole-plane Gaussian free field on the same probability space. -/
+theorem exists_coordChange (hh : IsWholePlaneGFF P hC hcirc) {γ : ℝ} (hγ0 : 0 < γ) (hγ2 : γ < 2)
+    {μ : Ω → Measure ℂ} (hμ : LQG.IsLQGMeasure P γ hcirc μ) {r : ℝ} (hr : 0 < r) (z : ℂ) :
+    ∃ (hC'' : Ω → (ℂ → ℝ) → ℝ) (hcirc'' : Ω → ℝ → ℂ → ℝ) (μ'' : Ω → Measure ℂ) (c : Ω → ℝ≥0∞),
+      IsWholePlaneGFF P hC'' hcirc'' ∧ LQG.IsLQGMeasure P γ hcirc'' μ'' ∧
+      ∀ᵐ ω ∂P, c ω ≠ 0 ∧ c ω ≠ ∞ ∧ (μ ω).map (fun x => (x - z) / (r : ℂ)) = c ω • μ'' ω :=
+  hh.exists_coordChange_of_scaleIncrementL1Bound hγ0 (hh.scaleIncrementL1Bound hγ0 hγ2) hμ hr z
+
+end IsWholePlaneGFF
 
 end LatticeProb.Gauss
