@@ -1,3 +1,4 @@
+import LatticeProb.Topology.CircleCharacterization
 import LatticeProb.Topology.ComplementComponents
 
 /-!
@@ -16,7 +17,9 @@ component of `ℂ \ K` is a simple loop. The classical proof splits into three i
 
 `torhorstSimpleLoop_of_ingredients` assembles them: given the three statements, Torhorst's theorem holds. The
 remaining facts of the assembly (the frontier is compact and has two points) are proved in
-`LatticeProb.Topology.ComplementComponents`.
+`LatticeProb.Topology.ComplementComponents`. Ingredient 3 is
+`nonempty_homeomorph_circle_of_forall_not_isPreconnected_diff_pair` (`LatticeProb.Topology.CircleCharacterization`),
+so `torhorstSimpleLoop_of_unicoherent_of_pairSeparates` needs only ingredients 1 and 2.
 -/
 
 namespace LatticeProb.Topology
@@ -41,5 +44,19 @@ theorem torhorstSimpleLoop_of_ingredients
   exact hMoore _ (isCompact_frontier_of_mem_connectedComponentsIn_compl hK hC) (hUnicoherent K hK hKc C hC)
     (frontier_nontrivial_of_mem_connectedComponentsIn_compl hK.isClosed hKn hC)
     (hPairSeparates K hK hKc hKn hKlc hKcut C hC)
+
+
+/-- **Torhorst's theorem from unicoherence and separation by pairs.** R. L. Moore's characterisation of the circle
+is proved (`nonempty_homeomorph_circle_of_forall_not_isPreconnected_diff_pair`), so `TorhorstSimpleLoop` follows
+from the first two ingredients alone. -/
+theorem torhorstSimpleLoop_of_unicoherent_of_pairSeparates
+    (hUnicoherent : ∀ K : Set ℂ, IsCompact K → IsConnected K → ∀ C ∈ connectedComponentsIn Kᶜ,
+      IsConnected (frontier C))
+    (hPairSeparates : ∀ K : Set ℂ, IsCompact K → IsConnected K → K.Nontrivial → IsLocallyConnectedSet K →
+      (∀ a : ℂ, ¬ IsCutPoint K a) → ∀ C ∈ connectedComponentsIn Kᶜ,
+        ∀ a ∈ frontier C, ∀ b ∈ frontier C, a ≠ b → ¬ IsPreconnected (frontier C \ {a, b})) :
+    TorhorstSimpleLoop :=
+  torhorstSimpleLoop_of_ingredients hUnicoherent hPairSeparates fun _ hΓ hΓc hΓn hpair =>
+    nonempty_homeomorph_circle_of_forall_not_isPreconnected_diff_pair hΓ hΓc hΓn hpair
 
 end LatticeProb.Topology
