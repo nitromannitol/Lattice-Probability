@@ -119,6 +119,7 @@ import LatticeProb.Prob.GaussianLogSobolevGradProd
 import LatticeProb.Prob.GaussianConcentrationL2
 import LatticeProb.Topology.Polygonal
 import LatticeProb.External.PolygonalTopology
+import LatticeProb.Topology.PolygonalJaniszewskiProved
 import LatticeProb.Analysis.NegSobolev
 import LatticeProb.Analysis.HeatStrongMinimum
 import LatticeProb.Analysis.SoftMaximum

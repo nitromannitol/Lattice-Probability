@@ -657,11 +657,16 @@ alignment:
       module: "LatticeProb.Meta.AxiomsAudit"
       status: "cataloged"
       note: "The principal-name audit is additional evidence; the full environment census binds current all-public coverage."
-    - source: "Cited results (Gaussian log-Sobolev and Herbst bound, polygonal unicoherence, Janiszewski, Rellich-Kondrachov in negative order)"
-      lean: "LatticeProb.GaussianLogSobolev, LatticeProb.GaussianHerbstBound, LatticeProb.PolygonalUnicoherence, LatticeProb.PolygonalJaniszewski, LatticeProb.External.RellichKondrachovNegSobolev"
+    - source: "Janiszewski's theorem at a point (Newman, Elements of the Topology of Plane Sets of Points, Chapter V, Theorem 9.3; Burckel, Classical Analysis in the Complex Plane, Exercise 4.37(ii))"
+      lean: "LatticeProb.polygonalJaniszewski"
+      module: "LatticeProb.Topology.PolygonalJaniszewskiProved"
+      status: "proved"
+      note: "The proposition LatticeProb.PolygonalJaniszewski, for any compact plane sets with preconnected intersection (LatticeProb.not_separates_union), from QuantumZipper.CA.Topo.janiszewski."
+    - source: "Cited results (Gaussian log-Sobolev and Herbst bound, polygonal unicoherence, Rellich-Kondrachov in negative order)"
+      lean: "LatticeProb.GaussianLogSobolev, LatticeProb.GaussianHerbstBound, LatticeProb.PolygonalUnicoherence, LatticeProb.External.RellichKondrachovNegSobolev"
       module: "LatticeProb.External"
       status: "assumed"
-      note: "Explicit hypotheses of the theorems that use them; the two polygonal topology propositions are not currently consumed by any theorem here."
+      note: "Explicit hypotheses of the theorems that use them; the polygonal unicoherence proposition is not currently consumed by any theorem here."
 
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are
