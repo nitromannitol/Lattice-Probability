@@ -6,6 +6,7 @@ import LatticeProb.Prob.UpcrossReturnLaplace
 import LatticeProb.Prob.LaplaceIndicator
 import LatticeProb.Prob.BrownianLaplaceHitZero
 import LatticeProb.Prob.ExpNegLimit
+import LatticeProb.Prob.BrownianTailZeroOne
 
 /-!
 # Laplace identity for the first up-crossing piece
@@ -367,5 +368,60 @@ theorem lintegral_piece_eq_rev (hB : IsBrownianReal B P) (hm : ∀ t, Measurable
       (lintegral_congr fun v => mul_comm _ _))
 
 end Cancel
+
+section Finite
+
+/-- Under Brownian motion with positive drift, the end `d₁` of the first up-crossing interval from
+`0` to `c > 0` is almost surely finite. -/
+theorem ae_upcrossEnd₁_lt_top_driftLaw [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
+    (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω) {mu : ℝ}
+    (hmu : 0 < mu) {c : ℝ} (hc : 0 < c) :
+    ∀ᵐ v : C(ℝ≥0, ℝ) ∂(driftLaw P B hcont mu), upcrossEnd₁ c (v : ℝ≥0 → ℝ) < ⊤ := by
+  have hpm : Measurable (pathMap B hcont) := measurable_pathMap B hm hcont
+  have hset : MeasurableSet {v : C(ℝ≥0, ℝ) | upcrossEnd₁ c (v : ℝ≥0 → ℝ) < ⊤} :=
+    measurableSet_lt (measurable_upcrossEnd₁ c) measurable_const
+  refine (ae_map_iff (measurable_driftMap mu).aemeasurable hset).2 ?_
+  refine (ae_map_iff hpm.aemeasurable (hset.preimage (measurable_driftMap mu))).2 ?_
+  filter_upwards [ae_tendsto_div_nat hB.toIsPreBrownianReal hm,
+    hB.toIsPreBrownianReal.eval_zero_ae_eq_zero] with ω hlim h0
+  change upcrossEnd₁ c (fun s => B s ω + mu * (s : ℝ)) < ⊤
+  set v : ℝ≥0 → ℝ := fun s => B s ω + mu * (s : ℝ) with hv
+  have hvc : Continuous v := (hcont ω).add (continuous_const.mul NNReal.continuous_coe)
+  have hv0 : v 0 = 0 := by simp [hv, h0]
+  obtain ⟨n, hn1, hn2⟩ := ((hlim.eventually (Ioi_mem_nhds (show -(mu / 2) < 0 by linarith))).and
+    (Filter.eventually_ge_atTop ⌈2 * c / mu⌉₊)).exists
+  have hcn : 2 * c / mu ≤ (n : ℝ) := (Nat.le_ceil _).trans (Nat.cast_le.2 hn2)
+  have hnpos : (0 : ℝ) < n := lt_of_lt_of_le (div_pos (by linarith) hmu) hcn
+  have hmn : 2 * c ≤ (n : ℝ) * mu := (div_le_iff₀ hmu).1 hcn
+  have hBn : B (n : ℝ≥0) ω = n * ((n : ℝ)⁻¹ * B (n : ℝ≥0) ω) := by field_simp
+  have hlt : -(mu / 2) < (n : ℝ)⁻¹ * B (n : ℝ≥0) ω := Set.mem_Ioi.1 hn1
+  have hcvn : c ≤ v (n : ℝ≥0) := by
+    simp only [hv, NNReal.coe_natCast]
+    nlinarith [mul_lt_mul_of_pos_left hlt hnpos]
+  obtain ⟨s, -, hs⟩ := intermediate_value_Icc (zero_le : (0 : ℝ≥0) ≤ n) hvc.continuousOn
+    (show c ∈ Set.Icc (v 0) (v (n : ℝ≥0)) from ⟨by rw [hv0]; exact hc.le, hcvn⟩)
+  have h1 : hitFrom 0 0 v = 0 := by
+    refine le_antisymm ?_ zero_le
+    simpa using hitFrom_le (w := v) (a := 0) (r := 0) (s := 0) (by simp) hv0
+  have h2 : hitFrom c 0 v ≤ (s : ℝ≥0∞) := hitFrom_le zero_le hs
+  unfold upcrossEnd₁
+  rw [h1]
+  exact lt_of_le_of_lt h2 ENNReal.coe_lt_top
+
+/-- **Reversal identity for the first up-crossing piece under Brownian motion with positive
+drift**: `∫ f(piece) dμ₀ = ∫ f(rev(piece)) dμ₀`. -/
+theorem lintegral_piece_eq_rev_driftLaw [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
+    (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω) {mu : ℝ}
+    (hmu : 0 < mu) {c : ℝ} (hc : 0 < c) {f : (ℝ≥0 → ℝ) → ℝ≥0∞}
+    (hf : Measurable fun w : C(ℝ≥0, ℝ) => f (firstUpcrossPiece c (w : ℝ≥0 → ℝ)))
+    (hf' : Measurable fun w : C(ℝ≥0, ℝ) => f (upcrossRev c (firstUpcrossPiece c (w : ℝ≥0 → ℝ))))
+    (hf1 : ∀ p, f p ≤ 1) :
+    ∫⁻ v : C(ℝ≥0, ℝ), f (firstUpcrossPiece c (v : ℝ≥0 → ℝ)) ∂(driftLaw P B hcont mu)
+      = ∫⁻ v : C(ℝ≥0, ℝ), f (upcrossRev c (firstUpcrossPiece c (v : ℝ≥0 → ℝ)))
+        ∂(driftLaw P B hcont mu) :=
+  lintegral_piece_eq_rev hB hm hcont hmu hc (ae_upcrossEnd₁_lt_top_driftLaw hB hm hcont hmu hc)
+    hf hf' hf1
+
+end Finite
 
 end LatticeProb
