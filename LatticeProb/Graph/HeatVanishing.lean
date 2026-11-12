@@ -206,9 +206,9 @@ theorem heat_matchingGraph_even (p : ℕ × Bool) :
       rw [hflip]
       exact ih p
 
-/-- The return probability of the walk on an infinite locally finite graph need
-not tend to zero: the frozen statement of the cited input is false without a
-hypothesis making the component of the starting vertex infinite. -/
+/-- On the perfect matching of `ℕ × Bool` the return probability does not tend to
+zero: the vanishing of the transition probabilities needs the component of the
+starting vertex to be infinite. -/
 theorem not_heat_tendsto_zero :
     ¬ ∀ x v : ℕ × Bool, Tendsto (fun n : ℕ => heat matchingGraph n x v) atTop (𝓝 0) := by
   intro h
