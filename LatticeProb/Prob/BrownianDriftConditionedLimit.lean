@@ -18,7 +18,7 @@ Lipschitz cylinder functional `Φ`, the conditional averages `E[Φ(B) | G_δ]` c
   itself is an uncountable intersection, and is not known to be measurable).
 * `LatticeProb.integral_stayAbove_inter_hitDrift_le`: the real-valued restart identity at the
   hitting time of the level `ε`.
-* `LatticeProb.abs_sub_shiftPath_le`: on the event that the upper level is reached first by time
+* `LatticeProb.abs_sub_levelShiftPath_le`: on the event that the upper level is reached first by time
   `η`, the path `B` and the restarted path (shifted to start at the level `ε`) are uniformly
   close on `[0, T]` once the drifted motion has a modulus of continuity.
 -/
@@ -68,18 +68,18 @@ theorem ae_eq_stayAboveHat [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
 
 /-- The path `ε + z - c · id`: a drifted increment `z`, seen again as a path of the motion
 without drift started at the level `ε`. -/
-def shiftPath (ε c : ℝ) (z : ℝ≥0 → ℝ) : ℝ≥0 → ℝ := fun u => ε + z u - c * (u : ℝ)
+def levelShiftPath (ε c : ℝ) (z : ℝ≥0 → ℝ) : ℝ≥0 → ℝ := fun u => ε + z u - c * (u : ℝ)
 
-theorem measurable_shiftPath (ε c : ℝ) : Measurable (shiftPath ε c) :=
+theorem measurable_levelShiftPath (ε c : ℝ) : Measurable (levelShiftPath ε c) :=
   measurable_pi_iff.2 fun u => by
     show Measurable fun z : ℝ≥0 → ℝ => ε + z u - c * (u : ℝ)
     have hu : Measurable fun z : ℝ≥0 → ℝ => z u := measurable_pi_apply u
     exact (hu.const_add ε).sub_const _
 
 omit mΩ in
-theorem shiftPath_drift (ε c : ℝ) (ω : Ω) :
-    shiftPath ε c (fun t : ℝ≥0 => B t ω + c * (t : ℝ)) = fun u => ε + B u ω := by
-  funext u; unfold shiftPath; ring
+theorem levelShiftPath_drift (ε c : ℝ) (ω : Ω) :
+    levelShiftPath ε c (fun t : ℝ≥0 => B t ω + c * (t : ℝ)) = fun u => ε + B u ω := by
+  funext u; unfold levelShiftPath; ring
 
 /-- **Restart identity for real functionals.**  For a measurable `Φ ≥ 0` on path space,
 `∫_{G_δ ∩ {τ_ε ≤ η}} Φ (ε + increments of the drifted motion after τ_ε - c · id)` equals
@@ -89,7 +89,7 @@ theorem integral_stayAbove_inter_hitDrift_le [IsProbabilityMeasure P] (hB : IsBr
     {ε δ : ℝ} (hε : 0 < ε) (hδ : 0 < δ) (η : ℝ≥0) {Φ : (ℝ≥0 → ℝ) → ℝ} (hΦ : Measurable Φ)
     (h0 : ∀ g, 0 ≤ Φ g) :
     ∫ ω in {ω | ∀ t : ℝ≥0, -δ < B t ω + c * t} ∩ {ω | hitDrift B c ε ω ≤ (η : ℝ≥0∞)},
-        Φ (shiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω)) ∂P =
+        Φ (levelShiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω)) ∂P =
       (P (topFirst B c ε δ ∩ {ω | hitDrift B c ε ω ≤ (η : ℝ≥0∞)})).toReal *
         ∫ ω in {ω | ∀ t : ℝ≥0, -(ε + δ) < B t ω + c * t}, Φ (fun u => ε + B u ω) ∂P := by
   have hτ := isStoppingTime_hitDriftTrunc hm hcont c ε η
@@ -97,11 +97,11 @@ theorem integral_stayAbove_inter_hitDrift_le [IsProbabilityMeasure P] (hB : IsBr
   have hY : Measurable (fun ω (t : ℝ≥0) => B t ω + c * (t : ℝ)) :=
     measurable_pi_iff.2 fun t => (hm t).add measurable_const
   have key := lintegral_stayAbove_inter_hitDrift_le hB hm hcont hc hε hδ η
-    (Φ := fun z => ENNReal.ofReal (Φ (shiftPath ε c z)))
-    (ENNReal.measurable_ofReal.comp (hΦ.comp (measurable_shiftPath ε c)))
-  simp only [shiftPath_drift] at key
-  have hm1 : Measurable fun ω => Φ (shiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω)) :=
-    hΦ.comp ((measurable_shiftPath ε c).comp hincr)
+    (Φ := fun z => ENNReal.ofReal (Φ (levelShiftPath ε c z)))
+    (ENNReal.measurable_ofReal.comp (hΦ.comp (measurable_levelShiftPath ε c)))
+  simp only [levelShiftPath_drift] at key
+  have hm1 : Measurable fun ω => Φ (levelShiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω)) :=
+    hΦ.comp ((measurable_levelShiftPath ε c).comp hincr)
   have hm2 : Measurable fun ω => Φ (fun u => ε + B u ω) :=
     hΦ.comp (measurable_pi_iff.2 fun u => measurable_const.add (hm u))
   rw [integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall fun ω => h0 _)
@@ -112,13 +112,13 @@ theorem integral_stayAbove_inter_hitDrift_le [IsProbabilityMeasure P] (hB : IsBr
 omit mΩ in
 /-- **Pathwise comparison after the hitting time.**  If the upper level `ε` is reached first by
 time `η ≤ min η₁ 1` and the drifted path has modulus `w` at scale `η₁` on `[0, T + 1]`, then `B`
-and the restarted path `shiftPath ε c (driftIncr ..)` differ by at most `w` on `[0, T]`. -/
-theorem abs_sub_shiftPath_le (hcont : ∀ ω, Continuous fun s => B s ω) (c : ℝ) {ε δ : ℝ}
+and the restarted path `levelShiftPath ε c (driftIncr ..)` differ by at most `w` on `[0, T]`. -/
+theorem abs_sub_levelShiftPath_le (hcont : ∀ ω, Continuous fun s => B s ω) (c : ℝ) {ε δ : ℝ}
     (hε : 0 < ε) (hδ : 0 < δ) (η : ℝ≥0) {ω : Ω} (h0 : B 0 ω = 0)
     (hω : ω ∈ topFirst B c ε δ ∩ {ω | hitDrift B c ε ω ≤ (η : ℝ≥0∞)}) {T η₁ : ℝ≥0} {w : ℝ}
     (hη : η ≤ η₁) (hη1 : η ≤ 1)
     (hmod : HasModulus (fun t : ℝ≥0 => B t ω + c * t) (T + 1) η₁ w) {t : ℝ≥0} (ht : t ≤ T) :
-    |B t ω - shiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω) t| ≤ w := by
+    |B t ω - levelShiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω) t| ≤ w := by
   set σ := hitDriftTrunc B c ε η ω with hσ
   have hv := value_at_hitDriftTrunc hcont c hε hδ η h0 hω
   have hσle : σ ≤ η := by
@@ -133,9 +133,9 @@ theorem abs_sub_shiftPath_le (hcont : ∀ ω, Continuous fun s => B s ω) (c : �
     rw [this, abs_neg, abs_of_nonneg (NNReal.coe_nonneg σ)]
     exact_mod_cast hσle.trans hη
   have h := hmod t (σ + t) (ht.trans (le_self_add)) hs habs
-  have e : B t ω - shiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω) t =
+  have e : B t ω - levelShiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω) t =
       (B t ω + c * t) - (B (σ + t) ω + c * ((σ + t : ℝ≥0) : ℝ)) := by
-    simp only [shiftPath, driftIncr]; push_cast; linarith [hv]
+    simp only [levelShiftPath, driftIncr]; push_cast; linarith [hv]
   rw [e]; exact h
 
 
@@ -235,9 +235,9 @@ theorem abs_integral_part1_le (hB : IsBrownianReal B P) (hm : ∀ t, Measurable 
     (measurableSet_topFirst hm hcont c ε δ).inter hτm
   set S := stayAboveSet B c δ ∩ {ω | hitDrift B c ε ω ≤ (η : ℝ≥0∞)} with hSdef
   set Ev := topFirst B c ε δ ∩ {ω | hitDrift B c ε ω ≤ (η : ℝ≥0∞)} with hEvdef
-  set Zf : Ω → ℝ≥0 → ℝ := fun ω => shiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω)
+  set Zf : Ω → ℝ≥0 → ℝ := fun ω => levelShiftPath ε c (driftIncr B c (hitDriftTrunc B c ε η) ω)
     with hZf
-  have hZm : Measurable Zf := (measurable_shiftPath ε c).comp hincr
+  have hZm : Measurable Zf := (measurable_levelShiftPath ε c).comp hincr
   set S' := Ev ∩ {ω | driftIncr B c (hitDriftTrunc B c ε η) ω ∈ posOn D (ε + δ)} with hS'def
   have hS'm : MeasurableSet S' := hEm.inter (hincr (measurableSet_posOn hDc (ε + δ)))
   have hSS' : S =ᵐ[P] S' := ae_eq_stayAbove_inter_hitDrift_le hB hm hcont hc hε hδ η hDc hDd
@@ -279,7 +279,7 @@ theorem abs_integral_part1_le (hB : IsBrownianReal B P) (hm : ∀ t, Measurable 
     have hEω : ω ∈ Ev := hω.1
     by_cases hmod : HasModulus (fun t : ℝ≥0 => B t ω + c * t) (T + 1) η₁ w
     · have := hlip (fun t => B t ω) (Zf ω) w hw (fun t ht =>
-        abs_sub_shiftPath_le hcont c hε hδ η hb0 hEω hηη hη1 hmod (hI t ht))
+        abs_sub_levelShiftPath_le hcont c hε hδ η hb0 hEω hηη hη1 hmod (hI t ht))
       exact this.trans (le_add_of_nonneg_right
         (Set.indicator_nonneg (fun _ _ => zero_le_one) ω))
     · have hωU : ω ∈ U := subset_toMeasurable _ _ ⟨hSω.1, hmod⟩
