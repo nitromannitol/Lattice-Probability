@@ -57,7 +57,8 @@ theorem lintegral_expNeg_piece_upcrossEnd₁_restart [IsProbabilityMeasure P]
     (hXad : StronglyAdapted (natFiltration (liftOne B) (stronglyMeasurable_liftOne hm)) X)
     (hXc : ∀ ω, Continuous fun t => X t ω) {mu : ℝ}
     (hXinc : ∀ ω t s, X (t + s) ω - X t ω = (B (t + s) ω - B t ω) + mu * s)
-    {c : ℝ} (hc : 0 < c) (q : ℝ) {f : (ℝ≥0 → ℝ) → ℝ≥0∞} (hf : Measurable f) :
+    {c : ℝ} (hc : 0 < c) (q : ℝ) {f : (ℝ≥0 → ℝ) → ℝ≥0∞}
+    (hf : Measurable fun w : C(ℝ≥0, ℝ) => f (firstUpcrossPiece c (w : ℝ≥0 → ℝ))) :
     ∫⁻ ω, expNeg q (upcrossEnd₁ c (fun t => X t ω)) * f (firstUpcrossPiece c (fun t => X t ω)) ∂P
       = (∫⁻ ω, expNeg q (hitFrom 0 0 (fun t => X t ω)) ∂P) *
         ∫⁻ v : C(ℝ≥0, ℝ), f (firstUpcrossPiece c (v : ℝ≥0 → ℝ)) *
@@ -72,7 +73,7 @@ theorem lintegral_expNeg_piece_upcrossEnd₁_restart [IsProbabilityMeasure P]
   set G : C(ℝ≥0, ℝ) → ℝ≥0∞ := fun v =>
     f (firstUpcrossPiece c (v : ℝ≥0 → ℝ)) * expNeg q (upcrossEnd₁ c (v : ℝ≥0 → ℝ)) with hG
   have hGm : Measurable G :=
-    (hf.comp (measurable_firstUpcrossPiece c)).mul
+    hf.mul
       ((measurable_expNeg q).comp (measurable_upcrossEnd₁ c))
   set Φ : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) → ℝ≥0∞ := fun p =>
     expNeg q (hitFrom 0 0 (p.1 : ℝ≥0 → ℝ)) * G p.2 with hΦdef

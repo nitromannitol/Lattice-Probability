@@ -90,7 +90,8 @@ theorem lintegral_expNeg_piece_upcrossEnd₂_restart [IsProbabilityMeasure P]
     (hXad : StronglyAdapted (natFiltration (liftOne B) (stronglyMeasurable_liftOne hm)) X)
     (hXc : ∀ ω, Continuous fun t => X t ω) {mu : ℝ}
     (hXinc : ∀ ω t s, X (t + s) ω - X t ω = (B (t + s) ω - B t ω) + mu * s)
-    (c q : ℝ) {f : (ℝ≥0 → ℝ) → ℝ≥0∞} (hf : Measurable f) :
+    (c q : ℝ) {f : (ℝ≥0 → ℝ) → ℝ≥0∞}
+    (hf : Measurable fun w : C(ℝ≥0, ℝ) => f (firstUpcrossPiece c (w : ℝ≥0 → ℝ))) :
     ∫⁻ ω, expNeg q (upcrossEnd₂ c (fun t => X t ω)) * f (firstUpcrossPiece c (fun t => X t ω)) ∂P
       = (∫⁻ ω, expNeg q (upcrossEnd₁ c (fun t => X t ω)) *
           f (firstUpcrossPiece c (fun t => X t ω)) ∂P) *
@@ -99,7 +100,7 @@ theorem lintegral_expNeg_piece_upcrossEnd₂_restart [IsProbabilityMeasure P]
   have hA : Measurable fun s : C(ℝ≥0, ℝ) =>
       expNeg q (upcrossEnd₁ c (s : ℝ≥0 → ℝ)) * f (firstUpcrossPiece c (s : ℝ≥0 → ℝ)) :=
     ((measurable_expNeg q).comp (measurable_upcrossEnd₁ c)).mul
-      (hf.comp (measurable_firstUpcrossPiece c))
+      hf
   have hR : Measurable fun v : C(ℝ≥0, ℝ) => expNeg q (upcrossReturn c (v : ℝ≥0 → ℝ)) :=
     (measurable_expNeg q).comp (measurable_upcrossReturn c)
   have hstep : ∀ w : C(ℝ≥0, ℝ),
