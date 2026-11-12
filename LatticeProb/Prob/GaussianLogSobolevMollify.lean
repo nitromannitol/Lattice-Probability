@@ -1,4 +1,5 @@
 import LatticeProb.Prob.GaussianLogSobolevAssembly
+import LatticeProb.Prob.GaussianLogSobolevOneInput
 import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 import Mathlib.Analysis.Calculus.ContDiff.Convolution
@@ -29,6 +30,8 @@ dominating function for `q log q`, so the entropies converge by dominated conver
 * `LatticeProb.lipschitzLogApprox`: `LipschitzLogApprox n` for every `n`.
 * `LatticeProb.gaussianLogSobolevGradToLipschitz`: `GaussianLogSobolevGradToLipschitz n` for
   every `n`.
+* `LatticeProb.gaussianLogSobolev_all_of_ouFlow_of_tensorStep` and the primed forms of the
+  `GaussianLogSobolevOneInput` theorems: the chain without the regularity bridge hypothesis.
 -/
 
 noncomputable section
@@ -296,6 +299,22 @@ theorem lipschitzLogApprox (n : ℕ) : LipschitzLogApprox n := by
 inequality for `C¹` densities implies the frozen Lipschitz-log form. -/
 theorem gaussianLogSobolevGradToLipschitz (n : ℕ) : GaussianLogSobolevGradToLipschitz n :=
   fun hgrad => gaussianLogSobolevGradToLipschitz_of_approx hgrad (lipschitzLogApprox n) hgrad
+
+/-- **The one-dimensional Gaussian log-Sobolev inequality** from the Γ-form inequality alone:
+`gaussianLogSobolevOne_of_gradOne` without the regularity bridge hypothesis. -/
+theorem gaussianLogSobolevOne_of_gradOne' (hgrad : GaussianLogSobolevGradOne) :
+    GaussianLogSobolevOne :=
+  gaussianLogSobolevOne_of_gradOne hgrad (gaussianLogSobolevGradToLipschitz 1)
+
+/-- `gaussianHerbstBound_of_gradOne` without the regularity bridge hypothesis. -/
+theorem gaussianHerbstBound_of_gradOne' (hone : GaussianLogSobolevGradOne)
+    (hprod : GaussianLogSobolevGradProdStep) (n : ℕ) : GaussianHerbstBound n :=
+  gaussianHerbstBound_of_gradOne hone hprod gaussianLogSobolevGradToLipschitz n
+
+/-- `gaussianLogSobolev_all_of_gradOne` without the regularity bridge hypothesis. -/
+theorem gaussianLogSobolev_all_of_gradOne' (hone : GaussianLogSobolevGradOne)
+    (hprod : GaussianLogSobolevGradProdStep) : ∀ n : ℕ, GaussianLogSobolev n :=
+  gaussianLogSobolev_all_of_gradOne hone hprod gaussianLogSobolevGradToLipschitz
 
 /-- **The Gaussian log-Sobolev inequality in every dimension**, from the one-dimensional
 Ornstein–Uhlenbeck heat-flow contraction and the one-step tensorization; the mollification input

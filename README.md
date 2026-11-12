@@ -426,7 +426,8 @@ the field with zero boundary values on a finite set `C` as
   the single named mollification input `LipschitzLogApprox`.
 * `LatticeProb.lipschitzLogApprox`, `LatticeProb.gaussianLogSobolevGradToLipschitz`,
   `LatticeProb.gaussianLogSobolev_all_of_ouFlow_of_tensorStep`,
-  `LatticeProb.gaussianHerbstBound_all_of_ouFlow_of_tensorStep`: the mollification input is
+  `LatticeProb.gaussianHerbstBound_all_of_ouFlow_of_tensorStep`,
+  `LatticeProb.gaussianLogSobolev_all_of_gradOne'`: the mollification input is
   proved in every dimension, by normalised convolution with smooth bumps, so the regularity
   bridge holds unconditionally and the general-`n` log-Sobolev and Herbst bounds rest only on
   the one-dimensional heat-flow contraction and the one-step tensorization
