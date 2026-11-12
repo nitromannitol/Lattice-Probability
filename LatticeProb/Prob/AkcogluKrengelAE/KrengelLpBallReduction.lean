@@ -1,28 +1,25 @@
 /-
-# `ℓ¹`-ball and anchored-box geometry for the multiparameter `Lᵖ` maximal bound
+# The `ℓ¹`-ball maximal function and anchored-box geometry
 
-This file collects the finite-set geometry for the second named gap of
-`LatticeProb/Prob/AkcogluKrengelAE/BallMaximalLp.lean`, `KrengelLpBall d` (the multiparameter
-`Lᵖ` maximal bound for `ℓ¹`-ball averages), together with the `ℓ¹`-ball maximal function
-`l1BallMax` and its measurability.
+This file collects the finite-set geometry that compares `ℓ¹`-ball averages on `ℤ^d` with
+anchored-box averages, towards the multiparameter `Lᵖ` maximal bound `KrengelLpBall d`
+(`LatticeProb/Prob/AkcogluKrengelAE/BallMaximalLp.lean`).
 
-The geometric content proved here is:
-
+* `l1BallMax` and `measurable_l1BallMax`: the `ℓ¹`-ball maximal function of a measure-preserving
+  additive action and its measurability;
 * `anchoredBox_subset_l1Ball`: an anchored box lies inside an `ℓ¹` ball;
 * `l1Ball_subset_boxFinset` / `card_l1Ball_le`: the `ℓ¹` ball lies inside the `ℓ∞` box
   `∏ᵢ [-⌈R⌉₊, ⌈R⌉₊]`, with cardinality at most `(2⌈R⌉₊+1)^d`;
 * `orthantBox` and `boxFinset_eq_biUnion_orthantBox`: the `ℓ∞` box is the union of the `2^d`
-  orthant boxes, each a translate of an anchored box, with total volume `(2⌈R⌉₊+1)^d`;
-* `avg_l1Ball_le_orthantBoxMax`: the ball average is at most `(2d)^d` times the largest orthant-box
-  average, with a constant independent of the radius.
+  orthant boxes, each a translate of an anchored box;
+* `card_l1Ball_ge`, `avg_l1Ball_le_orthantBoxMax` and `l1BallMax_le_orthantBoxMax`: the volume lower
+  bound and the comparison of the `ℓ¹`-ball average with the orthant-box averages, with the constant
+  `(2d)^d`, independent of the radius;
+* `anchoredBox_smallC`: each orthant box is an anchored box with all side parameters at most `1`;
+* `tau_nsmul_one_eq_iterate`, `ae_eq_of_measurePreserving_idempotent` and `avg_map_addRight`: the
+  bookkeeping that passes between the action and translates of finite sets.
 
-**Maximal inequalities with constant one are false here.**  The restricted weak-type bound
-`t · μ{M > t} ≤ ∫_{M > t} f` holds for the one-parameter forward averages (Hopf), but not for the
-families of this file, so it cannot feed `marcinkiewicz_abstract`.  For centred `ℓ¹` balls in
-`d = 1` on `ℤ/7` with the rotation, `f = 2δ` at `0`, `3t - δ` at `2` and `0` elsewhere has level
-set `{1}`, where `f = 0`; for anchored boxes with `c = (2)` (even lengths only) on `ℤ/n`, `f = ε`
-at `0` and `2t` at `1` has level set `{0}`, where `f = ε < t`.  The centred anchored-box form fails
-already at `N = 0`, where the box is empty: `not_krengelMaximalInputCentred`.
+Every statement here is proved.
 -/
 import LatticeProb.Prob.AkcogluKrengelAE.BirkhoffLpMaximalProved
 import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodic
@@ -40,7 +37,7 @@ noncomputable section
 
 variable {Ω : Type*} [MeasurableSpace Ω] {d : ℕ}
 
-/-! ### The `ℓ¹`-ball maximal function and its weak type -/
+/-! ### The `ℓ¹`-ball maximal function -/
 
 /-- The `ℓ¹`-ball maximal function `Mf ω = ⨆_{1 ≤ R} avg (B¹_R(0)) (f ∘ T_·)(ω)`. -/
 noncomputable def l1BallMax (T : Site d → Ω → Ω) (f : Ω → ℝ≥0∞) (ω : Ω) : ℝ≥0∞ :=
@@ -52,49 +49,6 @@ theorem measurable_l1BallMax {T : Site d → Ω → Ω} (hT : ∀ x, Measurable 
   refine Measurable.iSup fun R => ?_
   refine Measurable.iSup_Prop (1 ≤ R) ?_
   exact measurable_const.mul (Finset.measurable_sum _ fun y _ => hf.comp (hT y))
-
-/-! ### The centred anchored-box maximal input -/
-
-/-- The centred anchored-box average: the uniform average of `h` over `∏ᵢ [0, ⌈N cᵢ⌉)`, minus the
-true mean `∫ h`. -/
-noncomputable def anchoredBoxAvgCentred {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    (h : Ω → ℝ) (τ : Site d → Ω → Ω) (c : Fin d → ℝ) (N : ℕ) (ω : Ω) : ℝ :=
-  (((anchoredBox c N).card : ℝ))⁻¹ * ∑ x ∈ anchoredBox c N, h (τ x ω) - ∫ ω, h ω ∂μ
-
-/-- **The centred anchored-box maximal inequality with constant one is false** for `d ≥ 1`.  The
-supremum runs over every `N : ℕ`, including `N = 0`, where the box `∏ᵢ [0, 0)` is empty and the
-centred average is `-∫ h`.  On a one-point space with `h = 1` the level set at `t = 1/2` is the
-whole space, so the left side is `1/2`, while `h - ∫ h = 0` makes the right side `0`. -/
-theorem not_krengelMaximalInputCentred (hd : 0 < d) (c : Fin d → ℝ) :
-    ¬ ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-        (τ : Site d → Ω → Ω),
-        (∀ z, MeasurePreserving (τ z) μ μ) →
-        (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
-        ∀ (h : Ω → ℝ), Measurable h → (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
-          ∀ t : ℝ, 0 < t →
-            ENNReal.ofReal t * μ {ω | ENNReal.ofReal t <
-                ⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgCentred μ h τ c N ω|} ≤
-              ∫⁻ ω, ({ω | ENNReal.ofReal t <
-                ⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgCentred μ h τ c N ω|}.indicator
-                  (fun ω => ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|)) ω ∂μ := by
-  intro h
-  have key := h (Ω := Unit) (Measure.dirac ()) (fun _ ω => ω)
-    (fun _ => MeasurePreserving.id _) (fun _ _ _ => rfl) (fun _ => 1) measurable_const
-    ⟨1, zero_le_one, fun _ => by simp⟩ (1 / 2) (by norm_num)
-  have hbox : anchoredBox c 0 = ∅ := by
-    rw [Finset.eq_empty_iff_forall_notMem]
-    intro x hx
-    have hx0 := (Fintype.mem_piFinset.mp hx) ⟨0, hd⟩
-    simp at hx0
-  have hset : {ω : Unit | ENNReal.ofReal (1 / 2) < ⨆ N : ℕ, ENNReal.ofReal
-      |anchoredBoxAvgCentred (Measure.dirac ()) (fun _ => (1 : ℝ)) (fun _ ω => ω) c N ω|}
-      = Set.univ := by
-    refine Set.eq_univ_of_forall fun ω => ?_
-    show ENNReal.ofReal (1 / 2) < _
-    refine lt_of_lt_of_le ?_ (le_iSup _ 0)
-    simp [anchoredBoxAvgCentred, hbox]
-  rw [hset] at key
-  simp at key
 
 /-! ### The `ℓ¹`-ball geometry against anchored boxes -/
 
@@ -528,7 +482,6 @@ theorem avg_map_addRight (B : Finset (Site d)) (z : Site d) (f : Site d → ℝ�
   unfold avg
   rw [Finset.card_map, Finset.sum_map]
   rfl
-
 
 #print axioms boxFinset_eq_biUnion_orthantBox
 #print axioms anchoredBox_subset_l1Ball
