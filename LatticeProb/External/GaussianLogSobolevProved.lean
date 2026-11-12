@@ -12,9 +12,14 @@ product of standard Gaussians (`LatticeProb.GaussConc.gaussEuclid_map_ofLp`) and
 from the Euclidean to the sup metric (`integral_mul_log_le_of_contDiff`). A merely Lipschitz
 logarithm is reached through the `C¹` approximations of `LatticeProb.lipschitzLogApprox`, which keep
 the Lipschitz constant and the mass and converge in entropy.
+
+The `ℓ²` form `LatticeProb.GaussianLogSobolevL2 n`, for logarithms that are `C`-Lipschitz for the
+Euclidean distance, holds for every `n` as well (`gaussianLogSobolevL2_holds`), from the Lipschitz
+exponential-tilt inequality `LatticeProb.GaussLSI.integral_exp_mul_le_of_lipschitz`.
 -/
 import LatticeProb.External.GaussianLogSobolev
-import LatticeProb.Prob.GaussianLogSobolevEntropy
+import LatticeProb.Prob.GaussianLogSobolevLipschitz
+import LatticeProb.Prob.HerbstFromLSI
 import LatticeProb.Prob.GaussianLogSobolevMollify
 import LatticeProb.Prob.GaussEuclideanPushforward
 
@@ -24,6 +29,14 @@ open MeasureTheory ProbabilityTheory Filter
 open scoped NNReal
 
 namespace LatticeProb
+
+/-- Integrals of continuous functions transfer from `EuclideanSpace ℝ (Fin n)` with its standard
+Gaussian measure to `Fin n → ℝ` with the product of standard Gaussians. -/
+theorem integral_comp_ofLp_stdGaussian {n : ℕ} {F : (Fin n → ℝ) → ℝ} (hF : Continuous F) :
+    ∫ x, F (WithLp.ofLp x) ∂(stdGaussian (EuclideanSpace ℝ (Fin n)))
+      = ∫ y, F y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) := by
+  rw [← GaussConc.gaussEuclid_map_ofLp n, integral_map
+    (WithLp.measurable_ofLp (p := 2) (Fin n → ℝ)).aemeasurable hF.aestronglyMeasurable]
 
 /-- **The Gaussian logarithmic Sobolev inequality for `C¹` densities** on `Fin n → ℝ` whose
 logarithm is `C`-Lipschitz for the sup metric. -/
@@ -52,17 +65,10 @@ theorem integral_mul_log_le_of_contDiff {n : ℕ} {h : (Fin n → ℝ) → ℝ} 
   have key := GaussLSI.integral_mul_log_le_of_gradient hg hgd hg'c hg'b
   have hexp : ∀ x, Real.exp (g x) = h (WithLp.ofLp x) := fun x => Real.exp_log (hpos _)
   simp only [hexp] at key
-  have hmeas : Measurable (WithLp.ofLp : EuclideanSpace ℝ (Fin n) → Fin n → ℝ) :=
-    WithLp.measurable_ofLp (p := 2) (Fin n → ℝ)
-  have hpush : ∀ F : (Fin n → ℝ) → ℝ, Continuous F →
-      ∫ x, F (WithLp.ofLp x) ∂(stdGaussian (EuclideanSpace ℝ (Fin n)))
-        = ∫ y, F y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) := by
-    intro F hF
-    rw [← GaussConc.gaussEuclid_map_ofLp n,
-      integral_map hmeas.aemeasurable hF.aestronglyMeasurable]
   have hhc : Continuous h := hc.continuous
-  rw [hpush (fun y => h y * Real.log (h y))
-      (hhc.mul (hhc.log fun x => (hpos x).ne')), hpush h hhc, hnorm] at key
+  rw [integral_comp_ofLp_stdGaussian (F := fun y => h y * Real.log (h y))
+      (hhc.mul (hhc.log fun x => (hpos x).ne')), integral_comp_ofLp_stdGaussian hhc,
+    hnorm] at key
   simpa using key
 
 /-- **The Gaussian logarithmic Sobolev inequality holds in every dimension.** -/
@@ -72,5 +78,26 @@ theorem gaussianLogSobolev_holds (n : ℕ) : GaussianLogSobolev n := by
   refine le_of_tendsto' htend fun k => ?_
   obtain ⟨hp, hc, hlc, -, -, -, hnk⟩ := hprops k
   exact integral_mul_log_le_of_contDiff hp hc hlc hnk
+
+/-- **The `ℓ²` form of the Gaussian logarithmic Sobolev inequality holds in every dimension.** -/
+theorem gaussianLogSobolevL2_holds (n : ℕ) : GaussianLogSobolevL2 n := by
+  intro h hpos _ _ hnorm C hlip
+  set g : EuclideanSpace ℝ (Fin n) → ℝ := fun x => Real.log (h (WithLp.ofLp x))
+  have hg : LipschitzWith C g := LipschitzWith.of_dist_le_mul fun x y => by
+    rw [Real.dist_eq, EuclideanSpace.dist_eq]
+    refine (hlip (WithLp.ofLp x) (WithLp.ofLp y)).trans (le_of_eq ?_)
+    simp [Real.dist_eq, sq_abs]
+  have hh : h = fun y => Real.exp (g (WithLp.toLp 2 y)) :=
+    funext fun y => (Real.exp_log (hpos y)).symm
+  have hhc : Continuous h := by
+    rw [hh]
+    exact (hg.continuous.comp (by fun_prop)).rexp
+  have key := GaussLSI.integral_exp_mul_le_of_lipschitz hg
+  have hexp : ∀ x, Real.exp (g x) = h (WithLp.ofLp x) := fun x => Real.exp_log (hpos _)
+  simp only [hexp] at key
+  rw [integral_comp_ofLp_stdGaussian (F := fun y => h y * Real.log (h y))
+      (hhc.mul (hhc.log fun x => (hpos x).ne')), integral_comp_ofLp_stdGaussian hhc,
+    hnorm] at key
+  simpa using key
 
 end LatticeProb

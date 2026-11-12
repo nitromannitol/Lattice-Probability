@@ -97,6 +97,7 @@ import LatticeProb.External.GaussianLogSobolevProved
 import LatticeProb.Prob.GaussianLogSobolevMehler
 import LatticeProb.Prob.GaussianLogSobolevMehlerDeriv
 import LatticeProb.Prob.GaussianLogSobolevEntropy
+import LatticeProb.Prob.GaussianLogSobolevLipschitz
 import LatticeProb.Prob.GaussianHerbst
 import LatticeProb.Prob.HerbstBound
 import LatticeProb.Prob.HerbstFromLSI

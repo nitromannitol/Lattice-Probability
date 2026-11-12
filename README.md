@@ -458,6 +458,10 @@ the field with zero boundary values on a finite set `C` as
   integrating by parts; hence `GaussianLogSobolev n` for every `n`
   (`LatticeProb/Prob/GaussianLogSobolevMehler.lean`, `GaussianLogSobolevMehlerDeriv.lean`,
   `GaussianLogSobolevEntropy.lean`, `LatticeProb/External/GaussianLogSobolevProved.lean`).
+* `LatticeProb.GaussLSI.integral_exp_mul_le_of_lipschitz`, `LatticeProb.gaussianLogSobolevL2_holds`:
+  the same inequality for every `K`-Lipschitz `g`, by mollifying bounded truncations, and hence the
+  `ℓ²` form `GaussianLogSobolevL2 n` for every `n`
+  (`LatticeProb/Prob/GaussianLogSobolevLipschitz.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
