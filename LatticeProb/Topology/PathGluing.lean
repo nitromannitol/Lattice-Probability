@@ -14,13 +14,15 @@ open scoped Topology
 
 namespace LatticeProb.Topology
 
-/-- **Infinite concatenation of paths.** Paths `γ n` from `c n` to `c (n + 1)` inside balls `ball x (ρ n)` with
-`ρ n → 0` concatenate to a curve `β`, continuous on `[0, 1]`, with `β 1 = x` and `β t` on some `γ n` for
-`t ∈ [0, 1)`. -/
-theorem exists_continuousOn_Icc_of_tendsto_paths {X : Type*} [MetricSpace X] {x : X} {c : ℕ → X}
+/-- **Infinite concatenation of paths, with its time grid.** Paths `γ n` from `c n` to `c (n + 1)` inside balls
+`ball x (ρ n)` with `ρ n → 0` concatenate to a curve `β`, continuous on `[0, 1]`, with `β 1 = x`, `β t` on some
+`γ n` for `t ∈ [0, 1)`, and `β` running `γ n` affinely on `[1 - 2⁻¹ ^ n, 1 - 2⁻¹ ^ (n + 1)]`. -/
+theorem exists_continuousOn_Icc_of_tendsto_paths_grid {X : Type*} [MetricSpace X] {x : X} {c : ℕ → X}
     (γ : ∀ n, Path (c n) (c (n + 1))) {ρ : ℕ → ℝ} (hρ : Tendsto ρ atTop (𝓝 0))
     (hγρ : ∀ n, ∀ s, dist (γ n s) x < ρ n) :
-    ∃ β : ℝ → X, ContinuousOn β (Icc 0 1) ∧ β 1 = x ∧ ∀ t ∈ Ico 0 1, ∃ n, β t ∈ range (γ n) := by
+    ∃ β : ℝ → X, ContinuousOn β (Icc 0 1) ∧ β 1 = x ∧ (∀ t ∈ Ico 0 1, ∃ n, β t ∈ range (γ n)) ∧
+      ∀ n, ∀ t ∈ Icc (1 - 2⁻¹ ^ n) (1 - 2⁻¹ ^ (n + 1)),
+        β t = (γ n).extend ((t - (1 - 2⁻¹ ^ n)) / 2⁻¹ ^ (n + 1)) := by
   classical
   -- the time grid `a n = 1 - 2⁻¹ ^ n`
   set a : ℕ → ℝ := fun n => 1 - 2⁻¹ ^ n with hadef
@@ -98,7 +100,11 @@ theorem exists_continuousOn_Icc_of_tendsto_paths {X : Type*} [MetricSpace X] {x 
     refine ⟨m, ?_⟩
     rw [hβI m t ⟨hm1, hm2⟩, ← Path.extend_range]
     exact mem_range_self _
-  refine ⟨β, ?_, hβ1, hrange⟩
+  refine ⟨β, ?_, hβ1, hrange, fun n t ht => ?_⟩
+  swap
+  · have h := hβI n t ht
+    rw [hstep n] at h
+    exact h
   intro t ht
   rcases ht.2.lt_or_eq with ht1 | rfl
   · obtain ⟨n, hn⟩ := hlim t ht1
@@ -126,5 +132,15 @@ theorem exists_continuousOn_Icc_of_tendsto_paths {X : Type*} [MetricSpace X] {x 
       exact (hγρ m s).trans (hN m hmN)
     · rw [hβ1, dist_self]
       exact hε
+
+/-- **Infinite concatenation of paths.** Paths `γ n` from `c n` to `c (n + 1)` inside balls `ball x (ρ n)` with
+`ρ n → 0` concatenate to a curve `β`, continuous on `[0, 1]`, with `β 1 = x` and `β t` on some `γ n` for
+`t ∈ [0, 1)`. -/
+theorem exists_continuousOn_Icc_of_tendsto_paths {X : Type*} [MetricSpace X] {x : X} {c : ℕ → X}
+    (γ : ∀ n, Path (c n) (c (n + 1))) {ρ : ℕ → ℝ} (hρ : Tendsto ρ atTop (𝓝 0))
+    (hγρ : ∀ n, ∀ s, dist (γ n s) x < ρ n) :
+    ∃ β : ℝ → X, ContinuousOn β (Icc 0 1) ∧ β 1 = x ∧ ∀ t ∈ Ico 0 1, ∃ n, β t ∈ range (γ n) := by
+  obtain ⟨β, hc, h1, hr, -⟩ := exists_continuousOn_Icc_of_tendsto_paths_grid γ hρ hγρ
+  exact ⟨β, hc, h1, hr⟩
 
 end LatticeProb.Topology
