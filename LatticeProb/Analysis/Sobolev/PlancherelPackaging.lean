@@ -3,8 +3,7 @@
 
 For `L¹ ∩ L²` functions the `L²` Fourier transform (`MeasureTheory.Lp.fourierTransformₗᵢ`)
 agrees almost everywhere with the pointwise Fourier integral `𝓕`.  Integrability is
-necessary: the
-Bochner integral defining `𝓕` is `0` off `L¹`, so the unrestricted `L²` statement is false.
+needed because the Bochner integral defining `𝓕` is `0` off `L¹`.
 -/
 import LatticeProb.Analysis.Sobolev.Defs
 
