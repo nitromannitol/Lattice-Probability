@@ -1,9 +1,9 @@
 /-
 # Reducing `FrechetKolmogorovH` to two classical inputs
 
-`FrechetKolmogorovH` (`FrechetKolmogorov.lean`) is the last open input of the Rellich low-frequency
-route.  This module reduces it — in its **integrable-family** form `FrechetKolmogorovHInt`, which
-is what the triangle inequality `sobolevNormSq_add_le` needs — to the two classical halves of the
+`FrechetKolmogorovH` (`FrechetKolmogorov.lean`) is the Fréchet–Kolmogorov input of the Rellich
+low-frequency route, for families of integrable functions (the form the triangle inequality
+`sobolevNormSq_add_le` needs).  This module reduces it to the two classical halves of the
 Fréchet–Kolmogorov proof:
 
 * `FrechetKolmogorovMollify` — uniform translation-continuity yields, for every accuracy, a smooth
@@ -38,9 +38,9 @@ def FrechetKolmogorovMollify : Prop :=
       ∀ f ∈ S, sobolevNormSq d s (fun x => f x - convReal f ρ x) ≤ ENNReal.ofReal η
 
 /-- **Mollified compactness.**  Convolution with a fixed smooth compactly supported `ρ` maps a
-tight, integrable, `H^s`-bounded family into a totally bounded family, with centres in the original
-family.  This is the Arzelà–Ascoli half (the mollified family is `C^m`-bounded and compactly
-supported) followed by the `C^m → H^s` transfer. -/
+tight, integrable, `H^s`-bounded family into a totally bounded family, with centres the mollified
+members `g i ⋆ ρ` of the family.  This is the Arzelà–Ascoli half (the mollified family is
+`C^m`-bounded and compactly supported) followed by the `C^m → H^s` transfer. -/
 def FrechetKolmogorovMollifiedCompact : Prop :=
   ∀ (d : ℕ) (K : Set (Space d)), IsCompact K → ∀ (s : ℝ) (S : Set (Space d → ℝ))
     (ρ : Space d → ℝ),
@@ -49,20 +49,8 @@ def FrechetKolmogorovMollifiedCompact : Prop :=
     (∃ C : ℝ, ∀ f ∈ S, sobolevNormSq d s f ≤ ENNReal.ofReal C) →
     ContDiff ℝ (⊤ : ℕ∞) ρ → HasCompactSupport ρ →
     ∀ (η : ℝ), 0 < η → ∃ (N : ℕ) (g : Fin N → Space d → ℝ), (∀ i, g i ∈ S) ∧
-      ∀ f ∈ S, ∃ i, sobolevNormSq d s (fun x => convReal f ρ x - g i x) ≤ ENNReal.ofReal η
-
-/-- `FrechetKolmogorovH` for families of integrable functions (the form the triangle inequality
-consumes).  The Rellich family of test functions is integrable, so this is the form in force. -/
-def FrechetKolmogorovHInt : Prop :=
-  ∀ (d : ℕ) (K : Set (Space d)), IsCompact K → ∀ (s : ℝ) (S : Set (Space d → ℝ)),
-    (∀ f ∈ S, tsupport f ⊆ K) →
-    (∀ f ∈ S, Integrable f) →
-    (∃ C : ℝ, ∀ f ∈ S, sobolevNormSq d s f ≤ ENNReal.ofReal C) →
-    (∀ (η : ℝ), 0 < η → ∃ (δ : ℝ), 0 < δ ∧ ∀ (h : Space d), ‖h‖ < δ →
-      ∀ f ∈ S, sobolevNormSq d s (fun x => f (x + h) - f x) ≤ ENNReal.ofReal η) →
-    ∀ δ : ℝ, 0 < δ →
-      ∃ (N : ℕ) (g : Fin N → Space d → ℝ), (∀ i, g i ∈ S) ∧
-        ∀ f ∈ S, ∃ i, sobolevNormSq d s (fun x => f x - g i x) ≤ ENNReal.ofReal δ
+      ∀ f ∈ S, ∃ i,
+        sobolevNormSq d s (fun x => convReal f ρ x - convReal (g i) ρ x) ≤ ENNReal.ofReal η
 
 /-- The three-term triangle inequality for `sobolevNormSq`. -/
 private theorem decomp {d : ℕ} (s : ℝ) {φ P ψ : Space d → ℝ}
@@ -81,37 +69,55 @@ private theorem decomp {d : ℕ} (s : ℝ) {φ P ψ : Space d → ℝ}
   rwa [show (fun x => (φ x - P x) + (P x - ψ x)) = fun x => φ x - ψ x by
     funext x; ring] at h
 
+/-- `‖a - b‖_{H^s} = ‖b - a‖_{H^s}`: the Fourier transform of `b - a` is the negative of that of
+`a - b`, whether or not they are integrable. -/
+private theorem sobolevNormSq_sub_comm {d : ℕ} (s : ℝ) (a b : Space d → ℝ) :
+    sobolevNormSq d s (fun x => b x - a x) = sobolevNormSq d s (fun x => a x - b x) := by
+  have hF : ∀ ξ, 𝓕 (fun x => ((b x - a x : ℝ) : ℂ)) ξ
+      = -𝓕 (fun x => ((a x - b x : ℝ) : ℂ)) ξ := by
+    intro ξ
+    rw [Real.fourier_eq, Real.fourier_eq, ← integral_neg]
+    congr 1
+    funext v
+    simp only [Circle.smul_def, Complex.ofReal_sub]
+    ring
+  unfold sobolevNormSq
+  simp_rw [hF, norm_neg]
+
 /-- **The reduction.**  The mollification approximation and the mollified compactness compose into
 the Fréchet–Kolmogorov statement. -/
-theorem frechetKolmogorovHInt_of_mollify_and_compact
+theorem frechetKolmogorovH_of_mollify_and_compact
     (hm : FrechetKolmogorovMollify) (hc : FrechetKolmogorovMollifiedCompact) :
-    FrechetKolmogorovHInt := by
+    FrechetKolmogorovH := by
   intro d K hK s S htight hint hb htrans δ hδ
-  obtain ⟨ρ, hρcont, hρcs, happ⟩ := hm d K hK s S htight htrans (δ / 4) (by positivity)
-  obtain ⟨N, g, hgS, hcov⟩ :=
-    hc d K hK s S ρ htight hint hb hρcont hρcs (δ / 4) (by positivity)
+  have hε : (0 : ℝ) < δ / 10 := by positivity
+  obtain ⟨ρ, hρcont, hρcs, happ⟩ := hm d K hK s S htight htrans (δ / 10) hε
+  obtain ⟨N, g, hgS, hcov⟩ := hc d K hK s S ρ htight hint hb hρcont hρcs (δ / 10) hε
   refine ⟨N, g, hgS, fun f hf => ?_⟩
   obtain ⟨i, hi⟩ := hcov f hf
   refine ⟨i, ?_⟩
   have hρint : Integrable ρ := hρcont.continuous.integrable_of_hasCompactSupport hρcs
-  have hconv : Integrable (fun x => (convReal f ρ x : ℂ)) :=
-    (Integrable.integrable_convolution (ContinuousLinearMap.mul ℝ ℝ) (hint f hf) hρint).ofReal
-  have hdec := decomp s (hint f hf).ofReal hconv (hint (g i) (hgS i)).ofReal
-  have h2a : (2 : ℝ≥0∞) * ENNReal.ofReal (δ / 4) = ENNReal.ofReal (δ / 2) := by
-    rw [show (2 : ℝ≥0∞) = ENNReal.ofReal 2 from (ENNReal.ofReal_natCast 2).symm,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
-    congr 1
-    ring
-  have hsum : ENNReal.ofReal (δ / 2) + ENNReal.ofReal (δ / 2) = ENNReal.ofReal δ := by
-    rw [← ENNReal.ofReal_add (by positivity : (0 : ℝ) ≤ δ / 2)
-      (by positivity : (0 : ℝ) ≤ δ / 2)]
-    congr 1
-    ring
+  have hconv : ∀ h ∈ S, Integrable (fun x => (convReal h ρ x : ℂ)) := fun h hh =>
+    (Integrable.integrable_convolution (ContinuousLinearMap.mul ℝ ℝ) (hint h hh) hρint).ofReal
+  have h1 := decomp s (hint f hf).ofReal (hconv f hf) (hint (g i) (hgS i)).ofReal
+  have h2 := decomp s (hconv f hf) (hconv (g i) (hgS i)) (hint (g i) (hgS i)).ofReal
+  have h3 : sobolevNormSq d s (fun x => convReal (g i) ρ x - g i x) ≤ ENNReal.ofReal (δ / 10) := by
+    rw [sobolevNormSq_sub_comm]
+    exact happ (g i) (hgS i)
   calc sobolevNormSq d s (fun x => f x - g i x)
       ≤ 2 * sobolevNormSq d s (fun x => f x - convReal f ρ x)
-        + 2 * sobolevNormSq d s (fun x => convReal f ρ x - g i x) := hdec
-    _ ≤ 2 * ENNReal.ofReal (δ / 4) + 2 * ENNReal.ofReal (δ / 4) :=
-        add_le_add (mul_le_mul_right (happ f hf) 2) (mul_le_mul_right hi 2)
-    _ = ENNReal.ofReal δ := by rw [h2a, hsum]
+        + 2 * (2 * sobolevNormSq d s (fun x => convReal f ρ x - convReal (g i) ρ x)
+          + 2 * sobolevNormSq d s (fun x => convReal (g i) ρ x - g i x)) :=
+        h1.trans (add_le_add le_rfl (mul_le_mul_right h2 2))
+    _ ≤ 2 * ENNReal.ofReal (δ / 10)
+        + 2 * (2 * ENNReal.ofReal (δ / 10) + 2 * ENNReal.ofReal (δ / 10)) := by
+        gcongr
+        · exact happ f hf
+    _ = ENNReal.ofReal δ := by
+        rw [← ENNReal.ofReal_ofNat 2, ← ENNReal.ofReal_mul (by norm_num),
+          ← ENNReal.ofReal_add (by positivity) (by positivity),
+          ← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_add (by positivity) (by positivity)]
+        congr 1
+        ring
 
 end LatticeProb.Sobolev
