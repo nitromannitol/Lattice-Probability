@@ -16,8 +16,6 @@ conditional mgf into the unconditional one, and then Chernoff, the two-sided tai
 tail-to-moment step give the actual factorial-Bernstein `r`-th moment bound
 
   `(∫ |S|^r dμ)^{1/r} ≤ 32 (√(r v) + r a)`.
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinFactorialBound
 

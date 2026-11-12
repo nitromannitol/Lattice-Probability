@@ -16,8 +16,6 @@ using the Bochner layer-cake identity `∫ Y^r dμ = ∫_0^∞ r t^{r-1} μ{Y �
 (`LatticeProb.integral_rpow_exp_bernstein`):
 
   `(∫ Y^r dμ)^{1/r} ≤ 32 (√(r v) + r a)`.
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinLayerCake
 import LatticeProb.Prob.BernsteinIntegrate

@@ -17,8 +17,6 @@ remaining analytical pieces, both pointwise (the caller applies them a.s.):
 Together they give `∑_{i∈s} d_λ(i) ≤ λ²v/(2(1-aλ))`, the `hD_le` input of the consumer.
 The
 empty-horizon case is `s = ∅` (sum `0`), and `λ = 0` is inside the statement (exponent `0`).
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinFactorialProducerTwo
 
