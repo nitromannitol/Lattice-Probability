@@ -1,16 +1,17 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S3P32G4 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.DZZ.S3P32G4 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3P32G3
 
 /-!
 # DZZ (eq-B-good-Psi) + union at `μIn`, explicit parameters, with the proved cover (P2-DZZ32G)
 
-Copy of `start_bound_explicit` (S3P32F6, P2-DZZ32F) with the false hypothesis `P32StartGeom`
-(`not_p32StartGeom`) replaced by the proved corrected cover `p32StartGeomS` (S3P32G3); it is
+Copy of `start_bound_explicit` (S3P32F6, P2-DZZ32F) with the proved cover `p32StartGeomS`
+(S3P32G3) as the start cover; it is
 applied only to cells, where `r = rP32 γ δ ≤ δ^{C_mc}/8 ≤ s_B/8`.
 
 DZZ (arXiv:1807.00422, `LBM_LGDarXiv.tex` l. 1149–1153): with `t = 2^{-q}`, the balls of the start
-path (`P32StartGeom`) are covered by the boxes `B̂_j` of level `n_B + q`; if one ball has
+path (`P32StartGeomS`) are covered by the boxes `B̂_j` of level `n_B + q`; if one ball has
 `μIn`-mass `> δ²` then on `{M_s(B) ≤ δ²} ∩ G_δ` ((eq-M-tilde-B-bound)) some `B̂_j` has
 `M̃_{γ,ε²s,η}(B̂_j) ≥ s² e^{-2αγ√L log L}/4`, of probability `≤ |{B̂_j}| (ts)²/θ = 16 M t² e^E`
 ((Eq.LQG-tildeM)). The union is over the `≤ 9` boxes per level with `x ∈ B_large`

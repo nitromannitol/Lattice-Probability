@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S4.Iterate4Enlarge at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S4.Iterate4Enlarge at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.Iterate4Pair
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.Iterate4L420F
 
@@ -15,8 +16,7 @@ radius of (1) (`μ' = μ/2`):
   the second; `gm_comap_stop_le`);
 * (4): fewer pairs `(𝕫, 𝕨)`; the conclusion for `λ₄'` implies the one for `λ₄`.
 
-`T4_2Gt1E` = `T4_2Gt1` (D95: both carry `0 < ε₀`, GM l. 1557; without it the statement is false
-for `ε₀ ≤ 0`, report of P2-M2K4).
+`T4_2Gt1E` = `T4_2Gt1` (D95: both carry `0 < ε₀`, GM l. 1557).
 -/
 
 set_option autoImplicit false

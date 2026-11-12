@@ -1,17 +1,14 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S3CM7 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.DZZ.S3CM7 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module, DZZCrudeMomentsEv and dzzProp317_of_approxEv. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3P317B
 
 /-!
 # DZZ Proposition 3.17 from crude moments for small `δ` (P2-DZZCM)
 
-`DZZCrudeMoments` (S3P317A) asks the second-moment bounds `E X² ≤ K (log δ⁻¹)²` for **all**
-`δ ∈ (0,1)`. This is false as `δ → 1`: the right side tends to `0`, while e.g. for the constant
-pair `{(1/4,1/4)}, {(3/4,3/4)}` the root box `𝕍` splits with probability
-`≥ P(M_{γ,1}(𝕍) ≥ 1) > 0`, and then `D' ≥ 2`, `log D' ≥ log 2`; likewise `D ≥ 2` when the
-mass of the region between `u` and `v` exceeds `δ²` (positive probability). DZZ
-(l. 849–857) state the bounds as `O_γ(1)` for `(log D / log δ⁻¹)²`, i.e. for small `δ` only,
-which is all that Corollary 3.3 and Proposition 3.17 use. We therefore use
+DZZ (l. 849–857) state the crude second-moment bounds `E X² ≤ K (log δ⁻¹)²` as `O_γ(1)` for
+`(log D / log δ⁻¹)²`, i.e. for small `δ`, which is all that Corollary 3.3 and Proposition 3.17
+use. We therefore use
 
 * **`DZZCrudeMomentsEv`**: the same bounds for `δ ∈ (0, δ₁)`, `δ₁ > 0` depending on the pair;
 * `abs_integral_sub_le_of_highProb_ev`: `abs_integral_sub_le_of_highProb` (S3L12Cor33) under
@@ -35,7 +32,7 @@ open WhiteNoise
 variable {Ω : Type*} [MeasurableSpace Ω]
 
 /-- **(eq-very-crude), (eq-very-crude-prime)** (DZZ l. 849–857) for `ξ`-admissible pairs, for
-small `δ` (the corrected form of `DZZCrudeMoments`). -/
+small `δ`. -/
 def DZZCrudeMomentsEv (P : Measure Ω) (γ : ℝ) (W : WNSpace → Ω → ℝ) (μ : Ω → Measure ℂ)
     (ξ : ℝ) : Prop :=
   ∀ A B : ℝ → Set ℂ, IsXiAdmissible ξ A B → ∃ K δ₁ : ℝ, 0 < δ₁ ∧ ∀ δ ∈ Ioo (0 : ℝ) δ₁,
@@ -89,7 +86,7 @@ theorem abs_integral_sub_le_of_highProb_ev {P : Measure Ω} [IsProbabilityMeasur
 set_option maxHeartbeats 1000000 in
 /-- **DZZ Proposition 3.17 from Proposition 3.2, the crude moments for small `δ` and the
 concentration of `D'`** (DZZ l. 1526–1530, 1627–1630): `dzzProp317_of_approx` (P2-DZZ32G,
-S3P317B) with `DZZCrudeMoments` weakened to `DZZCrudeMomentsEv`; the proof is a copy of it. -/
+S3P317B) with the crude moments `DZZCrudeMomentsEv`; the proof is a copy of it. -/
 theorem dzzProp317_of_approxEv {P : Measure Ω} [IsProbabilityMeasure P] {γ ξ : ℝ}
     {W : WNSpace → Ω → ℝ} {μ : Ω → Measure ℂ} (h32 : DZZProp32U P γ W μ ξ ξ)
     (hmom : DZZCrudeMomentsEv P γ W μ ξ) (hconc : DZZConcApprox P γ W ξ) :

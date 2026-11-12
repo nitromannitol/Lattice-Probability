@@ -2,7 +2,8 @@
    source module QuantumZipper.Proofs.LQG.LocalRule at commit fdb5cad; only the module paths of local imports are changed.
    Declarations, examples and checks that the copied results do not use are omitted.
    Imports of copied modules that this file does not need are replaced by their own imports.
-   Opens of namespaces with no copied declaration are removed (Positivity). -/
+   Opens of namespaces with no copied declaration are removed (Positivity).
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.BoundaryExistence
 import LatticeProb.Bonanno.QuantumZipper.LQG.Measures
 import Mathlib.Topology.ContinuousMap.SecondCountableSpace
@@ -50,8 +51,8 @@ on a thickening of `K`; for `2^{-k}` small the dyadic circle averages of `x + of
 `x + ofFun φ'` agree near `K`, the densities differ from those of `x` by `e^{γ ∫ φ' dfc/2}`, which
 converges to `e^{γφ/2}` uniformly on `K`, and `GoodSample.tendsto_integral_exp_mul` concludes.
 
-Note on constants: the statement "exactly for every `x`" is false with the junk convention of
-`limUnder`: if the raw values `x(fc(d_n z, 2^{-k}))` diverge for every `z`, then
+Note on constants: with the junk convention of `limUnder` the identity needs convergent raw
+averages: if the raw values `x(fc(d_n z, 2^{-k}))` diverge for every `z`, then
 `avgReg (addConst x c) = avgReg x` (both are the same junk constant), so
 `bdryApprox γ (addConst x c) = bdryApprox γ x ≠ e^{γc/2} • bdryApprox γ x` for `c ≠ 0`. We
 therefore assume the raw averages converge (true for regular samples).

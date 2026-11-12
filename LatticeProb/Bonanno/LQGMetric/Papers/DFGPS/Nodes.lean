@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DFGPS.Nodes at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.DFGPS.Nodes at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of a comment. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.Defs
 import LatticeProb.Bonanno.LQGMetric.Blueprint.DFGPSEstimatesF
 import LatticeProb.Bonanno.LQGMetric.Field.StandardBorelDistOn
@@ -103,8 +104,7 @@ def Lem1_3 : Prop :=
     AEDeterminedBy Y X P → TendstoInMeasure P Yn atTop Y
 
 -- DFGPS Lemma 2.6 (T:837–856) is proved: `DFGPS.lem2_6` (a.s. for a whole-plane GFF, with
--- `h^r = affineComp r 0 h`) and `DFGPS.lem2_6_law` in `Papers/DFGPS/L2_6*.lean`. The earlier node
--- form (`affineComp r⁻¹`, every `h : DistC`) was false (D54, DEV-DFGPS-B1a).
+-- `h^r = affineComp r 0 h`) and `DFGPS.lem2_6_law` in `Papers/DFGPS/L2_6*.lean`.
 
 /-- **DFGPS Lemma 2.12** (`lem-weyl-scaling`, T:1026–1031; factor `𝔞⁻¹` restored, DEV-DFGPS-3),
 for a Skorokhod coupling of the convergence along `εn` -/

@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S5.Tubes56Geom at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S5.Tubes56Geom at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of a section comment. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S5.Tubes56Diam
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S5.Pigeonhole
 
@@ -39,9 +40,8 @@ open Blueprint
 /-- the tube `int ⋃_{m ∈ F} S_m` of a finite set of grid squares of side `s` -/
 def tubeOf (s : ℝ) (F : Finset (ℤ × ℤ)) : Set ℂ := interior (⋃ m ∈ F, gridSquare s m)
 
-/-! The former node `L56Geom` (open ball `𝓢_{ε₁r}(B_{2r}(z))`, pointwise condition (2)) was false
-(z = 2r: z − 2r is a grid corner and not in the tube; P2-M2L4) and is replaced by `L56GeomN`
-(`SepMeas56.lean`: closed ball, robust condition (2) `SepNear`; decision D69, decisions/DEC-SEP.md). -/
+/-! The geometric node of GM Lemma 5.6 is `L56GeomN` (`SepMeas56.lean`: closed ball, robust
+condition (2) `SepNear`; decision D69, decisions/DEC-SEP.md). -/
 
 /-- the side length of the index box -/
 def boxLen (s R : ℝ) : ℕ := ⌈2 * R / s⌉₊ + 1

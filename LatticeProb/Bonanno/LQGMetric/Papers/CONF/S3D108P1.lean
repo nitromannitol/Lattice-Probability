@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.CONF.S3D108P1 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.CONF.S3D108P1 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module and CONFZBMetricN. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3D108A
 import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_17CoreG
 import LatticeProb.Bonanno.LQGMetric.Metric.WeylLocal
@@ -21,15 +22,10 @@ continuous function, where `g` is a bump function equal to `1` on `V`, and the r
   function) and the locality of Weyl scaling (`internal_weyl_eq_of_internal_eq`) identify
   `D_{(h − h_ρ(w)) − f}(·,·;V)` with `D_Y(·,·;V)` for every continuous `f = 𝔥^U` on `V`.
 
-**Correction of `CONF.CONFZBMetric` (S3D108A).** As stated there, the conclusion reads
-`D_{h − f}(·,·;V) = F(X|_V)` with `f = 𝔥^U` on `V`, where `𝔥^U` is the harmonic part of the
-*normalized* field `recField h ρ w = h − h_ρ(w)`. Then `(h − f)|_V = X|_V + h_ρ(w)`, so
-`D_{h − f}(·,·;V) = e^{ξ h_ρ(w)} D_{recField − f}(·,·;V)`. For `h = h₀ + Z` with `h₀` normalized at
-`∂B_ρ(w)` and `Z ~ N(0,1)` independent of `h₀` (an `IsWholePlaneGFF`), `X` is a function of `h₀`
-while `h_ρ(w) = Z`, so `D_{h−f}(u,v;V) = e^{ξZ}·D_{h₀−f}(u,v;V)` (positive and finite for `u ≠ v`
-in one component of `V`) is not a.s. a function of `X|_V`: **`CONFZBMetric` is false as stated.**
-CONF's `h` is normalized (C:347, C:1187), so the faithful form uses the normalized field:
-`CONFZBMetricN` below (proved, `confZBMetricN`).
+**The normalized field.** CONF's `h` is normalized (C:347, C:1187). The harmonic part `𝔥^U` is
+that of the normalized field `recField h ρ w = h − h_ρ(w)`, and Remark 1.2 is stated for the metric
+`D_{(h − h_ρ(w)) − f}(·,·;V)` of the normalized field: `CONFZBMetricN` below (proved,
+`confZBMetricN`).
 -/
 
 set_option autoImplicit false
@@ -44,8 +40,8 @@ namespace LQGMetric.CONF
 
 open Blueprint
 
-/-- **CONF Remark 1.2** (C:324–338) for the normalized field `h − h_ρ(w)` (the faithful form of
-`CONFZBMetric`, see the module docstring): for `V` open with `cl V ⊆ U` and every version `X` of
+/-- **CONF Remark 1.2** (C:324–338) for the normalized field `h − h_ρ(w)` (see the module
+docstring): for `V` open with `cl V ⊆ U` and every version `X` of
 `h̊^U`, there is a measurable `F` with, a.s., `D_{(h − h_ρ(w)) − f}(·,·;V) = F(X|_V)` for every
 continuous `f` equal to the harmonic part `𝔥^U` on `V`. -/
 def CONFZBMetricN (D : DistC → ContMetric) : Prop :=

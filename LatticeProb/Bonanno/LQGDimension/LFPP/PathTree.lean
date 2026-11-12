@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGDimension.LFPP.PathTree at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGDimension.LFPP.PathTree at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGDimension.Blueprint.Draft.LFPPPlan
 
 /-!
@@ -13,8 +14,8 @@ import LatticeProb.Bonanno.LQGDimension.Blueprint.Draft.LFPPPlan
   `[0, 1]` (each complete piece has chord `r`, hence time-length at least some `η > 0`).
 
 * `chainLengthBounds : Blueprint.Draft.ChainLengthBounds` — depth bounds for leaves.  (The
-  node originally omitted `IsAdmissiblePath γ`; it was false without it, since the constant path
-  has a well-formed one-node tree.  Only `γ 0 = 0`, `γ 1 = 1` is used.)
+  node assumes `IsAdmissiblePath γ`, which excludes the constant path; only `γ 0 = 0`, `γ 1 = 1`
+  is used.)
 -/
 
 noncomputable section

@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S3ConcL4 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.DZZ.S3ConcL4 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3ConcL3
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3ConcK
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3CM9
@@ -11,7 +12,7 @@ DZZ (arXiv:1807.00422, `LBM_LGDarXiv.tex`), proof of Prop 3.17 (l. 1519–1652).
 
 * `dzzConcApprox1_ofEv`, `dzzConcApprox2_ofEv`, **`dzzConcApprox_ofEv`**: `dzzConcApprox1_of`,
   `dzzConcApprox2_of`, `dzzConcApprox_of` (S3ConcD, S3ConcE, P2-DZZCONC) with the small-`δ` crude
-  moments `DZZCrudeMomentsEv` (D122) in place of `DZZCrudeMoments` (false as stated, D122). The
+  moments `DZZCrudeMomentsEv` (D122). The
   proofs are copied from S3ConcD/S3ConcE (DZZ l. 1595–1613, 1640–1651); the only change is that
   the moment bound is used for `δ < δm` (`δ₀` is shrunk by `δm`).
 * **`dzzProp317_dzzMuIn_of_eStar`**: `DZZProp317 P (dzzMuIn γ W) ξ` for `0 < ξ < dzzCMc γ`

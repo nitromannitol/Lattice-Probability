@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S5Walls0 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.DZZ.S5Walls0 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S5Glue
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3P317E
 
@@ -8,8 +9,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3P317E
 
 Decision DEC-123 §2 (finding 1 of P2-DZZ317K): consumers of the walled DZZ Proposition 3.17
 (DZZ arXiv:1807.00422, `LBM_LGDarXiv.tex`, Prop 3.17 l. 1505–1517, Remark 5.2 l. 2281–2284) take
-`DZZProp317In P (fun ω => dzzWall K (μ ω)) K ξ` (pairs in `kXi K ξ`), never the walled
-`DZZProp317` (false for pairs touching `Kᶜ`).
+`DZZProp317In P (fun ω => dzzWall K (μ ω)) K ξ`, the walled Proposition 3.17 for the pairs in
+`kXi K ξ`.
 
 * `mem_kXi_of_ball_subset`: a point whose `r`-ball lies in
   `K` (with `Kᶜ ≠ ∅`) is in `K^r`.

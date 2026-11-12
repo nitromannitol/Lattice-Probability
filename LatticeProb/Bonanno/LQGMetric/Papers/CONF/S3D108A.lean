@@ -1,6 +1,7 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
    source module LQGMetric.Papers.CONF.S3D108A at commit fdb5cad; only the module paths of local imports are changed.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
+   Imports of copied modules that this file does not need are replaced by their own imports.
+   Changed: docstring wording of the module and of a section heading. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3L33M
 import LatticeProb.Bonanno.LQGMetric.Blueprint.M2Defs
 
@@ -12,21 +13,19 @@ Gwynne–Miller, *Confluence of geodesics in LQG*, arXiv:1905.00381 (CONF),
 
 CONF's field is normalized, `h_1(0) = 0` (C:347), and CONF conditions on fields "viewed modulo
 additive constant" (C:1154, 1187). With `IsWholePlaneGFF` (any random additive constant) the
-raw σ-algebra `σ(𝓑^•_τ, h|_{𝓑^•_τ})` can carry information on the outside field (for
-`h = h₀ + 1_{Bad}(h₀)` and `τ` the hitting time of `B_2(0) ⊆ 𝓑^•_s`, `h_1(0) = 1_{Bad}`), so
-`Blueprint.CONFLem3_6AtAE` as stated is false; CONF's own proof (C:1431–1432: "`(𝓑^•_τ, h|_{𝓑^•_τ})`
-is a.s. determined by `h|_{ℂ∖𝔘}`") needs the set `𝓑^•_τ` to be a local set of the field modulo
-constants. This file has the mod-constant objects and the exact open nodes of D108:
+σ-algebras are read modulo additive constants, as in CONF's own proof (C:1431–1432:
+"`(𝓑^•_τ, h|_{𝓑^•_τ})` is a.s. determined by `h|_{ℂ∖𝔘}`"), which uses that the set `𝓑^•_τ` is a
+local set of the field modulo constants. This file has the mod-constant objects and the exact open nodes of D108:
 
 * `hullSigma0`, `localSigma0`, `filledBallSigmaAt0` : `σ(A, h|_A)` modulo additive constants
   (D32's dyadic-hull form with the mean-zero pairings `GM.fieldSigma0On` of D79);
 * `IsLocalSetDet0` : local set modulo constants (CONF Lemma 2.1 as used at C:1431);
-* `CONFLem3_6AtAE0` : **CONF Lemma 3.6** in its true form (D108 (a));
+* `CONFLem3_6AtAE0` : **CONF Lemma 3.6** modulo additive constants (D108 (a));
 * `confFatEv`, `CONFLem3_3W` : the weakened **Lemma 3.3** (3.9′) that Lemma 3.6 consumes
   (D108 (b): C:1208 fails for one-square-wide corridors and circle slivers);
 * `CONFFatChainA`, `CONFFatChainB` : the deterministic square-chain claims replacing C:1208;
-* `CONFZBMetric` : CONF Remark 1.2 (C:324–338), the metric of the zero-boundary part as a
-  measurable function of `h̊^U` (D108 (c));
+* `CONFZBMetricN` (S3D108P1) : CONF Remark 1.2 (C:324–338), the metric of the zero-boundary
+  part as a measurable function of `h̊^U` (D108 (c));
 * `condFKG_freeze2` : the conditioning argument of Step 3 with `G^U` allowed to depend on the
   frozen outside field (proved).
 -/
@@ -44,7 +43,7 @@ namespace LQGMetric.CONF
 
 open Blueprint
 
-/-! ## σ-algebras modulo additive constants and CONF Lemma 3.6 (true form)
+/-! ## σ-algebras modulo additive constants and CONF Lemma 3.6
 
 D110 P1: `hullSigma0`, `localSigma0`, `IsLocalSetDet0` now live in `Blueprint/M2Defs.lean`,
 `filledBallSigmaAt0` in `Blueprint/CONFDefs.lean` and `CONFLem3_6AtAE0` in

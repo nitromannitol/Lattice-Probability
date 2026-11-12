@@ -1,9 +1,10 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S3P32G3 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.DZZ.S3P32G3 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module and P32StartGeomS. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3P32G2
 
 /-!
-# `P32StartGeom`, steps 3–4: DZZ's row of balls and the assembly (P2-DZZ32G)
+# `P32StartGeomS`, steps 3–4: DZZ's row of balls and the assembly (P2-DZZ32G)
 
 DZZ (arXiv:1807.00422, `LBM_LGDarXiv.tex` l. 1149–1151): "The collection of these balls covers a
 line segment from `x` to `∂B_large`, and each ball is covered by at most 4 boxes in `{B̂_j}`."
@@ -11,10 +12,8 @@ At `μIn` the path is the escape chain `x → x' = pushIn h x` (S3P32G2, DV-ETA2
 horizontal segment `x' → w = (c_B.re ± s_B, x'.im) ∈ ∂B_large`, covered by `8·2^{N-n_B}+1` balls of
 radius `h/2` (`h = 2^{-N}`); every ball lies in `≤ 4` level-`N` boxes (`four_box`).
 
-* **`p32StartGeomS`**: `P32StartGeomS`, i.e. `P32StartGeom` with the extra hypothesis
-  `r ≤ s_B / 2` (always true where it is used: `r = rP32 γ δ ≤ δ^{C_mc}/8 ≤ s_B/8` for cells).
-* **`not_p32StartGeom`**: `P32StartGeom` as stated in S3P32F5 is false (`r = 1/2`, `x = (1/2,1/2)`:
-  `𝕍_{−1/2} = {x}` contains no path to `∂B_large`).
+* **`p32StartGeomS`**: `P32StartGeomS`, the start cover of S3P32F5 for `r ≤ s_B / 2` (always true
+  where it is used: `r = rP32 γ δ ≤ δ^{C_mc}/8 ≤ s_B/8` for cells).
 -/
 
 set_option autoImplicit false
@@ -29,7 +28,7 @@ namespace DZZ
 
 open DyBox
 
-/-- `P32StartGeom` with the hypothesis `r ≤ s_B / 2` (corrected statement, see `not_p32StartGeom`). -/
+/-- The start cover of S3P32F5 for `r ≤ s_B / 2`. -/
 def P32StartGeomS : Prop :=
   ∀ (B : DyBox) (N j : ℕ) (r : ℝ) (x : ℂ), 1 ≤ B.n → B.n + 3 ≤ N → 0 < r → r ≤ B.side / 2 →
     (2⁻¹ : ℝ) ^ N ≤ 2 ^ j * r → x ∈ dzzVIn r → x ∈ B.largeBox →

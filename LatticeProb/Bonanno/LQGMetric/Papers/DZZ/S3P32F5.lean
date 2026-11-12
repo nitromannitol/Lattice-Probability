@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S3P32F5 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.DZZ.S3P32F5 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3P32F2
 
 /-!
@@ -13,7 +14,8 @@ to `∂B_large`, and each ball is covered by at most 4 boxes in `{B̂_j}`. Conse
 
 At `μIn` the balls must lie in `𝕍` and the path in `𝕍_{−r}`; DZZ's horizontal segment through `x`
 cannot be covered this way when `x` is at depth `r ≪ ts` (handoff/P2-DZZETA2.md, DV-ETA2d).
-**`P32StartGeom`** (deterministic, open) is the cover statement used instead: a path from `x` to
+**`P32StartGeomS`** (deterministic, S3P32G3) is the cover statement used instead: for
+`r ≤ s_B / 2`, a path from `x` to
 `∂B_large` inside `𝕍_{−r}` covered by `≤ 8·2^{N−n_B} + 4j + 16` balls inside `𝕍`, each inside
 `≤ 4` level-`N` boxes near `c_B` (`2^{-N} ≤ 2^j r`; the `4j` balls are the escape chain from the
 walls).

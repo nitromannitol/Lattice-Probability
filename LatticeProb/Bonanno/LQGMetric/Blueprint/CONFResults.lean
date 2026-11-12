@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Blueprint.CONFResults at commit 31e7483; only the module paths of local imports are changed. -/
+   source module LQGMetric.Blueprint.CONFResults at commit 31e7483; only the module paths of local imports are changed.
+   Changed: docstring wording of CONFLem3_6AtAE0 and CONFSection3. -/
 import LatticeProb.Bonanno.LQGMetric.Blueprint.CONFDefs
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.Lift
 import LatticeProb.Bonanno.LQGMetric.Blueprint.StoppingAE
@@ -125,7 +126,7 @@ def CONFLem3_5At (γ : ℝ) (D : DistC → ContMetric) (c : ℝ → ℝ) (p : CO
 
 /-- **CONF Lemma 3.6, a.s. form modulo additive constants** (D108 (a), moved from
 `Papers/CONF/S3D108A.lean` by D110 P1; C:1308–1320 with the field "viewed modulo additive
-constant", C:347, 1154, 1187). As `CONFLem3_6AtAE` (D106) with: the σ-algebras `σ(𝓑^•_τ, h|_{𝓑^•_τ})`,
+constant", C:347, 1154, 1187). CONF Lemma 3.6 a.s. (D106), with: the σ-algebras `σ(𝓑^•_τ, h|_{𝓑^•_τ})`,
 `σ(𝓑^•_{σ^ε_{τ,𝕣}}, h|_{𝓑^•_{σ^ε_{τ,𝕣}}})` read modulo additive constants (`localSigma0`,
 `filledBallSigmaAt0`), and the hypothesis that `𝓑^•_τ` is a local set modulo constants
 (`IsLocalSetDet0`; CONF Lemma 2.1 as used at C:1431). D114: the sub-σ-algebra hypothesis
@@ -205,7 +206,7 @@ def CONFThm3_9At (γ : ℝ) (D : DistC → ContMetric) (c : ℝ → ℝ) (p : CO
 /-- **CONF §3 package** (Lemmas 3.5, 3.6, 3.8, Theorem 3.9 with one choice of the parameters
 `c, δ, A, η`, "depending only on the choice of metric `D`", CONF l. 1277, 1286, 1476; any fixed
 Hölder exponent `χ ∈ (0, ξ(Q−2))`, l. 1480–1481). This is the form GM §4 uses (GM l. 1096–1168).
-Lemma 3.6 is in its true form `CONFLem3_6AtAE0` (modulo additive constants; D108, D110). -/
+Lemma 3.6 is `CONFLem3_6AtAE0`, modulo additive constants (D108, D110). -/
 def CONFSection3 : Prop :=
   ∀ γ : ℝ, 0 < γ → γ < 2 → ∀ (D : DistC → ContMetric) (c : ℝ → ℝ), IsWeakLQGMetric γ D c →
     ∃ p : CONFParams, p.Valid ∧ CONFLem3_5At γ D c p ∧ CONFLem3_6AtAE0 γ D c p ∧

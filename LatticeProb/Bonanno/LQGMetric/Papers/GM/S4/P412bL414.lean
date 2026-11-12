@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S4.P412bL414 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S4.P412bL414 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.JordanLC
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.P412cLC
 import LatticeProb.Bonanno.LQGMetric.Topo.CrosscutMain
@@ -16,8 +17,8 @@ l. 2097–2102), proof l. 2457–2520; L4.15 Step 3, choice (∗) of `z_y` (l. 2
   `Y = connectedComponentIn (∂B̃ ∖ K) y₀` of the boundary of a closed ball `B̃` of radius
   `≤ 8ε` (with `B̃ ∩ K ≠ ∅`, as for every ball of GM's family `𝓑`, l. 2481).
 
-  **Correction of the statement of handoff/P2-M2I.md item 2.** That draft (and GM's text,
-  "compact connected set `Y^ε_y ⊂ ℂ∖𝒦`") asks for a *compact* `Y ⊆ ℂ ∖ K`. This is false:
+  **Correction of GM's text** ("compact connected set `Y^ε_y ⊂ ℂ∖𝒦`"), which asks for a
+  *compact* `Y ⊆ ℂ ∖ K`. This is false:
   for `K = closedBall 0 1`, `ε < 1/16`, `y = 1`, the point `1 + ε/6` lies in `𝒞^ε_y`
   (take `X = {|z−1| = ε/3, |z| > 1}`), and `𝒞^ε_y` accumulates at `∂K` near `1`; but if `Y`
   is compact, connected, disjoint from `K` and of diameter `≤ 16ε < diam K`, every bounded

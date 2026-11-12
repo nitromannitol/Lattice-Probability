@@ -1,17 +1,18 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.CONF.S3D112A at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.CONF.S3D112A at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3L36In
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3L36B
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3L36C
 
 /-!
-# D112: the true form of CONF Lemma 3.3 consumed by Lemma 3.6 — the grid-component event `fatG`
+# D112: CONF Lemma 3.3 as consumed by Lemma 3.6 — the grid-component event `fatG`
 
 Gwynne–Miller, *Confluence of geodesics in LQG*, arXiv:1905.00381 (CONF),
 `literature/src/1905.00381/confluence-final.tex` (C:line). Decision D112
-(`decisions/DEC-112.md`): CONF's event `G^U` (3.9) (C:1205) and D108's (3.9′) `confFatEv` are
-both false as inputs to Lemma 3.3 ("pocket" configurations, P2-CONF33W handoff, verified in
-DEC-112 §1), and the per-Euclidean-component repair needs a hard circle-sliver analysis. Instead,
+(`decisions/DEC-112.md`): CONF's event `G^U` (3.9) (C:1205) does not serve Lemma 3.3 as
+printed ("pocket" configurations, DEC-112 §1), and a per-Euclidean-component version needs a hard
+circle-sliver analysis. Instead,
 the small-diameter event is stated on the **grid graph of full squares**: a square of
 `𝒮^z_{δr}(𝔸_{3r,4r}(z))` is *full* if it meets the closed annulus `3r+2δr ≤ |u−z| ≤ 4r−2δr`
 (so it lies in `𝔸_{3r,4r}(z)`); the free squares are the full non-removed ones; `C` ranges over

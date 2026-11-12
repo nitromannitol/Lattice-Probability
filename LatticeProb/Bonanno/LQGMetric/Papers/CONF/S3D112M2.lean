@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.CONF.S3D112M2 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.CONF.S3D112M2 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module and exists_isL33ZBPart_G_ext. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3D112M1
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3D112L3
 import LatticeProb.Bonanno.LQGMetric.Field.MarkovAsm
@@ -10,16 +11,10 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
-# The Markov version of `h̊^U` is the zero-boundary GFF extended by `0` (CONF L3.3, corrected)
+# The Markov version of `h̊^U` is the zero-boundary GFF extended by `0` (CONF L3.3)
 
-`CONFZBExtOfMarkov` (S3D112L3) is **false as stated**: for any `X G` as there and any
-deterministic distribution `m` supported on `∂U` (e.g. `δ_{x₀}`, `x₀ ∈ ∂U`), the pair
-`(X + m, G − m)` satisfies all its hypotheses (`IsL33ZBPart` only sees `X|_U`, `X` off `cl U` and
-`X`'s independence; `G − m` is still outside-measurable and harmonic on `U`), but `X + m` is not
-centred. The law of `X` is pinned only up to such a deterministic mean (CONF C:1187–1190 uses the
-canonical decomposition).
-
-Corrected form, proved here: **the** Markov decomposition of LM Lemma 2.1 (the one built from
+CONF (C:1187–1190) uses the canonical Markov decomposition. Proved here: **the** Markov
+decomposition of LM Lemma 2.1 (the one built from
 `MarkovExt.zbExt`, `Field/MarkovAsm.markov_decomp_ae`), transported to the normalization
 `h_ρ(w) = 0` as in `DFGPS.markov_normAt`, has a zero-boundary part with the law `IsZBExtField`.
 
@@ -142,8 +137,8 @@ theorem markov_normAt_ext (P : Measure Ω) [IsProbabilityMeasure P] (h : Ω → 
       exact MeasurableSpace.comap_mono hmA.comap_le
     · exact fieldSigmaClosed_le_affineComp hr V h
 
-/-- **Corrected `CONFZBExtOfMarkov`** (CONF C:1187–1190): `exists_isL33ZBPart_G` (S3D112L3) for
-bounded `U`, with the Markov version `X = (h − h_ρ(w)) − G` of `h̊^U` the zero-boundary GFF on `U`
+/-- **The zero-boundary part of the Markov decomposition** (CONF C:1187–1190):
+`exists_isL33ZBPart_G` (S3D112L3) for bounded `U`, with the Markov version `X = (h − h_ρ(w)) − G` of `h̊^U` the zero-boundary GFF on `U`
 extended by `0` (`IsZBExtField`) -/
 theorem exists_isL33ZBPart_G_ext {P : Measure Ω} [IsProbabilityMeasure P] {h : Ω → DistC}
     (hh : IsWholePlaneGFF h P) {ρ : ℝ} (hρ : 0 < ρ) (w : ℂ) {U : Set ℂ} (hU : IsOpen U)

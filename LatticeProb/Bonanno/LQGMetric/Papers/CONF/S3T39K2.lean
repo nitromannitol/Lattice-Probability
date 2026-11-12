@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.CONF.S3T39K2 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.CONF.S3T39K2 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3T39J10
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3T39K0
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3D110A
@@ -16,16 +17,7 @@ set_option relaxedAutoImplicit false
 CONF = Gwynne–Miller arXiv:1905.00381, `confluence-final.tex`, Lemma 2.1 (C:476–479), used at
 C:1431–1432 with `h` viewed modulo additive constants (C:1154).
 
-**The D130 form of L2 is false.** `IsFilledBallStoppingTimeAE0 P D h z₀ τ` puts the *raw* ball
-sets `𝓑^•_s` into `localSigma0` (through `setSigma`), so every deterministic `τ ≡ s` satisfies it
-(`t39k2_ae0_const`). For `h = h₀ + Z` with `Z` an independent nondegenerate constant (an
-`IsWholePlaneGFF`, D108/D112 (a)), Weyl scaling gives `𝓑^•_1(D_h) = 𝓑^•_{e^{-ξZ}}(D_{h₀})`, so for
-`U = B_R(z₀)` the conditional probability of `{𝓑^•_1(D_h) ⊆ U}` given `h₀` lies a.s. in `(0,1)`,
-while `σ(h|_U mod const) ⊆ σ(h₀)`: `IsLocalSetDet0 P h 𝓑^•_1` fails. The step of the raw proof
-that has no mod-constant analogue is the deterministic-radius step `conf21_aeEventIn_det`
-(`{𝓑^•_s ⊆ U}` is a function of `D_h(·,·;U)`, which sees the constant).
-
-**Corrected form proved here** (`t39k2_isLocalSetDet0_of_cov`): CONF L2.1 modulo constants for a
+**Main result** (`t39k2_isLocalSetDet0_of_cov`): CONF L2.1 modulo constants for a
 time `τ` that is *covariant*: for every `ψ` with `∫ ψ = 1` the ball `𝓑^•_τ(D_h)` is a.s. the ball
 at an a.s. raw stopping time `τ' > 0` of the normalized field `h − h(ψ)` (`CONF.normIn`). This is
 how CONF's own times (`τ_𝕣`, `σ^ε_{τ,𝕣}`, …) are local modulo constants. Proof: copy of

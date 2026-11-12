@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.CONF.S3D110A at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.CONF.S3D110A at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module and isHarmPart0_addConst_iff. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3D108A
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.Iterate3Norm
 import LatticeProb.Bonanno.LQGMetric.Meas.LocalEventRandom
@@ -16,7 +17,7 @@ Source: CONF = Gwynne–Miller, arXiv:1905.00381, `literature/src/1905.00381/con
 
 `IsWholePlaneGFF` allows a random additive constant, so `σ(h|_K)` (`fieldSigmaClosed`) and
 `σ(A, h|_A)` (`localSigma`) can contain information about `h` inside `K`/`A` through the constant
-(counterexamples DEC-110 §1). This file provides the objects of the true forms and the cheap
+(DEC-110 §1). This file provides the objects read modulo additive constants and the cheap
 adapters:
 
 * `IsHarmPart0`, `harmPart0`: the harmonic part of `h|_U` with the conditioning σ-algebra read
@@ -157,7 +158,7 @@ theorem integrable_harm_mul_test {U : Set ℂ} {H : ℂ → ℝ}
   exact hc.integrable_of_hasCompactSupport φ.hasCompactSupport.mul_left
 
 /-- **the mod-constant harmonic part is constant-covariant**: `𝔥^U_{h+c} = 𝔥^U_h + c` for a random
-constant `c` (CONF C:1187; false for `Blueprint.IsHarmPart`, DEC-110 §1) -/
+constant `c` (CONF C:1187; DEC-110 §1) -/
 theorem isHarmPart0_addConst_iff {P : Measure Ω} (h : Ω → DistC) (c : Ω → ℝ) (U : Set ℂ)
     (H : Ω → ℂ → ℝ) :
     IsHarmPart0 P (fun ω => addConst (h ω) (c ω)) U (fun ω x => H ω x + c ω) ↔

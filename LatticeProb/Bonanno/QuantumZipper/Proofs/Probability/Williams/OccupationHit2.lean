@@ -1,7 +1,8 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
    source module QuantumZipper.Proofs.Probability.Williams.OccupationHit2 at commit fdb5cad; only the module paths of local imports are changed.
    Changed for Lean v4.35: set_option autoImplicit true after the imports, the default of the source repository (this library disables it).
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   Declarations, examples and checks that the copied results do not use are omitted.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.OccupationHit
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.GaussKernel
 
@@ -30,8 +31,8 @@ statements `occ_shift_neg`, `occ_shift_pos`, `occDens_nonneg_const` and `prob_hi
   `occ σ μ A = P(τ_y < ∞) * occ σ μ (A - y)`.
 * `occ_shift_pos`: for `x > 0`, `σ, μ > 0` and `B ⊆ (0, ∞)` the occupation measure is invariant
   under a shift to the right: `occ σ μ (B + x) = occ σ μ B`, the factor `P(τ_x < ∞)` being `1`
-  by `ae_exists_eq_level`. **The hypotheses `0 < σ`, `0 < μ` are needed and are added to the
-  handed-down statement, which is false without them** (see the docstring of `occ_shift_pos`).
+  by `ae_exists_eq_level`. **The hypotheses `0 < σ`, `0 < μ` are needed** (see the docstring of
+  `occ_shift_pos`).
 * `occDens_nonneg`, `occ_Ioc_eq_ofReal_integral`: the occupation density of an interval, in a form
   usable together with `eqOn_Ioi_of_integral_Ioc_eq` / `eqOn_Iio_of_integral_Ioc_eq`.
 * `prob_hit_neg`: for `σ, μ > 0` and `y < 0`, `P(τ_y < ∞) = occDens σ μ y / occDens σ μ 0` and

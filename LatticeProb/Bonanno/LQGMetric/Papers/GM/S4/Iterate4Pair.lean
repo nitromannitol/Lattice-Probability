@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S4.Iterate4Pair at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S4.Iterate4Pair at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.Iterate3Gt1
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.IterateT42
 
@@ -13,8 +14,8 @@ bound over the pairs of grid points (l. 1540, 2437–2441, `gm_T4_2_assembly`). 
 `ε`; `T4_2Gt1S` is `T4_2Gt1` with `λ₃ < λ₄`.
 
 All three nodes carry `0 < ε₀` (GM l. 1557: "a small number `ε₀ > 0`"); since D95, `T4_2` and
-`T4_2Gt1` carry it too (without it they would be false for `ε₀ ≤ 0`: then `ℛ ⊆ (0, ε₀𝕣] = ∅` while
-the conclusion asks for `r ∈ ℛ`; see the report of P2-M2K4).
+`T4_2Gt1` carry it too (for `ε₀ ≤ 0` the set `ℛ ⊆ (0, ε₀𝕣]` is empty, while
+the conclusion asks for `r ∈ ℛ`).
 
 * `gm_T4_2Gt1S_of_pair` (packet E): the union bound `gm_T4_2_assembly` with `M = 4q + 1`.
 -/

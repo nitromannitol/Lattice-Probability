@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.CONF.S3D108L1 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.CONF.S3D108L1 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3D108K5
 import LatticeProb.Bonanno.LQGMetric.Field.CameronMartin
 import LatticeProb.Bonanno.LQGMetric.Field.MarkovHarm
@@ -12,13 +13,12 @@ import LatticeProb.Bonanno.LQGMetric.Papers.MQ.ZBCM
 
 Gwynne–Miller, *Confluence of geodesics in LQG*, arXiv:1905.00381 (CONF), C:667–669 and
 C:1239–1241: "adding a smooth compactly supported function to `h` affects its law in an absolutely
-continuous way". The open node `CONFZBShiftAC U φ` (S3D108K5) is proved here for the shifts it is
-true for: `φ = F` a test function with `supp F ⊆ U`, `U` bounded (`confZBShiftAC_of_test`).
+continuous way". The open node `CONFZBShiftAC U φ` (S3D108K5) is proved here for test-function
+shifts: `φ = F` a test function with `supp F ⊆ U`, `U` bounded (`confZBShiftAC_of_test`).
 
-The node is false for general `φ ∈ C(ℂ, ℝ)` (e.g. `φ ≠ 0` off `cl U`: `X` vanishes there, `X + tφ`
-does not), and for unbounded `U` the covariance `zeroGFFTestCov U (φ 1_U) (ψ 1_U)` of
-`IsZBExtField` need not be the `H⁻¹(U)` pairing (admissibility of `φ 1_U` is proved only for
-bounded `U`, `admissible_bddOn`). The consumer `confProp2_8_diam_CM` takes `CONFZBShiftAC U (φ i)`
+The shift is supported in `U`, where `X` lives, and `U` is bounded, so that the covariance
+`zeroGFFTestCov U (φ 1_U) (ψ 1_U)` of `IsZBExtField` is the `H⁻¹(U)` pairing (admissibility of
+`φ 1_U` for bounded `U`, `admissible_bddOn`). The consumer `confProp2_8_diam_CM` takes `CONFZBShiftAC U (φ i)`
 for its bumps `φ i = 1` on `V i`; with `V i ⋐ U` these can be chosen as `testCont F`, `supp F ⊆ U`.
 
 * `zeroGFFTestCov_indicator_cmTest`: **Green's identity** `⟨φ 1_U, ρ_F⟩_{H⁻¹(U)} = ∫ φ F`

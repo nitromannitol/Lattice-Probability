@@ -1,12 +1,13 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.DZZ.S3P32G5 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.DZZ.S3P32G5 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S3P32G4
 
 /-!
 # `L32StartPhiHPC` at `μIn`, unconditional (P2-DZZ32G)
 
 Copy of `l32StartPhiHPC_of_geom` (S3P32F7, P2-DZZ32F) using `start_bound_explicitS` (S3P32G4,
-with the proved cover `p32StartGeomS`) instead of the false hypothesis `P32StartGeom`.
+with the proved cover `p32StartGeomS`).
 
 
 DZZ (arXiv:1807.00422, `LBM_LGDarXiv.tex` l. 1149–1153): `t = 2^{-q}` with `2^q ≤ δ^{-ι/2} < 2^{q+1}`

@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.CONF.S3T39J5 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.CONF.S3T39J5 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3T39J5b
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3T39J4
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3T39I4
@@ -22,8 +23,7 @@ P2-CONFT39c) with the D120 restatement:
   complete spaces, for `τ` with `𝓑^•_τ` local modulo additive constants (D130).
 
 The remaining node is `CONFThm3_9RestCL` (S3T39J9); the assembly `CONFThm3_9At` from it is
-`confThm3_9At_of_restCL` (S3T39J11). The former node `CONFThm3_9RestC` (without the D130
-locality hypothesis on `τ`) was removed (D130; it is false for `p.A < 0`, handoff/P2-CONFJ6.md).
+`confThm3_9At_of_restCL` (S3T39J11).
 
 `AEMeasurable[𝓕_k] f P` of the D120 §5 text does not typecheck in Lean (`AEMeasurable[m]` fixes
 the σ-algebra of the measure, `P` lives on `mΩ`); the fields are written in the meaning D120 §5

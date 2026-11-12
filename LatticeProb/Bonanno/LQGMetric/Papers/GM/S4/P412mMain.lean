@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S4.P412mMain at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S4.P412mMain at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module, P412OfL36AE0 and gm_P4_12S. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.P412iCond
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.P412mQk
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.P412S
@@ -16,12 +17,11 @@ Source: GM (arXiv:1905.00383v3, `uniqueness-final.tex`) proof of Lemma 4.15 Step
   place of the open input `P412jCentres`; the a.s. good set `G₀` also records `x_{k,j} ω ∈ ∂𝓑^•_{t_k}`;
 * `p412m_P4_12At`: all probability spaces (D70 completion transfer `p412j_P4_12At_of_complete`);
 * **`gm_P4_12S`**: `GMP4_12S` from `CONFSection3` and the Blueprint inputs (replaces
-  `gm_P4_12S_of`, P412S.lean). Since D110 P1, `CONFSection3` carries CONF L3.6 in its true form
-  `CONFLem3_6AtAE0` (modulo additive constants), while the chain above consumes the raw
-  `CONFLem3_6AtAE` (false for `IsWholePlaneGFF`, D108, D110). Until D110 P5/P6 rewire the chain
+  `gm_P4_12S_of`, P412S.lean). Since D110 P1, `CONFSection3` carries CONF L3.6 modulo additive
+  constants, `CONFLem3_6AtAE0`. Until D110 P5/P6 rewire the chain
   (`CONFLem3_6AtAENE`, `confLem3_6AtAENE_of_AE0`, `GM.FilledBallLocalSet`, normalization
   `normIn h ψ₀` and `η → 0`), the missing step was the node **`P412OfL36AE0`**: Prop 4.12 at
-  parameters satisfying the true L3.6 and Thm 3.9. It is now proved, on the final route, by
+  parameters satisfying L3.6 modulo constants and Thm 3.9. It is now proved, on the final route, by
   `GM.p412n_P412OfL36AE0'` (Papers/GM/S4/P412pMain.lean).
 -/
 
@@ -37,9 +37,8 @@ open LQGMetric.Blueprint
 namespace LQGMetric.GM
 
 /-- **Open node (D110 P5 + P6)**: GM Proposition 4.12 (`GMP4_12At`) at CONF parameters satisfying
-CONF Lemma 3.6 in its true form `CONFLem3_6AtAE0` and CONF Theorem 3.9, for constant-invariant
-geodesic selections. This is `p412m_P4_12At` with `CONFLem3_6AtAE0` in place of the raw
-`CONFLem3_6AtAE` (false, D108/D110); DEC-110 §2.3 gives the proof (inside normalization
+CONF Lemma 3.6 modulo additive constants, `CONFLem3_6AtAE0`, and CONF Theorem 3.9, for
+constant-invariant geodesic selections. DEC-110 §2.3 gives the proof (inside normalization
 `normIn h ψ₀`, `CONFLem3_6AtAENE`, `GM.FilledBallLocalSet` = CONF Lemma 2.1, `η → 0`). -/
 def P412OfL36AE0 : Prop :=
   DFGPSLem3_8 → CONFLem2_7 → CONFThm1_4 →
@@ -50,7 +49,7 @@ def P412OfL36AE0 : Prop :=
   GMP4_12At γ D c cp χ χ' sel
 
 /-- **GM Proposition 4.12 at the CONF §3 parameters** (`GMP4_12S`, D104) from the CONF §3 package
-(with CONF L3.6 in its true form, D110), the Blueprint inputs and the node `P412OfL36AE0`
+(with CONF L3.6 modulo additive constants, D110), the Blueprint inputs and the node `P412OfL36AE0`
 (D110 P5/P6; proved by `GM.p412n_P412OfL36AE0'`) -/
 theorem gm_P4_12S (h38 : DFGPSLem3_8) (hC27 : CONFLem2_7) (hC14 : CONFThm1_4)
     (hC3 : CONFSection3) (hN : P412OfL36AE0) : GMP4_12S := by

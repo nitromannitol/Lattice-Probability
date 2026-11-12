@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S4.P412nUnion at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S4.P412nUnion at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.CONF.S3D110C
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S4.P412iCond
 
@@ -13,7 +14,7 @@ L3.6 = GM L2.14 at the centres `z_y`); CONF L3.6 (C:1308–1320) in the form
 * `p412n_condExp_union_compl`: a conditional lower bound `P[G | F] ≥ 1 − c` on an `F`-event `E`
   gives `P[G ∪ Eᶜ | F] ≥ 1 − c` a.s. (own elementary glue);
 * `p412n_union_k`: the proof of `p412m_union_k` (P412mStep.lean) for a field normalized at `ψ₀`
-  with `CONFLem3_6AtAENE` in place of the raw `CONFLem3_6AtAE`; the union bound holds for
+  with `CONFLem3_6AtAENE`; the union bound holds for
   `(⋂_j G_j) ∪ {supp ψ₀ ⊄ int 𝓑^•_τ}`. Since D114 the `G_j` are a.s. events of
   `σ(𝓑^•_{σ}, h|)` (`AEEventIn`, the D114 form of CONF L3.6), with the constant `ε = δ`
   (countably valued).

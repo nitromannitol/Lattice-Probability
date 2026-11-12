@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S5.SepMeas56 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S5.SepMeas56 at commit fdb5cad; only the module paths of local imports are changed.
+   Changed: docstring wording of the module. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S5.Tubes56Geom
 
 /-!
@@ -8,7 +9,7 @@ import LatticeProb.Bonanno.LQGMetric.Papers.GM.S5.Tubes56Geom
 GM = Gwynne–Miller, arXiv:1905.00383, `literature/src/1905.00383/uniqueness-final.tex`, proof of
 Lemma 5.6 (l. 2959–2995).
 
-`L56GeomN` is `L56Geom` (`Tubes56Geom.lean`) with the two corrections of D69:
+`L56GeomN` is GM's geometric claim in the proof of Lemma 5.6 with the two corrections of D69:
 
 * the squares are those of `𝓢_{ε₁r}(cl B_{2r}(z))`. With GM's open ball `B_{2r}(z)` the statement
   is false: if `z − 2r` lies on a vertical grid line `Re w = m ε₁ r`, the squares to its left do
