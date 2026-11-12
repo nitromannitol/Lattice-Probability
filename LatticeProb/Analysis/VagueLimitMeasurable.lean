@@ -1,5 +1,6 @@
 import Mathlib
 import LatticeProb.Analysis.VagueLimitSequence
+import LatticeProb.LQG.LocalMeasureKernel
 
 /-!
 # Measurable choice of a vague limit
@@ -19,6 +20,10 @@ choice is measurable.
 * `measurable_integral_vagueLimitOrZero`: under the same hypotheses, `ω ↦ ∫ f d(vagueLimitOrZero (m · ω))` is
   measurable for every continuous compactly supported `f`: it is the limit of the integrals on that event and `0`
   off it.
+* `measurable_vagueLimitOrZero`: under the same hypotheses, `ω ↦ vagueLimitOrZero (m · ω)` is measurable for the Giry
+  σ-algebra on `Measure X`. The mass of an open set is the supremum of the integrals of an increasing sequence of
+  continuous compactly supported functions, and a family of locally finite measures is measurable once its values on
+  open sets are.
 -/
 
 open MeasureTheory Filter Topology Set
@@ -119,6 +124,24 @@ theorem measurable_integral_vagueLimitOrZero {m : ℕ → Ω → Measure X}
         vagueLimitOrZero_of_not hω, integral_zero_measure]
   rw [heq]
   exact hlim.piecewise hE measurable_const
+
+/-- **The chosen vague limit is a random measure.** If the measures `m k ω` are finite on compacts and the integrals
+`ω ↦ ∫ f d(m k ω)` against continuous compactly supported `f` are measurable, then `ω ↦ vagueLimitOrZero (m · ω)` is
+measurable for the Giry σ-algebra on `Measure X`. -/
+theorem measurable_vagueLimitOrZero {m : ℕ → Ω → Measure X}
+    (hfin : ∀ k ω, IsFiniteMeasureOnCompacts (m k ω))
+    (hmeas : ∀ k (f : X → ℝ), Continuous f → HasCompactSupport f →
+      Measurable fun ω => ∫ x, f x ∂(m k ω)) :
+    Measurable fun ω => vagueLimitOrZero fun k => m k ω := by
+  refine LatticeProb.LocalMeasureKernel.measurable_measure_of_isOpenX (fun _ => inferInstance)
+    fun U hU => ?_
+  obtain ⟨f, hfc, hfs, hmass⟩ := LatticeProb.LocalMeasureKernel.exists_open_mass_test_functionsX hU
+  have heq : (fun ω => (vagueLimitOrZero fun k => m k ω) U) =
+      fun ω => ⨆ n, ENNReal.ofReal (∫ x, f n x ∂(vagueLimitOrZero fun k => m k ω)) :=
+    funext fun _ => hmass _ inferInstance
+  rw [heq]
+  exact Measurable.iSup fun n =>
+    ENNReal.measurable_ofReal.comp (measurable_integral_vagueLimitOrZero hfin hmeas (hfc n) (hfs n))
 
 end Measurable
 
