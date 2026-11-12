@@ -30,7 +30,7 @@ namespace LatticeProb.LQG
 open MeasureTheory Set Metric LatticeProb.Gauss LQGMetric LQGMetric.Blueprint LQGMetric.DFGPS LQGMetric.DFGPS.P31
 open scoped ENNReal
 
-/-- **One-parameter upper tail of the internal distance of two sets.** See the module docstring. The constants `A, K, C₄,
+/-- **One-parameter upper tail of the internal distance of two sets.** See the module docstring. The constants `A > 0, K, C₄,
 ε₁` depend on the parameters and on the realization of the field only through `C₄`; the bound holds for every scale
 `𝕣 > 0` and `ε ∈ (0, ε₁)`. -/
 theorem IsLQGMetric.exists_measure_internalDist_gt_le {γ ξ : ℝ} {𝔇 : ((ℂ → ℝ) → ℝ) → ℂ → ℂ → ℝ}
@@ -42,7 +42,7 @@ theorem IsLQGMetric.exists_measure_internalDist_gt_le {γ ξ : ℝ} {𝔇 : ((�
     {hC : Ω → (ℂ → ℝ) → ℝ} {hcirc : Ω → ℝ → ℂ → ℝ} (hG : IsWholePlaneGFF P hC hcirc) {H : Ω → DistC}
     (hH : LQGMetric.IsWholePlaneGFF H P) (hHC : ∀ ψ : TestC, (fun ω => H ω ψ) =ᵐ[P] fun ω => hC ω ψ)
     (hHcirc : ∀ r : ℝ, 0 < r → ∀ z : ℂ, ∀ᵐ ω ∂P, hcirc ω r z = circleAvg (H ω) r z) :
-    ∃ A K C₄ ε₁ : ℝ, 0 < ε₁ ∧ ∀ 𝕣 : ℝ, 0 < 𝕣 → ∀ ε ∈ Ioo (0 : ℝ) ε₁,
+    ∃ A K C₄ ε₁ : ℝ, 0 < A ∧ 0 < ε₁ ∧ ∀ 𝕣 : ℝ, 0 < 𝕣 → ∀ ε ∈ Ioo (0 : ℝ) ε₁,
       P {ω | ENNReal.ofReal (A * ε ^ (-(6 + 2 * Λ + ξ * q)) * (𝕣 ^ (ξ * lqgQ γ) * Real.exp (ξ * hcirc ω 𝕣 0))) <
           ⨅ u ∈ scaleSet 𝕣 0 K₁, ⨅ v ∈ scaleSet 𝕣 0 K₂,
             internalMetric (𝔇 (hC ω)) (scaleSet 𝕣 0 U₀) u v} ≤
@@ -76,7 +76,9 @@ theorem IsLQGMetric.exists_measure_internalDist_gt_le {γ ξ : ℝ} {𝔇 : ((�
   obtain ⟨C, hC1, hCprob⟩ := h𝔇.exists_le_measure_goodCircleEvent hpt1
   obtain ⟨C₄, hC₄⟩ := lem3_4 hH (ν := 1) (q := q) (R := R₀ + 1) zero_le_one hq (by linarith)
   obtain ⟨ε₀', hε₀', H35⟩ := lem3_5 hU₀ hU₀c hK₁ hK₁c hK₁n hK₂ hK₂c hK₂n h₁U h₂U hM
-  refine ⟨(2 * (8 * (R₀ + 1) + 1) ^ 2 + 1) * C * Λ, K, C₄, min (min ε₀ ε₀') 1,
+  have hCpos : 0 < C := by linarith
+  have hΛpos : 0 < Λ := by linarith
+  refine ⟨(2 * (8 * (R₀ + 1) + 1) ^ 2 + 1) * C * Λ, K, C₄, min (min ε₀ ε₀') 1, by positivity,
     lt_min (lt_min hε₀ hε₀') one_pos, ?_⟩
   intro 𝕣 h𝕣 ε hε
   obtain ⟨hε0, hεlt⟩ := hε
