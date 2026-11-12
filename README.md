@@ -354,6 +354,13 @@ the field with zero boundary values on a finite set `C` as
   constant `L √n` produced by `LatticeProb.lipschitzWith_pi_of_hasSum_sq` and
   the l2-versus-sup comparison
   `LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist`.
+* `LatticeProb.GaussConc.gaussLaw_tail_le_of_hasSum_lipschitz`: Gaussian
+  concentration `P(F ≥ E F + t) ≤ exp (-t² / (2 L²))` with the sharp constant for
+  an integrable functional of an arbitrary family of independent standard
+  Gaussians (`LatticeProb.gaussLaw ι`, any index type `ι`) under the l2
+  (Cameron–Martin) Lipschitz condition; proved from the finite-dimensional bound
+  by conditioning on finitely many coordinates and Lévy's upward theorem
+  (`LatticeProb/Prob/GaussLipConcentrationInfinite.lean`).
 * `LatticeProb.gaussianLogSobolev_of_one_of_tensorStep`,
   `LatticeProb.gaussianHerbstBound_of_one_of_tensorStep`: the Gaussian
   log-Sobolev inequality in every dimension from its one-dimensional case and

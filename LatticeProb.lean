@@ -353,6 +353,7 @@ import LatticeProb.Prob.GaussianHerbstDischarge
 import LatticeProb.Topology.ContinuousMapBorel
 import LatticeProb.Prob.BrownianPathMap
 import LatticeProb.Prob.GaussLipConcentration
+import LatticeProb.Prob.GaussLipConcentrationInfinite
 import LatticeProb.Prob.BrownianMomentsCore
 import LatticeProb.Analysis.HessianTaylorRemainder
 import LatticeProb.Prob.DyadicExitApprox
