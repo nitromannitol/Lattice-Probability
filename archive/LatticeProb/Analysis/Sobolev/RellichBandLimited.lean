@@ -1,5 +1,11 @@
 /-
-# Rellich–Kondrachov: the low-frequency statement from a band-limited `C^m`-net
+# Archived: the low-frequency statement from a band-limited `C^m`-net
+
+This file is not part of the built library.  `rkBandLimitedCmNet` is false as stated: the `H^s`
+unit ball is not `C^m`-bounded for `s < m` (the family `N^{-M} sin (N x₁) ρ(x)` with
+`s < M < m` is `H^s`-bounded and `C^m`-unbounded; see `RellichLowFreqNet.lean`), so the two
+theorems below, which assume it, say nothing.  The low-frequency step is `rkLowFreqNet`.
+
 
 `rk_finite_net_of_Cm_net` (`RellichNet.lean`) turns a finite `C^m(K)`-net of a
 family of smooth functions supported in a compact `K` into a finite net in the

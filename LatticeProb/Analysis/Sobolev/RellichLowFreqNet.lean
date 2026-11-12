@@ -23,9 +23,9 @@ exist.  (In particular the family need not be band-limited, and adding an
 supported function has an entire Fourier transform and cannot vanish on the open
 complement of a ball, so it would be band-limited only if it were zero.)
 
-The reduction `rkLowFrequencyStatement_of_rkBandLimitedCmNet` is therefore a
-valid implication from a false premise, and its docstring's claim that
-`rkBandLimitedCmNet` is "exactly the compactness input" is not correct.
+The reduction `rkLowFrequencyStatement_of_rkBandLimitedCmNet` was therefore a
+valid implication from a false premise; both are kept only in `archive/`, which is
+not built.
 
 ## The corrected residual
 

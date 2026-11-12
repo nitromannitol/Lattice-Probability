@@ -67,8 +67,8 @@ remaining low-frequency compactness step is
 isolated as `LatticeProb.Sobolev.rkLowFreqNet`, whose consumer
 `rellichKondrachovNegSobolev_of_lowfreqNet` reduces the cited embedding to it
 (`Analysis/Sobolev/RellichLowFreqNet.lean`).  The `C^m`-net formulation of
-that step, `rkBandLimitedCmNet` (`Analysis/Sobolev/RellichBandLimited.lean`), is false as stated — the `H^s` unit ball is not
-`C^m`-bounded for `s < m` — and is not used.  The band-limited Bernstein bounds
+that step is false as stated — the `H^s` unit ball is not `C^m`-bounded for `s < m` — and is
+kept only in `archive/`, which is not built.  The band-limited Bernstein bounds
 that feed the net are proved for the low-frequency projections: the uniform
 `C^m` and multi-index bounds (`LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le`,
 `exists_uniform_iteratedFDeriv_apply_le`, `BandLimitedCmNet.lean`) and their
@@ -506,12 +506,10 @@ Rellich–Kondrachov compact embedding in negative Sobolev order.
   `LatticeProb.Sobolev.rk_finite_net_of_Cm_net`: the de-normalised residual,
   turning uniform `C^m` closeness on a compact set into `H^{s₀}` closeness with
   explicit accuracy `C ε²`, and the finite-net-from-uniform-bound lemma.
-* `LatticeProb.Sobolev.rellichKondrachov_iff_rkLowFrequencyStatement`,
-  `LatticeProb.Sobolev.rellichKondrachov_of_rkLowFrequencyStatement`,
-  `LatticeProb.Sobolev.rkLowFrequencyStatement_of_rkBandLimitedCmNet` and
-  `LatticeProb.Sobolev.rellichKondrachov_of_rkBandLimitedCmNet`: the external
+* `LatticeProb.Sobolev.rellichKondrachov_iff_rkLowFrequencyStatement` and
+  `LatticeProb.Sobolev.rellichKondrachov_of_rkLowFrequencyStatement`: the external
   `RellichKondrachovNegSobolev` is equivalent to the internal low-frequency
-  finite-net statement, which follows from the band-limited `C^m`-net residual.
+  finite-net statement.
 **The bracket process and the Dambis–Dubins–Schwarz representation.**
 `LatticeProb/Prob/BracketProcess.lean` is Stage 1 of the bracket process of a
 continuous martingale: the dyadic realized quadratic variation

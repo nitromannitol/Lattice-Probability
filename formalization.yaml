@@ -266,14 +266,6 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
-    - declaration: "LatticeProb.Sobolev.rellichKondrachov_of_rkBandLimitedCmNet"
-      file: "LatticeProb/Analysis/Sobolev/RellichBandLimited.lean"
-      sorry_count: 0
-      axioms: ["propext", "Classical.choice", "Quot.sound"]
-      comparator_config: ""
-      literature_dependencies:
-        - statement: "Rellich-Kondrachov compact embedding in negative Sobolev order (LatticeProb.External.RellichKondrachovNegSobolev), reduced to the band-limited finite-net residual"
-          source: "Rellich 1930; Kondrachov 1945"
     - declaration: "LatticeProb.Sobolev.rellichKondrachov_iff_rkLowFrequencyStatement"
       file: "LatticeProb/Analysis/Sobolev/RellichEquiv.lean"
       sorry_count: 0
