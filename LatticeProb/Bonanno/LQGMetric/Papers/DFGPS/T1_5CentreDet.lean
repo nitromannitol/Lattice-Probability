@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Theorem 1.5, Steps 2–3 in terms of the Prop 3.1 events (deterministic)
+
 DFGPS (arXiv:1905.00380, "T"), proof of Theorem 1.5:
 * Step 2 (T:1677–1691, (eqn-lfpp-lower)): if every grid vertex `z ∈ (𝕣𝕊) ∩ (sℤ²)` (`s = δ𝕣`) has
   short crossings of its two rectangles (cost `≤ K e^{ξ φ(z)}`), then the `D`-distance between

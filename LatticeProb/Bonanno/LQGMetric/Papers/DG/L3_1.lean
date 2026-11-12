@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppA3Ker
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent3Law
 
 /-!
+# Ding–Gwynne Lemma 3.1 for the pair `(h^U, ĥ)`, `U = 𝕍`, circle-average form (task P2-DG3D)
+
 DG (`metric-comparison-final.tex`, Lemma 3.1 `lem-gff-compare`, DG:966–974; proof DG:2243–2244
 "Combine Lemmas 2.2, A.1 and A.2"). Here `U = 𝕍 = (0,1)²` and all fields are built from one white
 noise `W` (DG's coupling: "`ĥ` and `ĥ^tr` are defined using the same white noise"):

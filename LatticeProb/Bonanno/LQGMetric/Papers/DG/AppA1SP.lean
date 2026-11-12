@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppASP2
 
 /-!
+# Ding–Gwynne Lemma A.1: start-point regularity of `p_U − p_D` (task P2-DG3B)
+
 DG (`metric-comparison-final.tex`, proof of Lemma A.1, DG:2141–2232): the kernel of
 `f_t(z) = h^U_{t,1}(z) − ĥ^tr_t(z)` is `q_s(z, ·) = p_U(s/2; z, ·) − p_{B_{1/10}(z)}(s/2; z, ·)`.
 This file generalizes `AppASP`/`AppASP2` from `U = ℂ` to an open `U ⊇ D`:

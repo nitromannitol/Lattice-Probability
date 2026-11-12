@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# `L¹` bounds for the image-series Dirichlet kernels (task P2-DDDFP29, WP-110)
+
 * `HeatSq.lintegral_abs_intervalDirKernel_le`: `∫_a^{a+L} |q_s(u,w)| dw ≤ 2`;
 * `HeatSq.lintegral_abs_sqDirKernel_le`: `∫_D |p^D_s(x,y)| dy ≤ 4` on `D = (a,a+L)²`.
 

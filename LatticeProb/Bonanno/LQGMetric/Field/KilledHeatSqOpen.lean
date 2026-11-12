@@ -8,6 +8,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel of the square, part 4: dyadic versus continuous staying
 (task P2-KHSQ4, target `killedHeat_sqOpen`)
 
 `KilledHeatSq.stayGrid_ae_eq`: for `z ∈ Q = sqOpen a L` and `t ≠ 0`, staying in `Q` at all dyadic

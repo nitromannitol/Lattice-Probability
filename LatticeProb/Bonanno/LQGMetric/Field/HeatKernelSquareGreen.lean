@@ -7,6 +7,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Sine (eigenfunction) expansion of the Dirichlet heat kernel of an interval and a square
 (task P2-KHSQ)
 
 From the Poisson-summation form of the image sums (`HeatSq.tsum_gauss1_shift_eq_cos`) and

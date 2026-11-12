@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.Blueprint
 
 /-!
+# Blueprint: DG Proposition 3.21 (the quantitative upper half of DG Theorem 1.5)
+
 Source: DG = Ding–Gwynne, *The fractal dimension of Liouville quantum gravity: universality,
 monotonicity, and bounds*, arXiv:1807.01072, `literature/src/1807.01072/metric-comparison-final.tex`
 (cited `DG:`). Decision D52 (DECISIONS.md).

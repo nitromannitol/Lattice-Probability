@@ -18,6 +18,8 @@ import Mathlib.Probability.Moments.Variance
 import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
+# Bounded boundary data; fields modulo `cℤ`; lateral part
+
 * `exists_isGFFBoundary_of_bounded`: `exists_isGFFBoundary` for bounded harmonic data (the case of
   IG1's piecewise-constant boundary data).
 * `φ₀` and `normMod c h`: the normalized

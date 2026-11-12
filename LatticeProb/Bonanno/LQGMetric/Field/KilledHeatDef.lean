@@ -11,6 +11,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 3: the canonical planar Brownian motion and the definition of `p_A`
 (task P2-KILLED, decision D-KHK1, `decisions/DEC-KHK.md`)
 
 The canonical planar Brownian motion `planarBM` lives on `Ω2 = Bool → ℕ → ℝ` with the product

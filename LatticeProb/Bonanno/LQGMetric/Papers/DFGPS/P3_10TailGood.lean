@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.10, Steps 1–2 on the good event
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.10 (T:1880–1904). On the event where
 * the circle averages satisfy `h_{2^{-n}𝕣}(w) − h_𝕣(0) ≤ log(C 2^{qn})` at all dyadic corners

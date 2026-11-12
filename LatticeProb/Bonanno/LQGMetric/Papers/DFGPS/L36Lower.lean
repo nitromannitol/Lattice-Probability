@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.6, lower bound for `𝕣 = 1`
+
 DFGPS Lemma 3.6 (arXiv:1905.00380, T:1628–1650): w.p. → 1 as `δ → 0`,
 `D̃^δ_h(∂_L 𝕊, ∂_R 𝕊; 𝕊) ≥ δ^{−ξQ+ζ} e^{ξ h_1(0)}`. Proof (DFGPS T:1646–1649 and node S11 of
 `blueprint/DFGPS.md`): every left–right graph path gives a continuum path from `K = [0,1/4]×[0,1]` to

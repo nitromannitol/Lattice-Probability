@@ -34,6 +34,8 @@ import Mathlib.MeasureTheory.Measure.HasOuterApproxClosed
 import Mathlib.Probability.Independence.Basic
 
 /-!
+# WEDGE-ADDCONST (3): scale invariance of the lateral part under an independent random factor
+
 Input of the translation step of B4(c) (Sheffield, arXiv:1012.4797, §1.6 and §5.4: the lateral
 part `h†` of a free-boundary GFF is scale invariant and independent of the radial part;
 Duplantier–Miller–Sheffield, arXiv:1409.7055, §4.1 and the proof of Prop. 4.6, where the field is

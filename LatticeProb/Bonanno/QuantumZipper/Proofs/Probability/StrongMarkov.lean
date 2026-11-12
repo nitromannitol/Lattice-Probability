@@ -9,6 +9,8 @@ import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import LatticeProb.Bonanno.QuantumZipper.Proofs.ItoLite.OptionalStopping
 
 /-!
+# L9: the strong Markov property of Brownian motion
+
 Blueprint item L9 (`blueprint/SECTION5_BLUEPRINT.md`, §4).
 
 Setting: `B : ℝ≥0 → Ω → ℝ` pre-Brownian with continuous paths, `𝓕` a filtration to which `B`

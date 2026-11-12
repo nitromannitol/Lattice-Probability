@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Theorem 1.5, Step 3: discretizing a crossing path (deterministic part)
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, *Weak LQG metrics and Liouville first passage percolation*
 (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), proof of Theorem 1.5, Step 3
 (T:1693–1716): a path `P` crossing `𝕣𝕊` from left to right is turned into a path `π` of the

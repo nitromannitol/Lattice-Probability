@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.ConeOfFun
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea5
 
 /-!
+# The area of a cone-type field along all radii (deterministic)
+
 Let `h = X − ofFunC g₁ + ofFunC g₂` where `X` is a field whose area approximations
 converge along all radii (`HasAreaLimitS γ X μX`), and `g₁, g₂` are measurable, locally integrable,
 continuous off the cone point `0`, with `G = g₂ − g₁ ≤ c(−log|w|) + C` near `0` (the α-log

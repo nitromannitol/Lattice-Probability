@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMMoments
 import Mathlib.MeasureTheory.Constructions.HaarToSphere
 
 /-!
+# Whole-plane LQG area, part 6: local integrability of the radial part
+
 * `lintegral_radG_le`: `E|X_r(0) − X_1(0)| ≤ 1 + |log r|` for `0 < r ≤ 1`, since
   `t ↦ X_{e^{−t}}(0) − X_1(0)` is a Brownian motion (Duplantier–Sheffield arXiv:0808.1560
   Prop. 3.3; LM `CircleAvg.isPreBrownianReal_circleAvg`) and `E B_t² = t` (QZ `integral_sq`);

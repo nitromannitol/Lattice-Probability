@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemmas 3.19 and 3.21 with constants before the field (task P2-DFA7)
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380, `lqg-metric-estimates-final.tex` ("T"):
 Lemma 3.19 (`lem-ep-diam`, T:2264–2272) and Lemma 3.21 (`lem-ep-cross`, T:2337–2343).
 

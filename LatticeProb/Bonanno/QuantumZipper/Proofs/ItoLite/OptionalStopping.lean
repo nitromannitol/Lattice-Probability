@@ -8,6 +8,8 @@ import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
+# ITO-LITE: continuous-time optional stopping, hitting times, and the glue lemma
+
 Blueprint nodes IL-4 and IL-5 (`blueprint/THM11_BLUEPRINT.md`, §3 and §10).
 
 Time is `ℝ≥0`, `𝓕` is an arbitrary filtration, stopping times take values in

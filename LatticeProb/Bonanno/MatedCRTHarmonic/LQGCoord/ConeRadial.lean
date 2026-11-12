@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.ConeTight
 import LatticeProb.Bonanno.MatedCRTHarmonic.CellScaling.Radial
 
 /-!
+# The radial profiles of the quantum cone field
+
 The circle-average embedding of the α-quantum cone (`CellScaling.coneField`) is
 `X − ofFunC g₁ + ofFunC g₂` with `g₁ = radialAvg X = X_{|·|}(0)` and
 `g₂ = A(−log|·|)`, `A = coneRadial γ α B B'` (DMS Def. 4.10 and Rem. 4.4). This file

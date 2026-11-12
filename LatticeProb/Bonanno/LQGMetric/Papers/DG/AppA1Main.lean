@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L7
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L7Cont
 
 /-!
+# Ding–Gwynne Lemma A.1: the increments of `h^U_{1,∞}` (task P2-DG3C)
+
 DG (`metric-comparison-final.tex`, DG:2141–2162): `h^U_{1,∞}(z) = √π ∫_1^∞ ∫ p_U(s/2; z, w) W(dw, ds)`
 "admits a continuous modification (Kolmogorov)". Kernel form: `wndKernelL2 U (Ioi 1) z`.
 

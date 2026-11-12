@@ -7,6 +7,8 @@ import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 import Mathlib.Analysis.Calculus.FDeriv.Measurable
 
 /-!
+# Auxiliary lemmas for node `J42` (`TreeInequality`)
+
 * Combinatorics of well-formed cut trees (`CutTree.WF`): prefix closure, positivity of the
   chord lengths, consecutive child times, the unit flow, and the decomposition of the leaves
   below an internal node into the leaves below its children.

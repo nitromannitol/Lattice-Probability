@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.WPLimit
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaOffsetsModulus
 
 /-!
+# The modulus of the area density in the offset (whole-plane GFF)
+
 At a point
 `z` and a scale `ε`, for offsets `a ∈ [1, 2]`,
 

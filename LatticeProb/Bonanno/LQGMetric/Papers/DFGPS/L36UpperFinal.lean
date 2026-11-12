@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.6, upper half at `𝕣 = 1`, from DG Proposition 3.21
+
 DFGPS Lemma 3.6 (arXiv:1905.00380, T:1628–1650), upper inequality of (eqn-lfpp-dist-show): w.p.
 → 1 as `δ → 0`, `D̃^δ_h(∂_L 𝕊, ∂_R 𝕊; 𝕊) ≤ δ^{−ξQ−ζ} e^{ξ h_1(0)}`.
 

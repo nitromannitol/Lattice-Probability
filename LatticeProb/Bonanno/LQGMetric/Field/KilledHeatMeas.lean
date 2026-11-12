@@ -7,6 +7,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 15: Brownian scaling of the bridge and joint measurability
 (task P2-KILLED, D-KHK1)
 
 * `IsPlanarBridge.scale`: if `X` is a planar bridge of length `1`, `s ↦ √t X_{s/t}` is one of

@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodSample
 import Mathlib.Probability.Kernel.MeasurableIntegral
 
 /-!
+# M4-R5(a), part 1: regularity is a measurable property of field samples
+
 We prove `MeasurableSet {x : FieldSample | IsRegularSample x}` by characterizing regularity
 through countably many conditions on measurable functions of `x`
 (`isRegularSample_iff_cert`):

@@ -24,6 +24,8 @@ import Mathlib.Probability.Process.FiniteDimensionalLaws
 import LatticeProb.Bonanno.LQGMetric.Gaussian.FerniqueDZZ
 
 /-!
+# White-noise kernels of measures and their fine/coarse splitting (P2-GMCID, D67)
+
 For a finite measure `μ` (in the application a circle `∂B(z, 2^{-k})`), DZZ's white-noise
 representation of the field average `(h, μ)` (`LBM_LGDarXiv.tex` l. 430–433, the decomposition
 `h = lim_δ h̃_δ`) uses the kernel `K^I_μ(s, w) = ∫ 1_I(s) p_𝕍(s/2; y, w) μ(dy)` (`measKer`):

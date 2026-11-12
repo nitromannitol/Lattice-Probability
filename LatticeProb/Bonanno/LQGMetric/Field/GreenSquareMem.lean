@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The square modes are in `H¹₀` (task P2-KHSQ2, G3)
+
 `HeatSq.gradFeat_sqMode_mem_gradClosure`: `g_p = gradFeat U φ_p` lies in the closure of the
 gradient features of `C_c^∞(U)`, `U = (a,a+L)²`. Approximants:
 `f_δ(z) = χ_δ(x) sin_j(x) · χ_δ(y) sin_k(y)` with the cutoff `HeatSq.cutoff` (`δ = 1/(n+1)`):

@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Kill
 
 /-!
+# W5 (part 4): the killed occupation density of `X + c`
+
 W5(i), reversed side, of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1): the occupation measure of
 `X + c` killed at `T_c` (`X = dpath σ (-μ) b`, `T_c` its hitting time of `-c`) has density
 `C · χ_c` (`C = occDens σ μ 0`, `χ_c = chiKill`):

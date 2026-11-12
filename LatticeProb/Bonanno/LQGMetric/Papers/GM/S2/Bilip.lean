@@ -80,6 +80,7 @@ import LatticeProb.Bonanno.LQGMetric.Metric.Internal
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightA
 
 /-!
+# GM Proposition 2.2: weak LQG metrics with the same scaling constants are bi-Lipschitz
 (task P2-M2A, WP-M2a, row 2 of `blueprint/M2.md`)
 
 GM (arXiv:1905.00383v3, `uniqueness-final.tex`) Prop 2.2, l. 890–896: for a whole-plane GFF `h`

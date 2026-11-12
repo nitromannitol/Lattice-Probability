@@ -7,6 +7,8 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 import Mathlib.Topology.Instances.NNReal.Lemmas
 
 /-!
+# ITO-LITE IL-1 / IL-2: Brownian increments and path functionals
+
 * `bmFiltration B` : the natural filtration `σ(B_r : r ≤ t)`.
 * `bm_incr_moment` (IL-1) : for bounded `𝓕_t`-measurable `ξ`,
   `E[ξ (B_{t+s} - B_t)^k] = E[ξ] * m_k(s)`.

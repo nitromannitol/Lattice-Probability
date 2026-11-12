@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The Fernique criterion of Ding–Zeitouni–Zhang (DZZ Lemma 2.3) for continuous fields
+
 J. Ding, O. Zeitouni, F. Zhang, *Heat kernel for Liouville Brownian motion and Liouville graph
 distance*, arXiv:1807.00422, Lemma 2.3 (LaTeX lines 364–373): there is a universal `C_F > 0`
 such that if `B` is a box of side `b` and `{G_v}_{v ∈ B}` is a mean-zero Gaussian field with

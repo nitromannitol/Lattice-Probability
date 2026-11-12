@@ -12,6 +12,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTIsLocallyFinite
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTGraph
 
 /-!
+# Graph-connectivity and looplessness producers from the mated-CRT cell coupling
+
 The frozen coupling supplies the unit-mesh Brownian path and almost-sure cellular embedding. The random-family
 adapter `CellCoupledRandomFamily` also records the mesh graph identification asserted by the cell model and
 transported by Brownian scaling, in adjacency-only form. Walk laws, degrees and

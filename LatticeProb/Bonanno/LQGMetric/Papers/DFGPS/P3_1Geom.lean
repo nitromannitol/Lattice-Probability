@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.1: geometry and the bounds on `𝔠_r e^{ξ h_r(w)}` (task P2-DFA3)
+
 DFGPS (arXiv:1905.00380, "T"), proof of Proposition 3.1, T:1522–1568.
 
 * `exists_bounded_conn`: T:1525 "We also impose the requirement that `U` is bounded" and T:1566

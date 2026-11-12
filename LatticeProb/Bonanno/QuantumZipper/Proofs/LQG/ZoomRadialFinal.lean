@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.WedgeTranslation
 set_option autoImplicit true
 
 /-!
+# Measurability of the truncated zoom radial path (TASKS.md R6, D3-RAD step (i))
+
 This file supplies the measurability input of the D3 radial comparison
 (`ZoomRadial.abs_prob_zoomRadial_sub_le`, TASKS.md row R6): for a Brownian motion `b`, the map
 

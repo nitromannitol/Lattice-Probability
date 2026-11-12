@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.20 (`Blueprint.DFGPSLem3_20`) from Lemma 3.19 (task P2-DFA7)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), Lemma 3.20 (T:2317–2325), proof
 T:2327–2330. First display: `L320.lem3_20_ball_of` (`L3_20Ball.lean`); second display:
 `lem3_20_sq_of` below, from Lemma 3.19's square part with `s = (χ + ξ(Q−2))/2`, the union bound

@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.WPCirc
 
 /-!
+# Normalized area masses of the whole-plane GFF and the two-radius rate
+
 Fix a **window**: a scale
 `δ > 0` and a measurable set `S ⊆ B̄(0, δ/4)` (`Win S δ`), and a bounded measurable `f` vanishing off
 `S` (`WinFun S f M`). For a whole-plane GFF `X` and a radius `s ≤ δ/2` the normalized density and

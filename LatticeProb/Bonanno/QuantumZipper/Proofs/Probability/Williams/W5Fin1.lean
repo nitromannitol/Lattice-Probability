@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Main3
 
 /-!
+# W5 (part 9): the hitting time of `-c` by the down-drift process has finite mean
+
 Preparation for W5(ii) (de-integration) of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1): the killed
 time integrals of W5(i) are finite for bounded `g`, because `E[T_c] < ∞` for
 `T_c = hitLevel X (-c)`, `X = dpath σ (-μ) b` (`lintegral_hitLevel_lt_top`).

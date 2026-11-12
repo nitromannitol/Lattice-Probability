@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Fractional-moment tail bound for sums of `e^{ξ h_ρ(z)}` (upper half of DFGPS Lemma 3.6)
+
 For the boundary layer of DFGPS Lemma 3.6 (D52) we bound, with probability → 1, the sums
 `Σ_k r_k^{ξQ} e^{ξ h_{r_k}(c)}` over dyadic scales and `Σ_v e^{ξ h_δ(v)}` over a straight walk of
 `≈ δ^{−a}` vertices. Own elementary argument (DEVIATIONS DV-DFC2-1): Markov's inequality for the

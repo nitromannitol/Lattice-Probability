@@ -9,6 +9,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 12: the law of the maximum of a Brownian bridge
 (task P2-KILLED, D-KHK1)
 
 `measureReal_bridge_max_gt`: for a planar bridge `X` of length `t > 0`, each coordinate and

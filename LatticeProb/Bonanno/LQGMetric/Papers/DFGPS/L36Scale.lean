@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.6: reduction to `𝕣 = 1` (T:1640–1644)
+
 "By the scale and translation invariance of the law of `h`, modulo additive constant, we have
 `h(𝕣·) − h_𝕣(0) =ᵈ h`. Moreover … `D̃^δ_{h(𝕣·)−h_𝕣(0)}(·,·;𝕊) = e^{−ξ h_𝕣(0)} D̃^{δ𝕣}_h(·,·;𝕣𝕊)`."
 (DFGPS arXiv:1905.00380, T:1640–1644.) We use it pathwise: `h' = h(𝕣·) − h_𝕣(0)` is again a

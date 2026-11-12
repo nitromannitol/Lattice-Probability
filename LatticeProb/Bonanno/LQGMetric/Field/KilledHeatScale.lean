@@ -6,6 +6,7 @@ import LatticeProb.Bonanno.LQGMetric.Field.KilledHeatBound
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 
 /-!
+# Killed heat kernel, part 17: Brownian scaling and log-convexity in time
 (task P2-DZZPRE2; open item 2 of `handoff/P2-KILLED.md`; decision D62 route (1))
 
 * `bridgeStay_scale`, `killedHeat_scale`: Brownian scaling

@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 10: consequences used by DZZ (task P2-KILLED, D-KHK1)
+
 * `integral_killedHeat_mul_killedHeat`: `∫ p_A(t; u, w) p_A(t; v, w) dw = p_A(2t; u, v)`
   (Chapman–Kolmogorov + symmetry), the identity behind DZZ (eq-cov-tildeh),
   `LBM_LGDarXiv.tex` l. 437–441.

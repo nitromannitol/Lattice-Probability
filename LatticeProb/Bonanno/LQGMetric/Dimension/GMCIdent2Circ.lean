@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# White-noise circle kernels reproduce the circle-average covariance (task P2-GMCID2, G2)
+
 For circles `∂B(z, r)`, `∂B(w, s)` whose closed discs lie in `𝕍` and
 `K_μ = ∫ 1_{s>0} p_𝕍(s/2; y, ·) μ(dy)` (`GMCIdent.measKer openSquare (Ioi 0) μ`):
 

@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Gaussian.FerniqueDZZ
 
 /-!
+# DZZ §2.2: Gaussian tail of the supremum of a field on a small box (task P2-DZZPRE, WP-112)
+
 The step used repeatedly in Ding–Zeitouni–Zhang (arXiv:1807.00422, `LBM_LGDarXiv.tex`): proofs of
 Lemma 2.6 (l. 556–567), Lemma 2.7 (l. 573–592, "Combined with Lemmas 2.1 and 2.3 this gives
 (eq-boring-2)"), Lemma 2.8 (l. 616–621) and Lemma 2.9 (l. 628–633): a continuous centered Gaussian

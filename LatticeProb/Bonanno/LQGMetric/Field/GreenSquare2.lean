@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Spectral form of the zero-boundary covariance on a square and R1 (task P2-KHSQ2, G5 + R1)
+
 See the docstring of `LQGMetric.Field.GreenSquare`.
 -/
 

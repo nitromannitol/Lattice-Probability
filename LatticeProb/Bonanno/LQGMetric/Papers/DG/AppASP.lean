@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.ExistKernelL2
 import LatticeProb.Bonanno.LQGMetric.Field.HeatKernelSquareCK
 
 /-!
+# Ding–Gwynne App. A: start-point regularity of `p − p_D` (task P2-DG3B)
+
 For an open set `D` let `a_x(τ)(w) := p(τ; x, w) − p_D(τ; x, w)` (`compK`), the kernel of the
 paths from `x` that leave `D` before time `τ`. In the proof of DG Lemma A.1/A.2
 (`metric-comparison-final.tex`, DG:2183–2232) the kernels of `(ĥ − ĥ^tr)(z₁)` and

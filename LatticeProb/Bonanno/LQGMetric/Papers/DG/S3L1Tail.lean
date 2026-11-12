@@ -32,6 +32,8 @@ import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
+# DG Lemma 3.1, last step: Gaussian tail of `max_K |h¹ − h²|` (task P2-DG3A, WP-118)
+
 Ding–Gwynne, arXiv:1807.01072, `metric-comparison-final.tex`, proof of Lemma A.1 (DG:2160–2164),
 after the increment bound (A.3) `Var(f(z₁) − f(z₂)) ≲ |z₁ − z₂|`: "this together with the
 Kolmogorov continuity criterion will show that … `f` is locally Hölder continuous …

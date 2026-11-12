@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea4G
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea2
 
 /-!
+# Cone area, part 8: (b1) unconditional; `ConeRefMeas` from (b2), (b3) only
+
 * **`ae_isVagueLimitOn_coneField_punctured`**: for a whole-plane GFF `X`, a cone process `A` and
   `0 < γ < 2`, a.s. the approximations of the cone field `coneField (lateralPartC X) A Q` converge
   vaguely on `ℂ \ {0}` (input (b1) of `ConeArea2.coneRefMeas_of_punctured`). It is

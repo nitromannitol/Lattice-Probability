@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.2, measurability step (task P2-L32)
+
 DFGPS = Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380,
 `literature/src/1905.00380/lqg-metric-estimates-final.tex` ("T"), proof of Lemma 3.2, T:1476:
 "By the locality of `D_h` and Axiom III, the event `E_r(z;C)` is determined by

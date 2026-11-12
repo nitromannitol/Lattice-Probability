@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.6, deterministic part: LFPP length of a polygonal path
+
 For DFGPS Lemma 3.6 (arXiv:1905.00380, `lqg-metric-estimates-final.tex` T:1628–1650) the
 discretized LFPP `D̃^δ_h` is compared with continuum LFPP; the easy direction ("the upper bound in
 DG Prop 3.16", DG arXiv:1807.01072 l. 1447–1452: concatenate the segments between consecutive

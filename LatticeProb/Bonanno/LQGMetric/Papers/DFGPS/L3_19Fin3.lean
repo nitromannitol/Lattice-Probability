@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.19, ball part (`eqn-ep-diam`)
+
 DFGPS arXiv:1905.00380, `lqg-metric-estimates-final.tex` ("T"), Lemma 3.19 (T:2264–2268) and
 its proof (T:2274–2298): (3.31) (`moment_eps`) with `ρ = 2ε𝕣`, `r = 𝕣`, Theorem 1.5
 (`DFGPSScaling`) for `𝔠_{2ε𝕣}/𝔠_𝕣 ≤ (2ε)^{ξQ − δ}`, Chebyshev with `p = (ξQ − s)/ξ²`, and the

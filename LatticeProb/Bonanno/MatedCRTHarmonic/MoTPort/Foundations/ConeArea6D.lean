@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea6C
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea5C
 
 /-!
+# Cone area, part 16: the whole-plane sup-moment bound (Hölder form)
+
 For a whole-plane GFF `X`, `S = B̄(0, 2^{-n})`, `δ = 4·2^{-n}` (`n ≥ 2`) and the circle-average
 increment `Ω_δ = h_δ(0) − h_1(0)` (centred Gaussian, variance `−log δ`):
 

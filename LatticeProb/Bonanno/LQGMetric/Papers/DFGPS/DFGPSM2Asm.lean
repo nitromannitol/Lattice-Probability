@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemmas 3.19 and 3.20 from the cited results only
+
 DFGPS arXiv:1905.00380, Lemma 3.19 (T:2264–2300) and Lemma 3.20 (T:2302–2330), from
 LM Lemma 3.1 (`LMLem3_1a`, behind Prop 3.1) and the DG results behind Theorem 1.5
 (`DGThm1_5KU`, `DGProp3_21`, via `dfgpsScaling_of_lem3_6`).

@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L7Cont
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2Box
 
 /-!
+# DZZ Lemma 2.7, uniform Gaussian tail of `Σ_i |Δ_i|` (task P2-DZZPRE, WP-112)
+
 Ding–Zeitouni–Zhang (arXiv:1807.00422, `LBM_LGDarXiv.tex`), Lemma 2.7 (`lem-tilde-h-eta`),
 l. 548–576: `P(max_{v∈𝕍} max_{j≥0} |h̃_{2^{-j}}(v) − η_{2^{-j}}(v)|≥ λ) ≤ O(1)e^{−Ω(λ²)}`, proved by
 bounding `Σ_i max_v |Δ_i(v)|`. Here (for continuous versions `Y_i` of `Δ_i`):

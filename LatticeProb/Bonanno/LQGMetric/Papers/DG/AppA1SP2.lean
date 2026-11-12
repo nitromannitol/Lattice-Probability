@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppA1SP
 
 /-!
+# Ding–Gwynne Lemma A.1: start-point regularity of `p_U − p_D`, part 2 (task P2-DG3B)
+
 Generalization of `AppASP.lintegral_sq_compK_sub_le` and `AppASP2` to `a_x = p_U − p_D`
 (`compK2`, `D ⊆ U`), ending with the uniform bound `lintegral_sq_compK2_sub_le_unif`:
 `‖a_x(τ) − a_c(τ)‖₂² ≤ (3/(4π) + 87480/(πρ⁶)) |x − c|` if `B(x,ρ), B(c,ρ) ⊆ D`.

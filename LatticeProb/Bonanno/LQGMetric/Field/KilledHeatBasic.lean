@@ -7,6 +7,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 4: definition of `p_A(t; z, w)` and its elementary properties
 (task P2-KILLED, decision D-KHK1, `decisions/DEC-KHK.md`)
 
 Ding–Zeitouni–Zhang (arXiv:1807.00422, `LBM_LGDarXiv.tex` l. 467–469):

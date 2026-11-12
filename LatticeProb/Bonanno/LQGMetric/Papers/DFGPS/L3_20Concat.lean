@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Internal distance to a limit point along a chain of short paths (task P2-DFA7)
+
 `internalEDist_le_tsum_of_chain`: if `xₙ → u ∈ Y` and `d(xₙ, xₙ₊₁; Y) ≤ cₙ`, then
 `d(x₀, u; Y) ≤ Σ cₙ`. Proof: concatenate paths `γₙ` from `xₙ` to `xₙ₊₁` inside `Y` on the
 intervals `[1 − 2^{-n}, 1 − 2^{-n-1}]` (finite concatenations `catN n`, constant `xₙ` after

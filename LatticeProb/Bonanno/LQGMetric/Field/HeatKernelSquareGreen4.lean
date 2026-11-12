@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The Dirichlet form of a sine mode against a test function (task P2-KHSQ)
+
 For `f ∈ C¹_c(ℂ)` and the square mode `φ_{jk}(z) = sin(πj(x−a)/L) sin(πk(y−a)/L)`:
 
   `∫ ⟪∇φ_{jk}, ∇f⟫ = λ_{jk} ∫ φ_{jk} f`,  `λ_{jk} = π²(j²+k²)/L² = 2·sqRate L (j,k)`

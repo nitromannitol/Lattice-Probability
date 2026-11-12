@@ -5,6 +5,8 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea5
 
 /-!
+# Cone area, part 11: growth of the cone shift at the origin
+
 For the cone field `coneField (lateralPartC X) A Q = X + g`, `g = coneShift A Q R`
 (ConeArea3B), with `s = −log|w|`:
 

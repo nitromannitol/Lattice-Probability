@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.MarkovHit
 set_option autoImplicit true
 
 /-!
+# W3 (second half): deterministic and measure-theoretic ingredients
+
 Second half of node W3 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), towards the two items
 `occDens_nonneg_const` and `prob_hit_neg`. This file contains the ingredients that do not use the
 strong Markov property:

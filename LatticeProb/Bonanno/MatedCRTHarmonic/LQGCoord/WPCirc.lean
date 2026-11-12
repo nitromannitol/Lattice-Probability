@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceTRL
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistence
 
 /-!
+# Whole-plane circle averages: covariances, laws, independence, and the two-radius hypotheses
+
 For a whole-plane GFF `X` (LQGMetric `IsWholePlaneGFF`, any additive constant) the
 circle-average increments `cInc X r z s w = X_r(z) − X_s(w)` are jointly centred Gaussian with
 covariance `incCov` (LQGMetric `map_cInc`, `covariance_cInc`, `isGaussianProcess_incProc`;

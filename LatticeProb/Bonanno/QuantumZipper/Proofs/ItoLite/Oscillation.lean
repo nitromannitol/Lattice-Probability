@@ -8,6 +8,8 @@ import Mathlib.MeasureTheory.Integral.Gamma
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
+# BM-OSC: moments of the Brownian oscillation
+
 * `BMOsc.expGrid_submartingale` : along a monotone grid of times, `k ↦ exp (θ (B (u k) - B t))`
   is a submartingale for the natural filtration.
 * `BMOsc.tail_upper` : the exponential maximal inequality on a finite grid (Doob's weak maximal

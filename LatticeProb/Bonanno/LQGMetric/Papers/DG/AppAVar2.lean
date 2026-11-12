@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppAVar
 
 /-!
+# Ding–Gwynne Lemma A.2: `Var((ĥ_t − ĥ^tr_t)(z₁) − (ĥ_t − ĥ^tr_t)(z₂)) ≤ C |z₁ − z₂|` (task P2-DG3B)
+
 DG (`metric-comparison-final.tex`, DG:2236–2240; (A.3) at DG:2156–2160 for `f = ĥ − ĥ^tr`), in
 kernel form, uniformly in the truncation `t ∈ (0, 1]`:
 

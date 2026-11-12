@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.WPArea
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea3
 
 /-!
+# Circle averages of `X − ofFunC g₁ + ofFunC g₂` along every mollifier scale
+
 The γ-quantum cone field is `coneField X A = X − ofFunC (radialAvg X) + ofFunC
 (A(−log|·|))` (`CellScaling.coneField`, `lateralPart`), i.e. a whole-plane GFF plus two functions that
 are continuous off the cone point `0` and locally integrable. For such fields and circles avoiding

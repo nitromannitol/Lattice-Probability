@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Theorem 1.5, Step 2: chaining crossings along a graph path (deterministic part)
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Theorem 1.5, Step 2 (T:1677–1690): along a path `π` of the graph `(𝕣𝕊) ∩ (δ𝕣ℤ²)` from
 `∂_L` to `∂_R`, short `D_h`-paths attached to the vertices `π(j)` meet consecutively, so their

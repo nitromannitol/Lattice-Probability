@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W6Main
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.ZoomRadialFinal
 
 /-!
+# Wire5: the consumers of `WilliamsDriftDecomposition`, made unconditional
+
 `QuantumZipper.Williams.williamsDriftDecomposition_holds`
 (`Proofs/Probability/Williams/W6Main.lean`) proves the Williams drift decomposition (L14,
 

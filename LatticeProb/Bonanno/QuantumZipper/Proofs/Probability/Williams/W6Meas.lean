@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.Glue
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W0
 
 /-!
+# W6 (part 1): killed functionals and their measurability
+
 Node W6 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1). This file sets up the four *killed
 finite-dimensional functionals* used in the assembly of `WilliamsDriftDecomposition`:
 

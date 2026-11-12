@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W0
 
 /-!
+# Williams decomposition: reduction with `Y` hitting every negative level
+
 `williamsDrift_of_good_hit`: strengthening of `williamsDrift_of_good` (W0) where one may also
 assume that the negatively drifted path of `b'` hits every level `-d`, `d > 0`, for every `ω`.
 Own bookkeeping (modification on a null set), same as `williamsDrift_of_good`.

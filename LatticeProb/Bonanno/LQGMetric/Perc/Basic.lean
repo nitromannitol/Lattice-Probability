@@ -6,6 +6,8 @@ import Mathlib.Data.Int.Interval
 import Mathlib.Data.Finset.Prod
 
 /-!
+# Site percolation on boxes of `ℤ²`: lattice notions
+
 Sites are points of `ℤ × ℤ` (the boxes of a grid of boxes). This file fixes the notions used by
 the percolation tools of `LQGMetric.Perc.*`:
 

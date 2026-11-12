@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.UnzipInvariance
 import LatticeProb.Bonanno.QuantumZipper.Proofs.ItoLite.OptionalStopping
 
 /-!
+# Wedge translation invariance (blueprint `E_BRANCH_BLUEPRINT.md` §5, node "B4(c) from L14")
+
 For an `α`-wedge radial process `A` (`IsWedgeProcess α Q A P`, `α < Q`) and `c > 0`, with
 `T_c = inf {t ≥ 0 | A t ≤ −c}`, the re-centred path `t ↦ A (T_c + t) + c` has the law of `A`
 (on `ℝ → ℝ` with the product σ-algebra, as in `IsQuantumWedge`).

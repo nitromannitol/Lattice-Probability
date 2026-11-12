@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppA1Var
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.AppAVar3
 
 /-!
+# Ding–Gwynne Lemma A.1 at `t = 0` (task P2-DG3B)
+
 DG (`metric-comparison-final.tex`, DG:2150–2160): `f(z) := lim_{t→0} f_t(z)` for
 `f_t = h^U_{t,1} − ĥ^tr_t`, with `Var(f(z₁) − f(z₂)) ≲ |z₁ − z₂|` on `K`. Kernel form, as
 `AppAVar3` for Lemma A.2:

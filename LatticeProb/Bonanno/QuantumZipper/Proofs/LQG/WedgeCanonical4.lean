@@ -69,6 +69,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMExistence
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AllOffsetsModulus
 
 /-!
+# M4-A5-WEDGE (TASKS R23): assembly of (a), (b), (c) from the two analytic inputs
+
 * `continuous_wedgePath`, `ae_continuous_wedgeProcess`: the wedge radial path is continuous for
   continuous driving paths started at `0` (the two branches glue at `t = 0` because the
   backward path vanishes at its last zero; if the zero set is unbounded, `lastZero` is the junk

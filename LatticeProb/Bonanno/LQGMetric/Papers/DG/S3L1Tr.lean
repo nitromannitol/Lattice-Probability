@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L5Kernel
 
 /-!
+# DG's truncated white-noise field `ĥ^tr_t` and its spatial independence (task P2-DG3A)
+
 Ding–Gwynne, arXiv:1807.01072, `metric-comparison-final.tex`, (3.4) (DG:916–918):
 `ĥ^tr_t(z) := √π ∫_{t²}^1 ∫_ℂ p_{B_{1/10}(z)}(s/2; z, w) W(dw, ds)`, `t ∈ (0,1]`, and the key
 property (DG:923–925): "if `A, B ⊂ ℂ` with `dist(A,B) ≥ 1/5`, then `{ĥ^tr_t|_A}` and

@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Almost sure limits of centred Gaussian processes (task P2-DFA7b)
+
 If `Yₙ : T → Ω → ℝ` are centred Gaussian processes and `Yₙ t → Y t` almost surely for each `t`,
 then `Y` is a centred Gaussian process (`isGaussianProcess_of_ae_tendsto`) and the covariances
 converge (`tendsto_covariance_of_ae_tendsto`). This is the argument of

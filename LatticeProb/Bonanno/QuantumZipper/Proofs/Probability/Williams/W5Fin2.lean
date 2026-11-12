@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Fin1
 
 /-!
+# W5 (part 10): de-integration in time (W5(ii), abstract form)
+
 Node W5(ii) of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1): if two random (lifetime, path) pairs
 `(L₁, p₁)`, `(L₂, p₂)` with continuous paths and integrable lifetimes have equal time-integrated
 killed finite-dimensional functionals

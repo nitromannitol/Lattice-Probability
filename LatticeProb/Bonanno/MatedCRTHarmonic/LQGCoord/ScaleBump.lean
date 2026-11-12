@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgKolm
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgAffine
 
 /-!
+# Mollifiers at an arbitrary scale and their circle averages
+
 LQGMetric defines the circle average `circleAvg h r z` as
 the limit of the circle averages of the mollified field `x ↦ h(ψ_{n,x})` along the **dyadic**
 mollifier scales `2^{-n}` (`LQGMetric.circleAvg`). The field `h(r · + z)` sees the

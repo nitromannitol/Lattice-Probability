@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightChain
 import LatticeProb.Bonanno.LQGMetric.Metric.InternalC
 
 /-!
+# GM S2.4c: tightness of internal diameters (task P2-TIGHT)
+
 GM (arXiv:1905.00383v3) l. 449–452 / DFGPS (1.4), T:370–374: the laws of
 `𝔠_r⁻¹ e^{−ξ h_r(0)} sup_{u,v ∈ rK} D_h(u, v; rU)` are tight. No proof in either paper.
 Decision D-A3 (`decisions/DEC-A.md` (c), S2.4c) reads `U` as a bounded **connected** open set

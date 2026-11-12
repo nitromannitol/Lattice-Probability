@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# D105 N4: `μ_ĥ` is the vague limit of its own circle-average approximations (DG:980–988)
+
 Ding–Gwynne, arXiv:1807.01072, `metric-comparison-final.tex`, DG:984: "If `h` is a GFF and `f`
 is a (possibly random) continuous function, then … we can define the average
 `(h+f)_ε(z) = h_ε(z) + f_ε(z)` of `h+f` over the circle `∂B_ε(z)`. We can then define `μ_{h+f}`

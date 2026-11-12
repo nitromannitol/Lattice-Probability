@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.ExistGFF
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgCont
 
 /-!
+# DG Lemma 3.1, the pair `(h, ĥ)`: circle averages of the white-noise GFF (task P2-DG105e, D109)
+
 For a white noise `W` and a whole-plane GFF `h₀` with `h₀(φ) = W(kerFun φ)` a.s. (the
 construction of `Field/ExistGFF`), and a circle `σ = circleUnif z r`, `r > 0`:
 

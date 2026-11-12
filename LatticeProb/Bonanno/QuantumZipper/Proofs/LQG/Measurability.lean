@@ -5,6 +5,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodSample
 import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
+# M4-R5 (measurability): the LQG measures are measurable functions of good samples
+
 For a good sample `x` (`IsLQGGood γ x`), `qBoundaryMeasure γ x` and `qAreaMeasure γ x` are the
 limits of the approximations `bdryApprox γ x k`, `areaApprox γ x k` (radius `2^{-k}`). Hence:
 

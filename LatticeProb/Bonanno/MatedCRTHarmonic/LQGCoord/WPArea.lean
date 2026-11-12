@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.Transform
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea4D
 
 /-!
+# The whole-plane GFF: area approximations along all radii, on all of `ℂ`
+
 For a whole-plane GFF `X` and `0 < γ < 2`, almost surely
 
 * `ae_hasAreaLimitS_wp`: `areaS γ (X ω) s → lqgArea γ (X ω)` vaguely on `ℂ` as `s → 0⁺` (the

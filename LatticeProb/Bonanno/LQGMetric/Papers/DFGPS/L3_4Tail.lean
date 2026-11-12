@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.4, ingredients: the two Gaussian tail bounds (task P2-DFA0)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), proof of Lemma 3.4,
 T:1495–1507:
 

@@ -11,6 +11,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Locality of `μ_{ĥ^tr}` (P2-DGLOC, part 1): DG:984 for a general field, on an open set
+
 Ding–Gwynne, arXiv:1807.01072, `metric-comparison-final.tex`, DG:984 ("we can then define
 `μ_{h+f}` as the a.s. weak limit `lim ε^{γ²/2} e^{γ(h+f)_ε(z)} dz`"), applied to `h = h^𝕍` and
 `f = −Y`, `Y` a continuous modification of `h^𝕍 − G` (DG:986, `G = ĥ^tr` for `μ_{ĥ^tr}`).

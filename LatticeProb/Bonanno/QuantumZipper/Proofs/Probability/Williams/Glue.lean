@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.MarkovHit
 
 /-!
+# W6g: gluing an independent drift Brownian motion at a stopping time
+
 Converse form of the strong Markov property, the tool that node W6 of
 `blueprint/EXT_PP_BLUEPRINT.md` (§A.1) needs: "the converse form is also needed (for W6):
 gluing an independent BM at `T` gives a drift BM in law".

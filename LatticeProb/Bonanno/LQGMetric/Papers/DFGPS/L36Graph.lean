@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.6, deterministic part: a left–right graph crossing of `𝕊` bounds `D^ε(K, ∂U)`
+
 DFGPS Lemma 3.6 (arXiv:1905.00380, T:1628–1650), lower bound. A path in the 8-neighbour graph
 `𝕊 ∩ εℤ²` (T:1606) from a leftmost to a rightmost vertex, made polygonal, crosses the line
 `Re z = 1/2`; the piece up to the first crossing is a path from `K = [0,1/4] × [0,1]` to the boundary

@@ -10,6 +10,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgCont
 import Mathlib.Topology.UrysohnsLemma
 
 /-!
+# Density change under continuous perturbations of a GFF
+
 Ding–Gwynne (arXiv:1807.01072) show that adding a continuous function `f` to a GFF `h`
 multiplies its LQG area measure by `e^{γ f}`.
 

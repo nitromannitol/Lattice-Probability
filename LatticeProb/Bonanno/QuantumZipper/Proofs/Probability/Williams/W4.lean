@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W4Trans
 
 /-!
+# W4: the time-integrated law of `Ŷ`
+
 Node W4 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1): `lintegral_shift_postLast`, the identity
 
 `E ∫_{s>r} F(Ŷ(s+·)) ds = C ∫_{y>0} E[F(y+Y); y+Y > 0 forever] · P(y + X > 0 on [0,r]) dy`,

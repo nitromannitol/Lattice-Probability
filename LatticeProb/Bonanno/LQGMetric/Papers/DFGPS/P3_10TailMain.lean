@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Propositions 3.10 and 3.9
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.10, Steps 1–3 (T:1875–1912): the probability estimates.
 For `C` large, outside an event of probability `≤ (1 + 6C_p) C^{-(q + √(q²-4)) + (Q-q)}`

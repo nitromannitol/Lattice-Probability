@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.KilledHeatBound
 import LatticeProb.Bonanno.LQGMetric.Field.WhiteNoiseKernel
 
 /-!
+# Ding–Gwynne App. A: the integrated shell estimate for a change of domain (task P2-DG3B)
+
 Ding–Gwynne, arXiv:1807.01072, `metric-comparison-final.tex`, proof of Lemma A.1 (DG:2207–2216):
 moving the centre of the killing ball `B_{1/10}(z)` by `ε` changes the killed kernel only on the
 event that the bridge "exits `B_{1/10}(z)` without exiting `B_{1/10+4ε}(z)`", whose probability

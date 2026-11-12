@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.MeasurableAvg
 import Mathlib.MeasureTheory.Constructions.Polish.StronglyMeasurable
 
 /-!
+# C.area-exist for the cone field, input (b1): the cone field off the origin
+
 The cone field `coneField (lateralPartC x) a Q` (DMS Def. 4.10) is `x` plus the function
 `g(z) = Q(−log|z|) + a(−log|z|) − R(|z|)`, where `R` is a version of the radial process
 `r ↦ x_r(0)` (`radialFun`) continuous on `(0,∞)`; `g` is continuous on `ℂ \ {0}`. By the Ding–Gwynne density-change statement

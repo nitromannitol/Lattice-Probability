@@ -9,6 +9,8 @@ import LatticeProb.Bonanno.QuantumZipper.GFF.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
+# Wedge, cone and zipping parameters (DMS Tables 1.1–1.3)
+
 Duplantier–Miller–Sheffield (arXiv:1409.7055v4), L428–471 and L629–660.
 For `γ ∈ (0,2)`, `Q = 2/γ + γ/2` (QuantumZipper's `Qc`) and `χ = 2/γ − γ/2` (QuantumZipper's
 `chiC` at `κ = γ²`), every parameter of a quantum wedge or cone is an affine function of its

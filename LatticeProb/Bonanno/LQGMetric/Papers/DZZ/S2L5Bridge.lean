@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.KilledHeatSupp
 import LatticeProb.Bonanno.LQGMetric.Statement.Dimension
 
 /-!
+# DZZ Lemma 2.5, bridge part: `q(t; u, u) − q(t; u, v) = O(|u − v|/√t)` (task P2-DZZPRE, WP-112)
+
 Ding–Zeitouni–Zhang, *Heat kernel for Liouville Brownian motion and Liouville graph distance*
 (arXiv:1807.00422, `LBM_LGDarXiv.tex`), proof of Lemma 2.5 (`lem-variance-continuity`),
 l. 466–508, following Rhodes–Vargas [RV14, Appendix A]:

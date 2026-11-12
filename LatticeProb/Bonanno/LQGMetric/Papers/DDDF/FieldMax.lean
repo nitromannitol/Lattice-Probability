@@ -37,6 +37,8 @@ import Mathlib.Analysis.Complex.OperatorNorm
 import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
+# DDDF Prop. 2, (2.10): the maximum tail of `φ_{0,n}` (task P2-DDDFFIELD, WP-94)
+
 DDDF (arXiv:1904.08021, `tightness.tex` l. 299–305), (2.10): for `α > 0`, `n ≥ 0`,
 `P(max_{[0,1]²} |φ_{0,n}| ≥ α(n + C√n)) ≤ C 4^n e^{−α² n/log 4}`. DDDF give no proof ("corresponds
 to Lemma 10.1 [...] in [DF18]"); we follow DF (arXiv:1809.02607) Lemma 10.1, l. 1823–1858:

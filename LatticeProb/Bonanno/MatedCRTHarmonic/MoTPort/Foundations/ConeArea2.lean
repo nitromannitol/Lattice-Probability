@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeMeas2
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AtomlessUncond
 
 /-!
+# C.area-exist for the cone field: localization at the singular point `0`
+
 Node C.area-exist for the cone field (the only remaining input of C.meas after
 `ConeMeas2.coneRefMeas_of_area`) asks for an a.s. vague limit on all of `ℂ` of the whole-plane
 approximations `areaApproxC γ (coneField (lateralPartC X) A Q)`. The cone field is a whole-plane

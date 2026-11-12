@@ -16,6 +16,8 @@ import Mathlib.Topology.UniformSpace.LocallyUniformConvergence
 import Mathlib.Topology.Order.Compact
 
 /-!
+# DFGPS Lemma 2.11: limits of internal metrics (`lem-internal-conv`)
+
 **DFGPS Lemma 2.11** (Dubédat–Falconet–Gwynne–Pfeffer–Sun, *Weak LQG metrics and Liouville first
 passage percolation*,
 arXiv:1905.00380, `lqg-metric-estimates-final.tex`:971–988). Let `V ⊂ ℂ` be open, `Dⁿ` continuous

@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L7Trunc
 import LatticeProb.Bonanno.LQGMetric.Papers.DZZ.S2L5Kernel
 
 /-!
+# The bridge shell bound (DZZ L2.5, `η` half; decision D62 route (1); task P2-DZZPRE2)
+
 `bridgeShellBound_256 : BridgeShellBound 256`: the radial maximum `M_t = max_{s ≤ t} |X_s|` of the
 planar Brownian bridge of length `t` satisfies `P(r − d ≤ M_t < r) ≤ 256 d/√t`.
 

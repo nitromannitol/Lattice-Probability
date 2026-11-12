@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.GM.S1.Dilate
 import LatticeProb.Bonanno.LQGMetric.Field.GFFInvariance
 
 /-!
+# The rescaled cone field in lateral/radial coordinates
+
 DMS Def 4.10 writes the circle-average embedding of a
 quantum cone as `h = h^{lat} + A_{−log|·|}`; Prop 4.13(i) re-centres it. With `R = R_b = e^{L}`, `L = L_y(A)` and `y = γ⁻¹ log b`,
 

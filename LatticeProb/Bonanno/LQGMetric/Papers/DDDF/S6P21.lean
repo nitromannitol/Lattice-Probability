@@ -125,6 +125,8 @@ import Mathlib.Logic.Equiv.List
 import LatticeProb.Bonanno.QuantumZipper.LQG.Local
 
 /-!
+# DDDF Proposition 21: `ξ = γ/d_γ` satisfies Condition (T) (task P2-DDDF6c)
+
 DDDF = arXiv:1904.08021, `tightness.tex` l. 972–1018 (`Prop:CondSatisfied`), from (5.54)
 (`eq:DGlowerBound`, l. 1004–1010; DG Prop 3.17 + DGo Prop 3.3), taken as the hypothesis
 `S6Eq5_54`.

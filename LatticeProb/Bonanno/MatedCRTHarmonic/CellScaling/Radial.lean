@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMLLN
 import LatticeProb.Bonanno.MatedCRTHarmonic.CellScaling.ConeDefs
 
 /-!
+# the cone-radius asymptotic: `log R_{2^k} / (k log 2) → a_γ` almost surely (pathwise proof)
+
 Paper: the cone-radius asymptotic, (`a_γ = 1/(γ(Q − γ)) = 1/(2 − γ²/2)`). We follow the
 pathwise proof of the cone's radial last-passage estimates, which needs
 neither [17, Lemma 2.6] nor Borel–Cantelli: for `s > 0` the cone's radial path is `X(s) = c(ℓ + s)`, where

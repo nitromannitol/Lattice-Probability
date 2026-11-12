@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.19, square part: (3.31) for the square
+
 DFGPS arXiv:1905.00380, `lqg-metric-estimates-final.tex` ("T"), T:2300 ("proven similarly but
 with Proposition 3.10 used in place of Proposition 3.9").
 

@@ -116,6 +116,8 @@ import LatticeProb.Bonanno.LQGMetric.Metric.InternalOps
 import LatticeProb.Bonanno.LQGMetric.Metric.Internal
 
 /-!
+# GM Lemma 3.7, the Weyl-scaling step (task P2-M2E2)
+
 GM = Gwynne–Miller, arXiv:1905.00383v3, `literature/src/1905.00383/uniqueness-final.tex`, proof
 of Lemma 3.7, l. 1346–1347: "By Axiom III (Weyl scaling) subtracting `h_{4r}(0)` from `h` results
 in scaling `D_h` and `D̃_h` by the same factor, so does not affect the occurrence of `𝖤_r(z)`.

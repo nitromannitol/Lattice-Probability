@@ -7,6 +7,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Elementary estimates for the assembly of the upper half of DFGPS Lemma 3.6 (D52)
 -/
 
 noncomputable section

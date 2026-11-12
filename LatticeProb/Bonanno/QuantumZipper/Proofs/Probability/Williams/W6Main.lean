@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.Probability.Williams.W6Main at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module QuantumZipper.Proofs.Probability.Williams.W6Main at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W6Fub
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W6Coc
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W6Tail
@@ -8,6 +7,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W6Red
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.PathLaw
 
 /-!
+# W6 (part 4): assembly of `WilliamsDriftDecomposition` (L14)
+
 Node W6 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), assembly, and the discharge of
 `WilliamsDriftDecomposition` (`Proofs/LQG/WedgeTranslation.lean`).
 
@@ -178,5 +179,13 @@ Revuz–Yor VII §4. -/
 theorem williamsDriftDecomposition_holds : WilliamsDriftDecomposition :=
   williamsDrift_of_good_hit fun _μ _σ _c hμ hσ hc _Ω _ _P _ _b _b' hb hb' hind hhit hhit' =>
     map_glued_eq_map_postLast hb hb' hσ hμ hind hc hhit hhit'
+
+/-- **B4(c): wedge translation invariance, unconditionally.** -/
+theorem wedge_translation_uncond {Ω : Type} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P] {α Q : ℝ} {A : ℝ → Ω → ℝ}
+    (hA : IsWedgeProcess α Q A P) (hαQ : α < Q) {c : ℝ} (hc : 0 < c) :
+    P.map (fun ω t => A (sInf {s | 0 ≤ s ∧ A s ω ≤ -c} + t) ω + c) =
+      P.map (fun ω t => A t ω) :=
+  WedgeTrans.wedge_translation williamsDriftDecomposition_holds hA hαQ hc
 
 end QuantumZipper.Williams

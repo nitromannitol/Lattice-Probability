@@ -52,6 +52,8 @@ import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
+# `Γ⁰` is invariant under unzipping (blueprint node B1)
+
 Task S5-B1. Conditionally on Theorem 1.2 (`theorem1_2`), for `κ > 0`, `γ = √κ`, `t > 0`, a
 Brownian motion `B` and a free field `X ⊥ B`, the configuration
 `c ω = (𝔥₀ + X ω, √κ B(·, ω))` satisfies

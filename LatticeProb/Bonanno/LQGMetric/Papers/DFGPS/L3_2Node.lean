@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.2 as a node (task P2-DFA3, package DF-A3)
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 Lemma 3.2 (`lem-good-annulus-all`, T:1452–1456): for each `ν > 0` and `M > 0` there is
 `C = C(ν, M) > 1` such that for each `𝕣 > 0`, with probability `1 − O_ε(ε^M)` as `ε → 0`,

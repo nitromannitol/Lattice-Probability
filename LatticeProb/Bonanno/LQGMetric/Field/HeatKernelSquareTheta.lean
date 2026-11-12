@@ -8,6 +8,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Spectral (cosine) form of the image sums and decay of the Dirichlet kernel
 (task P2-DDDFP29, WP-110)
 
 By Poisson summation (mathlib `Complex.tsum_exp_neg_quadratic`, the Jacobi theta

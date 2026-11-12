@@ -6,6 +6,8 @@ import Mathlib.MeasureTheory.Function.JacobianOneDim
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 
 /-!
+# The classical Gaussian kernel identity behind `occDens_nonneg_const`
+
 Node W3 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1). `occDens_nonneg_const` states that the
 occupation density `occDens σ μ` of the drift Brownian motion is constant on `[0, ∞)`; unlike the
 statement `prob_hit_neg`, it carries no `GoodBM b P`, so the blueprint's strong-Markov proof at

@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Auxiliary bounds for the assembly of the upper half of DFGPS Lemma 3.6
+
 Decision D52: choice of the number of dyadic boxes (`exists_scale`: the walk endpoint scale
 `ρ = 2^{−N−2}` lies in `[δ^{1−a}, 2δ^{1−a})`) and the lengths of the two corner walks
 (`≤ 2δ^{−a} + 3` vertices).

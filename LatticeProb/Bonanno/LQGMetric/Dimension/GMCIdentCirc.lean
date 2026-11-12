@@ -5,6 +5,7 @@ import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdentBoch
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCSqReg
 
 /-!
+# `E(μ_ε(·) 1_B)` for `B ∈ 𝓖_n`: the circle-average step of Berestycki's argument
 (P2-GMCID, D67)
 
 Hypothesis `WNCircleCoupling W X P`: the zero-boundary GFF `X` on `𝕍` is realized by the white

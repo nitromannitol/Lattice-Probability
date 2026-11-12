@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.LFPP.PathOps
 
 /-!
+# Concatenation of piecewise C¹ paths and additivity of the LFPP length
+
 Task P2-LFPP. Used for the triangle inequality of `D^ε_h` (GM (1.4),
 `uniqueness-final.tex` l. 216–220). Own elementary argument.
 -/

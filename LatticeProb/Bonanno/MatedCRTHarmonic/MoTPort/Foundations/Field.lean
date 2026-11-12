@@ -11,6 +11,8 @@ import LatticeProb.Bonanno.QuantumZipper.GFF.Kernels
 import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.K3.GreenLower1
 
 /-!
+# The field type of the mating-of-trees project
+
 * `Field := LQGMetric.DistC` (Decision F1), `FieldOn U := LQGMetric.DistOn U`.
 * `testPullCLE L : TestC →L[ℝ] TestC`, `φ ↦ φ ∘ L` for a continuous real-linear automorphism `L`
   of `ℂ`. **Adapted** from LQGMetric's affine pullback `LQGMetric.testAffinePull` / `pullK`

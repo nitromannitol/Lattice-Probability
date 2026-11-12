@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.10, Steps 1–2: the deterministic multiscale chaining
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.10, Steps 1–2 (T:1875–1904, Figure `fig-diam`): paths crossing rectangles
 inside each dyadic square `S ⊆ 𝕣𝕊` form a `#`-shaped set `X_S`; `X_S ∩ X_{S'} ≠ ∅` for every

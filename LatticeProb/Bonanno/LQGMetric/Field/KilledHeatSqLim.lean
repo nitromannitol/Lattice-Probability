@@ -7,6 +7,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel of the square, part 3: the dyadic limit
 (task P2-KHSQ3, target `killedHeat_sqOpen`)
 
 Letting the dyadic mesh `t/2ⁿ → 0` in the discrete optional stopping identity

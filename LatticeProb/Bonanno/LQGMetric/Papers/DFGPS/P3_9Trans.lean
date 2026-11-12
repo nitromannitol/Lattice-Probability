@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.9: the tail of Proposition 3.10 for every square `𝕣S_k`
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.9 (T:1769–1773): "Proposition 3.10 together with Axiom IV′ shows that …
 for each `k`, `E[(𝔠_{𝕣ρ_k}^{-1} e^{-ξh_{𝕣ρ_k}(𝕣u_k)} sup_{z,w∈𝕣S_k} D_h(z,w;𝕣S_k))^p] ≤ C̃_p`"

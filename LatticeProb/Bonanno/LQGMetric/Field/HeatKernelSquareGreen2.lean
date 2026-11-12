@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Spectral form of `∫∫ ρ p^D_s σ` on the square (task P2-KHSQ)
+
 With the product modes `φ_{jk}(z) = sin(πj(x−a)/L) sin(πk(y−a)/L)` (`HeatSq.sqMode`) and the
 coefficients `ρ̂_{jk} = ∫ ρ φ_{jk}` (`HeatSq.sqCoef`):
 

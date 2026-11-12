@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S2.TightLaw
 
 /-!
+# GM S2.4a, S2.4b, S2.4b′: crossing lower bounds and uniform moduli (task P2-TIGHT)
+
 GM (arXiv:1905.00383v3) l. 449–452: Axiom V "implies the tightness of various functionals of
 `D_h`", e.g. of `(𝔠_r⁻¹ e^{−ξ h_r(0)} D_h(rK, r∂U))⁻¹` (DFGPS (1.4), T:370–374). No proof is
 given. Decision D-A3 (`decisions/DEC-A.md` (c)) states the nodes proved here, for a weak γ-LQG

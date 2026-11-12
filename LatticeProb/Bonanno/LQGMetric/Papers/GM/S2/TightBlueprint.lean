@@ -27,6 +27,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# GM S2.4a–c in the Blueprint form (D56)
+
 The Blueprint Props `Blueprint.GMS2_4a`, `GMS2_4b`, `GMS2_4c` (GM U:449–452, decision D14 =
 DEC-A D-A3; constants before `(Ω, P, h)`, decision D56) follow from the proved
 `GM.Tight.gm_S2_4a`, `gm_S2_4a_sep`, `gm_S2_4b`, `gm_S2_4c` (own proofs, D-A3) by rewriting the

@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 2.3, part 1: Gaussian tails of the circle-average process on dyadic blocks
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, *Weak LQG metrics and Liouville first passage percolation*
 (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), proof of Lemma 2.3 (`lem-gff-tail`),
 T:751–781. Let `H` be a jointly continuous version of the circle-average process

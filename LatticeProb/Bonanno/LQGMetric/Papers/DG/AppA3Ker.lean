@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.HeatMollifyCont
 import LatticeProb.Bonanno.LQGMetric.Field.ExistKernel
 
 /-!
+# The kernel of `h^U − ĥ` integrated against a measure (task P2-DG3D)
+
 DG (`metric-comparison-final.tex`, (3.1) DG:917 and the proof of Lemma A.1 DG:2146):
 `ĥ = √π ∫_0^1 ∫ p_{s/2}(·, w) W(dw, ds)` and `h^U = √π ∫_0^∞ ∫ p_U(s/2; ·, w) W(dw, ds)`.
 The point kernel `dgUHatKernel U z` of `h^U − ĥ` (AppAPair) is a.e. the function

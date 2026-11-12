@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Fin3
 
 /-!
+# W5 (part 12): W5(ii) in measure form
+
 The killed finite-dimensional laws of `Ŷ` (killed at `λ_c(Ŷ)`) and of `revHit X c` (killed at
 `T_c`) are equal as finite measures on `ℝⁿ` (`killed_fd_measure_eq`): equality of the integrals of
 bounded continuous functions (`killed_fd_eq_postLast_revHit`) determines a finite Borel measure

@@ -356,6 +356,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# RT-MEAS2, part 5: local vague limits on open subsets of `ℍ` from countable window certificates
+
 The planar analogue of `E1.exists_isVagueLimitOnR_of_winW` (E1Glue.lean): rational balls
 `B(c_n, r_n)` with `B̄(c_n, 2r_n) ⊆ U` exhaust the open set `U`; vague limits on all of them glue
 to a vague limit on `U` (disjointified sum, consistency by uniqueness, partition of unity for test

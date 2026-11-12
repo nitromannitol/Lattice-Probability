@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 9: the Chapman–Kolmogorov equation (task P2-KILLED, D-KHK1)
+
 `killedHeat_chapmanKolmogorov`: for open `A`, `t, s > 0` and all `z, w` (pointwise, not only
 a.e.),
 `p_A(t + s; z, w) = ∫ p_A(t; z, y) p_A(s; y, w) dy`.

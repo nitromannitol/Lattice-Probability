@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The bound on the good event (upper half of DFGPS Lemma 3.6)
+
 Decision D52. On the event where the box paths exist (DG Prop 3.21), the oscillation of `h_δ` is
 `≤ (ζ₁/ξ) log δ⁻¹`, the dyadic scale sums are `≤ δ^{−ζ₁}` and the two corner walks cost
 `≤ δ^{−ξQ−ζ₁}`, the left–right graph distance is `≤ 18 δ^{−ξQ−3ζ₁} ≤ δ^{−ξQ−4ζ₁}`.

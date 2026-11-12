@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Straight walks in the 8-neighbour graph `εℤ²` (DFGPS (eq:graph), T:1606)
+
 Deterministic combinatorics for the upper half of DFGPS Lemma 3.6 (decision D52): the straight
 8-neighbour walk between two grid points (`gridWalk`), and the concatenation of a chain of such
 walks (`exists_chain_walks`). Own elementary arguments (DEVIATIONS DV-DFC2-2).

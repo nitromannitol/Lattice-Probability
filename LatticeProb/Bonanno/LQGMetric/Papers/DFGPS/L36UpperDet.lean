@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Deterministic assembly of the left–right graph path (upper half of DFGPS Lemma 3.6)
+
 Decision D52. The path from the leftmost vertex `δ(1,1)` to the rightmost vertex `δ(⌈1/δ⌉−1, 1)`
 of `𝕊 ∩ δℤ²`: a straight walk from `δ(1,1)` to (the rounding of) `x^L_{N+1} = 2^{−N−2}(1+i)`;
 the chain of boxes `2^{−k−1} B(1+i, 3/4)`, `k = N, …, 0`, towards the centre

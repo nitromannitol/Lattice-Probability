@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.GermZeroOne
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Thm14.FromThm13
 
 /-!
+# W2: Lebesgue duality (fixed-time reversal of Brownian motion with drift)
+
 Node W2 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), a step of the proof of L14
 (`WilliamsDriftDecomposition`): for `W = dpath σ μ b` (a drift-`μ` Brownian motion) and every
 measurable `F : (ℝ≥0 → ℝ) → ℝ≥0∞`,

@@ -5,6 +5,8 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea6D
 
 /-!
+# Cone area, part 17: quantum cones exist (unconditionally)
+
 `ConeArea5.ae_tight_logFactor`, `b3_of_supMoment`, `coneRefMeas_of_supMoment` and
 `exists_isQuantumCone_of_supMoment` (ConeArea5C) re-run with the Cauchy–Schwarz form
 `ConeArea6.WPSupMomentH` of the whole-plane sup-moment bound, proved in ConeArea6D. The only change

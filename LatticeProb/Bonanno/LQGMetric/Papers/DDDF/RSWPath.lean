@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DDDF.LenBasic
 import LatticeProb.Bonanno.LQGMetric.LFPP.PathOps
 
 /-!
+# Crossing lengths of sub-arcs (RSW, DDDF Prop 14)
+
 Task P2-DDDFRSW. DDDF (`tightness.tex` l. 794, 800; DF arXiv:1809.02607 DF:650–670) use that if a
 crossing `π` of a domain contains a sub-arc crossing a smaller domain, then the crossing length
 of the smaller domain is at most the length of `π`. Here: if a piecewise-C¹ path `P` has a

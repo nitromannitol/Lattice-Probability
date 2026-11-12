@@ -40,6 +40,8 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Analysis.Real.Pi.Bounds
 
 /-!
+# Field-layer helpers for GM §1.4 (GM.S1.16a, GM.S1.18′)
+
 * `isWholePlaneGFF_id_map`, `normGFFLaw_eq`: `normGFFLaw` is the law of every normalized
   whole-plane GFF (law uniqueness `CircleAvg.map_eq_of_isNormalizedWPGFF`, tasks P2-FINV,
   P2-FCIRC);

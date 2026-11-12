@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Dens
 
 /-!
+# W5 (part 5): the reversal step on `[0, U]` with weights `χ_c` and `ψ_r`
+
 Last step of W5(i), reversed side, of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1): the Lebesgue
 duality W2 (`lintegral_reversal`) on `[0, U]`, applied with the weight `χ_c` at the start and
 `ψ_r` at the end, turns the reversed-side expression

@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# From a continuum LFPP path to a graph path (upper half of DFGPS Lemma 3.6)
+
 DFGPS (T:1645–1650) pass from continuum LFPP to the discretized LFPP `D̃^δ` "by the same argument
 as in the proof of [DG, Proposition 3.16]". For the upper bound we need the direction
 "continuum path ⇒ graph path". We use an own elementary argument (decision D52, DEVIATIONS

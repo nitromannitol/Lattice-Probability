@@ -12,6 +12,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.Admissible
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.TwoRadiusTilt
 
 /-!
+# M4-P3(b), area version, part 4: the rate form of the step bound and the sup bound
+
 Continuation of `AreaP3bMoment` (handoff `handoff/M4-AREA-P3B.md`, "Remaining" items 1–2).
 
 * `integral_abs_massFunC_step_le_rate'` / `integral_abs_massFunC_step_le_rate`: the raw two-radius

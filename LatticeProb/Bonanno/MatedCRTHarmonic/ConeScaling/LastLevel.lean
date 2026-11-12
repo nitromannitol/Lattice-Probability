@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.WedgeMeasurable
 import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
 
 /-!
+# The last-level time and the radial re-centring map of the quantum cone
+
 Deterministic layer of DMS Proposition 4.13(i). For a continuous path `w : ℝ → ℝ`
 (with `CellScaling.coneRadial` parametrized by `w t = h_{e^{-t}}(0)`, so that
 `Y_w(s) := w(−s) + Q s` is `h_{e^s}(0) + Q s`, i.e. `CellScaling.coneLogRadial`):

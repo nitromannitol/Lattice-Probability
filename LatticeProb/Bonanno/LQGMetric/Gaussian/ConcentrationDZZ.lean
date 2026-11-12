@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Borell–TIS for finite maxima and Ding–Zeitouni–Zhang Lemma 2.1 (Gram form)
+
 A centered Gaussian vector `X = (X_1, …, X_n)` is represented as `X_i = ⟪v i, Z⟫` with `Z` a
 standard Gaussian vector and `‖v i‖² = Var X_i` (DZZ's `X = A Z`; the rows of `A` are the `v i`).
 In this representation we prove:

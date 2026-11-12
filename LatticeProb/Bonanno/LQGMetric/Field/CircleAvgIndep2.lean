@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# `h_ρ(z) − h_r(z)` is independent of `(h − h_ρ(z))|_{B_ρ(z)}` (task P2-DFA7b)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, T:2275–2276, proof of Lemma 3.19):
 "`h_{2ε𝕣}(z) − h_𝕣(z)` is centered Gaussian of variance `log ε⁻¹ − log 2` and is independent from
 `(h − h_{2ε𝕣}(z))|_{B_{2ε𝕣}(z)}`." This is the standard consequence of the Markov property /

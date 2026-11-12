@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.19, square part: the moment bound
+
 DFGPS arXiv:1905.00380, `lqg-metric-estimates-final.tex` ("T"), Lemma 3.19 (`eqn-ep-diam-square`,
 T:2269–2272), "proven similarly but with Proposition 3.10 used in place of Proposition 3.9"
 (T:2300).

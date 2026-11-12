@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.19, step 1: independence of the coarse increment and the local diameter
+
 DFGPS arXiv:1905.00380, `lqg-metric-estimates-final.tex` ("T"), proof of Lemma 3.19,
 T:2275–2281: "`h_{2ε𝕣}(z) − h_𝕣(z)` … is independent from `(h − h_{2ε𝕣}(z))|_{B_{2ε𝕣}(z)}`.
 By Axioms II and III, `h_{2ε𝕣}(z) − h_𝕣(z)` is also independent from the internal metric

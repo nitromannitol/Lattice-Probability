@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Spectral form of the heat-kernel Green pairing `π ∫_0^∞ ∫∫ ρ p^D_s σ ds` (task P2-KHSQ)
+
 For bounded measurable `ρ, σ` vanishing off the square `D = (a,a+L)²`,
 
   `π ∫_0^∞ ∫∫ ρ(x) p^D_s(x,y) σ(y) dx dy ds = ∑_{j,k} 8 ρ̂_{jk} σ̂_{jk} / (π (j² + k²))`

@@ -12,6 +12,8 @@ import LatticeProb.Bonanno.QuantumZipper.GFF.Defs
 import Mathlib.Probability.BrownianMotion.Basic
 
 /-!
+# WEDGE-MEAS (AUDIT-2, M1): measurability of the reference wedge data map
+
 The reference map of `IsQuantumWedge` is
 `ω ↦ canonical γ (wedgeField (lateralPart (X ω)) (A · ω) Q)`, read through `fieldLawFull`
 (`coordsFull` jointly with raw test pairings).

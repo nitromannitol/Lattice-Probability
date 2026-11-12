@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DG.S3L11Loc1
 import LatticeProb.Bonanno.LQGMetric.Papers.DG.L3_1C3
 
 /-!
+# Whole-plane LQG area, part 2: the white-noise whole-plane GFF on a window
+
 For the whole-plane GFF `h₀` built from a white noise `W` (LM `DG.exists_wn_wholePlaneGFF`), a.s.
 the approximations `areaApproxC γ h₀` have a vague limit on the window `U₀ = B(c₀, 1/20)`,
 `c₀ = (1 + i)/2`, and are eventually finite on its compacts (`ae_areaGood_wn`).

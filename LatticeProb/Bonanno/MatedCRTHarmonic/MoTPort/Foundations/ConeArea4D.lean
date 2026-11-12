@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.GM.S1.Dilate
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Thm18.RTMeas2CGlue
 
 /-!
+# Whole-plane LQG area, part 4: scaling and gluing
+
 **`ae_areaGood_univ`**: for every whole-plane GFF `X` and `0 < γ < 2`, a.s. the approximations
 `areaApproxC γ X = 2^{-kγ²/2} e^{γ X_{2^{-k}}(z)} dz` converge vaguely on all of `ℂ` and are
 eventually finite on every compact set (Duplantier–Sheffield arXiv:0808.1560 Prop. 1.1 for the

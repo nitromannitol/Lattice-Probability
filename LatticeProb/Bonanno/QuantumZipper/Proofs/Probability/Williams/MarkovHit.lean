@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.Markov
 
 /-!
+# W1b: the strong Markov property of drift Brownian motion at a hitting time
+
 Second half of node W1 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1); used by W3 (occupation
 measure) and W6 (gluing) of the proof of L14.
 

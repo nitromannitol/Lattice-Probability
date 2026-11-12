@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Theorem 1.5 (`Blueprint.DFGPSScaling`) from Proposition 3.1 and Lemma 3.6
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 Theorem 1.5 (`thm-metric-scaling`), proof T:1659–1723: for every `ζ > 0` there is `δ₀` with
 `δ^{ξQ+ζ} ≤ 𝔠_{δ𝕣}/𝔠_𝕣 ≤ δ^{ξQ-ζ}` for `δ < δ₀`, `𝕣 > 0`.

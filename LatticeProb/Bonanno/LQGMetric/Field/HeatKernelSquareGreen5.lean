@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Orthogonality of the Dirichlet sine and cosine modes of `(a, a+L)` (task P2-KHSQ)
+
 `∫_a^{a+L} sin(πj(t−a)/L) sin(πk(t−a)/L) dt = (L/2) δ_{jk}` and the same for cosines
 (`k ≥ 1`): product-to-sum formulas and `∫_a^{a+L} cos(πm(t−a)/L) dt = L·1_{m=0}`
 (`m ∈ ℤ`, fundamental theorem of calculus, `sin(mπ) = 0`). Standard; own elementary proof.

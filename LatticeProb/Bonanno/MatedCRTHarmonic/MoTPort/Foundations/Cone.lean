@@ -170,6 +170,8 @@ import LatticeProb.Bonanno.LQGMetric.Papers.GM.S1.FieldAux
 import Mathlib.MeasureTheory.Integral.Indicator
 
 /-!
+# Quantum cones (DMS Def 4.10)
+
 DMS (arXiv:1409.7055v4) Def `def::quantum_cone` (L2198–2201): for `α < Q`, the
 `α`-quantum cone is the field `h` on `ℂ` whose average on `∂B(0,e^{-s})` is `A_s`, with `A_s` as
 in Def 4.5 (L2071) "except with `B_{2s}` and `B̂_{2s}` replaced by `B_s` and `B̂_s`", and whose

@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Proposition 3.1, Step 3: choosing `ε` as a power of `A` (task P2-DFA3)
+
 DFGPS (arXiv:1905.00380, "T"), T:1559–1563: "Given `A > 0`, we now choose `ε = A^{-b/√M}`"
 so that the right side of (3.11) is `≥ A⁻¹ 𝔠_𝕣 e^{ξh_𝕣(0)}` and that of (3.12) `≤ A 𝔠_𝕣 e^{ξh_𝕣(0)}`.
 Here `ε = A^{-β}` with `β = 1/(2(a + 6))`, `a = 2Λ + ξq` the exponent of (3.11)/(3.12) and `6`

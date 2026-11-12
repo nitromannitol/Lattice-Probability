@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent4Fact
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.Measurability
 
 /-!
+# Whole-plane LQG area, part 1: a measurable certificate for local vague limits
+
 For an open bounded `U ⊆ ℍ` and a sequence of measures `μs`, `AreaGood U μs` says that `μs` has a
 vague limit on `U` and is eventually finite on every compact subset of `U`; `AreaCert U μs` is a
 countable certificate for it: convergence of the test integrals of `openBump U n · g` (QZ's

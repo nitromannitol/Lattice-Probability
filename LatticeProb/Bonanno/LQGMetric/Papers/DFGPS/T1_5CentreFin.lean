@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Theorem 1.5: the bounds on `𝔠_{δ𝕣}/𝔠_𝕣` on the good event (deterministic)
+
 DFGPS (arXiv:1905.00380, "T"), proof of Theorem 1.5, end of Step 2 (T:1688–1691) and of Step 3
 (T:1716–1720): on the intersection of the Prop 3.1 events (with `A = δ^{-ζ'}`) and the event of
 Lemma 3.6 (with `ζ'`),

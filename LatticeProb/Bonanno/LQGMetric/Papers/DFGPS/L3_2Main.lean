@@ -20,6 +20,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.2 (task P2-L32)
+
 DFGPS = Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380,
 `literature/src/1905.00380/lqg-metric-estimates-final.tex` ("T"), Lemma 3.2
 (`lem-good-annulus-all`, T:1452–1456) and its proof (T:1474–1481), following the paper:

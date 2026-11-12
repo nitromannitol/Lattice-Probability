@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.QuantumZipper.LQG.Measures
 import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 
 /-!
+# M4-P3: dyadic scaling toolkit and fractional moments of the boundary measure
+
 Blueprint `M4_BLUEPRINT.md`, node M4-P3.
 
 Fix a centre `t ∈ ℝ`, a scale `δ > 0` and `R` with `|t| + δ ≤ R`. For the normalized field

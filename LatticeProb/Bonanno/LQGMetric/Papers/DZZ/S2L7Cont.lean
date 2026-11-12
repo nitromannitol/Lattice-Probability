@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.WhiteNoisePsi
 import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
+# Continuous versions of white-noise fields with `1/2`-Hölder kernels (P2-DZZPRE, WP-112)
+
 DZZ's fields `h̃`, `η` (and their band differences `Δ_i`) only have `E(X(u) − X(v))² ≤ K|u − v|`
 (Lemma 2.5), so the Lipschitz-kernel Kolmogorov lemma of the white-noise layer
 (`WhiteNoise.exists_continuous_modification_of_kernel`, fourth moments) does not apply; with sixth

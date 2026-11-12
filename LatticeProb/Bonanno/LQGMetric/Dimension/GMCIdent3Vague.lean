@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdent3Law
 
 /-!
+# Law transfer, part 2: a.s. vague limits for circle-determined fields (P2-GMCID3, D85)
+
 * `VagueGood γ x`: the deterministic hypotheses of DS's existence argument (convergence of the
   test integrals of a fixed countable dense family times cut-offs, local finiteness at fine
   scales); `exists_isVagueLimitOn_of_good` (the deterministic tail of

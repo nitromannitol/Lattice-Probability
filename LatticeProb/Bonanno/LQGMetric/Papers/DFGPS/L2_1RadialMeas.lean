@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 2.1: `L¹` rate of the mollified circle averages; joint measurability
+
 For a whole-plane GFF `g`:
 
 * `lintegral_enorm_circBump_sub_circleAvg_le`: for `r > 0`,

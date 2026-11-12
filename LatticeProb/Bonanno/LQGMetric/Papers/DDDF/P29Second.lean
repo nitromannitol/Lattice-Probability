@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DDDF Prop 29, second term: the noise outside `D` (task P2-DDDFP29, WP-110)
+
 DDDF (arXiv:1904.08021), `tightness.tex:1576–1588`: for `x, x' ∈ U`, `d = d(U, D^c)`,
 `φ²_t(x) = √π ∫_0^{1−t} ∫_{D^c} p_{(t+s)/2}(x − y) W(dy, ds)` satisfies
 `E(φ²_t(x) − φ²_t(x'))² ≤ C|x − x'|` and `E φ²_t(x)² ≤ C`, uniformly in `t`.

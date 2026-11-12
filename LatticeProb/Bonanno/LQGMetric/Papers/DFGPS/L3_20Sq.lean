@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.20, second display: closed squares from nested open dyadic squares (P2-DFA7)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), Lemma 3.20, second display
 (`eqn-holder-upper-square`, T:2322–2325) for the closed squares `S` of `Blueprint.DFGPSLem3_20`,
 proof T:2330 "similarly follows from (eqn-ep-diam-square)". Lemma 3.19's square estimate

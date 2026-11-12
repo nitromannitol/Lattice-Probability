@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea4I
 import Mathlib.Analysis.SpecialFunctions.Integrals.PosLogEqCircleAverage
 
 /-!
+# Cone area, part 10: the log-singular comparison (deterministic)
+
 If `g` is continuous on `ℂ \ {0}` and `g(w) ≤ c(−log|w|) + C` on the punctured disc `B(0,ρ)`,
 then on `B(0,δ)` (with `δ + 2^{-k} ≤ ρ`) the approximations of `x + g` are dominated by
 `e^{γC}` times the approximations of `x` weighted by `max(|z|, 2^{-k})^{−γc}` (QZ

@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.MatedCRTHarmonic.LQGCoord.WPMass
 
 /-!
+# Dyadic limits of the normalized masses, with `L¹` rates along every offset
+
 For a window
 `(S, δ)` and a test function `f`, the normalized masses `wMass γ X δ f s` along the dyadic radii
 `wRad δ k = δ 2^{-k}` converge almost surely to a limit `L` (`exists_wMass_limit`), with

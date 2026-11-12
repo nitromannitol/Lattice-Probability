@@ -8,6 +8,8 @@ import LatticeProb.Bonanno.LQGMetric.Field.WhiteNoisePsi
 import LatticeProb.Bonanno.LQGMetric.Field.ZeroBoundary
 
 /-!
+# DZZ's white-noise fields `h̃` (eq:WND_decomposition) and their covariance (P2-DZZPRE, WP-112)
+
 Ding–Zeitouni–Zhang (arXiv:1807.00422, `LBM_LGDarXiv.tex`) l. 424–441:
 `h̃_δ^{δ̃}(v) = √π ∫_{𝕍 × (δ², δ̃²)} p_𝕍(s/2; v, w) W(dw, ds)`, and (eq-cov-tildeh), "the
 Chapman–Kolmogorov equations give that `E(h̃_δ^{δ̃}(u) h̃_δ^{δ̃}(v)) = π ∫_{δ²}^{δ̃²} p_𝕍(t; u, v) dt`".

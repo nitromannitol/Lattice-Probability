@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.OccupationHit2
 
 /-!
+# W4 (part 1): measurable surrogates for path events
+
 Preparation for node W4 (`lintegral_shift_postLast`) of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1).
 The events `∀ t ≤ r, 0 < w t` and `∃ t, w t = 0` are not measurable for the product σ-algebra on
 `ℝ≥0 → ℝ`, but on continuous paths they agree with the countably described sets `posSet r`,

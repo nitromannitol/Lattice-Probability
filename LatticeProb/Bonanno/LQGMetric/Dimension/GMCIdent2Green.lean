@@ -11,6 +11,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The Green function of the unit square is `π ∫₀^∞ p_𝕍(s; ·, ·) ds` (task P2-GMCID2, (1))
+
 **`GMCIdent2.killedGreen_openSquare`**: for `x ≠ y` in `𝕍 = (0,1)²`,
 
   `π ∫₀^∞ p_𝕍(s; x, y) ds = −log‖x − y‖ + hS x y  (= G_ℍ(φ x, φ y) = G_𝕍(x, y))`,

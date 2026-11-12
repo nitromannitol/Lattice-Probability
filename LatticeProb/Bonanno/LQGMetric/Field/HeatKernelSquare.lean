@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# The Dirichlet heat kernel of a square by the method of images (task P2-DDDFP29, WP-110)
+
 DDDF Prop 29 (Ding–Dubédat–Dunlap–Falconet, arXiv:1904.08021, `tightness.tex:1501–1601`) uses the
 transition density `p^D_s` of Brownian motion killed on exiting `D` and the kernel comparison
 (6.96) (`tightness.tex:1561`), proved there with Brownian bridges. By decision D19

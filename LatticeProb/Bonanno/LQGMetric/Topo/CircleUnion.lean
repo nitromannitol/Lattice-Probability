@@ -11,6 +11,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Unions of circles of a minimal cover by discs are path-connected (F.TOPO I)
+
 Deterministic plane topology behind
 
 * **LM Lemma 4.3** (`lem-connected`, Gwynne–Miller, *Local metrics of the Gaussian free field*,

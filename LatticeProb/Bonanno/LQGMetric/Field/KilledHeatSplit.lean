@@ -7,6 +7,7 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Killed heat kernel, part 7: splitting a Brownian bridge at an intermediate time
 (task P2-KILLED, decision D-KHK1)
 
 Let `β` be a planar Brownian bridge of length `T = t + s`. Then

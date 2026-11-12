@@ -9,6 +9,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# Smooth cutoffs of the sine modes of an interval (task P2-KHSQ2, G3 part 1)
+
 `cutoff a L δ u = S((u−a)/δ − 1) S((a+L−u)/δ − 1)` (`S` = mathlib `Real.smoothTransition`)
 vanishes within `δ` of `{a, a+L}`, equals `1` beyond `2δ`, and its derivative is `O(1/δ)` on
 the transition layers, where `|sin(πk(u−a)/L)| ≤ (πk/L)·dist(u, {a, a+L})`. Hence

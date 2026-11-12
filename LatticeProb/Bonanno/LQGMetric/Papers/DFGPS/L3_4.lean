@@ -8,6 +8,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.4 (`lem-circle-avg-tail`, T:1485–1508) (task P2-DFA0)
+
 For `ν ≥ 0`, `q > 0`, `R > 0` there is `C` such that for all `𝕣 > 0`, `ε ∈ (0,1)` and every
 countable set `S ⊆ [ε^{1+ν}𝕣, ε𝕣]` of radii,
 `P[∃ w ∈ B_{R𝕣}(0) ∩ (ε^{1+ν}𝕣/4)ℤ², r ∈ S : |h_r(w) − h_𝕣(0)| > q log ε⁻¹]

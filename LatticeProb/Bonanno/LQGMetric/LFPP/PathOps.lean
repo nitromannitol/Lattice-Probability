@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.LFPP.PathPiece
 
 /-!
+# Piecewise C¹ paths: segments, sub-paths, reversal, concatenation (with their LFPP lengths)
+
 Task P2-LFPP. The path operations implicit in GM (1.4) (`uniqueness-final.tex` l. 216–220) and
 DFGPS §2 (`lqg-metric-estimates-final.tex`, LFPP as a length metric): straight segments,
 restriction to `[s,t]`, time reversal and concatenation of piecewise C¹ paths, with the

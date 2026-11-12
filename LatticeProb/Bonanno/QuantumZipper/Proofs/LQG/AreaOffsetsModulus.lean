@@ -7,6 +7,8 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceAS
 import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
+# Area analogue of M4-B4, part 2: the modulus in the offset for interior circles (B4a)
+
 At an interior point `z` with `2ε ≤ Im z`, folded circles are genuine circles and
 `d°_{aε}(z) = d°_{2ε}(z) · H(a)` with `H(a) = (a/2)^{γ²/2} e^{γ Φ(a)}`,
 `Φ(a) = Z_{aε}(z) − Z_{2ε}(z)` independent of `Z_{2ε}(z)`. This is the boundary computation with

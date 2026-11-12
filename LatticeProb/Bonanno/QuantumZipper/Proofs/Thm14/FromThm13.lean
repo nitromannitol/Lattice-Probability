@@ -46,6 +46,8 @@ import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Topology.Order.IntermediateValue
 
 /-!
+# Theorem 1.4(a) from Theorem 1.3 (blueprint node C1, part (a))
+
 Sheffield, *Conformal weldings of random surfaces*, §1.4. For almost every `ω`:
 
 1. the reverse SLE hull `revHull W T` is a simple curve hull: `revHull W T` is the forward hull

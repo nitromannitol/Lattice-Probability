@@ -6,6 +6,8 @@ import Mathlib.MeasureTheory.Constructions.Projective
 import Mathlib.Topology.Algebra.Order.Archimedean
 
 /-!
+# Continuous-time law of large numbers for Brownian motion
+
 `BMLLN.ae_tendsto_div_atTop`: for a Brownian motion `B` (mathlib's `IsBrownianReal`, a.s.
 continuous paths), almost surely `B_t / t → 0` as `t → ∞` along all real times.
 

@@ -9,6 +9,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea7
 import LatticeProb.Bonanno.MatedCRTHarmonic.CellScaling.ConeDefs
 
 /-!
+# The lateral part of a whole-plane GFF paired with a test function
+
 For a whole-plane GFF `X` and a test function `φ`, almost surely
 
   `⟨X − X_{|·|}(0), φ⟩ = ⟨X, φ − φ̄⟩` (`ae_lateralPartC_apply`, `ae_lateralPart_apply`)

@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Fin2
 
 /-!
+# W5 (part 11): W5(ii), the killed finite-dimensional laws of `Ŷ` and `revHit X c` agree
+
 Node W5(ii) of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1). `killed_fd_eq_of_integrated` is the
 abstract de-integration step (right-continuity + FTC, `W5Fin2`); `killed_fd_eq_postLast_revHit`
 applies it to W5(i) (`lintegral_killed_fd_eq`): for bounded continuous `g ≥ 0`, `c > 0` and

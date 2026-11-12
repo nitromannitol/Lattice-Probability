@@ -6,6 +6,8 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeArea6D
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.FractionalMoments
 
 /-!
+# The whole-plane GFF near a fixed point: weighted masses along all radii are small
+
 For a whole-plane GFF `X`, `0 < γ < 2` and `0 ≤ c < Q`, almost surely: for every
 `ε > 0` there is `r₀ > 0` with
 

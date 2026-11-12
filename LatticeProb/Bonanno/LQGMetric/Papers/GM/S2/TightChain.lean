@@ -10,6 +10,8 @@ import Mathlib.Topology.Algebra.Module.LocallyConvex
 import Mathlib.Analysis.LocallyConvex.WithSeminorms
 
 /-!
+# GM S2.4c, deterministic part: chains in a compact subset of a domain (task P2-TIGHT)
+
 Decision D-A3 (`decisions/DEC-A.md` (c), S2.4c): "connectedness of `K′` and a `b/2`-net of `N(b)`
 points give a chain of at most `N(b)` such steps between any two points". Here:
 `exists_chain_compact`: for `U ⊆ ℂ` open and connected and `K ⊆ U` compact there is a compact

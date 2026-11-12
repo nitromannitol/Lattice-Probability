@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W6Meas
 
 /-!
+# W6 (part 2): replacing `Ŷ'` by the reversed hitting path of an independent copy
+
 Node W6 of `blueprint/EXT_PP_BLUEPRINT.md` (§A.1), assembly step. With `X = dpath σ (-μ) b`,
 `Y' = dpath σ μ b'`, `X' = dpath σ (-μ) b'` (`b, b'` independent), the glued path
 `Z_c = glued c X Y'` killed at its last passage at `c + d` has the same killed

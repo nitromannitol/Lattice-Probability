@@ -111,6 +111,8 @@ import Mathlib.MeasureTheory.Measure.MeasuredSets
 import Mathlib.MeasureTheory.SetAlgebra
 
 /-!
+# WEDGE-LAW (1): the reference law of a quantum wedge does not depend on the witness
+
 `Prop16Asm.RefWedgeLawUnique γ α`: for two reference tuples `(X, A)` on `(Ω, P)` and `(X', A')`
 on `(Ω', P')` (free field modulo constants, independent `α`-wedge radial process), the reference
 fields `canonical γ (h† + Q(−log|·|) + A_{−log|·|})` have the same `fieldLawFull H` law.

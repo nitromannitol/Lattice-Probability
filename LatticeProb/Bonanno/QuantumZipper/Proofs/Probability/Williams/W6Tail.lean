@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.Williams.W5Hat
 
 /-!
+# W6 tail: last passages of `Ŷ` tend to infinity
+
 For `Ŷ = postLast Y 0`, `Y = dpath σ μ b`, `μ > 0`: a.s., for every horizon `U`,
 `lastPass Ŷ a > U` for all large `a`. Own elementary proof (transience `ae_eventually_gt`,
 closedness of the zero set, intermediate value theorem).

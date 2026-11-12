@@ -4,6 +4,8 @@
 import LatticeProb.Bonanno.LQGMetric.Dimension.GMCIdentKer
 
 /-!
+# The kernel of a measure is the Bochner average of the point kernels (P2-GMCID, D67)
+
 For a bounded open `A`, a time set `I ⊆ (c₀, ∞)` and a finite measure `μ` for which
 `y ↦ K^I_y = 1_I(s) p_A(s/2; y, ·) ∈ L²` is Bochner integrable:
 

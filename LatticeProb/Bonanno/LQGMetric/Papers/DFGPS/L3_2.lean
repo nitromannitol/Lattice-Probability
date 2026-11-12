@@ -10,6 +10,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Lemma 3.2: the events `E_r(z; C)` and their probability (task P2-DFA0, package DF-A1)
+
 DFGPS (arXiv:1905.00380, `lqg-metric-estimates-final.tex`, "T"), (3.4) `eqn-annulus-event`,
 T:1446–1450: `E_r(z; C)` is the event that
 `sup_{u,v ∈ ∂B_r(z)} D_h(u, v; 𝔸_{r/2,2r}(z)) ≤ C 𝔠_r e^{ξ h_r(z)}` and

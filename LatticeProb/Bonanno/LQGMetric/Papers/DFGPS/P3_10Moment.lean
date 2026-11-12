@@ -7,6 +7,8 @@ set_option autoImplicit false
 set_option relaxedAutoImplicit false
 
 /-!
+# DFGPS Propositions 3.9–3.10: from tail bounds to moment bounds
+
 Dubédat–Falconet–Gwynne–Pfeffer–Sun, arXiv:1905.00380 (`lqg-metric-estimates-final.tex`, "T"),
 proof of Proposition 3.10, last sentence (T:1914–1915): "For `p ∈ (0, 4d_γ/γ²)`, we can multiply
 this last estimate by `C̃^{p-1}` and integrate to get the desired `p`th moment bound." We use the
