@@ -1,5 +1,6 @@
 import LatticeProb.Topology.CircleCharacterization
 import LatticeProb.Topology.ComplementComponents
+import LatticeProb.Topology.Unicoherence
 
 /-!
 # Torhorst's theorem from its plane-topological and continuum-theoretic ingredients
@@ -19,7 +20,9 @@ component of `ℂ \ K` is a simple loop. The classical proof splits into three i
 remaining facts of the assembly (the frontier is compact and has two points) are proved in
 `LatticeProb.Topology.ComplementComponents`. Ingredient 3 is
 `nonempty_homeomorph_circle_of_forall_not_isPreconnected_diff_pair` (`LatticeProb.Topology.CircleCharacterization`),
-so `torhorstSimpleLoop_of_unicoherent_of_pairSeparates` needs only ingredients 1 and 2.
+so `torhorstSimpleLoop_of_unicoherent_of_pairSeparates` needs only ingredients 1 and 2. Ingredient 1 is
+`isConnected_frontier_of_mem_connectedComponentsIn_compl` (`LatticeProb.Topology.Unicoherence`), so
+`torhorstSimpleLoop_of_pairSeparates` needs only ingredient 2.
 -/
 
 namespace LatticeProb.Topology
@@ -58,5 +61,18 @@ theorem torhorstSimpleLoop_of_unicoherent_of_pairSeparates
     TorhorstSimpleLoop :=
   torhorstSimpleLoop_of_ingredients hUnicoherent hPairSeparates fun _ hΓ hΓc hΓn hpair =>
     nonempty_homeomorph_circle_of_forall_not_isPreconnected_diff_pair hΓ hΓc hΓn hpair
+
+
+/-- **Torhorst's theorem from separation by pairs.** Unicoherence of the plane
+(`isConnected_frontier_of_mem_connectedComponentsIn_compl`) and R. L. Moore's characterisation of the circle are
+proved, so `TorhorstSimpleLoop` follows from the second ingredient alone. -/
+theorem torhorstSimpleLoop_of_pairSeparates
+    (hPairSeparates : ∀ K : Set ℂ, IsCompact K → IsConnected K → K.Nontrivial → IsLocallyConnectedSet K →
+      (∀ a : ℂ, ¬ IsCutPoint K a) → ∀ C ∈ connectedComponentsIn Kᶜ,
+        ∀ a ∈ frontier C, ∀ b ∈ frontier C, a ≠ b → ¬ IsPreconnected (frontier C \ {a, b})) :
+    TorhorstSimpleLoop :=
+  torhorstSimpleLoop_of_unicoherent_of_pairSeparates
+    (fun _ hK hKc _ hC => isConnected_frontier_of_mem_connectedComponentsIn_compl hK.isClosed hKc hC)
+    hPairSeparates
 
 end LatticeProb.Topology
