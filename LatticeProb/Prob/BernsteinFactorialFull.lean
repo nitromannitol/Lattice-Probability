@@ -11,8 +11,6 @@ the **conditional product/tower bound**
 proved by induction: peel the last factor, apply the tower property to `F n`, pull the
 `F n`-measurable partial product out of the conditional expectation, and bound the remaining
 factor by `E[e^{λ ξ_{n+1}} | F n] ≤ c_{n+1}`.  This file is that lemma.
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinFactorialFinal
 

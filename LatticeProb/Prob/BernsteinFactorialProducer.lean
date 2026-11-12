@@ -17,8 +17,6 @@ supplies that exponent and the matching conditional-exponential bound:
 
 The exponent is the increment's own conditional moment series, so summing over the increments and
 invoking the raw factorial bound gives `∑_i d_λ(i) ≤ λ²v/(2(1-aλ))`.
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinSteps
 

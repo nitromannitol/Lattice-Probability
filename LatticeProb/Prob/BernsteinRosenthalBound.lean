@@ -12,8 +12,6 @@ estimate into `A ≤ C (B + V)`, `V = ∑_{i<n} ∫ |ξ (i+1)|^p`.  Feeding thes
 `LatticeProb.rosenthal_of_crossTerm` gives the actual Rosenthal bound with the source constants:
 
   `A^{2/p} ≤ max (2 C K · (∫ V n^{p/2})^{2/p}) ((2 C (K+1) V)^{2/p})`.
-
-No new `Prop`; no new external input; no false Pinelis input; not imported by the root.
 -/
 import LatticeProb.Prob.BernsteinVariancePair
 import LatticeProb.Prob.BernsteinInduction
