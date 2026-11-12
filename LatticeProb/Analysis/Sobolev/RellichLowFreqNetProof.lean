@@ -1,13 +1,9 @@
 /-
 # The bounded `C^m`-net sub-piece of the Rellich–Kondrachov low-frequency residual
 
-`rkLowFreqNet` (`RellichLowFreqNet.lean`) is the corrected low-frequency compactness
-step of the Rellich–Kondrachov argument, and `RellichLowFreqNetSteps.lean` reduces it to
-the single open input `rkLowFreqCmNet`: the low-frequency family admits a finite
-`C^m`-net with test-function centres.
-
-`rkLowFreqCmNet` bundles four inputs, of which this file discharges the smallest and most
-reusable one, the **net step**: a uniformly bounded, uniformly Lipschitz family of
+`rkLowFreqNet` (`RellichLowFreqNet.lean`) is the low-frequency compactness step of the
+Rellich–Kondrachov argument.  This file proves a reusable ingredient of `C^m`-net
+constructions, the **net step**: a uniformly bounded, uniformly Lipschitz family of
 continuous functions on a compact space has a finite `ε`-net in the sup metric, with
 centres *in the family*.  That last clause is what keeps the centres inside the class of
 test functions in the reduction.  This is Arzelà–Ascoli in the net form; it is the half of
@@ -15,11 +11,11 @@ the `C^m`-net construction that Mathlib does not state and that is genuinely bou
 
 ## What is left open (one named Prop)
 
-The remaining content of `rkLowFreqCmNet` is the **uniform Bernstein jet bound** on the
+The open input stated here is the **uniform Bernstein jet bound** on the
 band-limited fields, `rkLowFreqUniformJetBound` below: the `Λ`-band-limited test fields of
 the `H^s` unit ball have all derivatives up to order `m + 1` bounded by one constant on a
-compact carrier.  Two further inputs are needed to turn that bound into the `C^m`-net of
-`rkLowFreqCmNet` and are *not* part of this file:
+compact carrier.  Two further inputs are needed to turn that bound into a `C^m`-net and are
+*not* part of this file:
 
 1. the multi-index/jet packaging that feeds the bound for every order `k ≤ m + 1` into the
    abstract net lemma above (`C^m`-closeness is the sup-closeness of the jet
@@ -29,18 +25,6 @@ compact carrier.  Two further inputs are needed to turn that bound into the `C^m
    band-limited fields are not compactly supported).
 
 Neither is a missing Mathlib *definition*; the net step below is the reusable half.
-
-### Erratum recorded for `RellichLowFreqNetSteps.lean`
-
-The reduction `rkLowFreqNet_of_rkLowFreqCmNet` applies `rkLowFreqCmNet` at the order `m`
-returned by `rkResidual_diff_bound`, which is large relative to `s₀` and `d`.  But the
-low-frequency family is not `C^m`-bounded for such `m`: the oscillating test field
-`u_N = N^{-M} sin (N x₁) ρ(x)` with `s < M < m` has `sobolevNormSq d s u_N → 0` and
-`sobolevNormSqHigh d s₀ Λ u_N → 0`, yet `‖iteratedFDeriv ℝ m u_N‖_∞ → ∞`.  A finite
-`C^m`-net can only cover a `C^m`-bounded family, so `rkLowFreqCmNet` is false at that `m`
-and that reduction runs from a false premise.  The sound replacement bounds the
-*band-limited projections* `P_Λ φ`, which the Bernstein estimate below does make
-`C^m`-bounded.
 -/
 import Mathlib
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet

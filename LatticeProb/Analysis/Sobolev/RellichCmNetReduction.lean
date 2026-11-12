@@ -14,12 +14,6 @@ This module proves the Arzelà–Ascoli step
 `exists_finite_supNet_of_uniformLip`: a uniformly bounded, uniformly Lipschitz family of
 continuous functions on a compact space has a finite sup-net with centres in the family (so the
 centres stay inside the family of test functions).
-
-The former reduction `rkLowFreqNet_of_uniformCmNet`, which carried the `C^m`-net hypothesis
-`rkUniformCmNet` and converted it to `rkLowFreqNet`, has been **removed**: `rkUniformCmNet` is
-**false** once `s < m` (the `H^s` unit ball is not `C^m`-bounded; see the refutation recorded in
-`RellichLowFreqNet.lean`), and its only consumer `RellichAssembly.lean` is quarantined.  The sound
-route to `rkLowFreqNet` is `RellichLowFreqGlue.lean`.
 -/
 import Mathlib
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
@@ -77,17 +71,5 @@ theorem exists_finite_supNet_of_uniformLip {α : Type*} [PseudoMetricSpace α] [
   refine ⟨g, hgT, ?_⟩
   rw [Metric.mem_eball, edist_dist, ENNReal.ofReal_lt_ofReal_iff hε] at hfg
   exact le_of_lt hfg
-
-/-! ### Quarantine: the refuted `C^m`-net input `rkUniformCmNet`
-
-The declarations `rkUniformCmNet` and `rkLowFreqNet_of_uniformCmNet` that stood here have been
-**removed**.  `rkUniformCmNet` asserted that the low-frequency family of test functions on `D`
-admits a finite `C^m`-net; it is **false** for every `s < m`, because the `H^s` unit ball is
-not `C^m`-bounded (the oscillating family `N^{-M} sin (N x_1) rho(x)` with `s < M < m`; the refutation is
-recorded in `RellichLowFreqNet.lean`).  Its only consumer, `RellichAssembly.lean`, is quarantined.
-The sound route to `rkLowFreqNet` is `RellichLowFreqGlue.lean`.
-
-What remains here is the genuine Arzela-Ascoli step `exists_finite_supNet_of_uniformLip` above.
--/
 
 end LatticeProb.Sobolev

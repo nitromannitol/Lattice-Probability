@@ -66,9 +66,7 @@ band-limitedness of its output are built (`FrequencyTruncation.lean`), and the
 remaining low-frequency compactness step is
 isolated as `LatticeProb.Sobolev.rkLowFreqNet`, whose consumer
 `rellichKondrachovNegSobolev_of_lowfreqNet` reduces the cited embedding to it
-(`Analysis/Sobolev/RellichLowFreqNet.lean`).  The `C^m`-net formulation of
-that step is false as stated — the `H^s` unit ball is not `C^m`-bounded for `s < m` — and is
-kept only in `archive/`, which is not built.  The band-limited Bernstein bounds
+(`Analysis/Sobolev/RellichLowFreqNet.lean`).  The band-limited Bernstein bounds
 that feed the net are proved for the low-frequency projections: the uniform
 `C^m` and multi-index bounds (`LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le`,
 `exists_uniform_iteratedFDeriv_apply_le`, `BandLimitedCmNet.lean`) and their
@@ -76,15 +74,7 @@ Lipschitz (`k = 1`) form (`LatticeProb.Sobolev.exists_uniform_lipschitz_bandTrun
 `BandLimitedLip.lean`).
 
 The truncation identity `‖φ − P_Λφ‖_{H^s} ≤ ‖φ‖_{H^s,>Λ}` is proved
-(`LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le`), and the sound composition
-`LatticeProb.Sobolev.rkLowFreqNet_of_domainSupportRepair` reduces `rkLowFreqNet` to the single
-support-repair input `BandLimitedTestFnApproxOnDomain` (the domain-restricted form, since the
-unrestricted `BandLimitedTestFnApprox` is false as stated), which
-`rellichKondrachovNegSobolev_of_lowfreqNet` composes into the external discharge
-(`Analysis/Sobolev/SupportRepair.lean`).  The unrestricted premise `BandLimitedTestFnApprox` of
-`Analysis/Sobolev/RellichLowFreqGlue.lean` ranges over every compactly supported function and is
-not used; `Analysis/Sobolev/SupportRepairFalsity.lean` proves the analytic facts behind its
-failure.
+(`LatticeProb.Sobolev.sobolevNormSq_sub_bandProj_le`).
 
 Two further sandpile inputs are literal proposition definitions:
 [`FeyDenBoerRedigCubicalCluster`](LatticeProb/External/FeyDenBoerRedigCubicalCluster.lean)
