@@ -22,6 +22,8 @@ square meets the top-bottom crossing of the half of its parent which contains th
 * `IsEuclideanLengthMetric.internalMetric_le_of_mem_shortCrossingSet`: its internal diameter is at most `3 L`.
 * `HasShortHalfCrossings`: the four hard crossings of the halves of a closed rectangle of `D`-length at most `L`.
 * `IsEuclideanLengthMetric.internalMetric_le_of_hasShortHalfCrossings`: the multiscale bound.
+* `IsEuclideanLengthMetric.exists_internalMetric_le_of_hasShortHalfCrossings`: finite crossings at the coarse levels and
+  a summable bound on the crossings at the fine levels give a finite internal diameter.
 -/
 
 namespace LatticeProb.LQG
@@ -142,5 +144,88 @@ theorem IsEuclideanLengthMetric.internalMetric_le_of_hasShortHalfCrossings {D : 
   rw [ENNReal.tsum_mul_left] at key
   calc internalMetric D _ z w ≤ 3 * L 0 + 2 * (3 * ∑' n, L (n + 1)) := key
     _ = 3 * (L 0 + 2 * ∑' n, L (n + 1)) := by ring
+
+/-- Short half crossings at level `L` are short half crossings at every level `L' ≥ L`. -/
+theorem HasShortHalfCrossings.mono {D : ℂ → ℂ → ℝ} {x₀ x₁ y₀ y₁ : ℝ} {L L' : ℝ≥0∞}
+    (h : HasShortHalfCrossings D x₀ x₁ y₀ y₁ L) (hL : L ≤ L') : HasShortHalfCrossings D x₀ x₁ y₀ y₁ L' := by
+  obtain ⟨⟨u₁, v₁, P₁, h₁, l₁⟩, ⟨u₂, v₂, P₂, h₂, l₂⟩, ⟨u₃, v₃, P₃, h₃, l₃⟩, ⟨u₄, v₄, P₄, h₄, l₄⟩⟩ := h
+  exact ⟨⟨u₁, v₁, P₁, h₁, l₁.trans hL⟩, ⟨u₂, v₂, P₂, h₂, l₂.trans hL⟩, ⟨u₃, v₃, P₃, h₃, l₃.trans hL⟩,
+    ⟨u₄, v₄, P₄, h₄, l₄.trans hL⟩⟩
+
+/-- Finite internal diameter of a closed square from short half crossings: if every closed dyadic subsquare of level
+`n < N` of `S = [a, a + s] × [b, b + s]` has hard crossings of its halves of finite `D`-length, and every closed dyadic
+subsquare of level `n ≥ N` has hard crossings of its halves of `D`-length at most `l n`, where `∑ l n < ∞`, then the
+internal diameter of `S` in its own internal metric is finite. -/
+theorem IsEuclideanLengthMetric.exists_internalMetric_le_of_hasShortHalfCrossings {D : ℂ → ℂ → ℝ}
+    (hD : IsEuclideanLengthMetric D) {a b s : ℝ} (hs : 0 < s) {N : ℕ}
+    (hfin : ∀ n < N, ∀ i j : ℕ, i < 2 ^ n → j < 2 ^ n → ∃ L : ℝ≥0∞, L ≠ ⊤ ∧
+      HasShortHalfCrossings D (a + i * (s / 2 ^ n)) (a + (i + 1) * (s / 2 ^ n)) (b + j * (s / 2 ^ n))
+        (b + (j + 1) * (s / 2 ^ n)) L)
+    (l : ℕ → ℝ≥0∞) (hl : ∑' n, l n ≠ ⊤)
+    (htail : ∀ n, N ≤ n → ∀ i j : ℕ, i < 2 ^ n → j < 2 ^ n →
+      HasShortHalfCrossings D (a + i * (s / 2 ^ n)) (a + (i + 1) * (s / 2 ^ n)) (b + j * (s / 2 ^ n))
+        (b + (j + 1) * (s / 2 ^ n)) (l n)) :
+    ∃ M : ℝ≥0∞, M ≠ ⊤ ∧ ∀ z ∈ Icc a (a + s) ×ℂ Icc b (b + s), ∀ w ∈ Icc a (a + s) ×ℂ Icc b (b + s),
+      internalMetric D (Icc a (a + s) ×ℂ Icc b (b + s)) z w ≤ M := by
+  -- one finite level for the finitely many subsquares of each coarse level
+  have hC : ∀ n, ∃ C : ℝ≥0∞, C ≠ ⊤ ∧ ∀ i j : ℕ, i < 2 ^ n → j < 2 ^ n → n < N →
+      HasShortHalfCrossings D (a + i * (s / 2 ^ n)) (a + (i + 1) * (s / 2 ^ n)) (b + j * (s / 2 ^ n))
+        (b + (j + 1) * (s / 2 ^ n)) C := by
+    intro n
+    have hp : ∀ p : ℕ × ℕ, ∃ L : ℝ≥0∞, L ≠ ⊤ ∧ (p.1 < 2 ^ n → p.2 < 2 ^ n → n < N →
+        HasShortHalfCrossings D (a + p.1 * (s / 2 ^ n)) (a + (p.1 + 1) * (s / 2 ^ n)) (b + p.2 * (s / 2 ^ n))
+          (b + (p.2 + 1) * (s / 2 ^ n)) L) := by
+      rintro ⟨i, j⟩
+      by_cases h : i < 2 ^ n ∧ j < 2 ^ n ∧ n < N
+      · obtain ⟨L, hL, hL'⟩ := hfin n h.2.2 i j h.1 h.2.1
+        exact ⟨L, hL, fun _ _ _ => hL'⟩
+      · exact ⟨0, ENNReal.zero_ne_top, fun hi hj hn => absurd ⟨hi, hj, hn⟩ h⟩
+    choose f hf hf' using hp
+    refine ⟨(Finset.range (2 ^ n) ×ˢ Finset.range (2 ^ n)).sup f,
+      ((Finset.sup_lt_iff bot_lt_top).2 fun p _ => (hf p).lt_top).ne, fun i j hi hj hn => ?_⟩
+    exact (hf' (i, j) hi hj hn).mono
+      (Finset.le_sup (f := f) (Finset.mem_product.2 ⟨Finset.mem_range.2 hi, Finset.mem_range.2 hj⟩))
+  choose C hCfin hC' using hC
+  let L : ℕ → ℝ≥0∞ := fun n => (if n < N then C n else 0) + l n
+  have hcross : ∀ n i j : ℕ, i < 2 ^ n → j < 2 ^ n →
+      HasShortHalfCrossings D (a + i * (s / 2 ^ n)) (a + (i + 1) * (s / 2 ^ n)) (b + j * (s / 2 ^ n))
+        (b + (j + 1) * (s / 2 ^ n)) (L n) := by
+    intro n i j hi hj
+    by_cases hn : n < N
+    · refine (hC' n i j hi hj hn).mono ?_
+      show C n ≤ (if n < N then C n else 0) + l n
+      rw [ite_eq_left hn]
+      exact le_self_add
+    · refine (htail n (not_lt.1 hn) i j hi hj).mono ?_
+      show l n ≤ (if n < N then C n else 0) + l n
+      rw [ite_eq_right hn, zero_add]
+  have hsumL : ∑' n, L n ≠ ⊤ := by
+    show ∑' n, ((if n < N then C n else 0) + l n) ≠ ⊤
+    rw [ENNReal.tsum_add]
+    refine ENNReal.add_ne_top.2 ⟨?_, hl⟩
+    rw [tsum_eq_sum (s := Finset.range N) fun n hn => ite_eq_right (by simpa using hn)]
+    exact ENNReal.sum_ne_top.2 fun n hn => by rw [ite_eq_left (Finset.mem_range.1 hn)]; exact hCfin n
+  have h0 : L 0 ≠ ⊤ := ne_top_of_le_ne_top hsumL (ENNReal.le_tsum 0)
+  have h1 : ∑' n, L (n + 1) ≠ ⊤ :=
+    ne_top_of_le_ne_top hsumL (ENNReal.tsum_comp_le_tsum_of_injective (add_left_injective 1) L)
+  refine ⟨3 * (L 0 + 2 * ∑' n, L (n + 1)), ?_, fun z hz w hw =>
+    hD.internalMetric_le_of_hasShortHalfCrossings hs L hcross hz hw⟩
+  exact ENNReal.mul_ne_top ENNReal.ofNat_ne_top
+    (ENNReal.add_ne_top.2 ⟨h0, ENNReal.mul_ne_top ENNReal.ofNat_ne_top h1⟩)
+
+/-- The bound of `IsEuclideanLengthMetric.exists_internalMetric_le_of_hasShortHalfCrossings` as a real number. -/
+theorem IsEuclideanLengthMetric.exists_internalMetric_le_ofReal_of_hasShortHalfCrossings {D : ℂ → ℂ → ℝ}
+    (hD : IsEuclideanLengthMetric D) {a b s : ℝ} (hs : 0 < s) {N : ℕ}
+    (hfin : ∀ n < N, ∀ i j : ℕ, i < 2 ^ n → j < 2 ^ n → ∃ L : ℝ≥0∞, L ≠ ⊤ ∧
+      HasShortHalfCrossings D (a + i * (s / 2 ^ n)) (a + (i + 1) * (s / 2 ^ n)) (b + j * (s / 2 ^ n))
+        (b + (j + 1) * (s / 2 ^ n)) L)
+    (l : ℕ → ℝ≥0∞) (hl : ∑' n, l n ≠ ⊤)
+    (htail : ∀ n, N ≤ n → ∀ i j : ℕ, i < 2 ^ n → j < 2 ^ n →
+      HasShortHalfCrossings D (a + i * (s / 2 ^ n)) (a + (i + 1) * (s / 2 ^ n)) (b + j * (s / 2 ^ n))
+        (b + (j + 1) * (s / 2 ^ n)) (l n)) :
+    ∃ A : ℝ, ∀ z ∈ Icc a (a + s) ×ℂ Icc b (b + s), ∀ w ∈ Icc a (a + s) ×ℂ Icc b (b + s),
+      internalMetric D (Icc a (a + s) ×ℂ Icc b (b + s)) z w ≤ ENNReal.ofReal A := by
+  obtain ⟨M, hM, h⟩ := hD.exists_internalMetric_le_of_hasShortHalfCrossings hs hfin l hl htail
+  exact ⟨M.toReal, fun z hz w hw => (h z hz w hw).trans (ENNReal.ofReal_toReal hM).ge⟩
 
 end LatticeProb.LQG
