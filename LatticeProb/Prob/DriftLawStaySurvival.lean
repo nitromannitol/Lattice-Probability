@@ -14,7 +14,7 @@ the event `staySet δ` (the path stays strictly above `-δ` for all times) the p
 `1 - exp (-2 μ δ)`, which is positive for `δ > 0`.
 
 * `LatticeProb.driftLaw_staySet_eq`: `driftLaw P B hcont μ (staySet δ) = ofReal (1 - exp (-(2 μ δ)))`.
-* `LatticeProb.driftLaw_staySet_pos`: this probability is positive.
+* `LatticeProb.driftLaw_staySet_measure_pos`: this probability is positive.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -38,7 +38,7 @@ theorem driftLaw_staySet_eq (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable
   exact measure_forall_drift_gt hB hm hcont hμ hδ
 
 /-- **The drifted Brownian path stays above `-δ` forever with positive probability.** -/
-theorem driftLaw_staySet_pos (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable (B t))
+theorem driftLaw_staySet_measure_pos (hB : IsPreBrownianReal B P) (hm : ∀ t, Measurable (B t))
     (hcont : ∀ ω, Continuous fun t => B t ω) {μ : ℝ} (hμ : 0 < μ) {δ : ℝ} (hδ : 0 < δ) :
     0 < driftLaw P B hcont μ (staySet δ) := by
   rw [driftLaw_staySet_eq hB hm hcont hμ hδ, ENNReal.ofReal_pos, sub_pos]
