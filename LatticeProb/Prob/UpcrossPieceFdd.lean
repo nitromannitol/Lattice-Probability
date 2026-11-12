@@ -2,6 +2,7 @@ import Mathlib
 import LatticeProb.Prob.UpcrossPieceGap
 import LatticeProb.Prob.ConvergingTogether
 import LatticeProb.Prob.UpcrossStay
+import LatticeProb.Prob.LawFromFiniteCoordinates
 import LatticeProb.Prob.BrownianDriftConditionedTightFamily
 
 /-!
@@ -22,6 +23,9 @@ of the stopped limit path.
 * `LatticeProb.ae_integral_comp_piece_eq`: for Lebesgue-almost every level `c > 0`, the
   finite-dimensional laws of the piece under the drifted Brownian law equal those of the
   stopped limit path.
+* `LatticeProb.ae_map_piece_eq`: for Lebesgue-almost every level `c > 0`, the law of the piece
+  under the drifted Brownian law equals the law of the stopped limit path (as measures on
+  `ℝ≥0 → ℝ`).
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology Set
@@ -181,6 +185,30 @@ theorem ae_integral_comp_piece_eq [IsProbabilityMeasure P] (hB : IsBrownianReal 
       (M := ‖f‖) fun p => by simpa [Real.norm_eq_abs] using f.norm_coe_le_norm _).symm
   have huniq := tendsto_nhds_unique hconst hmain
   rw [huniq, integral_map hXm.aemeasurable f.continuous.aestronglyMeasurable]
+
+/-- **The law of the first up-crossing piece.**  Under the hypothesis of
+`ae_integral_comp_piece_eq`, for Lebesgue-almost every level `c > 0` the law of the first
+up-crossing piece under the drifted Brownian law equals the law of the path stopped at its first
+hit of `c` under the drifted limit law. -/
+theorem ae_map_piece_eq [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
+    (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω) {mu : ℝ} (hmu : 0 < mu)
+    {ν : Measure C(ℝ≥0, ℝ)} [IsProbabilityMeasure ν]
+    (hν : ∀ f : C(ℝ≥0, ℝ) →ᵇ ℝ, Tendsto
+      (fun δ : ℝ => ∫ w, f w ∂((P.map (pathMap B hcont))[|driftMap mu ⁻¹' staySet δ]))
+      (𝓝[>] 0) (𝓝 (∫ w, f w ∂ν))) :
+    ∀ᵐ c ∂(volume.restrict (Ioi (0 : ℝ))),
+      (driftLaw P B hcont mu).map (fun y : C(ℝ≥0, ℝ) => firstUpcrossPiece c (y : ℝ≥0 → ℝ)) =
+        (ν.map (driftMap mu)).map
+          (fun y : C(ℝ≥0, ℝ) => (stopAt (hitFrom c 0 (y : ℝ≥0 → ℝ)) y : ℝ≥0 → ℝ)) := by
+  have hμprob : IsProbabilityMeasure (driftLaw P B hcont mu) :=
+    isProbabilityMeasure_driftLaw hm hcont mu
+  have hνp : IsProbabilityMeasure (ν.map (driftMap mu)) :=
+    isProb_map (measurable_driftMap mu).aemeasurable
+  filter_upwards [ae_integral_comp_piece_eq hB hm hcont hmu hν] with c hc
+  have hSm : Measurable fun y : C(ℝ≥0, ℝ) => stopAt (hitFrom c 0 (y : ℝ≥0 → ℝ)) y :=
+    measurable_stopAt_path (measurable_hitFrom (r := fun _ => 0) measurable_const c)
+  exact map_eq_of_forall_integral_comp_fin_eq (measurable_firstUpcrossPiece c)
+    (measurable_pi_iff.2 fun s => (continuous_eval_const s).measurable.comp hSm) hc
 
 end Fdd
 
