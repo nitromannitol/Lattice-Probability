@@ -71,6 +71,42 @@ theorem measure_univ_rpow_le_lintegral_rpow_mul (μ : Measure α) {g : α → �
   rw [mul_comm]
   exact hpow
 
+/-- **Negative power of a mean, pointwise form.** If `0 < g < ∞` everywhere, `0 < μ(univ) < ∞` and
+`r > 0`, then `(∫ g dμ)^{-r} ≤ μ(univ)^{-(1+r)} ∫ g^{-r} dμ`. -/
+theorem lintegral_rpow_neg_le_measure_univ_rpow_mul (μ : Measure α) {g : α → ℝ≥0∞}
+    (hg : AEMeasurable g μ) (h0 : ∀ x, g x ≠ 0) (htop : ∀ x, g x ≠ ⊤) (hV0 : μ univ ≠ 0)
+    (hVtop : μ univ ≠ ⊤) {r : ℝ} (hr : 0 < r) :
+    (∫⁻ x, g x ∂μ) ^ (-r) ≤ μ univ ^ (-(1 + r)) * ∫⁻ x, g x ^ (-r) ∂μ := by
+  have h := measure_univ_rpow_le_lintegral_rpow_mul μ hg h0 htop hr
+  by_cases hA : ∫⁻ x, g x ∂μ = ⊤
+  · rw [hA, ENNReal.top_rpow_of_neg (by linarith)]
+    exact zero_le
+  by_cases hA0 : ∫⁻ x, g x ∂μ = 0
+  · exfalso
+    rw [hA0, ENNReal.zero_rpow_of_pos hr, zero_mul, nonpos_iff_eq_zero,
+      ENNReal.rpow_eq_zero_iff] at h
+    rcases h with ⟨h1, -⟩ | ⟨-, h2⟩
+    · exact hV0 h1
+    · linarith
+  set a := (∫⁻ x, g x ∂μ) ^ r with ha
+  set v := μ univ ^ (1 + r) with hv
+  set B := ∫⁻ x, g x ^ (-r) ∂μ
+  have ha0 : a ≠ 0 := by
+    rw [ha]; exact (ENNReal.rpow_pos (pos_iff_ne_zero.2 hA0) hA).ne'
+  have hatop : a ≠ ⊤ := by rw [ha]; exact ENNReal.rpow_ne_top_of_nonneg hr.le hA
+  have hv0 : v ≠ 0 := by
+    rw [hv]; exact (ENNReal.rpow_pos (pos_iff_ne_zero.2 hV0) hVtop).ne'
+  have hvtop : v ≠ ⊤ := by rw [hv]; exact ENNReal.rpow_ne_top_of_nonneg (by linarith) hVtop
+  have e1 : (∫⁻ x, g x ∂μ) ^ (-r) = a⁻¹ := by rw [ha, ENNReal.rpow_neg]
+  have e2 : μ univ ^ (-(1 + r)) = v⁻¹ := by rw [hv, ENNReal.rpow_neg]
+  rw [e1, e2]
+  have h3 : a⁻¹ * v ≤ B := by
+    calc a⁻¹ * v ≤ a⁻¹ * (a * B) := by gcongr
+      _ = B := ENNReal.inv_mul_cancel_left ha0 hatop
+  calc a⁻¹ = v⁻¹ * (v * a⁻¹) := (ENNReal.inv_mul_cancel_left hv0 hvtop).symm
+    _ = v⁻¹ * (a⁻¹ * v) := by rw [mul_comm v]
+    _ ≤ v⁻¹ * B := by gcongr
+
 end ReverseHolder
 
 /-- **Elementary bound.** For `u, s > 0`, `exp(-u) ≤ s^s e^{-s} u^{-s}`. -/
