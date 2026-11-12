@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.GFF.K3.DisjointUnion at commit 31e7483; only the module paths of local imports are changed. -/
+   source module QuantumZipper.Proofs.GFF.K3.DisjointUnion at commit 31e7483; only the module paths of local imports are changed.
+   Changed: docstring wording of the module docstring entry for dualCov_union_of_disjoint and dualCov_iUnion_of_pairwise_disjoint. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.GFF.K3.DualNorm
 import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Calculus.MeanValue
@@ -23,8 +24,8 @@ Main results:
 * `dualNormSq_union_of_disjoint` — two open disjoint pieces;
 * `dualNormSq_iUnion_of_pairwise_disjoint` — countably many open pairwise disjoint pieces;
 * `dualCov_union_of_disjoint`, `dualCov_iUnion_of_pairwise_disjoint` — the polarized versions,
-  for measures **admissible on the union** (`IsAdmissibleDual` on `D₁ ∪ D₂`, not merely finite dual
-  norm on each piece: with only piecewise finiteness the countable identity is false, AUDIT7 K1).
+  for measures **admissible on the union** (`IsAdmissibleDual` on `D₁ ∪ D₂`, which the countable
+  identity needs; finite dual norm on each piece does not suffice).
 
 A test function `f ∈ zeroSpace (D₁ ∪ D₂)` is split with a smooth cut-off `χ`, equal to `1` on
 `tsupport f ∩ closure D₁` and supported in `D₁`; the cut-off is built by hand from finitely many

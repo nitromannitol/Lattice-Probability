@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module LQGMetric.Papers.GM.S1.Subseq at commit 31e7483; only the module paths of local imports are changed. -/
+   source module LQGMetric.Papers.GM.S1.Subseq at commit 31e7483; only the module paths of local imports are changed.
+   Changed: docstring wording of the module docstring entry for gm_tip_congr and gm_tip_smul_of_aemeasurable. -/
 import LatticeProb.Bonanno.LQGMetric.Papers.GM.S1.Defs
 import LatticeProb.Bonanno.LQGMetric.Field.GFFLaw
 import LatticeProb.Bonanno.LQGMetric.Analysis.Multiplicative
@@ -21,9 +22,7 @@ Source: Gwynne–Miller, arXiv:1905.00383v3 (GM), `literature/src/1905.00383/uni
   `Filter.tendsto_of_subseq_tendsto`.
 * `gm_tip_congr`, `gm_tip_smul_of_aemeasurable`: convergence in probability is unchanged by
   a.s. modification of the limit, and is preserved by deterministic scalars `a_i → a₀`.
-  (Own elementary proofs.) The statement `TIP_smul` of `blueprint/M1.md` §5 omits a
-  measurability hypothesis on `Y`; it is false without one (see the task report), so the version
-  proved here assumes each `ω ↦ Y ω p` is a.e.-measurable.
+  (Own elementary proofs.) The scalar version assumes each `ω ↦ Y ω p` is a.e.-measurable.
 -/
 
 set_option autoImplicit false
