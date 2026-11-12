@@ -81,15 +81,15 @@ theorem IsWholePlaneGFF.covariance_circle_le_log_two (hh : IsWholePlaneGFF P hC 
   linarith
 
 /-- The variance of a linear combination of circle averages at a common scale. -/
-theorem IsWholePlaneGFF.variance_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {A : ℕ} {ε : ℝ}
-    (hε : 0 < ε) (x : Fin A → ℂ) (c : Fin A → ℝ) :
+theorem IsWholePlaneGFF.variance_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {ι : Type*} [Fintype ι] {ε : ℝ}
+    (hε : 0 < ε) (x : ι → ℂ) (c : ι → ℝ) :
     Var[fun ω => ∑ k, c k * hcirc ω ε (x k); P] =
       ∑ k, ∑ l, c k * c l * cov[fun ω => hcirc ω ε (x k), fun ω => hcirc ω ε (x l); P] := by
   have hP := hh.isProbabilityMeasure
-  let f : Fin A → GFFObservable.Admissible := fun k => ⟨.circle ε (x k), hε⟩
+  let f : ι → GFFObservable.Admissible := fun k => ⟨.circle ε (x k), hε⟩
   have hproc := (hh.isGaussianProcess.comp_right f).smul c
   have hG : HasGaussianLaw (fun ω => ∑ k, c k * hcirc ω ε (x k)) P :=
-    hproc.hasGaussianLaw_fun_sum (I := (Finset.univ : Finset (Fin A)))
+    hproc.hasGaussianLaw_fun_sum (I := (Finset.univ : Finset ι))
   have hmem : ∀ k, MemLp (fun ω => c k * hcirc ω ε (x k)) 2 P := fun k =>
     (hh.memLp_two_circle hε (x k)).const_mul (c k)
   rw [← covariance_self hG.aemeasurable, covariance_fun_sum_fun_sum hmem hmem]
@@ -99,16 +99,16 @@ theorem IsWholePlaneGFF.variance_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {A
 
 /-- **Law of a linear combination of circle averages at a common scale.** It is the centred Gaussian whose
 variance is `∑_k ∑_l c_k c_l Cov(h_ε(x_k), h_ε(x_l))`. -/
-theorem IsWholePlaneGFF.hasLaw_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {A : ℕ} {ε : ℝ}
-    (hε : 0 < ε) (x : Fin A → ℂ) (c : Fin A → ℝ) :
+theorem IsWholePlaneGFF.hasLaw_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {ι : Type*} [Fintype ι] {ε : ℝ}
+    (hε : 0 < ε) (x : ι → ℂ) (c : ι → ℝ) :
     HasLaw (fun ω => ∑ k, c k * hcirc ω ε (x k))
       (gaussianReal 0 (∑ k, ∑ l, c k * c l *
         cov[fun ω => hcirc ω ε (x k), fun ω => hcirc ω ε (x l); P]).toNNReal) P := by
   have hP := hh.isProbabilityMeasure
-  let f : Fin A → GFFObservable.Admissible := fun k => ⟨.circle ε (x k), hε⟩
+  let f : ι → GFFObservable.Admissible := fun k => ⟨.circle ε (x k), hε⟩
   have hproc := (hh.isGaussianProcess.comp_right f).smul c
   have hG : HasGaussianLaw (fun ω => ∑ k, c k * hcirc ω ε (x k)) P :=
-    hproc.hasGaussianLaw_fun_sum (I := (Finset.univ : Finset (Fin A)))
+    hproc.hasGaussianLaw_fun_sum (I := (Finset.univ : Finset ι))
   have hmem : ∀ k, MemLp (fun ω => c k * hcirc ω ε (x k)) 2 P := fun k =>
     (hh.memLp_two_circle hε (x k)).const_mul (c k)
   have hmean : ∫ ω, ∑ k, c k * hcirc ω ε (x k) ∂P = 0 := by
@@ -120,8 +120,8 @@ theorem IsWholePlaneGFF.hasLaw_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {A :
   exact ⟨hG.aemeasurable, by rw [hG.map_eq_gaussianReal, hmean]⟩
 
 /-- The exponential of a linear combination of circle averages at a common scale is integrable. -/
-theorem IsWholePlaneGFF.integrable_exp_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {A : ℕ} {ε : ℝ}
-    (hε : 0 < ε) (x : Fin A → ℂ) (c : Fin A → ℝ) :
+theorem IsWholePlaneGFF.integrable_exp_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {ι : Type*} [Fintype ι] {ε : ℝ}
+    (hε : 0 < ε) (x : ι → ℂ) (c : ι → ℝ) :
     Integrable (fun ω => Real.exp (∑ k, c k * hcirc ω ε (x k))) P := by
   have hlaw := hh.hasLaw_sum_circle hε x c
   have h1 := integrable_exp_mul_gaussianReal (μ := 0)
@@ -133,8 +133,8 @@ theorem IsWholePlaneGFF.integrable_exp_sum_circle (hh : IsWholePlaneGFF P hC hci
 
 /-- **Gaussian exponential moment of circle averages at a common scale.**
 `E exp (∑_k c_k h_ε(x_k)) = exp ((∑_k ∑_l c_k c_l Cov(h_ε(x_k), h_ε(x_l))) / 2)`. -/
-theorem IsWholePlaneGFF.integral_exp_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {A : ℕ} {ε : ℝ}
-    (hε : 0 < ε) (x : Fin A → ℂ) (c : Fin A → ℝ) :
+theorem IsWholePlaneGFF.integral_exp_sum_circle (hh : IsWholePlaneGFF P hC hcirc) {ι : Type*} [Fintype ι] {ε : ℝ}
+    (hε : 0 < ε) (x : ι → ℂ) (c : ι → ℝ) :
     ∫ ω, Real.exp (∑ k, c k * hcirc ω ε (x k)) ∂P =
       Real.exp ((∑ k, ∑ l, c k * c l *
         cov[fun ω => hcirc ω ε (x k), fun ω => hcirc ω ε (x l); P]) / 2) := by
