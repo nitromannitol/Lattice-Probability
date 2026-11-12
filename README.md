@@ -423,7 +423,14 @@ the field with zero boundary values on a finite set `C` as
   `LatticeProb.gaussianLogSobolev_all_of_one_of_prodStep_of_approx`,
   `LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep_of_approx`: the regularity
   bridge from the `C¹` Γ-form predicate to the frozen Lipschitz form, reduced to
-  the single named mollification input `LipschitzLogApprox`
+  the single named mollification input `LipschitzLogApprox`.
+* `LatticeProb.lipschitzLogApprox`, `LatticeProb.gaussianLogSobolevGradToLipschitz`,
+  `LatticeProb.gaussianLogSobolev_all_of_ouFlow_of_tensorStep`,
+  `LatticeProb.gaussianHerbstBound_all_of_ouFlow_of_tensorStep`: the mollification input is
+  proved in every dimension, by normalised convolution with smooth bumps, so the regularity
+  bridge holds unconditionally and the general-`n` log-Sobolev and Herbst bounds rest only on
+  the one-dimensional heat-flow contraction and the one-step tensorization
+  (`LatticeProb/Prob/GaussianLogSobolevMollify.lean`).
 * `LatticeProb.paley_zygmund_of_second_moment`, `LatticeProb.ottaviani`,
   `LatticeProb.DoobMaximal.measureReal_sup_partialSum_sq_le`,
   `LatticeProb.pinsker`: the Paley-Zygmund inequality, Ottaviani's maximal
