@@ -23,21 +23,6 @@ noncomputable def anchoredBoxAvgMean (h : Ω → ℝ) (τ : Site d → Ω → Ω
     (ω : Ω) : ℝ :=
   (N : ℝ) ^ (-(d : ℝ)) * ∑ x ∈ anchoredBox c N, h (τ x ω)
 
-/-- **The anchored-box `Lᵖ` maximal inequality.**  For `c ≥ 0` and `p > 1`, the sup over `N` of the
-deviation of the box average from the mean is controlled in `Lᵖ` by `‖h - ∫h‖_p`. -/
-def AnchoredBoxMaximal (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
-  (∀ i, 0 ≤ c i) →
-  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (τ : Site d → Ω → Ω),
-    (∀ z, MeasurePreserving (τ z) μ μ) →
-    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (h : Ω → ℝ), Measurable h →
-      (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
-      ∫⁻ ω, (⨆ N : ℕ,
-          ENNReal.ofReal |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) ^ p ∂μ ≤
-        ENNReal.ofReal C *
-          ∫⁻ ω, (ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|) ^ p ∂μ
-
 /-- **The `Lᵖ` box mean ergodic theorem**: `∫⁻ |boxAvg_N h - (∏ᵢ cᵢ) ∫h|ᵖ → 0`. -/
 def AnchoredBoxMean (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
   (∀ i, 0 ≤ c i) →
@@ -45,6 +30,7 @@ def AnchoredBoxMean (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
     (τ : Site d → Ω → Ω),
     (∀ z, MeasurePreserving (τ z) μ μ) →
     (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    (∀ A : Set Ω, MeasurableSet A → (∀ z, τ z ⁻¹' A = A) → μ A = 0 ∨ μ A = 1) →
     ∀ (h : Ω → ℝ), Measurable h → (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
       Tendsto (fun N : ℕ =>
           ∫⁻ ω, (ENNReal.ofReal
@@ -59,6 +45,7 @@ def AnchoredBoxDenseClass (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
     (τ : Site d → Ω → Ω),
     (∀ z, MeasurePreserving (τ z) μ μ) →
     (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    (∀ A : Set Ω, MeasurableSet A → (∀ z, τ z ⁻¹' A = A) → μ A = 0 ∨ μ A = 1) →
     ∃ D : Set (Ω → ℝ),
       (∀ g ∈ D, Measurable g) ∧
       (∀ g ∈ D, ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ =>
@@ -67,43 +54,10 @@ def AnchoredBoxDenseClass (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
         ∃ g ∈ D, ∫⁻ ω, (ENNReal.ofReal
           |(h ω - g ω) - ∫ ω', (h ω' - g ω') ∂μ|) ^ p ∂μ < ENNReal.ofReal ε)
 
-/-- **Step (c): the density/`limsup` upgrade.**  Given the maximal inequality and the dense class,
-every bounded measurable `h` has its box averages converging a.e. to `(∏ᵢ cᵢ) ∫h`: for `g` in the
-class, `limsup_N |A_N h| ≤ limsup_N |A_N g| + sup_N |A_N (h - g)| = sup_N |A_N (h - g)|` a.e., the
-maximal bound controls the sup in `Lᵖ`, and the `Lᵖ` density lets `∫ |(h-g) - ∫(h-g)|ᵖ → 0`. -/
-def AnchoredBoxDensityUpgrade (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
-  (∀ i, 0 ≤ c i) → 1 < p →
-  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (τ : Site d → Ω → Ω),
-    (∀ z, MeasurePreserving (τ z) μ μ) →
-    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
-    AnchoredBoxMaximal d c p → AnchoredBoxDenseClass d c p →
-    ∀ (h : Ω → ℝ), Measurable h → (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
-      ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => anchoredBoxAvgMean h τ c N ω) atTop
-        (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ))
-
-/-- **The pair-to-anchored-box reduction.**  With the `Lᵖ` maximal inequality `AnchoredBoxMaximal`
-(the library's `KrengelLpBall` dominates it), the `Lᵖ` box mean theorem `AnchoredBoxMean` and the
-dense/`limsup` upgrade `AnchoredBoxDensityUpgrade`, the library's `AnchoredBoxErgodic` holds.  The
-upgrade is the only place the density/`limsup` argument is used. -/
-theorem AnchoredBoxErgodic_of_MaximalMean
-    (Hmax : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMaximal d c p)
-    (_Hmean : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMean d c p)
-    (Hdense : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxDenseClass d c p)
-    (Hup : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxDensityUpgrade d c p) :
-    AnchoredBoxErgodic d := by
-  intro Ω _ μ _ τ hτ hadd _herg h hh hb c hc
-  exact (Hup c 2 (by norm_num)) hc (by norm_num) μ τ hτ hadd
-    (Hmax c 2 (by norm_num)) (Hdense c 2 (by norm_num)) h hh hb
-
-/-- **The centred-function form of the anchored-box maximal inequality.**  The library's
-`AnchoredBoxMaximal` is false as stated (`not_anchoredBoxMaximal`): its left side compares
-`A_N h` with `(∏ᵢ cᵢ) ∫h`, but the anchored box `∏ᵢ [0, ⌈N cᵢ⌉)` has cardinality `∏ᵢ ⌈N cᵢ⌉`,
-which differs from `N^d ∏ᵢ cᵢ` at every finite `N`; for a constant `h` the right-hand side built
-from the centred function is identically zero, so the discrepancy is invisible to it.  The
-satisfiable replacement centres the function: for `c ≥ 0` and `p > 1` there is `C ≥ 0` with the
-`Lᵖ` norm of `sup_N |A_N (h - ∫h)|` bounded by `C` times the `Lᵖ` norm of `h - ∫h`.  This is
-exactly the maximal input the density/`limsup` upgrade consumes. -/
+/-- **The centred anchored-box `Lᵖ` maximal inequality.**  For `c ≥ 0` and `p > 1` there is
+`C ≥ 0` with the `Lᵖ` norm of `sup_N |A_N (h - ∫h)|` bounded by `C` times the `Lᵖ` norm of
+`h - ∫h`, where `A_N` is the anchored-box average `anchoredBoxAvgMean`.  This is the maximal input
+the density/`limsup` upgrade consumes. -/
 def AnchoredBoxMaximalCentred (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
   (∀ i, 0 ≤ c i) →
   ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
@@ -117,31 +71,35 @@ def AnchoredBoxMaximalCentred (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
         ENNReal.ofReal C *
           ∫⁻ ω, (ENNReal.ofReal |h ω - ∫ x, h x ∂μ|) ^ p ∂μ
 
-/-- **The dense/`limsup` upgrade with the centred maximal hypothesis.**  Identical body to
-`AnchoredBoxDensityUpgrade`, with `AnchoredBoxMaximal` replaced by the satisfiable
-`AnchoredBoxMaximalCentred`. -/
+/-- **Step (c): the density/`limsup` upgrade.**  For an ergodic action, given the centred maximal
+inequality and the dense class, every bounded measurable `h` has its box averages converging a.e.
+to `(∏ᵢ cᵢ) ∫h`: for `g` in the class, `limsup_N |A_N h - (∏c)∫h|` is at most
+`sup_N |A_N ((h - g) - ∫(h - g))|`, whose `Lᵖ` norm the maximal inequality bounds by the
+approximation error. -/
 def AnchoredBoxDensityUpgradeCentred (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
   (∀ i, 0 ≤ c i) → 1 < p →
   ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (τ : Site d → Ω → Ω),
     (∀ z, MeasurePreserving (τ z) μ μ) →
     (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
+    (∀ A : Set Ω, MeasurableSet A → (∀ z, τ z ⁻¹' A = A) → μ A = 0 ∨ μ A = 1) →
     AnchoredBoxMaximalCentred d c p → AnchoredBoxDenseClass d c p →
     ∀ (h : Ω → ℝ), Measurable h → (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
       ∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => anchoredBoxAvgMean h τ c N ω) atTop
         (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ))
 
-/-- **The pair-to-anchored-box reduction, with the satisfiable centred hypothesis.**  Exact
-analogue of `AnchoredBoxErgodic_of_MaximalMean` in which the (false) `AnchoredBoxMaximal` is
-replaced by `AnchoredBoxMaximalCentred`. -/
+/-- **The pair-to-anchored-box reduction.**  With the centred `Lᵖ` maximal inequality
+`AnchoredBoxMaximalCentred`, the `Lᵖ` box mean theorem `AnchoredBoxMean`, the dense class
+`AnchoredBoxDenseClass` and the density/`limsup` upgrade `AnchoredBoxDensityUpgradeCentred`, the
+library's `AnchoredBoxErgodic` holds. -/
 theorem AnchoredBoxErgodic_of_MaximalMeanCentred
     (Hmax : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMaximalCentred d c p)
     (_Hmean : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxMean d c p)
     (Hdense : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxDenseClass d c p)
     (Hup : ∀ (c : Fin d → ℝ) (p : ℝ), 1 < p → AnchoredBoxDensityUpgradeCentred d c p) :
     AnchoredBoxErgodic d := by
-  intro Ω _ μ _ τ hτ hadd _herg h hh hb c hc
-  exact (Hup c 2 (by norm_num)) hc (by norm_num) μ τ hτ hadd
+  intro Ω _ μ _ τ hτ hadd herg h hh hb c hc
+  exact (Hup c 2 (by norm_num)) hc (by norm_num) μ τ hτ hadd herg
     (Hmax c 2 (by norm_num)) (Hdense c 2 (by norm_num)) h hh hb
 
 /-- The anchored-box average is measurable in the state. -/
@@ -212,24 +170,6 @@ theorem anchoredBoxAvgMean_invariant {h : Ω → ℝ} (τ : Site d → Ω → Ω
   rw [Finset.sum_congr rfl (fun x _ => hinv x ω), Finset.sum_const, nsmul_eq_mul]
   ring
 
-/-- **The two model cases of step (b)**, stated together: (i) functions invariant under the action
-have box averages equal to `(N^{-d} |anchoredBox c N|) h`, converging a.e. to `(∏ᵢ cᵢ) ∫h` under
-ergodicity (their a.e. value is the integral); (ii) a coboundary `h = g - g ∘ τ x` has box-sum
-boundary of size `O(N^{d-1})`, so its average tends to `0 = ∫h`.  The density assembly (finite sums
-plus the maximal inequality on the approximation error) is the remaining named step. -/
-def AnchoredBoxDenseCases (d : ℕ) : Prop :=
-  (∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-      (τ : Site d → Ω → Ω) (h : Ω → ℝ) (c : Fin d → ℝ),
-      (∀ z ω, h (τ z ω) = h ω) →
-      (∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => anchoredBoxAvgMean h τ c N ω) atTop
-        (𝓝 ((∏ i, c i) * ∫ ω, h ω ∂μ)))) ∧
-  (∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-      (τ : Site d → Ω → Ω) (x : Site d) (g : Ω → ℝ) (c : Fin d → ℝ),
-      (∀ᵐ ω ∂μ, Tendsto (fun N : ℕ =>
-        anchoredBoxAvgMean (fun ω => g ω - g (τ x ω)) τ c N ω) atTop (𝓝 0)))
-
-
-
 omit [MeasurableSpace Ω] in
 /-- **Coboundary model case (algebraic telescoping).**  For `h = g - g ∘ τ x`, the box sum is the
 difference of the box sum of `g` and the sum of `g ∘ τ` over the shifted box (written as `x + y`):
@@ -262,20 +202,6 @@ def CoboundaryBound (d : ℕ) : Prop :=
     (j : Fin d) (_hcj : 0 < c j) (ω : Ω) (N : ℕ),
     |∑ y ∈ anchoredBox c N, (g (τ y ω) - g (τ (unit j) (τ y ω)))| ≤
       2 * M * ∏ i ∈ Finset.univ.erase j, ((⌈(N : ℝ) * c i⌉).toNat : ℝ)
-
-
-/-- **Step (iii), the `limsup` comparison.**  For every `h` and every `h'`, a.e.
-`limsup_N |A_N h - (∏c)∫h| ≤ (⨆N |A_N (h - h')|) + |(∏c)∫(h - h')|`.  The invariant and coboundary
-cases give `limsup_N |A_N h' - (∏c)∫h'| = 0`, and the `Lᵖ` density of the span lets
-`∫ |(h - h') - ∫(h - h')|ᵖ → 0`, so the `limsup` vanishes. -/
-def AnchoredBoxLimsupBound (d : ℕ) (c : Fin d → ℝ) : Prop :=
-  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (τ : Site d → Ω → Ω) (h h' : Ω → ℝ),
-    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) → ∀ ω,
-      ENNReal.ofReal (limsup (fun N : ℕ =>
-          |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) atTop) ≤
-        (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (h - h') τ c N ω|) +
-          ENNReal.ofReal |(∏ i, c i) * (∫ ω, h ω ∂μ - ∫ ω, h' ω ∂μ)|
 
 
 /-- **The two-face cardinality bound.**  The symmetric difference of `anchoredBox c N` and its unit
@@ -480,14 +406,6 @@ theorem coboundaryBound (d : ℕ) : CoboundaryBound d := by
       push_cast
       ring
 
-/-! ## ERRATUM: `AnchoredBoxLimsupBound` is false as stated
-
-The standalone step-(c) `Prop` at line 223 carries only additivity, so it applies to the
-identity action.  With `h = h'` an indicator and a Dirac measure the left side is `1/2` and the
-right side is `0`.  The fix is to restrict `h'` to the dense class on which
-`avg_N h' → (∏c) ∫h'` is *known* (measure preservation is not enough: the identity action is
-measure preserving). -/
-
 omit [MeasurableSpace Ω] in
 /-- The anchored-box average at scale `0` vanishes when `d ≥ 1`. -/
 theorem anchoredBoxAvgMean_zero {d : ℕ} (hd : 1 ≤ d) (h : Ω → ℝ) (τ : Site d → Ω → Ω)
@@ -500,198 +418,6 @@ theorem anchoredBoxAvgMean_zero {d : ℕ} (hd : 1 ≤ d) (h : Ω → ℝ) (τ : 
       linarith)
   rw [h0, zero_mul]
 
-/-- **`AnchoredBoxLimsupBound` is false as stated.**  On `Bool` with the Dirac measure at
-`false`, the identity action, `h = h' = 1_{false}`, `d = 1`, `c = 1/2`, the left side of the
-claimed inequality at `true` is `1/2` while the right side is `0`. -/
-theorem not_anchoredBoxLimsupBound :
-    ¬ AnchoredBoxLimsupBound 1 (fun _ => (1 / 2 : ℝ)) := by
-  intro H
-  let h : Bool → ℝ := fun b => if b then 0 else 1
-  have hineq := H (Ω := Bool) (Measure.dirac false) (fun _ => id) h h
-      (fun _ _ _ => rfl) true
-  have hA : ∀ N : ℕ,
-      anchoredBoxAvgMean (d := 1) h (fun _ => id) (fun _ => (1 / 2 : ℝ)) N true = 0 := by
-    intro N
-    simp [anchoredBoxAvgMean, h]
-  have hseq : (fun N : ℕ => |anchoredBoxAvgMean (d := 1) h (fun _ => id)
-        (fun _ => (1 / 2 : ℝ)) N true -
-        (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ b, h b ∂Measure.dirac false|) =
-      fun _ => (1 / 2 : ℝ) := by
-    funext N
-    rw [hA N]
-    simp [h]
-  have hLHS : ENNReal.ofReal (limsup (fun N : ℕ =>
-        |anchoredBoxAvgMean (d := 1) h (fun _ => id) (fun _ => (1 / 2 : ℝ)) N true -
-          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ b, h b ∂Measure.dirac false|) atTop) =
-      ENNReal.ofReal (1 / 2) := by
-    rw [hseq]
-    simp
-  have hRHS : (⨆ N : ℕ, ENNReal.ofReal
-        |anchoredBoxAvgMean (d := 1) (h - h) (fun _ => id) (fun _ => (1 / 2 : ℝ)) N true|) +
-      ENNReal.ofReal |(∏ _i : Fin 1, (1 / 2 : ℝ)) *
-        (∫ b, h b ∂Measure.dirac false - ∫ b, h b ∂Measure.dirac false)| = 0 := by
-    simp [anchoredBoxAvgMean, h]
-  rw [hLHS, hRHS] at hineq
-  exact (not_le_of_gt (ENNReal.ofReal_pos.mpr (by norm_num : (0 : ℝ) < 1 / 2))) hineq
-
-/-- **`AnchoredBoxMaximal` is *also* false as stated.**  The defect is the box **cardinality**:
-`#∏ᵢ[0,⌈N cᵢ⌉) = ∏ᵢ⌈N cᵢ⌉` equals `N^d ∏ᵢ cᵢ` only asymptotically, so the box average of a
-constant function is not `∏c`.  With the constant `h = 1`, `d = 1`, `c = 1/2`, the box at
-`N = 1` is `{0}` (cardinality `1`), so `anchoredBoxAvgMean h id c 1 () = 1` while
-`(∏c)∫h = 1/2`; the left side is therefore at least `1/4` while the right side `∫ |h - ∫h|ᵖ = 0`.
-(The `N = 0` term, where `anchoredBoxAvgMean _ _ _ 0 _ = 0`, is a further witness, but it is *not*
-the root cause: restricting to `N ≥ 1` does not repair the statement — see
-`not_anchoredBoxMaximal_ge_one`.) -/
-theorem not_anchoredBoxMaximal :
-    ¬ AnchoredBoxMaximal 1 (fun _ => (1 / 2 : ℝ)) 2 := by
-  intro H
-  obtain ⟨C, _hC0, hC⟩ := H (fun _ => by norm_num)
-      (Ω := Unit) (Measure.dirac ()) (fun _ => id)
-      (fun _ => MeasurePreserving.id (Measure.dirac ()))
-      (fun _ _ _ => rfl)
-  have hineq := hC (fun _ => (1 : ℝ)) measurable_const ⟨(1 : ℝ), by norm_num, fun _ => by simp⟩
-  simp only [ENNReal.rpow_two] at hineq
-  have hint : ∫ _ω : Unit, (1 : ℝ) ∂Measure.dirac () = 1 := by
-    rw [MeasureTheory.integral_dirac]
-  have hceil : ⌈(2 : ℝ)⁻¹⌉ = 1 := by
-    rw [Int.ceil_eq_iff]
-    norm_num
-  have hcard : (anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1).card = 1 := by
-    rw [anchoredBox, Fintype.card_piFinset]
-    simp [Int.card_Ico, hceil]
-  have hsum : (∑ x ∈ anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1,
-      (fun _ => (1 : ℝ)) ((fun _ => id) x ())) = 1 := by
-    have hconst : ∀ x ∈ anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1,
-        (fun _ => (1 : ℝ)) ((fun _ => id) x ()) = (1 : ℝ) := fun x _ => rfl
-    rw [Finset.sum_congr rfl hconst, Finset.sum_const, hcard]
-    simp
-  have hbox : anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-      (fun _ => (1 / 2 : ℝ)) 1 () = 1 := by
-    rw [anchoredBoxAvgMean, hsum]
-    norm_num
-  have hRHS : ENNReal.ofReal C * ∫⁻ _ω : Unit,
-      (ENNReal.ofReal |(1 : ℝ) - ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
-        ∂Measure.dirac () = 0 := by
-    rw [hint]
-    simp
-  have hpow : ENNReal.ofReal (1 / 4) = (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ) := by
-    rw [sq, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1 / 2)]
-    norm_num
-  have hpoint : ENNReal.ofReal (1 / 4) ≤ ∫⁻ _ω : Unit,
-      (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-          (fun _ => id) (fun _ => (1 / 2 : ℝ)) N _ω -
-          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
-        ∂Measure.dirac () := by
-    rw [MeasureTheory.lintegral_dirac]
-    have h1 : ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-        (fun _ => (1 / 2 : ℝ)) 1 () -
-        (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()| = ENNReal.ofReal (1 / 2) := by
-      rw [hbox, hint]
-      norm_num
-    rw [hpow, ← h1]
-    exact ENNReal.pow_le_pow_left (le_iSup (fun N : ℕ => ENNReal.ofReal
-      |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-        (fun _ => (1 / 2 : ℝ)) N () -
-        (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) 1)
-  have hcontra : ENNReal.ofReal (1 / 4) ≤ 0 := by
-    calc
-      ENNReal.ofReal (1 / 4) ≤ ∫⁻ _ω : Unit,
-          (⨆ N : ℕ, ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-            (fun _ => id) (fun _ => (1 / 2 : ℝ)) N _ω -
-            (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
-          ∂Measure.dirac () := hpoint
-      _ ≤ ENNReal.ofReal C * ∫⁻ _ω : Unit,
-            (ENNReal.ofReal |(1 : ℝ) - ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
-              ∂Measure.dirac () := hineq
-      _ = 0 := hRHS
-  exact (not_le_of_gt (ENNReal.ofReal_pos.mpr (by norm_num : (0 : ℝ) < 1 / 4))) hcontra
-
-/-- **`AnchoredBoxMaximal` with the supremum restricted to `N ≥ 1`.**  This is the natural
-"repair" of the `N = 0` anomaly, but it is still false. -/
-def AnchoredBoxMaximalGeOne (d : ℕ) (c : Fin d → ℝ) (p : ℝ) : Prop :=
-  (∀ i, 0 ≤ c i) →
-  ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (τ : Site d → Ω → Ω),
-    (∀ z, MeasurePreserving (τ z) μ μ) →
-    (∀ z w ω, τ (z + w) ω = τ z (τ w ω)) →
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (h : Ω → ℝ), Measurable h →
-      (∃ M : ℝ, 0 ≤ M ∧ ∀ x, |h x| ≤ M) →
-      ∫⁻ ω, (⨆ N : ℕ, ⨆ (_ : 1 ≤ N),
-          ENNReal.ofReal |anchoredBoxAvgMean h τ c N ω - (∏ i, c i) * ∫ ω, h ω ∂μ|) ^ p ∂μ ≤
-        ENNReal.ofReal C *
-          ∫⁻ ω, (ENNReal.ofReal |h ω - ∫ ω, h ω ∂μ|) ^ p ∂μ
-
-/-- **The `N ≥ 1` repair of `AnchoredBoxMaximal` is also false.**  The witness is at `N = 1`
-(box `{0}`, average `1`, mean `1/2`), so the `N = 0` term was a red herring *for the repair*: the
-real defect is that `#∏ᵢ[0,⌈N cᵢ⌉) = ∏ᵢ⌈N cᵢ⌉` differs from `N^d ∏ᵢ cᵢ` at every finite `N`,
-and that discrepancy is invisible to the right-hand side built from the centred function. -/
-theorem not_anchoredBoxMaximal_ge_one :
-    ¬ AnchoredBoxMaximalGeOne 1 (fun _ => (1 / 2 : ℝ)) 2 := by
-  intro H
-  obtain ⟨C, _hC0, hC⟩ := H (fun _ => by norm_num)
-      (Ω := Unit) (Measure.dirac ()) (fun _ => id)
-      (fun _ => MeasurePreserving.id (Measure.dirac ()))
-      (fun _ _ _ => rfl)
-  have hineq := hC (fun _ => (1 : ℝ)) measurable_const ⟨(1 : ℝ), by norm_num, fun _ => by simp⟩
-  simp only [ENNReal.rpow_two] at hineq
-  have hint : ∫ _ω : Unit, (1 : ℝ) ∂Measure.dirac () = 1 := by
-    rw [MeasureTheory.integral_dirac]
-  have hceil : ⌈(2 : ℝ)⁻¹⌉ = 1 := by rw [Int.ceil_eq_iff]; norm_num
-  have hcard : (anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1).card = 1 := by
-    rw [anchoredBox, Fintype.card_piFinset]
-    simp [Int.card_Ico, hceil]
-  have hsum : (∑ x ∈ anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1,
-      (fun _ => (1 : ℝ)) ((fun _ => id) x ())) = 1 := by
-    have hconst : ∀ x ∈ anchoredBox (fun _ : Fin 1 => (1 / 2 : ℝ)) 1,
-        (fun _ => (1 : ℝ)) ((fun _ => id) x ()) = (1 : ℝ) := fun x _ => rfl
-    rw [Finset.sum_congr rfl hconst, Finset.sum_const, hcard]
-    simp
-  have hbox : anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-      (fun _ => (1 / 2 : ℝ)) 1 () = 1 := by
-    rw [anchoredBoxAvgMean, hsum]
-    norm_num
-  have h1 : ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-      (fun _ => (1 / 2 : ℝ)) 1 () -
-      (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()| = ENNReal.ofReal (1 / 2) := by
-    rw [hbox, hint]
-    norm_num
-  have hpow : ENNReal.ofReal (1 / 4) = (ENNReal.ofReal (1 / 2)) ^ (2 : ℕ) := by
-    rw [sq, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1 / 2)]
-    norm_num
-  have hRHS : ENNReal.ofReal C * ∫⁻ _ω : Unit,
-      (ENNReal.ofReal |(1 : ℝ) - ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
-        ∂Measure.dirac () = 0 := by
-    rw [hint]
-    simp
-  have hpoint : ENNReal.ofReal (1 / 4) ≤ ∫⁻ _ω : Unit,
-      (⨆ N : ℕ, ⨆ (_ : 1 ≤ N), ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ))
-          (fun _ => id) (fun _ => (1 / 2 : ℝ)) N _ω -
-          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
-        ∂Measure.dirac () := by
-    rw [MeasureTheory.lintegral_dirac, hpow]
-    have hle : ENNReal.ofReal (1 / 2) ≤ ⨆ N : ℕ, ⨆ (_ : 1 ≤ N),
-        ENNReal.ofReal |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-          (fun _ => (1 / 2 : ℝ)) N () -
-          (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()| := by
-      rw [← h1]
-      exact le_trans (le_iSup (fun _ : 1 ≤ (1 : ℕ) => ENNReal.ofReal
-          |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-            (fun _ => (1 / 2 : ℝ)) 1 () -
-            (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) le_rfl)
-        (le_iSup (fun N : ℕ => ⨆ (_ : 1 ≤ N), ENNReal.ofReal
-          |anchoredBoxAvgMean (d := 1) (fun _ => (1 : ℝ)) (fun _ => id)
-            (fun _ => (1 / 2 : ℝ)) N () -
-            (∏ _i : Fin 1, (1 / 2 : ℝ)) * ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) 1)
-    exact ENNReal.pow_le_pow_left hle
-  have hcontra : ENNReal.ofReal (1 / 4) ≤ 0 := by
-    calc
-      ENNReal.ofReal (1 / 4) ≤ _ := hpoint
-      _ ≤ ENNReal.ofReal C * ∫⁻ _ω : Unit,
-            (ENNReal.ofReal |(1 : ℝ) - ∫ _ω, (1 : ℝ) ∂Measure.dirac ()|) ^ (2 : ℕ)
-              ∂Measure.dirac () := hineq
-      _ = 0 := hRHS
-  exact (not_le_of_gt (ENNReal.ofReal_pos.mpr (by norm_num : (0 : ℝ) < 1 / 4))) hcontra
-
 end LatticeProb
 
 #print axioms LatticeProb.anchoredBoxMaximal_ae_lt_top
@@ -702,9 +428,6 @@ end LatticeProb
 #print axioms LatticeProb.sum_shift_anchoredBox
 #print axioms LatticeProb.coboundaryBound
 #print axioms LatticeProb.anchoredBoxAvgMean_zero
-#print axioms LatticeProb.not_anchoredBoxLimsupBound
-#print axioms LatticeProb.not_anchoredBoxMaximal
-#print axioms LatticeProb.not_anchoredBoxMaximal_ge_one
 #print axioms LatticeProb.AnchoredBoxMaximalCentred
 #print axioms LatticeProb.AnchoredBoxDensityUpgradeCentred
 #print axioms LatticeProb.AnchoredBoxErgodic_of_MaximalMeanCentred

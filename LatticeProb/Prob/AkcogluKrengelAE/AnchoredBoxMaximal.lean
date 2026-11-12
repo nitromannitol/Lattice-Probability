@@ -5,18 +5,15 @@ import LatticeProb.Prob.AkcogluKrengelAE.Assembly
 import LatticeProb.Prob.AkcogluKrengel
 
 /-!
-# The historical anchored-box maximal predicate
+# The normalized anchored-box average
 
 The maximal-inequality directory
 proves a maximal inequality only for the **anchored-cube** set function
 (`LatticeProb.measureReal_exists_heavy_le_akMaxConst_mul_div`,
 `MaximalInequalityCore.lean:443`) and a cube tiling bound
 (`LatticeProb.cubeRatio_le_gridAvg_add_defect`, `UpperBound.lean:103`).  Neither covers
-coordinate-dependent boxes `∏ᵢ [0, ⌈N cᵢ⌉)`.
-
-The historical `AnchoredBoxMaximal` predicate is imported from `AnchoredBoxMean`, which also
-proves `not_anchoredBoxMaximal`: the predicate is false because the finite box cardinality need
-not equal `N^d ∏ᵢ cᵢ`. This module retains the normalized average `anchoredBoxAvg`.
+coordinate-dependent boxes `∏ᵢ [0, ⌈N cᵢ⌉)`.  This module provides the normalized average
+`anchoredBoxAvg` over such boxes.
 -/
 
 open MeasureTheory Filter Topology
