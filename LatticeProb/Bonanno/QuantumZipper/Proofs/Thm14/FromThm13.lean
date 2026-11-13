@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.Thm14.FromThm13 at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module QuantumZipper.Proofs.Thm14.FromThm13 at commit fdb5cad; only the module paths of local imports are changed.
+   Declarations, examples and checks that the copied results do not use are omitted. -/
 import LatticeProb.Bonanno.QuantumZipper.Statements.Thm14
 import LatticeProb.Bonanno.QuantumZipper.Blueprint.External2
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WeldingUniqueness
@@ -7,19 +8,23 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.Loewner.Algebra
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Thm14.DoubledHull
 
 /-!
-# Theorem 1.4(a) from Theorem 1.3 (blueprint node C1, part (a))
+# Lemmas for Theorem 1.4(a) (blueprint node C1, part (a))
 
-Sheffield, *Conformal weldings of random surfaces*, §1.4. For almost every `ω`:
+Sheffield, *Conformal weldings of random surfaces*, §1.4. Deterministic and probabilistic
+ingredients of the identification of the welding of the reverse SLE hull:
 
-1. the reverse SLE hull `revHull W T` is a simple curve hull: `revHull W T` is the forward hull
-   of the time-reversed increment `s ↦ W(T-s) - W(T)` (A1(c)), which is `√κ` times the
-   time-reversed Brownian motion `revBM B T` (proved here to be a Brownian motion), so
-   Rohde–Schramm (`RohdeSchrammSimple`) applies;
-2. the doubled hull is removable (`RohdeSchrammHolder` + `JonesSmirnovRemovable`);
-3. the second clause of Theorem 1.3, together with the Carathéodory boundary correspondence
-   (`RevMapCaratheodory`) and the regularity of `ν_h` (`RevCouplingBoundaryMeasureRegular`),
-   gives `weldingHom W T = weldR (√κ) h` on `[0₋, 0]`;
-4. deterministic welding uniqueness (`revHull_eq_of_welding_eq`, A3) concludes.
+1. the forward hull at time `T` depends only on the driver on `[0, T]`
+   (`fwdHull_eq_of_eqOn`), and the trace of a simple chord on `(0, T]` is a simple curve hull
+   (`isSimpleCurveHull_image_Ioc`);
+2. the time reversal `revBM B T` of a Brownian motion is a Brownian motion
+   (`isBrownianReal_revBM`), and the driver of `revBM B T` is the time-reversed increment of
+   the driver of `B` (`drive_revBM`);
+3. for a boundary measure `ν` without atoms, positive on open intervals and finite on compact
+   intervals, the measures of `[c, r]` and `[r, c]` are continuous in `r`;
+4. given a Carathéodory extension of the reverse Loewner map (`Blueprint.IsCaratheodoryRevExt`)
+   and such a measure `ν` whose quantum lengths agree at identified boundary points, the
+   welding homeomorphism is `s ↦ inf {r ≥ 0 | ν[s, 0] ≤ ν[0, r]}` on `[0₋, 0]`
+   (`weldingHom_eq_sInf_of_car`), and `0₋ < 0` for a nonempty hull (`zeroMinus_neg_of_car`).
 -/
 
 noncomputable section
@@ -152,22 +157,6 @@ theorem continuous_drive {κ : ℝ} {B : ℝ≥0 → Ω → ℝ} {ω : Ω} (h : 
     Continuous (drive κ B ω) := by
   unfold drive
   exact continuous_const.mul (h.comp continuous_real_toNNReal)
-
-/-- **Step (i).** Almost surely the reverse SLE hull at time `T` is a simple curve hull. -/
-theorem ae_isSimpleCurveHull_revHull (hRSS : Blueprint.RohdeSchrammSimple) {κ : ℝ}
-    (hκ0 : 0 < κ) (hκ4 : κ < 4) {T : ℝ} (hT : 0 < T) {Ω : Type} [MeasurableSpace Ω]
-    (P : Measure Ω) [IsProbabilityMeasure P] (B : ℝ≥0 → Ω → ℝ) (hB : IsBrownianReal B P) :
-    ∀ᵐ ω ∂P, IsSimpleCurveHull (revHull (drive κ B ω) T) := by
-  have hB' := isBrownianReal_revBM hB T.toNNReal
-  filter_upwards [hRSS κ hκ0 hκ4.le P _ hB', hB.cont, hB'.cont, hB.eval_zero_ae_eq_zero]
-    with ω hrs hc hc' h0
-  obtain ⟨hchord, hhull⟩ := hrs
-  have hWc : Continuous (drive κ B ω) := continuous_drive hc
-  have hW0 : drive κ B ω 0 = 0 := by simp [drive, h0]
-  rw [LoewnerAlgebra.revHull_eq_fwdHull_timeRev _ hWc hW0 hT,
-    fwdHull_eq_of_eqOn (by fun_prop) (continuous_drive hc') hT.le (drive_revBM B ω),
-    hhull T hT.le]
-  exact isSimpleCurveHull_image_Ioc hchord hT
 
 /-! ### Measure-theoretic lemmas for the welding identification -/
 
@@ -514,35 +503,6 @@ theorem zeroMinus_neg_of_car {W : ℝ → ℝ} {T : ℝ} {F : ℂ → ℂ}
     have : zeroPlus W T = 0 := by rw [← hF.2.2.2.2.1, h, hφ0]
     linarith [h2.1, h2.2]
   · exact h
-
-/-! ### The main implication -/
-
-/-- **Theorem 1.4(a) from Theorem 1.3.** -/
-theorem theorem1_4a_of_theorem1_3 (h13 : theorem1_3) (hRSH : Blueprint.RohdeSchrammHolder)
-    (hJS : Blueprint.JonesSmirnovRemovable) (hCar : Blueprint.RevMapCaratheodory)
-    (hRSS : Blueprint.RohdeSchrammSimple)
-    (hReg : Blueprint.RevCouplingBoundaryMeasureRegular) : theorem1_4a := by
-  intro κ hκ0 hκ4 T hT Ω _ P _ B X hB hX hind
-  filter_upwards [h13 κ hκ0 hκ4 T hT P B X hB hX hind, hRSH κ hκ0 hκ4 T hT P B hB,
-    ae_isSimpleCurveHull_revHull hRSS hκ0 hκ4 hT P B hB, hReg κ hκ0 hκ4 T hT P B X hB hX hind,
-    hB.cont, hB.eval_zero_ae_eq_zero] with ω h13ω hhold hsimple hregω hc h0
-  obtain ⟨c1, c2, -⟩ := h13ω
-  obtain ⟨hatom, hpos, hfin⟩ := hregω
-  have hWc : Continuous (drive κ B ω) := continuous_drive hc
-  have hW0 : drive κ B ω 0 = 0 := by simp [drive, h0]
-  obtain ⟨F, hF⟩ := hCar _ hWc hW0 T hT hsimple
-  have hEq := weldingHom_eq_sInf_of_car hWc hT hF hatom hpos hfin c1
-    (fun xm xp h1 h2 h3 h4 => c2 xm xp h1 h2 h3 (Set.mem_insert_of_mem _ h4))
-  have hne : (revHull (drive κ B ω) T).Nonempty := by
-    obtain ⟨γ, -, -, -, -, hK⟩ := id hsimple
-    exact ⟨γ 1, by rw [hK]; exact ⟨1, ⟨one_pos, le_rfl⟩, rfl⟩⟩
-  refine ⟨⟨zeroMinus_neg_of_car hF hne, fun s hs => hEq s hs⟩, ?_⟩
-  intro T' hT' W' hW' hW'0 hK' hzm hweld
-  have hrem := hJS _ hhold (interior_doubledHull_eq_empty hsimple)
-  refine revHull_eq_of_welding_eq hCar hWc hW' hW0 hW'0 hT hT' hsimple hK' hzm.symm ?_ hrem
-  intro s hs
-  rw [hEq s hs, hweld s hs]
-  rfl
 
 end Thm14FromThm13
 

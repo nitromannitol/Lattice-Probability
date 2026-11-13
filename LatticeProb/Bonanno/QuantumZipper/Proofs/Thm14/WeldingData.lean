@@ -1,5 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.Thm14.WeldingData at commit fdb5cad; only the module paths of local imports are changed. -/
+   source module QuantumZipper.Proofs.Thm14.WeldingData at commit fdb5cad; only the module paths of local imports are changed.
+   Declarations, examples and checks that the copied results do not use are omitted. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Thm14.Determination
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Loewner.ReverseFlow
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Loewner.ForwardFlow
@@ -586,20 +587,6 @@ theorem exists_weldingGraph_of_goodSet (hCar : Blueprint.RevMapCaratheodory) {T 
     exact (hagree hq).symm
   rw [h1, h2]
   exact hG'mem _ hmem
-
-/-- The blueprint hypotheses make almost every Brownian driver good: continuous, started at
-`0`, with a simple and removable reverse hull at time `T`. -/
-theorem ae_good_drive (hRSS : Blueprint.RohdeSchrammSimple)
-    (hRSH : Blueprint.RohdeSchrammHolder) (hJS : Blueprint.JonesSmirnovRemovable) {κ : ℝ}
-    (hκ0 : 0 < κ) (hκ4 : κ < 4) {T : ℝ} (hT : 0 < T) {Ω : Type} [MeasurableSpace Ω]
-    (P : Measure Ω) [IsProbabilityMeasure P] (B : ℝ≥0 → Ω → ℝ) (hB : IsBrownianReal B P) :
-    ∀ᵐ ω ∂P, Continuous (drive κ B ω) ∧ drive κ B ω 0 = 0 ∧
-      IsSimpleCurveHull (revHull (drive κ B ω) T) ∧
-      IsConformallyRemovable (closure (revHull (drive κ B ω) T) ∪
-        conj '' closure (revHull (drive κ B ω) T)) := by
-  filter_upwards [Thm14FromThm13.ae_isSimpleCurveHull_revHull hRSS hκ0 hκ4 hT P B hB,
-    hRSH κ hκ0 hκ4 T hT P B hB, hB.cont, hB.eval_zero_ae_eq_zero] with ω hs hh hc h0
-  exact ⟨Thm14FromThm13.continuous_drive hc, by simp [drive, h0], hs, hJS _ hh (interior_doubledHull_eq_empty hs)⟩
 
 end Thm14WeldingData
 
