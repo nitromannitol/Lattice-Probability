@@ -20,6 +20,11 @@ values, and `Y` is unbounded below, then every straddling pair of `Y` at `v` is 
 chain of straddling pairs has no gap. The proof uses the right continuity of `l ↦ lastBelow X v l`, and its left
 continuity or that of `l ↦ firstBelow X v l` (one of the two endpoints is left continuous at each level, since a
 jump of an endpoint produces a local minimum of `X` at that level).
+
+It suffices that the straddling pairs of `X` at the levels of a dense set are contour pairs of `Y`
+(`straddle_pairs_of_dense`, `exists_level_eq_of_dense_straddle_pairs`): the equality of `Y` at the two ends passes
+to the limit from above, and the strict inequality inside follows from a dense level whose pair still contains the
+given time.
 -/
 
 set_option autoImplicit false
@@ -187,6 +192,43 @@ theorem isLocalMin_firstBelow (hf : Continuous f) (hl : l < f v) (hb : ∃ b, v 
   have h2 : firstBelow f v (f w) ≤ w := firstBelow_le hw.1.le le_rfl
   linarith [hw.2]
 
+/-- **Right continuity of the right endpoint.** -/
+theorem exists_firstBelow_sub_lt (hf : Continuous f) (hb : ∃ b, v ≤ b ∧ f b ≤ l) {ε : ℝ}
+    (hε : 0 < ε) :
+    ∃ l₁, l < l₁ ∧ ∀ l', l ≤ l' → l' < l₁ → firstBelow f v l - ε < firstBelow f v l' := by
+  obtain ⟨b, hvb, hfb⟩ := hb
+  by_cases hK : firstBelow f v l - ε < v
+  · refine ⟨l + 1, by linarith, fun l' hll' _ => ?_⟩
+    exact lt_of_lt_of_le hK (firstBelow_mem hf ⟨b, hvb, hfb.trans hll'⟩).1
+  push Not at hK
+  obtain ⟨p, hp, hpmin⟩ := (isCompact_Icc (a := v) (b := firstBelow f v l - ε)).exists_isMinOn
+    (nonempty_Icc.mpr hK) hf.continuousOn
+  have hlp : l < f p := lt_apply_of_lt_firstBelow hp.1 (by linarith [hp.2])
+  refine ⟨f p, hlp, fun l' hll' hl'p => ?_⟩
+  by_contra h
+  push Not at h
+  obtain ⟨hvt', hft'⟩ := firstBelow_mem hf ⟨b, hvb, hfb.trans hll'⟩
+  have := isMinOn_iff.mp hpmin _ ⟨hvt', h⟩
+  linarith
+
+theorem lastBelow_lt_lastBelow (hf : Continuous f) {l' : ℝ} (hll' : l < l') (hl' : l' < f v)
+    (ha : ∃ a ≤ v, f a ≤ l) : lastBelow f v l < lastBelow f v l' := by
+  obtain ⟨a, hav, hfa⟩ := ha
+  refine lt_of_le_of_ne (lastBelow_mono hll'.le ⟨a, hav, hfa⟩) fun h => ?_
+  have h1 := apply_lastBelow hf (hll'.trans hl') ⟨a, hav, hfa⟩
+  have h2 := apply_lastBelow hf hl' ⟨a, hav, hfa.trans hll'.le⟩
+  rw [h] at h1
+  linarith
+
+theorem firstBelow_lt_firstBelow (hf : Continuous f) {l' : ℝ} (hll' : l < l') (hl' : l' < f v)
+    (hb : ∃ b, v ≤ b ∧ f b ≤ l) : firstBelow f v l' < firstBelow f v l := by
+  obtain ⟨b, hvb, hfb⟩ := hb
+  refine lt_of_le_of_ne (firstBelow_anti hll'.le ⟨b, hvb, hfb⟩) fun h => ?_
+  have h1 := apply_firstBelow hf (hll'.trans hl') ⟨b, hvb, hfb⟩
+  have h2 := apply_firstBelow hf hl' ⟨b, hvb, hfb.trans hll'.le⟩
+  rw [← h] at h1
+  linarith
+
 end OneFunction
 
 /-- **No-gap lemma for chains of straddling pairs.** Let `X` and `Y` be continuous. Suppose that `X` is below every
@@ -321,5 +363,115 @@ theorem exists_level_eq_of_straddle_pairs {X Y : ℝ → ℝ} (hX : Continuous X
   have hu := lastBelow_eq_and_firstBelow_eq (f := Y) hsv hvt hp1 hp2
   rw [heq] at hu
   exact ⟨l₀, hl₀v, hu.1.symm, hu.2.symm⟩
+
+/-- The value of `Y` at the left endpoint is right continuous in the level. -/
+theorem exists_dist_comp_lastBelow_lt {X Y : ℝ → ℝ} (hX : Continuous X) (hY : Continuous Y) {v l : ℝ}
+    (ha : ∃ a ≤ v, X a ≤ l) {ε : ℝ} (hε : 0 < ε) :
+    ∃ l₁, l < l₁ ∧ ∀ l', l ≤ l' → l' < l₁ → dist (Y (lastBelow X v l')) (Y (lastBelow X v l)) < ε := by
+  obtain ⟨δ, hδ, hδY⟩ :=
+    Metric.continuousAt_iff.mp (hY.continuousAt : ContinuousAt Y (lastBelow X v l)) ε hε
+  obtain ⟨l₁, hl₁, h⟩ := exists_lastBelow_lt_add hX ha hδ
+  refine ⟨l₁, hl₁, fun l' hll' hl'l₁ => hδY ?_⟩
+  have h1 := lastBelow_mono hll' ha
+  have h2 := h l' hll' hl'l₁
+  rw [Real.dist_eq, abs_lt]; constructor <;> linarith
+
+/-- The value of `Y` at the right endpoint is right continuous in the level. -/
+theorem exists_dist_comp_firstBelow_lt {X Y : ℝ → ℝ} (hX : Continuous X) (hY : Continuous Y) {v l : ℝ}
+    (hb : ∃ b, v ≤ b ∧ X b ≤ l) {ε : ℝ} (hε : 0 < ε) :
+    ∃ l₁, l < l₁ ∧ ∀ l', l ≤ l' → l' < l₁ → dist (Y (firstBelow X v l')) (Y (firstBelow X v l)) < ε := by
+  obtain ⟨δ, hδ, hδY⟩ :=
+    Metric.continuousAt_iff.mp (hY.continuousAt : ContinuousAt Y (firstBelow X v l)) ε hε
+  obtain ⟨l₁, hl₁, h⟩ := exists_firstBelow_sub_lt hX hb hδ
+  refine ⟨l₁, hl₁, fun l' hll' hl'l₁ => hδY ?_⟩
+  have h1 := firstBelow_anti hll' hb
+  have h2 := h l' hll' hl'l₁
+  rw [Real.dist_eq, abs_lt]; constructor <;> linarith
+
+/-- **Contour pairs on a dense set of levels extend to all levels.** If the straddling pair of `X` at `v` at every
+level of a dense set `D` below `X v` is a contour pair of `Y`, then so is the straddling pair at every level below
+`X v`: equality at the ends passes to the limit along `D` from above, and strictness inside follows from the
+strictness at a level of `D` whose pair still contains the given time. -/
+theorem straddle_pairs_of_dense {X Y : ℝ → ℝ} (hX : Continuous X) (hY : Continuous Y) {v : ℝ}
+    (hXlow : ∀ l, (∃ a ≤ v, X a ≤ l) ∧ ∃ b, v ≤ b ∧ X b ≤ l) {D : Set ℝ} (hD : Dense D)
+    (hpairD : ∀ d ∈ D, d < X v → Y (lastBelow X v d) = Y (firstBelow X v d) ∧
+      ∀ u ∈ Ioo (lastBelow X v d) (firstBelow X v d), Y (lastBelow X v d) < Y u)
+    {l : ℝ} (hl : l < X v) :
+    Y (lastBelow X v l) = Y (firstBelow X v l) ∧
+      ∀ u ∈ Ioo (lastBelow X v l) (firstBelow X v l), Y (lastBelow X v l) < Y u := by
+  have hS := fun l => (hXlow l).1
+  have hT := fun l => (hXlow l).2
+  -- approximation from above along `D`
+  have happrox : ∀ ε > 0, ∃ d ∈ D, l < d ∧ d < X v ∧
+      dist (Y (lastBelow X v d)) (Y (lastBelow X v l)) < ε ∧
+      dist (Y (firstBelow X v d)) (Y (firstBelow X v l)) < ε := by
+    intro ε hε
+    obtain ⟨l₁, hl₁, h₁⟩ := exists_dist_comp_lastBelow_lt hX hY (hS l) hε
+    obtain ⟨l₂, hl₂, h₂⟩ := exists_dist_comp_firstBelow_lt hX hY (hT l) hε
+    obtain ⟨d, hdD, hd⟩ := hD.exists_between (lt_min (lt_min hl₁ hl₂) hl)
+    have hd1 : d < l₁ := hd.2.trans_le ((min_le_left _ _).trans (min_le_left _ _))
+    have hd2 : d < l₂ := hd.2.trans_le ((min_le_left _ _).trans (min_le_right _ _))
+    have hd3 : d < X v := hd.2.trans_le (min_le_right _ _)
+    exact ⟨d, hdD, hd.1, hd3, h₁ d hd.1.le hd1, h₂ d hd.1.le hd2⟩
+  have heq : Y (lastBelow X v l) = Y (firstBelow X v l) := by
+    refine le_antisymm (le_of_forall_pos_lt_add fun ε hε => ?_) (le_of_forall_pos_lt_add fun ε hε => ?_)
+    all_goals
+      obtain ⟨d, hdD, -, hdv, h1, h2⟩ := happrox (ε / 2) (by linarith)
+      have h3 := (hpairD d hdD hdv).1
+      rw [Real.dist_eq, abs_lt] at h1 h2
+      linarith [h1.1, h1.2, h2.1, h2.2]
+  refine ⟨heq, fun u hu => ?_⟩
+  have hsv := lastBelow_lt hX hl (hS l)
+  have hvt := lt_firstBelow hX hl (hT l)
+  obtain ⟨p, hp, hpmin⟩ := (isCompact_Icc (a := min u v) (b := max u v)).exists_isMinOn
+    (nonempty_Icc.mpr min_le_max) hX.continuousOn
+  have hlp : l < X p := by
+    rcases le_total p v with hpv | hvp
+    · exact lt_apply_of_lastBelow_lt (lt_of_lt_of_le (lt_min hu.1 hsv) hp.1) hpv
+    · exact lt_apply_of_lt_firstBelow hvp (lt_of_le_of_lt hp.2 (max_lt hu.2 hvt))
+  obtain ⟨d₁, hd₁D, hd₁⟩ := hD.exists_between hlp
+  have hpv : X p ≤ X v := isMinOn_iff.mp hpmin v ⟨min_le_right _ _, le_max_right _ _⟩
+  have hd₁v : d₁ < X v := hd₁.2.trans_le hpv
+  -- `u` lies strictly inside the straddling pair at level `d₁`
+  have hSu : lastBelow X v d₁ < u := by
+    by_contra h
+    push Not at h
+    obtain ⟨hs, hfs⟩ := lastBelow_mem hX (hS d₁)
+    have := isMinOn_iff.mp hpmin _ ⟨(min_le_left _ _).trans h, hs.trans (le_max_right _ _)⟩
+    linarith [hd₁.2]
+  have huT : u < firstBelow X v d₁ := by
+    by_contra h
+    push Not at h
+    obtain ⟨ht, hft⟩ := firstBelow_mem hX (hT d₁)
+    have := isMinOn_iff.mp hpmin _ ⟨(min_le_right _ _).trans ht, h.trans (le_max_left _ _)⟩
+    linarith [hd₁.2]
+  have hYu := (hpairD d₁ hd₁D hd₁v).2 u ⟨hSu, huT⟩
+  -- the value of `Y` at the left endpoint at level `d₁` is at least its value at level `l`
+  have hge : Y (lastBelow X v l) ≤ Y (lastBelow X v d₁) := by
+    refine le_of_forall_pos_lt_add fun ε hε => ?_
+    obtain ⟨l₁, hl₁, h₁⟩ := exists_dist_comp_lastBelow_lt hX hY (hS l) hε
+    obtain ⟨d, hdD, hd⟩ := hD.exists_between (lt_min hl₁ hd₁.1)
+    have hdd₁ : d < d₁ := hd.2.trans_le (min_le_right _ _)
+    have h1 := h₁ d hd.1.le (hd.2.trans_le (min_le_left _ _))
+    rw [Real.dist_eq, abs_lt] at h1
+    have hSd := lastBelow_lt_lastBelow hX hdd₁ hd₁v (hS d)
+    have hs₁v := lastBelow_lt hX hd₁v (hS d₁)
+    have hvtd := lt_firstBelow hX (hdd₁.trans hd₁v) (hT d)
+    have h2 := (hpairD d hdD (hdd₁.trans hd₁v)).2 _ ⟨hSd, hs₁v.trans hvtd⟩
+    linarith [h1.1]
+  linarith
+
+/-- **No-gap lemma, dense version.** As `exists_level_eq_of_straddle_pairs`, with the contour-pair hypothesis
+required only at the levels of a dense set. -/
+theorem exists_level_eq_of_dense_straddle_pairs {X Y : ℝ → ℝ} (hX : Continuous X) (hY : Continuous Y) {v : ℝ}
+    (hXlow : ∀ l, (∃ a ≤ v, X a ≤ l) ∧ ∃ b, v ≤ b ∧ X b ≤ l)
+    (hvL : ∀ u < v, ∃ w ∈ Ioo u v, X w < X v)
+    (hmin : ∀ p q, p < q → IsLocalMin X p → IsLocalMin X q → X p ≠ X q) {D : Set ℝ} (hD : Dense D)
+    (hpairD : ∀ d ∈ D, d < X v → Y (lastBelow X v d) = Y (firstBelow X v d) ∧
+      ∀ u ∈ Ioo (lastBelow X v d) (firstBelow X v d), Y (lastBelow X v d) < Y u)
+    {m : ℝ} (hm : m < Y v) (hYm : ∃ u, Y u ≤ m) :
+    ∃ l < X v, lastBelow X v l = lastBelow Y v m ∧ firstBelow X v l = firstBelow Y v m :=
+  exists_level_eq_of_straddle_pairs hX hY hXlow hvL hmin
+    (fun _ hl => straddle_pairs_of_dense hX hY hXlow hD hpairD hl) hm hYm
 
 end LatticeProb
