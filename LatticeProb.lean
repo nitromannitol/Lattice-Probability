@@ -888,3 +888,4 @@ import LatticeProb.Sandpile.FLP.Basic
 import LatticeProb.Sandpile.FLP.OneDimensional
 import LatticeProb.Sandpile.FLP.SlabStabilizer
 import LatticeProb.Sandpile.FLP.LowStabilize
+import LatticeProb.External.LevinePeresShell
