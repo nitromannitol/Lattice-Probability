@@ -1,15 +1,13 @@
 /-
-# The `n`-dimensional Ornstein–Uhlenbeck layer for the Gaussian log-Sobolev route
+# The `n`-dimensional Ornstein–Uhlenbeck semigroup
 
-`LatticeProb.GaussianLogSobolev n` (`LatticeProb/External/GaussianLogSobolev.lean`) is the cited
-Gaussian log-Sobolev inequality; `Prob/GaussianLogSobolevOU.lean` lands the `n = 1` Ornstein–Uhlenbeck
-(Mehler) semigroup `ouSemigroup`, the generator `ouGenerator`, and the named open input
-`OUHeatEquation` (`∂_t P_t f = L P_t f` on `ℝ`).
+`Prob/GaussianLogSobolevOU.lean` defines the `n = 1` Ornstein–Uhlenbeck (Mehler) semigroup
+`ouSemigroup`, its generator `ouGenerator`, and the heat equation `OUHeatEquation`
+(`∂_t P_t f = L P_t f` on `ℝ`, proved as `ouHeatEquation_holds` in `Prob/MehlerSmoothing.lean`).
 
-This file continues the route to general `n`.  It defines the `n`-dimensional Mehler semigroup and
-generator and proves the **tensorisation of the generator identity**: on functions of a single
-coordinate the `n`-dimensional heat equation reduces to the `1`-dimensional `OUHeatEquation`.  The
-general case is the single named open input `OUHeatEquationN`.
+This file defines the `n`-dimensional Mehler semigroup and generator and proves the
+**tensorisation of the generator identity**: on functions of a single coordinate the
+`n`-dimensional heat equation reduces to the `1`-dimensional `OUHeatEquation`.
 
 * `ouSemigroupN n t f x = ∫ z, f (fun i => e^{-t} x_i + √(1 - e^{-2t}) z_i) ∂γ_n(z)`,
   `γ_n = Measure.pi (fun _ : Fin n => gaussianReal 0 1)`;
@@ -18,11 +16,9 @@ general case is the single named open input `OUHeatEquationN`.
 * `ouSemigroupN_zero`, `ouSemigroupN_const`, `ouSemigroupN_const_mul` — the structural identities;
 * `ouSemigroupN_comp_eval` — `P_t^{(n)}(g ∘ π_i) = (P_t g) ∘ π_i` (the marginal of the product law);
 * `ouGeneratorN_comp_eval` — `L_n (g ∘ π_i) = (L g) ∘ π_i`;
-* `OUHeatEquationN n` — the named open input (the general heat equation);
 * `ouHeatEquationN_comp_eval` — the tensorisation: the `n`-dimensional heat equation on a
-  coordinate function follows from the `1`-dimensional `OUHeatEquation`.
-
-Nothing is conditional on `sorry`; `OUHeatEquationN` is a named `Prop`, never an axiom.
+  coordinate function follows from the `1`-dimensional `OUHeatEquation`;
+* `ouSemigroupN_prod` — the semigroup factorises on tensor products.
 -/
 import LatticeProb.Prob.GaussianLogSobolevOU
 
@@ -135,21 +131,12 @@ theorem ouGeneratorN_comp_eval (n : ℕ) (i : Fin n) (g : ℝ → ℝ) :
   change g ((Function.update x i y) i) = g y
   rw [Function.update_self]
 
-/-! ### The named open input and its tensorisation -/
-
-/-- **The `n`-dimensional Ornstein–Uhlenbeck heat equation** `∂_t P_t f = L P_t f`, for smooth
-compactly supported `f`.  This is the named open input of the general-`n` OU layer, generalising
-`OUHeatEquation` from `Prob/GaussianLogSobolevOU.lean`. -/
-def OUHeatEquationN (n : ℕ) : Prop :=
-  ∀ f : (Fin n → ℝ) → ℝ, ContDiff ℝ 2 f → HasCompactSupport f →
-    ∀ t : ℝ, 0 < t → ∀ x : Fin n → ℝ,
-      HasDerivAt (fun s => ouSemigroupN n s f x) (ouGeneratorN n (ouSemigroupN n t f) x) t
+/-! ### Tensorisation -/
 
 /-- **The tensorisation of the heat equation.**  On a function of one coordinate, the
 `n`-dimensional heat equation is the `1`-dimensional `OUHeatEquation`: the semigroup and the
 generator both reduce to their `1`-dimensional counterparts by `ouSemigroupN_comp_eval` and
-`ouGeneratorN_comp_eval`.  This is the bounded sub-lemma of the `n`-dimensional OU layer; the
-general case is `OUHeatEquationN`. -/
+`ouGeneratorN_comp_eval`. -/
 theorem ouHeatEquationN_comp_eval (n : ℕ) (h1 : OUHeatEquation)
     (i : Fin n) (g : ℝ → ℝ) (hg : ContDiff ℝ 2 g) (hgc : HasCompactSupport g) :
     ∀ t : ℝ, 0 < t → ∀ x : Fin n → ℝ,

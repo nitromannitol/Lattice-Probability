@@ -1,5 +1,4 @@
-import LatticeProb.Prob.GaussianLogSobolevAssembly
-import LatticeProb.Prob.GaussianLogSobolevOneInput
+import LatticeProb.Prob.GaussianLogSobolevTensor
 import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 import Mathlib.Analysis.Calculus.ContDiff.Convolution
@@ -8,9 +7,11 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 /-!
 # Smooth approximation of densities with Lipschitz logarithm
 
-This file proves the mollification input `LatticeProb.LipschitzLogApprox n` of the regularity
-bridge of the Gaussian log-Sobolev chain, and hence the bridge
-`LatticeProb.GaussianLogSobolevGradToLipschitz n` itself, in every dimension.
+This file states and proves `LatticeProb.LipschitzLogApprox n` in every dimension: a positive
+probability density of the standard Gaussian product law on `Fin n → ℝ` with `C`-Lipschitz
+logarithm and finite entropy is the entropy limit of `C¹` positive densities of mass one whose
+logarithms are again `C`-Lipschitz. It is the approximation step of the proof of
+`LatticeProb.gaussianLogSobolev_holds`.
 
 Let `h > 0` have a `C`-Lipschitz logarithm. For a normalised smooth bump `φ` supported in the ball
 of radius `r`, the convolution `g = φ ⋆ h` satisfies, pointwise,
@@ -27,11 +28,8 @@ dominating function for `q log q`, so the entropies converge by dominated conver
 
 ## Main results
 
+* `LatticeProb.LipschitzLogApprox`: the approximation statement;
 * `LatticeProb.lipschitzLogApprox`: `LipschitzLogApprox n` for every `n`.
-* `LatticeProb.gaussianLogSobolevGradToLipschitz`: `GaussianLogSobolevGradToLipschitz n` for
-  every `n`.
-* `LatticeProb.gaussianLogSobolev_all_of_ouFlow_of_tensorStep` and the primed forms of the
-  `GaussianLogSobolevOneInput` theorems: the chain without the regularity bridge hypothesis.
 -/
 
 noncomputable section
@@ -248,10 +246,35 @@ end LogLipschitzMollify
 
 open LogLipschitzMollify
 
-/-- **The mollification input of the Gaussian log-Sobolev regularity bridge**, in every
-dimension: a positive density with `C`-Lipschitz logarithm and finite entropy under the standard
-Gaussian measure is the entropy limit of `C¹` positive densities of mass one with `C`-Lipschitz
-logarithms. -/
+/-- **Approximation of densities with Lipschitz logarithm.**  A positive density on
+`Fin n → ℝ` whose logarithm is `C`-Lipschitz is the entropy limit of a sequence of `C¹` positive
+densities with the same `C`-Lipschitz logarithm, total mass `1`, and integrable `h`-weighted
+squared gradient of the logarithm. -/
+def LipschitzLogApprox (n : ℕ) : Prop :=
+  ∀ (h : (Fin n → ℝ) → ℝ) (C : NNReal),
+    (∀ x, 0 < h x) →
+    LipschitzWith C (fun x => Real.log (h x)) →
+    Integrable h (Measure.pi fun _ : Fin n => gaussianReal 0 1) →
+    Integrable (fun x => h x * Real.log (h x))
+      (Measure.pi fun _ : Fin n => gaussianReal 0 1) →
+    (∫ x, h x ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) = 1) →
+      ∃ hε : ℕ → (Fin n → ℝ) → ℝ,
+        (∀ k, (∀ x, 0 < hε k x) ∧ ContDiff ℝ 1 (hε k) ∧
+          LipschitzWith C (fun x => Real.log (hε k x)) ∧
+          Integrable (hε k) (Measure.pi fun _ : Fin n => gaussianReal 0 1) ∧
+          Integrable (fun x => hε k x * Real.log (hε k x))
+            (Measure.pi fun _ : Fin n => gaussianReal 0 1) ∧
+          Integrable (fun x => ‖fderiv ℝ (fun y => Real.log (hε k y)) x‖ ^ 2 * hε k x)
+            (Measure.pi fun _ : Fin n => gaussianReal 0 1) ∧
+          (∫ x, hε k x ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) = 1)) ∧
+        Tendsto (fun k => ∫ x, hε k x * Real.log (hε k x)
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) atTop
+          (𝓝 (∫ x, h x * Real.log (h x)
+            ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
+
+/-- **Approximation of densities with Lipschitz logarithm**, in every dimension: a positive
+density with `C`-Lipschitz logarithm and finite entropy under the standard Gaussian measure is the
+entropy limit of `C¹` positive densities of mass one with `C`-Lipschitz logarithms. -/
 theorem lipschitzLogApprox (n : ℕ) : LipschitzLogApprox n := by
   intro h C hpos hlip hint hintlog hmass
   set γ := Measure.pi fun _ : Fin n => gaussianReal 0 1
@@ -294,39 +317,5 @@ theorem lipschitzLogApprox (n : ℕ) : LipschitzLogApprox n := by
     have hq := tendsto_of_tendsto_of_tendsto_of_le_of_le hlo hhi
       (fun k => ((spec k).2.2.2.2.2 x).1) (fun k => ((spec k).2.2.2.2.2 x).2)
     exact (Real.continuous_mul_log.tendsto (h x)).comp hq
-
-/-- **The regularity bridge of the Gaussian log-Sobolev chain**, in every dimension: the Γ-form
-inequality for `C¹` densities implies the frozen Lipschitz-log form. -/
-theorem gaussianLogSobolevGradToLipschitz (n : ℕ) : GaussianLogSobolevGradToLipschitz n :=
-  fun hgrad => gaussianLogSobolevGradToLipschitz_of_approx hgrad (lipschitzLogApprox n) hgrad
-
-/-- **The one-dimensional Gaussian log-Sobolev inequality** from the Γ-form inequality alone:
-`gaussianLogSobolevOne_of_gradOne` without the regularity bridge hypothesis. -/
-theorem gaussianLogSobolevOne_of_gradOne' (hgrad : GaussianLogSobolevGradOne) :
-    GaussianLogSobolevOne :=
-  gaussianLogSobolevOne_of_gradOne hgrad (gaussianLogSobolevGradToLipschitz 1)
-
-/-- `gaussianHerbstBound_of_gradOne` without the regularity bridge hypothesis. -/
-theorem gaussianHerbstBound_of_gradOne' (hone : GaussianLogSobolevGradOne)
-    (hprod : GaussianLogSobolevGradProdStep) (n : ℕ) : GaussianHerbstBound n :=
-  gaussianHerbstBound_of_gradOne hone hprod gaussianLogSobolevGradToLipschitz n
-
-/-- `gaussianLogSobolev_all_of_gradOne` without the regularity bridge hypothesis. -/
-theorem gaussianLogSobolev_all_of_gradOne' (hone : GaussianLogSobolevGradOne)
-    (hprod : GaussianLogSobolevGradProdStep) : ∀ n : ℕ, GaussianLogSobolev n :=
-  gaussianLogSobolev_all_of_gradOne hone hprod gaussianLogSobolevGradToLipschitz
-
-/-- **The Gaussian log-Sobolev inequality in every dimension**, from the one-dimensional
-Ornstein–Uhlenbeck heat-flow contraction and the one-step tensorization; the mollification input
-of `GaussianLogSobolevResidual` is `lipschitzLogApprox`. -/
-theorem gaussianLogSobolev_all_of_ouFlow_of_tensorStep (hflow : GaussianOUFlowContraction)
-    (htensor : GaussianLogSobolevGradTensorStep) : ∀ n : ℕ, GaussianLogSobolev n :=
-  gaussianLogSobolev_all_of_residual ⟨hflow, htensor, lipschitzLogApprox⟩
-
-/-- **The Herbst exponential moment bound in every dimension**, from the one-dimensional
-heat-flow contraction and the one-step tensorization. -/
-theorem gaussianHerbstBound_all_of_ouFlow_of_tensorStep (hflow : GaussianOUFlowContraction)
-    (htensor : GaussianLogSobolevGradTensorStep) (n : ℕ) : GaussianHerbstBound n :=
-  gaussianHerbstBound_all_of_residual ⟨hflow, htensor, lipschitzLogApprox⟩ n
 
 end LatticeProb

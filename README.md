@@ -327,6 +327,15 @@ the field with zero boundary values on a finite set `C` as
   the lattice, bounded by a multiple of the volume, and subadditive when a box
   splits into two boxes, has a volume-normalised mean that converges along the
   cubes `[0, n)^d`.
+* `LatticeProb.anchoredBoxErgodic_holds` and `LatticeProb.rectangleErgodic_holds`:
+  the multiparameter pointwise ergodic theorem along anchored boxes
+  `∏ᵢ [0, ⌈N cᵢ⌉)` and along rectangles. For a measure-preserving action of
+  `ℤ^d` on an ergodic probability space, the averages of a bounded measurable
+  function over these boxes converge almost everywhere to the volume times its
+  mean. `LatticeProb.anchoredBoxMaximalCentred_holds`: the `Lᵖ` maximal
+  inequality for anchored boxes (`p > 1`), from Wiener's one-parameter maximal
+  theorem applied once per coordinate; `LatticeProb.anchoredBoxMean_holds`: the
+  `Lᵖ` mean ergodic theorem along anchored boxes.
 * `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
   measure-preserving transformation of a standard Borel probability space.
 * `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;
@@ -388,21 +397,13 @@ the field with zero boundary values on a finite set `C` as
   the tensorization step, and the resulting Herbst moment bound; the sharp
   tensorization of the Lipschitz form is obstructed by a factor two, recorded in
   `LatticeProb/Prob/GaussianLogSobolevTensor.lean`.
-* `LatticeProb.GaussianLogSobolevGrad`, `LatticeProb.gaussianLogSobolev_of_grad_smooth`:
-  the gradient (carré-du-champ) form of the Gaussian log-Sobolev inequality, its
-  one-step tensorization as a named residual, and the proof that it implies the
-  Lipschitz form for `C¹` densities.
-* `LatticeProb.entropy_prod_split`: the entropy chain rule for a product measure,
-  the first step of the Γ-form tensorization.
-* `LatticeProb.norm_sq_integral_le_integral_norm_sq`: squared Jensen for a
-  probability measure, the vector-valued half of the slicewise Jensen bound in
-  the Γ-form tensorization.
+* `LatticeProb.entropy_prod_split`, `LatticeProb.norm_sq_integral_le_integral_norm_sq`,
+  `LatticeProb.fderiv_log`: the entropy chain rule for a product measure, squared
+  Jensen for a probability measure, and the chain rule for `log`
+  (`LatticeProb/Prob/GaussianLogSobolevGradTensor.lean`).
 * `LatticeProb.hasFDerivAt_integral_marginal`: differentiation under the integral
-  for the marginal `x ↦ ∫ h(x,y) dν(y)`, the last input of the slicewise Jensen
-  step of the Γ-form tensorization.
-* `LatticeProb.fderiv_log`, `LatticeProb.gaussianLogSobolevGradTensorStep_of_prodStep`: the
-  chain rule for `log` and the reduction of the Γ tensorization step to the
-  abstract product step.
+  for the marginal `x ↦ ∫ h(x,y) dν(y)`
+  (`LatticeProb/Prob/FDerivIntegralMarginal.lean`).
 * `LatticeProb.hasSum_sq_comb_sub`, `LatticeProb.abs_partialInt_sub_le`: the
   partial integral on a finite coordinate set preserves the ℓ²-Lipschitz
   constant, since splicing along a finite set leaves a difference supported on
@@ -425,45 +426,21 @@ the field with zero boundary values on a finite set `C` as
   measure, `∫ P_t f dγ = ∫ f dγ` for `t ≥ 0`.
 * `LatticeProb.ouSemigroup_add`: the Mehler semigroup law `P_s (P_t f) = P_{s+t} f`
   for `s, t ≥ 0`, from the composition of the two Mehler kernels.
-* `LatticeProb.OUHeatEquation`: the named open input of the Ornstein–Uhlenbeck
-  route, the generator/heat equation `∂_t P_t f = L P_t f`; it is a `Prop`, never
-  an axiom, and it is what remains of the `n = 1` Gaussian log-Sobolev
-  inequality beyond the semigroup layer built here.
+* `LatticeProb.OUHeatEquation`, `LatticeProb.ouHeatEquation_holds`: the
+  generator/heat equation `∂_t P_t f = L P_t f` of the one-dimensional
+  Ornstein–Uhlenbeck semigroup for `C²` compactly supported `f`
+  (`LatticeProb/Prob/MehlerSmoothing.lean`).
 * `LatticeProb.ae_subset_iUnion_iInter_of_tendsto_ae`,
   `LatticeProb.measure_le_of_tendsto_ae_of_isOpen`,
   `LatticeProb.measure_le_of_tendsto_ae_of_lt`: the a.e. Fatou limit: an almost
   sure limit `X n → Y` inherits the tail bound of the `X n` on open sets and on
   strict tails.
-* `LatticeProb.gaussianLogSobolevGrad_all_of_one_of_prodStep`,
-  `LatticeProb.gaussianLogSobolev_all_of_one_of_prodStep`,
-  `LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep`: the Γ-form chain composed to the
-  general-`n` log-Sobolev and Herbst bounds, conditional on the one-dimensional Γ-form, the
-  abstract product step and the named regularity bridge `GaussianLogSobolevGradToLipschitz`
-  (`LatticeProb/Prob/GaussianLogSobolevGeneral.lean`).
-* `LatticeProb.GaussianLogSobolevGradOne`, `LatticeProb.gaussianLogSobolevOne_of_gradOne`,
-  `LatticeProb.gaussianLogSobolev_all_of_gradOne`: the one-dimensional Γ-form Gaussian
-  log-Sobolev inequality named as the sole dimension-specific input of the general-`n` chain,
-  with its Herbst and log-Sobolev consequences (`LatticeProb/Prob/GaussianLogSobolevOneInput.lean`).
-* `LatticeProb.gaussianLogSobolevGrad_zero`,
-  `LatticeProb.gaussianLogSobolevGradProdStep_of_tensorStep`,
-  `LatticeProb.gaussianLogSobolevGradProdStep_iff_tensorStep`: the product step
-  `GaussianLogSobolevGradProdStep` is not an independent input — given `Grad 1` it is equivalent
-  to the one-step tensorization `GaussianLogSobolevGradTensorStep`
-  (`LatticeProb/Prob/GaussianLogSobolevGradProd.lean`).
-* `LatticeProb.LipschitzLogApprox`,
-  `LatticeProb.gaussianLogSobolevGradToLipschitz_of_approx`,
-  `LatticeProb.gaussianLogSobolev_all_of_one_of_prodStep_of_approx`,
-  `LatticeProb.gaussianHerbstBound_all_of_one_of_prodStep_of_approx`: the regularity
-  bridge from the `C¹` Γ-form predicate to the frozen Lipschitz form, reduced to
-  the single named mollification input `LipschitzLogApprox`.
-* `LatticeProb.lipschitzLogApprox`, `LatticeProb.gaussianLogSobolevGradToLipschitz`,
-  `LatticeProb.gaussianLogSobolev_all_of_ouFlow_of_tensorStep`,
-  `LatticeProb.gaussianHerbstBound_all_of_ouFlow_of_tensorStep`,
-  `LatticeProb.gaussianLogSobolev_all_of_gradOne'`: the mollification input is
-  proved in every dimension, by normalised convolution with smooth bumps, so the regularity
-  bridge holds unconditionally and the general-`n` log-Sobolev and Herbst bounds rest only on
-  the one-dimensional heat-flow contraction and the one-step tensorization
-  (`LatticeProb/Prob/GaussianLogSobolevMollify.lean`).
+* `LatticeProb.LipschitzLogApprox`, `LatticeProb.lipschitzLogApprox`: a positive
+  density with `C`-Lipschitz logarithm and finite entropy under the standard
+  Gaussian product law is the entropy limit of `C¹` positive densities of mass one
+  with `C`-Lipschitz logarithms, by normalised convolution with smooth bumps
+  (`LatticeProb/Prob/GaussianLogSobolevMollify.lean`); this is the approximation
+  step of `gaussianLogSobolev_holds`.
 * `LatticeProb.GaussLSI.integral_mul_log_le_of_gradient`,
   `LatticeProb.integral_mul_log_le_of_contDiff`, `LatticeProb.gaussianLogSobolev_holds`: the
   Gaussian logarithmic Sobolev inequality with the sharp constant, `Ent(e^g) ≤ (K² / 2) E e^g`

@@ -1,34 +1,20 @@
 /-
-# The entropy chain rule for a product measure
+# Entropy of a product measure, squared Jensen, and the derivative of a logarithm
 
-This is step (1) of the Γ-form tensorization (see `GaussianLogSobolevGrad.lean`):
-the entropy of a function on
-a product `μ ⊗ ν` splits as the average of the slice entropies plus the entropy
-of the marginal,
+Three analytic facts about the entropy functional
+`Ent_ρ(g) = ∫ g log g dρ - (∫ g dρ) log (∫ g dρ)` (`LatticeProb.entropy`):
 
-  `Ent_{μ⊗ν}(h) = ∫ x, Ent_ν(h(x,·)) dμ(x) + Ent_μ(F x)`,
-  `F x = ∫ y, h(x,y) dν(y)`.
+* `LatticeProb.entropy_prod_split`: the entropy chain rule for a product measure,
 
-The proof is Fubini together with the elementary splitting
-`Ent_ρ(g) = ∫ g log g dρ - (∫ g dρ) log (∫ g dρ)`.
+    `Ent_{μ⊗ν}(h) = ∫ x, Ent_ν(h(x,·)) dμ(x) + Ent_μ(F)`,  `F x = ∫ y, h(x,y) dν(y)`,
 
-## The remaining steps for the Γ tensorization
-
-With the split in hand, the Γ tensorization needs (2) the slicewise Jensen bound
-`‖∇_x log F‖² · F ≤ ∫ ‖∇_x log h‖² · h_x dν`, so that the two factors contribute
-`∫ ‖∇ log h‖² h` with the constant preserved, and then (3) the identification of
-`γ_{n+1}` with `γ_n ⊗ γ_1`.
-
-The vector-valued Jensen half of (2) is proved below as
-`norm_sq_integral_le_integral_norm_sq`: for a probability measure and a Bochner
-integrable `g`, `‖∫ g dμ‖² ≤ ∫ ‖g‖² dμ`.  Applied to the probability measure
-`(h_x / F x) · ν` and the field `y ↦ fderiv (log ∘ h(·,y)) x`, this gives the
-slicewise bound once the marginal Leibniz rule identifies `fderiv (log ∘ F) x`
-with the conditional average of `fderiv (log ∘ h(·,y)) x`; that differentiation
-under the integral is the residual.  The assembly (3) then stays the named `Prop`
-`GaussianLogSobolevGradTensorStep`.
+  by Fubini and the splitting of `Ent_ρ(g)`;
+* `LatticeProb.norm_sq_integral_le_integral_norm_sq`: for a probability measure and a Bochner
+  integrable `g`, `‖∫ g dμ‖² ≤ ∫ ‖g‖² dμ`;
+* `LatticeProb.fderiv_log`: `fderiv ℝ (log ∘ F) x = (F x)⁻¹ • fderiv ℝ F x` where `F` is
+  differentiable at `x` and `F x ≠ 0`.
 -/
-import LatticeProb.Prob.GaussianLogSobolevGrad
+import Mathlib
 
 noncomputable section
 
@@ -62,8 +48,7 @@ theorem entropy_prod_split {α β : Type*} [MeasurableSpace α] [MeasurableSpace
 
 /-- **Squared Jensen for a probability measure.**  The square of the norm of a
 Bochner integral is at most the integral of the squared norm, the vector-valued
-Jensen inequality for the convex function `t ↦ t²`.  This is the slicewise Jensen
-step of the Γ tensorization, applied to the probability measure `h_x / F x · ν`. -/
+Jensen inequality for the convex function `t ↦ t²`. -/
 theorem norm_sq_integral_le_integral_norm_sq {α E : Type*} [MeasurableSpace α]
     [NormedAddCommGroup E] [NormedSpace ℝ E] (μ : Measure α) [IsProbabilityMeasure μ]
     {g : α → E} (hg : Integrable g μ) (hg2 : Integrable (fun x => ‖g x‖ ^ 2) μ) :
@@ -79,5 +64,12 @@ theorem norm_sq_integral_le_integral_norm_sq {α E : Type*} [MeasurableSpace α]
   calc ‖∫ x, g x ∂μ‖ ^ 2 ≤ (∫ x, ‖g x‖ ∂μ) ^ 2 :=
         pow_le_pow_left₀ (norm_nonneg _) h1 2
     _ ≤ ∫ x, ‖g x‖ ^ 2 ∂μ := hjensen
+
+/-- The chain rule for the logarithm: if `F` is differentiable at `x` and `F x ≠ 0`, then
+`fderiv ℝ (log ∘ F) x = (F x)⁻¹ • fderiv ℝ F x`. -/
+theorem fderiv_log {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (F : E → ℝ) (x : E) (hd : DifferentiableAt ℝ F x) (hx : F x ≠ 0) :
+    fderiv ℝ (fun y => Real.log (F y)) x = (F x)⁻¹ • fderiv ℝ F x :=
+  (hd.hasFDerivAt.log hx).fderiv
 
 end LatticeProb

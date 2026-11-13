@@ -341,17 +341,11 @@ library.
 #print axioms LatticeProb.gaussianLogSobolev_succ_of_one
 #print axioms LatticeProb.gaussianLogSobolev_of_one_of_tensorStep
 #print axioms LatticeProb.gaussianHerbstBound_of_one_of_tensorStep
-#print axioms LatticeProb.gaussianLogSobolevGrad_of_one_of_tensorStep
-#print axioms LatticeProb.gaussianLogSobolev_of_grad_smooth
 #print axioms LatticeProb.entropy_prod_split
 #print axioms LatticeProb.norm_sq_integral_le_integral_norm_sq
 #print axioms LatticeProb.fderiv_slice
 #print axioms LatticeProb.hasFDerivAt_integral_marginal
 #print axioms LatticeProb.fderiv_log
-#print axioms LatticeProb.gaussianLogSobolevGradTensorStep_of_prodStep
-#print axioms LatticeProb.gaussianLogSobolevGrad_zero
-#print axioms LatticeProb.gaussianLogSobolevGradProdStep_of_tensorStep
-#print axioms LatticeProb.gaussianLogSobolevGradProdStep_iff_tensorStep
 #print axioms LatticeProb.sqrt_sum_sq_le_sqrt_card_mul_dist
 #print axioms LatticeProb.lipschitzWith_pi_of_hasSum_sq
 #print axioms LatticeProb.gaussian_lipschitz_concentration_l2_fin
