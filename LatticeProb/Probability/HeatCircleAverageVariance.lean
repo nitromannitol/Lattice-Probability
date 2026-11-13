@@ -28,7 +28,10 @@ uniformly in the scale `ε > 0` and the centre `z`.
 * `exists_gaussianReal_heatMollify_sub_circleAvg_le`: the centered Gaussian law `N(0, V)` of
   `h*_ε(z) - h_ε(z)` has `V ≤ ∫_0^∞ 2u e^{-u²} |log u| du`, uniformly in `ε` and `z`;
 * `measure_abs_heatMollify_sub_circleAvg_ge_le`: the Gaussian tail bound
-  `P(|h*_ε(z) - h_ε(z)| ≥ T) ≤ 2 exp(-T² / (2 V₀))`, uniformly in `ε` and `z`.
+  `P(|h*_ε(z) - h_ε(z)| ≥ T) ≤ 2 exp(-T² / (2 V₀))`, uniformly in `ε` and `z`;
+* `lintegral_sq_cInc_sameRadius_le`: `E[(h_r(x) - h_r(y))²] ≤ 2|x - y| / r`;
+* `lintegral_sq_heatMollify_sub_circleAvg_incr_le`: the spatial increments of `h*_ε - h_ε` satisfy
+  `E[((h*_ε - h_ε)(x) - (h*_ε - h_ε)(y))²] ≤ 4 (√π + 1) |x - y| / ε`.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology Set
@@ -365,5 +368,264 @@ theorem measure_abs_heatMollify_sub_circleAvg_ge_le
   rw [hpre, ← Measure.map_apply hR hS, hV]
   exact LatticeProb.Isonormal.gaussianReal_abs_ge_le V heatCircleVarConst hVle
     heatCircleVarConst_pos T hT
+
+/-! ## Spatial increments of the heat-versus-circle difference -/
+
+/-- **Jointly measurable modification.** A process indexed by `u > 0` whose paths are continuous
+and each of whose marginals agrees almost surely with a measurable random variable has a jointly
+measurable modification, which agrees with it at every `u` off a single null set. -/
+lemma exists_measurable_uncurry_ae_eq {X Z : Ioi (0 : ℝ) → Ω → ℝ}
+    (hXc : ∀ ω, Continuous fun u => X u ω) (hZ : ∀ u, Measurable (Z u))
+    (hXZ : ∀ u, X u =ᵐ[P] Z u) :
+    ∃ X' : Ioi (0 : ℝ) → Ω → ℝ, Measurable (Function.uncurry X') ∧
+      ∀ᵐ ω ∂P, ∀ u, X' u ω = X u ω := by
+  classical
+  have hG : ∀ᵐ ω ∂P, ∀ q : ℚ, ∀ hq : 0 < (q : ℝ), X ⟨q, hq⟩ ω = Z ⟨q, hq⟩ ω := by
+    refine ae_all_iff.2 fun q => ?_
+    by_cases hq : 0 < (q : ℝ)
+    · filter_upwards [hXZ ⟨q, hq⟩] with ω hω
+      exact fun _ => hω
+    · exact ae_of_all _ fun _ hq' => absurd hq' hq
+  set N : Set Ω := toMeasurable P {ω | ¬ ∀ q : ℚ, ∀ hq : 0 < (q : ℝ),
+      X ⟨q, hq⟩ ω = Z ⟨q, hq⟩ ω} with hNdef
+  have hN0 : P N = 0 := by rw [hNdef, measure_toMeasurable]; exact ae_iff.1 hG
+  have hNm : MeasurableSet N := measurableSet_toMeasurable _ _
+  have hNc : ∀ ω ∉ N, ∀ q : ℚ, ∀ hq : 0 < (q : ℝ), X ⟨q, hq⟩ ω = Z ⟨q, hq⟩ ω := by
+    intro ω hω
+    by_contra hc
+    exact hω (subset_toMeasurable _ _ hc)
+  have hNae : ∀ᵐ ω ∂P, ω ∉ N := by
+    refine ae_iff.2 ?_
+    simp only [not_not, ofPred_mem_eq]
+    exact hN0
+  set X' : Ioi (0 : ℝ) → Ω → ℝ := fun u ω => if ω ∈ N then 0 else X u ω with hX'def
+  have hX'cont : ∀ ω, Continuous fun u : Ioi (0 : ℝ) => X' u ω := by
+    intro ω
+    by_cases hω : ω ∈ N
+    · simp only [hX'def, hω, ite_true]; exact continuous_const
+    · simp only [hX'def, hω, ite_false]; exact hXc ω
+  have hX'meas : ∀ u : Ioi (0 : ℝ), Measurable (X' u) := by
+    intro u
+    have hu : 0 < (u : ℝ) := mem_Ioi.mp u.2
+    have hex : ∀ n : ℕ, ∃ q : ℚ, (u : ℝ) < q ∧ (q : ℝ) < u + 1 / ((n : ℝ) + 1) := fun n =>
+      exists_rat_btwn (by have : (0 : ℝ) < 1 / ((n : ℝ) + 1) := by positivity
+                          linarith)
+    choose q hq1 hq2 using hex
+    have hqpos : ∀ n, 0 < (q n : ℝ) := fun n => hu.trans (hq1 n)
+    have hqt : Tendsto (fun n => (q n : ℝ)) atTop (𝓝 u) := by
+      have hlim : Tendsto (fun n : ℕ => (u : ℝ) + 1 / ((n : ℝ) + 1)) atTop (𝓝 u) := by
+        have h0 := (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).const_add (u : ℝ)
+        rwa [add_zero] at h0
+      exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim
+        (fun n => (hq1 n).le) (fun n => (hq2 n).le)
+    have hsub : Tendsto (fun n => (⟨q n, hqpos n⟩ : Ioi (0 : ℝ))) atTop (𝓝 u) :=
+      tendsto_subtype_rng.2 hqt
+    refine measurable_of_tendsto_metrizable
+      (f := fun n ω => if ω ∈ N then 0 else Z ⟨q n, hqpos n⟩ ω)
+      (fun n => Measurable.ite hNm measurable_const (hZ _)) ?_
+    rw [tendsto_pi_nhds]
+    intro ω
+    by_cases hω : ω ∈ N
+    · simp only [hX'def, hω, ite_true]; exact tendsto_const_nhds
+    · simp only [hX'def, hω, ite_false]
+      have heq : ∀ n, Z ⟨q n, hqpos n⟩ ω = X ⟨q n, hqpos n⟩ ω :=
+        fun n => (hNc ω hω (q n) (hqpos n)).symm
+      simp only [heq]
+      exact ((hXc ω).tendsto u).comp hsub
+  refine ⟨X', measurable_uncurry_of_continuous_of_measurable hX'cont hX'meas, ?_⟩
+  filter_upwards [hNae] with ω hω u
+  simp only [hX'def, hω, ite_false]
+
+/-- **Radial identity along a continuous version.** For a whole-plane GFF normalized by
+`h_1(0) = 0` and a jointly continuous version `H` of its circle-average process, almost surely
+`h*_ε(z) - h_ε(z) = ∫_0^∞ 2u e^{-u²} (H_{εu}(z) - H_ε(z)) du`, the integrand being integrable. -/
+lemma ae_heatMollify_sub_circleAvg_eq_radial
+    (hh : SupercriticalLQGUniqueness.IsNormalizedWholePlaneGFF h P) {H : ℝ → ℂ → Ω → ℝ}
+    (hH : DFGPS.IsCircleAvgVersion h P H) {ε : ℝ} (hε : 0 < ε) (z : ℂ) :
+    ∀ᵐ ω ∂P,
+      IntegrableOn (fun u : ℝ => 2 * u * Real.exp (-u ^ 2) * (H (ε * u) z ω - H ε z ω))
+        (Ioi 0) ∧
+      heatMollify ε (h ω) z - circleAvg (h ω) ε z =
+        ∫ u in Ioi (0 : ℝ), 2 * u * Real.exp (-u ^ 2) * (H (ε * u) z ω - H ε z ω) := by
+  have hW := hh.1
+  obtain ⟨A, hA, hAb⟩ := DFGPS.lem2_2 hW hH (‖z‖ + 1)
+  filter_upwards [SupercriticalLFPPAS.Field.ae_heatMollify_eq_polarInt_forVersion P h hh H hH,
+    hH.ae_eq ε hε z, hAb (1 / 2) (by norm_num)] with ω hHω hCω hGω
+  obtain ⟨C₀, hC₀⟩ := hGω
+  have hzb : z ∈ Metric.ball (0 : ℂ) (‖z‖ + 1) := mem_ball_zero_iff.2 (by linarith)
+  have hF : ∀ r, 0 < r → |H r z ω| ≤ |C₀| * (A / r + r + 1) := fun r hr =>
+    SupercriticalLQGUniqueness.B2.Polylog.abs_le_of_lem2_2 hA.le hr (hC₀ r hr z hzb)
+  have hFc : ContinuousOn (fun r => H r z ω) (Ioi 0) :=
+    (hH.cont ω).comp (continuousOn_id.prodMk continuousOn_const)
+      (fun r hr => ⟨hr, mem_univ _⟩)
+  have hInt := SupercriticalLFPPAS.Field.integrableOn_polarIntegrand_gauss hε hA.le
+    (abs_nonneg C₀) hF hFc (w := fun _ => 1) (fun _ => by simp) continuousOn_const
+  simp only [mul_one] at hInt
+  have hid := LatticeProb.GaussianRadialAverage.gaussRadial_integral_sub_self_eq
+    (fun r => H r z ω) hε hInt
+  refine ⟨?_, ?_⟩
+  · have h1 := (LatticeProb.GaussianRadialAverage.integrableOn_gaussRadial_iff
+      (fun r => H r z ω) hε).2 hInt
+    have h2 := LatticeProb.GaussianRadialAverage.integrableOn_two_mul_exp_neg_sq.const_mul
+      (H ε z ω)
+    exact (h1.sub h2).congr_fun (fun u _ => by simp only [Pi.sub_apply]; ring) measurableSet_Ioi
+  · rw [← hid, hHω ε hε z, ← hCω]
+    simp only [SupercriticalLQGUniqueness.B2.Polylog.polarInt, mul_one]
+
+/-- **Same-radius increments of the circle average**: `E[(h_r(x) - h_r(y))²] ≤ 2|x - y| / r`. -/
+theorem lintegral_sq_cInc_sameRadius_le (hh : IsWholePlaneGFF h P) {r : ℝ} (hr : 0 < r)
+    (x y : ℂ) :
+    ∫⁻ ω, ENNReal.ofReal (CircleAvg.cInc h r x r y ω ^ 2) ∂P ≤
+      ENNReal.ofReal (2 * ‖x - y‖ / r) := by
+  have hm := CircleAvg.measurable_cInc hh r x r y
+  obtain ⟨hmap, -⟩ := CircleAvg.map_cInc hh hr hr x y
+  rw [lintegral_sq_eq_of_map_eq_gaussianReal hm hmap]
+  refine ENNReal.ofReal_le_ofReal ?_
+  have hinc := LQGDimension.Osc37.gffCircleCov_incr_le hr x y
+  rw [CircleAvg.gffCircleCov_eq_incCov hr hr, CircleAvg.gffCircleCov_eq_incCov hr hr,
+    CircleAvg.gffCircleCov_eq_incCov hr hr] at hinc
+  have key : CircleAvg.incCov x r y r x r y r =
+      CircleAvg.incCov x r 0 1 x r 0 1 - 2 * CircleAvg.incCov x r 0 1 y r 0 1 +
+        CircleAvg.incCov y r 0 1 y r 0 1 := by
+    simp only [CircleAvg.incCov]
+    rw [CircleAvg.circCov_comm hr hr y x, CircleAvg.circCov_comm one_pos hr 0 x,
+      CircleAvg.circCov_comm one_pos hr 0 y]
+    ring
+  rcases le_total 0 (CircleAvg.incCov x r y r x r y r) with h0 | h0
+  · rw [Real.coe_toNNReal _ h0, key]
+    exact hinc
+  · rw [Real.toNNReal_of_nonpos h0, NNReal.coe_zero]
+    positivity
+
+lemma ofReal_sq_sub_le (a b : ℝ) :
+    ENNReal.ofReal ((a - b) ^ 2) ≤ 2 * ENNReal.ofReal (a ^ 2) + 2 * ENNReal.ofReal (b ^ 2) := by
+  have h : (a - b) ^ 2 ≤ 2 * a ^ 2 + 2 * b ^ 2 := by nlinarith [sq_nonneg (a + b)]
+  calc ENNReal.ofReal ((a - b) ^ 2) ≤ ENNReal.ofReal (2 * a ^ 2 + 2 * b ^ 2) :=
+        ENNReal.ofReal_le_ofReal h
+    _ = 2 * ENNReal.ofReal (a ^ 2) + 2 * ENNReal.ofReal (b ^ 2) := by
+        rw [ENNReal.ofReal_add (by positivity) (by positivity),
+          ENNReal.ofReal_mul (by norm_num), ENNReal.ofReal_mul (by norm_num),
+          ENNReal.ofReal_ofNat]
+
+/-- **Spatial increments of the heat-versus-circle difference.** For a whole-plane GFF normalized
+by `h_1(0) = 0`, every scale `ε > 0` and all points `x, y`,
+`E[((h*_ε(x) - h_ε(x)) - (h*_ε(y) - h_ε(y)))²] ≤ 4 (√π + 1) |x - y| / ε`. -/
+theorem lintegral_sq_heatMollify_sub_circleAvg_incr_le
+    (hh : SupercriticalLQGUniqueness.IsNormalizedWholePlaneGFF h P) {ε : ℝ} (hε : 0 < ε)
+    (x y : ℂ) :
+    ∫⁻ ω, ENNReal.ofReal (((heatMollify ε (h ω) x - circleAvg (h ω) ε x) -
+        (heatMollify ε (h ω) y - circleAvg (h ω) ε y)) ^ 2) ∂P ≤
+      ENNReal.ofReal (4 * (Real.sqrt Real.pi + 1) * ‖x - y‖ / ε) := by
+  have hW := hh.1
+  have := hW.gaussian.isProbabilityMeasure
+  obtain ⟨H, hH⟩ := DFGPS.exists_isCircleAvgVersion hW
+  set c : ℝ := ‖x - y‖ with hc
+  set X : Ioi (0 : ℝ) → Ω → ℝ := fun u ω =>
+    (H (ε * u) x ω - H ε x ω) - (H (ε * u) y ω - H ε y ω) with hXdef
+  have hXc : ∀ ω, Continuous fun u : Ioi (0 : ℝ) => X u ω := by
+    intro ω
+    have hc' : ∀ w : ℂ, Continuous fun u : Ioi (0 : ℝ) => H (ε * u) w ω := fun w =>
+      (hH.cont ω).comp_continuous
+        (f := fun u : Ioi (0 : ℝ) => ((ε * (u : ℝ) : ℝ), w)) (by fun_prop)
+        (fun u => ⟨mul_pos hε (mem_Ioi.mp u.2), mem_univ _⟩)
+    exact ((hc' x).sub continuous_const).sub ((hc' y).sub continuous_const)
+  set D : ℝ → Ω → ℝ := fun r => CircleAvg.cInc h r x r y with hDdef
+  have hXae : ∀ u : Ioi (0 : ℝ), X u =ᵐ[P] fun ω => D (ε * u) ω - D ε ω := by
+    intro u
+    have hu : 0 < ε * (u : ℝ) := mul_pos hε (mem_Ioi.mp u.2)
+    filter_upwards [hH.ae_eq (ε * u) hu x, hH.ae_eq ε hε x, hH.ae_eq (ε * u) hu y,
+      hH.ae_eq ε hε y] with ω h1 h2 h3 h4
+    simp only [hXdef, hDdef, CircleAvg.cInc, h1, h2, h3, h4]
+    ring
+  have hDm : ∀ r, Measurable (D r) := fun r => CircleAvg.measurable_cInc hW r x r y
+  obtain ⟨X', hX'm, hX'ae⟩ := exists_measurable_uncurry_ae_eq hXc
+    (fun u => (hDm _).sub (hDm _)) hXae
+  -- Jensen's inequality for the radial Gaussian weight
+  have hJ := LatticeProb.WeightedAverageSecondMoment.lintegral_sq_integral_le
+    (μ := gaussRadialMeasure) (P := P) X' hX'm
+  -- the left side: the radial identity at both points
+  have hLHS : (fun ω => ENNReal.ofReal (((heatMollify ε (h ω) x - circleAvg (h ω) ε x) -
+        (heatMollify ε (h ω) y - circleAvg (h ω) ε y)) ^ 2))
+      =ᵐ[P] fun ω => ENNReal.ofReal ((∫ u, X' u ω ∂gaussRadialMeasure) ^ 2) := by
+    filter_upwards [ae_heatMollify_sub_circleAvg_eq_radial hh hH hε x,
+      ae_heatMollify_sub_circleAvg_eq_radial hh hH hε y, hX'ae] with ω ⟨hix, hx⟩ ⟨hiy, hy⟩ hω
+    have hX'ω : ∫ u, X' u ω ∂gaussRadialMeasure =
+        (∫ u in Ioi (0 : ℝ), 2 * u * Real.exp (-u ^ 2) * (H (ε * u) x ω - H ε x ω)) -
+          ∫ u in Ioi (0 : ℝ), 2 * u * Real.exp (-u ^ 2) * (H (ε * u) y ω - H ε y ω) := by
+      rw [← integral_sub hix hiy]
+      have hfun : (fun u : ℝ => 2 * u * Real.exp (-u ^ 2) * (H (ε * u) x ω - H ε x ω) -
+          2 * u * Real.exp (-u ^ 2) * (H (ε * u) y ω - H ε y ω)) = fun u : ℝ =>
+          2 * u * Real.exp (-u ^ 2) *
+            ((H (ε * u) x ω - H ε x ω) - (H (ε * u) y ω - H ε y ω)) := by
+        funext u; ring
+      rw [hfun, ← integral_gaussRadialMeasure]
+      refine integral_congr_ae (ae_of_all _ fun u => ?_)
+      exact hω u
+    rw [hX'ω, ← hx, ← hy]
+  -- the right side: same-radius increments at radii `εu` and `ε`
+  have hRHS : ∀ u : Ioi (0 : ℝ), ∫⁻ ω, ENNReal.ofReal (X' u ω ^ 2) ∂P ≤
+      ENNReal.ofReal (4 * c / (ε * u) + 4 * c / ε) := by
+    intro u
+    have hu : 0 < ε * (u : ℝ) := mul_pos hε (mem_Ioi.mp u.2)
+    have hae : (fun ω => ENNReal.ofReal (X' u ω ^ 2)) =ᵐ[P]
+        fun ω => ENNReal.ofReal ((D (ε * u) ω - D ε ω) ^ 2) := by
+      filter_upwards [hX'ae, hXae u] with ω hω hXω
+      rw [hω u, hXω]
+    have hm1 : Measurable fun ω => ENNReal.ofReal (D (ε * u) ω ^ 2) :=
+      ((hDm _).pow_const 2).ennreal_ofReal
+    have hm2 : Measurable fun ω => ENNReal.ofReal (D ε ω ^ 2) :=
+      ((hDm _).pow_const 2).ennreal_ofReal
+    calc ∫⁻ ω, ENNReal.ofReal (X' u ω ^ 2) ∂P
+        = ∫⁻ ω, ENNReal.ofReal ((D (ε * u) ω - D ε ω) ^ 2) ∂P := lintegral_congr_ae hae
+      _ ≤ ∫⁻ ω, (2 * ENNReal.ofReal (D (ε * u) ω ^ 2) + 2 * ENNReal.ofReal (D ε ω ^ 2)) ∂P :=
+          lintegral_mono fun ω => ofReal_sq_sub_le _ _
+      _ = 2 * ∫⁻ ω, ENNReal.ofReal (D (ε * u) ω ^ 2) ∂P +
+            2 * ∫⁻ ω, ENNReal.ofReal (D ε ω ^ 2) ∂P := by
+          rw [lintegral_add_left (hm1.const_mul 2), lintegral_const_mul _ hm1,
+            lintegral_const_mul _ hm2]
+      _ ≤ 2 * ENNReal.ofReal (2 * c / (ε * u)) + 2 * ENNReal.ofReal (2 * c / ε) := by
+          gcongr
+          · exact lintegral_sq_cInc_sameRadius_le hW hu x y
+          · exact lintegral_sq_cInc_sameRadius_le hW hε x y
+      _ = ENNReal.ofReal (4 * c / (ε * u) + 4 * c / ε) := by
+          rw [ENNReal.ofReal_add (by positivity) (by positivity),
+            show 4 * c / (ε * u) = 2 * (2 * c / (ε * u)) by ring,
+            show 4 * c / ε = 2 * (2 * c / ε) by ring,
+            ENNReal.ofReal_mul (by norm_num), ENNReal.ofReal_mul (by norm_num),
+            ENNReal.ofReal_ofNat]
+  -- integrate against the radial weight
+  have hint : IntegrableOn (fun u : ℝ => 4 * c / ε * (2 * Real.exp (-1 * u ^ 2)) +
+      4 * c / ε * (2 * u * Real.exp (-u ^ 2))) (Ioi 0) :=
+    ((((integrable_exp_neg_mul_sq one_pos).const_mul 2).const_mul (4 * c / ε)).integrableOn).add
+      (LatticeProb.GaussianRadialAverage.integrableOn_two_mul_exp_neg_sq.const_mul (4 * c / ε))
+  have hval : ∫ u in Ioi (0 : ℝ), (4 * c / ε * (2 * Real.exp (-1 * u ^ 2)) +
+      4 * c / ε * (2 * u * Real.exp (-u ^ 2))) = 4 * (Real.sqrt Real.pi + 1) * c / ε := by
+    rw [integral_add (((integrable_exp_neg_mul_sq one_pos).const_mul 2).const_mul
+        (4 * c / ε)).integrableOn
+      (LatticeProb.GaussianRadialAverage.integrableOn_two_mul_exp_neg_sq.const_mul (4 * c / ε)),
+      integral_const_mul, integral_const_mul, integral_const_mul, integral_gaussian_Ioi,
+      LatticeProb.GaussianRadialAverage.integral_two_mul_exp_neg_sq, div_one]
+    ring
+  rw [lintegral_congr_ae hLHS]
+  refine hJ.trans ?_
+  calc ∫⁻ v, ∫⁻ ω, ENNReal.ofReal (X' v ω ^ 2) ∂P ∂gaussRadialMeasure
+      ≤ ∫⁻ v, ENNReal.ofReal (4 * c / (ε * v) + 4 * c / ε) ∂gaussRadialMeasure :=
+        lintegral_mono hRHS
+    _ = ∫⁻ u in Ioi (0 : ℝ), ENNReal.ofReal (2 * u * Real.exp (-u ^ 2)) *
+          ENNReal.ofReal (4 * c / (ε * u) + 4 * c / ε) :=
+        lintegral_gaussRadialMeasure (g := fun u => ENNReal.ofReal (4 * c / (ε * u) + 4 * c / ε))
+          (by fun_prop)
+    _ = ∫⁻ u in Ioi (0 : ℝ), ENNReal.ofReal (4 * c / ε * (2 * Real.exp (-1 * u ^ 2)) +
+          4 * c / ε * (2 * u * Real.exp (-u ^ 2))) := by
+        refine setLIntegral_congr_fun measurableSet_Ioi fun u hu => ?_
+        have hu0 : 0 < u := mem_Ioi.mp hu
+        rw [← ENNReal.ofReal_mul (by positivity), show -1 * u ^ 2 = -u ^ 2 by ring]
+        congr 1
+        field_simp
+    _ = ENNReal.ofReal (4 * (Real.sqrt Real.pi + 1) * c / ε) := by
+        rw [← ofReal_integral_eq_lintegral_ofReal hint, hval]
+        filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
+        have hu0 : 0 < u := mem_Ioi.mp hu
+        positivity
 
 end LQGMetric.HeatCircle
