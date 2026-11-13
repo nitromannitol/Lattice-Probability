@@ -374,6 +374,30 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.anchoredBoxErgodic_holds"
+      file: "LatticeProb/Prob/AkcogluKrengelAE/AnchoredBoxErgodicHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.rectangleErgodic_holds"
+      file: "LatticeProb/Prob/AkcogluKrengelAE/AnchoredBoxErgodicHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.anchoredBoxMean_holds"
+      file: "LatticeProb/Prob/AkcogluKrengelAE/AnchoredBoxErgodicHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.anchoredBoxMaximalCentred_holds"
+      file: "LatticeProb/Prob/AkcogluKrengelAE/AnchoredBoxMaximalHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.LQG.rescaledBallMassUniformStepLP_holds"
       file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
       sorry_count: 0
@@ -817,6 +841,16 @@ alignment:
       module: "LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyProved"
       status: "proved"
       note: "The proposition LatticeProb.Sobolev.FrechetKolmogorovH, from the mollification step LatticeProb.Sobolev.frechetKolmogorovMollify_holds and the mollified compactness LatticeProb.Sobolev.frechetKolmogorovMollifiedCompact_holds."
+    - source: "Multiparameter pointwise ergodic theorem for Z^d actions along boxes (Wiener 1939; Dunford 1951; Zygmund 1951)"
+      lean: "LatticeProb.anchoredBoxErgodic_holds"
+      module: "LatticeProb.Prob.AkcogluKrengelAE.AnchoredBoxErgodicHolds"
+      status: "proved"
+      note: "The proposition LatticeProb.AnchoredBoxErgodic, for anchored boxes prod_i [0, ceil(N c_i)) and bounded measurable functions on an ergodic probability space; LatticeProb.rectangleErgodic_holds gives the rectangle form LatticeProb.RectangleErgodic, and LatticeProb.anchoredBoxMean_holds the L^p mean form."
+    - source: "L^p maximal inequality for Z^d actions along boxes, p > 1 (Wiener 1939; Dunford 1951; Zygmund 1951)"
+      lean: "LatticeProb.anchoredBoxMaximalCentred_holds"
+      module: "LatticeProb.Prob.AkcogluKrengelAE.AnchoredBoxMaximalHolds"
+      status: "proved"
+      note: "The proposition LatticeProb.AnchoredBoxMaximalCentred for p > 1, from the one-parameter maximal theorem LatticeProb.birkhoffLpMaximal applied once per coordinate (LatticeProb.exists_lintegral_iSup_boxAvg_rpow_le)."
 
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are

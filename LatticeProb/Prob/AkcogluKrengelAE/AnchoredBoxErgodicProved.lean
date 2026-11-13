@@ -11,7 +11,8 @@ named steps:
 
 * `AnchoredBoxLimitInvariant` — the **boundary-slab estimate**: for each fixed `z`, the anchored-box
   sum at `ω` and at `σ z ω` differ by the boundary layer of `∏ᵢ [0,N)` against `z + ∏ᵢ [0,N)`,
-  whose relative size tends to `0`, so `G` is a.e. invariant under `σ`;
+  whose relative size tends to `0`, so for positive sides `G` is a.e. invariant under `σ` (a box
+  with a zero side is empty, and its limit is `0` whatever `G` is);
 * `ErgodicConstantLimit` — an a.e.-invariant bounded function on an ergodic probability space is
   a.e. constant, so `G = ∫h` a.e.
 
@@ -46,13 +47,15 @@ def AnchoredBoxLimitExists (d : ℕ) : Prop :=
 /-- **Boundary-slab invariance of the box limit.**  The limit `G` of the anchored-box averages is
 almost surely invariant under the action: for each fixed `z` the anchored-box sum at `σ z ω`
 differs from the one at `ω` by the boundary slab of `∏ᵢ [0,N)` against `z + ∏ᵢ [0,N)`, whose
-normalised size tends to `0`, and the two limits are the same constant shifted. -/
+normalised size tends to `0`, and the two limits are the same constant shifted.  All sides are
+taken positive: with a zero side the box is empty and the limit `0 = (∏ᵢ cᵢ) · G ω` carries no
+information on `G`. -/
 def AnchoredBoxLimitInvariant (d : ℕ) : Prop :=
   ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (σ : Site d → Ω → Ω), (∀ z, MeasurePreserving (σ z) μ μ) →
     (∀ z w ω, σ (z + w) ω = σ z (σ w ω)) →
     ∀ (h : Ω → ℝ), Measurable h → ∀ {M : ℝ}, 0 ≤ M → (∀ x, |h x| ≤ M) →
-    ∀ (c : Fin d → ℝ), (∀ i, 0 ≤ c i) →
+    ∀ (c : Fin d → ℝ), (∀ i, 0 < c i) →
     ∀ (G : Ω → ℝ), Measurable G → ∫ ω, G ω ∂μ = ∫ ω, h ω ∂μ →
       (∀ᵐ ω ∂μ, Tendsto (fun N : ℕ => (N : ℝ) ^ (-(d : ℝ)) *
           ∑ x ∈ anchoredBox c N, h (σ x ω)) atTop (𝓝 ((∏ i, c i) * G ω))) →
@@ -78,10 +81,17 @@ theorem anchoredBoxErgodic_of_steps
   intro Ω _ μ _ σ hσ hσadd herg h hh hbdd c hc
   obtain ⟨M, hM, hb⟩ := hbdd
   obtain ⟨G, hGm, _hGb, hGint, hGconv⟩ := hEx μ σ hσ hσadd h hh hM hb c hc
-  have hinv := hInv μ σ hσ hσadd h hh hM hb c hc G hGm hGint hGconv
-  have hconst := hConst μ σ hσ hσadd herg h hh hM hb c hc G hGm hGint hinv
-  filter_upwards [hGconv, hconst] with ω h1 h2
-  rwa [h2] at h1
+  by_cases hpos : ∀ i, 0 < c i
+  · have hinv := hInv μ σ hσ hσadd h hh hM hb c hpos G hGm hGint hGconv
+    have hconst := hConst μ σ hσ hσadd herg h hh hM hb c hc G hGm hGint hinv
+    filter_upwards [hGconv, hconst] with ω h1 h2
+    rwa [h2] at h1
+  · obtain ⟨i, hi⟩ := not_forall.1 hpos
+    have hprod : (∏ i, c i) = 0 :=
+      Finset.prod_eq_zero (Finset.mem_univ i) (le_antisymm (not_lt.1 hi) (hc i))
+    filter_upwards [hGconv] with ω h1
+    rw [hprod]
+    rwa [hprod, zero_mul, ← zero_mul (∫ ω, h ω ∂μ)] at h1
 
 /-- **`RectangleErgodic` from the box iteration, the slab estimate, and ergodicity.** -/
 theorem rectangleErgodic_of_steps
