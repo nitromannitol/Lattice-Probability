@@ -4,6 +4,7 @@ import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgBridge
 import LatticeProb.Analysis.GaussianRadialAverage
 import LatticeProb.Probability.WeightedAverageSecondMoment
 import LatticeProb.Probability.HeatCircleAverageGaussian
+import LatticeProb.Gauss.IsonormalSum
 
 /-!
 # Second moment of the heat-kernel mollification minus the circle average
@@ -25,7 +26,9 @@ uniformly in the scale `ε > 0` and the centre `z`.
 * `lintegral_sq_heatMollify_sub_circleAvg_le`: the second-moment bound above;
 * `heatCircleVarConst`, `integrableOn_gaussRadial_abs_log`: the constant is finite;
 * `exists_gaussianReal_heatMollify_sub_circleAvg_le`: the centered Gaussian law `N(0, V)` of
-  `h*_ε(z) - h_ε(z)` has `V ≤ ∫_0^∞ 2u e^{-u²} |log u| du`, uniformly in `ε` and `z`.
+  `h*_ε(z) - h_ε(z)` has `V ≤ ∫_0^∞ 2u e^{-u²} |log u| du`, uniformly in `ε` and `z`;
+* `measure_abs_heatMollify_sub_circleAvg_ge_le`: the Gaussian tail bound
+  `P(|h*_ε(z) - h_ε(z)| ≥ T) ≤ 2 exp(-T² / (2 V₀))`, uniformly in `ε` and `z`.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology Set
@@ -326,5 +329,41 @@ theorem exists_gaussianReal_heatMollify_sub_circleAvg_le
   rw [lintegral_sq_eq_of_map_eq_gaussianReal (measurable_heatMollify_sub_circleAvg hh.1 ε z)
     hV] at h1
   exact (ENNReal.ofReal_le_ofReal_iff heatCircleVarConst_nonneg).1 h1
+
+/-- The constant `V₀ = ∫_0^∞ 2u e^{-u²} |log u| du` is positive: the integrand is positive on `(2, 3)`. -/
+lemma heatCircleVarConst_pos : 0 < heatCircleVarConst := by
+  unfold heatCircleVarConst
+  rw [setIntegral_pos_iff_support_of_nonneg_ae _ integrableOn_gaussRadial_abs_log]
+  · have hsub : Ioo (2 : ℝ) 3 ⊆ Function.support
+        (fun u : ℝ => 2 * u * Real.exp (-u ^ 2) * |Real.log u|) ∩ Ioi 0 := by
+      intro u hu
+      have hu0 : (0 : ℝ) < u := by linarith [hu.1]
+      refine ⟨?_, hu0⟩
+      have hlog : 0 < Real.log u := Real.log_pos (by linarith [hu.1])
+      exact (mul_pos (mul_pos (mul_pos two_pos hu0) (Real.exp_pos _))
+        (abs_pos.mpr hlog.ne')).ne'
+    refine lt_of_lt_of_le ?_ (measure_mono hsub)
+    rw [Real.volume_Ioo]
+    norm_num
+  · filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
+    exact mul_nonneg (mul_pos (mul_pos two_pos (mem_Ioi.mp hu)) (Real.exp_pos _)).le
+      (abs_nonneg _)
+
+/-- **Gaussian tail of the heat-versus-circle difference.** For a whole-plane GFF normalized by
+`h_1(0) = 0`, every scale `ε > 0`, every centre `z` and every level `T > 0`,
+`P(|h*_ε(z) - h_ε(z)| ≥ T) ≤ 2 exp(-T² / (2 V₀))` with `V₀ = ∫_0^∞ 2u e^{-u²} |log u| du`. -/
+theorem measure_abs_heatMollify_sub_circleAvg_ge_le
+    (hh : SupercriticalLQGUniqueness.IsNormalizedWholePlaneGFF h P) {ε : ℝ} (hε : 0 < ε)
+    (z : ℂ) {T : ℝ} (hT : 0 < T) :
+    P {ω | T ≤ |heatMollify ε (h ω) z - circleAvg (h ω) ε z|} ≤
+      ENNReal.ofReal (2 * Real.exp (-(T ^ 2 / (2 * heatCircleVarConst)))) := by
+  obtain ⟨V, hV, hVle⟩ := exists_gaussianReal_heatMollify_sub_circleAvg_le hh hε z
+  have hR := measurable_heatMollify_sub_circleAvg hh.1 ε z
+  have hS : MeasurableSet {x : ℝ | T ≤ |x|} := measurableSet_le measurable_const measurable_id.abs
+  have hpre : {ω | T ≤ |heatMollify ε (h ω) z - circleAvg (h ω) ε z|} =
+      (fun ω => heatMollify ε (h ω) z - circleAvg (h ω) ε z) ⁻¹' {x : ℝ | T ≤ |x|} := rfl
+  rw [hpre, ← Measure.map_apply hR hS, hV]
+  exact LatticeProb.Isonormal.gaussianReal_abs_ge_le V heatCircleVarConst hVle
+    heatCircleVarConst_pos T hT
 
 end LQGMetric.HeatCircle
