@@ -14,6 +14,11 @@ So the mass of a compact set is the same for every vague limit, and it is comput
 approximating measures alone. In particular, as soon as some vague limit exists, the statement
 "every vague limit gives `K` the mass `a`" is equivalent to a statement about the sequence `μs` only
 (`forall_isVagueLimit_measure_eq_ofReal_iff`).
+
+For a continuous curve `η`, the statement "every vague limit gives `η([s, t])` the mass `t - s` for all
+`s ≤ t`" therefore reduces to the countable `CurveMassCondition` on the approximating measures
+(`forall_isVagueLimit_measure_image_Icc_iff`), using that rational times suffice
+(`measure_image_Icc_eq_ofReal_of_rat`).
 -/
 
 open MeasureTheory Filter Topology Set Metric
@@ -133,5 +138,87 @@ theorem forall_isVagueLimit_measure_eq_ofReal_iff {μs : ℕ → Measure X} (hex
   obtain ⟨μ, hμ⟩ := hex
   refine ⟨fun hall => (hμ.measure_eq_ofReal_iff hK ha).1 (hall μ hμ), fun hT μ' hμ' => ?_⟩
   exact (hμ'.measure_eq_ofReal_iff hK ha).2 hT
+
+/-! ### Curves parametrized by mass
+
+A curve `η : ℝ → X` is parametrized by the mass of `μ` when `μ (η '' [s, t]) = t - s` for all `s ≤ t`. It
+suffices to check this for rational times, and for every vague limit of `μs` it is equivalent to a countable
+condition on the approximating measures (`CurveMassCondition`). -/
+
+section Parametrization
+
+private theorem exists_rat_seq_lt (x : ℝ) :
+    ∃ q : ℕ → ℚ, (∀ n, (q n : ℝ) < x) ∧ Tendsto (fun n => (q n : ℝ)) atTop (𝓝 x) := by
+  choose q hq using fun n : ℕ =>
+    exists_rat_btwn (sub_lt_self x (Nat.one_div_pos_of_nat (α := ℝ) (n := n)))
+  refine ⟨q, fun n => (hq n).2, ?_⟩
+  have h1 : Tendsto (fun n : ℕ => x - 1 / ((n : ℝ) + 1)) atTop (𝓝 x) := by
+    have h0 : Tendsto (fun n : ℕ => 1 / ((n : ℝ) + 1)) atTop (𝓝 0) :=
+      tendsto_one_div_add_atTop_nhds_zero_nat
+    simpa using (tendsto_const_nhds (x := x)).sub h0
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le h1 tendsto_const_nhds
+    (fun n => (hq n).1.le) (fun n => (hq n).2.le)
+
+private theorem exists_rat_seq_gt (x : ℝ) :
+    ∃ q : ℕ → ℚ, (∀ n, x < (q n : ℝ)) ∧ Tendsto (fun n => (q n : ℝ)) atTop (𝓝 x) := by
+  choose q hq using fun n : ℕ =>
+    exists_rat_btwn (lt_add_of_pos_right x (Nat.one_div_pos_of_nat (α := ℝ) (n := n)))
+  refine ⟨q, fun n => (hq n).1, ?_⟩
+  have h1 : Tendsto (fun n : ℕ => x + 1 / ((n : ℝ) + 1)) atTop (𝓝 x) := by
+    have h0 : Tendsto (fun n : ℕ => 1 / ((n : ℝ) + 1)) atTop (𝓝 0) :=
+      tendsto_one_div_add_atTop_nhds_zero_nat
+    simpa using (tendsto_const_nhds (x := x)).add h0
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h1
+    (fun n => (hq n).1.le) (fun n => (hq n).2.le)
+
+/-- **Rational times suffice.** If `μ (f '' [s, t]) = t - s` for all rational `s ≤ t`, then for all real
+`s ≤ t` (monotonicity of `μ` and density of the rationals; no regularity of `f` is needed). -/
+theorem measure_image_Icc_eq_ofReal_of_rat {Y : Type*} [MeasurableSpace Y] {μ : Measure Y} {f : ℝ → Y}
+    (h : ∀ s t : ℚ, s ≤ t → μ (f '' Icc (s : ℝ) t) = ENNReal.ofReal ((t : ℝ) - s))
+    {s t : ℝ} (hst : s ≤ t) : μ (f '' Icc s t) = ENNReal.ofReal (t - s) := by
+  apply le_antisymm
+  · obtain ⟨a, ha, ha'⟩ := exists_rat_seq_lt s
+    obtain ⟨b, hb, hb'⟩ := exists_rat_seq_gt t
+    refine ge_of_tendsto' (ENNReal.tendsto_ofReal (hb'.sub ha')) fun n => ?_
+    have hab : a n ≤ b n := by exact_mod_cast (((ha n).trans_le hst).trans (hb n)).le
+    rw [← h _ _ hab]
+    exact measure_mono (image_mono (Icc_subset_Icc (ha n).le (hb n).le))
+  · rcases hst.eq_or_lt with heq | hlt
+    · simp [heq]
+    · obtain ⟨a, ha, ha'⟩ := exists_rat_seq_gt s
+      obtain ⟨b, hb, hb'⟩ := exists_rat_seq_lt t
+      have h1 := ha'.eventually (gt_mem_nhds (show s < (s + t) / 2 by linarith))
+      have h2 := hb'.eventually (lt_mem_nhds (show (s + t) / 2 < t by linarith))
+      refine le_of_tendsto (ENNReal.tendsto_ofReal (hb'.sub ha')) ?_
+      filter_upwards [h1, h2] with n hn1 hn2
+      have hab : a n ≤ b n := by exact_mod_cast (hn1.trans hn2).le
+      rw [← h _ _ hab]
+      exact measure_mono (image_mono (Icc_subset_Icc (ha n).le (hb n).le))
+
+/-- The countable mass condition for a curve `η` and measures `μs`: for all rational `s ≤ t`, the iterated
+limits `lim_n lim_k ∫ compactCutoff (η '' [s, t]) n d(μs k)` equal `t - s`. -/
+def CurveMassCondition (μs : ℕ → Measure X) (η : ℝ → X) : Prop :=
+  ∀ s t : ℚ, s ≤ t → Tendsto (fun n => limUnder atTop
+    (fun k => ∫ x, compactCutoff (η '' Icc (s : ℝ) t) n x ∂(μs k))) atTop (𝓝 ((t : ℝ) - s))
+
+/-- Under the countable mass condition, every vague limit parametrizes the curve by its mass. -/
+theorem IsVagueLimit.measure_image_Icc_of_curveMassCondition {μs : ℕ → Measure X} {μ : Measure X}
+    {η : ℝ → X} (hη : Continuous η) (hμ : IsVagueLimit μs μ) (h : CurveMassCondition μs η) {s t : ℝ}
+    (hst : s ≤ t) : μ (η '' Icc s t) = ENNReal.ofReal (t - s) :=
+  measure_image_Icc_eq_ofReal_of_rat (fun s' t' hst' => (hμ.measure_eq_ofReal_iff
+    (isCompact_Icc.image hη) (sub_nonneg.2 (by exact_mod_cast hst'))).2 (h s' t' hst')) hst
+
+/-- If some vague limit exists, then every vague limit parametrizes the continuous curve `η` by its mass
+if and only if the countable mass condition holds. -/
+theorem forall_isVagueLimit_measure_image_Icc_iff {μs : ℕ → Measure X} {η : ℝ → X} (hη : Continuous η)
+    (hex : ∃ μ, IsVagueLimit μs μ) :
+    (∀ μ, IsVagueLimit μs μ → ∀ s t : ℝ, s ≤ t → μ (η '' Icc s t) = ENNReal.ofReal (t - s)) ↔
+      CurveMassCondition μs η := by
+  refine ⟨fun h s t hst => ?_, fun h μ hμ s t hst => hμ.measure_image_Icc_of_curveMassCondition hη h hst⟩
+  have hst' : (s : ℝ) ≤ t := by exact_mod_cast hst
+  exact (forall_isVagueLimit_measure_eq_ofReal_iff hex (isCompact_Icc.image hη) (sub_nonneg.2 hst')).1
+    fun μ hμ => h μ hμ s t hst'
+
+end Parametrization
 
 end LatticeProb.VagueLimit
