@@ -21,6 +21,8 @@ arguments for the mating-of-trees encoding:
 * `IsRegularCoordinatePair.volume_image_eq_zero`: the same for the coordinates of a regular pair.
 * `ae_isRegularCoordinatePair`: a correlated Brownian pair is almost surely regular, given the descent and
   excursion-count conditions almost surely at each rational time.
+* `IsRegularCoordinatePair.eq_or_swap_of_contour_pairs`: contour-pair rigidity for two regular pairs, with the
+  exceptional times confined to a set that is countable or of Hausdorff dimension `< 1/2`.
 -/
 
 set_option autoImplicit false
@@ -66,6 +68,29 @@ theorem IsRegularCoordinatePair.volume_image_eq_zero {ω : Path2} (h : IsRegular
     {Z : Set ℝ} (hZ : Z.Countable ∨ ∃ d : ℝ≥0∞, dimH Z ≤ d ∧ d < 1 / 2) :
     volume ((fun t => lrCoord i t ω) '' Z) = 0 :=
   volume_image_eq_zero_of_forall_holder_lt_half (h.2.2.2 i) hZ
+
+/-- **Contour-pair rigidity for regular pairs.** Let `ω` and `ω'` be regular coordinate pairs and let `Z` be a set
+of times that is countable or of Hausdorff dimension `< 1/2`. Assume that the two coordinates of `ω'` have no common
+weak contour pair, and that every contour pair of a coordinate of `ω` with a rational anchor whose left end lies off
+`Z` is a contour pair of one of the two coordinates of `ω'`. Then `ω'` equals `ω`, or `ω'` equals `ω` with its two
+coordinates exchanged. -/
+theorem IsRegularCoordinatePair.eq_or_swap_of_contour_pairs {ω ω' : Path2} (h : IsRegularCoordinatePair ω)
+    (h' : IsRegularCoordinatePair ω') {Z : Set ℝ} (hZ : Z.Countable ∨ ∃ d : ℝ≥0∞, dimH Z ≤ d ∧ d < 1 / 2)
+    (hNC : ∀ s t, IsWeakContourPair (fun u => lrCoord 0 u ω') s t →
+      IsWeakContourPair (fun u => lrCoord 1 u ω') s t → False)
+    (hcol : ∀ i : Fin 2, ∀ w ∈ range ((↑) : ℚ → ℝ), ∀ l,
+      lastBelow (fun u => lrCoord i u ω) w l ∉ Z → l < lrCoord i w ω →
+        IsContourPair (fun u => lrCoord 0 u ω') (lastBelow (fun u => lrCoord i u ω) w l)
+            (firstBelow (fun u => lrCoord i u ω) w l) ∨
+          IsContourPair (fun u => lrCoord 1 u ω') (lastBelow (fun u => lrCoord i u ω) w l)
+            (firstBelow (fun u => lrCoord i u ω) w l)) :
+    (∀ u, lrCoord 0 u ω' = lrCoord 0 u ω ∧ lrCoord 1 u ω' = lrCoord 1 u ω) ∨
+      ∀ u, lrCoord 0 u ω' = lrCoord 1 u ω ∧ lrCoord 1 u ω' = lrCoord 0 u ω := by
+  rcases eq_or_swap_of_contour_pairs_of_volume_image (h.1 0) (h.1 1) (h'.1 0) (h'.1 1)
+      Rat.denseRange_cast hNC (h.volume_image_eq_zero 0 hZ) (h.volume_image_eq_zero 1 hZ) (hcol 0) (hcol 1)
+      (t₀ := 0) (c := 0) (h.2.2.1 0) (h.2.2.1 1) (h'.2.2.1 0) (h'.2.2.1 1) h.2.1 with ⟨hL, hR⟩ | ⟨hL, hR⟩
+  · exact Or.inl fun u => ⟨congrFun hL u, congrFun hR u⟩
+  · exact Or.inr fun u => ⟨congrFun hL u, congrFun hR u⟩
 
 variable {γ : ℝ} {μ : Measure Path2}
 
