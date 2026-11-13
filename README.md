@@ -339,6 +339,9 @@ the field with zero boundary values on a finite set `C` as
   inequality for anchored boxes (`p > 1`), from Wiener's one-parameter maximal
   theorem applied once per coordinate; `LatticeProb.anchoredBoxMean_holds`: the
   `Lᵖ` mean ergodic theorem along anchored boxes.
+  `LatticeProb.krengelLpBall_holds`: Krengel's `Lᵖ` maximal bound for the
+  averages over `ℓ¹` balls (`p > 1`), through the `2^d` orthant boxes, each a
+  box along a reflected action.
 * `LatticeProb.ergodic_decomposition`: the ergodic decomposition of a
   measure-preserving transformation of a standard Borel probability space.
 * `LatticeProb.ergodic_coordShift_infinitePi`: Bernoulli shifts are ergodic;

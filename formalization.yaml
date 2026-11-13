@@ -404,6 +404,12 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.krengelLpBall_holds"
+      file: "LatticeProb/Prob/AkcogluKrengelAE/KrengelLpBallHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.LQG.rescaledBallMassUniformStepLP_holds"
       file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
       sorry_count: 0
@@ -862,6 +868,11 @@ alignment:
       module: "LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodicAllHolds"
       status: "proved"
       note: "The propositions LatticeProb.RectangleErgodicAll and LatticeProb.RectangleErgodicFull (rectangles prod_i [ceil(N a_i), ceil(N b_i)) for every a <= b), from the box ergodic theorem along arbitrary side lengths LatticeProb.ae_tendsto_boxAvg_univ_integral, the orthant decomposition and the reflected actions."
+    - source: "L^p maximal inequality for Z^d actions along l1 balls, p > 1 (Wiener 1939; Krengel, Ergodic Theorems, 1985)"
+      lean: "LatticeProb.krengelLpBall_holds"
+      module: "LatticeProb.Prob.AkcogluKrengelAE.KrengelLpBallHolds"
+      status: "proved"
+      note: "The proposition LatticeProb.KrengelLpBall d for every d, with a constant depending only on d and p: the l1-ball average is at most (2d)^d times the largest of the 2^d orthant-box averages (LatticeProb.l1BallMax_le_orthantBoxMax), each orthant box is a box along a reflected action at a shifted point (LatticeProb.avg_orthantBox_eq), and the box maximal inequality LatticeProb.lintegral_iSup_boxAvg_rpow_le_uniform bounds each term."
 
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are

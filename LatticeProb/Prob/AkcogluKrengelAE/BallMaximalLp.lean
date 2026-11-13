@@ -1,7 +1,7 @@
 /-
 # The multiparameter pointwise ergodic maximal inequality (Krengel's `Lᵖ` bound)
 
-This file is the library-side home of the statement VRW's worker isolated as
+This file is the library-side home of the statement isolated in VRW as
 `VRW.KrengelLpBall` (`_wip/MaximalErgodicReduction.lean`): for a measure-preserving action
 `T : ℤ^d → Ω → Ω` of the lattice on a probability space, `p > 1` and a measurable
 `f : Ω → ℝ≥0∞`, the `ℓ¹`-ball averaging maximal is `Lᵖ`-bounded,
@@ -13,26 +13,18 @@ The definitions `l1Ball` and `avg` reproduce VRW's (`VRW/Model/Lattice.lean:72`,
 
 ## Status
 
-The one-parameter weak-type `(1,1)` bound is already in the library in normalised form
+The one-parameter weak-type `(1,1)` bound is in the library in normalised form
 (`maximal_inequality` read through `bAvg`; see `measureReal_normalizedMaximalSet_le` below).
-The two genuinely missing inputs are isolated as named `Prop`s and are **not** proved here:
+Both propositions stated here are proved:
 
 * `BirkhoffLpMaximal` — the one-parameter strong `Lᵖ` maximal (Wiener's maximal theorem for a
-  single measure-preserving transformation). Mathlib has only Doob's *weak*-type maximal
-  inequality (`MeasureTheory.maximal_ineq`) and no Marcinkiewicz interpolation
-  (`grep -rn "Marcinkiewicz" .lake/packages/mathlib` is empty), so this must be built from the
-  layer-cake identity `MeasureTheory.lintegral_eq_lintegral_meas_lt` plus
-  `maximal_inequality`.
-* `KrengelLpBall` — the multiparameter bound. The precise route: since
-  `l1Ball 0 R ⊆ [-R,R]^d`, the `ℓ¹`-ball maximal is dominated by the cube maximal
-  `sup_s avg (box s) (f ∘ T_·)`, and the cube average factors by Fubini as the `d`-fold
-  iterate `M_1 M_2 ⋯ M_d` of the one-parameter maximals `M_i f(x) =
-  sup_{N} (1/N) ∑_{k<N} f(T_{k e_i} x)`. Applying `BirkhoffLpMaximal` once per coordinate
-  (and `MeasurePreserving.lintegral_comp` / Fubini for the measure-preserving factors) gives
-  the bound. Nothing in this library assembles the iteration.
-
-Everything below is `sorry`-free; the two `Prop`s mark the exact remaining gap rather than
-assume it.
+  single measure-preserving transformation), proved as `birkhoffLpMaximal`
+  (`BirkhoffLpMaximalProved.lean`) from the weak-type bound and the layer-cake identity.
+* `KrengelLpBall` — the multiparameter bound, proved as `krengelLpBall_holds`
+  (`KrengelLpBallHolds.lean`): the `ℓ¹`-ball average is at most `(2d)^d` times the largest of
+  the `2^d` orthant-box averages, each orthant box is a box along a reflected action at a
+  shifted point, and the box maximal function is bounded by applying `birkhoffLpMaximal` once
+  per coordinate.
 -/
 import LatticeProb.Prob.Birkhoff
 import LatticeProb.Walk.Ball
@@ -57,8 +49,8 @@ noncomputable def avg {d : ℕ} (B : Finset (Site d)) (f : Site d → ℝ≥0∞
   (B.card : ℝ≥0∞)⁻¹ * ∑ y ∈ B, f y
 
 /-- The one-parameter strong `Lᵖ` maximal for a measure-preserving transformation.  This is
-Wiener's maximal theorem in the form the `d = 1` case of `KrengelLpBall` consumes; it is the
-first missing input (see the file header). -/
+Wiener's maximal theorem in the form the `d = 1` case of `KrengelLpBall` consumes; it is proved
+as `birkhoffLpMaximal` (`BirkhoffLpMaximalProved.lean`). -/
 def BirkhoffLpMaximal : Prop :=
   ∀ p : ℝ, 1 < p → ∃ C : ℝ, 0 ≤ C ∧
     ∀ {Ω : Type} [MeasurableSpace Ω] (μ : Measure Ω), IsProbabilityMeasure μ →
