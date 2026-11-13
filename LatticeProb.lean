@@ -557,6 +557,7 @@ import LatticeProb.Analysis.Sobolev.RellichLowFreq
 import LatticeProb.Analysis.Sobolev.RellichMollify
 import LatticeProb.Analysis.Sobolev.RellichNonzeroConsumer
 import LatticeProb.Analysis.Sobolev.RellichCompactProved
+import LatticeProb.Analysis.Sobolev.BandLimitedProved
 import LatticeProb.Analysis.Sobolev.RellichCmNetReduction
 import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
 import LatticeProb.External.RellichKondrachovNegSobolev
