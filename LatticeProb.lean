@@ -884,3 +884,7 @@ import LatticeProb.Analysis.CircleAverageUniformLimit
 import LatticeProb.Vendor.FormalMathPercolation
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Zipper.WeldingUniquenessUncond
 import LatticeProb.ParticleDrivenAgree.Agree
+import LatticeProb.Sandpile.FLP.Basic
+import LatticeProb.Sandpile.FLP.OneDimensional
+import LatticeProb.Sandpile.FLP.SlabStabilizer
+import LatticeProb.Sandpile.FLP.LowStabilize
