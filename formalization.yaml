@@ -103,15 +103,16 @@ status:
     Kolmogorov-Chentsov theorem, Brownian motion on R^d and its strong Markov
     property, the isonormal process, regular variation, and Jordan separation
     on the square lattice.  Five results from the literature are stated
-    as propositions in LatticeProb/External/ and not proved (the Gaussian
-    logarithmic Sobolev inequality and its Herbst bound, polygonal
-    unicoherence, Janiszewski's theorem for polygonal sets, the
-    Rellich-Kondrachov embedding in negative Sobolev order); the theorems that
-    use them take them as explicit hypotheses.  Of these, the log-Sobolev
-    inequality, the Herbst bound, Janiszewski's theorem and polygonal
-    unicoherence are now proved (LatticeProb.gaussianLogSobolev_holds,
+    as propositions in LatticeProb/External/ (the Gaussian logarithmic
+    Sobolev inequality and its Herbst bound, polygonal unicoherence,
+    Janiszewski's theorem for polygonal sets, the Rellich-Kondrachov
+    embedding in negative Sobolev order), and all five are proved
+    (LatticeProb.gaussianLogSobolev_holds,
     LatticeProb.gaussianHerbstBound_all, LatticeProb.polygonalJaniszewski,
-    LatticeProb.polygonalUnicoherence).  A sixth proposition there,
+    LatticeProb.polygonalUnicoherence,
+    LatticeProb.Sobolev.rellichKondrachovNegSobolev_holds), so the theorems
+    stated with one of them as a hypothesis hold without it.  A sixth
+    proposition there,
     PotentialKernelAsymptotics (Lawler-Limic, Theorems 4.3.1 and 4.4.4), is
     stated for the formalizations that cite it and proved in
     LatticeProb/External/PotentialKernelAsymptoticsProved.lean, and three more,
@@ -285,6 +286,24 @@ status:
       literature_dependencies: []
     - declaration: "LatticeProb.Sobolev.rk_finite_net_of_Cm_net"
       file: "LatticeProb/Analysis/Sobolev/RellichNet.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.rellichKondrachovNegSobolev_holds"
+      file: "LatticeProb/Analysis/Sobolev/RellichConvolvedCompact.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.negSobolevNorm_le_finset_sup_add_unconditional"
+      file: "LatticeProb/Analysis/Sobolev/RellichCompactProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.tight_transfer_unconditional"
+      file: "LatticeProb/Analysis/Sobolev/RellichCompactProved.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
@@ -675,11 +694,11 @@ alignment:
       module: "LatticeProb.External.GaussianLogSobolevProved"
       status: "proved"
       note: "The propositions LatticeProb.GaussianLogSobolev n and LatticeProb.GaussianLogSobolevL2 n for every n, from the sharp exponential-tilt inequality LatticeProb.GaussLSI.integral_mul_log_le_of_gradient (semigroup argument along the Mehler interpolation), the C1 approximation LatticeProb.lipschitzLogApprox, and its Lipschitz form LatticeProb.GaussLSI.integral_exp_mul_le_of_lipschitz."
-    - source: "Cited results (Rellich-Kondrachov in negative order)"
-      lean: "LatticeProb.External.RellichKondrachovNegSobolev"
-      module: "LatticeProb.External"
-      status: "assumed"
-      note: "Explicit hypotheses of the theorems that use them."
+    - source: "Rellich-Kondrachov compact embedding in negative Sobolev order (Rellich 1930; Kondrachov 1945)"
+      lean: "LatticeProb.Sobolev.rellichKondrachovNegSobolev_holds"
+      module: "LatticeProb.Analysis.Sobolev.RellichConvolvedCompact"
+      status: "proved"
+      note: "The proposition LatticeProb.External.RellichKondrachovNegSobolev, for every bounded domain and all real orders s0 < s, with test-function centres; its consumers hold without it in LatticeProb.Analysis.Sobolev.RellichCompactProved."
 
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are

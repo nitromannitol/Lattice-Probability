@@ -49,8 +49,13 @@ a cited result with their sources.
 ### Cited results taken as hypotheses
 
 The following results from the literature are stated as propositions in
-`LatticeProb/External/` and are not proved here: the Rellich-Kondrachov compact
-embedding in negative Sobolev order.  The Gaussian logarithmic Sobolev
+`LatticeProb/External/`, and each of them is proved.  The Rellich-Kondrachov
+compact embedding in negative Sobolev order, stated there as
+`LatticeProb.External.RellichKondrachovNegSobolev`, is proved for every bounded
+domain and all real orders `s₀ < s`
+(`LatticeProb.Sobolev.rellichKondrachovNegSobolev_holds`, by a uniform
+test-function mollifier and a finite net of the mollified unit ball, in
+`LatticeProb/Analysis/Sobolev/RellichConvolvedCompact.lean`).  The Gaussian logarithmic Sobolev
 inequality, stated there as `LatticeProb.GaussianLogSobolev n`, is proved for
 every `n` (`LatticeProb.gaussianLogSobolev_holds`, by the Bakry-Emery semigroup
 argument along the Mehler interpolation, with the sharp constant, in
@@ -65,7 +70,9 @@ the connectedness of the frontier of a complementary component in
 `LatticeProb/Topology/Unicoherence.lean`).  A
 theorem that uses one of them takes it as an explicit hypothesis, so its
 statement shows what it rests on.  The Rellich-Kondrachov embedding is used by
-the compactness results of `LatticeProb/Analysis/Sobolev/`.  The Herbst bound
+the compactness results of `LatticeProb/Analysis/Sobolev/`, which also hold
+without it (`LatticeProb.Sobolev.negSobolevNorm_le_finset_sup_add_unconditional`,
+`LatticeProb.Sobolev.tight_transfer_unconditional`).  The Herbst bound
 `GaussianHerbstBound n`, stated in the same file as the log-Sobolev inequality,
 is proved for every `n` (`LatticeProb.gaussianHerbstBound_all`), so the Gaussian
 concentration inequality `LatticeProb.gaussian_lipschitz_concentration_unconditional`
@@ -511,8 +518,7 @@ Rellich–Kondrachov compact embedding in negative Sobolev order.
   Sobolev pairing bound for smooth compactly supported tests, mollified values
   and derivative kernels. Smooth compact support supplies the spatial `L¹`
   and `L²` premises. The bump consumers prove a positive Sobolev norm and a
-  nonzero derivative kernel. These results retain their stated hypotheses;
-  the remaining Rellich compactness input stays explicit.
+  nonzero derivative kernel. These results retain their stated hypotheses.
 * `LatticeProb.Sobolev.sobolevNormSqHigh_le` and
   `LatticeProb.Sobolev.exists_sobolevNormSqHigh_le`: the high-frequency part of
   the `H^{s₀}` norm is at most `(1 + (2πΛ)²)^{s₀-s}` times the `H^s` norm, and
@@ -538,6 +544,11 @@ Rellich–Kondrachov compact embedding in negative Sobolev order.
   `LatticeProb.Sobolev.rellichKondrachov_of_rkLowFrequencyStatement`: the external
   `RellichKondrachovNegSobolev` is equivalent to the internal low-frequency
   finite-net statement.
+* `LatticeProb.Sobolev.rellichKondrachovNegSobolev_holds`: the
+  Rellich–Kondrachov compact embedding itself, with test-function centres, for
+  every bounded domain and all real orders `s₀ < s`;
+  `negSobolevNorm_le_finset_sup_add_unconditional` and
+  `tight_transfer_unconditional` are its dual-norm and tightness consequences.
 **The bracket process and the Dambis–Dubins–Schwarz representation.**
 `LatticeProb/Prob/BracketProcess.lean` is Stage 1 of the bracket process of a
 continuous martingale: the dyadic realized quadratic variation
