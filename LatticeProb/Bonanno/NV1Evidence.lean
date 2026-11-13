@@ -120,6 +120,31 @@ theorem lfppCrossingLength_eq_chain (ξ : ℝ) (φ : C(ℂ, ℝ)) :
     (LQGMetric.LFPP.leftSide_subset_square (LQGMetric.LFPP.sideRat_subset 0 a.2))
     (LQGMetric.LFPP.rightSide_subset_square (LQGMetric.LFPP.sideRat_subset 1 b.2))
 
+theorem aemeasurable_lfppCrossingLength_of_ae_heatMollify {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} {h : Ω → DistC}
+    (hh : IsWholePlaneGFF h P) (ξ ε : ℝ) (hε : 0 < ε)
+    (X : Ω → C(ℂ, ℝ))
+    (hX : ∀ᵐ ω ∂P, ∀ z : ℂ, X ω z = LQGMetric.heatMollify ε (h ω) z) :
+    AEMeasurable (fun ω => lfppCrossingLength ξ (X ω)) P := by
+  let C : DistC → ℝ≥0∞ := fun g =>
+    ⨅ (a : LQGMetric.LFPP.sideRat 0) (b : LQGMetric.LFPP.sideRat 1),
+      ⨅ (N : ℕ)
+        (q : Fin N → ↥(LQGMetric.LFPP.gaussRat ∩
+          LQGMetric.Blueprint.closedUnitSquare)),
+        LQGMetric.LFPP.chainCost ξ (LQGMetric.heatMollify ε g) a b N q
+  have hm : Measurable C := by
+    have := (LQGMetric.LFPP.sideRat_countable 0).to_subtype
+    have := (LQGMetric.LFPP.sideRat_countable 1).to_subtype
+    exact Measurable.iInf fun a => Measurable.iInf fun b =>
+      LQGMetric.LFPP.measurable_iInf_chainCost ξ ε
+        (LQGMetric.LFPP.gaussRat_countable.mono inter_subset_left) a b
+  refine ⟨fun ω => C (h ω), hm.comp hh.measurable, ?_⟩
+  filter_upwards [hh.ae_tendstoLocallyUniformly_heatMollify ε hε.ne', hX] with ω hω hXω
+  have heq : X ω = ⟨LQGMetric.heatMollify ε (h ω), hω.2⟩ :=
+    ContinuousMap.ext fun z => hXω z
+  rw [heq]
+  exact lfppCrossingLength_eq_chain ξ ⟨LQGMetric.heatMollify ε (h ω), hω.2⟩
+
 theorem lfppCrossingLength_lt_top (ξ : ℝ) (φ : C(ℂ, ℝ)) :
     lfppCrossingLength ξ φ < ∞ := by
   let E : ℂ → ℝ := fun z => Real.exp (ξ * φ z)
@@ -181,5 +206,47 @@ theorem exists_median_of_ae_lt_top {Ω : Type*} [MeasurableSpace Ω]
     exact hlevel.1
   · rw [measure_congr hupper]
     exact hlevel.2
+
+theorem exists_heatVersion_median {Ω : Type*} [MeasurableSpace Ω]
+    (P : Measure Ω) [IsProbabilityMeasure P] (h : Ω → DistC)
+    (hh : IsNormalizedWholePlaneGFF h P) (ξ ε : ℝ) (hε : 0 < ε) :
+    ∃ (X : Ω → C(ℂ, ℝ)) (m : ℝ≥0∞),
+      (∀ z : ℂ, ∀ᵐ ω ∂P,
+        Tendsto (fun n : ℕ => h ω
+          (positiveHeatTrunc ⟨ε ^ 2 / 2,
+            Set.mem_Ioi.mpr (div_pos (pow_pos hε 2) two_pos)⟩ z n)) atTop
+          (𝓝 (X ω z))) ∧
+      IsMedian P (fun ω => lfppCrossingLength ξ (X ω)) m := by
+  obtain ⟨X, hXeq, hXlim⟩ := exists_heatVersion hh ε hε
+  have hL : AEMeasurable (fun ω => lfppCrossingLength ξ (X ω)) P :=
+    aemeasurable_lfppCrossingLength_of_ae_heatMollify hh.1 ξ ε hε X hXeq
+  have hfinite : ∀ᵐ ω ∂P, lfppCrossingLength ξ (X ω) < ∞ :=
+    Filter.Eventually.of_forall fun ω => lfppCrossingLength_lt_top ξ (X ω)
+  obtain ⟨m, hm⟩ := exists_median_of_ae_lt_top P
+    (fun ω => lfppCrossingLength ξ (X ω)) hL hfinite
+  exact ⟨X, m, hXlim, hm⟩
+
+theorem exists_exponent_witness_family {Ω : Type} [MeasurableSpace Ω]
+    (P : Measure Ω) [IsProbabilityMeasure P] (h : Ω → DistC)
+    (hh : IsNormalizedWholePlaneGFF h P) (ξ : Set.Ioi (0 : ℝ)) :
+    ∃ (X : ℝ → Ω → C(ℂ, ℝ)) (m : ℝ → ℝ≥0∞),
+      ∀ ε : ℝ, ∀ hε : 0 < ε,
+        (∀ z : ℂ, ∀ᵐ ω ∂P,
+          Tendsto (fun n : ℕ => h ω
+            (positiveHeatTrunc ⟨ε ^ 2 / 2,
+              Set.mem_Ioi.mpr (div_pos (pow_pos hε 2) two_pos)⟩ z n)) atTop
+            (𝓝 (X ε ω z))) ∧
+        IsMedian P (fun ω => lfppCrossingLength ξ (X ε ω)) (m ε) := by
+  classical
+  have hExists (ε : ℝ) (hε : 0 < ε) :=
+    exists_heatVersion_median P h hh (ξ : ℝ) ε hε
+  let X : ℝ → Ω → C(ℂ, ℝ) := fun ε =>
+    if hε : 0 < ε then Classical.choose (hExists ε hε) else 0
+  let m : ℝ → ℝ≥0∞ := fun ε =>
+    if hε : 0 < ε then Classical.choose (Classical.choose_spec (hExists ε hε)) else 0
+  refine ⟨X, m, ?_⟩
+  intro ε hε
+  simpa only [X, m, dif_pos hε] using
+    (Classical.choose_spec (Classical.choose_spec (hExists ε hε)))
 
 end SupercriticalLQGUniqueness
