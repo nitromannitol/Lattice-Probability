@@ -1,9 +1,9 @@
 /-
 # Arzelà–Ascoli with a general normed codomain (the jet-net input)
 
-The low-frequency net route (`RellichCmNetSupply.lean`, `rkBandLimitedJetNet`) needs
-Arzelà–Ascoli applied not to scalar functions but to the **iterated-derivative jet**
-`x ↦ (f x, f' x, …)`, which lands in a finite-dimensional normed space.  The landed scalar form
+`C^m`-nets of families of smooth functions come from Arzelà–Ascoli applied not to scalar
+functions but to the **iterated-derivative jet** `x ↦ (f x, f' x, …)`, which lands in a
+finite-dimensional normed space.  The landed scalar form
 `exists_finite_supNet_of_uniformLip` (`RellichCmNetReduction.lean`) is stated for
 `BoundedContinuousFunction α ℝ`; this module generalizes it to a normed codomain `β` with
 `ProperSpace β` (the jet space is finite-dimensional, hence proper).

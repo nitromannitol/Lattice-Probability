@@ -527,7 +527,11 @@ Rellich–Kondrachov compact embedding in negative Sobolev order.
 * `LatticeProb.Sobolev.rellichKondrachov_iff_rkLowFrequencyStatement` and
   `LatticeProb.Sobolev.rellichKondrachov_of_rkLowFrequencyStatement`: the external
   `RellichKondrachovNegSobolev` is equivalent to the internal low-frequency
-  finite-net statement.
+  finite-net statement, which holds (`rkLowFrequencyStatement_holds`,
+  `Analysis/Sobolev/BandLimitedProved.lean`).
+* `LatticeProb.Sobolev.bandProjHighFreq_holds`: the truncation identity
+  `‖φ - P_Λ φ‖_{H^s}² ≤` the high-frequency part of `‖φ‖_{H^s}²` for the real band
+  projection (`Analysis/Sobolev/RellichLowFreqGlue.lean`).
 * `LatticeProb.Sobolev.rellichKondrachovNegSobolev_holds`: the
   Rellich–Kondrachov compact embedding itself, with test-function centres, for
   every bounded domain and all real orders `s₀ < s`;

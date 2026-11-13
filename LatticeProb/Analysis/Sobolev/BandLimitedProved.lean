@@ -3,7 +3,8 @@
 
 `BandLimitedPrecompact` is the finite-net form of the Rellich–Kondrachov embedding
 `rellichKondrachovNegSobolev_holds`, taken at accuracy `η = √δ`; the low-frequency net
-`rkLowFreqNet` follows from it.  `BandLimitedTranslationContinuous` follows from the
+`rkLowFreqNet` follows from it, and with it the internal finite-net statement
+`rkLowFrequencyStatement`.  `BandLimitedTranslationContinuous` follows from the
 quantitative translation bound `sobolevNormSq_translate_sub_le` together with the uniform
 high-frequency truncation `exists_sobolevNormSqHigh_le_truncation` of the `H^s` unit ball.
 -/
@@ -30,6 +31,10 @@ theorem bandLimitedPrecompact_holds : BandLimitedPrecompact := by
 /-- The low-frequency net statement holds. -/
 theorem rkLowFreqNet_holds : rkLowFreqNet :=
   rkLowFreqNet_of_bandLimitedPrecompact bandLimitedPrecompact_holds
+
+/-- The internal finite-net form of the Rellich–Kondrachov embedding holds. -/
+theorem rkLowFrequencyStatement_holds : rkLowFrequencyStatement :=
+  rkLowFrequencyStatement_of_rkLowFreqNet rkLowFreqNet_holds
 
 /-- The `H^s` unit ball of test functions on a bounded domain is uniformly
 translation-continuous in the `H^{s₀}` norm (`s₀ < s`). -/

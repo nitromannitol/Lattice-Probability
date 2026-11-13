@@ -1,30 +1,11 @@
 /-
-# The bounded `C^m`-net sub-piece of the Rellich–Kondrachov low-frequency residual
+# Arzelà–Ascoli in net form, with centres in the family
 
-`rkLowFreqNet` (`RellichLowFreqNet.lean`) is the low-frequency compactness step of the
-Rellich–Kondrachov argument.  This file proves a reusable ingredient of `C^m`-net
-constructions, the **net step**: a uniformly bounded, uniformly Lipschitz family of
-continuous functions on a compact space has a finite `ε`-net in the sup metric, with
-centres *in the family*.  That last clause is what keeps the centres inside the class of
-test functions in the reduction.  This is Arzelà–Ascoli in the net form; it is the half of
-the `C^m`-net construction that Mathlib does not state and that is genuinely bounded.
-
-## What is left open (one named Prop)
-
-The open input stated here is the **uniform Bernstein jet bound** on the
-band-limited fields, `rkLowFreqUniformJetBound` below: the `Λ`-band-limited test fields of
-the `H^s` unit ball have all derivatives up to order `m + 1` bounded by one constant on a
-compact carrier.  Two further inputs are needed to turn that bound into a `C^m`-net and are
-*not* part of this file:
-
-1. the multi-index/jet packaging that feeds the bound for every order `k ≤ m + 1` into the
-   abstract net lemma above (`C^m`-closeness is the sup-closeness of the jet
-   `x ↦ (D^k f x)_{k ≤ m}`, and the top derivative is Lipschitz precisely by the `k = m+1`
-   case); and
-2. the support repair replacing the band-limited centres by test functions on `D` (the
-   band-limited fields are not compactly supported).
-
-Neither is a missing Mathlib *definition*; the net step below is the reusable half.
+`exists_finite_supNet_of_uniformLip`: a uniformly bounded, uniformly Lipschitz family of
+bounded continuous functions on a compact space has, for every `ε > 0`, a finite `ε`-net in the
+sup metric whose centres belong to the family. Keeping the centres in the family is what keeps
+them inside a class of test functions when the lemma is applied to the low-frequency step of the
+Rellich–Kondrachov argument (`RellichLowFreqNet.lean`).
 -/
 import Mathlib
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
@@ -81,19 +62,5 @@ theorem exists_finite_supNet_of_uniformLip {α : Type*} [PseudoMetricSpace α] [
   refine ⟨g, hgT, ?_⟩
   rw [Metric.mem_eball, edist_dist, ENNReal.ofReal_lt_ofReal_iff hε] at hfg
   exact le_of_lt hfg
-
-/-! ### The single open input -/
-
-/-- **The uniform Bernstein jet bound for band-limited fields.**  The `Λ`-band-limited
-fields of the `H^s` unit ball have all derivatives up to order `m + 1` bounded by one
-constant on every compact carrier.  This is the Bernstein/`H^s → C^m` input the classical
-proof consumes; it is what makes the projections `P_Λ φ` `C^m`-bounded even though the
-rough fields `φ` are not.  It is the one named open input kept by this file. -/
-def rkLowFreqUniformJetBound : Prop :=
-  ∀ (d : ℕ) (K : Set (Space d)), IsCompact K → ∀ (Λ : ℝ), 0 < Λ →
-    ∀ (s : ℝ), 0 ≤ s → ∀ m : ℕ,
-      ∃ C : ℝ, 0 < C ∧
-        ∀ φ : Space d → ℝ, IsBandLimited Λ φ → sobolevNormSq d s φ ≤ 1 →
-          ∀ k ≤ m + 1, ∀ x ∈ K, ‖iteratedFDeriv ℝ k φ x‖ ≤ C
 
 end LatticeProb.Sobolev

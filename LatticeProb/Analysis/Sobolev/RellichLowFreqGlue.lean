@@ -1,12 +1,14 @@
 /-
-# The truncation identity for the real band projection, as a named input
+# The truncation identity for the real band projection
 
-`BandProjHighFreq` states the truncation identity
+`BandProjHighFreq` is the truncation identity
 `sobolevNormSq d s (φ - P_Λ φ) ≤ sobolevNormSqHigh d s Λ φ` for the real projection
-`P_Λ φ = bandProj d Λ …`; it follows from `fourier_bandProj` (`FejerLimit.lean`) and the support
-of `1 - bandCut`.
+`P_Λ φ = bandProj d Λ …` of a test function `φ`. It holds (`bandProjHighFreq_holds`) by
+`sobolevNormSq_sub_bandProj_le`, from `fourier_bandProj` (`FejerLimit.lean`) and the support of
+`1 - bandCut`.
 -/
 import LatticeProb.Analysis.Sobolev.Additivity
+import LatticeProb.Analysis.Sobolev.BandProjectionConsume
 import LatticeProb.Analysis.Sobolev.FejerLimit
 import LatticeProb.Analysis.Sobolev.RellichLowFreqNet
 
@@ -23,5 +25,9 @@ def BandProjHighFreq : Prop :=
       (hcs : HasCompactSupport φ),
       sobolevNormSq d s (fun x => φ x - bandProj d Λ hΛ.ne' φ hcont hcs x)
         ≤ sobolevNormSqHigh d s Λ φ
+
+/-- The truncation identity `BandProjHighFreq` holds. -/
+theorem bandProjHighFreq_holds : BandProjHighFreq :=
+  fun d s Λ hΛ φ hcont hcs => sobolevNormSq_sub_bandProj_le d Λ hΛ φ hcont hcs s
 
 end LatticeProb.Sobolev
