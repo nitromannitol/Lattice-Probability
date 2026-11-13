@@ -654,6 +654,7 @@ import LatticeProb.Walk.LatticeKernel
 import LatticeProb.Walk.RiemannLattice
 import LatticeProb.Walk.BallGreenBounds
 import LatticeProb.External.BallGreenBoundsProved
+import LatticeProb.Prob.Percolation.LSS
 import LatticeProb.Prob.Percolation.LSSThinComplement
 import LatticeProb.Prob.Percolation.LSSThinFinal
 import LatticeProb.Prob.Percolation.LSSThinKDependent
