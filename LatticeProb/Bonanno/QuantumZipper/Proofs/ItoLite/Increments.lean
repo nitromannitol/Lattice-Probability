@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.ItoLite.Increments at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module QuantumZipper.Proofs.ItoLite.Increments at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMMoments
 import Mathlib.Probability.Independence.Integration
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
@@ -44,5 +43,77 @@ theorem bmFiltration_le (hBm : ∀ r, Measurable (B r)) (t : ℝ≥0) : bmFiltra
   iSup₂_le fun s _ => (hBm s).comap_le
 
 /-! ### IL-2: oscillation of continuous paths through a countable dense set of times -/
+
+/-- The oscillation of `B · ω` on `[t, t+s]` (as in the blueprint). -/
+def bmOsc (B : ℝ≥0 → Ω → ℝ) (t s : ℝ≥0) (ω : Ω) : ℝ :=
+  ⨆ r ∈ Set.Icc t (t + s), |B r ω - B t ω|
+
+/-- For a continuous path, the oscillation equals the supremum over the subtype `Icc`. -/
+theorem bmOsc_eq_iSup_subtype {t s : ℝ≥0} {ω : Ω} (hc : Continuous (B · ω)) :
+    bmOsc B t s ω = ⨆ x : Set.Icc t (t + s), |B x ω - B t ω| := by
+  have hbdd : BddAbove (Set.range fun x : Set.Icc t (t + s) => |B x ω - B t ω|) := by
+    have hK : IsCompact (Set.Icc t (t + s)) := isCompact_Icc
+    obtain ⟨C, hC⟩ := (hK.image (f := fun r => |B r ω - B t ω|)
+      (by fun_prop)).bddAbove
+    exact ⟨C, by rintro _ ⟨x, rfl⟩; exact hC ⟨x, x.2, rfl⟩⟩
+  have hne : Nonempty (Set.Icc t (t + s)) := (Set.nonempty_Icc.2 le_self_add).to_subtype
+  have x0 : Set.Icc t (t + s) := hne.some
+  unfold bmOsc
+  refine le_antisymm ?_ ?_
+  · refine Real.iSup_le (fun r => ?_) ?_
+    · by_cases hr : r ∈ Set.Icc t (t + s)
+      · rw [ciSup_pos hr]; exact le_ciSup hbdd ⟨r, hr⟩
+      · simp only [hr, Real.iSup_of_isEmpty]
+        exact (abs_nonneg _).trans (le_ciSup hbdd x0)
+    · exact (abs_nonneg _).trans (le_ciSup hbdd x0)
+  · refine ciSup_le fun x => ?_
+    have hbdd2 : BddAbove (Set.range fun r : ℝ≥0 => ⨆ (_ : r ∈ Set.Icc t (t + s)),
+        |B r ω - B t ω|) := by
+      obtain ⟨C, hC⟩ := hbdd
+      refine ⟨max C 0, ?_⟩
+      rintro _ ⟨r, rfl⟩
+      by_cases hr : r ∈ Set.Icc t (t + s)
+      · dsimp only; rw [ciSup_pos hr]; exact (hC ⟨⟨r, hr⟩, rfl⟩).trans (le_max_left _ _)
+      · dsimp only; simp only [hr, Real.iSup_of_isEmpty]; exact le_max_right _ _
+    refine le_trans ?_ (le_ciSup hbdd2 (x : ℝ≥0))
+    rw [ciSup_pos x.2]
+
+/-- IL-2: for a continuous path the oscillation is the supremum over any dense set of times in
+`[t, t+s]`. -/
+theorem bmOsc_eq_iSup_dense {t s : ℝ≥0} {ω : Ω} (hc : Continuous (B · ω))
+    {D : Set (Set.Icc t (t + s))} (hD : Dense D) (hDne : D.Nonempty) :
+    bmOsc B t s ω = ⨆ x : D, |B (x : Set.Icc t (t + s)) ω - B t ω| := by
+  rw [bmOsc_eq_iSup_subtype hc]
+  have : Nonempty (Set.Icc t (t + s)) := (Set.nonempty_Icc.2 le_self_add).to_subtype
+  have hbdd : BddAbove (Set.range fun x : Set.Icc t (t + s) => |B x ω - B t ω|) := by
+    obtain ⟨C, hC⟩ := (isCompact_Icc (a := t) (b := t + s)).image
+      (f := fun r => |B r ω - B t ω|) (by fun_prop) |>.bddAbove
+    exact ⟨C, by rintro _ ⟨x, rfl⟩; exact hC ⟨x, x.2, rfl⟩⟩
+  have : Nonempty D := hDne.to_subtype
+  refine le_antisymm (ciSup_le fun x => ?_) (ciSup_le fun x => le_ciSup hbdd _)
+  have hbddD : BddAbove (Set.range fun x : D => |B (x : Set.Icc t (t + s)) ω - B t ω|) := by
+    obtain ⟨C, hC⟩ := hbdd
+    exact ⟨C, by rintro _ ⟨x, rfl⟩; exact hC ⟨x, rfl⟩⟩
+  set c := ⨆ x : D, |B (x : Set.Icc t (t + s)) ω - B t ω|
+  have hcl : IsClosed {y : Set.Icc t (t + s) | |B y ω - B t ω| ≤ c} :=
+    isClosed_le (by fun_prop) continuous_const
+  have hsub : D ⊆ {y : Set.Icc t (t + s) | |B y ω - B t ω| ≤ c} := fun y hy =>
+    le_ciSup hbddD ⟨y, hy⟩
+  have := hcl.closure_subset_iff.2 hsub
+  rw [hD.closure_eq] at this
+  exact this (Set.mem_univ x)
+
+/-- IL-2: the oscillation of a process with measurable marginals and continuous paths is
+measurable. -/
+theorem measurable_bmOsc (hBm : ∀ r, Measurable (B r)) (hBc : ∀ ω, Continuous (B · ω))
+    (t s : ℝ≥0) : Measurable (bmOsc B t s) := by
+  have : Nonempty (Set.Icc t (t + s)) := (Set.nonempty_Icc.2 le_self_add).to_subtype
+  obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense (Set.Icc t (t + s))
+  have hDne : D.Nonempty := hDd.nonempty
+  have : Countable D := hDc.to_subtype
+  have heq : bmOsc B t s = fun ω => ⨆ x : D, |B (x : Set.Icc t (t + s)) ω - B t ω| :=
+    funext fun ω => bmOsc_eq_iSup_dense (hBc ω) hDd hDne
+  rw [heq]
+  exact Measurable.iSup fun x => continuous_abs.measurable.comp ((hBm _).sub (hBm _))
 
 end QuantumZipper

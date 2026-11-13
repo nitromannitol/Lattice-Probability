@@ -1,14 +1,7 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.LQG.WedgeMeasurable at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodMeasurableReg
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.Measurability
-import LatticeProb.Bonanno.QuantumZipper.LQG.Measures
-import Mathlib.Topology.ContinuousMap.SecondCountableSpace
-import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.AreaExistenceVague
-import LatticeProb.Bonanno.QuantumZipper.Field.CoordsFull
-import LatticeProb.Bonanno.QuantumZipper.GFF.Defs
+   source module QuantumZipper.Proofs.LQG.WedgeMeasurable at commit fdb5cad; only the module paths of local imports are changed. -/
+import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodMeasurable
+import LatticeProb.Bonanno.QuantumZipper.LQG.Wedge
 import Mathlib.Probability.BrownianMotion.Basic
 
 /-!
@@ -46,7 +39,89 @@ open Factorization CoordsFull
 
 /-! ## 1. The data of a rescaled reconstruction is measurable -/
 
+/-- The data map read by `fieldLawFull U`. -/
+def dataFull (U : Set ℂ) (y : FieldSample) : (ℕ → ℝ) × (TestFun U → ℝ) :=
+  (coordsFull y, fun ρ => pairRaw y ρ.1)
+
+/-- The sample `rescale (reconstruct c) Q s`. -/
+def resc (Q : ℝ) (p : (ℕ → ℝ) × ℝ) : FieldSample := rescale (reconstruct p.1) Q p.2
+
+theorem deriv_mul_left' (a : ℝ) (z : ℂ) : deriv (fun w : ℂ => (a : ℂ) * w) z = a := by
+  simp
+
+theorem measurable_resc_apply (Q : ℝ) (μ : Measure ℂ) [SFinite μ] :
+    Measurable fun p : (ℕ → ℝ) × ℝ => resc Q p μ := by
+  have e : ∀ p : (ℕ → ℝ) × ℝ, resc Q p μ =
+      limUnder atTop (fun k => ∫ z, avgReg (reconstruct p.1) k ((p.2 : ℂ) * z) ∂μ) +
+        Q * (μ.real univ * Real.log |p.2|) := by
+    intro p
+    have h1 : evalReg (reconstruct p.1) (μ.map fun z => (p.2 : ℂ) * z) =
+        limUnder atTop (fun k => ∫ z, avgReg (reconstruct p.1) k ((p.2 : ℂ) * z) ∂μ) := by
+      unfold evalReg
+      congr 1
+      funext k
+      have hm : Measurable (avgReg (reconstruct p.1) k) :=
+        RegClosure.measurable_avgReg_slice (reconstruct p.1) k
+      exact integral_map (measurable_const_mul (p.2 : ℂ)).aemeasurable hm.aestronglyMeasurable
+    have h2 : ∫ z, Real.log ‖deriv (fun w : ℂ => (p.2 : ℂ) * w) z‖ ∂μ =
+        μ.real univ * Real.log |p.2| := by
+      have hd : ∀ z, Real.log ‖deriv (fun w : ℂ => (p.2 : ℂ) * w) z‖ = Real.log |p.2| :=
+        fun z => by rw [deriv_mul_left', Complex.norm_real, Real.norm_eq_abs]
+      rw [integral_congr_ae (ae_of_all _ hd), integral_const, smul_eq_mul]
+    show evalReg (reconstruct p.1) (μ.map fun z => (p.2 : ℂ) * z) +
+      Q * ∫ z, Real.log ‖deriv (fun w : ℂ => (p.2 : ℂ) * w) z‖ ∂μ = _
+    rw [h1, h2]
+  rw [show (fun p : (ℕ → ℝ) × ℝ => resc Q p μ) = fun p =>
+      limUnder atTop (fun k => ∫ z, avgReg (reconstruct p.1) k ((p.2 : ℂ) * z) ∂μ) +
+        Q * (μ.real univ * Real.log |p.2|) from funext e]
+  have hk : ∀ k : ℕ, StronglyMeasurable
+      (fun p : (ℕ → ℝ) × ℝ => ∫ z, avgReg (reconstruct p.1) k ((p.2 : ℂ) * z) ∂μ) := fun k =>
+    StronglyMeasurable.integral_prod_right'
+      (f := fun q : ((ℕ → ℝ) × ℝ) × ℂ => avgReg (reconstruct q.1.1) k ((q.1.2 : ℂ) * q.2))
+      ((measurable_avgReg k).comp ((measurable_reconstruct.comp measurable_fst.fst).prodMk
+        ((Complex.continuous_ofReal.measurable.comp measurable_fst.snd).mul
+          measurable_snd))).stronglyMeasurable
+  exact (StronglyMeasurable.limUnder hk).measurable.add (measurable_const.mul
+    (measurable_const.mul (Real.measurable_log.comp (continuous_abs.measurable.comp
+      measurable_snd))))
+
+theorem measurable_dataFull_resc (U : Set ℂ) (Q : ℝ) :
+    Measurable fun p : (ℕ → ℝ) × ℝ => dataFull U (resc Q p) :=
+  (measurable_pi_iff.2 fun _ => measurable_resc_apply Q _).prodMk
+    (measurable_pi_iff.2 fun _ => (measurable_resc_apply Q _).sub (measurable_resc_apply Q _))
+
 /-! ## 2. `canonical` through coordinates and the scale on good samples -/
+
+theorem canonical_eq_resc (γ : ℝ) (x : FieldSample) :
+    canonical γ x = resc (Qc γ) (coords x, scaleParam γ x) := by
+  funext μ
+  simp only [canonical, resc, rescale, coordChange]
+  rw [evalReg_congr (avgReg_reconstruct_coords x)]
+
+open Classical in
+/-- The scale parameter of the reconstruction, on the good set (junk `0` elsewhere). -/
+def scaleG (γ : ℝ) (c : ℕ → ℝ) : ℝ :=
+  if IsLQGGood γ (reconstruct c) then scaleParam γ (reconstruct c) else 0
+
+theorem measurable_scaleG (γ : ℝ) : Measurable (scaleG γ) :=
+  (GoodMeas.measurable_scaleParam_global γ).comp measurable_reconstruct
+
+theorem scaleG_coords {γ : ℝ} {x : FieldSample} (hx : IsLQGGood γ x) :
+    scaleG γ (coords x) = scaleParam γ x := by
+  have hx' : IsLQGGood γ (reconstruct (coords x)) := (GoodSample.isLQGGood_iff_reconstruct γ x).2 hx
+  simp only [scaleG, if_pos hx']
+  exact scaleParam_congr (avgReg_reconstruct_coords x) γ
+
+/-- **Conditional measurability of canonical data.** -/
+theorem aemeasurable_dataFull_canonical {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {γ : ℝ} {W : Ω → FieldSample} (hc : AEMeasurable (fun ω => coords (W ω)) P)
+    (hg : ∀ᵐ ω ∂P, IsLQGGood γ (W ω)) (U : Set ℂ) :
+    AEMeasurable (fun ω => dataFull U (canonical γ (W ω))) P := by
+  have hm := (measurable_dataFull_resc U (Qc γ)).comp_aemeasurable
+    (hc.prodMk ((measurable_scaleG γ).comp_aemeasurable hc))
+  refine hm.congr ?_
+  filter_upwards [hg] with ω hω
+  simp only [Function.comp, canonical_eq_resc, scaleG_coords hω]
 
 /-! ## 3. `lastZero` of a continuous path is measurable -/
 
@@ -195,9 +270,157 @@ theorem measurable_wedgePath_joint {Ω : Type*} [MeasurableSpace Ω] (α Q : ℝ
     (((hJ hBc hBm).const_mul _).add (measurable_snd.const_mul _)) ?_
   exact hF.comp (measurable_fst.prodMk (measurable_snd.neg.add (hL.comp measurable_fst)))
 
+/-- A version of an a.s. continuous, a.e.-measurable process, continuous and measurable
+everywhere, equal to it on a measurable conull set. -/
+theorem exists_good_version {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : ℝ≥0 → Ω → ℝ} (hm : ∀ t, AEMeasurable (B t) P) (hc : ∀ᵐ ω ∂P, Continuous (B · ω)) :
+    ∃ G : Set Ω, MeasurableSet G ∧ P Gᶜ = 0 ∧ (∀ ω ∈ G, Continuous (B · ω)) ∧
+      ∀ t, Measurable (G.indicator (B t)) := by
+  obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense ℝ≥0
+  have : Countable D := hDc.to_subtype
+  set S : Set Ω := {ω | Continuous (B · ω) ∧ ∀ q : D, B q ω = (hm q).mk (B q) ω} with hS
+  have hSae : ∀ᵐ ω ∂P, ω ∈ S :=
+    hc.and (ae_all_iff.2 fun q => (hm q).ae_eq_mk)
+  refine ⟨(toMeasurable P Sᶜ)ᶜ, (measurableSet_toMeasurable _ _).compl, ?_, ?_, ?_⟩
+  · rw [compl_compl, measure_toMeasurable]; exact ae_iff.1 hSae
+  · intro ω hω
+    exact (not_not.1 fun h => hω (subset_toMeasurable _ _ h)).1
+  · have hsub : (toMeasurable P Sᶜ)ᶜ ⊆ S := fun ω hω =>
+      not_not.1 fun h => hω (subset_toMeasurable _ _ h)
+    have hq : ∀ q : D, Measurable ((toMeasurable P Sᶜ)ᶜ.indicator (B q)) := by
+      intro q
+      have e : (toMeasurable P Sᶜ)ᶜ.indicator (B q) =
+          (toMeasurable P Sᶜ)ᶜ.indicator ((hm q).mk (B q)) := by
+        funext ω
+        by_cases hω : ω ∈ (toMeasurable P Sᶜ)ᶜ
+        · simp only [indicator_of_mem hω]; exact (hsub hω).2 q
+        · simp only [indicator_of_notMem hω]
+      rw [e]
+      exact (hm q).measurable_mk.indicator (measurableSet_toMeasurable _ _).compl
+    intro t
+    obtain ⟨u, huD, hut⟩ := mem_closure_iff_seq_limit.1 (hDd.closure_eq ▸ mem_univ t)
+    refine measurable_of_tendsto_metrizable (f := fun n => (toMeasurable P Sᶜ)ᶜ.indicator
+      (B (u n))) (fun n => hq ⟨u n, huD n⟩) (tendsto_pi_nhds.2 fun ω => ?_)
+    by_cases hω : ω ∈ (toMeasurable P Sᶜ)ᶜ
+    · simp only [indicator_of_mem hω]
+      exact ((hsub hω).1.tendsto t).comp hut
+    · simp only [indicator_of_notMem hω]
+      exact tendsto_const_nhds
+
 /-! ## 5. Coordinates of the wedge field -/
 
+theorem measurable_radAvgReg_joint :
+    Measurable (fun p : FieldSample × ℝ => radAvgReg p.1 p.2) := by
+  have hround : ∀ n : ℕ, Measurable (fun p : FieldSample × ℝ =>
+      p.1 (foldedCircle 0 (dyadicRound n p.2 + radius n))) := by
+    intro n
+    set g : ℝ → ℝ := fun r => dyadicRound n r + radius n with hg
+    have hgm : Measurable g := (((measurable_from_top : Measurable (Int.cast : ℤ → ℝ)).div_const
+      ((2 : ℝ) ^ n)).comp (Measurable.floor (measurable_id.const_mul ((2 : ℝ) ^ n)))).add_const _
+    have hcount : (Set.range g).Countable := by
+      have hsub : Set.range g ⊆ Set.range (fun m : ℤ => (m : ℝ) / (2 : ℝ) ^ n + radius n) := by
+        rintro _ ⟨r, rfl⟩
+        exact ⟨⌊(2 : ℝ) ^ n * r⌋, rfl⟩
+      exact (Set.countable_range _).mono hsub
+    have : Countable (Set.range g) := hcount.to_subtype
+    intro T hT
+    have key : (fun p : FieldSample × ℝ => p.1 (foldedCircle 0 (g p.2))) ⁻¹' T
+        = ⋃ d : Set.range g,
+            {x : FieldSample | x (foldedCircle 0 (d : ℝ)) ∈ T} ×ˢ (g ⁻¹' ({(d : ℝ)} : Set ℝ)) := by
+      ext ⟨x, r⟩
+      simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_prod, Set.mem_ofPred_eq,
+        Set.mem_singleton_iff]
+      constructor
+      · intro hmem
+        exact ⟨⟨g r, Set.mem_range_self r⟩, hmem, rfl⟩
+      · rintro ⟨d, hmem, hdz⟩
+        rwa [hdz]
+    show MeasurableSet ((fun p : FieldSample × ℝ => p.1 (foldedCircle 0 (g p.2))) ⁻¹' T)
+    rw [key]
+    exact MeasurableSet.iUnion fun d => MeasurableSet.prod
+      (measurable_pi_apply (foldedCircle 0 (d : ℝ)) hT) (hgm (measurableSet_singleton _))
+  unfold radAvgReg
+  exact (StronglyMeasurable.limUnder fun n => (hround n).stronglyMeasurable).measurable
+
+theorem measurable_lateralPart_apply' (μ : Measure ℂ) [SFinite μ] :
+    Measurable fun x : FieldSample => lateralPart x μ :=
+  (measurable_evalReg μ).sub (StronglyMeasurable.integral_prod_right' (ν := μ)
+    (measurable_radAvgReg_joint.comp (measurable_fst.prodMk
+      (measurable_norm.comp measurable_snd))).stronglyMeasurable).measurable
+
+theorem measurable_wedgeField_apply {Ω : Type*} [MeasurableSpace Ω] {X : Ω → FieldSample}
+    (hX : ∀ μ : Measure ℂ, Measurable fun ω => X ω μ) {A : Ω × ℝ → ℝ} (hA : Measurable A)
+    (Q : ℝ) (ν : Measure ℂ) [SFinite ν] :
+    Measurable fun ω => wedgeField (lateralPart (X ω)) (fun t => A (ω, t)) Q ν := by
+  have hXm : Measurable X := measurable_pi_iff.2 hX
+  refine ((measurable_lateralPart_apply' ν).comp hXm).add ?_
+  have hf : Measurable fun q : Ω × ℂ => Q * (-Real.log ‖q.2‖) + A (q.1, -Real.log ‖q.2‖) :=
+    (measurable_const.mul (Real.measurable_log.comp (measurable_norm.comp measurable_snd)).neg).add
+      (hA.comp (measurable_fst.prodMk
+        (Real.measurable_log.comp (measurable_norm.comp measurable_snd)).neg))
+  exact (StronglyMeasurable.integral_prod_right' (ν := ν)
+    (f := fun q : Ω × ℂ => Q * (-Real.log ‖q.2‖) + A (q.1, -Real.log ‖q.2‖))
+    hf.stronglyMeasurable).measurable
+
+/-- **Coordinates of the reference wedge field are a.e.-measurable.** -/
+theorem aemeasurable_coords_wedgeField {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {X : Ω → FieldSample} {A : ℝ → Ω → ℝ} {α Q : ℝ}
+    (hX : ∀ μ : Measure ℂ, Measurable fun ω => X ω μ) (hA : IsWedgeProcess α Q A P) :
+    AEMeasurable (fun ω => coords (wedgeField (lateralPart (X ω)) (fun t => A t ω) Q)) P := by
+  obtain ⟨B, B', hB, hB', -, hAB⟩ := hA
+  obtain ⟨G, hGm, hG0, hGc, hGmeas⟩ :=
+    exists_good_version (P := P) (fun t => hB.aemeasurable t) hB.cont
+  obtain ⟨G', hG'm, hG'0, hG'c, hG'meas⟩ :=
+    exists_good_version (P := P) (fun t => hB'.aemeasurable t) hB'.cont
+  set Bt : ℝ≥0 → Ω → ℝ := fun t => G.indicator (B t) with hBt
+  set Bt' : ℝ≥0 → Ω → ℝ := fun t => G'.indicator (B' t) with hBt'
+  have hcont : ∀ {C : ℝ≥0 → Ω → ℝ} {K : Set Ω}, (∀ ω ∈ K, Continuous (C · ω)) →
+      ∀ ω, Continuous fun t => K.indicator (C t) ω := by
+    intro C K hK ω
+    by_cases hω : ω ∈ K
+    · simp only [indicator_of_mem hω]; exact hK ω hω
+    · simp only [indicator_of_notMem hω]; exact continuous_const
+  have hÂ := measurable_wedgePath_joint α Q (B := Bt) (B' := Bt') (hcont hGc) (hcont hG'c)
+    hGmeas hG'meas
+  set Â : Ω × ℝ → ℝ := fun q => wedgePath α Q (fun s => Bt s q.1) (fun s => Bt' s q.1) q.2
+  have hmeas : Measurable fun ω => coords (wedgeField (lateralPart (X ω)) (fun t => Â (ω, t)) Q) :=
+    measurable_pi_iff.2 fun i => measurable_wedgeField_apply hX hÂ Q _
+  refine hmeas.aemeasurable.congr ?_
+  have hae : ∀ᵐ ω ∂P, ω ∈ G ∩ G' := by
+    rw [ae_iff]
+    refine measure_mono_null (fun ω hω => ?_) (measure_union_null hG0 hG'0)
+    simp only [mem_setOf_eq, mem_inter_iff, not_and_or] at hω
+    rcases hω with h | h
+    · exact Or.inl h
+    · exact Or.inr h
+  filter_upwards [hae] with ω hω
+  have e : (fun t => Â (ω, t)) = fun t => A t ω := by
+    funext t
+    rw [hAB ω t]
+    simp only [Â, hBt, hBt', indicator_of_mem hω.1, indicator_of_mem hω.2]
+  simp only [e]
+
 /-! ## 6. The reference law -/
+
+/-- The reference field of `IsQuantumWedge`. -/
+def wedgeRef (γ : ℝ) {Ω : Type*} (X : Ω → FieldSample) (A : ℝ → Ω → ℝ) : Ω → FieldSample :=
+  fun ω => canonical γ (wedgeField (lateralPart (X ω)) (fun t => A t ω) (Qc γ))
+
+/-- **WEDGE-MEAS, conditional form.** If the reference wedge field is a.s. good, the reference
+data map is a.e.-measurable, so the reference law is a probability measure. -/
+theorem aemeasurable_wedgeRefData {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {X : Ω → FieldSample} {A : ℝ → Ω → ℝ} {γ α : ℝ} (hX : IsFreeGFFModConstH X P)
+    (hA : IsWedgeProcess α (Qc γ) A P)
+    (hgood : ∀ᵐ ω ∂P, IsLQGGood γ (wedgeField (lateralPart (X ω)) (fun t => A t ω) (Qc γ)))
+    (U : Set ℂ) : AEMeasurable (fun ω => dataFull U (wedgeRef γ X A ω)) P :=
+  aemeasurable_dataFull_canonical (aemeasurable_coords_wedgeField hX.measurable_coord hA) hgood U
+
+theorem isProbabilityMeasure_fieldLawFull_wedgeRef {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P] {X : Ω → FieldSample} {A : ℝ → Ω → ℝ} {γ α : ℝ}
+    (hX : IsFreeGFFModConstH X P) (hA : IsWedgeProcess α (Qc γ) A P)
+    (hgood : ∀ᵐ ω ∂P, IsLQGGood γ (wedgeField (lateralPart (X ω)) (fun t => A t ω) (Qc γ)))
+    (U : Set ℂ) : IsProbabilityMeasure (fieldLawFull U (wedgeRef γ X A) P) :=
+  (Measure.isProbabilityMeasure_map_iff (aemeasurable_wedgeRefData hX hA hgood U)).2 inferInstance
 
 end WedgeMeas
 

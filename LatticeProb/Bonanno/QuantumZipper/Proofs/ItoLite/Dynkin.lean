@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.ItoLite.Dynkin at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module QuantumZipper.Proofs.ItoLite.Dynkin at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Probability.BMMoments
 import Mathlib.Probability.Martingale.Basic
 import Mathlib.Probability.Independence.Integration
@@ -46,7 +45,76 @@ namespace Dynkin
 
 /-! ### 1. Generic measurability and Fubini facts -/
 
+/-- A parametric interval integral of a Carathéodory function (measurable in `ω`, continuous in
+`r`) is measurable. The measurable space on `α` is arbitrary (used with sub-σ-algebras). -/
+theorem measurable_intervalIntegral_of_continuous {α : Type*} {mα : MeasurableSpace α}
+    {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G] [MeasurableSpace G] [BorelSpace G]
+    [SecondCountableTopology G]
+    {Y : ℝ → α → G} (hm : ∀ r, Measurable (Y r)) (hc : ∀ ω, Continuous (Y · ω)) (a b : ℝ) :
+    Measurable (fun ω => ∫ r in a..b, Y r ω) := by
+  have hj : Measurable (Function.uncurry Y) :=
+    measurable_uncurry_of_continuous_of_measurable hc hm
+  have hsm : StronglyMeasurable (fun p : α × ℝ => Y p.2 p.1) :=
+    (hj.comp measurable_swap).stronglyMeasurable
+  have h1 := hsm.integral_prod_right' (ν := volume.restrict (Set.Ioc a b))
+  have h2 := hsm.integral_prod_right' (ν := volume.restrict (Set.Ioc b a))
+  exact (h1.sub h2).measurable
+
 variable {Ω : Type*} [mΩ : MeasurableSpace Ω] {P : Measure Ω}
+
+/-- Tonelli for the pathwise time integral of a nonnegative Carathéodory process: the
+integral is integrable, with an explicit bound on its expectation. -/
+theorem integrable_intervalIntegral_and_le [IsProbabilityMeasure P] {g : ℝ → Ω → ℝ}
+    (hm : ∀ r, Measurable (g r)) (hc : ∀ ω, Continuous (g · ω)) (hnn : ∀ r ω, 0 ≤ g r ω)
+    {a b c : ℝ} (hab : a ≤ b) (hint : ∀ r ∈ Set.Icc a b, Integrable (g r) P)
+    (hbd : ∀ r ∈ Set.Icc a b, ∫ ω, g r ω ∂P ≤ c) :
+    Integrable (fun ω => ∫ r in a..b, g r ω) P ∧ ∫ ω, (∫ r in a..b, g r ω) ∂P ≤ c * (b - a) := by
+  have hc0 : 0 ≤ c := (integral_nonneg fun ω => hnn a ω).trans (hbd a ⟨le_rfl, hab⟩)
+  have hHeq : ∀ ω, (∫ r in a..b, g r ω) = ∫ r in Set.Ioc a b, g r ω ∂volume :=
+    fun ω => intervalIntegral.integral_of_le hab
+  have hHnn : ∀ ω, 0 ≤ ∫ r in a..b, g r ω :=
+    fun ω => intervalIntegral.integral_nonneg hab fun r _ => hnn r ω
+  have hHmeas : Measurable (fun ω => ∫ r in a..b, g r ω) :=
+    measurable_intervalIntegral_of_continuous hm hc a b
+  have hjoint : Measurable (Function.uncurry g) :=
+    measurable_uncurry_of_continuous_of_measurable hc hm
+  have key : ∫⁻ ω, ENNReal.ofReal (∫ r in a..b, g r ω) ∂P ≤ ENNReal.ofReal (c * (b - a)) := by
+    have hstep1 : ∀ ω, ENNReal.ofReal (∫ r in a..b, g r ω) ≤
+        ∫⁻ r in Set.Ioc a b, ENNReal.ofReal (g r ω) ∂volume := by
+      intro ω
+      rw [hHeq ω, integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall fun r => hnn r ω)
+        (hc ω).measurable.aestronglyMeasurable]
+      exact ENNReal.ofReal_toReal_le
+    have hmeasENN : Measurable (Function.uncurry fun (ω : Ω) (r : ℝ) => ENNReal.ofReal (g r ω)) :=
+      ENNReal.measurable_ofReal.comp (hjoint.comp measurable_swap)
+    have hswap : ∫⁻ ω, ∫⁻ r in Set.Ioc a b, ENNReal.ofReal (g r ω) ∂volume ∂P =
+        ∫⁻ r in Set.Ioc a b, ∫⁻ ω, ENNReal.ofReal (g r ω) ∂P ∂volume :=
+      lintegral_lintegral_swap hmeasENN.aemeasurable
+    have hperslice : ∀ r ∈ Set.Ioc a b, (∫⁻ ω, ENNReal.ofReal (g r ω) ∂P) ≤ ENNReal.ofReal c := by
+      intro r hr
+      have hr' : r ∈ Set.Icc a b := ⟨hr.1.le, hr.2⟩
+      rw [← ofReal_integral_eq_lintegral_ofReal (hint r hr')
+        (Filter.Eventually.of_forall fun ω => hnn r ω)]
+      exact ENNReal.ofReal_le_ofReal (hbd r hr')
+    calc ∫⁻ ω, ENNReal.ofReal (∫ r in a..b, g r ω) ∂P
+        ≤ ∫⁻ ω, ∫⁻ r in Set.Ioc a b, ENNReal.ofReal (g r ω) ∂volume ∂P :=
+          lintegral_mono_ae (Filter.Eventually.of_forall hstep1)
+      _ = ∫⁻ r in Set.Ioc a b, ∫⁻ ω, ENNReal.ofReal (g r ω) ∂P ∂volume := hswap
+      _ ≤ ∫⁻ r in Set.Ioc a b, ENNReal.ofReal c ∂volume := by
+          apply lintegral_mono_ae
+          filter_upwards [ae_restrict_mem measurableSet_Ioc] with r hr using hperslice r hr
+      _ = ENNReal.ofReal c * ENNReal.ofReal (b - a) := by
+          rw [setLIntegral_const, Real.volume_Ioc]
+      _ = ENNReal.ofReal (c * (b - a)) := (ENNReal.ofReal_mul hc0).symm
+  have hfin : HasFiniteIntegral (fun ω => ∫ r in a..b, g r ω) P := by
+    rw [hasFiniteIntegral_iff_ofReal (Filter.Eventually.of_forall hHnn)]
+    exact key.trans_lt ENNReal.ofReal_lt_top
+  refine ⟨⟨hHmeas.aestronglyMeasurable, hfin⟩, ?_⟩
+  rw [integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall hHnn)
+    hHmeas.aestronglyMeasurable]
+  calc (∫⁻ ω, ENNReal.ofReal (∫ r in a..b, g r ω) ∂P).toReal
+      ≤ (ENNReal.ofReal (c * (b - a))).toReal := ENNReal.toReal_mono ENNReal.ofReal_ne_top key
+    _ = c * (b - a) := ENNReal.toReal_ofReal (mul_nonneg hc0 (sub_nonneg.2 hab))
 
 /-! ### 2. Telescoping on a uniform partition -/
 
@@ -194,15 +262,329 @@ theorem taylor2_bound {F : E → ℝ} (hF : ContDiff ℝ 3 F) {C : ℝ} (hC0 : 0
 
 /-! ### 4. Path regularity of a solution of the integral equation -/
 
+/-- A bounded measurable-free self-consistency argument: if `V r = β r + ∫₀ʳ b(V)` for `r ≥ 0`,
+with `β` continuous and `b` continuous and bounded, then `b ∘ V` is integrable on every `[0,T]`.
+(If it failed, let `t*` be the supremal time of integrability; below `t*`, `V` is continuous;
+above `t*` the integral vanishes by convention and `V = β`; both pieces are integrable.) -/
+theorem intervalIntegrable_of_selfConsistent {b : E → E} (hbc : Continuous b) {Mb : ℝ}
+    (hbM : ∀ x, ‖b x‖ ≤ Mb) {β : ℝ → E} (hβ : Continuous β) {V : ℝ → E}
+    (hV : ∀ r, 0 ≤ r → V r = β r + ∫ q in (0 : ℝ)..r, b (V q)) (T : ℝ) (hT : 0 ≤ T) :
+    IntervalIntegrable (fun q => b (V q)) volume 0 T := by
+  set g : ℝ → E := fun q => b (V q) with hg
+  -- continuity on `[0,t]` from integrability on `[0,t]`
+  have hcont : ∀ t, 0 ≤ t → IntervalIntegrable g volume 0 t → ContinuousOn g (Set.Icc 0 t) := by
+    intro t ht hi
+    have hprim : ContinuousOn (fun x => ∫ q in (0 : ℝ)..x, g q) (Set.uIcc 0 t) :=
+      intervalIntegral.continuousOn_primitive_interval
+        ((intervalIntegrable_iff_integrableOn_Icc_of_le ht).1 hi |>.mono_set
+          (Set.uIcc_of_le ht).le)
+    rw [Set.uIcc_of_le ht] at hprim
+    have hVc : ContinuousOn V (Set.Icc 0 t) := by
+      refine (hβ.continuousOn.add hprim).congr ?_
+      intro r hr
+      exact hV r hr.1
+    exact hbc.comp_continuousOn hVc
+  -- a bounded function continuous on `Ioo c d` is integrable on `[c,d]`
+  have hIoo : ∀ c d, c ≤ d → ContinuousOn g (Set.Ioo c d) → IntervalIntegrable g volume c d := by
+    intro c d hcd hgc
+    rw [intervalIntegrable_iff_integrableOn_Ioo_of_le hcd]
+    refine IntegrableOn.of_bound (by simp) (hgc.aestronglyMeasurable measurableSet_Ioo) Mb ?_
+    exact Filter.Eventually.of_forall fun q => hbM _
+  by_contra hnot
+  set S : Set ℝ := {t | 0 ≤ t ∧ IntervalIntegrable g volume 0 t} with hS
+  have hSbdd : BddAbove S := by
+    refine ⟨T, fun t ht => ?_⟩
+    by_contra hlt
+    push_neg at hlt
+    exact hnot (ht.2.mono_set (by
+      rw [Set.uIcc_of_le hT, Set.uIcc_of_le ht.1]
+      exact Set.Icc_subset_Icc le_rfl hlt.le))
+  have hS0 : (0 : ℝ) ∈ S := ⟨le_rfl, IntervalIntegrable.refl⟩
+  set ts := sSup S with hts
+  have hts0 : 0 ≤ ts := le_csSup hSbdd hS0
+  have htsT : ts ≤ T := csSup_le ⟨0, hS0⟩ fun t ht => by
+    by_contra hlt
+    push_neg at hlt
+    exact hnot (ht.2.mono_set (by
+      rw [Set.uIcc_of_le hT, Set.uIcc_of_le ht.1]
+      exact Set.Icc_subset_Icc le_rfl hlt.le))
+  -- below `ts`
+  have hbelow : ∀ t, 0 ≤ t → t < ts → IntervalIntegrable g volume 0 t := by
+    intro t ht htlt
+    obtain ⟨t', ht'S, htt'⟩ := exists_lt_of_lt_csSup ⟨0, hS0⟩ htlt
+    exact ht'S.2.mono_set (by
+      rw [Set.uIcc_of_le ht, Set.uIcc_of_le ht'S.1]
+      exact Set.Icc_subset_Icc le_rfl htt'.le)
+  have hts_int : IntervalIntegrable g volume 0 ts := by
+    refine hIoo 0 ts hts0 ?_
+    intro r hr
+    have hmid : r < (r + ts) / 2 := by linarith [hr.2]
+    have hmid' : (r + ts) / 2 < ts := by linarith [hr.2]
+    have hc := hcont ((r + ts) / 2) (by linarith [hr.1]) (hbelow _ (by linarith [hr.1]) hmid')
+    have hnhds : Set.Icc 0 ((r + ts) / 2) ∈ 𝓝 r := Icc_mem_nhds hr.1 hmid
+    exact ((hc r (Set.mem_Icc.2 ⟨hr.1.le, hmid.le⟩)).continuousAt hnhds).continuousWithinAt
+  -- above `ts`
+  have habove : ∀ t, ts < t → V t = β t := by
+    intro t ht
+    have ht0 : 0 ≤ t := by linarith
+    have hnS : t ∉ S := fun htS => by
+      have := le_csSup hSbdd htS
+      linarith
+    have hni : ¬ IntervalIntegrable g volume 0 t := fun hi => hnS ⟨ht0, hi⟩
+    rw [hV t ht0, intervalIntegral.integral_undef hni, add_zero]
+  rcases htsT.lt_or_eq with hlt | heq
+  · have hup : IntervalIntegrable g volume ts T := by
+      refine hIoo ts T htsT ?_
+      have : ContinuousOn (fun q => b (β q)) (Set.Ioo ts T) :=
+        (hbc.comp hβ).continuousOn
+      refine this.congr ?_
+      intro r hr
+      simp only [hg, habove r hr.1]
+    exact hnot (hts_int.trans hup)
+  · exact hnot (heq ▸ hts_int)
+
+/-- Consequence: `V` is continuous on `[0, ∞)`. -/
+theorem continuousOn_of_selfConsistent {b : E → E} (hbc : Continuous b) {Mb : ℝ}
+    (hbM : ∀ x, ‖b x‖ ≤ Mb) {β : ℝ → E} (hβ : Continuous β) {V : ℝ → E}
+    (hV : ∀ r, 0 ≤ r → V r = β r + ∫ q in (0 : ℝ)..r, b (V q)) :
+    ContinuousOn V (Set.Ici 0) := by
+  intro r hr
+  have hr0 : (0 : ℝ) ≤ r := hr
+  have hi := intervalIntegrable_of_selfConsistent hbc hbM hβ hV (r + 1) (by linarith)
+  have hprim : ContinuousOn (fun x => ∫ q in (0 : ℝ)..x, b (V q)) (Set.Icc 0 (r + 1)) := by
+    have := intervalIntegral.continuousOn_primitive_interval
+      ((intervalIntegrable_iff_integrableOn_Icc_of_le (by linarith : (0 : ℝ) ≤ r + 1)).1 hi
+        |>.mono_set (Set.uIcc_of_le (by linarith : (0 : ℝ) ≤ r + 1)).le)
+    rwa [Set.uIcc_of_le (by linarith : (0 : ℝ) ≤ r + 1)] at this
+  have hVc : ContinuousOn V (Set.Icc 0 (r + 1)) :=
+    (hβ.continuousOn.add hprim).congr fun q hq => hV q hq.1
+  have hmem : Set.Icc 0 (r + 1) ∈ 𝓝[Set.Ici 0] r := by
+    rw [← Set.Ici_inter_Iic]
+    exact inter_mem_nhdsWithin _ (Iic_mem_nhds (by linarith))
+  exact (hVc r ⟨hr0, by linarith⟩).mono_of_mem_nhdsWithin hmem
+
 /-! ### 5. The generator and the pathwise one-step expansion -/
 
 end Dynkin
+
+/-- The Dynkin generator of `dU = b(U) dt + e dB`: `LF = DF·b + ½ D²F[e,e]`. -/
+def dynkinGen {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (b : E → E) (e : E)
+    (F : E → ℝ) (x : E) : ℝ :=
+  fderiv ℝ F x (b x) + (1 / 2) * iteratedFDeriv ℝ 2 F x ![e, e]
 
 namespace Dynkin
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
+theorem integral_affine (c0 c1 : ℝ) {f : ℝ → ℝ} (hf : Continuous f) (a h : ℝ) :
+    ∫ r in a..(a + h), (c0 + c1 * f r) = c0 * h + c1 * ∫ r in a..(a + h), f r := by
+  rw [intervalIntegral.integral_add intervalIntegrable_const
+    ((hf.intervalIntegrable _ _).const_mul c1), intervalIntegral.integral_const,
+    intervalIntegral.integral_const_mul]
+  simp only [smul_eq_mul, add_sub_cancel_left]
+  ring
+
+theorem continuous_dynkinGen {F : E → ℝ} (hF : ContDiff ℝ 3 F) {b : E → E} (hbc : Continuous b)
+    (e : E) : Continuous (dynkinGen b e F) := by
+  have hF2 : ContDiff ℝ 2 (fderiv ℝ F) := hF.fderiv_right (by norm_num)
+  have h1 : Continuous fun y => fderiv ℝ F y (b y) :=
+    (hF.continuous_fderiv (by norm_num)).clm_apply hbc
+  have h2 : Continuous fun y => iteratedFDeriv ℝ 2 F y ![e, e] := by
+    have : (fun y => iteratedFDeriv ℝ 2 F y ![e, e]) = fun y => fderiv ℝ (fderiv ℝ F) y e e :=
+      funext fun y => iteratedFDeriv_two_vec F y e e
+    rw [this]
+    exact ((hF2.continuous_fderiv (by norm_num)).clm_apply continuous_const).clm_apply
+      continuous_const
+  exact h1.add (continuous_const.mul h2)
+
 variable [CompleteSpace E]
+
+/-- Pathwise one-step expansion. With `Δ = β(a+h) - β(a)`, the increment of
+`F(p) - ∫ LF(p)` over `[a,a+h]` equals `Δ·DF(p_a)e + ½D²F(p_a)[e,e](Δ² - h)` up to an explicit
+error of order `h^{3/2}` in mean. -/
+theorem step_pathwise {F : E → ℝ} (hF : ContDiff ℝ 3 F) {C Mb : ℝ} (hC0 : 0 ≤ C)
+    (hDF : ∀ y z, ‖fderiv ℝ F y - fderiv ℝ F z‖ ≤ C * ‖y - z‖)
+    (hD2 : ∀ y, ‖iteratedFDeriv ℝ 2 F y‖ ≤ C)
+    (hLip2 : ∀ y z, ‖iteratedFDeriv ℝ 2 F y - iteratedFDeriv ℝ 2 F z‖ ≤ C * ‖y - z‖)
+    {b : E → E} (hbc : Continuous b) (hbM : ∀ x, ‖b x‖ ≤ Mb) (e : E)
+    {p : ℝ → E} (hp : Continuous p) {β : ℝ → ℝ} (hβ : Continuous β) {a h : ℝ} (hh : 0 ≤ h)
+    (hrep : ∀ r ∈ Set.Icc a (a + h), p r = p a + (∫ q in a..r, b (p q)) + (β r - β a) • e) :
+    |F (p (a + h)) - F (p a) - (∫ r in a..(a + h), dynkinGen b e F (p r))
+      - (β (a + h) - β a) * fderiv ℝ F (p a) e
+      - (1 / 2) * iteratedFDeriv ℝ 2 F (p a) ![e, e] * ((β (a + h) - β a) ^ 2 - h)|
+    ≤ 4 * C * ((Mb * h) ^ 3 + ‖e‖ ^ 3 * |β (a + h) - β a| ^ 3)
+      + (C * Mb + (1 / 2) * C * ‖e‖ ^ 2) * (Mb * h ^ 2 + ‖e‖ * ∫ r in a..(a + h), |β r - β a|)
+      + (1 / 2) * C * (Mb ^ 2 * h ^ 2 + 2 * Mb * h * ‖e‖ * |β (a + h) - β a|) := by
+  have hMb : 0 ≤ Mb := (norm_nonneg _).trans (hbM 0)
+  have hF2 : ContDiff ℝ 2 (fderiv ℝ F) := hF.fderiv_right (by norm_num)
+  set D1 := fderiv ℝ F with hD1def
+  set D2 := fderiv ℝ (fderiv ℝ F) with hD2def
+  set Q := iteratedFDeriv ℝ 2 F with hQdef
+  have hD1c : Continuous D1 := hF.continuous_fderiv (by norm_num)
+  have hD2c : Continuous D2 := hF2.continuous_fderiv (by norm_num)
+  have hQv : ∀ y v w, Q y ![v, w] = D2 y v w := fun y v w => iteratedFDeriv_two_vec F y v w
+  have hD2b : ∀ y v w, |D2 y v w| ≤ C * ‖v‖ * ‖w‖ := fun y v w => by
+    have := norm_fderiv_fderiv_apply_le F y v w
+    rw [Real.norm_eq_abs] at this
+    refine this.trans ?_
+    gcongr
+    exact hD2 y
+  set Δ := β (a + h) - β a with hΔ
+  set I := ∫ q in a..(a + h), b (p q) with hIdef
+  set w := I + Δ • e with hw
+  have hbpc : Continuous fun q => b (p q) := hbc.comp hp
+  have hpw : p (a + h) = p a + w := by
+    rw [hrep (a + h) ⟨by linarith, le_rfl⟩, hw]
+    abel
+  have hI : ‖I‖ ≤ Mb * h := by
+    have := intervalIntegral.norm_integral_le_of_norm_le_const (a := a) (b := a + h) (C := Mb)
+      (f := fun q => b (p q)) (fun q _ => hbM _)
+    simpa [abs_of_nonneg hh] using this
+  have hpr : ∀ r ∈ Set.Icc a (a + h), ‖p a - p r‖ ≤ Mb * h + ‖e‖ * |β r - β a| := by
+    intro r hr
+    have h2 : ‖∫ q in a..r, b (p q)‖ ≤ Mb * h := by
+      have := intervalIntegral.norm_integral_le_of_norm_le_const (a := a) (b := r) (C := Mb)
+        (f := fun q => b (p q)) (fun q _ => hbM _)
+      refine this.trans ?_
+      rw [abs_of_nonneg (by linarith [hr.1])]
+      exact mul_le_mul_of_nonneg_left (by linarith [hr.2]) hMb
+    rw [norm_sub_rev, hrep r hr]
+    calc ‖p a + (∫ q in a..r, b (p q)) + (β r - β a) • e - p a‖
+        = ‖(∫ q in a..r, b (p q)) + (β r - β a) • e‖ := by congr 1; abel
+      _ ≤ ‖∫ q in a..r, b (p q)‖ + ‖(β r - β a) • e‖ := norm_add_le _ _
+      _ ≤ Mb * h + ‖e‖ * |β r - β a| := by
+          rw [norm_smul, Real.norm_eq_abs, mul_comm (|β r - β a|)]; linarith
+  -- integrability
+  have hint1 : IntervalIntegrable (fun r => D1 (p r) (b (p r))) volume a (a + h) :=
+    ((hD1c.comp hp).clm_apply hbpc).intervalIntegrable _ _
+  have hQc : Continuous fun r => Q (p r) ![e, e] := by
+    have : (fun r => Q (p r) ![e, e]) = fun r => D2 (p r) e e := funext fun r => hQv _ _ _
+    rw [this]
+    exact ((hD2c.comp hp).clm_apply continuous_const).clm_apply continuous_const
+  have hint2 : IntervalIntegrable (fun r => Q (p r) ![e, e]) volume a (a + h) :=
+    hQc.intervalIntegrable _ _
+  have hint3 : IntervalIntegrable (fun r => D1 (p a) (b (p r))) volume a (a + h) :=
+    ((D1 (p a)).continuous.comp hbpc).intervalIntegrable _ _
+  have hβc : Continuous fun r => |β r - β a| := (hβ.sub continuous_const).abs
+  -- identities
+  have eG : ∫ r in a..(a + h), dynkinGen b e F (p r)
+      = (∫ r in a..(a + h), D1 (p r) (b (p r))) + (1 / 2) * ∫ r in a..(a + h), Q (p r) ![e, e] := by
+    simp only [dynkinGen]
+    rw [intervalIntegral.integral_add hint1 (hint2.const_mul _),
+      intervalIntegral.integral_const_mul]
+  have e3 : D1 (p a) I = ∫ r in a..(a + h), D1 (p a) (b (p r)) :=
+    ((D1 (p a)).intervalIntegral_comp_comm (hbpc.intervalIntegrable _ _)).symm
+  have e4 : ∫ r in a..(a + h), (D1 (p a) (b (p r)) - D1 (p r) (b (p r)))
+      = D1 (p a) I - ∫ r in a..(a + h), D1 (p r) (b (p r)) := by
+    rw [intervalIntegral.integral_sub hint3 hint1, e3]
+  have e5 : ∫ r in a..(a + h), (Q (p a) ![e, e] - Q (p r) ![e, e])
+      = h * Q (p a) ![e, e] - ∫ r in a..(a + h), Q (p r) ![e, e] := by
+    rw [intervalIntegral.integral_sub intervalIntegrable_const hint2,
+      intervalIntegral.integral_const]
+    simp only [smul_eq_mul, add_sub_cancel_left]
+  have eD1w : D1 (p a) w = D1 (p a) I + Δ * D1 (p a) e := by
+    simp [hw, map_add, map_smul]
+  have eQw : Q (p a) ![w, w] = D2 (p a) I I + Δ * D2 (p a) I e + Δ * D2 (p a) e I
+      + Δ ^ 2 * Q (p a) ![e, e] := by
+    rw [hQv, hQv]
+    simp only [hw, map_add, map_smul, ContinuousLinearMap.add_apply,
+      ContinuousLinearMap.smul_apply, smul_eq_mul]
+    ring
+  have key : F (p (a + h)) - F (p a) - (∫ r in a..(a + h), dynkinGen b e F (p r))
+      - Δ * D1 (p a) e - (1 / 2) * Q (p a) ![e, e] * (Δ ^ 2 - h)
+      = (F (p a + w) - F (p a) - D1 (p a) w - (1 / 2) * Q (p a) ![w, w])
+        + (∫ r in a..(a + h), (D1 (p a) (b (p r)) - D1 (p r) (b (p r))))
+        + (1 / 2) * (∫ r in a..(a + h), (Q (p a) ![e, e] - Q (p r) ![e, e]))
+        + (1 / 2) * (D2 (p a) I I + Δ * D2 (p a) I e + Δ * D2 (p a) e I) := by
+    rw [e4, e5, hpw, eG, eD1w, eQw]
+    ring
+  rw [key]
+  -- bounds
+  set J := ∫ r in a..(a + h), |β r - β a| with hJ
+  have hR : |F (p a + w) - F (p a) - D1 (p a) w - (1 / 2) * Q (p a) ![w, w]|
+      ≤ 4 * C * ((Mb * h) ^ 3 + ‖e‖ ^ 3 * |Δ| ^ 3) := by
+    refine (taylor2_bound hF hC0 hLip2 (p a) w).trans ?_
+    have hwn : ‖w‖ ≤ Mb * h + ‖e‖ * |Δ| := by
+      calc ‖w‖ ≤ ‖I‖ + ‖Δ • e‖ := norm_add_le _ _
+        _ ≤ Mb * h + ‖e‖ * |Δ| := by
+            rw [norm_smul, Real.norm_eq_abs, mul_comm (|Δ|)]; linarith
+    have hx0 : 0 ≤ Mb * h := mul_nonneg hMb hh
+    have hy0 : 0 ≤ ‖e‖ * |Δ| := mul_nonneg (norm_nonneg _) (abs_nonneg _)
+    have h3 : ‖w‖ ^ 3 ≤ (Mb * h + ‖e‖ * |Δ|) ^ 3 := pow_le_pow_left₀ (norm_nonneg _) hwn 3
+    have h4 : (Mb * h + ‖e‖ * |Δ|) ^ 3 ≤ 4 * ((Mb * h) ^ 3 + (‖e‖ * |Δ|) ^ 3) := by
+      nlinarith [mul_nonneg (add_nonneg hx0 hy0) (sq_nonneg (Mb * h - ‖e‖ * |Δ|))]
+    calc C * ‖w‖ ^ 3 ≤ C * (4 * ((Mb * h) ^ 3 + (‖e‖ * |Δ|) ^ 3)) :=
+          mul_le_mul_of_nonneg_left (h3.trans h4) hC0
+      _ = 4 * C * ((Mb * h) ^ 3 + ‖e‖ ^ 3 * |Δ| ^ 3) := by ring
+  have hT4 : |∫ r in a..(a + h), (D1 (p a) (b (p r)) - D1 (p r) (b (p r)))|
+      ≤ C * Mb * (Mb * h ^ 2 + ‖e‖ * J) := by
+    rw [← Real.norm_eq_abs]
+    refine (intervalIntegral.norm_integral_le_of_norm_le (g := fun r =>
+      C * Mb * (Mb * h) + (C * Mb * ‖e‖) * |β r - β a|) (by linarith)
+      (Filter.Eventually.of_forall fun r hr => ?_)
+      ((continuous_const.add (continuous_const.mul hβc)).intervalIntegrable _ _)).trans ?_
+    · have hr' : r ∈ Set.Icc a (a + h) := ⟨hr.1.le, hr.2⟩
+      rw [← ContinuousLinearMap.sub_apply]
+      calc ‖(D1 (p a) - D1 (p r)) (b (p r))‖ ≤ ‖D1 (p a) - D1 (p r)‖ * ‖b (p r)‖ :=
+            ContinuousLinearMap.le_opNorm _ _
+        _ ≤ (C * (Mb * h + ‖e‖ * |β r - β a|)) * Mb := by
+            gcongr
+            · exact (hDF _ _).trans (mul_le_mul_of_nonneg_left (hpr r hr') hC0)
+            · exact hbM _
+        _ = C * Mb * (Mb * h) + (C * Mb * ‖e‖) * |β r - β a| := by ring
+    · rw [integral_affine _ _ hβc]
+      apply le_of_eq; ring
+  have hT5 : |(1 / 2) * (∫ r in a..(a + h), (Q (p a) ![e, e] - Q (p r) ![e, e]))|
+      ≤ (1 / 2) * C * ‖e‖ ^ 2 * (Mb * h ^ 2 + ‖e‖ * J) := by
+    rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 1 / 2), ← Real.norm_eq_abs, mul_assoc,
+      mul_assoc]
+    refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+    refine (intervalIntegral.norm_integral_le_of_norm_le (g := fun r =>
+      C * ‖e‖ ^ 2 * (Mb * h) + (C * ‖e‖ ^ 2 * ‖e‖) * |β r - β a|) (by linarith)
+      (Filter.Eventually.of_forall fun r hr => ?_)
+      ((continuous_const.add (continuous_const.mul hβc)).intervalIntegrable _ _)).trans ?_
+    · have hr' : r ∈ Set.Icc a (a + h) := ⟨hr.1.le, hr.2⟩
+      rw [Real.norm_eq_abs]
+      refine (abs_sub_apply_two_le _ _ e).trans ?_
+      calc ‖Q (p a) - Q (p r)‖ * ‖e‖ ^ 2 ≤ (C * (Mb * h + ‖e‖ * |β r - β a|)) * ‖e‖ ^ 2 := by
+            gcongr
+            exact (hLip2 _ _).trans (mul_le_mul_of_nonneg_left (hpr r hr') hC0)
+        _ = C * ‖e‖ ^ 2 * (Mb * h) + (C * ‖e‖ ^ 2 * ‖e‖) * |β r - β a| := by ring
+    · rw [integral_affine _ _ hβc]
+      apply le_of_eq; ring
+  have hT6 : |(1 / 2) * (D2 (p a) I I + Δ * D2 (p a) I e + Δ * D2 (p a) e I)|
+      ≤ (1 / 2) * C * (Mb ^ 2 * h ^ 2 + 2 * Mb * h * ‖e‖ * |Δ|) := by
+    rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 1 / 2), mul_assoc]
+    refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+    have h1 := hD2b (p a) I I
+    have h2 := hD2b (p a) I e
+    have h3 := hD2b (p a) e I
+    have hIn := norm_nonneg I
+    have hen := norm_nonneg e
+    have hΔn := abs_nonneg Δ
+    calc |D2 (p a) I I + Δ * D2 (p a) I e + Δ * D2 (p a) e I|
+        ≤ |D2 (p a) I I| + |Δ| * |D2 (p a) I e| + |Δ| * |D2 (p a) e I| := by
+          refine (abs_add_le _ _).trans ?_
+          rw [abs_mul]
+          refine add_le_add ((abs_add_le _ _).trans ?_) le_rfl
+          rw [abs_mul]
+      _ ≤ C * ‖I‖ * ‖I‖ + |Δ| * (C * ‖I‖ * ‖e‖) + |Δ| * (C * ‖e‖ * ‖I‖) := by
+          gcongr
+      _ = C * (‖I‖ ^ 2 + 2 * ‖I‖ * ‖e‖ * |Δ|) := by ring
+      _ ≤ C * ((Mb * h) ^ 2 + 2 * (Mb * h) * ‖e‖ * |Δ|) := by
+          gcongr
+      _ = C * (Mb ^ 2 * h ^ 2 + 2 * Mb * h * ‖e‖ * |Δ|) := by ring
+  calc _ ≤ |F (p a + w) - F (p a) - D1 (p a) w - (1 / 2) * Q (p a) ![w, w]|
+        + |∫ r in a..(a + h), (D1 (p a) (b (p r)) - D1 (p r) (b (p r)))|
+        + |(1 / 2) * (∫ r in a..(a + h), (Q (p a) ![e, e] - Q (p r) ![e, e]))|
+        + |(1 / 2) * (D2 (p a) I I + Δ * D2 (p a) I e + Δ * D2 (p a) e I)| := by
+        refine (abs_add_le _ _).trans (add_le_add ((abs_add_le _ _).trans
+          (add_le_add (abs_add_le _ _) le_rfl)) le_rfl)
+    _ ≤ 4 * C * ((Mb * h) ^ 3 + ‖e‖ ^ 3 * |Δ| ^ 3) + C * Mb * (Mb * h ^ 2 + ‖e‖ * J)
+        + (1 / 2) * C * ‖e‖ ^ 2 * (Mb * h ^ 2 + ‖e‖ * J)
+        + (1 / 2) * C * (Mb ^ 2 * h ^ 2 + 2 * Mb * h * ‖e‖ * |Δ|) := by
+        gcongr
+    _ = _ := by ring
 
 end Dynkin
 
@@ -214,6 +596,165 @@ variable {Ω : Type*} [mΩ : MeasurableSpace Ω] {P : Measure Ω} {B : ℝ≥0 �
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
 
+/-- The time integral `∫₀ᵗ φ(X_r) dr` of an adapted path-continuous process is
+`𝓕_t`-measurable. -/
+theorem measurable_integral_adapted {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
+    [MeasurableSpace G] [BorelSpace G] [SecondCountableTopology G]
+    (𝓕 : Filtration ℝ≥0 mΩ) {X : ℝ≥0 → Ω → E} (hX : ∀ t, Measurable[𝓕 t] (X t))
+    (hXc : ∀ ω, Continuous (X · ω)) {φ : E → G} (hφ : Continuous φ) (t : ℝ≥0) :
+    Measurable[𝓕 t] (fun ω => ∫ r in (0 : ℝ)..t, φ (X r.toNNReal ω)) := by
+  have hm : ∀ r : ℝ, Measurable[𝓕 t] (fun ω => φ (X (min r.toNNReal t) ω)) := fun r =>
+    hφ.measurable.comp ((hX _).mono (𝓕.mono (min_le_right _ _)) le_rfl)
+  have hc : ∀ ω, Continuous fun r : ℝ => φ (X (min r.toNNReal t) ω) := fun ω =>
+    hφ.comp ((hXc ω).comp (continuous_real_toNNReal.min continuous_const))
+  have h := measurable_intervalIntegral_of_continuous (mα := 𝓕 t) hm hc 0 t
+  have heq : (fun ω => ∫ r in (0 : ℝ)..t, φ (X r.toNNReal ω))
+      = fun ω => ∫ r in (0 : ℝ)..t, φ (X (min r.toNNReal t) ω) := by
+    funext ω
+    refine intervalIntegral.integral_congr fun r hr => ?_
+    rw [Set.uIcc_of_le t.coe_nonneg] at hr
+    rw [min_eq_left (Real.toNNReal_le_iff_le_coe.2 hr.2)]
+  rw [heq]
+  exact h
+
+/-- Independence of a Brownian increment from `𝓕_a` (weak Markov property). -/
+theorem integral_mul_incr (hB : IsPreBrownianReal B P) (hBm : ∀ r, Measurable (B r))
+    (𝓕 : Filtration ℝ≥0 mΩ)
+    (hpast : ∀ t, 𝓕 t ≤ MeasurableSpace.comap (fun ω (r : Set.Iic t) => B r ω) MeasurableSpace.pi)
+    {a h : ℝ≥0} {ξ : Ω → ℝ} (hξ : Measurable[𝓕 a] ξ) {φ : ℝ → ℝ} (hφ : Measurable φ) :
+    ∫ ω, ξ ω * φ (B (a + h) ω - B a ω) ∂P
+      = (∫ ω, ξ ω ∂P) * ∫ ω, φ (B (a + h) ω - B a ω) ∂P := by
+  set Fs : Ω → ℝ≥0 → ℝ := fun ω u => B (a + u) ω - B a ω with hFs
+  have hind : IndepFun Fs (fun ω (r : Set.Iic a) => B r ω) P := hB.indepFun_shift a
+  have hY : Measurable[MeasurableSpace.comap Fs MeasurableSpace.pi]
+      (fun ω => φ (B (a + h) ω - B a ω)) := by
+    have hFs_h : Measurable[MeasurableSpace.comap Fs MeasurableSpace.pi] (fun ω => Fs ω h) :=
+      (measurable_pi_apply h).comp (Measurable.of_comap_le (f := Fs) le_rfl)
+    exact hφ.comp hFs_h
+  have hξY : IndepFun ξ (fun ω => φ (B (a + h) ω - B a ω)) P := by
+    rw [IndepFun_iff_Indep] at hind ⊢
+    exact (indep_of_indep_of_le hind hY.comap_le (hξ.comap_le.trans (hpast a))).symm
+  have hξm : Measurable ξ := hξ.mono (𝓕.le a) le_rfl
+  have hYm : Measurable (fun ω => φ (B (a + h) ω - B a ω)) := hφ.comp ((hBm _).sub (hBm _))
+  have h1 := hξY.integral_mul_eq_mul_integral hξm.aestronglyMeasurable hYm.aestronglyMeasurable
+  simpa only [Pi.mul_apply] using h1
+
+/-- Path continuity of a solution of the integral equation. -/
+theorem continuous_of_integralEq (hBc : ∀ ω, Continuous (B · ω)) {b : E → E}
+    (hbc : Continuous b) {Mb : ℝ} (hbM : ∀ x, ‖b x‖ ≤ Mb) {u e : E} {U : ℝ≥0 → Ω → E}
+    (hU : ∀ ω (t : ℝ≥0), U t ω = u + (∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) + B t ω • e)
+    (ω : Ω) : Continuous (U · ω) := by
+  have hV : ∀ r : ℝ, 0 ≤ r → U r.toNNReal ω
+      = (u + B r.toNNReal ω • e) + ∫ q in (0 : ℝ)..r, b (U q.toNNReal ω) := by
+    intro r hr
+    rw [hU ω r.toNNReal, Real.coe_toNNReal r hr]
+    abel
+  have hβ : Continuous fun r : ℝ => u + B r.toNNReal ω • e :=
+    continuous_const.add (((hBc ω).comp continuous_real_toNNReal).smul continuous_const)
+  have hc := continuousOn_of_selfConsistent (V := fun r : ℝ => U r.toNNReal ω)
+    (β := fun r : ℝ => u + B r.toNNReal ω • e) hbc hbM hβ hV
+  have : (fun t : ℝ≥0 => U t ω) = (fun r : ℝ => U r.toNNReal ω) ∘ (fun t : ℝ≥0 => (t : ℝ)) := by
+    funext t; simp
+  rw [this]
+  exact hc.comp_continuous NNReal.continuous_coe fun t => t.coe_nonneg
+
+/-- Adaptedness of a solution of the integral equation, through Picard iteration. -/
+theorem measurable_of_integralEq (𝓕 : Filtration ℝ≥0 mΩ) (hBad : ∀ t, Measurable[𝓕 t] (B t))
+    (hBc : ∀ ω, Continuous (B · ω)) {b : E → E} {Lb : ℝ≥0} {Mb : ℝ} (hb : LipschitzWith Lb b)
+    (hbM : ∀ x, ‖b x‖ ≤ Mb) {u e : E} {U : ℝ≥0 → Ω → E}
+    (hU : ∀ ω (t : ℝ≥0), U t ω = u + (∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) + B t ω • e)
+    (hUc : ∀ ω, Continuous (U · ω)) (t : ℝ≥0) : Measurable[𝓕 t] (U t) := by
+  have hMb : 0 ≤ Mb := (norm_nonneg _).trans (hbM 0)
+  let V : ℕ → ℝ≥0 → Ω → E := fun n => Nat.rec (fun t ω => u + B t ω • e)
+    (fun _ Vn t ω => u + (∫ r in (0 : ℝ)..t, b (Vn r.toNNReal ω)) + B t ω • e) n
+  have hV0 : ∀ t ω, V 0 t ω = u + B t ω • e := fun _ _ => rfl
+  have hVs : ∀ n t ω, V (n + 1) t ω
+      = u + (∫ r in (0 : ℝ)..t, b (V n r.toNNReal ω)) + B t ω • e := fun _ _ _ => rfl
+  have hVc : ∀ n ω, Continuous (V n · ω) := by
+    intro n
+    induction n with
+    | zero =>
+      intro ω
+      show Continuous fun t => u + B t ω • e
+      exact continuous_const.add ((hBc ω).smul continuous_const)
+    | succ n ih =>
+      intro ω
+      show Continuous fun t : ℝ≥0 => u + (∫ r in (0 : ℝ)..t, b (V n r.toNNReal ω)) + B t ω • e
+      refine (continuous_const.add ?_).add ((hBc ω).smul continuous_const)
+      exact (intervalIntegral.continuous_primitive (fun a b' =>
+        (hb.continuous.comp ((ih ω).comp continuous_real_toNNReal)).intervalIntegrable a b') 0).comp
+        NNReal.continuous_coe
+  have hVm : ∀ n t, Measurable[𝓕 t] (V n t) := by
+    intro n
+    induction n with
+    | zero =>
+      intro t
+      show Measurable[𝓕 t] fun ω => u + B t ω • e
+      exact measurable_const.add ((hBad t).smul_const e)
+    | succ n ih =>
+      intro t
+      show Measurable[𝓕 t] fun ω => u + (∫ r in (0 : ℝ)..t, b (V n r.toNNReal ω)) + B t ω • e
+      exact (measurable_const.add (measurable_integral_adapted 𝓕 ih (hVc n) hb.continuous t)).add
+        ((hBad t).smul_const e)
+  have hbound : ∀ n (t : ℝ≥0) ω, ‖V n t ω - U t ω‖
+      ≤ Mb * (Lb : ℝ) ^ n * (t : ℝ) ^ (n + 1) / ((n + 1).factorial : ℝ) := by
+    intro n
+    induction n with
+    | zero =>
+      intro t ω
+      rw [hV0, hU ω t]
+      have heq : u + B t ω • e - (u + (∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) + B t ω • e)
+          = -(∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) := by abel
+      rw [heq, norm_neg]
+      have := intervalIntegral.norm_integral_le_of_norm_le_const (a := 0) (b := (t : ℝ))
+        (C := Mb) (f := fun r => b (U r.toNNReal ω)) (fun r _ => hbM _)
+      simpa [abs_of_nonneg t.coe_nonneg] using this
+    | succ n ih =>
+      intro t ω
+      rw [hVs, hU ω t]
+      have hi1 : IntervalIntegrable (fun r => b (V n r.toNNReal ω)) volume 0 t :=
+        (hb.continuous.comp ((hVc n ω).comp continuous_real_toNNReal)).intervalIntegrable _ _
+      have hi2 : IntervalIntegrable (fun r => b (U r.toNNReal ω)) volume 0 t :=
+        (hb.continuous.comp ((hUc ω).comp continuous_real_toNNReal)).intervalIntegrable _ _
+      have heq : u + (∫ r in (0 : ℝ)..t, b (V n r.toNNReal ω)) + B t ω • e
+          - (u + (∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) + B t ω • e)
+          = ∫ r in (0 : ℝ)..t, (b (V n r.toNNReal ω) - b (U r.toNNReal ω)) := by
+        rw [intervalIntegral.integral_sub hi1 hi2]; abel
+      rw [heq]
+      refine (intervalIntegral.norm_integral_le_of_norm_le (g := fun r : ℝ =>
+        (Lb : ℝ) * (Mb * (Lb : ℝ) ^ n * r ^ (n + 1) / ((n + 1).factorial : ℝ))) t.coe_nonneg
+        (Filter.Eventually.of_forall fun r hr => ?_) ?_).trans (le_of_eq ?_)
+      · have h1 : ‖b (V n r.toNNReal ω) - b (U r.toNNReal ω)‖
+            ≤ Lb * ‖V n r.toNNReal ω - U r.toNNReal ω‖ := by
+          rw [← dist_eq_norm, ← dist_eq_norm]; exact hb.dist_le_mul _ _
+        refine h1.trans (mul_le_mul_of_nonneg_left ?_ Lb.coe_nonneg)
+        have := ih r.toNNReal ω
+        rwa [Real.coe_toNNReal r hr.1.le] at this
+      · exact (Continuous.intervalIntegrable (by fun_prop) _ _)
+      · rw [intervalIntegral.integral_const_mul, intervalIntegral.integral_div,
+          intervalIntegral.integral_const_mul, integral_pow, zero_pow (by omega), sub_zero,
+          Nat.factorial_succ (n + 1)]
+        push_cast
+        field_simp
+        ring
+  have hlim : ∀ ω, Tendsto (fun n => V n t ω) atTop (𝓝 (U t ω)) := by
+    intro ω
+    rw [tendsto_iff_norm_sub_tendsto_zero]
+    have hsq : Tendsto (fun n : ℕ => Mb * t * (((Lb : ℝ) * t) ^ n / (n.factorial : ℝ)))
+        atTop (𝓝 0) := by
+      simpa using (FloorSemiring.tendsto_pow_div_factorial_atTop ((Lb : ℝ) * t)).const_mul (Mb * t)
+    refine squeeze_zero (fun n => norm_nonneg _) (fun n => (hbound n t ω).trans ?_) hsq
+    have hf : (n.factorial : ℝ) ≤ (n + 1).factorial := by
+      exact_mod_cast Nat.factorial_le (Nat.le_succ n)
+    have hfpos : (0 : ℝ) < n.factorial := by exact_mod_cast Nat.factorial_pos n
+    have hnum : 0 ≤ Mb * (Lb : ℝ) ^ n * (t : ℝ) ^ (n + 1) := by positivity
+    calc Mb * (Lb : ℝ) ^ n * (t : ℝ) ^ (n + 1) / ((n + 1).factorial : ℝ)
+        ≤ Mb * (Lb : ℝ) ^ n * (t : ℝ) ^ (n + 1) / (n.factorial : ℝ) :=
+          div_le_div_of_nonneg_left hnum hfpos hf
+      _ = Mb * t * (((Lb : ℝ) * t) ^ n / (n.factorial : ℝ)) := by rw [mul_pow]; ring
+  exact @measurable_of_tendsto_metrizable Ω E (𝓕 t) _ _ _ _ _ _ (fun n => hVm n t)
+    (tendsto_pi_nhds.2 hlim)
+
 /-! ### 7. The one-step estimate in expectation -/
 
 theorem rpow_three_halves_eq {x : ℝ} (hx : 0 ≤ x) : x ^ (((3 : ℕ) : ℝ) / 2) = x * Real.sqrt x := by
@@ -224,12 +765,406 @@ theorem rpow_one_half_eq (x : ℝ) : x ^ (((1 : ℕ) : ℝ) / 2) = Real.sqrt x :
   rw [Real.sqrt_eq_rpow]; norm_num
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
+theorem continuous_iteratedFDeriv_two_vec {F : E → ℝ} (hF : ContDiff ℝ 3 F) (e : E) :
+    Continuous fun y => iteratedFDeriv ℝ 2 F y ![e, e] := by
+  have hF2 : ContDiff ℝ 2 (fderiv ℝ F) := hF.fderiv_right (by norm_num)
+  have : (fun y => iteratedFDeriv ℝ 2 F y ![e, e]) = fun y => fderiv ℝ (fderiv ℝ F) y e e :=
+    funext fun y => iteratedFDeriv_two_vec F y e e
+  rw [this]
+  exact ((hF2.continuous_fderiv (by norm_num)).clm_apply continuous_const).clm_apply
+    continuous_const
+
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 theorem abs_iteratedFDeriv_two_vec_le (F : E → ℝ) (y e : E) :
     |iteratedFDeriv ℝ 2 F y ![e, e]| ≤ ‖iteratedFDeriv ℝ 2 F y‖ * ‖e‖ ^ 2 := by
   rw [iteratedFDeriv_two_vec, ← Real.norm_eq_abs, sq, ← mul_assoc]
   exact norm_fderiv_fderiv_apply_le F y e e
 
+/-- Abstract form of the one-step argument: two terms with vanishing mean are removed, the rest
+is dominated pointwise. -/
+theorem abs_integral_le_of_split {ξ Z W2 W3 Y : Ω → ℝ}
+    (hZ : Integrable (fun ω => ξ ω * Z ω) P) (hW2 : Integrable W2 P) (hW3 : Integrable W3 P)
+    (hW2z : ∫ ω, W2 ω ∂P = 0) (hW3z : ∫ ω, W3 ω ∂P = 0) (hY : Integrable Y P)
+    (hpt : ∀ ω, |ξ ω * Z ω - W2 ω - W3 ω| ≤ Y ω) :
+    |∫ ω, ξ ω * Z ω ∂P| ≤ ∫ ω, Y ω ∂P := by
+  have hsplit : ∫ ω, ξ ω * Z ω ∂P = ∫ ω, (ξ ω * Z ω - W2 ω - W3 ω) ∂P := by
+    have hZW2 : Integrable (fun ω => ξ ω * Z ω - W2 ω) P := hZ.sub hW2
+    rw [integral_sub hZW2 hW3, integral_sub hZ hW2, hW2z, hW3z]; ring
+  rw [hsplit, ← Real.norm_eq_abs]
+  exact norm_integral_le_of_norm_le hY (Filter.Eventually.of_forall fun ω => by
+    rw [Real.norm_eq_abs]; exact hpt ω)
+
+theorem split_identity (x y d w q k : ℝ) :
+    x * y - x * d * w - x * q * (w ^ 2 - k) = x * (y - w * d - q * (w ^ 2 - k)) := by ring
+
+theorem integral_four [IsProbabilityMeasure P] {f1 f2 f3 : Ω → ℝ} (h1 : Integrable f1 P)
+    (h2 : Integrable f2 P) (h3 : Integrable f3 P) (c0 c1 c2 c3 : ℝ) :
+    ∫ ω, (c0 + c1 * f1 ω + c2 * f2 ω + c3 * f3 ω) ∂P
+      = c0 + c1 * ∫ ω, f1 ω ∂P + c2 * ∫ ω, f2 ω ∂P + c3 * ∫ ω, f3 ω ∂P := by
+  have i01 : Integrable (fun ω => c0 + c1 * f1 ω) P := (integrable_const c0).add (h1.const_mul c1)
+  have i012 : Integrable (fun ω => c0 + c1 * f1 ω + c2 * f2 ω) P := i01.add (h2.const_mul c2)
+  rw [integral_add i012 (h3.const_mul c3), integral_add i01 (h2.const_mul c2),
+    integral_add (integrable_const c0) (h1.const_mul c1), integral_const,
+    integral_const_mul, integral_const_mul, integral_const_mul]
+  simp
+
+/-- The one-step estimate: `|E[ξ (M_{a+h} - M_a)]| ≤ K h^{3/2}` for `𝓕_a`-measurable `|ξ| ≤ 1`,
+uniformly for `a + h ≤ T`. -/
+theorem step_expect (hB : IsPreBrownianReal B P) (𝓕 : Filtration ℝ≥0 mΩ)
+    (hBad : ∀ t, Measurable[𝓕 t] (B t))
+    (hpast : ∀ t, 𝓕 t ≤ MeasurableSpace.comap (fun ω (r : Set.Iic t) => B r ω) MeasurableSpace.pi)
+    (hBc : ∀ ω, Continuous (B · ω))
+    {F : E → ℝ} (hF : ContDiff ℝ 3 F) {C Mb : ℝ} (hC0 : 0 ≤ C)
+    (hD1 : ∀ y, ‖fderiv ℝ F y‖ ≤ C)
+    (hDF : ∀ y z, ‖fderiv ℝ F y - fderiv ℝ F z‖ ≤ C * ‖y - z‖)
+    (hD2 : ∀ y, ‖iteratedFDeriv ℝ 2 F y‖ ≤ C)
+    (hLip2 : ∀ y z, ‖iteratedFDeriv ℝ 2 F y - iteratedFDeriv ℝ 2 F z‖ ≤ C * ‖y - z‖)
+    {b : E → E} (hbc : Continuous b) (hbM : ∀ x, ‖b x‖ ≤ Mb) {u e : E} {U : ℝ≥0 → Ω → E}
+    (hU : ∀ ω (t : ℝ≥0), U t ω = u + (∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) + B t ω • e)
+    (hUc : ∀ ω, Continuous (U · ω)) (hUm : ∀ t, Measurable[𝓕 t] (U t))
+    {M : ℝ≥0 → Ω → ℝ}
+    (hM : ∀ t ω, M t ω = F (U t ω) - F u - ∫ r in (0 : ℝ)..t, dynkinGen b e F (U r.toNNReal ω))
+    (hMint : ∀ t, Integrable (M t) P) (T : ℝ) :
+    ∃ K : ℝ, ∀ a h : ℝ≥0, (a : ℝ) + h ≤ T → ∀ ξ : Ω → ℝ, Measurable[𝓕 a] ξ →
+      (∀ ω, |ξ ω| ≤ 1) → |∫ ω, ξ ω * (M (a + h) ω - M a ω) ∂P| ≤ K * ((h : ℝ) * Real.sqrt h) := by
+  have hP : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  have hBm : ∀ r, Measurable (B r) := fun r => (hBad r).mono (𝓕.le r) le_rfl
+  have hMb : 0 ≤ Mb := (norm_nonneg _).trans (hbM 0)
+  have hg1 : 0 ≤ gaussianAbsMoment 1 := gaussianAbsMoment_nonneg 1
+  have hg3 : 0 ≤ gaussianAbsMoment 3 := gaussianAbsMoment_nonneg 3
+  refine ⟨4 * C * Mb ^ 3 * (T * Real.sqrt T) + (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * Mb * Real.sqrt T
+    + 1 / 2 * C * Mb ^ 2 * Real.sqrt T + 4 * C * ‖e‖ ^ 3 * gaussianAbsMoment 3
+    + (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * ‖e‖ * gaussianAbsMoment 1
+    + C * Mb * ‖e‖ * gaussianAbsMoment 1, ?_⟩
+  intro a h haT ξ hξ hξb
+  have hh0 : (0 : ℝ) ≤ h := h.coe_nonneg
+  have hhT : (h : ℝ) ≤ T := by linarith [a.coe_nonneg]
+  have hT0 : 0 ≤ T := hh0.trans hhT
+  have e1 : ((a : ℝ) + h).toNNReal = a + h := by rw [← NNReal.coe_add, Real.toNNReal_coe]
+  have e2 : (a : ℝ).toNNReal = a := Real.toNNReal_coe
+  -- the pathwise estimate
+  have hpath : ∀ ω, |M (a + h) ω - M a ω - (B (a + h) ω - B a ω) * fderiv ℝ F (U a ω) e
+      - (1 / 2) * iteratedFDeriv ℝ 2 F (U a ω) ![e, e] * ((B (a + h) ω - B a ω) ^ 2 - h)|
+      ≤ (4 * C * (Mb * h) ^ 3 + (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * (Mb * h ^ 2)
+          + 1 / 2 * C * (Mb ^ 2 * h ^ 2))
+        + 4 * C * ‖e‖ ^ 3 * |B (a + h) ω - B a ω| ^ 3
+        + (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * ‖e‖
+          * (∫ r in (a : ℝ)..(a + h), |B r.toNNReal ω - B a ω|)
+        + C * Mb * h * ‖e‖ * |B (a + h) ω - B a ω| := by
+    intro ω
+    have hpc : Continuous fun r : ℝ => U r.toNNReal ω := (hUc ω).comp continuous_real_toNNReal
+    have hβc : Continuous fun r : ℝ => B r.toNNReal ω := (hBc ω).comp continuous_real_toNNReal
+    have hbi : ∀ x y : ℝ, IntervalIntegrable (fun q => b (U q.toNNReal ω)) volume x y :=
+      fun x y => (hbc.comp hpc).intervalIntegrable x y
+    have hrep : ∀ r ∈ Set.Icc (a : ℝ) (a + h), U r.toNNReal ω = U (a : ℝ).toNNReal ω
+        + (∫ q in (a : ℝ)..r, b (U q.toNNReal ω))
+        + (B r.toNNReal ω - B (a : ℝ).toNNReal ω) • e := by
+      intro r hr
+      have hr0 : 0 ≤ r := a.coe_nonneg.trans hr.1
+      rw [hU ω r.toNNReal, hU ω (a : ℝ).toNNReal, Real.coe_toNNReal r hr0, e2,
+        ← intervalIntegral.integral_interval_sub_left (hbi 0 r) (hbi 0 a), sub_smul]
+      abel
+    have hstep := step_pathwise hF hC0 hDF hD2 hLip2 hbc hbM e hpc hβc hh0 hrep
+    have hGi : ∀ x y : ℝ, IntervalIntegrable (fun q => dynkinGen b e F (U q.toNNReal ω))
+        volume x y :=
+      fun x y => ((continuous_dynkinGen hF hbc e).comp hpc).intervalIntegrable x y
+    have hMdiff : M (a + h) ω - M a ω = F (U (a + h) ω) - F (U a ω)
+        - ∫ r in (a : ℝ)..(a + h), dynkinGen b e F (U r.toNNReal ω) := by
+      rw [hM, hM, NNReal.coe_add, ← intervalIntegral.integral_interval_sub_left
+        (hGi 0 ((a : ℝ) + h)) (hGi 0 a)]
+      ring
+    simp only [e1, e2] at hstep
+    rw [hMdiff]
+    refine hstep.trans (le_of_eq ?_)
+    ring
+  -- integrability facts
+  have hΔm : Measurable fun ω => B (a + h) ω - B a ω := (hBm _).sub (hBm _)
+  have hΔabs1 : Integrable (fun ω => |B (a + h) ω - B a ω|) P := by
+    simpa using integrable_pow (hB.shift a) h 1
+  have hΔabs3 : Integrable (fun ω => |B (a + h) ω - B a ω| ^ 3) P :=
+    integrable_pow (hB.shift a) h 3
+  have hΔint : Integrable (fun ω => B (a + h) ω - B a ω) P :=
+    hΔabs1.mono' hΔm.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun ω => by simp [Real.norm_eq_abs])
+  have hΔsq : Integrable (fun ω => (B (a + h) ω - B a ω) ^ 2) P := by
+    simpa [sq_abs] using integrable_pow (hB.shift a) h 2
+  -- the time integral `J`
+  have hJ : Integrable (fun ω => ∫ r in (a : ℝ)..(a + h), |B r.toNNReal ω - B a ω|) P ∧
+      ∫ ω, (∫ r in (a : ℝ)..(a + h), |B r.toNNReal ω - B a ω|) ∂P
+        ≤ (gaussianAbsMoment 1 * Real.sqrt h) * (((a : ℝ) + h) - a) := by
+    refine integrable_intervalIntegral_and_le (g := fun r ω => |B r.toNNReal ω - B a ω|)
+      (fun r => continuous_abs.measurable.comp ((hBm _).sub (hBm _)))
+      (fun ω => continuous_abs.comp (((hBc ω).comp continuous_real_toNNReal).sub continuous_const))
+      (fun r ω => abs_nonneg _) (by linarith) ?_ ?_
+    · intro r hr
+      have hr0 : 0 ≤ r := a.coe_nonneg.trans hr.1
+      obtain ⟨τ, hτ⟩ : ∃ τ : ℝ≥0, r.toNNReal = a + τ :=
+        ⟨r.toNNReal - a,
+          (add_tsub_cancel_of_le ((Real.le_toNNReal_iff_coe_le hr0).2 hr.1)).symm⟩
+      show Integrable (fun ω => |B r.toNNReal ω - B a ω|) P
+      rw [hτ]
+      simpa using integrable_pow (hB.shift a) τ 1
+    · intro r hr
+      have hr0 : 0 ≤ r := a.coe_nonneg.trans hr.1
+      obtain ⟨τ, hτ⟩ : ∃ τ : ℝ≥0, r.toNNReal = a + τ :=
+        ⟨r.toNNReal - a,
+          (add_tsub_cancel_of_le ((Real.le_toNNReal_iff_coe_le hr0).2 hr.1)).symm⟩
+      have hτh : (τ : ℝ) ≤ h := by
+        have h1 : ((r.toNNReal : ℝ≥0) : ℝ) = a + τ := by rw [hτ, NNReal.coe_add]
+        rw [Real.coe_toNNReal r hr0] at h1
+        linarith [hr.2]
+      show ∫ ω, |B r.toNNReal ω - B a ω| ∂P ≤ gaussianAbsMoment 1 * Real.sqrt h
+      rw [hτ]
+      have h1 : ∫ ω, |B (a + τ) ω - B a ω| ^ 1 ∂P ≤ gaussianAbsMoment 1 * (τ : ℝ) ^ (((1 : ℕ) : ℝ) / 2) :=
+        integral_abs_pow_le (hB.shift a) τ 1
+      simp only [pow_one] at h1
+      rw [rpow_one_half_eq] at h1
+      exact h1.trans (mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hτh) hg1)
+  obtain ⟨hJint, hJle⟩ := hJ
+  -- the two martingale-like terms
+  have hQc := continuous_iteratedFDeriv_two_vec hF e
+  have hDFc : Continuous fun y => fderiv ℝ F y e :=
+    (hF.continuous_fderiv (by norm_num)).clm_apply continuous_const
+  have hξ2m : Measurable[𝓕 a] fun ω => ξ ω * fderiv ℝ F (U a ω) e :=
+    hξ.mul (hDFc.measurable.comp (hUm a))
+  have hξ3m : Measurable[𝓕 a] fun ω => ξ ω * ((1 / 2) * iteratedFDeriv ℝ 2 F (U a ω) ![e, e]) :=
+    hξ.mul ((hQc.measurable.comp (hUm a)).const_mul (1 / 2))
+  have hξm : Measurable ξ := hξ.mono (𝓕.le a) le_rfl
+  have hξ2b : ∀ ω, ‖ξ ω * fderiv ℝ F (U a ω) e‖ ≤ C * ‖e‖ := fun ω => by
+    rw [norm_mul, Real.norm_eq_abs]
+    calc |ξ ω| * ‖fderiv ℝ F (U a ω) e‖ ≤ 1 * (C * ‖e‖) :=
+          mul_le_mul (hξb ω) (((fderiv ℝ F (U a ω)).le_opNorm e).trans
+            (mul_le_mul_of_nonneg_right (hD1 _) (norm_nonneg e))) (norm_nonneg _) zero_le_one
+      _ = C * ‖e‖ := one_mul _
+  have hξ3b : ∀ ω, ‖ξ ω * ((1 / 2) * iteratedFDeriv ℝ 2 F (U a ω) ![e, e])‖
+      ≤ 1 / 2 * C * ‖e‖ ^ 2 := fun ω => by
+    rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 1 / 2)]
+    have h1 := abs_iteratedFDeriv_two_vec_le F (U a ω) e
+    have h2 : ‖iteratedFDeriv ℝ 2 F (U a ω)‖ * ‖e‖ ^ 2 ≤ C * ‖e‖ ^ 2 :=
+      mul_le_mul_of_nonneg_right (hD2 _) (by positivity)
+    calc |ξ ω| * (1 / 2 * |iteratedFDeriv ℝ 2 F (U a ω) ![e, e]|)
+        ≤ 1 * (1 / 2 * (C * ‖e‖ ^ 2)) := by
+          apply mul_le_mul (hξb ω) _ (by positivity) zero_le_one
+          linarith
+      _ = 1 / 2 * C * ‖e‖ ^ 2 := by ring
+  have hW2i : Integrable (fun ω => (ξ ω * fderiv ℝ F (U a ω) e) * (B (a + h) ω - B a ω)) P :=
+    hΔint.bdd_mul (hξ2m.mono (𝓕.le a) le_rfl).aestronglyMeasurable
+      (Filter.Eventually.of_forall hξ2b)
+  have hW3i : Integrable (fun ω => (ξ ω * ((1 / 2) * iteratedFDeriv ℝ 2 F (U a ω) ![e, e]))
+      * ((B (a + h) ω - B a ω) ^ 2 - h)) P :=
+    (hΔsq.sub (integrable_const _)).bdd_mul (hξ3m.mono (𝓕.le a) le_rfl).aestronglyMeasurable
+      (Filter.Eventually.of_forall hξ3b)
+  have hZ : Integrable (fun ω => ξ ω * (M (a + h) ω - M a ω)) P :=
+    ((hMint (a + h)).sub (hMint a)).bdd_mul hξm.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun ω => by simpa [Real.norm_eq_abs] using hξb ω)
+  have hW2 : ∫ ω, (ξ ω * fderiv ℝ F (U a ω) e) * (B (a + h) ω - B a ω) ∂P = 0 := by
+    have h1 : ∫ ω, (ξ ω * fderiv ℝ F (U a ω) e) * (B (a + h) ω - B a ω) ∂P
+        = (∫ ω, ξ ω * fderiv ℝ F (U a ω) e ∂P) * ∫ ω, (B (a + h) ω - B a ω) ∂P :=
+      integral_mul_incr hB hBm 𝓕 hpast hξ2m (φ := id) measurable_id
+    have h0 : ∫ ω, (B (a + h) ω - B a ω) ∂P = 0 := integral_eq_zero (hB.shift a) h
+    rw [h1, h0, mul_zero]
+  have hW3 : ∫ ω, (ξ ω * ((1 / 2) * iteratedFDeriv ℝ 2 F (U a ω) ![e, e]))
+      * ((B (a + h) ω - B a ω) ^ 2 - h) ∂P = 0 := by
+    have h1 : ∫ ω, (ξ ω * ((1 / 2) * iteratedFDeriv ℝ 2 F (U a ω) ![e, e]))
+        * ((B (a + h) ω - B a ω) ^ 2 - h) ∂P
+        = (∫ ω, ξ ω * ((1 / 2) * iteratedFDeriv ℝ 2 F (U a ω) ![e, e]) ∂P)
+          * ∫ ω, ((B (a + h) ω - B a ω) ^ 2 - (h : ℝ)) ∂P :=
+      integral_mul_incr hB hBm 𝓕 hpast hξ3m (φ := fun x => x ^ 2 - (h : ℝ)) (by fun_prop)
+    have hsq : ∫ ω, (B (a + h) ω - B a ω) ^ 2 ∂P = h := integral_sq (hB.shift a) h
+    have h0 : ∫ ω, ((B (a + h) ω - B a ω) ^ 2 - (h : ℝ)) ∂P = 0 := by
+      rw [integral_sub hΔsq (integrable_const _), hsq, integral_const]; simp
+    rw [h1, h0, mul_zero]
+  have hYint : Integrable (fun ω => (4 * C * (Mb * h) ^ 3 + (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * (Mb * h ^ 2)
+          + 1 / 2 * C * (Mb ^ 2 * h ^ 2))
+        + 4 * C * ‖e‖ ^ 3 * |B (a + h) ω - B a ω| ^ 3
+        + (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * ‖e‖
+          * (∫ r in (a : ℝ)..(a + h), |B r.toNNReal ω - B a ω|)
+        + C * Mb * h * ‖e‖ * |B (a + h) ω - B a ω|) P := (((integrable_const ((4 * C * (Mb * h) ^ 3
+      + (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * (Mb * h ^ 2) + 1 / 2 * C * (Mb ^ 2 * h ^ 2)))).add
+    (hΔabs3.const_mul (4 * C * ‖e‖ ^ 3))).add
+    (hJint.const_mul ((C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * ‖e‖))).add
+    (hΔabs1.const_mul (C * Mb * h * ‖e‖))
+  have hmain := abs_integral_le_of_split hZ hW2i hW3i hW2 hW3 hYint (fun ω => by
+    rw [split_identity, abs_mul]
+    exact (mul_le_mul (hξb ω) (hpath ω) (abs_nonneg _) zero_le_one).trans_eq (one_mul _))
+  rw [integral_four hΔabs3 hJint hΔabs1] at hmain
+  refine hmain.trans ?_
+  -- numerical bounds
+  set S := (h : ℝ) * Real.sqrt h with hS
+  have hsqrt : Real.sqrt h ≤ Real.sqrt T := Real.sqrt_le_sqrt hhT
+  have hS0 : 0 ≤ S := mul_nonneg hh0 (Real.sqrt_nonneg _)
+  have hh2 : (h : ℝ) ^ 2 ≤ Real.sqrt T * S := by
+    have : (h : ℝ) ^ 2 = S * Real.sqrt h := by
+      rw [hS, mul_assoc, Real.mul_self_sqrt hh0]; ring
+    rw [this, mul_comm]
+    exact mul_le_mul_of_nonneg_right hsqrt hS0
+  have hh3 : (h : ℝ) ^ 3 ≤ T * Real.sqrt T * S := by
+    have : (h : ℝ) ^ 3 = (h : ℝ) ^ 2 * h := by ring
+    rw [this]
+    calc (h : ℝ) ^ 2 * h ≤ (Real.sqrt T * S) * T :=
+          mul_le_mul hh2 hhT hh0 (mul_nonneg (Real.sqrt_nonneg _) hS0)
+      _ = T * Real.sqrt T * S := by ring
+  have hA3 : ∫ ω, |B (a + h) ω - B a ω| ^ 3 ∂P ≤ gaussianAbsMoment 3 * S := by
+    have := integral_abs_pow_le (hB.shift a) h 3
+    rw [rpow_three_halves_eq hh0] at this
+    exact this
+  have hA1 : ∫ ω, |B (a + h) ω - B a ω| ∂P ≤ gaussianAbsMoment 1 * Real.sqrt h := by
+    have := integral_abs_pow_le (hB.shift a) h 1
+    rw [rpow_one_half_eq] at this
+    simpa using this
+  have hAJ : ∫ ω, (∫ r in (a : ℝ)..(a + h), |B r.toNNReal ω - B a ω|) ∂P
+      ≤ gaussianAbsMoment 1 * S := by
+    refine hJle.trans (le_of_eq ?_)
+    rw [hS]; ring
+  have hc1 : 0 ≤ 4 * C * ‖e‖ ^ 3 := by positivity
+  have hc2 : 0 ≤ (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * ‖e‖ := by positivity
+  have hc3 : 0 ≤ C * Mb * ‖e‖ := by positivity
+  have f1 := mul_le_mul_of_nonneg_left hA3 hc1
+  have f2 := mul_le_mul_of_nonneg_left hAJ hc2
+  have f3 : C * Mb * ‖e‖ * ((h : ℝ) * ∫ ω, |B (a + h) ω - B a ω| ∂P)
+      ≤ C * Mb * ‖e‖ * (gaussianAbsMoment 1 * S) := by
+    refine mul_le_mul_of_nonneg_left ?_ hc3
+    calc (h : ℝ) * ∫ ω, |B (a + h) ω - B a ω| ∂P ≤ h * (gaussianAbsMoment 1 * Real.sqrt h) :=
+          mul_le_mul_of_nonneg_left hA1 hh0
+      _ = gaussianAbsMoment 1 * S := by rw [hS]; ring
+  have f4 := mul_le_mul_of_nonneg_left hh3 (by positivity : 0 ≤ 4 * C * Mb ^ 3)
+  have f5 := mul_le_mul_of_nonneg_left hh2
+    (by positivity : 0 ≤ (C * Mb + 1 / 2 * C * ‖e‖ ^ 2) * Mb + 1 / 2 * C * Mb ^ 2)
+  nlinarith [f1, f2, f3, f4, f5]
+
 /-! ### 8. Dynkin's formula -/
+
+/-- **IL-3 (Dynkin formula for additive noise).** Let `B` be a pre-Brownian motion with
+continuous paths, and `𝓕` a filtration to which `B` is adapted and which is contained in the
+σ-algebra of the past of `B` (e.g. the natural filtration of `B`). Let
+`U_t = u + ∫₀ᵗ b(U_r) dr + B_t e` with `b` Lipschitz and bounded, and let `F ∈ C³` with
+`‖DF‖, ‖D²F‖, ‖D³F‖ ≤ C`. Then `F(U_t) - F(u) - ∫₀ᵗ LF(U_r) dr` is an `𝓕`-martingale, where
+`LF = DF·b + ½ D²F[e,e]` (`dynkinGen`). -/
+theorem dynkin_additive (hB : IsPreBrownianReal B P) (hBc : ∀ ω, Continuous (B · ω))
+    (𝓕 : Filtration ℝ≥0 mΩ) (hBad : ∀ t, Measurable[𝓕 t] (B t))
+    (hpast : ∀ t, 𝓕 t ≤ MeasurableSpace.comap (fun ω (r : Set.Iic t) => B r ω) MeasurableSpace.pi)
+    {b : E → E} {Lb : ℝ≥0} {Mb : ℝ} (hb : LipschitzWith Lb b) (hbM : ∀ x, ‖b x‖ ≤ Mb)
+    {u e : E} {U : ℝ≥0 → Ω → E}
+    (hU : ∀ ω (t : ℝ≥0), U t ω = u + (∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) + B t ω • e)
+    {F : E → ℝ} {C : ℝ} (hF : ContDiff ℝ 3 F)
+    (hD : ∀ x, ‖fderiv ℝ F x‖ ≤ C ∧ ‖iteratedFDeriv ℝ 2 F x‖ ≤ C ∧
+      ‖iteratedFDeriv ℝ 3 F x‖ ≤ C) :
+    Martingale (fun t ω => F (U t ω) - F u
+      - ∫ r in (0 : ℝ)..t, dynkinGen b e F (U r.toNNReal ω)) 𝓕 P := by
+  have hP : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  have hBm : ∀ r, Measurable (B r) := fun r => (hBad r).mono (𝓕.le r) le_rfl
+  have hC0 : 0 ≤ C := (norm_nonneg _).trans (hD 0).1
+  have hbc : Continuous b := hb.continuous
+  have hF2 : ContDiff ℝ 2 (fderiv ℝ F) := hF.fderiv_right (by norm_num)
+  have hDF : ∀ y z, ‖fderiv ℝ F y - fderiv ℝ F z‖ ≤ C * ‖y - z‖ := fun y z =>
+    Convex.norm_image_sub_le_of_norm_fderiv_le (s := Set.univ)
+      (fun p _ => (hF2.differentiable (by norm_num)) p)
+      (fun p _ => by
+        rw [← norm_iteratedFDeriv_one, norm_iteratedFDeriv_fderiv]
+        exact (hD p).2.1) convex_univ (Set.mem_univ _) (Set.mem_univ _)
+  have hLip2 : ∀ y z, ‖iteratedFDeriv ℝ 2 F y - iteratedFDeriv ℝ 2 F z‖ ≤ C * ‖y - z‖ :=
+    fun y z => Convex.norm_image_sub_le_of_norm_fderiv_le (s := Set.univ)
+      (fun p _ => (hF.differentiable_iteratedFDeriv (m := 2) (by norm_num)) p)
+      (fun p _ => by rw [norm_fderiv_iteratedFDeriv]; exact (hD p).2.2) convex_univ
+      (Set.mem_univ _) (Set.mem_univ _)
+  have hFlip : ∀ y z, |F y - F z| ≤ C * ‖y - z‖ := fun y z => by
+    rw [← Real.norm_eq_abs]
+    exact Convex.norm_image_sub_le_of_norm_fderiv_le (s := Set.univ)
+      (fun p _ => (hF.differentiable (by norm_num)) p) (fun p _ => (hD p).1) convex_univ
+      (Set.mem_univ _) (Set.mem_univ _)
+  have hUc : ∀ ω, Continuous (U · ω) := continuous_of_integralEq hBc hbc hbM hU
+  have hUm : ∀ t, Measurable[𝓕 t] (U t) := measurable_of_integralEq 𝓕 hBad hBc hb hbM hU hUc
+  set M : ℝ≥0 → Ω → ℝ := fun t ω => F (U t ω) - F u
+    - ∫ r in (0 : ℝ)..t, dynkinGen b e F (U r.toNNReal ω) with hMdef
+  have hM : ∀ t ω, M t ω = F (U t ω) - F u
+      - ∫ r in (0 : ℝ)..t, dynkinGen b e F (U r.toNNReal ω) := fun _ _ => rfl
+  have hGc := continuous_dynkinGen hF hbc e
+  have hMm : ∀ t, Measurable[𝓕 t] (M t) := fun t =>
+    ((hF.continuous.measurable.comp (hUm t)).sub measurable_const).sub
+      (measurable_integral_adapted 𝓕 hUm hUc hGc t)
+  have hGb : ∀ y, |dynkinGen b e F y| ≤ C * Mb + 1 / 2 * (C * ‖e‖ ^ 2) := fun y => by
+    unfold dynkinGen
+    have h1 : |fderiv ℝ F y (b y)| ≤ C * Mb := by
+      rw [← Real.norm_eq_abs]
+      exact ((fderiv ℝ F y).le_opNorm _).trans (mul_le_mul (hD y).1 (hbM y) (norm_nonneg _) hC0)
+    have h2 : |iteratedFDeriv ℝ 2 F y ![e, e]| ≤ C * ‖e‖ ^ 2 :=
+      (abs_iteratedFDeriv_two_vec_le F y e).trans
+        (mul_le_mul_of_nonneg_right (hD y).2.1 (by positivity))
+    calc _ ≤ |fderiv ℝ F y (b y)| + |1 / 2 * iteratedFDeriv ℝ 2 F y ![e, e]| := abs_add_le _ _
+      _ ≤ C * Mb + 1 / 2 * (C * ‖e‖ ^ 2) := by
+        rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 1 / 2)]
+        linarith
+  have hMint : ∀ t, Integrable (M t) P := by
+    intro t
+    have hBt : Integrable (fun ω => |B t ω|) P := by simpa using integrable_pow hB t 1
+    have hg : Integrable (fun ω => C * (Mb * t) + C * ‖e‖ * |B t ω|
+        + (C * Mb + 1 / 2 * (C * ‖e‖ ^ 2)) * t) P :=
+      ((integrable_const _).add (hBt.const_mul _)).add (integrable_const _)
+    refine Integrable.mono' hg ((hMm t).mono (𝓕.le t) le_rfl).aestronglyMeasurable
+      (Filter.Eventually.of_forall fun ω => ?_)
+    rw [Real.norm_eq_abs, hM]
+    have hUu : ‖U t ω - u‖ ≤ Mb * t + ‖e‖ * |B t ω| := by
+      rw [hU ω t]
+      have h1 := intervalIntegral.norm_integral_le_of_norm_le_const (a := 0) (b := (t : ℝ))
+        (C := Mb) (f := fun r => b (U r.toNNReal ω)) (fun r _ => hbM _)
+      rw [sub_zero, abs_of_nonneg t.coe_nonneg] at h1
+      calc ‖u + (∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) + B t ω • e - u‖
+          = ‖(∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)) + B t ω • e‖ := by congr 1; abel
+        _ ≤ ‖∫ r in (0 : ℝ)..t, b (U r.toNNReal ω)‖ + ‖B t ω • e‖ := norm_add_le _ _
+        _ ≤ Mb * t + ‖e‖ * |B t ω| := by
+            rw [norm_smul, Real.norm_eq_abs, mul_comm (|B t ω|)]; linarith
+    have hI : |∫ r in (0 : ℝ)..t, dynkinGen b e F (U r.toNNReal ω)|
+        ≤ (C * Mb + 1 / 2 * (C * ‖e‖ ^ 2)) * t := by
+      have := intervalIntegral.norm_integral_le_of_norm_le_const (a := 0) (b := (t : ℝ))
+        (f := fun r => dynkinGen b e F (U r.toNNReal ω))
+        (fun r _ => by rw [Real.norm_eq_abs]; exact hGb _)
+      rwa [sub_zero, abs_of_nonneg t.coe_nonneg, Real.norm_eq_abs] at this
+    have hF1 := (hFlip (U t ω) u).trans (mul_le_mul_of_nonneg_left hUu hC0)
+    have htri := abs_add_le (F (U t ω) - F u) (-(∫ r in (0 : ℝ)..t,
+      dynkinGen b e F (U r.toNNReal ω)))
+    rw [abs_neg, ← sub_eq_add_neg] at htri
+    nlinarith [htri, hF1, hI]
+  refine ⟨fun t => (hMm t).stronglyMeasurable, fun s t hst => ?_⟩
+  obtain ⟨K, hK⟩ := step_expect hB 𝓕 hBad hpast hBc hF hC0 (fun y => (hD y).1) hDF
+    (fun y => (hD y).2.1) hLip2 hbc hbM hU hUc hUm hM hMint (t : ℝ)
+  refine (ae_eq_condExp_of_forall_setIntegral_eq (𝓕.le s) (hMint t)
+    (fun A _ _ => (hMint s).integrableOn) (fun A hA _ => ?_)
+    ((hMm s).stronglyMeasurable.aestronglyMeasurable)).symm
+  have hAm : MeasurableSet A := 𝓕.le s A hA
+  set ξ : Ω → ℝ := A.indicator (fun _ => (1 : ℝ)) with hξdef
+  have hξA : ∀ f : Ω → ℝ, ∫ ω, ξ ω * f ω ∂P = ∫ ω in A, f ω ∂P := by
+    intro f
+    rw [← integral_indicator hAm]
+    congr 1
+    funext ω
+    by_cases hω : ω ∈ A <;> simp [hξdef, hω]
+  have hξb : ∀ ω, |ξ ω| ≤ 1 := fun ω => by by_cases hω : ω ∈ A <;> simp [hξdef, hω]
+  have hξmeas : Measurable ξ := measurable_const.indicator hAm
+  have hξM : ∀ r, Integrable (fun ω => ξ ω * M r ω) P := fun r =>
+    (hMint r).bdd_mul hξmeas.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun ω => by rw [Real.norm_eq_abs]; exact hξb ω)
+  have hstepψ : ∀ a' h' : ℝ, (s : ℝ) ≤ a' → 0 ≤ h' → a' + h' ≤ t →
+      |(∫ ω, ξ ω * M (a' + h').toNNReal ω ∂P) - ∫ ω, ξ ω * M a'.toNNReal ω ∂P|
+        ≤ K * (h' * Real.sqrt h') := by
+    intro a' h' ha' hh' hah'
+    have ha0 : 0 ≤ a' := s.coe_nonneg.trans ha'
+    have hsum : (a' + h').toNNReal = a'.toNNReal + h'.toNNReal := Real.toNNReal_add ha0 hh'
+    have hξm : Measurable[𝓕 a'.toNNReal] ξ :=
+      measurable_const.indicator (𝓕.mono ((Real.le_toNNReal_iff_coe_le ha0).2 ha') A hA)
+    rw [hsum, ← integral_sub (hξM _) (hξM _)]
+    have hb := hK a'.toNNReal h'.toNNReal
+      (by rw [Real.coe_toNNReal _ ha0, Real.coe_toNNReal _ hh']; exact hah') ξ hξm hξb
+    rw [Real.coe_toNNReal _ hh'] at hb
+    refine le_of_eq_of_le ?_ hb
+    congr 1
+    refine integral_congr_ae (Filter.Eventually.of_forall fun ω => ?_)
+    simp only
+    ring
+  have heq := eq_of_step_bound (ψ := fun x => ∫ ω, ξ ω * M x.toNNReal ω ∂P)
+    (NNReal.coe_le_coe.2 hst) hstepψ
+  simp only [Real.toNNReal_coe] at heq
+  rw [← hξA, ← hξA]
+  exact heq.symm
 
 end Dynkin
 

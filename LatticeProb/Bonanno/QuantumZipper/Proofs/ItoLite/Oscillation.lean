@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.ItoLite.Oscillation at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module QuantumZipper.Proofs.ItoLite.Oscillation at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.ItoLite.Increments
 import Mathlib.Probability.Martingale.OptionalStopping
 import Mathlib.Analysis.SpecialFunctions.Pow.Integral
@@ -181,6 +180,178 @@ theorem tail_abs (hB : IsPreBrownianReal B P) (hBm : ∀ r, Measurable (B r))
   refine (measure_mono hsub).trans ((measure_union_le _ _).trans ((add_le_add hup hlo).trans ?_))
   rw [← ENNReal.ofReal_add (exp_pos _).le (exp_pos _).le, ← two_mul]
 
+/-- The dyadic grid `t + s k / 2^N`. -/
+def dgrid (t s : ℝ≥0) (N k : ℕ) : ℝ≥0 := t + s * ((k : ℝ≥0) / 2 ^ N)
+
+theorem dgrid_mono (t s : ℝ≥0) (N : ℕ) : Monotone (dgrid t s N) := by
+  intro i j h
+  unfold dgrid
+  have : (i : ℝ≥0) ≤ j := by exact_mod_cast h
+  gcongr
+
+theorem dgrid_zero (t s : ℝ≥0) (N : ℕ) : dgrid t s N 0 = t := by simp [dgrid]
+
+theorem dgrid_top (t s : ℝ≥0) (N : ℕ) : dgrid t s N (2 ^ N) = t + s := by
+  simp [dgrid]
+
+theorem dgrid_two_mul (t s : ℝ≥0) (N k : ℕ) : dgrid t s (N + 1) (2 * k) = dgrid t s N k := by
+  unfold dgrid
+  congr 2
+  rw [pow_succ, Nat.cast_mul, Nat.cast_ofNat, mul_comm (2 : ℝ≥0),
+    mul_div_mul_right _ _ (two_ne_zero)]
+
+theorem coe_dgrid (t s : ℝ≥0) (N k : ℕ) :
+    ((dgrid t s N k : ℝ≥0) : ℝ) = t + s * ((k : ℝ) / 2 ^ N) := by
+  simp [dgrid]
+
+/-- Tail of the oscillation. -/
+theorem bmOsc_tail (hB : IsPreBrownianReal B P) (hBm : ∀ r, Measurable (B r))
+    (hBc : ∀ ω, Continuous (B · ω)) (t s : ℝ≥0) (hs : 0 < s) {a : ℝ} (ha : 0 < a) :
+    P {ω | a < bmOsc B t s ω} ≤ ENNReal.ofReal (2 * rexp (-(a ^ 2) / (2 * s))) := by
+  set E : ℕ → Set Ω := fun N => {ω | ∃ k ≤ 2 ^ N, a < |B (dgrid t s N k) ω - B t ω|}
+  have hmono : Monotone E := by
+    refine monotone_nat_of_le_succ fun N ω hω => ?_
+    obtain ⟨k, hk, h⟩ := hω
+    refine ⟨2 * k, by rw [pow_succ]; omega, ?_⟩
+    rw [dgrid_two_mul]
+    exact h
+  have hs' : (0 : ℝ) < s := hs
+  have hcover : {ω | a < bmOsc B t s ω} ⊆ ⋃ N, E N := by
+    intro ω hω
+    have : Nonempty (Icc t (t + s)) := ⟨⟨t, le_rfl, le_self_add⟩⟩
+    rw [mem_ofPred_eq, bmOsc_eq_iSup_subtype (hBc ω)] at hω
+    obtain ⟨r, hr⟩ := exists_lt_of_lt_ciSup hω
+    have hr1 : (t : ℝ) ≤ ((r : ℝ≥0) : ℝ) := by exact_mod_cast r.2.1
+    have hr2 : ((r : ℝ≥0) : ℝ) ≤ t + s := by exact_mod_cast r.2.2
+    set x : ℝ := (((r : ℝ≥0) : ℝ) - t) / s
+    have hx0 : 0 ≤ x := div_nonneg (sub_nonneg.2 hr1) hs'.le
+    have hx1 : x ≤ 1 := (div_le_one hs').2 (by linarith)
+    have hlim : Tendsto (fun N : ℕ => (⌊x * 2 ^ N⌋₊ : ℝ) / 2 ^ N) atTop (𝓝 x) :=
+      (tendsto_nat_floor_mul_div_atTop hx0).comp
+        (tendsto_pow_atTop_atTop_of_one_lt one_lt_two)
+    have hlim2 : Tendsto (fun N : ℕ => ((dgrid t s N ⌊x * 2 ^ N⌋₊ : ℝ≥0) : ℝ)) atTop
+        (𝓝 ((r : ℝ≥0) : ℝ)) := by
+      have h3 := (tendsto_const_nhds (x := (t : ℝ))).add
+        ((tendsto_const_nhds (x := (s : ℝ))).mul hlim)
+      have hx : (t : ℝ) + s * x = ((r : ℝ≥0) : ℝ) := by
+        simp only [x]; field_simp; ring
+      rw [hx] at h3
+      refine h3.congr fun N => ?_
+      rw [coe_dgrid]
+    have hlim3 := NNReal.tendsto_coe.1 hlim2
+    have hlim4 : Tendsto (fun N : ℕ => |B (dgrid t s N ⌊x * 2 ^ N⌋₊) ω - B t ω|) atTop
+        (𝓝 |B (r : ℝ≥0) ω - B t ω|) :=
+      (((continuous_abs.comp ((hBc ω).sub continuous_const)).tendsto _).comp hlim3)
+    obtain ⟨N, hN⟩ := (hlim4.eventually (lt_mem_nhds hr)).exists
+    refine mem_iUnion.2 ⟨N, ⌊x * 2 ^ N⌋₊, ?_, hN⟩
+    refine Nat.floor_le_of_le ?_
+    push_cast
+    exact mul_le_of_le_one_left (by positivity) hx1
+  refine (measure_mono hcover).trans ?_
+  rw [hmono.measure_iUnion]
+  refine iSup_le fun N => tail_abs hB hBm (dgrid_mono t s N) (by rw [dgrid_zero]) (2 ^ N) ha hs' ?_
+  rw [dgrid_top, add_tsub_cancel_left]
+
+theorem bmOsc_nonneg (t s : ℝ≥0) (ω : Ω) : 0 ≤ bmOsc B t s ω :=
+  Real.iSup_nonneg fun _ => Real.iSup_nonneg fun _ => abs_nonneg _
+
+theorem bmOsc_zero (t : ℝ≥0) (ω : Ω) : bmOsc B t 0 ω = 0 := by
+  have h : ∀ r : ℝ≥0, (⨆ (_ : r ∈ Icc t (t + 0)), |B r ω - B t ω|) = 0 := by
+    intro r
+    by_cases hr : r ∈ Icc t (t + 0)
+    · rw [ciSup_pos hr]
+      have : r = t := le_antisymm (by simpa using hr.2) hr.1
+      simp [this]
+    · simp only [hr, Real.iSup_of_isEmpty]
+  unfold bmOsc
+  simp_rw [h]
+  exact ciSup_const
+
+/-- Layer cake: the `p`-th moment of the oscillation, `p > 0` real. -/
+theorem bmOsc_lintegral_le (hB : IsPreBrownianReal B P) (hBm : ∀ r, Measurable (B r))
+    (hBc : ∀ ω, Continuous (B · ω)) (t s : ℝ≥0) (hs : 0 < s) {p : ℝ} (hp : 0 < p) :
+    ∫⁻ ω, ENNReal.ofReal (bmOsc B t s ω ^ p) ∂P ≤
+      ENNReal.ofReal (p * Gamma (p / 2) * 2 ^ (p / 2) * (s : ℝ) ^ (p / 2)) := by
+  have hs' : (0 : ℝ) < s := hs
+  have hb : (0 : ℝ) < 1 / (2 * s) := by positivity
+  have hq : (-1 : ℝ) < p - 1 := by linarith
+  have hint : IntegrableOn (fun a : ℝ => 2 * (a ^ (p - 1) * rexp (-(1 / (2 * s)) * a ^ (2 : ℝ))))
+      (Ioi 0) :=
+    (integrableOn_rpow_mul_exp_neg_mul_rpow hq two_pos hb).const_mul 2
+  rw [lintegral_rpow_eq_lintegral_meas_lt_mul P (Eventually.of_forall (bmOsc_nonneg t s))
+    (measurable_bmOsc hBm hBc t s).aemeasurable hp]
+  calc ENNReal.ofReal p * ∫⁻ a in Ioi 0, P {ω | a < bmOsc B t s ω} * ENNReal.ofReal (a ^ (p - 1))
+      ≤ ENNReal.ofReal p * ∫⁻ a in Ioi 0,
+          ENNReal.ofReal (2 * (a ^ (p - 1) * rexp (-(1 / (2 * s)) * a ^ (2 : ℝ)))) := by
+        refine mul_le_mul_of_nonneg_left (setLIntegral_mono' measurableSet_Ioi fun a ha => ?_)
+          zero_le
+        have ha' : (0 : ℝ) < a := ha
+        have he : rexp (-(1 / (2 * s)) * a ^ (2 : ℝ)) = rexp (-(a ^ 2) / (2 * s)) := by
+          rw [Real.rpow_two]; congr 1; ring
+        rw [he, show 2 * (a ^ (p - 1) * rexp (-(a ^ 2) / (2 * s))) =
+          (2 * rexp (-(a ^ 2) / (2 * s))) * a ^ (p - 1) by ring,
+          ENNReal.ofReal_mul (by positivity)]
+        exact mul_le_mul_of_nonneg_right (bmOsc_tail hB hBm hBc t s hs ha') zero_le
+    _ = ENNReal.ofReal p * ENNReal.ofReal
+          (∫ a in Ioi 0, 2 * (a ^ (p - 1) * rexp (-(1 / (2 * s)) * a ^ (2 : ℝ)))) := by
+        rw [ofReal_integral_eq_lintegral_ofReal hint]
+        refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun a ha => ?_)
+        have ha' : (0 : ℝ) < a := ha
+        positivity
+    _ = ENNReal.ofReal (p * Gamma (p / 2) * 2 ^ (p / 2) * (s : ℝ) ^ (p / 2)) := by
+        rw [← ENNReal.ofReal_mul hp.le, integral_const_mul,
+          integral_rpow_mul_exp_neg_mul_rpow two_pos hq hb]
+        congr 1
+        have e1 : p - 1 + 1 = p := by ring
+        rw [e1, one_div, Real.inv_rpow (by positivity), neg_div, Real.rpow_neg (by positivity),
+          inv_inv, Real.mul_rpow (by norm_num) hs'.le]
+        ring
+
 end BMOsc
+
+open BMOsc in
+/-- BM-OSC: integrability of the powers of the oscillation. -/
+theorem integrable_bmOsc_pow {Ω : Type*} [MeasurableSpace Ω] {B : ℝ≥0 → Ω → ℝ} {P : Measure Ω}
+    (hB : IsPreBrownianReal B P) (hBm : ∀ r, Measurable (B r))
+    (hBc : ∀ ω, Continuous (B · ω)) (t s : ℝ≥0) (p : ℕ) :
+    Integrable (fun ω => bmOsc B t s ω ^ p) P := by
+  have hP : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  rcases Nat.eq_zero_or_pos p with rfl | hp
+  · simp
+  rcases eq_zero_or_pos s with rfl | hs
+  · simp only [bmOsc_zero, zero_pow hp.ne']
+    exact integrable_zero _ _ _
+  refine (lintegral_ofReal_ne_top_iff_integrable
+    ((measurable_bmOsc hBm hBc t s).pow_const p).aestronglyMeasurable
+    (Eventually.of_forall fun ω => pow_nonneg (bmOsc_nonneg t s ω) p)).1 ?_
+  simp_rw [← Real.rpow_natCast]
+  exact ne_top_of_le_ne_top ENNReal.ofReal_ne_top
+    (bmOsc_lintegral_le hB hBm hBc t s hs (Nat.cast_pos.2 hp))
+
+open BMOsc in
+/-- **BM-OSC.** The `p`-th moment of the oscillation of Brownian motion on `[t, t+s]` is
+`O(s^{p/2})`, uniformly in `t`. -/
+theorem bm_osc_moment {Ω : Type*} [MeasurableSpace Ω] {B : ℝ≥0 → Ω → ℝ} {P : Measure Ω}
+    (hB : IsPreBrownianReal B P) (hBm : ∀ r, Measurable (B r))
+    (hBc : ∀ ω, Continuous (B · ω)) (p : ℕ) :
+    ∃ C, ∀ t s : ℝ≥0, ∫ ω, bmOsc B t s ω ^ p ∂P ≤ C * (s : ℝ) ^ ((p : ℝ) / 2) := by
+  have hP : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  refine ⟨max 1 (p * Gamma ((p : ℝ) / 2) * 2 ^ ((p : ℝ) / 2)), fun t s => ?_⟩
+  have hC0 : 0 ≤ max 1 (p * Gamma ((p : ℝ) / 2) * 2 ^ ((p : ℝ) / 2)) :=
+    zero_le_one.trans (le_max_left _ _)
+  rcases Nat.eq_zero_or_pos p with rfl | hp
+  · simp
+  rcases eq_zero_or_pos s with rfl | hs
+  · simp only [bmOsc_zero, zero_pow hp.ne', integral_zero]
+    positivity
+  have hp' : (0 : ℝ) < p := Nat.cast_pos.2 hp
+  rw [integral_eq_lintegral_of_nonneg_ae
+    (Eventually.of_forall fun ω => pow_nonneg (bmOsc_nonneg t s ω) p)
+    ((measurable_bmOsc hBm hBc t s).pow_const p).aestronglyMeasurable]
+  simp_rw [← Real.rpow_natCast]
+  refine ENNReal.toReal_le_of_le_ofReal (by positivity)
+    ((bmOsc_lintegral_le hB hBm hBc t s hs hp').trans (ENNReal.ofReal_le_ofReal ?_))
+  gcongr
+  exact le_max_right _ _
 
 end QuantumZipper

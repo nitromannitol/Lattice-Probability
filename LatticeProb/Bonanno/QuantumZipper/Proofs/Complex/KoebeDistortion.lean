@@ -1,6 +1,5 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.Complex.KoebeDistortion at commit fdb5cad; only the module paths of local imports are changed.
-   Declarations, examples and checks that the copied results do not use are omitted. -/
+   source module QuantumZipper.Proofs.Complex.KoebeDistortion at commit fdb5cad; only the module paths of local imports are changed. -/
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.KoebeCovering
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -284,6 +283,15 @@ theorem exp_mul_neg_log_eq_rpow {C s : ℝ} (hs : s < 1) :
     Real.exp (C * -Real.log (1 - s)) = (1 - s) ^ (-C) := by
   rw [Real.rpow_def_of_pos (by linarith)]; ring_nf
 
+/-- **K4, distortion theorem, upper bound** (exponent `C₂`; Garnett–Marshall Thm I.4.5 (4.17)). -/
+theorem norm_deriv_le_distortion {f : ℂ → ℂ} {c w : ℂ} {r : ℝ}
+    (hd : DifferentiableOn ℂ f (ball c r)) (hinj : InjOn f (ball c r)) (hw : w ∈ ball c r) :
+    ‖deriv f w‖ ≤ ‖deriv f c‖ * (1 - dist w c / r) ^ (-koebeDistExp) := by
+  have hr : 0 < r := pos_of_mem_ball hw
+  have hs1 : dist w c / r < 1 := (div_lt_one hr).2 (mem_ball.1 hw)
+  rw [← exp_mul_neg_log_eq_rpow hs1]
+  exact (distortion_aux hd hinj hw).1
+
 /-- **K4, distortion theorem, lower bound** (exponent `C₂`; Garnett–Marshall Thm I.4.5 (4.17)). -/
 theorem distortion_le_norm_deriv {f : ℂ → ℂ} {c w : ℂ} {r : ℝ}
     (hd : DifferentiableOn ℂ f (ball c r)) (hinj : InjOn f (ball c r)) (hw : w ∈ ball c r) :
@@ -298,5 +306,28 @@ theorem distortion_le_norm_deriv {f : ℂ → ℂ} {c w : ℂ} {r : ℝ}
   have hq : 0 < (1 - dist w c / r) ^ koebeDistExp := Real.rpow_pos_of_pos (by linarith) _
   rw [← mul_inv, inv_le_inv₀ hpw (by positivity)] at h
   exact h
+
+/-- **K4, growth theorem** (exponent `C₂`; Garnett–Marshall Thm I.4.5 (4.16), upper bound):
+`‖f w − f c‖ ≤ ‖w − c‖ ‖f'(c)‖ (1 − s)^(−C₂)`, `s = ‖w − c‖ / r`. -/
+theorem norm_sub_le_growth_global {f : ℂ → ℂ} {c w : ℂ} {r : ℝ}
+    (hd : DifferentiableOn ℂ f (ball c r)) (hinj : InjOn f (ball c r)) (hw : w ∈ ball c r) :
+    ‖f w - f c‖ ≤ dist w c * (‖deriv f c‖ * (1 - dist w c / r) ^ (-koebeDistExp)) := by
+  have hr : 0 < r := pos_of_mem_ball hw
+  have hsub : closedBall c (dist w c) ⊆ ball c r := closedBall_subset_ball (mem_ball.1 hw)
+  have := (convex_closedBall c (dist w c)).norm_image_sub_le_of_norm_deriv_le
+    (f := f) (C := ‖deriv f c‖ * (1 - dist w c / r) ^ (-koebeDistExp))
+    (fun z hz => hd.differentiableAt (isOpen_ball.mem_nhds (hsub hz)))
+    (fun z hz => by
+      refine (norm_deriv_le_distortion hd hinj (hsub hz)).trans ?_
+      gcongr ‖deriv f c‖ * ?_
+      apply Real.rpow_le_rpow_of_nonpos
+      · have := (div_lt_one hr).2 (mem_ball.1 hw); linarith
+      · have := mem_closedBall.1 hz
+        have : dist z c / r ≤ dist w c / r := div_le_div_of_nonneg_right this hr.le
+        linarith
+      · linarith [koebeDistExp_pos])
+    (mem_closedBall_self dist_nonneg) (mem_closedBall.2 le_rfl)
+  rw [← dist_eq_norm w c] at this
+  linarith [mul_comm (dist w c) (‖deriv f c‖ * (1 - dist w c / r) ^ (-koebeDistExp))]
 
 end QuantumZipper.CA.Koebe
