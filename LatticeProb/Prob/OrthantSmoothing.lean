@@ -11,8 +11,8 @@ orthant of `ℝ^m` is not an integrable difference of boxes when `m > 1`, so the
   shifted by `-y`, i.e. the convolution of `orthantIndicator h` with the Gaussian kernel, together
   with its identification with `orthantProb` at the Gaussian covariance.
 
-These are the objects the C1 smoothing inequality convolves with.  The remaining analytic input is
-the Fourier transform of `orthantSmooth` — a product of smoothed half-line transforms.
+These are the objects the orthant smoothing inequality convolves with; the Fourier transform of
+`orthantSmooth` is a product of smoothed half-line transforms.
 -/
 import Mathlib
 import LatticeProb.Prob.GaussCovDensityScalar
@@ -122,8 +122,8 @@ noncomputable def gaussFourier1 (σ u : ℝ) : ℝ := Real.exp (-(σ ^ 2 * u ^ 2
 
 /-- **The Fourier factor of the Gaussian-smoothed orthant kernel.**  The smoothing kernel is a
 product `∏ j g_σ (z j)`, so its Fourier factor is the product `∏ j, exp (-(σ² t j²) / 2)` of the
-one-dimensional Gaussian factors.  This is the factor weighting the Sazonov remainder in the C1
-smoothing inequality. -/
+one-dimensional Gaussian factors.  This is the factor weighting the Sazonov remainder in the
+orthant smoothing inequality. -/
 noncomputable def orthantFourierFactor {m : ℕ} (σ : ℝ) (t : Fin m → ℝ) : ℝ :=
   ∏ j, gaussFourier1 σ (t j)
 
@@ -300,21 +300,5 @@ theorem sazonovWeightedRemainder_zero_sigma {m : ℕ} (μ μ' : Measure (Fin m �
   rw [sazonovWeightedRemainder, sazonovRemainder]
   refine integral_congr_ae (Filter.Eventually.of_forall fun t => ?_)
   simp [orthantFourierFactor, gaussFourier1]
-
-/-- **The Sazonov multivariate smoothing inequality, weighted by the orthant Fourier factor.**
-The C1 smoothing inequality with the Sazonov remainder weighted by `orthantFourierFactor σ`: the
-Fourier factor of the Gaussian-smoothed orthant kernel (the product of the one-dimensional
-half-line transforms, `halfLineFourierFactor_eq`).  Stated as a named `Prop`; the analytic content
-is the bandwidth-vs-`m` balance producing the `m^{1/4}` factor. -/
-def mvbeSazonovSmoothing : Prop :=
-  ∃ C : ℝ, 0 < C ∧
-    ∀ (m : ℕ) (δ σ T : ℝ) (μ μ' : Measure (Fin m → ℝ)) [IsProbabilityMeasure μ]
-      [IsProbabilityMeasure μ'],
-      0 < δ → 0 < σ → 0 < T →
-      NearIsotropic (covMatrix μ) δ → NearIsotropic (covMatrix μ') δ →
-      ∀ h : Fin m → ℝ,
-        |orthantProb μ h - orthantProb μ' h|
-          ≤ C * ((m : ℝ) ^ ((1 : ℝ) / 4) * (1 + δ⁻¹))
-              * sazonovWeightedRemainder σ μ μ' T + sazonovTail m T
 
 end LatticeProb

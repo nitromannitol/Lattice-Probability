@@ -1,23 +1,21 @@
 /-
-# The multivariate orthant: vocabulary for the Sazonov smoothing inequality (mvbe C1)
+# The multivariate orthant: vocabulary for the Sazonov smoothing inequality
 
-The multivariate Berry–Esseen route (`scratch/pk/mvbe-route.md`, ingredient C) needs a smoothing
-inequality for **orthants** of `ℝ^m` with the dimension factor `m^{1/4}`.  The frozen target's
-vocabulary — `mvbeGram`, `mvbeCoeffNorm`, `mvbeQuadForm` — is fixed in
-`MultivariateBerryEsseenTarget.lean`; that file records the one remaining gap as exactly this
-smoothing inequality, which has no reference formalization and no Mathlib infrastructure.
+The multivariate Berry–Esseen theorem needs a smoothing inequality for **orthants** of `ℝ^m` with
+the dimension factor `m^{1/4}`.  The frozen target's vocabulary — `mvbeGram`, `mvbeCoeffNorm`,
+`mvbeQuadForm` — is fixed in `MultivariateBerryEsseenTarget.lean`; that file records the one
+remaining gap as exactly this smoothing inequality, which has no reference formalization and no
+Mathlib infrastructure.
 
-This module builds the missing **C-1 vocabulary**, so the inequality can be stated and attacked
-precisely:
+This module builds the **vocabulary** of that inequality:
 
 * `orthantSet`, `orthantProb` — the orthant `{y | ∀ j, y j ≤ h j}` and its `μ`-mass;
 * `charFunVec` — the multivariate characteristic function `t ↦ ∫ exp (i ∑ j, t j * y j) ∂μ`;
 * `covMatrix`, `NearIsotropic` — the covariance matrix of a measure on `Fin m → ℝ`, and the
   near-isotropy condition `(1-δ)‖v‖² ≤ vᵀ S v ≤ (1+δ)‖v‖²` (the frozen admissibility hypothesis,
   phrased through the existing `mvbeQuadForm`);
-* `sazonovRemainder`, `sazonovTail` — the two terms of the smoothing inequality: the Sazonov Fourier
-  functional over a ball and the Gaussian-orthant tail;
-* `SazonovSmoothingInequality` — the named `Prop` (route C1) with the explicit `m^{1/4}` factor.
+* `sazonovRemainder`, `sazonovTail` — the Sazonov Fourier functional over a ball and the
+  Gaussian-orthant tail term.
 
 The proved lemmas are the structural facts of the orthant mass (`orthantProb ∈ [0,1]`, monotone in
 the threshold, `1` in dimension `0`), the monotonicity of the near-isotropy relaxation, the basic
@@ -107,20 +105,6 @@ of the smoothing inequality, controlled by the Gaussian orthant estimate. -/
 noncomputable def sazonovTail (m : ℕ) (T : ℝ) : ℝ :=
   (m : ℝ) * (T : ℝ)⁻¹
 
-/-- **Ingredient C1, the Sazonov-type multivariate smoothing inequality** (the named open input of
-the mvbe route, cf. `MultivariateBerryEsseenTarget.lean`): two probability measures with
-near-isotropic covariances are compared on every orthant by the Sazonov Fourier functional plus a
-Gaussian tail, with the dimension factor `m^{1/4}`. -/
-def SazonovSmoothingInequality : Prop :=
-  ∃ C : ℝ, 0 < C ∧
-    ∀ (m : ℕ) (δ T : ℝ) (μ μ' : Measure (Fin m → ℝ)) [IsProbabilityMeasure μ]
-      [IsProbabilityMeasure μ'],
-      0 < δ → 0 < T → NearIsotropic (covMatrix μ) δ → NearIsotropic (covMatrix μ') δ →
-      ∀ h : Fin m → ℝ,
-        |orthantProb μ h - orthantProb μ' h|
-          ≤ C * ((m : ℝ) ^ ((1 : ℝ) / 4) * (1 + δ⁻¹)) * sazonovRemainder μ μ' T
-            + sazonovTail m T
-
 /-- The multivariate characteristic function is `1` at the origin. -/
 theorem charFunVec_zero {m : ℕ} (μ : Measure (Fin m → ℝ)) [IsProbabilityMeasure μ] :
     charFunVec μ 0 = 1 := by
@@ -164,7 +148,7 @@ theorem rpow_quarter_pos {m : ℕ} (hm : 0 < m) : 0 < (m : ℝ) ^ ((1 : ℝ) / 4
 
 /-- **The `m^{1/4}` bandwidth balance.**  At the bandwidth `T = m^{3/4}` the Gaussian tail
 `sazonovTail m T = m / T` is exactly `m^{1/4}`: the `T`-vs-`m` trade-off that turns the `m`-scaled
-tail into the dimension factor `m^{1/4}` of route C1. -/
+tail into the dimension factor `m^{1/4}` of the smoothing inequality. -/
 theorem sazonovTail_bandwidth {m : ℕ} (hm : 0 < m) :
     sazonovTail m ((m : ℝ) ^ ((3 : ℝ) / 4)) = (m : ℝ) ^ ((1 : ℝ) / 4) := by
   rw [sazonovTail]
