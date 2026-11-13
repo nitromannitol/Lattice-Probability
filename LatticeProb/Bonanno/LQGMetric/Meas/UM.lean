@@ -43,6 +43,13 @@ def AEEventDeterminedBy {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α
     (E : Set Ω) (X : Ω → α) (P : Measure Ω) : Prop :=
   ∃ S : Set α, MeasurableSet S ∧ E =ᵐ[P] X ⁻¹' S
 
+/-- `m₁ ⊆ m₂` modulo `P`-null sets. (`P` is a measure for the ambient σ-algebra `mΩ`; in the
+DEC-C text `(P : Measure Ω)` after the binders `m₁ m₂` would elaborate as a measure for `m₂`, the
+last local instance, so the ambient instance is named here.) -/
+def AESigmaLE {Ω : Type*} [mΩ : MeasurableSpace Ω] (m₁ m₂ : MeasurableSpace Ω)
+    (P : Measure[mΩ] Ω) : Prop :=
+  ∀ s, MeasurableSet[m₁] s → ∃ t, MeasurableSet[m₂] t ∧ s =ᵐ[P] t
+
 namespace UMeasurableSet
 
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] {s t : Set α}
@@ -128,6 +135,10 @@ variable {Ω α β : Type*} [MeasurableSpace Ω] [MeasurableSpace α] [Measurabl
 theorem of_measurableSet {S : Set α} (hS : MeasurableSet S) :
     AEEventDeterminedBy (X ⁻¹' S) X P := ⟨S, hS, ae_eq_refl _⟩
 
+theorem congr (h : AEEventDeterminedBy E X P) (hEF : E =ᵐ[P] F) : AEEventDeterminedBy F X P := by
+  obtain ⟨S, hS, hE⟩ := h
+  exact ⟨S, hS, hEF.symm.trans hE⟩
+
 theorem union (hE : AEEventDeterminedBy E X P) (hF : AEEventDeterminedBy F X P) :
     AEEventDeterminedBy (E ∪ F) X P := by
   obtain ⟨S, hS, h1⟩ := hE
@@ -146,6 +157,13 @@ end Det
 section SigmaLE
 
 variable {Ω α : Type*} [mΩ : MeasurableSpace Ω] [MeasurableSpace α] {P : Measure Ω}
+
+theorem AESigmaLE.trans {m₁ m₂ m₃ : MeasurableSpace Ω} (h₁ : @AESigmaLE Ω mΩ m₁ m₂ P)
+    (h₂ : @AESigmaLE Ω mΩ m₂ m₃ P) : @AESigmaLE Ω mΩ m₁ m₃ P := by
+  intro s hs
+  obtain ⟨t, ht, hst⟩ := h₁ s hs
+  obtain ⟨u, hu, htu⟩ := h₂ t ht
+  exact ⟨u, hu, hst.trans htu⟩
 
 end SigmaLE
 
