@@ -1,3 +1,4 @@
+import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
@@ -26,6 +27,9 @@ side conditions.
 * `LatticeProb.lintegral_le_add_mul_measure_lt_rpow`: `E X ≤ t + (E X^p)^{1/p} P(t < X)^{1/q}`.
 * `LatticeProb.lintegral_tsub_le_mul_measure_lt_rpow`: `E X - t ≤ (E X^p)^{1/p} P(t < X)^{1/q}`.
 * `LatticeProb.rpow_div_le_measure_lt`: `((E X - t) / (E X^p)^{1/p})^q ≤ P(t < X)`.
+* `LatticeProb.rpow_div_le_measure_lt_of_le`: the same with any higher moment `(E X^r)^{1/r}`,
+  `p ≤ r` (Lyapunov's inequality), and `LatticeProb.rpow_div_le_measure_lt_of_le_natCast` with an
+  integer moment `E X^N`, `p ≤ N`.
 -/
 
 open MeasureTheory
@@ -87,5 +91,31 @@ theorem rpow_div_le_measure_lt [IsProbabilityMeasure μ] {X : α → ℝ≥0∞}
       ≤ (μ {a | t < X a} ^ (1 / q)) ^ q := ENNReal.rpow_le_rpow h1 hq.le
     _ = μ {a | t < X a} := by
       rw [← ENNReal.rpow_mul, one_div_mul_cancel hq.ne', ENNReal.rpow_one]
+
+/-- **Paley-Zygmund inequality in `L^p`, with a higher moment.** On a probability space the
+`L^p` norm is nondecreasing in the exponent (Lyapunov's inequality), so for Hölder conjugate
+exponents `p, q` and any `r ≥ p`: `((E X - t) / (E X^r)^{1/r})^q ≤ P(t < X)`. -/
+theorem rpow_div_le_measure_lt_of_le [IsProbabilityMeasure μ] {X : α → ℝ≥0∞}
+    (hX : Measurable X) {p q : ℝ} (hpq : p.HolderConjugate q) {r : ℝ} (hpr : p ≤ r)
+    (t : ℝ≥0∞) :
+    ((∫⁻ a, X a ∂μ - t) / (∫⁻ a, X a ^ r ∂μ) ^ (1 / r)) ^ q ≤ μ {a | t < X a} := by
+  have hp : 0 < p := hpq.pos
+  have hq : 0 < q := hpq.symm.pos
+  have hmono : (∫⁻ a, X a ^ p ∂μ) ^ (1 / p) ≤ (∫⁻ a, X a ^ r ∂μ) ^ (1 / r) :=
+    eLpNorm'_le_eLpNorm'_of_exponent_le hp hpr μ hX.aestronglyMeasurable
+  calc ((∫⁻ a, X a ∂μ - t) / (∫⁻ a, X a ^ r ∂μ) ^ (1 / r)) ^ q
+      ≤ ((∫⁻ a, X a ∂μ - t) / (∫⁻ a, X a ^ p ∂μ) ^ (1 / p)) ^ q :=
+        ENNReal.rpow_le_rpow (ENNReal.div_le_div_left hmono _) hq.le
+    _ ≤ μ {a | t < X a} := rpow_div_le_measure_lt hX hpq t
+
+/-- **Paley-Zygmund inequality with an integer moment.** For Hölder conjugate exponents `p, q`
+and an integer `N ≥ p`: `((E X - t) / (E X^N)^{1/N})^q ≤ P(t < X)`. -/
+theorem rpow_div_le_measure_lt_of_le_natCast [IsProbabilityMeasure μ] {X : α → ℝ≥0∞}
+    (hX : Measurable X) {p q : ℝ} (hpq : p.HolderConjugate q) {N : ℕ} (hpN : p ≤ N)
+    (t : ℝ≥0∞) :
+    ((∫⁻ a, X a ∂μ - t) / (∫⁻ a, X a ^ N ∂μ) ^ (1 / (N : ℝ))) ^ q ≤ μ {a | t < X a} := by
+  have h := rpow_div_le_measure_lt_of_le (μ := μ) hX hpq hpN t
+  simp only [ENNReal.rpow_natCast] at h
+  exact h
 
 end LatticeProb
