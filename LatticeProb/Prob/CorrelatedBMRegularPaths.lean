@@ -23,6 +23,9 @@ arguments for the mating-of-trees encoding:
   excursion-count conditions almost surely at each rational time.
 * `IsRegularCoordinatePair.eq_or_swap_of_contour_pairs`: contour-pair rigidity for two regular pairs, with the
   exceptional times confined to a set that is countable or of Hausdorff dimension `< 1/2`.
+* `rigiditySet`, `eq_or_swap_of_mem_rigiditySet`, `measure_compl_rigiditySet_eq_zero`: the set of regular pairs
+  without a common weak contour pair and with a small exceptional set; rigidity holds between any two of its
+  elements, and it has full measure as soon as each of its three defining properties holds almost surely.
 -/
 
 set_option autoImplicit false
@@ -91,6 +94,43 @@ theorem IsRegularCoordinatePair.eq_or_swap_of_contour_pairs {ω ω' : Path2} (h 
       (t₀ := 0) (c := 0) (h.2.2.1 0) (h.2.2.1 1) (h'.2.2.1 0) (h'.2.2.1 1) h.2.1 with ⟨hL, hR⟩ | ⟨hL, hR⟩
   · exact Or.inl fun u => ⟨congrFun hL u, congrFun hR u⟩
   · exact Or.inr fun u => ⟨congrFun hL u, congrFun hR u⟩
+
+/-- **No common weak contour pair.** No pair of times is a weak contour pair of both coordinates of `ω`. -/
+def NoCommonWeakContourPair (ω : Path2) : Prop :=
+  ∀ s t, IsWeakContourPair (fun u => lrCoord 0 u ω) s t → IsWeakContourPair (fun u => lrCoord 1 u ω) s t → False
+
+/-- **The rigidity set** attached to a family `Z` of exceptional time sets: the regular coordinate pairs `ω` whose
+coordinates have no common weak contour pair and whose exceptional set `Z ω` is countable or of Hausdorff dimension
+`< 1/2`. -/
+def rigiditySet (Z : Path2 → Set ℝ) : Set Path2 :=
+  {ω | IsRegularCoordinatePair ω ∧ NoCommonWeakContourPair ω ∧
+    ((Z ω).Countable ∨ ∃ d : ℝ≥0∞, dimH (Z ω) ≤ d ∧ d < 1 / 2)}
+
+/-- **Rigidity on the rigidity set.** If `ω, ω'` lie in the rigidity set of `Z`, and every contour pair of a
+coordinate of `ω` with a rational anchor whose left end lies off `Z ω'` is a contour pair of one of the two
+coordinates of `ω'`, then `ω'` equals `ω` or `ω` with its two coordinates exchanged. -/
+theorem eq_or_swap_of_mem_rigiditySet {Z : Path2 → Set ℝ} {ω ω' : Path2} (hω : ω ∈ rigiditySet Z)
+    (hω' : ω' ∈ rigiditySet Z)
+    (hcol : ∀ i : Fin 2, ∀ w ∈ range ((↑) : ℚ → ℝ), ∀ l,
+      lastBelow (fun u => lrCoord i u ω) w l ∉ Z ω' → l < lrCoord i w ω →
+        IsContourPair (fun u => lrCoord 0 u ω') (lastBelow (fun u => lrCoord i u ω) w l)
+            (firstBelow (fun u => lrCoord i u ω) w l) ∨
+          IsContourPair (fun u => lrCoord 1 u ω') (lastBelow (fun u => lrCoord i u ω) w l)
+            (firstBelow (fun u => lrCoord i u ω) w l)) :
+    (∀ u, lrCoord 0 u ω' = lrCoord 0 u ω ∧ lrCoord 1 u ω' = lrCoord 1 u ω) ∨
+      ∀ u, lrCoord 0 u ω' = lrCoord 1 u ω ∧ lrCoord 1 u ω' = lrCoord 0 u ω :=
+  hω.1.eq_or_swap_of_contour_pairs hω'.1 hω'.2.2 hω'.2.1 hcol
+
+/-- **The rigidity set has full measure** for any measure under which the pair is almost surely regular, almost
+surely has no common weak contour pair, and almost surely has a countable or `< 1/2`-dimensional exceptional set. -/
+theorem measure_compl_rigiditySet_eq_zero {μ : Measure Path2} {Z : Path2 → Set ℝ}
+    (hreg : ∀ᵐ ω ∂μ, IsRegularCoordinatePair ω) (hNC : ∀ᵐ ω ∂μ, NoCommonWeakContourPair ω)
+    (hZ : ∀ᵐ ω ∂μ, (Z ω).Countable ∨ ∃ d : ℝ≥0∞, dimH (Z ω) ≤ d ∧ d < 1 / 2) :
+    μ (rigiditySet Z)ᶜ = 0 := by
+  have h : ∀ᵐ ω ∂μ, ω ∈ rigiditySet Z := by
+    filter_upwards [hreg, hNC, hZ] with ω h1 h2 h3
+    exact ⟨h1, h2, h3⟩
+  exact mem_ae_iff.1 h
 
 variable {γ : ℝ} {μ : Measure Path2}
 
