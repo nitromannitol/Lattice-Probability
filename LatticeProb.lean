@@ -881,3 +881,4 @@ import LatticeProb.Analysis.GeometricShellSums
 import LatticeProb.Analysis.AffineScaleRotation
 import LatticeProb.Analysis.MetricRescaling
 import LatticeProb.Analysis.CircleAverageUniformLimit
+import LatticeProb.Vendor.FormalMathPercolation
