@@ -24,6 +24,10 @@ under `x ∼ K z`.
   many values.
 * `LatticeProb.integral_stopShift_eq_of_boundedContinuous`, `LatticeProb.strongMarkov_of_markovAt`:
   strong Markov at a stopping time, by dyadic approximation.
+* `LatticeProb.strongMarkov_setIntegral_lt_top`, `LatticeProb.strongMarkov_of_markovAt_of_ae_lt_top`:
+  strong Markov at a stopping time with values in `[0, ∞]`, on the event that it is finite, and
+  on the whole space when it is almost surely finite (truncation `σ ∧ n` and the Markov property at
+  the deterministic time `n` on `{σ > n}`).
 -/
 
 set_option autoImplicit false
@@ -319,5 +323,183 @@ theorem strongMarkov_of_markovAt {K : E → ProbabilityMeasure C(ℝ≥0, E)} (h
         ∂(K z : Measure C(ℝ≥0, E)) :=
   integral_stopShift_eq_of_forall_boundedContinuous hK z (measurable_of_isStoppingTime hσ)
     (integral_stopShift_eq_of_boundedContinuous hK hM hσ) hg hC
+
+omit [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E] in
+/-- A stopping time of the filtration of stopped paths with values in `ℝ≥0∞` is measurable. -/
+theorem measurable_of_isStoppingTime_stoppedPath {σ : C(ℝ≥0, E) → ℝ≥0∞}
+    (hσ : IsStoppingTime (stoppedPathFiltration (E := E)) σ) : Measurable σ := by
+  refine measurable_of_Iic fun x => ?_
+  induction x using ENNReal.recTopCoe with
+  | top => simp
+  | coe t => exact (stoppedPathFiltration (E := E)).le t _ (hσ.measurableSet_le t)
+
+/-- The Markov property at a deterministic time `n`, restricted to an event of the past:
+if `{σ ≤ n}` is determined by the stopped path `x (· ∧ n)`, the identity holds on its complement. -/
+theorem integral_stopShift_compl_eq {K : E → ProbabilityMeasure C(ℝ≥0, E)}
+    (hK : Continuous K) {z : E} {n : ℝ≥0} (hM : MarkovAt K z n)
+    {σ : C(ℝ≥0, E) → ℝ≥0∞} (hσ : IsStoppingTime (stoppedPathFiltration (E := E)) σ)
+    {g : C(ℝ≥0, E) × C(ℝ≥0, E) → ℝ} (hg : Measurable g) {C : ℝ} (hC : ∀ p, ‖g p‖ ≤ C) :
+    ∫ x in {x | σ x ≤ (n : ℝ≥0∞)}ᶜ, g (stopPath x n, pathShift x n) ∂(K z : Measure C(ℝ≥0, E)) =
+      ∫ x in {x | σ x ≤ (n : ℝ≥0∞)}ᶜ, ∫ w, g (stopPath x n, w) ∂(K (x n) : Measure C(ℝ≥0, E))
+        ∂(K z : Measure C(ℝ≥0, E)) := by
+  classical
+  have hσm : Measurable σ := measurable_of_isStoppingTime_stoppedPath hσ
+  have hsm : MeasurableSet {x : C(ℝ≥0, E) | σ x ≤ (n : ℝ≥0∞)} := hσm measurableSet_Iic
+  obtain ⟨B, hB, hBeq⟩ := MeasurableSpace.measurableSet_comap.1 (hσ.measurableSet_le n)
+  have hind : ∀ x : C(ℝ≥0, E), stopPath x n ∈ Bᶜ ↔ x ∈ {x : C(ℝ≥0, E) | σ x ≤ (n : ℝ≥0∞)}ᶜ := by
+    intro x
+    have : x ∈ (fun x : C(ℝ≥0, E) => stopPath x n) ⁻¹' B ↔ x ∈ {x : C(ℝ≥0, E) | σ x ≤ (n : ℝ≥0∞)} := by
+      rw [hBeq]
+      exact Iff.rfl
+    simpa using this.not
+  let g' : C(ℝ≥0, E) × C(ℝ≥0, E) → ℝ := fun p => Bᶜ.indicator (fun _ => (1 : ℝ)) p.1 * g p
+  have hg' : Measurable g' :=
+    ((measurable_const.indicator hB.compl).comp measurable_fst).mul hg
+  have hC' : ∀ p, ‖g' p‖ ≤ C := by
+    intro p
+    by_cases hp : p.1 ∈ Bᶜ
+    · simpa [g', hp] using hC p
+    · have h0 := (norm_nonneg (g p)).trans (hC p)
+      simpa [g', hp] using h0
+  have h := hM.integral_eq_of_measurable hK hg' hC'
+  have e1 : ∀ x : C(ℝ≥0, E), g' (stopPath x n, pathShift x n) =
+      {x : C(ℝ≥0, E) | σ x ≤ (n : ℝ≥0∞)}ᶜ.indicator
+        (fun x => g (stopPath x n, pathShift x n)) x := by
+    intro x
+    by_cases hx : x ∈ {x : C(ℝ≥0, E) | σ x ≤ (n : ℝ≥0∞)}ᶜ
+    · simp [g', Set.indicator_of_mem hx, (hind x).2 hx]
+    · simp [g', Set.indicator_of_notMem hx, mt (hind x).1 hx]
+  have e2 : ∀ x : C(ℝ≥0, E), ∫ w, g' (stopPath x n, w) ∂(K (x n) : Measure C(ℝ≥0, E)) =
+      {x : C(ℝ≥0, E) | σ x ≤ (n : ℝ≥0∞)}ᶜ.indicator
+        (fun x => ∫ w, g (stopPath x n, w) ∂(K (x n) : Measure C(ℝ≥0, E))) x := by
+    intro x
+    by_cases hx : x ∈ {x : C(ℝ≥0, E) | σ x ≤ (n : ℝ≥0∞)}ᶜ
+    · simp [g', Set.indicator_of_mem hx, (hind x).2 hx]
+    · simp [g', Set.indicator_of_notMem hx, mt (hind x).1 hx]
+  simp_rw [e1, e2] at h
+  rwa [integral_indicator hsm.compl, integral_indicator hsm.compl] at h
+
+/-- **The strong Markov property at a stopping time that may be infinite.**  On the event
+`{σ < ∞}` the strong Markov identity holds for every stopping time `σ` with values in `ℝ≥0∞`
+of the filtration of stopped paths and every bounded measurable test function. -/
+theorem strongMarkov_setIntegral_lt_top {K : E → ProbabilityMeasure C(ℝ≥0, E)} (hK : Continuous K)
+    {z : E} (hM : ∀ t, MarkovAt K z t) {σ : C(ℝ≥0, E) → ℝ≥0∞}
+    (hσ : IsStoppingTime (stoppedPathFiltration (E := E)) σ)
+    {g : C(ℝ≥0, E) × C(ℝ≥0, E) → ℝ} (hg : Measurable g) {C : ℝ} (hC : ∀ p, ‖g p‖ ≤ C) :
+    ∫ x in {x | σ x < ⊤}, g (stopPath x (σ x).toNNReal, pathShift x (σ x).toNNReal)
+        ∂(K z : Measure C(ℝ≥0, E)) =
+      ∫ x in {x | σ x < ⊤}, ∫ w, g (stopPath x (σ x).toNNReal, w)
+        ∂(K (x (σ x).toNNReal) : Measure C(ℝ≥0, E)) ∂(K z : Measure C(ℝ≥0, E)) := by
+  classical
+  have hσm : Measurable σ := measurable_of_isStoppingTime_stoppedPath hσ
+  -- integrability of both sides for a finite measurable random time
+  have hint : ∀ ρ : C(ℝ≥0, E) → ℝ≥0, Measurable ρ →
+      Integrable (fun x => g (stopPath x (ρ x), pathShift x (ρ x))) (K z : Measure C(ℝ≥0, E)) ∧
+      Integrable (fun x => ∫ w, g (stopPath x (ρ x), w) ∂(K (x (ρ x)) : Measure C(ℝ≥0, E)))
+        (K z : Measure C(ℝ≥0, E)) := by
+    intro ρ hρ
+    have hs1 : Measurable fun x : C(ℝ≥0, E) => (stopPath x (ρ x), pathShift x (ρ x)) :=
+      (continuous_stopPath_uncurry.measurable.comp (measurable_id.prodMk hρ)).prodMk
+        (continuous_pathShift_uncurry.measurable.comp (measurable_id.prodMk hρ))
+    have hs2 : Measurable fun p : C(ℝ≥0, E) × C(ℝ≥0, E) => (stopPath p.1 (ρ p.1), p.2) :=
+      (continuous_stopPath_uncurry.measurable.comp
+        ((measurable_fst).prodMk (hρ.comp measurable_fst))).prodMk measurable_snd
+    refine ⟨Integrable.of_bound (hg.comp hs1).aestronglyMeasurable C
+      (Filter.Eventually.of_forall fun p => hC _), ?_⟩
+    have hI : Integrable (fun p : C(ℝ≥0, E) × C(ℝ≥0, E) => g (stopPath p.1 (ρ p.1), p.2))
+        ((K z : Measure C(ℝ≥0, E)) ⊗ₘ endpointKernel hK hρ) :=
+      Integrable.of_bound (hg.comp hs2).aestronglyMeasurable C
+        (Filter.Eventually.of_forall fun p => hC _)
+    exact MeasureTheory.Integrable.integral_compProd hI
+  let σ' : C(ℝ≥0, E) → ℝ≥0 := fun x => (σ x).toNNReal
+  have hσ'm : Measurable σ' := ENNReal.measurable_toNNReal.comp hσm
+  let s : ℕ → Set C(ℝ≥0, E) := fun n => {x | σ x ≤ ((n : ℝ≥0) : ℝ≥0∞)}
+  have hs_meas : ∀ n, MeasurableSet (s n) := fun n => hσm measurableSet_Iic
+  have hs_mono : Monotone s := fun m n hmn x hx =>
+    hx.trans (ENNReal.coe_le_coe.2 (Nat.cast_le.2 hmn))
+  have hs_union : ⋃ n, s n = {x | σ x < ⊤} := by
+    ext x
+    simp only [Set.mem_iUnion, s, Set.mem_ofPred_eq]
+    constructor
+    · rintro ⟨n, hn⟩
+      exact hn.trans_lt (by simp)
+    · intro hx
+      obtain ⟨n, hn⟩ := ENNReal.exists_nat_gt hx.ne
+      exact ⟨n, by simpa using hn.le⟩
+  -- the identity on `{σ ≤ n}`
+  have key : ∀ n : ℕ,
+      ∫ x in s n, g (stopPath x (σ' x), pathShift x (σ' x)) ∂(K z : Measure C(ℝ≥0, E)) =
+        ∫ x in s n, ∫ w, g (stopPath x (σ' x), w) ∂(K (x (σ' x)) : Measure C(ℝ≥0, E))
+          ∂(K z : Measure C(ℝ≥0, E)) := by
+    intro n
+    let τ : C(ℝ≥0, E) → ℝ≥0 := fun x => (min (σ x) ((n : ℝ≥0) : ℝ≥0∞)).toNNReal
+    have hτeq : ∀ x, (τ x : ℝ≥0∞) = min (σ x) ((n : ℝ≥0) : ℝ≥0∞) := fun x =>
+      ENNReal.coe_toNNReal (ne_top_of_le_ne_top ENNReal.coe_ne_top (min_le_right _ _))
+    have hτ : IsStoppingTime (stoppedPathFiltration (E := E)) fun x => (τ x : ℝ≥0∞) := by
+      have hfun : (fun x => (τ x : ℝ≥0∞)) = fun x => min (σ x) ((n : ℝ≥0) : ℝ≥0∞) := funext hτeq
+      rw [hfun]
+      exact hσ.min_const (n : ℝ≥0)
+    have hτm : Measurable τ := measurable_of_isStoppingTime hτ
+    have h1 := strongMarkov_of_markovAt hK hM hτ hg hC
+    obtain ⟨hF, hΦ⟩ := hint τ hτm
+    have hτs : ∀ x ∈ s n, τ x = σ' x := by
+      intro x hx
+      have hx' : σ x ≤ ((n : ℝ≥0) : ℝ≥0∞) := hx
+      simp only [τ, σ']
+      rw [min_eq_left hx']
+    have hτsc : ∀ x ∈ (s n)ᶜ, τ x = (n : ℝ≥0) := by
+      intro x hx
+      have hx' : ((n : ℝ≥0) : ℝ≥0∞) ≤ σ x := le_of_lt (not_le.1 hx)
+      simp only [τ]
+      rw [min_eq_right hx', ENNReal.toNNReal_coe]
+    have hsplit1 := integral_add_compl (hs_meas n) hF
+    have hsplit2 := integral_add_compl (hs_meas n) hΦ
+    have a1 : ∫ x in s n, g (stopPath x (τ x), pathShift x (τ x)) ∂(K z : Measure C(ℝ≥0, E)) =
+        ∫ x in s n, g (stopPath x (σ' x), pathShift x (σ' x)) ∂(K z : Measure C(ℝ≥0, E)) :=
+      setIntegral_congr_fun (hs_meas n) fun x hx => by simp only [hτs x hx]
+    have a2 : ∫ x in s n, ∫ w, g (stopPath x (τ x), w) ∂(K (x (τ x)) : Measure C(ℝ≥0, E))
+          ∂(K z : Measure C(ℝ≥0, E)) =
+        ∫ x in s n, ∫ w, g (stopPath x (σ' x), w) ∂(K (x (σ' x)) : Measure C(ℝ≥0, E))
+          ∂(K z : Measure C(ℝ≥0, E)) :=
+      setIntegral_congr_fun (hs_meas n) fun x hx => by simp only [hτs x hx]
+    have b1 : ∫ x in (s n)ᶜ, g (stopPath x (τ x), pathShift x (τ x)) ∂(K z : Measure C(ℝ≥0, E)) =
+        ∫ x in (s n)ᶜ, g (stopPath x (n : ℝ≥0), pathShift x (n : ℝ≥0))
+          ∂(K z : Measure C(ℝ≥0, E)) :=
+      setIntegral_congr_fun (hs_meas n).compl fun x hx => by simp only [hτsc x hx]
+    have b2 : ∫ x in (s n)ᶜ, ∫ w, g (stopPath x (τ x), w) ∂(K (x (τ x)) : Measure C(ℝ≥0, E))
+          ∂(K z : Measure C(ℝ≥0, E)) =
+        ∫ x in (s n)ᶜ, ∫ w, g (stopPath x (n : ℝ≥0), w) ∂(K (x (n : ℝ≥0)) : Measure C(ℝ≥0, E))
+          ∂(K z : Measure C(ℝ≥0, E)) :=
+      setIntegral_congr_fun (hs_meas n).compl fun x hx => by simp only [hτsc x hx]
+    have hdet := integral_stopShift_compl_eq hK (hM (n : ℝ≥0)) hσ hg hC
+    linarith
+  -- pass to the limit `n → ∞`
+  obtain ⟨hF, hΦ⟩ := hint σ' hσ'm
+  have hFi : IntegrableOn (fun x => g (stopPath x (σ' x), pathShift x (σ' x)))
+      (⋃ n, s n) (K z : Measure C(ℝ≥0, E)) := by
+    rw [hs_union]
+    exact hF.integrableOn
+  have hΦi : IntegrableOn
+      (fun x => ∫ w, g (stopPath x (σ' x), w) ∂(K (x (σ' x)) : Measure C(ℝ≥0, E)))
+      (⋃ n, s n) (K z : Measure C(ℝ≥0, E)) := by
+    rw [hs_union]
+    exact hΦ.integrableOn
+  have hL := tendsto_setIntegral_of_monotone hs_meas hs_mono hFi
+  have hR := tendsto_setIntegral_of_monotone hs_meas hs_mono hΦi
+  rw [hs_union] at hL hR
+  exact tendsto_nhds_unique hL (hR.congr fun n => (key n).symm)
+
+/-- **The strong Markov property at an almost surely finite stopping time.** -/
+theorem strongMarkov_of_markovAt_of_ae_lt_top {K : E → ProbabilityMeasure C(ℝ≥0, E)}
+    (hK : Continuous K) {z : E} (hM : ∀ t, MarkovAt K z t) {σ : C(ℝ≥0, E) → ℝ≥0∞}
+    (hσ : IsStoppingTime (stoppedPathFiltration (E := E)) σ)
+    (hfin : ∀ᵐ x ∂(K z : Measure C(ℝ≥0, E)), σ x < ⊤)
+    {g : C(ℝ≥0, E) × C(ℝ≥0, E) → ℝ} (hg : Measurable g) {C : ℝ} (hC : ∀ p, ‖g p‖ ≤ C) :
+    ∫ x, g (stopPath x (σ x).toNNReal, pathShift x (σ x).toNNReal) ∂(K z : Measure C(ℝ≥0, E)) =
+      ∫ x, ∫ w, g (stopPath x (σ x).toNNReal, w)
+        ∂(K (x (σ x).toNNReal) : Measure C(ℝ≥0, E)) ∂(K z : Measure C(ℝ≥0, E)) := by
+  have h := strongMarkov_setIntegral_lt_top hK hM hσ hg hC
+  have hae : ∀ᵐ x ∂(K z : Measure C(ℝ≥0, E)), x ∈ {x : C(ℝ≥0, E) | σ x < ⊤} := hfin
+  rwa [Measure.restrict_eq_self_of_ae_mem hae] at h
 
 end LatticeProb
