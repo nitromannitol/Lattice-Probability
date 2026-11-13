@@ -1,0 +1,213 @@
+/- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
+   source module ReflectedGMS.Temporal.RegenerativeInvarianceFiberwise at commit fdb5cad; only the module paths of local imports are changed. -/
+import LatticeProb.Bonanno.ReflectedGMS.Temporal.RegenerativeInvarianceReduction
+import Mathlib.Probability.Independence.ZeroOne
+
+/-!
+# Fixed-environment ergodicity from one-step regeneration
+
+`Temporal/RegenerativeInvarianceReduction` reduced `p:lem:regeninvariant` at the annealed law
+`νenv ⊗ₘ κ` to the fixed-environment input `FiberwiseConstant` **(F1)** (and the similarity
+transfer (F2)).  This module does two things for (F1).
+
+## The interface
+
+`CycleErgodic μ ρ` — every bounded measurable functional invariant under one measurable
+self-map `ρ` (the *cycle shift*: re-rooting at the next return to the root) is `μ`-a.s. constant.
+`fiberwiseConstant_of_cycleErgodic` proves (F1) from cycle ergodicity of almost every
+fixed-environment law, given only that the time flow, evaluated at the return time `τ e x` to
+the root, acts on the fiber `{e} × X` as the cycle shift: `θΩ (τ e x) (e, x) = (e, ρ e x)`.
+This is the manuscript's observation that re-rooting at a return to the *same* vertex gives back
+the *same* rooted environment (tex:1496), so that regeneration is a statement inside one fiber
+even though the flow moves the environment coordinate elsewhere.
+
+## The theorem
+
+`cycleErgodic_of_regeneration` — **one-step whole-cycle regeneration implies ergodicity of the
+cycle shift.**  For a probability law `μ` on a path space `X`, a measurable shift `ρ : X → X`
+and a measurable first-cycle map `C : X → Cyc` with
+
+* `μ.map ρ = μ` — the post-cycle path is again a copy of the process, and
+* `IndepFun C ρ μ` — the first cycle is independent of the post-cycle path,
+
+the cycle coordinates `C ∘ ρ^[k]` are independent (`iIndep_cycleSigma`), a `ρ`-invariant
+functional is measurable for the tail σ-algebra of the cycles
+(`measurable_limsup_cycleSigma_of_invariant`), Kolmogorov's zero-one law makes every level set
+trivial, and a countable separating family gives the constant (`ae_const_of_regeneration`).  The
+only further input is that the cycles generate the σ-algebra of the path,
+`⨆ k, cycleSigma ρ C k = ⊤`, i.e. that a path is recovered from its cycle sequence.
+
+**These are exactly the two conclusions of the checked one-step regeneration for the actual
+forward reflected walk**, `Temporal/ActualExcursionErgodicIdentification`:
+`map_futureAt_firstReturnTime` (`(PF.P v).map (futureAt PF.X τ_v) = PF.law v`) and
+`indepFun_killedPathAt_futureAt` (`IndepFun (killedPathAt PF.X τ_v) (futureAt PF.X τ_v) (PF.P v)`),
+stated on the sample space with the future read into `Trajectory V`.  To feed them here one
+states `ρ` and `C` on the trajectory space itself (the `X`-argument of `futureAt`,
+`killedPathAt` and `firstReturnTime` taken to be the evaluation on `Trajectory V`), transports
+both statements along the path map, and proves the generation clause from the splice
+`x = killedPathAt x ⊕ futureAt x` (the return time is the last non-cemetery time of the killed
+path).  None of that transport is done here.
+
+## What this does NOT give, stated exactly
+
+The manuscript's (F1) is for the **two-sided** law `ℙ_H^v` (independent forward and reversed
+backward halves).  The forward cycle shift does *not* preserve that law unless the reversed
+backward cycles have the forward cycle law — the excursion reversal invariance of
+`p:lem:regeninvariant`'s proof (checked on the constant-step grid in
+`Temporal/RegenerativeErgodicIdentification`, open for the complete stopped cycle).  So the
+theorem below closes the forward half of the first paragraph of that proof; reversal, the
+two-sided concatenation, and the `L_v/h_v` size-biasing remain, as recorded before.  Nothing
+here certifies `p:lem:regeninvariant`, `p:prop:timeergodic`, `p:lem:bracketlimit`,
+`p:thm:areaclt` or either main theorem.
+-/
+
+set_option autoImplicit false
+
+open MeasureTheory Filter Set ProbabilityTheory
+
+namespace ReflectedGMS.RegenerativeInvarianceFiberwise
+
+open ReflectedGMS.GridAveragedConstantReduction ReflectedGMS.EnvironmentLaws
+open ReflectedGMS.RegenerativeInvarianceReduction
+
+/-! ### Cycle ergodicity and the (F1) interface -/
+
+/-- **Cycle ergodicity** of a law under a self-map `ρ`: every bounded measurable `ρ`-invariant
+functional is almost surely constant. -/
+def CycleErgodic {X : Type*} [MeasurableSpace X] (μ : Measure X) (ρ : X → X) : Prop :=
+  ∀ g : X → ℝ, Measurable g → (∀ x : X, |g x| ≤ 1) → (∀ x : X, g (ρ x) = g x) →
+    ∃ c : ℝ, ∀ᵐ x ∂μ, g x = c
+
+/-! ### One-step regeneration implies cycle-shift ergodicity -/
+
+section Regeneration
+
+variable {X Cyc : Type*} [mX : MeasurableSpace X] [mC : MeasurableSpace Cyc]
+
+/-- The `k`-th cycle of a path: the first cycle of the path after `k` cycle shifts. -/
+def cycleCoord (ρ : X → X) (C : X → Cyc) (k : ℕ) (x : X) : Cyc := C (ρ^[k] x)
+
+/-- The σ-algebra generated by the `k`-th cycle. -/
+def cycleSigma (ρ : X → X) (C : X → Cyc) (k : ℕ) : MeasurableSpace X :=
+  mC.comap (cycleCoord ρ C k)
+
+omit mX mC in
+theorem cycleCoord_succ (ρ : X → X) (C : X → Cyc) (k : ℕ) :
+    cycleCoord ρ C (k + 1) = cycleCoord ρ C k ∘ ρ := by
+  funext x
+  show C (ρ^[k + 1] x) = C (ρ^[k] (ρ x))
+  rw [Function.iterate_succ_apply]
+
+theorem cycleSigma_succ (ρ : X → X) (C : X → Cyc) (k : ℕ) :
+    cycleSigma ρ C (k + 1) = (cycleSigma ρ C k).comap ρ := by
+  rw [cycleSigma, cycleSigma, MeasurableSpace.comap_comp, cycleCoord_succ]
+
+theorem cycleSigma_le {ρ : X → X} {C : X → Cyc} (hρ : Measurable ρ) (hC : Measurable C)
+    (k : ℕ) : cycleSigma ρ C k ≤ mX := by
+  have h : Measurable fun x : X => C (ρ^[k] x) := hC.comp (hρ.iterate k)
+  exact measurable_iff_comap_le.1 h
+
+/-- **The product formula for the first `n` cycles**, by induction on `n`: the zeroth cycle is
+independent of the post-cycle path, and the remaining cycles are the first `n - 1` cycles of
+the post-cycle path, which has the law of the path. -/
+theorem measure_biInter_range_eq_prod {ρ : X → X} {C : X → Cyc} (μ : Measure X)
+    [IsProbabilityMeasure μ] (hρ : Measurable ρ) (hC : Measurable C) (hlaw : μ.map ρ = μ)
+    (hind : IndepFun C ρ μ) :
+    ∀ (n : ℕ) (f : ℕ → Set X), (∀ k, MeasurableSet[cycleSigma ρ C k] (f k)) →
+      μ (⋂ k ∈ Finset.range n, f k) = ∏ k ∈ Finset.range n, μ (f k) := by
+  intro n
+  induction n with
+  | zero =>
+    intro f _
+    simp
+  | succ n ih =>
+    intro f hf
+    -- the later cycles are cycles of the post-cycle path
+    have hshift : ∀ k, ∃ g : Set X, MeasurableSet[cycleSigma ρ C k] g ∧ ρ ⁻¹' g = f (k + 1) := by
+      intro k
+      have h := hf (k + 1)
+      rw [cycleSigma_succ] at h
+      exact MeasurableSpace.measurableSet_comap.1 h
+    choose g hg hgf using hshift
+    -- the zeroth set is an event of the first cycle
+    obtain ⟨A, hA, hAf⟩ := MeasurableSpace.measurableSet_comap.1 (hf 0)
+    have hgm : ∀ k, MeasurableSet (g k) := fun k => cycleSigma_le hρ hC k _ (hg k)
+    have hD : MeasurableSet (⋂ k ∈ Finset.range n, g k) :=
+      Finset.measurableSet_biInter _ fun k _ => hgm k
+    have hdecomp : (⋂ k ∈ Finset.range (n + 1), f k)
+        = C ⁻¹' A ∩ ρ ⁻¹' (⋂ k ∈ Finset.range n, g k) := by
+      ext x
+      simp only [Set.mem_iInter, Finset.mem_range, Set.mem_inter_iff, Set.mem_preimage]
+      constructor
+      · intro h
+        refine ⟨?_, fun k hk => ?_⟩
+        · have h0 := h 0 (Nat.succ_pos n)
+          rw [← hAf] at h0
+          exact h0
+        · have hk1 := h (k + 1) (Nat.succ_lt_succ hk)
+          rw [← hgf k] at hk1
+          exact hk1
+      · rintro ⟨h0, h⟩ k hk
+        cases k with
+        | zero =>
+          rw [← hAf]
+          exact h0
+        | succ k =>
+          rw [← hgf k]
+          exact h k (Nat.lt_of_succ_lt_succ hk)
+    have hmapD : μ (ρ ⁻¹' (⋂ k ∈ Finset.range n, g k)) = μ (⋂ k ∈ Finset.range n, g k) := by
+      rw [← Measure.map_apply hρ hD, hlaw]
+    have hmapg : ∀ k, μ (f (k + 1)) = μ (g k) := by
+      intro k
+      rw [← hgf k, ← Measure.map_apply hρ (hgm k), hlaw]
+    rw [hdecomp, hind.measure_inter_preimage_eq_mul A _ hA hD, hmapD, ih g hg,
+      Finset.prod_range_succ', ← hAf]
+    simp only [hmapg]
+    exact mul_comm _ _
+
+/-- **The cycles are independent.** -/
+theorem iIndep_cycleSigma {ρ : X → X} {C : X → Cyc} (μ : Measure X) [IsProbabilityMeasure μ]
+    (hρ : Measurable ρ) (hC : Measurable C) (hlaw : μ.map ρ = μ) (hind : IndepFun C ρ μ) :
+    iIndep (cycleSigma ρ C) μ := by
+  rw [iIndep_iff]
+  intro s f hf
+  obtain ⟨n, hsn⟩ := Finset.exists_nat_subset_range s
+  obtain ⟨f', hf'⟩ : ∃ f' : ℕ → Set X, ∀ k, f' k = if k ∈ s then f k else Set.univ :=
+    ⟨fun k => if k ∈ s then f k else Set.univ, fun _ => rfl⟩
+  have hf'm : ∀ k, MeasurableSet[cycleSigma ρ C k] (f' k) := by
+    intro k
+    rw [hf' k]
+    by_cases hk : k ∈ s
+    · rw [if_pos hk]
+      exact hf k hk
+    · rw [if_neg hk]
+      exact MeasurableSet.univ
+  have hinter : (⋂ k ∈ s, f k) = ⋂ k ∈ Finset.range n, f' k := by
+    ext x
+    simp only [Set.mem_iInter]
+    constructor
+    · intro h k _
+      rw [hf' k]
+      by_cases hks : k ∈ s
+      · rw [if_pos hks]
+        exact h k hks
+      · rw [if_neg hks]
+        exact Set.mem_univ x
+    · intro h k hk
+      have hx := h k (hsn hk)
+      rw [hf' k, if_pos hk] at hx
+      exact hx
+  have hprod : (∏ k ∈ s, μ (f k)) = ∏ k ∈ Finset.range n, μ (f' k) := by
+    have h1 : (∏ k ∈ s, μ (f k)) = ∏ k ∈ s, μ (f' k) :=
+      Finset.prod_congr rfl fun k hk => by rw [hf' k, if_pos hk]
+    have h2 : (∏ k ∈ s, μ (f' k)) = ∏ k ∈ Finset.range n, μ (f' k) :=
+      Finset.prod_subset hsn fun k _ hks => by rw [hf' k, if_neg hks, measure_univ]
+    exact h1.trans h2
+  rw [hinter, hprod]
+  exact measure_biInter_range_eq_prod μ hρ hC hlaw hind n f' hf'm
+
+end Regeneration
+
+/-! ### Composition with the reduction -/
+
+end ReflectedGMS.RegenerativeInvarianceFiberwise
