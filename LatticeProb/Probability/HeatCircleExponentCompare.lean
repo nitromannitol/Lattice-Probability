@@ -3,6 +3,8 @@ import LatticeProb.Bonanno.HigherDimLFPP.TwoD.ExponentTransfer
 import LatticeProb.Bonanno.SupercriticalLQGUniqueness.Frozen.PositiveHeatTrunc
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgBridge
 import LatticeProb.Bonanno.HigherDimLFPP.TwoD.CircleLaw
+import LatticeProb.Bonanno.HigherDimLFPP.TwoD.CoupledGFF
+import LatticeProb.Bonanno.HigherDimLQGMetric.KernelIndep.Exponent
 
 /-!
 # Heat-kernel and circle-average Liouville first passage percolation share their exponent
@@ -26,7 +28,12 @@ average process.
   `h*_ε` (limit of the pairings with the truncated heat kernels) and a circle-average process `H`
   of the same field, `log D^ξ(X ε) / log ε → λ` in probability iff `λ` is the LFPP exponent of `H`;
 * `tendstoInMeasure_log_lfppDistance_heat_iff_isLFPPExponent_of_isGFFCircleAverage`: the same with
-  `H` any circle-average process of the normalized whole-plane GFF, on any probability space.
+  `H` any circle-average process of the normalized whole-plane GFF, on any probability space;
+* `isLFPPExponent_distExp_of_isGFFCircleAverage`: for `ξ > 0` the LFPP exponent of every
+  circle-average process at `ξ` is `1 - ξ Q(ξ)`, `Q(ξ) = HigherDimLQGMetric.distExp 2 ξ` the
+  kernel-independent distance exponent;
+* `tendstoInMeasure_log_lfppDistance_heat_distExp`: hence `log D^ξ(X ε) / log ε → 1 - ξ Q(ξ)` in
+  probability for every continuous version `X ε` of the heat-kernel mollification.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology Set Real
@@ -211,5 +218,41 @@ theorem tendstoInMeasure_log_lfppDistance_heat_iff_isLFPPExponent_of_isGFFCircle
     (h := h) (P := P) ⟨hh.1, hh.2.mono fun _ hω => hω.limUnder_eq⟩
   rw [tendstoInMeasure_log_lfppDistance_heat_iff_isLFPPExponent hh X hX hH hHc ξ lam]
   exact HigherDimLFPP.isLFPPExponent_iff_of_isGFFCircleAverage hH hH' ξ lam
+
+/-- **The circle-average LFPP exponent is `1 - ξ Q(ξ)`**: for `ξ > 0` and every circle-average
+process `H'` of the whole-plane GFF, on any probability space, `1 - ξ Q(ξ)` is the LFPP exponent of
+`H'` at `ξ`, where `Q(ξ) = HigherDimLQGMetric.distExp 2 ξ` is the kernel-independent distance
+exponent of the white-noise regularizations `H_{ε,1}`. On a coupled realization the exponent of
+`H_{ε,1}` (kernel `bumpKernel 2`) is the exponent of the coupled circle averages
+(`isLFPPExponent_iff_coupled`), which form a circle-average process, and the exponent of a
+circle-average process depends only on its law. -/
+theorem isLFPPExponent_distExp_of_isGFFCircleAverage {ξ : ℝ} (hξ : 0 < ξ)
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} {H' : ℝ → ℂ → Ω' → ℝ}
+    (hH' : LQGDimension.IsGFFCircleAverage H' P') :
+    LQGDimension.IsLFPPExponent H' P' ξ (1 - ξ * HigherDimLQGMetric.distExp 2 ξ) := by
+  have hκ := HigherDimLFPP.isLFPPKernel_bumpKernel 2
+  obtain ⟨Ω₀, _, P₀, W, H, h₀, hW, hH, hh⟩ := HigherDimLFPP.exists_coupledRealization hκ
+  have h1 := HigherDimLQGMetric.distExp_isDistanceExponent (d := 2) le_rfl hξ _ hκ Ω₀ P₀ W hW H hH
+  have h2 := (HigherDimLFPP.isLFPPExponent_iff_coupled hκ hW hH hh ξ _).1 h1
+  exact (HigherDimLFPP.isLFPPExponent_iff_of_isGFFCircleAverage
+    (HigherDimLFPP.isGFFCircleAverage_of_isCircleVersion hκ hW hh) hH' ξ _).1 h2
+
+/-- **The heat-kernel LFPP distance exponent is `1 - ξ Q(ξ)`**: for the normalized whole-plane GFF
+and every continuous version `X ε` of its heat-kernel mollification `h*_ε`,
+`log D^ξ(X ε) / log ε → 1 - ξ Q(ξ)` in probability as `ε → 0`, `Q(ξ) = distExp 2 ξ`. -/
+theorem tendstoInMeasure_log_lfppDistance_heat_distExp
+    (hh : SupercriticalLQGUniqueness.IsNormalizedWholePlaneGFF h P) (X : ℝ → Ω → C(ℂ, ℝ))
+    (hX : ∀ ε : ℝ, ∀ hε : 0 < ε, ∀ z : ℂ, ∀ᵐ ω ∂P,
+      Tendsto (fun n : ℕ => h ω (SupercriticalLQGUniqueness.positiveHeatTrunc
+        ⟨ε ^ 2 / 2, Set.mem_Ioi.mpr (div_pos (pow_pos hε 2) two_pos)⟩ z n)) atTop
+        (𝓝 (X ε ω z)))
+    {ξ : ℝ} (hξ : 0 < ξ) :
+    TendstoInMeasure P
+        (fun ε ω => Real.log (LQGDimension.lfppDistance ξ (X ε ω)) / Real.log ε) (𝓝[>] 0)
+        (fun _ => 1 - ξ * HigherDimLQGMetric.distExp 2 ξ) := by
+  obtain ⟨H, hH, -, -⟩ := LQGMetric.CircleAvg.exists_isGFFCircleAverage_normalized
+    (h := h) (P := P) ⟨hh.1, hh.2.mono fun _ hω => hω.limUnder_eq⟩
+  exact (tendstoInMeasure_log_lfppDistance_heat_iff_isLFPPExponent_of_isGFFCircleAverage hh X hX
+    hH ξ _).2 (isLFPPExponent_distExp_of_isGFFCircleAverage hξ hH)
 
 end LQGMetric.HeatCircle
