@@ -14,8 +14,10 @@ property at `(z₀, t)`: `LatticeProb.MarkovAt (K d) z₀ t`.
 
 * `LatticeProb.ae_markovAt_of_compProd`: the abstract statement, the Markov step being an identity of
   compositions-products on `S₀ × C(ℝ≥0, E) × C(ℝ≥0, E)`.
-* `LatticeProb.ae_markovAt_of_markov_step_pathShift`: the same from the convergence-in-law hypotheses of
-  `LatticeProb.compProd_eq_of_markov_step_pathShift`.
+* `LatticeProb.ae_forall_markovAt_of_countable_dense`: if this holds for a countable dense set of
+  `(z₀, t)`, it holds for `νD`-almost every `d` at all `(z, t)` simultaneously.
+* `LatticeProb.ae_markovAt_of_markov_step_pathShift`: the first statement from the convergence-in-law
+  hypotheses of `LatticeProb.compProd_eq_of_markov_step_pathShift`.
 -/
 
 set_option autoImplicit false
@@ -91,6 +93,16 @@ theorem ae_markovAt_of_compProd {νD : Measure S₀} [IsProbabilityMeasure νD]
   rw [integral_map hstop.aemeasurable hcont.aestronglyMeasurable]
   refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
   simp only [stopPath_apply, min_eq_right htT]
+
+/-- **The Markov property at all points and times for almost every environment.**  If, for a countable
+dense set `Q ⊆ E × ℝ≥0` of starting points and times, `MarkovAt (K d) z t` holds for `νD`-almost every `d`
+for each `(z, t) ∈ Q`, then for `νD`-almost every `d` it holds for all `(z, t)`. -/
+theorem ae_forall_markovAt_of_countable_dense [MeasurableSpace E] [BorelSpace E] {νD : Measure S₀}
+    {K : S₀ → C(E, ProbabilityMeasure C(ℝ≥0, E))} {Q : Set (E × ℝ≥0)} (hQc : Q.Countable)
+    (hQd : Dense Q) (h : ∀ q ∈ Q, ∀ᵐ d ∂νD, MarkovAt (K d) q.1 q.2) :
+    ∀ᵐ d ∂νD, ∀ z t, MarkovAt (K d) z t := by
+  filter_upwards [(ae_ball_iff hQc).2 h] with d hd
+  exact markovAt_of_dense (K := fun z => K d z) (K d).continuous hQd hd
 
 /-- **The Markov property of the quenched limit laws from the Markov step of the approximating
 walks.**  Under the hypotheses of `compProd_eq_of_markov_step_pathShift`, if the limit law is
