@@ -1,6 +1,8 @@
 import LatticeProb.Bonanno.LQGMetric.Field.HeatMollifyPoint
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgRate
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgGaussLim
+import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgIndep
+import LatticeProb.Bonanno.LQGMetric.Field.MeasurableAvg
 
 /-!
 # Heat-kernel mollification minus circle average of a whole-plane GFF is centered Gaussian
@@ -10,7 +12,8 @@ Let `h` be a whole-plane Gaussian free field, defined modulo a global additive c
 The heat-kernel mollification `h*_ε(z) = (h * p_{ε²/2})(z)` and the circle average `h_ε(z)`
 both integrate `h` against a probability density, so their difference does not see the
 additive constant. We show that for fixed `ε > 0` and `z`, the law of `h*_ε(z) - h_ε(z)` is a
-centered Gaussian `N(0, V)`.
+centered Gaussian `N(0, V)`, and that `(ε, z) ↦ h*_ε(z) - h_ε(z)` is a centered Gaussian
+process (`isGaussianProcess_heatMollify_sub_circleAvg`).
 
 Proof. With `χ_n` the smooth cutoffs and `ψ_{n,z,ε}` the mollified uniform measure on
 `∂B_ε(z)`, the test function `p_{ε²/2}(z,·) χ_n - (∫ p_{ε²/2}(z,·) χ_n) ψ_{n,z,ε}` has mean
@@ -105,6 +108,29 @@ theorem exists_gaussianReal_heatMollify_sub_circleAvg [IsProbabilityMeasure P]
   have hZ := aemeasurable_of_tendsto_metrizable_ae' hYm hlim
   obtain ⟨V, -, hV⟩ := exists_gaussianReal_of_ae_tendsto hYm hZ hlaw hlim
   exact ⟨V, hV⟩
+
+/-- The heat-versus-circle difference `ω ↦ h*_ε(z) − h_ε(z)` is measurable. -/
+theorem measurable_heatMollify_sub_circleAvg (hh : IsWholePlaneGFF h P) (ε : ℝ) (z : ℂ) :
+    Measurable fun ω => heatMollify ε (h ω) z - circleAvg (h ω) ε z :=
+  ((measurable_heatMollify_left ε z).comp hh.measurable).sub
+    ((measurable_circleAvg_left ε z).comp hh.measurable)
+
+/-- **Joint Gaussianity.** For a whole-plane GFF, the field
+`(ε, z) ↦ h*_ε(z) − h_ε(z)` indexed by `ε > 0` and `z ∈ ℂ` is a centered Gaussian process:
+it is the almost sure limit, coordinatewise, of the Gaussian process of pairings of `h` with
+the mean-zero test functions `heatCircDiff`. -/
+theorem isGaussianProcess_heatMollify_sub_circleAvg [IsProbabilityMeasure P]
+    (hh : IsWholePlaneGFF h P) :
+    IsGaussianProcess (fun (p : Ioi (0 : ℝ) × ℂ) (ω : Ω) =>
+      heatMollify (p.1 : ℝ) (h ω) p.2 - circleAvg (h ω) (p.1 : ℝ) p.2) P :=
+  CircleAvgIndep.isGaussianProcess_of_ae_tendsto
+    (Yn := fun n (p : Ioi (0 : ℝ) × ℂ) ω =>
+      h ω (heatCircDiff ((p.1 : ℝ) ^ 2 / 2) p.2 (p.1 : ℝ) n).1)
+    (fun n => hh.gaussian.comp_right
+      (fun p : Ioi (0 : ℝ) × ℂ => heatCircDiff ((p.1 : ℝ) ^ 2 / 2) p.2 (p.1 : ℝ) n))
+    (fun _ _ => hh.centered _)
+    (fun p => measurable_heatMollify_sub_circleAvg hh (p.1 : ℝ) p.2)
+    (fun p => ae_tendsto_pair_heatCircDiff hh (mem_Ioi.1 p.1.2) p.2)
 
 end HeatCircle
 end LQGMetric
