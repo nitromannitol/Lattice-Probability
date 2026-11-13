@@ -3,6 +3,7 @@ import LatticeProb.Bonanno.LQGMetric.Papers.DFGPS.L2_2
 import LatticeProb.Bonanno.LQGMetric.Field.CircleAvgBridge
 import LatticeProb.Analysis.GaussianRadialAverage
 import LatticeProb.Probability.WeightedAverageSecondMoment
+import LatticeProb.Probability.HeatCircleAverageGaussian
 
 /-!
 # Second moment of the heat-kernel mollification minus the circle average
@@ -21,7 +22,10 @@ uniformly in the scale `ε > 0` and the centre `z`.
 
 * `gaussRadialMeasure`: the probability measure `2u e^{-u²} du` on `(0, ∞)`;
 * `lintegral_sq_cInc_sameCentre`: `E[(h_r(z) - h_s(z))²] = |log r - log s|`;
-* `lintegral_sq_heatMollify_sub_circleAvg_le`: the second-moment bound above.
+* `lintegral_sq_heatMollify_sub_circleAvg_le`: the second-moment bound above;
+* `heatCircleVarConst`, `integrableOn_gaussRadial_abs_log`: the constant is finite;
+* `exists_gaussianReal_heatMollify_sub_circleAvg_le`: the centered Gaussian law `N(0, V)` of
+  `h*_ε(z) - h_ε(z)` has `V ≤ ∫_0^∞ 2u e^{-u²} |log u| du`, uniformly in `ε` and `z`.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology Set
@@ -77,6 +81,21 @@ instance : IsProbabilityMeasure gaussRadialMeasure := by
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {h : Ω → DistC}
 
+/-- The second moment of a random variable with law `N(0, v)` is `v`. -/
+lemma lintegral_sq_eq_of_map_eq_gaussianReal {X : Ω → ℝ} (hX : Measurable X) {v : NNReal}
+    (hmap : P.map X = gaussianReal 0 v) :
+    ∫⁻ ω, ENNReal.ofReal (X ω ^ 2) ∂P = ENNReal.ofReal v := by
+  rw [← lintegral_map (f := fun x : ℝ => ENNReal.ofReal (x ^ 2)) (by fun_prop) hX, hmap]
+  have hint : Integrable (fun x : ℝ => x ^ 2) (gaussianReal 0 v) :=
+    (memLp_id_gaussianReal 2).integrable_sq
+  rw [← ofReal_integral_eq_lintegral_ofReal hint (ae_of_all _ fun x => sq_nonneg x)]
+  have hvar := variance_id_gaussianReal (μ := 0) (v := v)
+  rw [variance_eq_integral measurable_id.aemeasurable] at hvar
+  simp only [id_eq] at hvar
+  rw [integral_id_gaussianReal] at hvar
+  simp only [sub_zero] at hvar
+  rw [hvar]
+
 /-- The increment covariance of two concentric circles: `|log r - log s|`. -/
 lemma incCov_sameCentre (z : ℂ) {r s : ℝ} (hr : 0 < r) (hs : 0 < s) :
     CircleAvg.incCov z r z s z r z s = |Real.log r - Real.log s| := by
@@ -101,16 +120,7 @@ theorem lintegral_sq_cInc_sameCentre (hh : IsWholePlaneGFF h P) {r s : ℝ} (hr 
   rw [incCov_sameCentre z hr hs] at hmap
   set v : NNReal := (|Real.log r - Real.log s|).toNNReal
   have hv : (v : ℝ) = |Real.log r - Real.log s| := Real.coe_toNNReal _ (abs_nonneg _)
-  rw [← lintegral_map (f := fun x : ℝ => ENNReal.ofReal (x ^ 2)) (by fun_prop) hm, hmap]
-  have hint : Integrable (fun x : ℝ => x ^ 2) (gaussianReal 0 v) :=
-    (memLp_id_gaussianReal 2).integrable_sq
-  rw [← ofReal_integral_eq_lintegral_ofReal hint (ae_of_all _ fun x => sq_nonneg x)]
-  have hvar := variance_id_gaussianReal (μ := 0) (v := v)
-  rw [variance_eq_integral measurable_id.aemeasurable] at hvar
-  simp only [id_eq] at hvar
-  rw [integral_id_gaussianReal] at hvar
-  simp only [sub_zero] at hvar
-  rw [hvar, hv]
+  rw [lintegral_sq_eq_of_map_eq_gaussianReal hm hmap, hv]
 
 /-! ## The second-moment bound -/
 
@@ -244,5 +254,77 @@ theorem lintegral_sq_heatMollify_sub_circleAvg_le
   rw [lintegral_congr hRHS]
   exact lintegral_gaussRadialMeasure (g := fun u => ENNReal.ofReal |Real.log u|)
     (by fun_prop)
+
+/-! ## The scale-free constant and the variance bound -/
+
+/-- The radial Gaussian average of `|log u|`: `V₀ = ∫_0^∞ 2u e^{-u²} |log u| du`. -/
+def heatCircleVarConst : ℝ := ∫ u in Ioi (0 : ℝ), 2 * u * Real.exp (-u ^ 2) * |Real.log u|
+
+lemma abs_log_le_inv_add_self {u : ℝ} (hu : 0 < u) : |Real.log u| ≤ u⁻¹ + u := by
+  have h1 := Real.log_le_sub_one_of_pos hu
+  have h2 := Real.log_le_sub_one_of_pos (inv_pos.mpr hu)
+  rw [Real.log_inv] at h2
+  have h3 : 0 < u⁻¹ := inv_pos.mpr hu
+  rw [abs_le]
+  constructor <;> linarith
+
+lemma integrableOn_gaussRadial_abs_log :
+    IntegrableOn (fun u : ℝ => 2 * u * Real.exp (-u ^ 2) * |Real.log u|) (Ioi 0) := by
+  have hg : Integrable (fun u : ℝ =>
+      2 * Real.exp (-1 * u ^ 2) + 2 * (u ^ (2 : ℝ) * Real.exp (-1 * u ^ 2))) :=
+    ((integrable_exp_neg_mul_sq one_pos).const_mul 2).add
+      ((integrable_rpow_mul_exp_neg_mul_sq one_pos (by norm_num : (-1 : ℝ) < 2)).const_mul 2)
+  have hmeas : Measurable fun u : ℝ => 2 * u * Real.exp (-u ^ 2) * |Real.log u| := by
+    fun_prop
+  refine hg.integrableOn.mono' hmeas.aestronglyMeasurable ?_
+  filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
+  have hu : 0 < u := mem_Ioi.mp hu
+  have hw : 0 ≤ 2 * u * Real.exp (-u ^ 2) := (mul_pos (mul_pos two_pos hu) (Real.exp_pos _)).le
+  rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg hw (abs_nonneg _)), Real.rpow_two, neg_one_mul]
+  calc 2 * u * Real.exp (-u ^ 2) * |Real.log u| ≤ 2 * u * Real.exp (-u ^ 2) * (u⁻¹ + u) :=
+        mul_le_mul_of_nonneg_left (abs_log_le_inv_add_self hu) hw
+    _ = 2 * Real.exp (-u ^ 2) + 2 * (u ^ 2 * Real.exp (-u ^ 2)) := by
+        have : u * u⁻¹ = 1 := mul_inv_cancel₀ hu.ne'
+        linear_combination (2 * Real.exp (-u ^ 2)) * this
+
+lemma heatCircleVarConst_nonneg : 0 ≤ heatCircleVarConst :=
+  setIntegral_nonneg measurableSet_Ioi fun _ hu =>
+    mul_nonneg (mul_pos (mul_pos two_pos (mem_Ioi.mp hu)) (Real.exp_pos _)).le (abs_nonneg _)
+
+lemma lintegral_gaussRadial_abs_log_eq :
+    ∫⁻ u in Ioi (0 : ℝ), ENNReal.ofReal (2 * u * Real.exp (-u ^ 2)) * ENNReal.ofReal |Real.log u| =
+      ENNReal.ofReal heatCircleVarConst := by
+  rw [heatCircleVarConst, ofReal_integral_eq_lintegral_ofReal integrableOn_gaussRadial_abs_log]
+  · refine lintegral_congr_ae ?_
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
+    rw [ENNReal.ofReal_mul (mul_pos (mul_pos two_pos (mem_Ioi.mp hu)) (Real.exp_pos _)).le]
+  · filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
+    exact mul_nonneg (mul_pos (mul_pos two_pos (mem_Ioi.mp hu)) (Real.exp_pos _)).le (abs_nonneg _)
+
+/-- **Heat-kernel mollification versus circle average, second moment**, with the finite
+scale-free constant `V₀ = ∫_0^∞ 2u e^{-u²} |log u| du`. -/
+theorem lintegral_sq_heatMollify_sub_circleAvg_le_const
+    (hh : SupercriticalLQGUniqueness.IsNormalizedWholePlaneGFF h P) {ε : ℝ} (hε : 0 < ε)
+    (z : ℂ) :
+    ∫⁻ ω, ENNReal.ofReal ((heatMollify ε (h ω) z - circleAvg (h ω) ε z) ^ 2) ∂P ≤
+      ENNReal.ofReal heatCircleVarConst :=
+  (lintegral_sq_heatMollify_sub_circleAvg_le hh hε z).trans_eq lintegral_gaussRadial_abs_log_eq
+
+/-- **Variance of the heat-versus-circle difference.** For a whole-plane GFF normalized by
+`h_1(0) = 0`, every scale `ε > 0` and every centre `z`, the random variable `h*_ε(z) - h_ε(z)` has
+a centered Gaussian law `N(0, V)` with `V ≤ ∫_0^∞ 2u e^{-u²} |log u| du`. -/
+theorem exists_gaussianReal_heatMollify_sub_circleAvg_le
+    (hh : SupercriticalLQGUniqueness.IsNormalizedWholePlaneGFF h P) {ε : ℝ} (hε : 0 < ε)
+    (z : ℂ) :
+    ∃ V : NNReal,
+      P.map (fun ω => heatMollify ε (h ω) z - circleAvg (h ω) ε z) = gaussianReal 0 V ∧
+        (V : ℝ) ≤ heatCircleVarConst := by
+  have := hh.1.gaussian.isProbabilityMeasure
+  obtain ⟨V, hV⟩ := exists_gaussianReal_heatMollify_sub_circleAvg hh.1 hε z
+  refine ⟨V, hV, ?_⟩
+  have h1 := lintegral_sq_heatMollify_sub_circleAvg_le_const hh hε z
+  rw [lintegral_sq_eq_of_map_eq_gaussianReal (measurable_heatMollify_sub_circleAvg hh.1 ε z)
+    hV] at h1
+  exact (ENNReal.ofReal_le_ofReal_iff heatCircleVarConst_nonneg).1 h1
 
 end LQGMetric.HeatCircle
