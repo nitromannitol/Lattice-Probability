@@ -84,7 +84,8 @@ band-limitedness of its output are built (`FrequencyTruncation.lean`), and the
 remaining low-frequency compactness step is
 isolated as `LatticeProb.Sobolev.rkLowFreqNet`, whose consumer
 `rellichKondrachovNegSobolev_of_lowfreqNet` reduces the cited embedding to it
-(`Analysis/Sobolev/RellichLowFreqNet.lean`).  The band-limited Bernstein bounds
+(`Analysis/Sobolev/RellichLowFreqNet.lean`); the step itself is proved as
+`LatticeProb.Sobolev.rkLowFreqNet_holds` (`Analysis/Sobolev/BandLimitedProved.lean`).  The band-limited Bernstein bounds
 that feed the net are proved for the low-frequency projections: the uniform
 `C^m` and multi-index bounds (`LatticeProb.Sobolev.exists_uniform_iteratedFDeriv_le`,
 `exists_uniform_iteratedFDeriv_apply_le`, `BandLimitedCmNet.lean`) and their
@@ -555,6 +556,14 @@ Rellich–Kondrachov compact embedding in negative Sobolev order.
   every bounded domain and all real orders `s₀ < s`;
   `negSobolevNorm_le_finset_sup_add_unconditional` and
   `tight_transfer_unconditional` are its dual-norm and tightness consequences.
+* `LatticeProb.Sobolev.frechetKolmogorovH_holds`: the Fréchet–Kolmogorov
+  theorem in `H^s` (an integrable family with a common compact support, bounded
+  and uniformly translation-continuous in `H^s`, is totally bounded in `H^s` with
+  centres in the family), from the mollification step
+  `frechetKolmogorovMollify_holds` (with `sobolevMollificationEstimate_holds`)
+  and the mollified compactness `frechetKolmogorovMollifiedCompact_holds`;
+  `bandLimitedPrecompact_holds`, `bandLimitedTranslationContinuous_holds` and
+  `rkLowFreqNet_holds` are the band-limited statements of the same route.
 **The bracket process and the Dambis–Dubins–Schwarz representation.**
 `LatticeProb/Prob/BracketProcess.lean` is Stage 1 of the bracket process of a
 continuous martingale: the dyadic realized quadratic variation

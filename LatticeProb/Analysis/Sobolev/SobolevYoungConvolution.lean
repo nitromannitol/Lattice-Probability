@@ -22,19 +22,12 @@
    integrands pointwise through `norm_fourier_lift_convReal_le`, integrates the comparison with
    `lintegral_mono`, and pulls the constant out with `lintegral_const_mul'`.
 
-## Relation to the residual `SobolevMollificationEstimate`
+## Relation to the mollification estimate
 
-The inequality `sobolevNormSq_convReal_le` is the bounding step of the standard proof of the
-residual `SobolevMollificationEstimate` (`FrechetKolmogorovMollifyResidual.lean:38`).  The residual
-itself needs, in addition, the averaging identity
-
-`f x - convReal f ρ x = ∫ y, ρ (-y) • (f x - f (x + y))`
-
-at points where the convolution integral exists, and almost everywhere for integrable `f` and `ρ`.
-For a kernel `ρ` of total mass one it also needs the `H^s` bound of that average by the
-`L¹`-average
-of the translation errors, and the choice of `ρ` inside the radius supplied by the
-translation-continuity hypothesis.  Those steps are not in this file.
+The mollification estimate `SobolevMollificationEstimate` is proved as
+`sobolevMollificationEstimate_holds` in `FrechetKolmogorovMollifyProved.lean`, through the
+Fourier-side bound `sobolevNormSq_sub_convReal_le` of `f - f ⋆ ρ` by the `ρ`-average of the
+translation errors.
 -/
 import LatticeProb.Analysis.Sobolev.Convolution
 import LatticeProb.Analysis.Sobolev.Additivity

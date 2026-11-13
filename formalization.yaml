@@ -332,6 +332,48 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.bandLimitedPrecompact_holds"
+      file: "LatticeProb/Analysis/Sobolev/BandLimitedProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.rkLowFreqNet_holds"
+      file: "LatticeProb/Analysis/Sobolev/BandLimitedProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.bandLimitedTranslationContinuous_holds"
+      file: "LatticeProb/Analysis/Sobolev/BandLimitedProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.frechetKolmogorovMollifiedCompact_holds"
+      file: "LatticeProb/Analysis/Sobolev/ConvolutionJetsIntegrable.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.sobolevMollificationEstimate_holds"
+      file: "LatticeProb/Analysis/Sobolev/FrechetKolmogorovMollifyProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.frechetKolmogorovMollify_holds"
+      file: "LatticeProb/Analysis/Sobolev/FrechetKolmogorovMollifyProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sobolev.frechetKolmogorovH_holds"
+      file: "LatticeProb/Analysis/Sobolev/FrechetKolmogorovMollifyProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.LQG.rescaledBallMassUniformStepLP_holds"
       file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
       sorry_count: 0
@@ -770,6 +812,11 @@ alignment:
       module: "LatticeProb.Analysis.Sobolev.RellichConvolvedCompact"
       status: "proved"
       note: "The proposition LatticeProb.External.RellichKondrachovNegSobolev, for every bounded domain and all real orders s0 < s, with test-function centres; its consumers hold without it in LatticeProb.Analysis.Sobolev.RellichCompactProved."
+    - source: "Frechet-Kolmogorov compactness theorem (Kolmogorov 1931; M. Riesz 1933), in the Sobolev space H^s through the Fourier transform"
+      lean: "LatticeProb.Sobolev.frechetKolmogorovH_holds"
+      module: "LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyProved"
+      status: "proved"
+      note: "The proposition LatticeProb.Sobolev.FrechetKolmogorovH, from the mollification step LatticeProb.Sobolev.frechetKolmogorovMollify_holds and the mollified compactness LatticeProb.Sobolev.frechetKolmogorovMollifiedCompact_holds."
 
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are
