@@ -274,10 +274,10 @@ theorem measurableSet_setOf_reachable [Countable V] (x y : V) :
 theorem measurableSet_threeInfClusters [Countable V] :
     MeasurableSet (threeInfClusters V) := by
   unfold threeInfClusters
-  simp only [Set.setOf_exists]
+  simp only [Set.ofPred_exists]
   refine MeasurableSet.iUnion fun x => MeasurableSet.iUnion fun y =>
     MeasurableSet.iUnion fun z => ?_
-  simp only [Set.setOf_and]
+  simp only [Set.ofPred_and]
   exact (measurableSet_percolatesAt_holds x).inter ((measurableSet_percolatesAt_holds y).inter
     ((measurableSet_percolatesAt_holds z).inter ((measurableSet_setOf_reachable x y).compl.inter
     ((measurableSet_setOf_reachable x z).compl.inter (measurableSet_setOf_reachable y z).compl))))
@@ -286,9 +286,9 @@ theorem measurableSet_threeInfClusters [Countable V] :
 theorem measurableSet_exactlyTwoInfClusters [Countable V] :
     MeasurableSet (exactlyTwoInfClusters V) := by
   unfold exactlyTwoInfClusters
-  simp only [Set.setOf_exists]
+  simp only [Set.ofPred_exists]
   refine MeasurableSet.iUnion fun x => MeasurableSet.iUnion fun y => ?_
-  simp only [Set.setOf_and, Set.setOf_forall, imp_iff_not_or, Set.setOf_or]
+  simp only [Set.ofPred_and, Set.ofPred_forall, imp_iff_not_or, Set.ofPred_or]
   exact (measurableSet_percolatesAt_holds x).inter ((measurableSet_percolatesAt_holds y).inter
     ((measurableSet_setOf_reachable x y).compl.inter (MeasurableSet.iInter fun z =>
       (measurableSet_percolatesAt_holds z).compl.union
@@ -298,7 +298,7 @@ theorem measurableSet_exactlyTwoInfClusters [Countable V] :
 theorem measurableSet_exactlyOneInfCluster [Countable V] :
     MeasurableSet (exactlyOneInfCluster V) := by
   unfold exactlyOneInfCluster
-  simp only [Set.setOf_and, Set.setOf_exists, Set.setOf_forall, imp_iff_not_or, Set.setOf_or]
+  simp only [Set.ofPred_and, Set.ofPred_exists, Set.ofPred_forall, imp_iff_not_or, Set.ofPred_or]
   exact (MeasurableSet.iUnion fun x => measurableSet_percolatesAt_holds x).inter
     (MeasurableSet.iInter fun x => MeasurableSet.iInter fun y =>
       (measurableSet_percolatesAt_holds x).compl.union
@@ -942,7 +942,7 @@ theorem bondPercolation_threeInfClusters_eq_zero (hd : 1 ≤ d) (p : unitInterva
   -- opening `Λ_r` on this event produces a cut-ball: `a = P(T_r(0)) > 0`
   set A : Set (BondConfig (LatticeModels.Site d)) := threeInBox r ∩ {ω | ω ⊆ (LatticeModels.zdGraph d).edgeSet} with hA_def
   have hAE : μ {ω : BondConfig (LatticeModels.Site d) | ω ⊆ (LatticeModels.zdGraph d).edgeSet}ᶜ = 0 := by
-    rw [Set.compl_setOf]
+    rw [Set.compl_ofPred]
     exact ae_iff.1 (setBernoulli_ae_subset (u := (LatticeModels.zdGraph d).edgeSet) (p := p))
   have hA : 0 < μ.real A := by
     rw [measureReal_def, ENNReal.toReal_pos_iff]
@@ -1067,7 +1067,7 @@ theorem bondPercolation_exactlyTwoInfClusters_eq_zero (hd : 1 ≤ d) (p : unitIn
     exact h2 (measure_mono_null exactlyTwoInfClusters_subset_iUnion (measure_iUnion_null_iff.2 hall))
   set A : Set (BondConfig (LatticeModels.Site d)) := twoInBox n ∩ {ω | ω ⊆ (LatticeModels.zdGraph d).edgeSet} with hA_def
   have hAE : μ {ω : BondConfig (LatticeModels.Site d) | ω ⊆ (LatticeModels.zdGraph d).edgeSet}ᶜ = 0 := by
-    rw [Set.compl_setOf]
+    rw [Set.compl_ofPred]
     exact ae_iff.1 (setBernoulli_ae_subset (u := (LatticeModels.zdGraph d).edgeSet) (p := p))
   have hA : 0 < μ.real A := by
     rw [measureReal_def, ENNReal.toReal_pos_iff]

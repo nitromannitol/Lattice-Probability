@@ -195,10 +195,9 @@ theorem setBernoulli_real_localCylinder (u : Set ι) (p : unitInterval) (K : Fin
   rw [hpre, Measure.infinitePi_pi _ (fun i _ => MeasurableSpace.measurableSet_top),
     ENNReal.toReal_prod]
   refine Finset.prod_congr rfl fun i _ => ?_
-  simp only [Measure.coe_add, Measure.coe_smul, Pi.add_apply, Pi.smul_apply,
-    Measure.dirac_apply, weight]
+  simp only [weight]
   by_cases hS : i ∈ S <;> by_cases hu : i ∈ u <;>
-    simp [hS, hu, Set.indicator, ENNReal.smul_def, ← ENNReal.coe_add]
+    simp [hS, hu, Set.indicator]
 
 open Classical in
 /-- The polynomial `q ↦ Σ_{S ⊆ K, S ∈ B} ∏_{i ∈ K} weight u S i q`, which computes

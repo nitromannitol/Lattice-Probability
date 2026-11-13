@@ -438,8 +438,6 @@ theorem theta_induce_eq_real_percolatesVia [Countable V] (x : V) (hx : x ∈ R) 
   have hae : ∀ᵐ ω ∂bondPercolation G p, ω ⊆ G.edgeSet := setBernoulli_ae_subset
   filter_upwards [hae] with ω hω
   refine propext ?_
-  change ω ∈ restrictConfig (Subtype.val : R → V) ⁻¹' percolatesAt (⟨x, hx⟩ : R) ↔
-    ω ∈ percolatesVia (withinGraph G R) x
   simp only [Set.mem_preimage, percolatesAt, percolatesVia, Set.mem_ofPred_eq,
     ← image_openCluster_restrictConfig G R hω hx]
   exact (Set.infinite_image_iff Subtype.val_injective.injOn).symm

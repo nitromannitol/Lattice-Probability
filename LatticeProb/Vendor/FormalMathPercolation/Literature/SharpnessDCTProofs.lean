@@ -432,7 +432,7 @@ theorem measurableSet_siteToBoundary (d n : ℕ) : MeasurableSet (siteToBoundary
 /-- `armEvent 0 n = {0 ⟷ ∂Λ_n}`. [folklore] -/
 theorem armEvent_zero (d n : ℕ) : armEvent (0 : Site d) n = siteToBoundary d n := by
   ext ω
-  simp only [armEvent, sub_zero, Set.mem_ofPred_eq, Finset.setOf_mem, siteToBoundary]
+  simp only [armEvent, sub_zero, Set.mem_ofPred_eq, Finset.setOfPred_mem, siteToBoundary]
 
 /-- The translated arm event is the pull-back of `{0 ⟷ ∂Λ_n}` under the shift of configurations
 by `-v`. [cite: GrimmettPercolation1999, §1.6 (translation invariance)] -/
@@ -445,8 +445,7 @@ theorem preimage_shift_siteToBoundary (v : Site d) (n : ℕ) :
       (openGraph (BondConfig.relabel (sym2Equiv (Site.shift (-v))) ω)).Adj (a - v) (b - v) ↔
         (openGraph ω).Adj a b := by
     intro a b
-    have := openGraph_relabel_adj_iff (Site.shift (-v)) ω a b
-    simpa [sub_eq_add_neg] using this
+    simp [sub_eq_add_neg]
   constructor
   · rintro ⟨y, hy, hpath⟩
     refine ⟨y + v, by simpa using hy, ?_⟩
