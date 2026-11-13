@@ -16,6 +16,10 @@ Let `X`, `Y₁`, `Y₂ : ℝ → ℝ` be continuous. Suppose that
 
 Then the colour does not switch along the chain of straddling pairs at an anchor `v ∈ Q`: either all the pairs at the
 levels of `D v` below `X v` are contour pairs of `Y₁`, or all are contour pairs of `Y₂` (`contour_chain_one_colour`).
+If the dense sets of levels are given by a property of the pairs, `D w = {l | P (s_l, t_l)}`, the colour does not
+depend on the anchor either (`contour_chain_global_colour`): if `X > l` on the interval between two anchors, their
+straddling pairs at level `l` coincide (`straddle_eq_of_lt_on`), and a common level of this kind exists below the
+minimum of `X` between the anchors (`exists_dense_lt_on_Icc`).
 
 The proof looks at the supremum `m` of the levels of one colour below a level of the other colour. The pair at `m`,
 a limit of pairs from above, and the limit of the pairs from below are weak contour pairs of the two colours; they are
@@ -324,5 +328,107 @@ theorem contour_chain_one_colour {X Y₁ Y₂ : ℝ → ℝ} (hX : Continuous X)
   · exact (hcol v hv l₁ hl₁D hl₁).elim h₁ h₂
   · exact no_switch_up hX hY₂ hY₁ hXlow hmin hNC' hQ hD hcol' hv h21 hl₁ hl₂D h₂
       ((hcol v hv l₁ hl₁D hl₁).resolve_left h₁)
+
+/-- **Straddling pairs do not depend on the anchor inside an excursion.** If `f > l` on `[v, w]`, the straddling pairs
+of `f` at `v` and at `w` at level `l` coincide. -/
+theorem straddle_eq_of_lt_on {f : ℝ → ℝ} {v w l : ℝ} (hvw : v ≤ w) (hl : ∀ u ∈ Icc v w, l < f u) :
+    lastBelow f v l = lastBelow f w l ∧ firstBelow f v l = firstBelow f w l := by
+  constructor
+  · unfold lastBelow
+    congr 1
+    ext u
+    simp only [mem_ofPred_eq]
+    constructor
+    · rintro ⟨hu, hfu⟩
+      exact ⟨hu.trans hvw, hfu⟩
+    · rintro ⟨hu, hfu⟩
+      refine ⟨?_, hfu⟩
+      by_contra h
+      push Not at h
+      exact absurd hfu (not_le.mpr (hl u ⟨h.le, hu⟩))
+  · unfold firstBelow
+    congr 1
+    ext u
+    simp only [mem_ofPred_eq]
+    constructor
+    · rintro ⟨hu, hfu⟩
+      refine ⟨?_, hfu⟩
+      by_contra h
+      push Not at h
+      exact absurd hfu (not_le.mpr (hl u ⟨hu, h.le⟩))
+    · rintro ⟨hu, hfu⟩
+      exact ⟨hvw.trans hu, hfu⟩
+
+/-- A dense set of levels contains a level below a continuous function on a compact interval. -/
+theorem exists_dense_lt_on_Icc {f : ℝ → ℝ} (hf : Continuous f) {D : Set ℝ} (hD : Dense D) (a b : ℝ) :
+    ∃ l ∈ D, ∀ u ∈ Icc a b, l < f u := by
+  rcases le_or_gt a b with hab | hba
+  · obtain ⟨c, -, hc⟩ := isCompact_Icc.exists_isMinOn (nonempty_Icc.mpr hab) hf.continuousOn
+    obtain ⟨l, hlD, hl⟩ := hD.exists_between (sub_one_lt (f c))
+    exact ⟨l, hlD, fun u hu => hl.2.trans_le (isMinOn_iff.mp hc u hu)⟩
+  · obtain ⟨l, hlD, -⟩ := hD.exists_between (sub_one_lt (0 : ℝ))
+    exact ⟨l, hlD, fun u hu => absurd (hu.1.trans hu.2) (not_le.mpr hba)⟩
+
+/-- **Colours agree across anchors.** If `(Y₁, Y₂)` has no corner return, the levels of a property `P` of the
+straddling pairs of `X` at `v` are dense, all such pairs at `v` are contour pairs of `Y₁`, and all such pairs at `w` are
+contour pairs of `Y₂`, we reach a contradiction: a common level below `X` between `v` and `w` gives one pair of both
+colours. -/
+theorem contour_colour_agree {X Y₁ Y₂ : ℝ → ℝ} (hX : Continuous X)
+    (hNC : ∀ s t, IsWeakContourPair Y₁ s t → IsWeakContourPair Y₂ s t → False) {P : ℝ → ℝ → Prop} {v w : ℝ}
+    (hD : Dense {l | P (lastBelow X v l) (firstBelow X v l)})
+    (h₁ : ∀ l, P (lastBelow X v l) (firstBelow X v l) → l < X v →
+      IsContourPair Y₁ (lastBelow X v l) (firstBelow X v l))
+    (h₂ : ∀ l, P (lastBelow X w l) (firstBelow X w l) → l < X w →
+      IsContourPair Y₂ (lastBelow X w l) (firstBelow X w l)) : False := by
+  obtain ⟨l, hlP, hl⟩ := exists_dense_lt_on_Icc hX hD (min v w) (max v w)
+  have hpair : lastBelow X v l = lastBelow X w l ∧ firstBelow X v l = firstBelow X w l := by
+    rcases le_total v w with hvw | hwv
+    · exact straddle_eq_of_lt_on hvw fun u hu =>
+        hl u ⟨(min_le_left v w).trans hu.1, hu.2.trans (le_max_right v w)⟩
+    · obtain ⟨e₁, e₂⟩ := straddle_eq_of_lt_on hwv fun u hu =>
+        hl u ⟨(min_le_right v w).trans hu.1, hu.2.trans (le_max_left v w)⟩
+      exact ⟨e₁.symm, e₂.symm⟩
+  have hv : l < X v := hl v ⟨min_le_left v w, le_max_left v w⟩
+  have hw : l < X w := hl w ⟨min_le_right v w, le_max_right v w⟩
+  have c₁ := h₁ l hlP hv
+  have hlP' : P (lastBelow X w l) (firstBelow X w l) := by
+    rw [← hpair.1, ← hpair.2]
+    exact hlP
+  have c₂ := h₂ l hlP' hw
+  rw [← hpair.1, ← hpair.2] at c₂
+  exact hNC _ _ c₁.weak c₂.weak
+
+/-- **One colour for all anchors.** Under the hypotheses of `contour_chain_one_colour`, with the dense sets of levels
+given by a property `P` of the straddling pairs, either every straddling pair of `X` with property `P` at an anchor of
+`Q` (at a level below the value of `X` at the anchor) is a contour pair of `Y₁`, or every such pair is a contour pair
+of `Y₂`. -/
+theorem contour_chain_global_colour {X Y₁ Y₂ : ℝ → ℝ} (hX : Continuous X) (hY₁ : Continuous Y₁)
+    (hY₂ : Continuous Y₂) (hXlow : ∀ w l, (∃ a ≤ w, X a ≤ l) ∧ ∃ b, w ≤ b ∧ X b ≤ l)
+    (hmin : ∀ p q, p < q → IsLocalMin X p → IsLocalMin X q → X p ≠ X q)
+    (hNC : ∀ s t, IsWeakContourPair Y₁ s t → IsWeakContourPair Y₂ s t → False)
+    {Q : Set ℝ} (hQ : Dense Q) {P : ℝ → ℝ → Prop}
+    (hD : ∀ w ∈ Q, Dense {l | P (lastBelow X w l) (firstBelow X w l)})
+    (hcol : ∀ w ∈ Q, ∀ l, P (lastBelow X w l) (firstBelow X w l) → l < X w →
+      IsContourPair Y₁ (lastBelow X w l) (firstBelow X w l) ∨
+        IsContourPair Y₂ (lastBelow X w l) (firstBelow X w l)) :
+    (∀ w ∈ Q, ∀ l, P (lastBelow X w l) (firstBelow X w l) → l < X w →
+      IsContourPair Y₁ (lastBelow X w l) (firstBelow X w l)) ∨
+    (∀ w ∈ Q, ∀ l, P (lastBelow X w l) (firstBelow X w l) → l < X w →
+      IsContourPair Y₂ (lastBelow X w l) (firstBelow X w l)) := by
+  have hone : ∀ w ∈ Q,
+      (∀ l, P (lastBelow X w l) (firstBelow X w l) → l < X w →
+        IsContourPair Y₁ (lastBelow X w l) (firstBelow X w l)) ∨
+      ∀ l, P (lastBelow X w l) (firstBelow X w l) → l < X w →
+        IsContourPair Y₂ (lastBelow X w l) (firstBelow X w l) := fun w hw =>
+    contour_chain_one_colour (D := fun w => {l | P (lastBelow X w l) (firstBelow X w l)}) hX hY₁ hY₂ hXlow hmin
+      hNC hQ hD (fun w hw l hl hlw => hcol w hw l hl hlw) hw
+  by_cases h : ∀ w ∈ Q, ∀ l, P (lastBelow X w l) (firstBelow X w l) → l < X w →
+      IsContourPair Y₁ (lastBelow X w l) (firstBelow X w l)
+  · exact Or.inl h
+  · push Not at h
+    obtain ⟨w₀, hw₀, l₀, hl₀P, hl₀, hl₀c⟩ := h
+    have h₂ := (hone w₀ hw₀).resolve_left fun h₁ => hl₀c (h₁ l₀ hl₀P hl₀)
+    refine Or.inr fun w hw => (hone w hw).resolve_left fun h₁ => ?_
+    exact contour_colour_agree hX hNC (hD w hw) h₁ h₂
 
 end LatticeProb
