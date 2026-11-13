@@ -1,5 +1,6 @@
 import LatticeProb.Analysis.ContourChainColour
 import LatticeProb.Analysis.LadderSetOfStraddlingPairs
+import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 /-!
 # Rigidity of contour chains
@@ -19,11 +20,17 @@ on the anchor (`contour_chain_global_colour`), and a path is determined by its l
 (`eq_of_dense_straddle_pairs_of_excursionCount`). For two pairs of functions `(L, R)` and `(L', R')` with `L ≠ R`,
 applying this to `X = L` and to `X = R` gives `(L', R') = (L, R)` or `(L', R') = (R, L)`
 (`eq_or_swap_of_contour_pairs`).
+
+The dense sets of levels arise from an exceptional set of times `Z` whose images under `L` and `R` are Lebesgue-null:
+at every level outside `L '' Z`, the straddling pair of `L` either is degenerate (the level is not below the value at
+the anchor) or has its left endpoint outside `Z` (`dense_setOf_straddle_of_volume_image_eq_zero`). This gives the form
+`eq_or_swap_of_contour_pairs_of_volume_image`, in which the straddling pairs are only required to be contour pairs of
+`L'` or `R'` when their left endpoint avoids `Z`.
 -/
 
 set_option autoImplicit false
 
-open Set Filter Topology
+open Set Filter Topology MeasureTheory
 
 namespace LatticeProb
 
@@ -103,5 +110,59 @@ theorem eq_or_swap_of_contour_pairs {L R L' R' : ℝ → ℝ} {Q : Set ℝ} (hL 
   · exact Or.inl ⟨h₁.symm, h₂.symm⟩
   · exact Or.inr ⟨h₂.symm, h₁.symm⟩
   · exact absurd (h₁.trans h₂.symm) hLR
+
+/-- At a level `l` not below `f v`, both straddling times of `v` at level `l` are `v`. -/
+theorem lastBelow_eq_and_firstBelow_eq_of_le {f : ℝ → ℝ} {v l : ℝ} (hl : f v ≤ l) :
+    lastBelow f v l = v ∧ firstBelow f v l = v :=
+  ⟨IsGreatest.csSup_eq ⟨⟨le_rfl, hl⟩, fun _ hu => hu.1⟩, IsLeast.csInf_eq ⟨⟨le_rfl, hl⟩, fun _ hu => hu.1⟩⟩
+
+/-- **Straddling pairs avoiding a null set of levels.** Let `X` be continuous and unbounded below on the left of `v`,
+and let `Z` be a set of times whose image `X '' Z` is Lebesgue-null. If a property `P` of pairs of times holds for
+every pair whose left time is outside `Z` and for every degenerate pair, then the levels `l` at which `P` holds for
+the straddling pair of `v` at level `l` are dense. -/
+theorem dense_setOf_straddle_of_volume_image_eq_zero {X : ℝ → ℝ} (hX : Continuous X) {v : ℝ}
+    (hlow : ∀ l, ∃ a ≤ v, X a ≤ l) {Z : Set ℝ} (hZ : volume (X '' Z) = 0) {P : ℝ → ℝ → Prop}
+    (hPZ : ∀ s t, s ∉ Z → P s t) (hPd : ∀ s, P s s) :
+    Dense {l | P (lastBelow X v l) (firstBelow X v l)} := by
+  have hd : Dense (X '' Z)ᶜ :=
+    interior_eq_empty_iff_dense_compl.1 (Measure.interior_eq_empty_of_null hZ)
+  refine hd.mono fun l hl => ?_
+  rcases lt_or_ge l (X v) with h | h
+  · exact hPZ _ _ fun hs => hl ⟨_, hs, apply_lastBelow hX h (hlow l)⟩
+  · obtain ⟨h₁, h₂⟩ := lastBelow_eq_and_firstBelow_eq_of_le h
+    show P (lastBelow X v l) (firstBelow X v l)
+    rw [h₁, h₂]
+    exact hPd v
+
+/-- **Rigidity with an exceptional set of times.** The form of `eq_or_swap_of_contour_pairs` in which the straddling
+pairs of `L` and `R` are required to be contour pairs of `L'` or `R'` only when their left time avoids a set of times
+`Z` whose images under `L` and `R` are Lebesgue-null. -/
+theorem eq_or_swap_of_contour_pairs_of_volume_image {L R L' R' : ℝ → ℝ} {Q : Set ℝ}
+    (hL : IsLadderRegularOn L Q) (hR : IsLadderRegularOn R Q) (hL' : IsLadderRegularOn L' Q)
+    (hR' : IsLadderRegularOn R' Q) (hQ : Dense Q)
+    (hNC : ∀ s t, IsWeakContourPair L' s t → IsWeakContourPair R' s t → False) {Z : Set ℝ}
+    (hZL : volume (L '' Z) = 0) (hZR : volume (R '' Z) = 0)
+    (hcolL : ∀ w ∈ Q, ∀ l, lastBelow L w l ∉ Z → l < L w →
+      IsContourPair L' (lastBelow L w l) (firstBelow L w l) ∨
+        IsContourPair R' (lastBelow L w l) (firstBelow L w l))
+    (hcolR : ∀ w ∈ Q, ∀ l, lastBelow R w l ∉ Z → l < R w →
+      IsContourPair L' (lastBelow R w l) (firstBelow R w l) ∨
+        IsContourPair R' (lastBelow R w l) (firstBelow R w l))
+    {t₀ c : ℝ} (hL0 : L t₀ = c) (hR0 : R t₀ = c) (hL'0 : L' t₀ = c) (hR'0 : R' t₀ = c) (hLR : L ≠ R) :
+    (L' = L ∧ R' = R) ∨ (L' = R ∧ R' = L) := by
+  refine eq_or_swap_of_contour_pairs hL hR hL' hR' hQ hNC (P := fun s t => s = t ∨ s ∉ Z)
+    (fun w _ => dense_setOf_straddle_of_volume_image_eq_zero hL.continuous (fun l => (hL.low w l).1) hZL
+      (fun _ _ h => Or.inr h) (fun _ => Or.inl rfl))
+    (fun w _ => dense_setOf_straddle_of_volume_image_eq_zero hR.continuous (fun l => (hR.low w l).1) hZR
+      (fun _ _ h => Or.inr h) (fun _ => Or.inl rfl))
+    (fun w hw l hP hl => ?_) (fun w hw l hP hl => ?_) hL0 hR0 hL'0 hR'0 hLR
+  · rcases hP with h | h
+    · exact absurd h ((lastBelow_lt hL.continuous hl (hL.low w l).1).trans
+        (lt_firstBelow hL.continuous hl (hL.low w l).2)).ne
+    · exact hcolL w hw l h hl
+  · rcases hP with h | h
+    · exact absurd h ((lastBelow_lt hR.continuous hl (hR.low w l).1).trans
+        (lt_firstBelow hR.continuous hl (hR.low w l).2)).ne
+    · exact hcolR w hw l h hl
 
 end LatticeProb
