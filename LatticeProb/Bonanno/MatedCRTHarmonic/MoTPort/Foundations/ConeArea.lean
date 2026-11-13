@@ -53,6 +53,13 @@ open Classical in
 def qAreaC (γ : ℝ) (h : Field) : Measure ℂ :=
   if hx : ∃ μ, QuantumZipper.IsVagueLimitOn univ (areaApproxC γ h) μ then hx.choose else 0
 
+/-- the uniform law on angles `[0, 2π)` -/
+def unifAngle : Measure ℝ := volume[|Ico (0 : ℝ) (2 * Real.pi)]
+
+instance isProbabilityMeasure_unifAngle : IsProbabilityMeasure unifAngle := by
+  unfold unifAngle
+  exact cond_isProbabilityMeasure_of_finite (by simp [Real.pi_pos]) (by simp [ENNReal.mul_eq_top])
+
 namespace ConeArea
 
 theorem measurable_areaApproxC (γ : ℝ) (k : ℕ) :

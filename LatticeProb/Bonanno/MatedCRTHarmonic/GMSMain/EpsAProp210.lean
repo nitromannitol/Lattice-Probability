@@ -156,6 +156,15 @@ def EpsAProp210At {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (bm : Ω �
     ∀ ε : ℝ, ε ∈ Ioo (0 : ℝ) 1 → ∀ (V : Set ℂ) (f : ℂ → ℝ), GMS4.Prop210Admissible ε ρ C β V f →
       P (EpsAProp210Bad bm η ε V f A (ε ^ α)) ≤ ENNReal.ofReal (Cfail * ε ^ α)
 
+/-- On the good event, the bound holds for any given embedding with the curve cells. -/
+theorem epsA_prop210Bound_of_not_mem_bad {Ω : Type*} {bm : Ω → MatedCRT.Path2} {η : Ω → C(ℝ, ℂ)} {ε : ℝ}
+    {V : Set ℂ} {f : ℂ → ℝ} {A tol : ℝ} {ω : Ω} (hω : ω ∉ EpsAProp210Bad bm η ε V f A tol)
+    (hlf : MatedCRT.IsLocallyFinite ε (bm ω)) (H : CellularEmbedding (MatedCRT.graph ε (bm ω) hlf) 0)
+    (hcell : ∀ x : ℤ, H.cell x = η ω '' Icc (ε * ((x : ℝ) - 1)) (ε * x)) :
+    GMS3.Prop210Bound H V f A tol := by
+  have h : ¬ ¬ _ := hω
+  exact (not_not.mp h).2 hlf H hcell
+
 section Coupling
 
 variable {γ : ℝ} {Ω : Type} [MeasurableSpace Ω] {P : Measure Ω}

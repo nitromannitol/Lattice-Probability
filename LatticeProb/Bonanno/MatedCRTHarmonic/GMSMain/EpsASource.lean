@@ -122,6 +122,17 @@ def EpsAProp410Source {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (η : �
         ∀ ε : ℝ, ε ∈ Ioo (0 : ℝ) 1 → ∀ (V : Set ℂ) (f : ℂ → ℝ), GMS4.Prop210Admissible ε ρ C β V f →
           P (BundleSec4.Prop410Bad η ε V f A (ε ^ α)) ≤ ENNReal.ofReal (Cfail * ε ^ α)
 
+/-- **[18] Proposition 2.10 in the source's quantifier order at every real mesh** for the mated-CRT maps
+`MatedCRT.graph ε (bm ·)` with the cells of `η` (failure event `EpsAProp210Bad`: an embedding with the curve cells
+exists and every such embedding satisfies G3's `Prop210Bound`). -/
+def EpsAProp210Source {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (bm : Ω → MatedCRT.Path2)
+    (η : Ω → C(ℝ, ℂ)) : Prop :=
+  ∃ α : ℝ, 0 < α ∧ ∃ β : ℝ, 0 < β ∧
+    ∀ ρ : ℝ, 0 < ρ → ρ < 1 → ∃ A : ℝ, 0 < A ∧
+      ∀ C : ℝ, 1 < C → ∃ Cfail : ℝ, 0 ≤ Cfail ∧
+        ∀ ε : ℝ, ε ∈ Ioo (0 : ℝ) 1 → ∀ (V : Set ℂ) (f : ℂ → ℝ), GMS4.Prop210Admissible ε ρ C β V f →
+          P (EpsAProp210Bad bm η ε V f A (ε ^ α)) ≤ ENNReal.ofReal (Cfail * ε ^ α)
+
 section Coupling
 
 variable {γ : ℝ} {Ω : Type} [MeasurableSpace Ω] {P : Measure Ω}
@@ -150,6 +161,27 @@ theorem epsA_prop410Source (D : MatedCRT.IsMatingOfTreesCoupling γ P X X₀ hIG
     (hstd : StandardBorelSpace Ω) (hγ : γ ∈ Ioo (0 : ℝ) 2) : EpsAProp410Source P η :=
   epsA_prop410Source_of_inputs D hγ (epsA_zeroConeCase0Uniform_holds D hstd hγ)
     (GMS4cM.lemma43MeasurableM_holds D hγ)
+
+/-- **[18] Proposition 2.10 from Proposition 4.10 and (4.20), source order, every real mesh**: exponent `α/2`,
+the same `β`, threshold `2A`, rate `Cfail + 2`. -/
+theorem epsA_prop210Source_of_prop410Source
+    (D : MatedCRT.IsMatingOfTreesCoupling γ P X X₀ hIG₀ B B' B₀ B₀' U ηL η η₀ bm)
+    (h : EpsAProp410Source P η) : EpsAProp210Source P bm η := by
+  obtain ⟨α, hα, β, hβ, h⟩ := h
+  refine ⟨α / 2, by positivity, β, hβ, fun ρ hρ0 hρ1 => ?_⟩
+  obtain ⟨A, hA, hCh⟩ := h ρ hρ0 hρ1
+  refine ⟨2 * A, by positivity, fun C hC => ?_⟩
+  obtain ⟨Cfail, hCfail, hbound⟩ := hCh C hC
+  exact ⟨Cfail + 2, by positivity, fun ε hε V f hadm =>
+    epsA_prop210Bad_le_of_prop410Bad D hε hadm.2.2.2.2.2.2.1.measurableSet hα hCfail (hbound ε hε V f hadm)⟩
+
+/-- **[18] Proposition 2.10 in the source's quantifier order, at every real mesh `ε ∈ (0, 1)`, for the mated-CRT
+map of every frozen coupling on a standard Borel space** (no premise): `∃ α(γ), β(γ) > 0, ∀ ρ ∈ (0, 1),
+∃ A(ρ, γ) > 0, ∀ C > 1, ∃ Cfail(ρ, C, γ)`, for every `ε ∈ (0, 1)` and every admissible `(V, f)`,
+`P (EpsAProp210Bad bm η ε V f A ε^α) ≤ Cfail ε^α`. -/
+theorem epsA_prop210Source (D : MatedCRT.IsMatingOfTreesCoupling γ P X X₀ hIG₀ B B' B₀ B₀' U ηL η η₀ bm)
+    (hstd : StandardBorelSpace Ω) (hγ : γ ∈ Ioo (0 : ℝ) 2) : EpsAProp210Source P bm η :=
+  epsA_prop210Source_of_prop410Source D (epsA_prop410Source D hstd hγ)
 
 end Coupling
 

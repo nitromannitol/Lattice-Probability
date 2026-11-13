@@ -97,4 +97,7 @@ theorem lemma34Bound_nonneg {s ρ δ w A η : ℝ} (hs : 0 < s) (hsρ : s < ρ) 
   unfold lemma34Bound
   positivity
 
+/-- The boundary layer of the annulus `{s < |u| < ρ}` used by Lemma 3.4. -/
+def lemma34Layer (s ρ w : ℝ) (u : ℂ) : ℝ := max (radialBump 0 s w u) (radialBump 0 ρ w u)
+
 end MatedCRTHarmonic.GMS3

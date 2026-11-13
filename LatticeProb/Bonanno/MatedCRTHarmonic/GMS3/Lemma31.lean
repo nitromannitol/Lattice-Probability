@@ -144,6 +144,33 @@ theorem cellSum_le_lintegral {D : Set ℂ} (hDo : IsOpen D) (hDb : Bornology.IsB
             ENNReal.ofReal (L * δ) * (∫⁻ z in D, uDens H z)) := add_le_add hbdry hint
     _ = _ := by ring
 
+/-- **[18] Lemma 3.1** (corrected boundary term), deterministic form: on the event where
+The conclusions of Proposition 2.10 hold for `(D, f)`, `(D, 1)` and `(Ω, g)`,
+`∑_{x ∈ V(D)} f^ε(x) diam(H_x)² deg(x) ≤ A ∫_D f + η + Lδ (A area(D) + η) + M (A ∫_Ω g + η)`. -/
+theorem lemma31 {D : Set ℂ} (hDo : IsOpen D) (hDb : Bornology.IsBounded D)
+    (p : V → ℂ) (hp : ∀ x, p x ∈ H.cell x) {f : ℂ → ℝ} {L M δ : ℝ}
+    (hLip : ∀ z ∈ D, ∀ w ∈ D, f z ≤ f w + L * dist z w) (hL : 0 ≤ L)
+    (hδ : ∀ x ∈ vFin H D, cellDiam H x ≤ δ) (hM : ∀ x ∈ vFin H D, f (p x) ≤ M)
+    {Ω : Set ℂ} {g : ℂ → ℝ}
+    (hbd : ∀ x ∈ vFin H D, (H.cell x ∩ frontier D).Nonempty →
+      H.cell x ⊆ Ω ∧ ∀ z ∈ H.cell x, 1 ≤ g z)
+    {A η : ℝ} (hf : Prop210Bound H D f A η) (h1 : Prop210Bound H D (fun _ => 1) A η)
+    (hg : Prop210Bound H Ω g A η) :
+    ∑ x ∈ vFin H D, ENNReal.ofReal (f (p x) * (cellDiam H x ^ 2 * G.deg x)) ≤
+      (ENNReal.ofReal A * (∫⁻ z in D, ENNReal.ofReal (f z)) + ENNReal.ofReal η) +
+        ENNReal.ofReal (L * δ) * (ENNReal.ofReal A * volume D + ENNReal.ofReal η) +
+        ENNReal.ofReal M * (ENNReal.ofReal A * (∫⁻ z in Ω, ENNReal.ofReal (g z)) +
+          ENNReal.ofReal η) := by
+  refine (cellSum_le_lintegral H hDo hDb p hp hLip hL hδ hM hbd).trans ?_
+  have h1' : (∫⁻ z in D, uDens H z) ≤ ENNReal.ofReal A * volume D + ENNReal.ofReal η := by
+    have := h1
+    unfold Prop210Bound at this
+    simpa only [ENNReal.ofReal_one, one_mul, setLIntegral_const, Measure.restrict_apply_univ]
+      using this
+  gcongr
+  · exact hf
+  · exact hg
+
 /-- The case `f = 1` of the deterministic core: `∑_{x ∈ V(D)} diam(H_x)² deg(x) ≤ ∫_D u + ∫_Ω g u`. -/
 theorem cellSum_one_le {D : Set ℂ} (hDo : IsOpen D) (hDb : Bornology.IsBounded D)
     {Ω : Set ℂ} {g : ℂ → ℝ}

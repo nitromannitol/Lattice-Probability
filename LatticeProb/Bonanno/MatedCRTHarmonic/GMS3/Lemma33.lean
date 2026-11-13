@@ -152,6 +152,21 @@ theorem energy_comp_le_sum (D : Set ℂ) {O : Set ℂ} (hO : IsOpen O) {f : ℂ 
   · exact sq_sub_le_of_adj H hO hdf hΛ hLip p hp (adj_of_edge G hloop)
       (hseg _ he.1 _ he.2 (adj_of_edge G hloop))
 
+/-- **Theorem 3.2 from Lemma 3.3** ([18], Dirichlet's principle): a function discrete harmonic
+at the interior vertices of `V(D)` (cells not meeting `∂D`) and equal to `f ∘ p` at the boundary vertices
+has energy at most `Energy(f ∘ p; G(V(D)))`. -/
+theorem energy_le_of_lap_eq_zero {D : Set ℂ} (hDo : IsOpen D) (hDb : Bornology.IsBounded D)
+    (q : V → ℝ) (h : V → ℝ)
+    (hharm : ∀ x ∈ vFin H D, ¬ (H.cell x ∩ frontier D).Nonempty → lap G h x = 0)
+    (hbd : ∀ x ∈ vFin H D, (H.cell x ∩ frontier D).Nonempty → h x = q x) :
+    energy G (vFin H D) h ≤ energy G (vFin H D) q := by
+  refine energy_le_of_harmonic G (B := {x | (H.cell x ∩ frontier D).Nonempty}) ?_ hharm
+    fun x hx hxB => (hbd x hx hxB).symm
+  intro x hx hxB d hd
+  have hsub := cell_subset_of_inter_frontier_eq_empty H hDo ((mem_vFin H hDb).mp hx)
+    (Set.not_nonempty_iff_eq_empty.mp hxB)
+  exact dtgt_mem_vFin_of_subset H hDb hsub hx hd
+
 /-- The sum of `(3.14)`, bounded through Lemma 3.1 (deterministic core, no probabilistic input). -/
 theorem energy_comp_le_lintegral {D : Set ℂ} (hDo : IsOpen D) (hDb : Bornology.IsBounded D)
     {O : Set ℂ} (hO : IsOpen O) {f : ℂ → ℝ} (hdf : DifferentiableOn ℝ f O) {Λ : ℝ} (hΛ : 0 ≤ Λ)
