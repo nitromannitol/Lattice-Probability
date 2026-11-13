@@ -14,7 +14,8 @@ in no other.
 Rounds, settling, holes and the odometer are defined exactly as in the stack
 construction, so the two processes share `LatticeProb.State` and every count
 derived from it.  What has to be proved is that the two have the same LAW,
-which is `ConstructionsAgree`.  The engine for it is
+which is `ConstructionsAgree`, proved as
+`LatticeProb.ParticleDrivenAgree.constructionsAgree`.  The engine for it is
 `LatticeProb.map_revealed_dag`: the pairs `(p, t)` at which a particle departs
 read pairwise distinct entries of `stack` (`LatticeProb.readIndex_injective`),
 each read looks only at the finitely many reads that precede it in the
@@ -159,7 +160,8 @@ def pObservables (ω : PData d) :
    fun tx => pHoleCount (toPDriver ω) tx.1 tx.2,
    fun ti => (pState (toPDriver ω) ti.1).active ti.2)
 
-/-- **The two constructions have the same law.**  The divisible-sandpile literature states it
+/-- **The two constructions have the same law.**  Proved as
+`LatticeProb.ParticleDrivenAgree.constructionsAgree`.  The divisible-sandpile literature states it
 without proof, and uses the same passage between
 the two constructions.  It is what carries the pathwise couplings of the
 particle-driven construction over to the odometer, the activity and the hole
