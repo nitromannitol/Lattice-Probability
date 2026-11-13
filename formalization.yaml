@@ -188,6 +188,18 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.External.feyDenBoerRedigCubicalCluster_holds"
+      file: "LatticeProb/External/FeyDenBoerRedigCubicalClusterProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.Sandpile.fdbr_parallel_terminal_unconditional"
+      file: "LatticeProb/External/FeyDenBoerRedigCubicalClusterProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.Graph.walkLaw_eval_le_carneVaropoulos"
       file: "LatticeProb/Graph/CarneVaropoulos.lean"
       sorry_count: 0
@@ -706,6 +718,11 @@ alignment:
       module: "LatticeProb.External.FeyMeesterRedigLeastActionProved"
       status: "proved"
       note: "From LatticeProb.Sandpile.le_of_isLegalToppling_of_eventually_eq, for legal toppling procedures in discrete time."
+    - source: "Fey-den Boer and Redig, Limiting shapes for deterministic centrally seeded growth models, arXiv:math/0702450v2, Theorem 4.1: the cubical toppled support on the background 2d - 2 and its lower radius"
+      lean: "LatticeProb.External.feyDenBoerRedigCubicalCluster_holds"
+      module: "LatticeProb.External.FeyDenBoerRedigCubicalClusterProved"
+      status: "proved"
+      note: "The proposition LatticeProb.External.FeyDenBoerRedigCubicalCluster, witnessed by the parallel odometer (LatticeProb.Sandpile.FdBR: stabilization, cube support, radius bound); LatticeProb.Sandpile.fdbr_parallel_terminal_unconditional is its consequence without the hypothesis."
     - source: "Carne (1985), Varopoulos (1985); Lyons-Peres, Probability on Trees and Networks, Theorem 13.4: the Carne-Varopoulos bound"
       lean: "LatticeProb.Graph.walkLaw_eval_le_carneVaropoulos"
       module: "LatticeProb.Graph.CarneVaropoulos"

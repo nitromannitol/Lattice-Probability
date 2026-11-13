@@ -49,7 +49,7 @@ a cited result with their sources.
 ### Cited results taken as hypotheses
 
 The following results from the literature are stated as propositions in
-`LatticeProb/External/`, and each of them is proved.  The Rellich-Kondrachov
+`LatticeProb/External/` and are proved in the library.  The Rellich-Kondrachov
 compact embedding in negative Sobolev order, stated there as
 `LatticeProb.External.RellichKondrachovNegSobolev`, is proved for every bounded
 domain and all real orders `s₀ < s`
@@ -102,7 +102,13 @@ states the eventual outer-radius bound. Their cited sources and chip-count conve
 specified in the files. Their conditional consequences in
 [`RadiusConsequences.lean`](LatticeProb/Sandpile/RadiusConsequences.lean) identify the global
 parallel stabilization and specialize the radius bound. These proofs take the two propositions
-as explicit hypotheses; the propositions remain unproved inputs.
+as explicit hypotheses. The cubical cluster is proved
+(`LatticeProb.External.feyDenBoerRedigCubicalCluster_holds`, in
+[`FeyDenBoerRedigCubicalClusterProved.lean`](LatticeProb/External/FeyDenBoerRedigCubicalClusterProved.lean),
+from the stabilization of the parallel odometer, the cube shape of its terminal support and chip
+conservation in [`LatticeProb/Sandpile/FdBR/`](LatticeProb/Sandpile/FdBR/)), so the terminal cube of
+the parallel process holds without it (`LatticeProb.Sandpile.fdbr_parallel_terminal_unconditional`).
+`FeyLevinePeresRadius` remains a cited input, and `flp_specialization` takes it as a hypothesis.
 
 Five further propositions there are proved in the library:
 `PotentialKernelAsymptotics`, the Green function and potential kernel
