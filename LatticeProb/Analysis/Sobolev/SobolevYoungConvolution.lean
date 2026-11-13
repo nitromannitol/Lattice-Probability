@@ -26,8 +26,8 @@
 
 The mollification estimate `SobolevMollificationEstimate` is proved as
 `sobolevMollificationEstimate_holds` in `FrechetKolmogorovMollifyProved.lean`, through the
-Fourier-side bound `sobolevNormSq_sub_convReal_le` of `f - f ⋆ ρ` by the `ρ`-average of the
-translation errors.
+Fourier-side bound `sobolevNormSq_sub_convReal_le_of_translate_le` of `f - f ⋆ ρ` by the
+`ρ`-average of the translation errors.
 -/
 import LatticeProb.Analysis.Sobolev.Convolution
 import LatticeProb.Analysis.Sobolev.Additivity

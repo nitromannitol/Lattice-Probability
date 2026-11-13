@@ -5,8 +5,8 @@ For a nonnegative continuous compactly supported `ρ` of total mass one, the Fou
 `1 - 𝓕ρ` satisfies `‖1 - 𝓕ρ(ξ)‖² ≤ ∫ ρ(y) ‖𝐞⟪-y, ξ⟫ - 1‖² dy`
 (`norm_one_sub_fourier_sq_le`), so for integrable `f` the squared `H^s` distance from `f` to
 `f ⋆ ρ` is at most the `ρ`-average of the translation errors `‖f(· - y) - f‖²_{H^s}`
-(`sobolevNormSq_sub_convReal_le`).  A normalized bump supported in a small ball gives
-`SobolevMollificationEstimate`.
+(`sobolevNormSq_sub_convReal_le_of_translate_le`).  A normalized bump supported in a small ball
+gives `SobolevMollificationEstimate`.
 
 If `f` has compact support but is not integrable, some point has no neighbourhood on which `f` is
 integrable.  Near that point the convolution with a bump that is positive on its open support
@@ -108,8 +108,8 @@ theorem norm_one_sub_fourier_sq_le {ρ : Space d → ℝ} (hρc : Continuous ρ)
 /-- **The mollification estimate.**  For integrable `f` and a continuous compactly supported
 probability density `ρ`, if every translation error `‖f(· - y) - f‖²_{H^s}` with `ρ y ≠ 0` is at
 most `η`, then `‖f - f ⋆ ρ‖²_{H^s} ≤ η`. -/
-theorem sobolevNormSq_sub_convReal_le (s : ℝ) {f ρ : Space d → ℝ} (hf : Integrable f)
-    (hρc : Continuous ρ) (hρcs : HasCompactSupport ρ) (hρ0 : ∀ y, 0 ≤ ρ y)
+theorem sobolevNormSq_sub_convReal_le_of_translate_le (s : ℝ) {f ρ : Space d → ℝ}
+    (hf : Integrable f) (hρc : Continuous ρ) (hρcs : HasCompactSupport ρ) (hρ0 : ∀ y, 0 ≤ ρ y)
     (hρ1 : ∫ y, ρ y = 1) {η : ℝ}
     (htr : ∀ y, ρ y ≠ 0 →
       sobolevNormSq d s (fun x => f (x + -y) - f x) ≤ ENNReal.ofReal η) :
@@ -305,8 +305,8 @@ theorem sobolevMollificationEstimate_holds : SobolevMollificationEstimate := by
   obtain ⟨δ, hδ, hδtr⟩ := htrans η hη
   obtain ⟨ρ, hρsm, hρcs, hρ0, hρ1, hsupp⟩ := exists_nonneg_mollifier (d := d) (half_pos hδ)
   refine ⟨ρ, hρsm, hρcs, fun f hf => ?_⟩
-  refine sobolevNormSq_sub_convReal_le s (hint f hf) hρsm.continuous hρcs hρ0 hρ1
-    (fun y hy => ?_)
+  refine sobolevNormSq_sub_convReal_le_of_translate_le s (hint f hf) hρsm.continuous hρcs hρ0
+    hρ1 (fun y hy => ?_)
   have hy' : y ∈ Metric.ball (0 : Space d) (δ / 2) := hsupp ▸ hy
   rw [Metric.mem_ball, dist_zero_right] at hy'
   exact hδtr (-y) (by rw [norm_neg]; linarith) f hf
@@ -320,7 +320,8 @@ theorem frechetKolmogorovMollify_holds : FrechetKolmogorovMollify := by
   obtain ⟨ρ, hρsm, hρcs, hρ0, hρ1, hρsupp⟩ := exists_nonneg_mollifier (d := d) (half_pos hδ)
   refine ⟨ρ, hρsm, hρcs, fun f hf => ?_⟩
   by_cases hfi : Integrable f
-  · refine sobolevNormSq_sub_convReal_le s hfi hρsm.continuous hρcs hρ0 hρ1 (fun y hy => ?_)
+  · refine sobolevNormSq_sub_convReal_le_of_translate_le s hfi hρsm.continuous hρcs hρ0 hρ1
+      (fun y hy => ?_)
     have hy' : y ∈ Metric.ball (0 : Space d) (δ / 2) := hρsupp ▸ hy
     rw [Metric.mem_ball, dist_zero_right] at hy'
     exact hδtr (-y) (by rw [norm_neg]; linarith) f hf
