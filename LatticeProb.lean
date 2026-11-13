@@ -677,6 +677,7 @@ import LatticeProb.Prob.AkcogluKrengelAE.BoxTiling
 import LatticeProb.Prob.AkcogluKrengelAE.AnchoredBoxErgodicProved
 import LatticeProb.Prob.AkcogluKrengelAE.AnchoredBoxErgodicHolds
 import LatticeProb.Prob.AkcogluKrengelAE.AnchoredBoxMaximalHolds
+import LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodicAllHolds
 import LatticeProb.Prob.Invariance
 import LatticeProb.Prob.ReturnTime
 import LatticeProb.Prob.Kac

@@ -398,6 +398,12 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.rectangleErgodicAll_holds"
+      file: "LatticeProb/Prob/AkcogluKrengelAE/RectangleErgodicAllHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.LQG.rescaledBallMassUniformStepLP_holds"
       file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
       sorry_count: 0
@@ -851,6 +857,11 @@ alignment:
       module: "LatticeProb.Prob.AkcogluKrengelAE.AnchoredBoxMaximalHolds"
       status: "proved"
       note: "The proposition LatticeProb.AnchoredBoxMaximalCentred for p > 1, from the one-parameter maximal theorem LatticeProb.birkhoffLpMaximal applied once per coordinate (LatticeProb.exists_lintegral_iSup_boxAvg_rpow_le)."
+    - source: "Multiparameter pointwise ergodic theorem for Z^d actions along rectangles with arbitrary corners"
+      lean: "LatticeProb.rectangleErgodicAll_holds"
+      module: "LatticeProb.Prob.AkcogluKrengelAE.RectangleErgodicAllHolds"
+      status: "proved"
+      note: "The propositions LatticeProb.RectangleErgodicAll and LatticeProb.RectangleErgodicFull (rectangles prod_i [ceil(N a_i), ceil(N b_i)) for every a <= b), from the box ergodic theorem along arbitrary side lengths LatticeProb.ae_tendsto_boxAvg_univ_integral, the orthant decomposition and the reflected actions."
 
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are
