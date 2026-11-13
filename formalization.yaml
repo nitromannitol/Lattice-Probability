@@ -410,6 +410,12 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.brownianMotionExists_holds"
+      file: "LatticeProb/Prob/BrownianMotionExistsHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.LQG.rescaledBallMassUniformStepLP_holds"
       file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
       sorry_count: 0
@@ -873,6 +879,11 @@ alignment:
       module: "LatticeProb.Prob.AkcogluKrengelAE.KrengelLpBallHolds"
       status: "proved"
       note: "The proposition LatticeProb.KrengelLpBall d for every d, with a constant depending only on d and p: the l1-ball average is at most (2d)^d times the largest of the 2^d orthant-box averages (LatticeProb.l1BallMax_le_orthantBoxMax), each orthant box is a box along a reflected action at a shifted point (LatticeProb.avg_orthantBox_eq), and the box maximal inequality LatticeProb.lintegral_iSup_boxAvg_rpow_le_uniform bounds each term."
+    - source: "Existence of standard real Brownian motion (Wiener 1923)"
+      lean: "LatticeProb.brownianMotionExists_holds"
+      module: "LatticeProb.Prob.BrownianMotionExistsHolds"
+      status: "proved"
+      note: "The proposition QuantumZipper.NonVacuity.BrownianMotionExists, the hypothesis of QuantumZipper.NonVacuity.exists_BM_indep_freeGFF, exists_BM_indep_zeroGFF and exists_wedge_indep_BM: the Gaussian-series process with covariance min s t on (N -> R, LQGDimension.ExistAsm.stdP) has a modification with continuous paths by the dyadic Kolmogorov theorem (QuantumZipper.BMExist.exists_isBrownianReal_stdP)."
 
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, and leanprover/comparator.  Modules are

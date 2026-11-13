@@ -588,6 +588,10 @@ is the log-sum-exp smoothing of `max x`, with Gibbs weight `softWeight β x i`.
   strong Markov property; `LatticeProb.brownian_exit_tail`: the probability of
   leaving the ball of radius `A` before time `T` is at most
   `C exp(-c A² / T)`.
+* `LatticeProb.brownianMotionExists_holds`: a standard real Brownian motion
+  exists (`QuantumZipper.NonVacuity.BrownianMotionExists`), as the continuous
+  modification of the Gaussian process with covariance `min s t` built from an
+  i.i.d. standard Gaussian sequence.
 * `LatticeProb.Isonormal.ae_tendsto_partialSum`: almost sure convergence of the
   partial sums of the isonormal process.
 * `LatticeProb.GaussTail.gaussianReal_real_Ioi_le`: the Mills ratio bound;
