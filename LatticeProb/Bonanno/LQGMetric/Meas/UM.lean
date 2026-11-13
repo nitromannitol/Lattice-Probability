@@ -139,11 +139,33 @@ theorem congr (h : AEEventDeterminedBy E X P) (hEF : E =ᵐ[P] F) : AEEventDeter
   obtain ⟨S, hS, hE⟩ := h
   exact ⟨S, hS, hEF.symm.trans hE⟩
 
+theorem compl (h : AEEventDeterminedBy E X P) : AEEventDeterminedBy Eᶜ X P := by
+  obtain ⟨S, hS, hE⟩ := h
+  exact ⟨Sᶜ, hS.compl, hE.compl⟩
+
+theorem iUnion {ι : Type*} [Countable ι] {E : ι → Set Ω}
+    (h : ∀ i, AEEventDeterminedBy (E i) X P) : AEEventDeterminedBy (⋃ i, E i) X P := by
+  choose S hS hE using h
+  refine ⟨⋃ i, S i, MeasurableSet.iUnion hS, ?_⟩
+  rw [preimage_iUnion]
+  exact EventuallyEqSet.countable_iUnion hE
+
+theorem iInter {ι : Type*} [Countable ι] {E : ι → Set Ω}
+    (h : ∀ i, AEEventDeterminedBy (E i) X P) : AEEventDeterminedBy (⋂ i, E i) X P := by
+  have := (iUnion fun i => (h i).compl).compl
+  simpa only [compl_iUnion, compl_compl] using this
+
 theorem union (hE : AEEventDeterminedBy E X P) (hF : AEEventDeterminedBy F X P) :
     AEEventDeterminedBy (E ∪ F) X P := by
   obtain ⟨S, hS, h1⟩ := hE
   obtain ⟨T, hT, h2⟩ := hF
   exact ⟨S ∪ T, hS.union hT, h1.union h2⟩
+theorem inter (hE : AEEventDeterminedBy E X P) (hF : AEEventDeterminedBy F X P) :
+    AEEventDeterminedBy (E ∩ F) X P := by
+  obtain ⟨S, hS, h1⟩ := hE
+  obtain ⟨T, hT, h2⟩ := hF
+  exact ⟨S ∩ T, hS.inter hT, h1.inter h2⟩
+
 
 end AEEventDeterminedBy
 
@@ -151,6 +173,14 @@ section Det
 
 variable {Ω α β : Type*} [MeasurableSpace Ω] [MeasurableSpace α] [MeasurableSpace β]
   {P : Measure Ω} {X : Ω → α}
+
+/-- if `Y` is a.s. determined by `X`, so is every event `{Y ∈ S}` -/
+theorem AEDeterminedBy.preimage {Y : Ω → β} (h : AEDeterminedBy Y X P) {S : Set β}
+    (hS : MeasurableSet S) : AEEventDeterminedBy (Y ⁻¹' S) X P := by
+  obtain ⟨F, hF, hY⟩ := h
+  refine ⟨F ⁻¹' S, hF hS, ?_⟩
+  filter_upwards [hY] with ω hω
+  simp [hω]
 
 end Det
 

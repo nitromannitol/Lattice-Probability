@@ -110,6 +110,49 @@ theorem octave_crossing_cdf_bounds
 
  
 
+theorem map_lenN_eq
+    {Ω Ω₂ : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω₂]
+    {P : Measure Ω} {P₂ : Measure Ω₂}
+    {W : WNSpace → Ω → ℝ} {V : WNSpace → Ω₂ → ℝ}
+    (hW : IsWhiteNoise P W) (hV : IsWhiteNoise P₂ V)
+    (ξ : ℝ) (m : ℕ) :
+    P.map (lenN ξ W P 1 1 m) = P₂.map (lenN ξ V P₂ 1 1 m) := by
+  have hv := isPhiVersion_phiMN hW (Nat.zero_le m)
+  have hv₂ := isPhiVersion_phiMN hV (Nat.zero_le m)
+  have hm : Measurable (lenN ξ W P 1 1 m) :=
+    measurable_lenObs hv.cont hv.meas _
+  have hm₂ : Measurable (lenN ξ V P₂ 1 1 m) :=
+    measurable_lenObs hv₂.cont hv₂.meas _
+  apply Measure.ext
+  intro S hS
+  rw [Measure.map_apply hm hS, Measure.map_apply hm₂ hS]
+  have hS' : MeasurableSet {x : ℝ≥0∞ | x.toReal ∈ S} :=
+    hS.preimage ENNReal.measurable_toReal
+  have he := measure_crossLenIn_phiVer_eq
+    (ξ := ξ) (K := (rectAB 1 1).toSet)
+    (A := (rectAB 1 1).side₁) (B := (rectAB 1 1).side₂)
+    (rectAB 1 1).isCompact_toSet hW hV
+    (show 0 < (2 : ℝ)⁻¹ ^ m by positivity)
+    (show (2 : ℝ)⁻¹ ^ m ≤ 1 by
+      exact pow_le_one₀ (by norm_num) (by norm_num))
+    (S := {x : ℝ≥0∞ | x.toReal ∈ S}) hS'
+  change
+    P {ω | (rectLen ξ (fun z => phiVer W P ((2 : ℝ)⁻¹ ^ m) 1 z ω)
+      (rectAB 1 1)).toReal ∈ S} =
+    P₂ {ω | (rectLen ξ (fun z => phiVer V P₂ ((2 : ℝ)⁻¹ ^ m) 1 z ω)
+      (rectAB 1 1)).toReal ∈ S}
+  simpa only [rectLen, Set.mem_setOf_eq] using he
+
+theorem lambdaN_eq_of_whiteNoise
+    {Ω Ω₂ : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω₂]
+    {P : Measure Ω} {P₂ : Measure Ω₂}
+    {W : WNSpace → Ω → ℝ} {V : WNSpace → Ω₂ → ℝ}
+    (hW : IsWhiteNoise P W) (hV : IsWhiteNoise P₂ V)
+    (ξ : ℝ) (m : ℕ) :
+    lambdaN ξ W P m = lambdaN ξ V P₂ m := by
+  unfold lambdaN
+  exact congrArg lowerMedianLaw (map_lenN_eq hW hV ξ m)
+
 theorem dyadic_quantile_sandwich
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     {W : WNSpace → Ω → ℝ} (hW : IsWhiteNoise P W)
