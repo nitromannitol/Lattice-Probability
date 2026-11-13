@@ -290,4 +290,16 @@ theorem ae_hasScaleCircleAvgs_wp (hX : IsWholePlaneGFF X P) :
   filter_upwards [ae_tendsto_mollAvgS_circleAvg hX] with ω h ρ hρ
   exact Eventually.of_forall (h.2 ρ hρ)
 
+/-- **The coordinate change for the whole-plane GFF**, simultaneously for all dilations,
+translations and additive constants: almost surely, for every `r > 0`, `c`, `z` and every set
+`A`, `lqgArea γ (X(r · + z) + Q log r + c) A = e^{γc} lqgArea γ X (r A + z)`. -/
+theorem ae_lqgArea_affine_wp (hX : IsWholePlaneGFF X P) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2) :
+    ∀ᵐ ω ∂P, ∀ r : ℝ, 0 < r → ∀ (c : ℝ) (z : ℂ) (A : Set ℂ),
+      lqgArea γ (addConst (affineComp r z (X ω)) (lqgQ γ * Real.log r + c)) A =
+        ENNReal.ofReal (Real.exp (γ * c)) *
+          lqgArea γ (X ω) ((fun w => (r : ℂ) * w + z) '' A) := by
+  filter_upwards [ae_hasScaleCircleAvgs_wp hX, ae_hasAreaLimitS_wp hX hγ hγ2] with ω h1 h2
+  intro r hr c z A
+  exact lqgArea_affine_apply hγ.ne' h1 h2 hr z c A
+
 end MatedCRTHarmonic.LQGCoord

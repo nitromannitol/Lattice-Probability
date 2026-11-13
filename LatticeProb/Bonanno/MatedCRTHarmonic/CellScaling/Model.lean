@@ -86,11 +86,32 @@ def field (ω : M.coupled.family.Ω) : LQGMetric.DistC :=
 def scale (b : ℝ) (ω : M.coupled.family.Ω) : ℝ :=
   coneScale γ γ (fun t => D.B t ω) (fun t => D.B' t ω) b
 
+/-- The γ-LQG area `μ_h = A^γ_h` of the cone field. -/
+def area (ω : M.coupled.family.Ω) : Measure ℂ := lqgArea γ (D.field ω)
+
 end ConeRealization
 
 /-! ### Joint scaling as printed, and the SLE-dependent bundle fields -/
 
+/-- **Area parametrization of space-filling SLE:** `η(0) = 0` and
+`A^γ_h(η([s, t])) = t − s` for `s ≤ t`. This combines the coupling's `areaParam`
+and `spaceFilling` fields. -/
+def AreaParametrization {γ : ℝ} {M : MesoModel.MatedCRTUnitMesoModel γ} (D : ConeRealization M) : Prop :=
+  ∀ᵐ ω ∂M.coupled.family.P, D.curve ω 0 = 0 ∧ ∀ s t : ℝ, s ≤ t →
+    D.area ω (D.curve ω '' Icc s t) = ENNReal.ofReal (t - s)
+
 /-! ### SLE-free inputs (to prove) -/
+
+/-- **Area scaling law of the cone:** for every `b > 0`,
+`b⁻¹ μ_h(B_{R_b}(0))` has the law of `μ_h(B_1(0))`. Sources: `μ_{h_b}(A) = b⁻¹ μ_h(R_b A)`
+a.s. for all Borel `A` ([SW] Sheffield–Wang Thm 1.1/1.4, `1605.06171v2.`, the random-dilation
+coordinate change; note [17] prints this formula inverted, the area-scaling discussion), and `h_b =d h`
+([14, Prop 4.13(i)]; [17] (2.8)) applied to the measurable
+functional `h ↦ μ_h(B_1(0))`. No SLE is involved (GFF, circle averages, GMC). -/
+def AreaScalingLaw {γ : ℝ} {M : MesoModel.MatedCRTUnitMesoModel γ} (D : ConeRealization M) : Prop :=
+  ∀ b : ℝ, 0 < b → ∀ S : Set ℝ≥0∞, MeasurableSet S →
+    M.coupled.family.P {ω | ENNReal.ofReal b⁻¹ * D.area ω (ball 0 (D.scale b ω)) ∈ S} =
+      M.coupled.family.P {ω | D.area ω (ball 0 1) ∈ S}
 
 /-! ### Produced downstream -/
 

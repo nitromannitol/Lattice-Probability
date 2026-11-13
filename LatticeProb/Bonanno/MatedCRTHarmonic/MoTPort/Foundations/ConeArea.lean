@@ -82,6 +82,10 @@ theorem qAreaC_compact_lt_top (γ : ℝ) (h : Field) {K : Set ℂ} (hK : IsCompa
   by_cases hx : ∃ μ, QuantumZipper.IsVagueLimitOn univ (areaApproxC γ h) μ
   · exact (isVagueLimitOn_qAreaC hx).2.1 K hK (subset_univ K)
   · rw [qAreaC, dite_eq_right_of_eq_false (eq_false hx)]; simp
+instance isLocallyFiniteMeasure_qAreaC (γ : ℝ) (h : Field) :
+    IsLocallyFiniteMeasure (qAreaC γ h) :=
+  haveI : IsFiniteMeasureOnCompacts (qAreaC γ h) := ⟨fun _ hK => qAreaC_compact_lt_top γ h hK⟩
+  inferInstance
 
 /-- the circle averages of `h` exist (as limits of the mollified averages) at a.e. point at
 every dyadic scale -/

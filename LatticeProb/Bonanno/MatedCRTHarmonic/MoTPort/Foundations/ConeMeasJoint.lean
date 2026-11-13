@@ -8,6 +8,7 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.Measurability
 import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.GoodSample
 import LatticeProb.Bonanno.LQGMetric.Field.MeasurableAvg
 import LatticeProb.Bonanno.LQGMetric.Field.GFFInvariance
+import LatticeProb.Bonanno.MatedCRTHarmonic.MoTPort.Foundations.ConeMeas
 
 /-!
 # C.meas (part 2): joint measurability of rotation and dilation; `surfMapC` is a.e.-measurable
@@ -68,6 +69,63 @@ theorem measurable_apply_family {ψ : ℝ → TestC} (hψ : Continuous ψ) :
     Measurable fun p : ℝ × Field => p.2 (ψ p.1) :=
   measurable_uncurry_of_continuous_of_measurable (u := fun (x : ℝ) (h : Field) => h (ψ x))
     (fun h => (map_continuous h).comp hψ) (fun x => measurable_distOn_apply _)
+/-- `(θ, y) ↦ φ(e^{-iθ} y)` is smooth -/
+theorem contDiff_rotPsi (φ : TestC) : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun p : ℝ × ℂ =>
+    φ (Complex.exp (Complex.ofRealCLM (-p.1) * Complex.I) * p.2)) := by
+  refine φ.contDiff.comp (ContDiff.mul ?_ contDiff_snd)
+  exact (ContDiff.restrict_scalars ℝ (𝕜' := ℂ) Complex.contDiff_exp).comp
+    ((Complex.ofRealCLM.contDiff.comp contDiff_fst.neg).mul contDiff_const)
+
+/-- the rotated test function as a function of `(θ, y)` -/
+def rotPsi (φ : TestC) (θ : ℝ) (y : ℂ) : ℝ :=
+  φ (Complex.exp (Complex.ofRealCLM (-θ) * Complex.I) * y)
+
+theorem contDiff_uncurry_rotPsi (φ : TestC) :
+    ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (Function.uncurry (rotPsi φ)) := by
+  rw [Function.uncurry_def]
+  unfold rotPsi
+  exact contDiff_rotPsi φ
+
+theorem contDiff_rotPsi_apply (φ : TestC) (θ : ℝ) :
+    ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (rotPsi φ θ) := by
+  have h := (contDiff_uncurry_rotPsi φ).comp ((contDiff_const (c := θ)).prodMk contDiff_id)
+  simpa only [Function.comp_def, Function.uncurry_apply_pair, id_eq] using h
+
+/-- **`θ ↦ φ(e^{-iθ} ·)` is continuous into `𝓓(ℂ)`** -/
+theorem continuous_rotTest (φ : TestC) :
+    Continuous fun θ : ℝ =>
+      testPullCLE (rotation (Circle.exp (-θ))).toContinuousLinearEquiv φ := by
+  obtain ⟨R, hR⟩ := φ.hasCompactSupport.isCompact.isBounded.subset_closedBall (0 : ℂ)
+  let K : Compacts ℂ := ⟨closedBall 0 R, isCompact_closedBall _ _⟩
+  have hK : ∀ θ, ∀ y ∉ (K : Set ℂ), rotPsi φ θ y = 0 := by
+    intro θ y hy
+    simp only [K, TopologicalSpace.Compacts.coe_mk, mem_closedBall, dist_zero_right] at hy
+    have hn : Complex.exp (Complex.ofRealCLM (-θ) * Complex.I) * y ∉ tsupport φ := by
+      intro h
+      have := hR h
+      rw [mem_closedBall, dist_zero_right, norm_mul, Complex.ofRealCLM_apply,
+        Complex.norm_exp_ofReal_mul_I, one_mul] at this
+      exact hy this
+    unfold rotPsi
+    exact image_eq_zero_of_notMem_tsupport (f := φ) hn
+  have hc := continuous_testFamK K (rotPsi φ) (contDiff_rotPsi_apply φ) hK
+    (continuous_iteratedFDeriv_snd_real (contDiff_uncurry_rotPsi φ))
+  have hval : ∀ θ y, testPullCLE (rotation (Circle.exp (-θ))).toContinuousLinearEquiv φ y =
+      rotPsi φ θ y := by
+    intro θ y
+    rw [testPullCLE_rotation_apply]
+    simp only [rotPsi, Circle.coe_exp, Complex.ofRealCLM_apply, Complex.ofReal_neg, neg_mul]
+  have e : (fun θ : ℝ => testPullCLE (rotation (Circle.exp (-θ))).toContinuousLinearEquiv φ) =
+      ofSuppC K ∘ testFamK K (rotPsi φ) (contDiff_rotPsi_apply φ) hK := by
+    funext θ
+    ext y
+    exact hval θ y
+  rw [e]
+  exact (ofSuppC K).continuous.comp hc
+
+/-- **rotation is jointly measurable** -/
+theorem measurable_rotateField_joint : Measurable fun p : ℝ × Field => rotateField p.1 p.2 :=
+  measurable_distOn_iff.2 fun φ => measurable_apply_family (continuous_rotTest φ)
 
 /-- **`u ↦ φ(e^{-u} ·)` is continuous into `𝓓(ℂ)`** (dilation by `e^u`) -/
 theorem continuous_dilTest (φ : TestC) :

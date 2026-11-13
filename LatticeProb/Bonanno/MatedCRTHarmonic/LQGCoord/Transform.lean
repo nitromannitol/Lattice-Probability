@@ -48,6 +48,8 @@ open LQGMetric LQGMetric.CircleAvg MatedCRTHarmonic.CellScaling
 /-- The area approximation at radius `s`: `s^{γ²/2} e^{γ h_s(z)} dz` on `ℂ`. -/
 def areaS (γ : ℝ) (h : DistC) (s : ℝ) : Measure ℂ :=
   volume.withDensity fun z => ENNReal.ofReal (s ^ (γ ^ 2 / 2) * Real.exp (γ * circleAvg h s z))
+lemma lqgAreaApprox_eq_areaS (γ : ℝ) (h : DistC) (k : ℕ) :
+    lqgAreaApprox γ h k = areaS γ h (dyadicScale k) := rfl
 
 /-- **Circle averages along every mollifier scale**: for every `ρ > 0` and a.e. centre `w`, the
 scale-`s` mollified circle averages converge to the circle average as `s → 0⁺`. -/
@@ -118,6 +120,7 @@ lemma circleAvg_addConst_affineComp_of_tendsto {h : DistC} {r ρ : ℝ} (hr : 0 
 
 /-- the affine map `w ↦ r w + z` -/
 abbrev affT {r : ℝ} (hr : 0 < r) (z : ℂ) : ℂ ≃ᵐ ℂ := DG.affineEquivC hr z
+lemma affT_apply {r : ℝ} (hr : 0 < r) (z w : ℂ) : affT hr z w = (r : ℂ) * w + z := rfl
 
 lemma quasiMeasurePreserving_affT {r : ℝ} (hr : 0 < r) (z : ℂ) :
     Measure.QuasiMeasurePreserving (affT hr z) volume volume := by

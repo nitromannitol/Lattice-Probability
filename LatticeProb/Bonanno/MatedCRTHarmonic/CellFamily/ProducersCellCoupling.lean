@@ -10,6 +10,7 @@ import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTPath2
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTEdge
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTIsLocallyFinite
 import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.MatedCRTGraph
+import LatticeProb.Bonanno.MatedCRTHarmonic.Implementation.MatedCRTGraphConnected
 
 /-!
 # Graph-connectivity and looplessness producers from the mated-CRT cell coupling
@@ -49,6 +50,9 @@ structure CellCoupledRandomFamily (γ : ℝ) where
 
 namespace RandomCellFamily
 
+/-- Adapt the cell-model package to the mesh-indexed random-cell-family interface. -/
+noncomputable def ofCellCoupling {γ : ℝ} (D : CellCoupledRandomFamily γ) : RandomCellFamily := D.family
+
 end RandomCellFamily
 
 /-- A cell-coupled random family whose mesh graphs are, almost surely, the mated-CRT **multigraphs** of its Brownian
@@ -61,6 +65,47 @@ structure MultigraphCoupledRandomFamily (γ : ℝ) extends CellCoupledRandomFami
 
 namespace MultigraphCoupledRandomFamily
 
+/-- Build a multigraph-coupled family from the multigraph identity alone (the adjacency field is derived). -/
+def ofMultigraph {γ : ℝ} (family : RandomCellFamily) (bm : family.Ω → MatedCRT.Path2)
+    (cell : family.Ω → ℤ → Set ℂ) (coupling : MatedCRT.IsCellCoupling γ family.P bm cell)
+    (meshGraph_eq : MatedCRTMultigraphIdentification family bm) : MultigraphCoupledRandomFamily γ where
+  family := family
+  bm := bm
+  cell := cell
+  coupling := coupling
+  graphIdentification := meshGraph_eq.graphIdentification
+  meshGraph_eq := meshGraph_eq
+
 end MultigraphCoupledRandomFamily
+
+private theorem connected_transfer_of_adjIff
+    {V : Type*} (G G' : SimpleGraph V)
+    (hadj : ∀ x y, G.Adj x y ↔ G'.Adj x y) (hconn : G'.Connected) : G.Connected := by
+  obtain ⟨root, hroot⟩ := (G'.connected_iff_exists_forall_reachable).mp hconn
+  apply G.connected_iff_exists_forall_reachable.mpr
+  refine ⟨root, fun x => ?_⟩
+  have hreach := hroot x
+  have hrt := (G'.reachable_iff_reflTransGen root x).mp hreach
+  have hrt' := Relation.ReflTransGen.mono (fun a b hab => (hadj a b).mpr hab) root x hrt
+  exact (G.reachable_iff_reflTransGen root x).mpr hrt'
+
+/-- The graph family of `RandomCellFamily.ofCellCoupling` is almost surely connected, using the checked provider of
+the frozen mated-CRT connectivity anchor. -/
+theorem graphConnected_ofCellCoupling {γ : ℝ} (D : CellCoupledRandomFamily γ) :
+    GraphConnected (RandomCellFamily.ofCellCoupling D) := by
+  intro k
+  filter_upwards [D.graphIdentification k] with ω hview
+  rcases hview with ⟨hlocal, hadj⟩
+  exact connected_transfer_of_adjIff (D.family.G k ω).adj
+    (MatedCRT.graph (mesh k) (D.bm ω) hlocal).adj hadj
+    (MatedCRTHarmonic.Implementation.matedCRT_graph_connected_impl
+      (mesh k) (D.bm ω) hlocal)
+
+/-- The mesh graphs of a multigraph-coupled family almost surely have no loops, at every mesh: the body of
+`GraphLoopless D.family` (`CellFamily/WaypointStrongMarkovFixed.lean`, the following-curve argument). Producer of the looplessness premise of
+the corrected waypoint input (the waypoint interface, §3.5; probe 1). -/
+theorem MultigraphCoupledRandomFamily.ae_loopless {γ : ℝ} (D : MultigraphCoupledRandomFamily γ) (k : ℕ) :
+    ∀ᵐ ω ∂D.family.P, ∀ e : D.family.E k ω, (D.family.G k ω).src e ≠ (D.family.G k ω).tgt e :=
+  D.meshGraph_eq.loopless k
 
 end MatedCRTHarmonic.CellFamily

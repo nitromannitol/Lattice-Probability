@@ -403,6 +403,22 @@ def ofFunC (f : ℂ → ℝ) : Field := Distribution.ofFun ⊤ f volume ⊤
 variable {Ω : Type*} [MeasurableSpace Ω]
 
 namespace GFFBdry
+lemma ofFunOn_apply {U : Opens ℂ} {f : ℂ → ℝ} (hf : LocallyIntegrableOn f U volume)
+    (φ : TestOn U) : ofFunOn U f φ = ∫ x, φ x * f x := by
+  rw [ofFunOn, Distribution.ofFun_apply hf]; rfl
+
+/-- restriction of `ofFunC g` to `U` is `ofFunOn U g` -/
+lemma restrictTo_ofFunC (U : Opens ℂ) {g : ℂ → ℝ} (hg : LocallyIntegrable g volume) :
+    restrictTo U (ofFunC g) = ofFunOn U g := by
+  ext φ
+  rw [ofFunOn_apply (hg.locallyIntegrableOn _)]
+  show ofFunC g (TestFunction.monoCLM ℝ φ) = _
+  rw [ofFunC, Distribution.ofFun_apply (hg.locallyIntegrableOn _)]
+  simp only [TestFunction.monoCLM_apply, le_refl, le_top, and_self, ite_true, smul_eq_mul]
+
+lemma restrictTo_add (U : Opens ℂ) (a b : Field) :
+    restrictTo U (a + b) = restrictTo U a + restrictTo U b := rfl
+
 
 end GFFBdry
 

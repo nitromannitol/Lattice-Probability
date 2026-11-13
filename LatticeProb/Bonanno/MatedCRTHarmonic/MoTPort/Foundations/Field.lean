@@ -122,6 +122,21 @@ end FieldOps
 
 open FieldOps
 
+/-- `h(e^{iθ} ·)`: `⟨h(e^{iθ}·), φ⟩ = ⟨h, φ(e^{-iθ}·)⟩` (rotations preserve Lebesgue measure) -/
+def rotateField (θ : ℝ) (h : Field) : Field :=
+  h.comp (testPullCLE (rotation (Circle.exp (-θ))).toContinuousLinearEquiv)
+
+lemma rotateField_apply (θ : ℝ) (h : Field) (φ : LQGMetric.TestC) :
+    rotateField θ h φ = h (testPullCLE (rotation (Circle.exp (-θ))).toContinuousLinearEquiv φ) :=
+  rfl
+
+lemma testPullCLE_rotation_apply (θ : ℝ) (φ : LQGMetric.TestC) (x : ℂ) :
+    (testPullCLE (rotation (Circle.exp (-θ))).toContinuousLinearEquiv φ) x =
+      φ (Circle.exp (-θ) * x) := rfl
+
+lemma measurable_rotateField (θ : ℝ) : Measurable (rotateField θ) :=
+  LQGMetric.measurable_distOn_iff.2 fun _ => LQGMetric.measurable_distOn_apply _
+
 /-! ## The bridge to QuantumZipper's `FieldSample` -/
 
 end MatedCRTHarmonic.MoTPort

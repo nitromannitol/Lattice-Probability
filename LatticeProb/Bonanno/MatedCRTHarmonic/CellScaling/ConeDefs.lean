@@ -89,6 +89,10 @@ def coneScale (γ α : ℝ) (b b' : ℝ≥0 → ℝ) (b₀ : ℝ) : ℝ :=
 def coneRescaleField (γ R b₀ : ℝ) (h : LQGMetric.DistC) : LQGMetric.DistC :=
   LQGMetric.addConst (LQGMetric.affineComp R 0 h) (lqgQ γ * Real.log R - γ⁻¹ * Real.log b₀)
 
+/-- **`η^b`** : `η^b(t) = R_b⁻¹ η(bt)`. -/
+def coneRescaleCurve (R b₀ : ℝ) (η : C(ℝ, ℂ)) : C(ℝ, ℂ) :=
+  ⟨fun t => ((R⁻¹ : ℝ) : ℂ) * η (b₀ * t), by fun_prop⟩
+
 /-- The γ-quantum cone field `h` of the cell model, built from the whole-plane GFF `X` and the two radial Brownian
 motions `B, B'` ( with `α = γ`). -/
 def coneFieldOf (γ : ℝ) (X : LQGMetric.DistC) (b b' : ℝ≥0 → ℝ) : LQGMetric.DistC :=

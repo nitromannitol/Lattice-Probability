@@ -38,12 +38,18 @@ namespace LQGMetric
 def UMeasurableSet {α : Type*} [MeasurableSpace α] (s : Set α) : Prop :=
   ∀ μ : Measure α, IsFiniteMeasure μ → NullMeasurableSet s μ
 
+/-- an event is a.s. determined by `X`: a.s. equal to an event of `σ(X)` -/
+def AEEventDeterminedBy {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α]
+    (E : Set Ω) (X : Ω → α) (P : Measure Ω) : Prop :=
+  ∃ S : Set α, MeasurableSet S ∧ E =ᵐ[P] X ⁻¹' S
+
 namespace UMeasurableSet
 
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] {s t : Set α}
 
 theorem of_measurableSet (hs : MeasurableSet s) : UMeasurableSet s :=
   fun _ _ => hs.nullMeasurableSet
+theorem empty : UMeasurableSet (∅ : Set α) := of_measurableSet MeasurableSet.empty
 
 theorem compl (hs : UMeasurableSet s) : UMeasurableSet sᶜ := fun μ hμ => (hs μ hμ).compl
 
@@ -52,6 +58,8 @@ theorem iUnion {ι : Sort*} [Countable ι] {s : ι → Set α} (hs : ∀ i, UMea
 
 theorem iInter {ι : Sort*} [Countable ι] {s : ι → Set α} (hs : ∀ i, UMeasurableSet (s i)) :
     UMeasurableSet (⋂ i, s i) := fun μ hμ => NullMeasurableSet.iInter fun i => hs i μ hμ
+theorem union (hs : UMeasurableSet s) (ht : UMeasurableSet t) : UMeasurableSet (s ∪ t) :=
+  fun μ hμ => (hs μ hμ).union (ht μ hμ)
 
 theorem inter (hs : UMeasurableSet s) (ht : UMeasurableSet t) : UMeasurableSet (s ∩ t) :=
   fun μ hμ => (hs μ hμ).inter (ht μ hμ)
@@ -116,6 +124,15 @@ namespace AEEventDeterminedBy
 
 variable {Ω α β : Type*} [MeasurableSpace Ω] [MeasurableSpace α] [MeasurableSpace β]
   {P : Measure Ω} {X : Ω → α} {E F : Set Ω}
+
+theorem of_measurableSet {S : Set α} (hS : MeasurableSet S) :
+    AEEventDeterminedBy (X ⁻¹' S) X P := ⟨S, hS, ae_eq_refl _⟩
+
+theorem union (hE : AEEventDeterminedBy E X P) (hF : AEEventDeterminedBy F X P) :
+    AEEventDeterminedBy (E ∪ F) X P := by
+  obtain ⟨S, hS, h1⟩ := hE
+  obtain ⟨T, hT, h2⟩ := hF
+  exact ⟨S ∪ T, hS.union hT, h1.union h2⟩
 
 end AEEventDeterminedBy
 

@@ -201,4 +201,21 @@ theorem exists_radialPath {Ω β : Type*} [MeasurableSpace Ω] [MeasurableSpace 
   rw [radMap_apply, ite_eq_left hmem]
   simp only [e1, e2]
 
+/-- **Independence of the GFF and the MoT cone process** (the hypothesis `hXA`
+theorems), from the independence of `X` and the Brownian pair. -/
+theorem indepFun_motConeRadial {Ω β : Type*} [MeasurableSpace Ω] [MeasurableSpace β]
+    {P : Measure Ω} {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2) {X : Ω → β} {B B' : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P) (hB' : IsBrownianReal B' P)
+    (hind : IndepFun X (fun ω => ((fun t => B t ω), (fun t => B' t ω))) P) :
+    IndepFun X (fun ω t =>
+      LQGCone.motConeRadial γ γ (fun s => B s ω) (fun s => B' s ω) t) P := by
+  obtain ⟨W, hWm, hXW, hW⟩ := exists_radialPath hγ hγ2 hB hB' hind
+  let G : C(ℝ, ℝ) → (ℝ → ℝ) := fun w t => w t - lqgQ γ * t
+  have hG : Measurable G :=
+    measurable_pi_iff.2 fun t => (ContinuousMap.measurable_eval t).sub_const _
+  refine (hXW.comp measurable_id hG).congr (ae_eq_refl _) ?_
+  filter_upwards [hW] with ω hω
+  funext t
+  simp only [Function.comp_apply, G, hω, LQGCone.motConeRadial]
+
 end MatedCRTHarmonic.ConeScaling

@@ -48,8 +48,67 @@ namespace MatedCRTHarmonic.MoTPort
 open LQGMetric GFFBdry
 
 /-! ## Fields modulo `cℤ` -/
+/-- the fixed bump `φ₀ ∈ C_c^∞(ℂ)` with `∫ φ₀ = 1` used to normalize fields modulo constants
+(IG4 L1103: "fix φ₀ ∈ C_c^∞ with ∫ φ₀ = 1"); it is LQGMetric's reference test function
+`refTest` (the standard mollifier supported in `B₁(0)`). -/
+def φ₀ : TestC := refTest
+
+lemma integral_φ₀ : ∫ x, φ₀ x = 1 := integral_refTest
+
+/-- the normalized representative of `h` modulo `cℤ`: `h − c⌊(h, φ₀)/c⌋`, so that
+`(h, φ₀) ∈ [0,c)` -/
+def normMod (c : ℝ) (h : Field) : Field :=
+  addConst h (-c * ⌊h φ₀ / c⌋)
 
 namespace NormMod
+
+lemma addConst_addConst (h : Field) (a b : ℝ) :
+    addConst (addConst h a) b = addConst h (a + b) := by
+  ext φ
+  simp only [GFFInv.addConst_apply]
+  ring
+
+lemma addConst_zero (h : Field) : addConst h 0 = h := by
+  ext φ
+  simp only [GFFInv.addConst_apply, mul_zero, add_zero]
+
+lemma addConst_apply_φ₀ (h : Field) (a : ℝ) : addConst h a φ₀ = h φ₀ + a := by
+  rw [GFFInv.addConst_apply, integral_φ₀, one_mul]
+
+lemma measurable_addConst_prod : Measurable fun p : Field × ℝ => addConst p.1 p.2 :=
+  GFFInv.measurable_distC_iff.2 fun φ => by
+    simp only [GFFInv.addConst_apply]
+    exact ((measurable_distOn_apply φ).comp measurable_fst).add (measurable_snd.const_mul _)
+
+theorem measurable_normMod (c : ℝ) : Measurable (normMod c) := by
+  have hf : Measurable fun h : Field => -c * (⌊h φ₀ / c⌋ : ℝ) :=
+    ((measurable_of_countable (fun n : ℤ => (n : ℝ))).comp
+      ((measurable_distOn_apply φ₀).div_const c).floor).const_mul _
+  refine GFFInv.measurable_distC_iff.2 fun φ => ?_
+  simp only [normMod, GFFInv.addConst_apply]
+  exact (measurable_distOn_apply φ).add (hf.const_mul _)
+
+/-- adding an integer multiple of `c` does not change the normalized representative
+(exact, for every field) -/
+theorem normMod_addConst_intMul {c : ℝ} (hc : c ≠ 0) (h : Field) (k : ℤ) :
+    normMod c (addConst h (c * k)) = normMod c h := by
+  unfold normMod
+  rw [addConst_apply_φ₀, addConst_addConst,
+    show (h φ₀ + c * k) / c = h φ₀ / c + k by field_simp,
+    Int.floor_add_intCast]
+  congr 1
+  push_cast
+  ring
+
+/-- a field already in the transversal `(h, φ₀) ∈ [0,c)` is its own normalized representative -/
+theorem normMod_eq_self {c : ℝ} (hc : 0 < c) {h : Field} (hh : h φ₀ ∈ Ico 0 c) :
+    normMod c h = h := by
+  have : ⌊h φ₀ / c⌋ = 0 := by
+    rw [Int.floor_eq_iff]
+    refine ⟨by simpa using div_nonneg hh.1 hc.le, ?_⟩
+    rw [Int.cast_zero, zero_add, div_lt_one hc]
+    exact hh.2
+  rw [normMod, this, Int.cast_zero, mul_zero, addConst_zero]
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 

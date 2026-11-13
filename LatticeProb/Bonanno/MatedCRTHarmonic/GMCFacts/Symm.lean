@@ -125,6 +125,8 @@ lemma rotSymm_radial (φ : ℂ → ℝ) (w : ℂ) : rotSymm φ w = rotSymm φ ((
 /-- A function on `ℂ` invariant under all rotations. -/
 def IsRotInv (u : ℂ → ℝ) : Prop := ∀ (α : ℝ) (w : ℂ), u (Complex.exp (α * Complex.I) * w) = u w
 
+lemma isRotInv_rotSymm (φ : ℂ → ℝ) : IsRotInv (rotSymm φ) := rotSymm_exp_mul φ
+
 /-- **The rotation average has the same integral against every rotation-invariant locally integrable function.** -/
 theorem integral_rotSymm_mul {φ : ℂ → ℝ} (hφc : Continuous φ) (hφs : HasCompactSupport φ)
     {u : ℂ → ℝ} (hu : IsRotInv u) (hloc : LocallyIntegrable u volume) :

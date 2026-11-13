@@ -147,6 +147,7 @@ import LatticeProb.Bonanno.LQGMetric.Complex.JordanMapCurve
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Complex.KoebeDistortion
 import LatticeProb.Bonanno.QuantumZipper.Proofs.Thm11.FrozenLocalDynkin
 import LatticeProb.Bonanno.QuantumZipper.Proofs.ItoLite.Dynkin
+import LatticeProb.Bonanno.MatedCRTHarmonic.CellFamily.ProducersGrid
 
 /-!
 # Inputs for mesoscopic cell-model estimates

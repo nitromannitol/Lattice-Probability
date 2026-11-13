@@ -10,6 +10,7 @@ import Mathlib.Basic.ENNReal.Basic
 import Mathlib.Topology.Defs.Filter
 import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import Mathlib.Analysis.Calculus.Deriv.Basic
+import LatticeProb.Bonanno.QuantumZipper.Statements.CouplingFields
 
 /-!
 # Unconditional atomlessness, the `Γ⁰` log singularity, and interior log singularities
@@ -555,6 +556,20 @@ def P3bBoundArea (P : Measure Ω) (X : Ω → FieldSample) (γ R : ℝ) (z : ℂ
   ∀ p : ℝ, 0 < p → p ≤ 1 → ∃ C : ℝ≥0∞, C ≠ ⊤ ∧ ∃ n₀ : ℕ, ∀ n : ℕ, n₀ ≤ n →
     ∫⁻ ω, annTC (areaApprox γ (aZ X R ω)) z n ^ p ∂P ≤
       C * ENNReal.ofReal ((2 : ℝ) ^ ((n : ℝ) * (γ ^ 2 * p ^ 2 / 2 - p * (2 + γ ^ 2 / 2))))
+
+theorem isVagueLimitOn_restrict {U U' : Set ℂ} (hU' : IsOpen U') (hUU : U' ⊆ U)
+    {νs : ℕ → Measure ℂ} {μ : Measure ℂ} (h : IsVagueLimitOn U νs μ) :
+    IsVagueLimitOn U' νs (μ.restrict U') := by
+  obtain ⟨h0, hK, ht⟩ := h
+  refine ⟨by rw [Measure.restrict_apply' hU'.measurableSet]; simp, fun K hKc hKU =>
+    (Measure.restrict_apply_le _ _).trans_lt (hK K hKc (hKU.trans hUU)), fun f hf hfc hfU => ?_⟩
+  rw [setIntegral_eq_integral_of_forall_compl_eq_zero fun t ht =>
+    image_eq_zero_of_notMem_tsupport fun h' => ht (hfU h')]
+  exact ht f hf hfc (hfU.trans hUU)
+
+theorem exists_radius_lt {c : ℝ} (hc : 0 < c) : ∃ K : ℕ, ∀ k, K ≤ k → radius k < c :=
+  ((RegClosure.tendsto_radius_nhdsGT.mono_right nhdsWithin_le_nhds).eventually
+    (gt_mem_nhds hc)).exists_forall_of_atTop
 
 end AtomlessUncond
 end QuantumZipper

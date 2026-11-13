@@ -9,6 +9,7 @@ import LatticeProb.Bonanno.QuantumZipper.Proofs.LQG.WedgeRestriction
 import Mathlib.Probability.BrownianMotion.Basic
 import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
 import Mathlib.MeasureTheory.Constructions.Projective
+import LatticeProb.Bonanno.MatedCRTHarmonic.GMCFacts.Version
 
 /-!
 # The radial process of a whole-plane GFF and the two-sided Brownian motion of a cone
@@ -44,6 +45,13 @@ variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 
 /-! ### The covariance of a two-sided Brownian motion -/
 
+/-- `Cov(W_s, W_t)` for a two-sided Brownian motion: `min(s, t) + (−s)⁺ + (−t)⁺`. -/
+def radCov (s t : ℝ) : ℝ := min s t + max (-s) 0 + max (-t) 0
+lemma radCov_eq_min_pos (s t : ℝ) :
+    min (max s 0) (max t 0) + min (max (-s) 0) (max (-t) 0) = radCov s t := by
+  simp only [radCov, max_def, min_def]
+  split_ifs <;> linarith
+
 /-- `log b + log⁺(a/b) = log max(a, b)`. -/
 lemma log_add_posLog_div {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     Real.log b + Real.posLog (b⁻¹ * a) = Real.log (max a b) := by
@@ -62,12 +70,245 @@ lemma circCov_concentric {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     circCov 0 a 0 b = Real.log (max a b) := by
   rw [circCov_center 0 ha b hb, log_add_posLog_div ha hb]
 
+/-- `Cov(h_{e^{-s}}(0), h_{e^{-t}}(0)) = radCov s t` for a whole-plane GFF normalized by `h_1(0) = 0`. -/
+lemma gffCircleCov_radial (s t : ℝ) :
+    LQGDimension.gffCircleCov (Real.exp (-s)) 0 (Real.exp (-t)) 0 = radCov s t := by
+  rw [gffCircleCov_eq_circCov (Real.exp_pos _) (Real.exp_pos _),
+    circCov_concentric (Real.exp_pos _) (Real.exp_pos _),
+    circCov_concentric (Real.exp_pos _) one_pos, circCov_concentric one_pos (Real.exp_pos _),
+    circCov_concentric one_pos one_pos, max_self, Real.log_one]
+  have h1 : Real.log (max (Real.exp (-s)) (Real.exp (-t))) = max (-s) (-t) := by
+    rcases le_total (-s) (-t) with h | h
+    · rw [max_eq_right (Real.exp_le_exp.2 h), max_eq_right h, Real.log_exp]
+    · rw [max_eq_left (Real.exp_le_exp.2 h), max_eq_left h, Real.log_exp]
+  have h2 : ∀ u : ℝ, Real.log (max (Real.exp (-u)) 1) = max (-u) 0 := fun u => by
+    rcases le_total (-u) 0 with h | h
+    · rw [max_eq_right (Real.exp_le_one_iff.2 h), max_eq_right h, Real.log_one]
+    · rw [max_eq_left (Real.one_le_exp_iff.2 h), max_eq_left h, Real.log_exp]
+  have h3 : ∀ u : ℝ, Real.log (max 1 (Real.exp (-u))) = max (-u) 0 := fun u => by
+    rw [max_comm, h2]
+  rw [h1, h2, h3]
+  unfold radCov
+  rw [max_neg_neg]
+  ring
+
 /-! ### Continuous measurable versions -/
+/-- A continuous, measurable version of a Brownian motion, vanishing at `0` for every `ω`. -/
+theorem exists_continuousVersion_brownian {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P) :
+    ∃ Bc : Ω → C(ℝ≥0, ℝ), Measurable Bc ∧ (∀ ω, Bc ω 0 = 0) ∧ ∀ᵐ ω ∂P, ∀ t, Bc ω t = B t ω := by
+  set S : Set Ω := {ω | Continuous (fun t => B t ω) ∧ B 0 ω = 0}
+  have hS : ∀ᵐ ω ∂P, ω ∈ S := by
+    filter_upwards [hB.cont, hB.eval_zero_ae_eq_zero] with ω h1 h2
+    exact ⟨h1, h2⟩
+  set G₀ : Set Ω := (toMeasurable P Sᶜ)ᶜ
+  have hG₀m : MeasurableSet G₀ := (measurableSet_toMeasurable _ _).compl
+  have hG₀ : ∀ᵐ ω ∂P, ω ∈ G₀ := by
+    rw [ae_iff]
+    simp only [G₀, mem_compl_iff, not_not]
+    rw [show {a | a ∈ toMeasurable P Sᶜ} = toMeasurable P Sᶜ from rfl, measure_toMeasurable]
+    exact ae_iff.1 hS
+  have hG₀S : G₀ ⊆ S := fun ω hω => by
+    by_contra h
+    exact hω (subset_toMeasurable _ _ h)
+  set Y : ℝ≥0 → Ω → ℝ := fun t => G₀.indicator (B t)
+  have hYc : ∀ ω, Continuous fun t => Y t ω := fun ω => by
+    by_cases hω : ω ∈ G₀
+    · simp only [Y, indicator_of_mem hω]
+      exact (hG₀S hω).1
+    · simp only [Y, indicator_of_notMem hω]
+      exact continuous_const
+  have hYm : ∀ t, AEMeasurable (Y t) P := fun t => (hB.aemeasurable t).indicator hG₀m
+  obtain ⟨G, hGm, hGc, hGmeas⟩ := exists_goodSet_of_continuous hYc hYm
+  have hG : ∀ᵐ ω ∂P, ω ∈ G := by rw [ae_iff]; exact hGc
+  refine ⟨fun ω => ⟨fun t => G.indicator (Y t) ω, ?_⟩, ?_, fun ω => ?_, ?_⟩
+  · by_cases hω : ω ∈ G
+    · simp only [indicator_of_mem hω]
+      exact hYc ω
+    · simp only [indicator_of_notMem hω]
+      exact continuous_const
+  · exact ContinuousMap.measurable_iff_eval.2 fun t => hGmeas t
+  · show G.indicator (Y 0) ω = 0
+    by_cases hω : ω ∈ G
+    · simp only [indicator_of_mem hω, Y]
+      by_cases hω' : ω ∈ G₀
+      · rw [indicator_of_mem hω']
+        exact (hG₀S hω').2
+      · rw [indicator_of_notMem hω']
+    · simp only [indicator_of_notMem hω]
+  · filter_upwards [hG, hG₀] with ω hω hω' t
+    show G.indicator (Y t) ω = B t ω
+    simp only [indicator_of_mem hω, Y, indicator_of_mem hω']
+
+/-- **The radial process of a whole-plane GFF**: a measurable `C(ℝ, ℝ)`-valued version `ρ` of
+`t ↦ X_{e^{-t}}(0) − X_1(0)`, a centred Gaussian process with covariance `radCov`. -/
+theorem exists_radialProcess {X : Ω → DistC} (hX : IsWholePlaneGFF X P) :
+    ∃ ρ : Ω → C(ℝ, ℝ), Measurable ρ ∧
+      (∀ t, (fun ω => ρ ω t) =ᵐ[P]
+        fun ω => circleAvg (X ω) (Real.exp (-t)) 0 - circleAvg (X ω) 1 0) ∧
+      IsGaussianProcess (fun t ω => ρ ω t) P ∧ (∀ t, ∫ ω, ρ ω t ∂P = 0) ∧
+      ∀ s t, cov[fun ω => ρ ω s, fun ω => ρ ω t; P] = radCov s t := by
+  obtain ⟨H, hH, hHc, hHae⟩ := exists_isGFFCircleAverage hX
+  set Y : ℝ → Ω → ℝ := fun t => H (Real.exp (-t)) 0
+  have hYc : ∀ ω, Continuous fun t => Y t ω := fun ω =>
+    (hHc ω).comp_continuous (f := fun t : ℝ => ((Real.exp (-t), (0 : ℂ)) : ℝ × ℂ)) (by fun_prop)
+      fun t => ⟨Real.exp_pos _, mem_univ _⟩
+  have hYm : ∀ t, AEMeasurable (Y t) P := fun t =>
+    hH.isGaussianProcess.aemeasurable (⟨Real.exp (-t), Real.exp_pos _⟩, 0)
+  obtain ⟨G, hGm, hGc, hGmeas⟩ := exists_goodSet_of_continuous hYc hYm
+  have hG : ∀ᵐ ω ∂P, ω ∈ G := by rw [ae_iff]; exact hGc
+  set ρ : Ω → C(ℝ, ℝ) := fun ω => ⟨fun t => G.indicator (Y t) ω, by
+    by_cases hω : ω ∈ G
+    · simp only [indicator_of_mem hω]
+      exact hYc ω
+    · simp only [indicator_of_notMem hω]
+      exact continuous_const⟩
+  have hρY : ∀ t, (fun ω => ρ ω t) =ᵐ[P] Y t := fun t => by
+    filter_upwards [hG] with ω hω
+    show G.indicator (Y t) ω = Y t ω
+    rw [indicator_of_mem hω]
+  have hGP : IsGaussianProcess Y P :=
+    hH.isGaussianProcess.comp_right fun t : ℝ => ((⟨Real.exp (-t), Real.exp_pos _⟩ : Ioi (0 : ℝ)), (0 : ℂ))
+  refine ⟨ρ, ContinuousMap.measurable_iff_eval.2 fun t => hGmeas t, fun t => ?_,
+    hGP.congr fun t => (hρY t).symm, fun t => ?_, fun s t => ?_⟩
+  · filter_upwards [hρY t, hHae (Real.exp (-t)) (Real.exp_pos _) 0] with ω h1 h2
+    rw [h1]
+    exact h2
+  · rw [integral_congr_ae (hρY t)]
+    exact hH.integral_eq_zero _ (Real.exp_pos _) 0
+  · rw [covariance_congr_ae (hρY s) (hρY t)]
+    rw [show Y s = H (Real.exp (-s)) 0 from rfl, show Y t = H (Real.exp (-t)) 0 from rfl,
+      hH.covariance_eq _ (Real.exp_pos _) _ (Real.exp_pos _), gffCircleCov_radial]
 
 /-! ### Independent Gaussian processes combine -/
 
+/-- The linear map gluing two coordinate vectors indexed by the two halves of a finite subset of a sum type. -/
+def sumGlue {S T : Type*} (I : Finset (S ⊕ T)) :
+    ((I.toLeft → ℝ) × (I.toRight → ℝ)) →ₗ[ℝ] (I → ℝ) where
+  toFun v i := match i with
+    | ⟨Sum.inl s, h⟩ => v.1 ⟨s, Finset.mem_toLeft.2 h⟩
+    | ⟨Sum.inr t, h⟩ => v.2 ⟨t, Finset.mem_toRight.2 h⟩
+  map_add' v w := by
+    funext i
+    rcases i with ⟨i | i, hi⟩ <;> rfl
+  map_smul' c v := by
+    funext i
+    rcases i with ⟨i | i, hi⟩ <;> rfl
+
+/-- Two independent Gaussian processes form a Gaussian process on the sum of the index types. -/
+lemma isGaussianProcess_sumElim {S T : Type*} {X : S → Ω → ℝ} {Y : T → Ω → ℝ}
+    (hX : IsGaussianProcess X P) (hY : IsGaussianProcess Y P)
+    (hind : IndepFun (fun ω s => X s ω) (fun ω t => Y t ω) P) :
+    IsGaussianProcess (Sum.elim X Y) P where
+  hasGaussianLaw I := by
+    classical
+    have h1 := hX.hasGaussianLaw I.toLeft
+    have h2 := hY.hasGaussianLaw I.toRight
+    have hind' : IndepFun (fun ω => I.toLeft.restrict (X · ω)) (fun ω => I.toRight.restrict (Y · ω)) P :=
+      hind.comp (Finset.measurable_restrict _) (Finset.measurable_restrict _)
+    have h12 := hind'.hasGaussianLaw h1 h2
+    have e : (fun ω => I.restrict (Sum.elim X Y · ω)) =
+        (LinearMap.toContinuousLinearMap (sumGlue I)) ∘
+          fun ω => (I.toLeft.restrict (X · ω), I.toRight.restrict (Y · ω)) := by
+      funext ω i
+      rcases i with ⟨i | i, hi⟩ <;> rfl
+    rw [e]
+    exact h12.map _
+
 /-! ### The two-sided Brownian motion -/
 
+/-- The two-sided path `t ↦ b(t⁺) − b(0) + b'((−t)⁺) − b'(0)`. -/
+def twoSided (b b' : C(ℝ≥0, ℝ)) : C(ℝ, ℝ) :=
+  ⟨fun t => (b (Real.toNNReal t) - b 0) + (b' (Real.toNNReal (-t)) - b' 0), by fun_prop⟩
+
+lemma twoSided_apply (b b' : C(ℝ≥0, ℝ)) (t : ℝ) :
+    twoSided b b' t = (b (Real.toNNReal t) - b 0) + (b' (Real.toNNReal (-t)) - b' 0) := rfl
+
+lemma measurable_twoSided :
+    Measurable (fun p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) => twoSided p.1 p.2) :=
+  ContinuousMap.measurable_iff_eval.2 fun t => by
+    have e1 : ∀ u, Measurable (fun p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) => p.1 u) := fun u =>
+      (ContinuousMap.measurable_eval u).comp measurable_fst
+    have e2 : ∀ u, Measurable (fun p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) => p.2 u) := fun u =>
+      (ContinuousMap.measurable_eval u).comp measurable_snd
+    exact ((e1 _).sub (e1 _)).add ((e2 _).sub (e2 _))
+
 variable {Bc Bc' : Ω → C(ℝ≥0, ℝ)}
+/-- The two-sided path of two independent Gaussian processes is a Gaussian process. -/
+theorem twoSided_isGaussianProcess (hB : IsGaussianProcess (fun t ω => Bc ω t) P)
+    (hB' : IsGaussianProcess (fun t ω => Bc' ω t) P)
+    (hind : IndepFun (fun ω t => Bc ω t) (fun ω t => Bc' ω t) P) :
+    IsGaussianProcess (fun t ω => twoSided (Bc ω) (Bc' ω) t) P := by
+  classical
+  have hZ := isGaussianProcess_sumElim hB hB' hind
+  refine hZ.of_isGaussianProcess fun t => ⟨{Sum.inl (Real.toNNReal t), Sum.inl 0,
+    Sum.inr (Real.toNNReal (-t)), Sum.inr 0},
+    { toFun := fun v => (v ⟨Sum.inl (Real.toNNReal t), by simp⟩ - v ⟨Sum.inl 0, by simp⟩) +
+        (v ⟨Sum.inr (Real.toNNReal (-t)), by simp⟩ - v ⟨Sum.inr 0, by simp⟩)
+      map_add' := fun v w => by simp only [Pi.add_apply]; ring
+      map_smul' := fun c v => by simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply]; ring },
+    fun ω => by simp [twoSided_apply]⟩
+
+/-- The covariance of the two-sided path of two independent (pre-)Brownian motions vanishing at `0`. -/
+theorem twoSided_covariance (hB : IsPreBrownianReal (fun t ω => Bc ω t) P)
+    (hB' : IsPreBrownianReal (fun t ω => Bc' ω t) P)
+    (hind : IndepFun (fun ω t => Bc ω t) (fun ω t => Bc' ω t) P) (h0 : ∀ ω, Bc ω 0 = 0)
+    (h0' : ∀ ω, Bc' ω 0 = 0) (s t : ℝ) :
+    cov[fun ω => twoSided (Bc ω) (Bc' ω) s, fun ω => twoSided (Bc ω) (Bc' ω) t; P] = radCov s t := by
+  have := hB.isGaussianProcess.isProbabilityMeasure
+  have e : ∀ u : ℝ, (fun ω => twoSided (Bc ω) (Bc' ω) u) =
+      (fun ω => Bc ω (Real.toNNReal u)) + fun ω => Bc' ω (Real.toNNReal (-u)) := fun u => by
+    funext ω
+    simp [twoSided_apply, h0, h0']
+  have hm : ∀ u, MemLp (fun ω => Bc ω u) 2 P := fun u =>
+    (hB.isGaussianProcess.hasGaussianLaw_eval u).memLp_two
+  have hm' : ∀ u, MemLp (fun ω => Bc' ω u) 2 P := fun u =>
+    (hB'.isGaussianProcess.hasGaussianLaw_eval u).memLp_two
+  have hi : ∀ u v, cov[fun ω => Bc ω u, fun ω => Bc' ω v; P] = 0 := fun u v =>
+    (hind.comp (measurable_pi_apply u) (measurable_pi_apply v)).covariance_eq_zero (hm u) (hm' v)
+  have hi' : ∀ u v, cov[fun ω => Bc' ω u, fun ω => Bc ω v; P] = 0 := fun u v => by
+    rw [covariance_comm]; exact hi v u
+  rw [e s, e t, covariance_add_left (hm _) (hm' _) ((hm _).add (hm' _)),
+    covariance_add_right (hm _) (hm _) (hm' _), covariance_add_right (hm' _) (hm _) (hm' _),
+    hi, hi', hB.covariance_fun_eval, hB'.covariance_fun_eval, ← radCov_eq_min_pos]
+  simp only [NNReal.coe_min, Real.coe_toNNReal', add_zero, zero_add]
+
+/-- **Uniqueness of the law of a continuous centred Gaussian process with covariance `radCov`** (two-sided Brownian
+motion), as a random element of `C(ℝ, ℝ)`. -/
+theorem map_eq_of_radCov {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} {ρ : Ω → C(ℝ, ℝ)}
+    {W : Ω' → C(ℝ, ℝ)} (hρm : Measurable ρ) (hWm : Measurable W)
+    (hρg : IsGaussianProcess (fun t ω => ρ ω t) P) (hWg : IsGaussianProcess (fun t ω => W ω t) P')
+    (hρ0 : ∀ t, ∫ ω, ρ ω t ∂P = 0) (hW0 : ∀ t, ∫ ω, W ω t ∂P' = 0)
+    (hρc : ∀ s t, cov[fun ω => ρ ω s, fun ω => ρ ω t; P] = radCov s t)
+    (hWc : ∀ s t, cov[fun ω => W ω s, fun ω => W ω t; P'] = radCov s t) :
+    P.map ρ = P'.map W := by
+  have := hρg.isProbabilityMeasure
+  have := hWg.isProbabilityMeasure
+  set c : C(ℝ, ℝ) → (ℝ → ℝ) := fun f => ⇑f
+  have hc : Measurable c := measurable_pi_iff.2 fun t => ContinuousMap.measurable_eval t
+  have hfin : ∀ I : Finset ℝ, ((P.map ρ).map c).map I.restrict =
+      ((P'.map W).map c).map I.restrict := by
+    intro I
+    rw [Measure.map_map (Finset.measurable_restrict I) hc, Measure.map_map
+      ((Finset.measurable_restrict I).comp hc) hρm, Measure.map_map (Finset.measurable_restrict I) hc,
+      Measure.map_map ((Finset.measurable_restrict I).comp hc) hWm]
+    exact QuantumZipper.WedgeRes.map_eq_of_gaussian_vec
+      (U := fun (i : I) ω => ρ ω i) (V := fun (i : I) ω => W ω i)
+      (hρg.hasGaussianLaw I) (hWg.hasGaussianLaw I)
+      (fun i => (ContinuousMap.measurable_eval _).comp hρm)
+      (fun i => (ContinuousMap.measurable_eval _).comp hWm)
+      (fun i => (hρg.hasGaussianLaw_eval _).memLp_two) (fun i => (hWg.hasGaussianLaw_eval _).memLp_two)
+      (fun i => hρ0 _) (fun i => hW0 _) (fun i j => by rw [hρc, hWc])
+  have hproj : (P.map ρ).map c = (P'.map W).map c :=
+    IsProjectiveLimit.unique (P := fun I => ((P'.map W).map c).map I.restrict) hfin (fun _ => rfl)
+  have hσ : (inferInstance : MeasurableSpace C(ℝ, ℝ)) = MeasurableSpace.comap c MeasurableSpace.pi := by
+    rw [ContinuousMap.measurableSpace_eq_iSup_comap_eval, MeasurableSpace.pi,
+      MeasurableSpace.comap_iSup]
+    simp_rw [MeasurableSpace.comap_comp]
+    rfl
+  ext s hs
+  have hs' : MeasurableSet[MeasurableSpace.comap c MeasurableSpace.pi] s := by
+    rw [← hσ]; exact hs
+  obtain ⟨t, ht, rfl⟩ := MeasurableSpace.measurableSet_comap.1 hs'
+  rw [← Measure.map_apply hc ht, ← Measure.map_apply hc ht, hproj]
 
 end MatedCRTHarmonic.GMCFacts
