@@ -25,7 +25,7 @@ private theorem contDiff_uncurry_fderiv {P E F : Type*}
     hg.comp (contDiff_fst.fst.prodMk contDiff_snd)
   exact haux.fderiv contDiff_snd (by simp)
 
-private theorem contDiff_uncurry_iteratedFDeriv {P E F : Type*}
+theorem contDiff_uncurry_iteratedFDeriv {P E F : Type*}
     [NormedAddCommGroup P] [NormedSpace ℝ P]
     [NormedAddCommGroup E] [NormedSpace ℝ E]
     [NormedAddCommGroup F] [NormedSpace ℝ F] {g : P → E → F}
@@ -64,7 +64,7 @@ theorem rellichDirectionalKernel_eq_iteratedFDeriv {d : ℕ} {ρ : Space d → �
         (ENat.natCast_lt_of_coe_top_le_withTop le_rfl k)) x
     exact (DifferentiableAt.iteratedFDeriv_succ_apply_left' (m := v) hd).symm
 
-private theorem contDiff_directionalKernel {d : ℕ} {ρ : Space d → ℝ}
+theorem contDiff_directionalKernel {d : ℕ} {ρ : Space d → ℝ}
     (hρ : ContDiff ℝ (⊤ : ℕ∞) ρ) (k : ℕ) :
     ContDiff ℝ (⊤ : ℕ∞)
       (fun z : (Fin k → Space d) × Space d => rellichDirectionalKernel ρ k z.1 z.2) := by
@@ -87,7 +87,7 @@ private theorem contDiff_directionalKernel {d : ℕ} {ρ : Space d → ℝ}
     exact haux.fderiv_apply contDiff_snd
       ((contDiff_apply ℝ (Space d) 0).comp contDiff_fst) (by simp)
 
-private theorem isTestFn_directionalKernel {d : ℕ} {D : Set (Space d)}
+theorem isTestFn_directionalKernel {d : ℕ} {D : Set (Space d)}
     {ρ : Space d → ℝ} (hρ : IsTestFn D ρ) (k : ℕ) (v : Fin k → Space d) :
     IsTestFn D (rellichDirectionalKernel ρ k v) := by
   induction k with
