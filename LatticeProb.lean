@@ -889,3 +889,4 @@ import LatticeProb.Sandpile.FLP.OneDimensional
 import LatticeProb.Sandpile.FLP.SlabStabilizer
 import LatticeProb.Sandpile.FLP.LowStabilize
 import LatticeProb.External.LevinePeresShell
+import LatticeProb.Analysis.ConvexSubgradient
