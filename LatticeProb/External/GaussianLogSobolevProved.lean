@@ -22,6 +22,7 @@ import LatticeProb.Prob.GaussianLogSobolevLipschitz
 import LatticeProb.Prob.HerbstFromLSI
 import LatticeProb.Prob.GaussianLogSobolevMollify
 import LatticeProb.Prob.GaussEuclideanPushforward
+import LatticeProb.Prob.GaussianLogSobolevTensor
 
 noncomputable section
 
@@ -99,5 +100,14 @@ theorem gaussianLogSobolevL2_holds (n : ℕ) : GaussianLogSobolevL2 n := by
       (hhc.mul (hhc.log fun x => (hpos x).ne')), integral_comp_ofLp_stdGaussian hhc,
     hnorm] at key
   simpa using key
+
+/-- The one-dimensional Gaussian logarithmic Sobolev inequality `GaussianLogSobolevOne`. -/
+theorem gaussianLogSobolevOne_holds : GaussianLogSobolevOne :=
+  gaussianLogSobolev_holds 1
+
+/-- The tensorization step `GaussianLogSobolevTensorStep` holds, since its conclusion
+`GaussianLogSobolev (n + 1)` holds in every dimension. -/
+theorem gaussianLogSobolevTensorStep_holds : GaussianLogSobolevTensorStep :=
+  fun n _ => gaussianLogSobolev_holds (n + 1)
 
 end LatticeProb

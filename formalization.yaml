@@ -182,6 +182,18 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.gaussianLogSobolevOne_holds"
+      file: "LatticeProb/External/GaussianLogSobolevProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.gaussianLogSobolevTensorStep_holds"
+      file: "LatticeProb/External/GaussianLogSobolevProved.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.External.feyMeesterRedigLeastAction_holds"
       file: "LatticeProb/External/FeyMeesterRedigLeastActionProved.lean"
       sorry_count: 0
