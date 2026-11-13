@@ -1110,6 +1110,13 @@ introduce no arc-straightening axiom or drawing-specific conclusion.
 * `LatticeProb.PlanarBrownian.ae_frequently_pos_of_indepFun_planar`: the unconditional form of the previous statement.
 * `LatticeProb.PlanarBrownian.ae_frequently_excursion`: outward excursion at a stopping time (planar form): if `B_τ ≠ z` almost surely, then almost surely `⟪B_τ - z, B_t - B_τ⟫ > 0` for arbitrarily small `t - τ > 0` (Mörters–Peres, Theorem 2.16).
 
+**The LQG area measure without hypotheses.**  The multiscale ball-mass bounds, non-atomicity, volume growth, full support and positivity on dyadic squares of the γ-LQG measure of a whole-plane GFF are reduced to the whole-plane ball-mass bounds (Ding–Gwynne 2020, Lemma 3.8), the coordinate change at `α₀ = 0` and the existence of the measure; all three are proved (`LatticeProb.LQG.wholePlaneLQGBallMassBoundsLP_holds`, `LatticeProb.LQG.lqgMeasureCoordChangeLP_zero`, `LatticeProb.LQG.lqgMeasureExistenceLP_proved`), so `LatticeProb/LQG/LQGMeasureChainHolds.lean` states the chain unconditionally.
+
+* `LatticeProb.LQG.rescaledBallMassUniformStepLP_holds` and `LatticeProb.LQG.wholePlaneScaledBallMassStepLP_holds`: the rescaled ball-mass bound uniformly in the dyadic scale, and the multiscale ball-mass bound around the origin (arXiv:2208.11795, Lemma 2.4).
+* `LatticeProb.LQG.lqgMeasureNonatomicAllLP_holds`: the LQG measure has no atom, for every whole-plane GFF model.
+* `LatticeProb.LQG.liouvilleBallMassBoundStepLP_holds` and `LatticeProb.LQG.lqgVolumeGrowthAllScalesStmtLP_holds`: ball-volume bounds at all small scales for the LQG measure with a log singularity at the origin.
+* `LatticeProb.LQG.lqgMeasureFullSupportStmtLP_holds` and `LatticeProb.LQG.lqgMeasureSquarePositiveLP_holds`: the LQG measure charges every nonempty open set and every closed dyadic square, almost surely.
+
 ## Guarantees
 
 - **No `sorry`.** The library has none. The five comparator challenges under

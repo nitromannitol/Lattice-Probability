@@ -308,6 +308,48 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: ""
       literature_dependencies: []
+    - declaration: "LatticeProb.LQG.rescaledBallMassUniformStepLP_holds"
+      file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.LQG.wholePlaneScaledBallMassStepLP_holds"
+      file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.LQG.lqgMeasureNonatomicAllLP_holds"
+      file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.LQG.liouvilleBallMassBoundStepLP_holds"
+      file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.LQG.lqgVolumeGrowthAllScalesStmtLP_holds"
+      file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.LQG.lqgMeasureFullSupportStmtLP_holds"
+      file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
+    - declaration: "LatticeProb.LQG.lqgMeasureSquarePositiveLP_holds"
+      file: "LatticeProb/LQG/LQGMeasureChainHolds.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: ""
+      literature_dependencies: []
     - declaration: "LatticeProb.Sobolev.exists_sobolevNormSqHigh_le"
       file: "LatticeProb/Analysis/Sobolev/Truncation.lean"
       sorry_count: 0
