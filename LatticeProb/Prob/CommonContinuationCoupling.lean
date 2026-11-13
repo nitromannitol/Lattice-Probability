@@ -76,7 +76,8 @@ variable {V : Type*} [Countable V]
 /-- **Coupling of mixtures with a common continuation.**  Let
 `μ = ∑ p v • ((A v ⊗ Q v) ∘ (Φ₁ v)⁻¹)` and `ν = ∑ q v • ((B v ⊗ Q v) ∘ (Φ₂ v)⁻¹)` be mixtures
 indexed by the countable set `V`, `p` and `q` probability vectors, and `E` a measurable event
-containing all the pairs `(Φ₁ v (y, u), Φ₂ v (y', u))`.  Then `μ` and `ν` have a coupling `ρ` with
+containing all the pairs `(Φ₁ v (y, u), Φ₂ v (y', u))` for the `v` with `p v ≠ 0` and `q v ≠ 0`.
+Then `μ` and `ν` have a coupling `ρ` with
 `ρ Eᶜ ≤ 1 - ∑ min (p v) (q v)`. -/
 theorem exists_coupling_mixture_common_continuation (p q : V → ℝ≥0∞) (hp : ∑' v, p v = 1)
     (hq : ∑' v, q v = 1) (A : V → Measure Y) (B : V → Measure Y') (Q : V → Measure U)
@@ -84,7 +85,7 @@ theorem exists_coupling_mixture_common_continuation (p q : V → ℝ≥0∞) (hp
     [∀ v, IsProbabilityMeasure (Q v)] (Φ₁ : V → Y × U → Ω₁) (Φ₂ : V → Y' × U → Ω₂)
     (h₁ : ∀ v, Measurable (Φ₁ v)) (h₂ : ∀ v, Measurable (Φ₂ v))
     {E : Set (Ω₁ × Ω₂)} (hE : MeasurableSet E)
-    (hEΦ : ∀ v y y' u, (Φ₁ v (y, u), Φ₂ v (y', u)) ∈ E) :
+    (hEΦ : ∀ v, p v ≠ 0 → q v ≠ 0 → ∀ y y' u, (Φ₁ v (y, u), Φ₂ v (y', u)) ∈ E) :
     ∃ ρ : Measure (Ω₁ × Ω₂),
       ρ.map Prod.fst = Measure.sum (fun v => p v • ((A v).prod (Q v)).map (Φ₁ v)) ∧
       ρ.map Prod.snd = Measure.sum (fun v => q v • ((B v).prod (Q v)).map (Φ₂ v)) ∧
@@ -96,7 +97,7 @@ theorem exists_coupling_mixture_common_continuation (p q : V → ℝ≥0∞) (hp
   have : ∀ v, IsProbabilityMeasure (((B v).prod (Q v)).map (Φ₂ v)) := fun v =>
     (Measure.isProbabilityMeasure_map_iff (h₂ v).aemeasurable).2 inferInstance
   exact exists_coupling_mixture p q hp hq (fun v => ((A v).prod (Q v)).map (Φ₁ v))
-    (fun v => ((B v).prod (Q v)).map (Φ₂ v)) c hc₁ hc₂ hE (fun v => hcE v E hE (hEΦ v))
+    (fun v => ((B v).prod (Q v)).map (Φ₂ v)) c hc₁ hc₂ hE (fun v hp0 hq0 => hcE v E hE (hEΦ v hp0 hq0))
 
 /-- Version with a total variation bound: if `∑_{v ∈ S} p v ≤ ∑_{v ∈ S} q v + a` for every
 `S ⊆ V`, the coupling gives `Eᶜ` mass at most `a`. -/
@@ -108,7 +109,7 @@ theorem exists_coupling_mixture_common_continuation_of_tv (p q : V → ℝ≥0�
     [∀ v, IsProbabilityMeasure (Q v)] (Φ₁ : V → Y × U → Ω₁) (Φ₂ : V → Y' × U → Ω₂)
     (h₁ : ∀ v, Measurable (Φ₁ v)) (h₂ : ∀ v, Measurable (Φ₂ v))
     {E : Set (Ω₁ × Ω₂)} (hE : MeasurableSet E)
-    (hEΦ : ∀ v y y' u, (Φ₁ v (y, u), Φ₂ v (y', u)) ∈ E) :
+    (hEΦ : ∀ v, p v ≠ 0 → q v ≠ 0 → ∀ y y' u, (Φ₁ v (y, u), Φ₂ v (y', u)) ∈ E) :
     ∃ ρ : Measure (Ω₁ × Ω₂),
       ρ.map Prod.fst = Measure.sum (fun v => p v • ((A v).prod (Q v)).map (Φ₁ v)) ∧
       ρ.map Prod.snd = Measure.sum (fun v => q v • ((B v).prod (Q v)).map (Φ₂ v)) ∧

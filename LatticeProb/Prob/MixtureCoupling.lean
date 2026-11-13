@@ -8,9 +8,9 @@ import Mathlib
 * `LatticeProb.one_sub_tsum_min_le`: if `∑_{v ∈ S} p v ≤ ∑_{v ∈ S} q v + a` for every `S`, then
   `1 - ∑ min (p v) (q v) ≤ a`; so a total variation bound `a` bounds the off-diagonal mass.
 * `LatticeProb.exists_coupling_mixture`: let `μ = ∑ p v • α v` and `ν = ∑ q v • β v` be mixtures of
-  probability measures indexed by the countable set `V`.  If for each `v` there is a coupling `c v`
-  of `α v` and `β v` carried by a measurable event `E`, then there is a coupling of `μ` and `ν`
-  that gives `Eᶜ` mass at most `1 - ∑ min (p v) (q v)`.
+  probability measures indexed by the countable set `V`.  If for each `v` with `p v ≠ 0` and
+  `q v ≠ 0` there is a coupling `c v` of `α v` and `β v` carried by a measurable event `E`, then
+  there is a coupling of `μ` and `ν` that gives `Eᶜ` mass at most `1 - ∑ min (p v) (q v)`.
 
 The last statement is the abstract form of coupling two Markov chains started from different
 points: after the chains first reach a set, with laws `p` and `q` for the position of arrival, the
@@ -137,13 +137,14 @@ variable {V Ω₁ Ω₂ : Type*} [Countable V] [MeasurableSpace Ω₁] [Measurab
 
 /-- **Coupling of mixtures.**  Let `μ = ∑ p v • α v` and `ν = ∑ q v • β v` be mixtures of
 probability measures indexed by a countable set `V`, `p` and `q` probability vectors.  Suppose that
-for each `v`, `c v` is a coupling of `α v` and `β v` carried by the measurable event `E`.  Then
+for each `v` with `p v ≠ 0` and `q v ≠ 0`, `c v` is a coupling of `α v` and `β v` carried by the
+measurable event `E`.  Then
 there is a coupling `ρ` of `μ` and `ν` such that `ρ Eᶜ ≤ 1 - ∑ min (p v) (q v)`. -/
 theorem exists_coupling_mixture (p q : V → ℝ≥0∞) (hp : ∑' v, p v = 1) (hq : ∑' v, q v = 1)
     (α : V → Measure Ω₁) (β : V → Measure Ω₂) [∀ v, IsProbabilityMeasure (α v)]
     [∀ v, IsProbabilityMeasure (β v)] (c : V → Measure (Ω₁ × Ω₂))
     (hc₁ : ∀ v, (c v).map Prod.fst = α v) (hc₂ : ∀ v, (c v).map Prod.snd = β v)
-    {E : Set (Ω₁ × Ω₂)} (hE : MeasurableSet E) (hcE : ∀ v, c v Eᶜ = 0) :
+    {E : Set (Ω₁ × Ω₂)} (hE : MeasurableSet E) (hcE : ∀ v, p v ≠ 0 → q v ≠ 0 → c v Eᶜ = 0) :
     ∃ ρ : Measure (Ω₁ × Ω₂), ρ.map Prod.fst = Measure.sum (fun v => p v • α v) ∧
       ρ.map Prod.snd = Measure.sum (fun v => q v • β v) ∧
       ρ Eᶜ ≤ 1 - ∑' v, min (p v) (q v) := by
@@ -190,8 +191,25 @@ theorem exists_coupling_mixture (p q : V → ℝ≥0∞) (hp : ∑' v, p v = 1) 
     simp only [Measure.smul_apply, smul_eq_mul]
     refine le_trans (ENNReal.tsum_le_tsum fun w => ?_) hoff
     by_cases h : w.1 = w.2
-    · rw [hc'pos w h, hcE]
-      simp [h]
+    · have hpw : π w ≤ p w.1 := by
+        rw [← hrow w.1]; exact ENNReal.le_tsum (f := fun v' => π (w.1, v')) w.2
+      have hqw : π w ≤ q w.2 := by
+        rw [← hcol w.2]; exact ENNReal.le_tsum (f := fun v => π (v, w.2)) w.1
+      rw [hc'pos w h]
+      by_cases hz : π w = 0
+      · simp [hz]
+      · have hp0 : p w.1 ≠ 0 := by
+          intro h0
+          apply hz
+          rw [h0] at hpw
+          exact nonpos_iff_eq_zero.1 hpw
+        have hq0 : q w.2 ≠ 0 := by
+          intro h0
+          apply hz
+          rw [h0] at hqw
+          exact nonpos_iff_eq_zero.1 hqw
+        rw [hcE w.1 hp0 (by rw [h]; exact hq0)]
+        simp [h]
     · rw [hc'neg w h]
       simp only [h, ↓reduceIte]
       calc π w * ((α w.1).prod (β w.2)) Eᶜ ≤ π w * 1 := by gcongr; exact prob_le_one
