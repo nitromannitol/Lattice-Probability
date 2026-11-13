@@ -16,6 +16,11 @@ interval. Hence almost every path is locally `α`-Hölder for every `α < 1/2`.
 * `IsCorrelatedBM2.ae_holderOnWith`: for a fixed `α < 1/2`, almost surely every coordinate path is
   `α`-Hölder on every interval `[-T, T]`.
 * `IsCorrelatedBM2.ae_forall_holderOnWith`: the same almost surely for all `α < 1/2` at once.
+* `IsCorrelatedBM2.ae_forall_exists_nhds_holderOnWith`,
+  `IsCorrelatedBM2.ae_forall_exists_nhdsWithin_holderOnWith`: almost surely, for all `α < 1/2`,
+  every coordinate path is `α`-Hölder on a neighbourhood of every time, and on a neighbourhood
+  within `Z` of every point of `Z`, for every set of times `Z` (the local Hölder hypothesis of the
+  Hausdorff dimension bound `dimH (X '' Z) ≤ dimH Z / α`).
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology Metric
@@ -309,5 +314,29 @@ theorem IsCorrelatedBM2.ae_forall_holderOnWith {γ : ℝ} {μ : Measure Path2}
   simp only [Set.mem_Icc] at hx ⊢
   push_cast
   constructor <;> linarith [hx.1, hx.2]
+
+/-- **Local Hölder continuity in neighbourhood form.** Almost surely, for every `α < 1/2`, each
+coordinate path is `α`-Hölder on a neighbourhood of every time. -/
+theorem IsCorrelatedBM2.ae_forall_exists_nhds_holderOnWith {γ : ℝ} {μ : Measure Path2}
+    (hμ : IsCorrelatedBM2 γ μ) (i : Fin 2) :
+    ∀ᵐ b ∂μ, ∀ α : ℝ≥0, (α : ℝ) < 1 / 2 → ∀ x : ℝ, ∃ C : ℝ≥0, ∃ U ∈ 𝓝 x,
+      HolderOnWith C α (fun t => lrCoord i t b) U := by
+  filter_upwards [hμ.ae_forall_holderOnWith i] with b hb α hα x
+  obtain ⟨C, hC⟩ := hb α hα (|x| + 1)
+  refine ⟨C, Set.Icc (-(|x| + 1)) (|x| + 1), Icc_mem_nhds ?_ ?_, hC⟩
+  · linarith [neg_abs_le x]
+  · linarith [le_abs_self x]
+
+/-- **Local Hölder continuity within a set of times.** Almost surely, for every set of times `Z`
+and every `α < 1/2`, each coordinate path is `α`-Hölder on a neighbourhood within `Z` of every
+point of `Z`; this is the local Hölder hypothesis of the bound `dimH (X '' Z) ≤ dimH Z / α`
+(`dimH_image_le_of_locally_holder_on`). -/
+theorem IsCorrelatedBM2.ae_forall_exists_nhdsWithin_holderOnWith {γ : ℝ} {μ : Measure Path2}
+    (hμ : IsCorrelatedBM2 γ μ) (i : Fin 2) :
+    ∀ᵐ b ∂μ, ∀ Z : Set ℝ, ∀ α : ℝ≥0, (α : ℝ) < 1 / 2 → ∀ x ∈ Z, ∃ C : ℝ≥0, ∃ U ∈ 𝓝[Z] x,
+      HolderOnWith C α (fun t => lrCoord i t b) U := by
+  filter_upwards [hμ.ae_forall_exists_nhds_holderOnWith i] with b hb Z α hα x _
+  obtain ⟨C, U, hU, hC⟩ := hb α hα x
+  exact ⟨C, U, mem_nhdsWithin_of_mem_nhds hU, hC⟩
 
 end MatedCRTHarmonic.MatedCRT
