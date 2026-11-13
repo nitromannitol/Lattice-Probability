@@ -332,10 +332,10 @@ the field with zero boundary values on a finite set `C` as
   `∏ᵢ [0, ⌈N cᵢ⌉)` and along rectangles. For a measure-preserving action of
   `ℤ^d` on an ergodic probability space, the averages of a bounded measurable
   function over these boxes converge almost everywhere to the volume times its
-  mean; `LatticeProb.rectangleErgodicAll_holds`: the same for rectangles with
+  mean. `LatticeProb.rectangleErgodicAll_holds`: the same for rectangles with
   arbitrary corners `a ≤ b`, through the decomposition of a rectangle into
   orthant boxes and the reflected actions.
-  mean. `LatticeProb.anchoredBoxMaximalCentred_holds`: the `Lᵖ` maximal
+  `LatticeProb.anchoredBoxMaximalCentred_holds`: the `Lᵖ` maximal
   inequality for anchored boxes (`p > 1`), from Wiener's one-parameter maximal
   theorem applied once per coordinate; `LatticeProb.anchoredBoxMean_holds`: the
   `Lᵖ` mean ergodic theorem along anchored boxes.
