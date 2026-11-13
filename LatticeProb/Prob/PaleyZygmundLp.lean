@@ -30,6 +30,8 @@ side conditions.
 * `LatticeProb.rpow_div_le_measure_lt_of_le`: the same with any higher moment `(E X^r)^{1/r}`,
   `p ≤ r` (Lyapunov's inequality), and `LatticeProb.rpow_div_le_measure_lt_of_le_natCast` with an
   integer moment `E X^N`, `p ≤ N`.
+* `LatticeProb.rpow_half_div_le_measure_lt`: if `L ≤ E X`, `L < ∞` and `E X^N ≤ U^N` with `N ≥ p`,
+  then `(L / 2 / U)^q ≤ P(L/2 < X)`.
 -/
 
 open MeasureTheory
@@ -117,5 +119,30 @@ theorem rpow_div_le_measure_lt_of_le_natCast [IsProbabilityMeasure μ] {X : α �
   have h := rpow_div_le_measure_lt_of_le (μ := μ) hX hpq hpN t
   simp only [ENNReal.rpow_natCast] at h
   exact h
+
+/-- **Paley-Zygmund inequality at half a lower bound for the mean.** For Hölder conjugate
+exponents `p, q`, an integer `N ≥ p`, a finite lower bound `L ≤ E X` and an upper bound
+`E X^N ≤ U^N`: `(L / 2 / U)^q ≤ P(L/2 < X)`. -/
+theorem rpow_half_div_le_measure_lt [IsProbabilityMeasure μ] {X : α → ℝ≥0∞}
+    (hX : Measurable X) {p q : ℝ} (hpq : p.HolderConjugate q) {N : ℕ} (hpN : p ≤ N)
+    {L U : ℝ≥0∞} (hL : L ≠ ⊤) (hLE : L ≤ ∫⁻ a, X a ∂μ) (hU : ∫⁻ a, X a ^ N ∂μ ≤ U ^ N) :
+    (L / 2 / U) ^ q ≤ μ {a | L / 2 < X a} := by
+  have hp : 0 < p := hpq.pos
+  have hq : 0 < q := hpq.symm.pos
+  have hN : N ≠ 0 := by
+    rintro rfl
+    simp only [Nat.cast_zero] at hpN
+    linarith
+  have hhalf : L / 2 ≤ ∫⁻ a, X a ∂μ - L / 2 :=
+    ENNReal.le_sub_of_add_le_left (ENNReal.div_ne_top hL two_ne_zero)
+      ((ENNReal.add_halves L).le.trans hLE)
+  have hmom : (∫⁻ a, X a ^ N ∂μ) ^ (1 / (N : ℝ)) ≤ U := by
+    calc (∫⁻ a, X a ^ N ∂μ) ^ (1 / (N : ℝ)) ≤ (U ^ N) ^ (1 / (N : ℝ)) :=
+          ENNReal.rpow_le_rpow hU (by positivity)
+      _ = U := by rw [one_div, ENNReal.pow_rpow_inv_natCast hN]
+  calc (L / 2 / U) ^ q
+      ≤ ((∫⁻ a, X a ∂μ - L / 2) / (∫⁻ a, X a ^ N ∂μ) ^ (1 / (N : ℝ))) ^ q :=
+        ENNReal.rpow_le_rpow (ENNReal.div_le_div hhalf hmom) hq.le
+    _ ≤ μ {a | L / 2 < X a} := rpow_div_le_measure_lt_of_le_natCast hX hpq hpN (L / 2)
 
 end LatticeProb
