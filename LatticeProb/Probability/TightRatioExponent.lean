@@ -18,7 +18,11 @@ of a crossing distance) yields the convergence in probability of their exponent.
 
 * `tendsto_log_div_log_of_rpow_bounds`: if `ε ^ (λ + δ) ≤ m ε ≤ ε ^ (λ - δ)` eventually for every
   `δ > 0`, then `log (m ε) / log ε → λ`;
-* `tendstoInMeasure_log_div_of_tight`: the statement above.
+* `tendstoInMeasure_log_div_of_tight`: the statement above;
+* `tight_toReal_of_ennreal_tails`, `tendstoInMeasure_log_div_of_ennreal_tails`: the same for
+  `[0, ∞]`-valued distances `L ε`, with the tightness hypothesis on `m ε⁻¹ L ε` stated through its
+  upper and lower tails uniformly in `ε ∈ (0, 1)`; the exponent is then that of the real parts
+  `(L ε).toReal` (the tails force `0 < L ε < ∞` almost surely).
 -/
 
 open MeasureTheory Filter Topology Set
@@ -101,5 +105,95 @@ theorem tendstoInMeasure_log_div_of_tight {D : ℝ → Ω → ℝ} {m : ℝ → 
         linarith
     _ ≤ P {ω | M * m ε < D ε ω} + P {ω | D ε ω < M⁻¹ * m ε} := measure_union_le _ _
     _ ≤ η := hε
+
+/-- The tails of the real part of `l ∈ [0, ∞]`, at scale `m > 0`, lie in the tails of `m⁻¹ l`:
+`M m < l.toReal` forces `M < m⁻¹ l`, and `l.toReal < M⁻¹ m` forces `m⁻¹ l < M⁻¹` or (when
+`l = ∞`, whose real part is `0`) `M < m⁻¹ l`. -/
+theorem toReal_tails_subset_tails {l : ℝ≥0∞} {m M : ℝ} (hm : 0 < m) (hM : 0 < M) :
+    (M * m < l.toReal → ENNReal.ofReal M < ENNReal.ofReal m⁻¹ * l) ∧
+      (l.toReal < M⁻¹ * m →
+        ENNReal.ofReal m⁻¹ * l < ENNReal.ofReal M⁻¹ ∨
+          ENNReal.ofReal M < ENNReal.ofReal m⁻¹ * l) := by
+  have hm0 : ENNReal.ofReal m⁻¹ ≠ 0 := by
+    rw [Ne, ENNReal.ofReal_eq_zero, not_le]; exact inv_pos.2 hm
+  by_cases hl : l = ⊤
+  · subst hl
+    rw [ENNReal.mul_top hm0]
+    exact ⟨fun _ => ENNReal.ofReal_lt_top, fun _ => Or.inr ENNReal.ofReal_lt_top⟩
+  obtain ⟨t, ht0, rfl⟩ : ∃ t : ℝ, 0 ≤ t ∧ l = ENNReal.ofReal t :=
+    ⟨l.toReal, ENNReal.toReal_nonneg, (ENNReal.ofReal_toReal hl).symm⟩
+  rw [ENNReal.toReal_ofReal ht0, ← ENNReal.ofReal_mul (inv_nonneg.2 hm.le)]
+  refine ⟨fun h => ?_, fun h => Or.inl ?_⟩
+  · have htpos : 0 < t := lt_trans (mul_pos hM hm) h
+    rw [ENNReal.ofReal_lt_ofReal_iff (mul_pos (inv_pos.2 hm) htpos), lt_inv_mul_iff₀ hm]
+    linarith [mul_comm m M]
+  · rw [ENNReal.ofReal_lt_ofReal_iff (inv_pos.2 hM), inv_mul_lt_iff₀ hm]
+    linarith [mul_comm m M⁻¹]
+
+/-- **Two-sided tightness of `[0, ∞]`-valued normalized distances.** If `m ε > 0` and the upper and
+lower tails of `m ε⁻¹ L ε` are uniformly small for `ε ∈ (0, 1)` (for every `η > 0` there is `M > 0`
+with `P {M < m ε⁻¹ L ε} ≤ η` and `P {m ε⁻¹ L ε < M⁻¹} ≤ η` for all `ε ∈ (0, 1)`), then the real
+parts `(L ε).toReal` satisfy the tightness hypothesis of `tendstoInMeasure_log_div_of_tight`. -/
+theorem tight_toReal_of_ennreal_tails {L : ℝ → Ω → ℝ≥0∞} {m : ℝ → ℝ}
+    (hm : ∀ ε, 0 < ε → ε < 1 → 0 < m ε)
+    (htails : ∀ η : ℝ, 0 < η → ∃ M : ℝ, 0 < M ∧ ∀ ε, 0 < ε → ε < 1 →
+      P {ω | ENNReal.ofReal M < ENNReal.ofReal (m ε)⁻¹ * L ε ω} ≤ ENNReal.ofReal η ∧
+        P {ω | ENNReal.ofReal (m ε)⁻¹ * L ε ω < ENNReal.ofReal M⁻¹} ≤ ENNReal.ofReal η) :
+    ∀ η : ℝ≥0∞, 0 < η → ∃ M : ℝ, 0 < M ∧ ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+      P {ω | M * m ε < (L ε ω).toReal} + P {ω | (L ε ω).toReal < M⁻¹ * m ε} ≤ η := by
+  intro η hη
+  have hη3 : 0 < η / 3 := ENNReal.div_pos hη.ne' ENNReal.ofNat_ne_top
+  obtain ⟨r, -, hrpos, hrlt⟩ := ENNReal.lt_iff_exists_real_btwn.1 hη3
+  have hr : 0 < r := ENNReal.ofReal_pos.1 hrpos
+  have h3r : ENNReal.ofReal r * 3 ≤ η :=
+    (ENNReal.le_div_iff_mul_le (Or.inl three_ne_zero) (Or.inl ENNReal.ofNat_ne_top)).1 hrlt.le
+  obtain ⟨M, hM, hT⟩ := htails r hr
+  refine ⟨M, hM, ?_⟩
+  filter_upwards [Ioo_mem_nhdsGT one_pos] with ε hε
+  have hmε := hm ε hε.1 hε.2
+  obtain ⟨hup, hlo⟩ := hT ε hε.1 hε.2
+  calc P {ω | M * m ε < (L ε ω).toReal} + P {ω | (L ε ω).toReal < M⁻¹ * m ε}
+      ≤ P {ω | ENNReal.ofReal M < ENNReal.ofReal (m ε)⁻¹ * L ε ω} +
+          (P {ω | ENNReal.ofReal (m ε)⁻¹ * L ε ω < ENNReal.ofReal M⁻¹} +
+            P {ω | ENNReal.ofReal M < ENNReal.ofReal (m ε)⁻¹ * L ε ω}) := by
+        refine add_le_add (measure_mono fun ω hω => (toReal_tails_subset_tails hmε hM).1 hω) ?_
+        exact (measure_mono fun ω hω => (toReal_tails_subset_tails hmε hM).2 hω).trans
+          (measure_union_le _ _)
+    _ ≤ ENNReal.ofReal r + (ENNReal.ofReal r + ENNReal.ofReal r) :=
+        add_le_add hup (add_le_add hlo hup)
+    _ = ENNReal.ofReal r * 3 := by ring
+    _ ≤ η := h3r
+
+/-- **Exponent in probability of `[0, ∞]`-valued distances from two-sided tightness.** If
+`m ε > 0` for `ε ∈ (0, 1)`, `log (m ε) / log ε → λ`, and the upper and lower tails of
+`m ε⁻¹ L ε` are uniformly small for `ε ∈ (0, 1)`, then `log (L ε).toReal / log ε → λ` in
+probability as `ε ↓ 0`. -/
+theorem tendstoInMeasure_log_div_of_ennreal_tails {L : ℝ → Ω → ℝ≥0∞} {m : ℝ → ℝ} {lam : ℝ}
+    (hm : ∀ ε, 0 < ε → ε < 1 → 0 < m ε)
+    (hmexp : Tendsto (fun ε => Real.log (m ε) / Real.log ε) (𝓝[>] 0) (𝓝 lam))
+    (htails : ∀ η : ℝ, 0 < η → ∃ M : ℝ, 0 < M ∧ ∀ ε, 0 < ε → ε < 1 →
+      P {ω | ENNReal.ofReal M < ENNReal.ofReal (m ε)⁻¹ * L ε ω} ≤ ENNReal.ofReal η ∧
+        P {ω | ENNReal.ofReal (m ε)⁻¹ * L ε ω < ENNReal.ofReal M⁻¹} ≤ ENNReal.ofReal η) :
+    TendstoInMeasure P (fun ε ω => Real.log (L ε ω).toReal / Real.log ε) (𝓝[>] 0)
+      (fun _ => lam) := by
+  refine tendstoInMeasure_log_div_of_tight (m := m) ?_ ?_ hmexp
+    (tight_toReal_of_ennreal_tails hm htails)
+  · filter_upwards [Ioo_mem_nhdsGT one_pos] with ε hε
+    have hmε := hm ε hε.1 hε.2
+    rw [ae_iff]
+    refine le_antisymm (ENNReal.le_of_forall_pos_le_add fun e he _ => ?_) zero_le
+    have he2 : 0 < (e : ℝ) / 2 := div_pos (NNReal.coe_pos.2 he) two_pos
+    obtain ⟨M, hM, hT⟩ := htails ((e : ℝ) / 2) he2
+    obtain ⟨hup, hlo⟩ := hT ε hε.1 hε.2
+    calc P {ω | ¬ 0 < (L ε ω).toReal}
+        ≤ P ({ω | ENNReal.ofReal (m ε)⁻¹ * L ε ω < ENNReal.ofReal M⁻¹} ∪
+            {ω | ENNReal.ofReal M < ENNReal.ofReal (m ε)⁻¹ * L ε ω}) :=
+          measure_mono fun ω hω => (toReal_tails_subset_tails hmε hM).2
+            (lt_of_le_of_lt (not_lt.1 hω) (mul_pos (inv_pos.2 hM) hmε))
+      _ ≤ ENNReal.ofReal ((e : ℝ) / 2) + ENNReal.ofReal ((e : ℝ) / 2) :=
+          (measure_union_le _ _).trans (add_le_add hlo hup)
+      _ = 0 + e := by
+          rw [← ENNReal.ofReal_add he2.le he2.le, add_halves, zero_add, ENNReal.ofReal_coe_nnreal]
+  · filter_upwards [Ioo_mem_nhdsGT one_pos] with ε hε using hm ε hε.1 hε.2
 
 end LatticeProb.Probability
