@@ -34,4 +34,7 @@ theorem prop12Lower : Blueprint.Prop12Lower :=
 theorem theorem11 : Theorem11 :=
   theorem11_of_lemma51 lemma51
 
+/-- Theorem 1.1, equation (1.5). -/
+theorem theorem11_lambda : Theorem11_Lambda := theorem11.2.1
+
 end LQGDimension

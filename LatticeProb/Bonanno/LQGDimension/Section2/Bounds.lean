@@ -425,6 +425,25 @@ lemma aE_finite_le (h2 : Blueprint.ASubadditiveE) {a1 : ℝ} (ha1 : aE 1 = (a1 :
       rw [hcast]
       nlinarith [hle, hle']
 
+lemma EReal_coe_mul_iSup {ι : Type*} {s : ℝ} (hs : 0 < s) (f : ι → EReal) :
+    ((s:ℝ):EReal) * (⨆ i, f i) = ⨆ i, ((s:ℝ):EReal) * f i := by
+  have hmono : ∀ (r : ℝ) (_ : 0 < r) (g : ι → EReal),
+      (⨆ i, ((r:ℝ):EReal) * g i) ≤ ((r:ℝ):EReal) * ⨆ i, g i := by
+    intro r hr g
+    refine iSup_le fun i => mul_le_mul_of_nonneg_left (le_iSup g i) ?_
+    exact_mod_cast hr.le
+  refine le_antisymm ?_ (hmono s hs f)
+  have hs' : 0 < s⁻¹ := inv_pos.2 hs
+  have h2 := hmono s⁻¹ hs' (fun i => ((s:ℝ):EReal) * f i)
+  have hassoc : ∀ i, ((s⁻¹:ℝ):EReal) * (((s:ℝ):EReal) * f i) = f i := by
+    intro i
+    rw [← mul_assoc, ← EReal.coe_mul, inv_mul_cancel₀ hs.ne', EReal.coe_one, one_mul]
+  simp_rw [hassoc] at h2
+  have h3 := mul_le_mul_of_nonneg_left h2
+    (show (0:EReal) ≤ ((s:ℝ):EReal) by exact_mod_cast hs.le)
+  rw [← mul_assoc, ← EReal.coe_mul, mul_inv_cancel₀ hs.ne', EReal.coe_one, one_mul] at h3
+  exact h3
+
 end Bounds
 
 open Bounds in

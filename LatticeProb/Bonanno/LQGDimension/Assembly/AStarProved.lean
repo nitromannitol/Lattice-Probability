@@ -26,4 +26,8 @@ theorem aSubadditiveE : Blueprint.ASubadditiveE :=
 theorem aLinearLowerBound : Blueprint.ALinearLowerBound :=
   aLinearLowerBound_of sudakovFernique gramBridge gramRepresentation maxIntegrable zCovPSD
 
+/-- **Theorem 1.1, first assertion.** -/
+theorem theorem11_aStar : Theorem11_AStar :=
+  theorem11_aStar_of aOneFinite aSubadditiveE aLinearLowerBound
+
 end LQGDimension
