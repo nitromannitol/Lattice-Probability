@@ -867,6 +867,44 @@ theorem one_le_mul_cappedSquareAverage_of_descendant_mem
   one_le_mul_cappedSquareAverage_of_descendant hℓ hil hS hparent
     (hparent ▸ dyadicDescendant_subset hℓ.le hS) hbad
 
+/-- A bad descendant bounds the average of the rooted mass-tail event from below. -/
+theorem one_le_mul_cappedSquareAverage_rootedBadSquareMassTail
+    {E : Set ℂ → GMSSpace → Prop} {H : GMSSpace} {q : DyadicCoord}
+    (h₁ : IsCompatible q.2.1) (h₂ : IsCompatible q.2.2) (j : ℤ)
+    {m : ℝ≥0∞} (hparent : originCappedSquare m H q = squareAt q.1 q.2.1 q.2.2 j 0)
+    (hm : m ≤ cellMass volume (complexCells H.1) (squareAt q.1 q.2.1 q.2.2 (j + 1) 0))
+    {i l : ℕ} (hil : i ≤ l) {S : Set ℂ}
+    (hS : S ∈ dyadicDescendants i (gridFloor q.1 q.2.1 j (0 : ℂ).re)
+      (gridFloor q.1 q.2.2 j (0 : ℂ).im) ((2 : ℝ) ^ (q.1 + (j : ℝ))))
+    (hbad : ¬ E S H) :
+    1 ≤ (4 : ℝ≥0∞) ^ l * cappedSquareAverage m
+      ((rootedBadSquareMassTail E (l + 1) m).indicator (fun _ => (1 : ℝ≥0∞))) H q := by
+  exact one_le_mul_cappedSquareAverage_of_descendant_mem (by positivity) hil hS hparent
+    (ae_mem_rootedBadSquareMassTail_of_dyadicDescendant h₁ h₂ j 0 hil hS hbad hm)
+
+/-- Almost surely, every positive finite mass has a capped-square generation whose bad
+descendants give the rooted mass-tail average bound. -/
+theorem ae_exists_cappedSquare_badDescendant_average (H : GMSSpace)
+    (E : Set ℂ → GMSSpace → Prop) :
+    ∀ᵐ q ∂dyadicLaw, ∀ m : ℝ≥0∞, m ≠ 0 → m ≠ ∞ → ∃ j : ℤ,
+      originCappedSquare m H q = squareAt q.1 q.2.1 q.2.2 j 0 ∧
+      ∀ (l i : ℕ), i ≤ l → ∀ S : Set ℂ,
+        S ∈ dyadicDescendants i (gridFloor q.1 q.2.1 j (0 : ℂ).re)
+          (gridFloor q.1 q.2.2 j (0 : ℂ).im) ((2 : ℝ) ^ (q.1 + (j : ℝ))) → ¬ E S H →
+        1 ≤ (4 : ℝ≥0∞) ^ l * cappedSquareAverage m
+          ((rootedBadSquareMassTail E (l + 1) m).indicator (fun _ => (1 : ℝ≥0∞))) H q := by
+  have := countable_cells H.2
+  filter_upwards [ae_isCompatible_isOffGrid_system 0,
+    ae_exists_isCappedSquare_squareAt_cellMass 0 (locallyFinite_complexCells H.2)
+      (iUnion_complexCells H.2) isCompact_complexCells (volume_complexCells_ne_zero H.2)]
+    with q hq hex
+  intro m hm0 hmtop
+  obtain ⟨j, _, hj, hcap⟩ := hex m hm0 hmtop
+  refine ⟨j, hcap.cappedSquare_eq, ?_⟩
+  intro l i hil S hS hbad
+  exact one_le_mul_cappedSquareAverage_rootedBadSquareMassTail hq.1 hq.2.1 j
+    hcap.cappedSquare_eq hj.le hil hS hbad
+
 /-- A lower bound for a rooted event's capped-square average gives a conditional measure bound.
 The geometric lower bound is an explicit hypothesis. -/
 theorem measure_le_mul_measure_inter_of_kernelAverage {μ : Measure GMSSpace}
