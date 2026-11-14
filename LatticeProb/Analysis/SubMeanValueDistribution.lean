@@ -1,8 +1,10 @@
 import LatticeProb.Analysis.WeakLaplaceMollify
+import LatticeProb.Analysis.JensenWeak
 import LatticeProb.Analysis.HessianTaylorRemainder
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.MeasureTheory.Integral.Average
+import Mathlib.Topology.TietzeExtension
 import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 import Mathlib.Analysis.InnerProductSpace.Projection.Reflection
 
@@ -635,5 +637,207 @@ theorem laplacian_nonneg_of_contDiffOn_of_le_ballAverage {U : Set E} (hU : IsOpe
     exact heq hy
   rw [(InnerProductSpace.laplacian_congr_nhds hev).eq_of_nhds] at h
   exact h
+
+/-- Convolution with a nonnegative compactly supported kernel preserves the sub-mean
+inequality when it holds at every translated centre. -/
+theorem convolution_le_ballAverage_of_translates {g ρ : E → ℝ} (hg : Continuous g) (hρ : Continuous ρ) (hρc : HasCompactSupport ρ)
+    (hρ0 : ∀ z, 0 ≤ ρ z) (a : E) (r : ℝ)
+    (hmean : ∀ z ∈ tsupport ρ, g (a - z) ≤ ⨍ y in ball a r, g (y - z) ∂μ) :
+    (g ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) a ≤
+      ⨍ y in ball a r, (g ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) y ∂μ := by
+  let K := tsupport ρ
+  let F : E × E → ℝ := fun p => ρ p.1 * g (p.2 - p.1)
+  have hF : Continuous F := (hρ.comp continuous_fst).mul (hg.comp (continuous_snd.sub continuous_fst))
+  have hprod : Integrable F ((μ.restrict K).prod (μ.restrict (ball a r))) := by
+    rw [Measure.prod_restrict]
+    apply ((hF.continuousOn.integrableOn_compact (hρc.prod (isCompact_closedBall a r))).mono_set ?_)
+    exact Set.prod_mono Subset.rfl ball_subset_closedBall
+  have hL : Integrable (fun z => ρ z * g (a - z)) (μ.restrict K) :=
+    ((hρ.mul (hg.comp (continuous_const.sub continuous_id))).continuousOn.integrableOn_compact hρc)
+  have hR : Integrable (fun z => ρ z * ⨍ y in ball a r, g (y - z) ∂μ) (μ.restrict K) := by
+    have hh := hprod.integral_prod_left.const_mul ((μ.real (ball a r))⁻¹)
+    convert hh using 1
+    ext z
+    rw [setAverage_eq]
+    simp only [F, smul_eq_mul, integral_const_mul]
+    ring
+  have hle : (∫ z in K, ρ z * g (a - z) ∂μ) ≤
+      ∫ z in K, ρ z * (⨍ y in ball a r, g (y - z) ∂μ) ∂μ := by
+    apply integral_mono_ae hL hR
+    filter_upwards [ae_restrict_mem (isClosed_tsupport ρ).measurableSet] with z hz
+    exact mul_le_mul_of_nonneg_left (hmean z hz) (hρ0 z)
+  have hswap : (∫ z in K, ∫ y in ball a r, ρ z * g (y - z) ∂μ ∂μ) =
+      ∫ y in ball a r, ∫ z in K, ρ z * g (y - z) ∂μ ∂μ :=
+    integral_integral_swap hprod
+  have hconv (y : E) : (g ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) y =
+      ∫ z in K, ρ z * g (y - z) ∂μ := by
+    rw [convolution_eq_swap]
+    simp only [ContinuousLinearMap.mul_apply']
+    rw [← integral_indicator (isClosed_tsupport ρ).measurableSet]
+    apply integral_congr_ae
+    filter_upwards [] with z
+    by_cases hz : z ∈ K
+    · change z ∈ tsupport ρ at hz
+      simp [hz, mul_comm]
+    · change z ∉ tsupport ρ at hz
+      have hz0 : ρ z = 0 := image_eq_zero_of_notMem_tsupport hz
+      simp [hz, hz0]
+  rw [hconv a]
+  simp_rw [hconv]
+  rw [setAverage_eq]
+  simp only [smul_eq_mul]
+  have heq : (∫ z in K, ρ z * (⨍ y in ball a r, g (y - z) ∂μ) ∂μ) =
+      (μ.real (ball a r))⁻¹ * ∫ y in ball a r, ∫ z in K, ρ z * g (y - z) ∂μ ∂μ := by
+    simp_rw [setAverage_eq, smul_eq_mul]
+    rw [← hswap, ← integral_const_mul]
+    apply integral_congr_ae
+    filter_upwards [] with z
+    rw [integral_const_mul]
+    ring
+  rwa [heq] at hle
+
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
+private theorem exists_continuous_extension_of_compact {K : Set E} (hK : IsCompact K) {u : E → ℝ} (hu : ContinuousOn u K) :
+    ∃ g : E → ℝ, Continuous g ∧ EqOn g u K := by
+  let v : C(K, ℝ) := ⟨fun x => u x, hu.domRestrict⟩
+  obtain ⟨g, hg⟩ := v.exists_restrict_eq hK.isClosed
+  refine ⟨g, g.continuous, ?_⟩
+  intro x hx
+  have h := congrArg (fun f : C(K, ℝ) => f ⟨x, hx⟩) hg
+  exact h
+
+/-- Mollification preserves the ball sub-mean inequality on balls whose enlargement by
+the kernel support remains in the domain. -/
+theorem mollify_le_ballAverage {U : Set E} {u ρ : E → ℝ} (hu : ContinuousOn u U)
+    (hmean : ∀ x ∈ U, ∀ r : ℝ, 0 < r → closedBall x r ⊆ U →
+      u x ≤ ⨍ y in ball x r, u y ∂μ)
+    (hρs : Continuous ρ) (hρc : HasCompactSupport ρ) (hρ0 : ∀ z, 0 ≤ ρ z)
+    {ε : ℝ} (hρ : tsupport ρ ⊆ closedBall 0 ε)
+    (a : E) {r : ℝ} (hr : 0 < r) (hK : closedBall a (r + ε) ⊆ U) :
+    ((U.indicator u) ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) a ≤
+      ⨍ y in ball a r, ((U.indicator u) ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) y ∂μ := by
+  obtain ⟨g, hg, heq⟩ := exists_continuous_extension_of_compact (isCompact_closedBall a (r + ε))
+    (hu.mono hK)
+  have hzdist (z : E) (hz : z ∈ tsupport ρ) : dist (a - z) a ≤ ε := by
+    have hz' := mem_closedBall_zero_iff.mp (hρ hz)
+    simpa [dist_eq_norm] using hz'
+  have htranslate (z : E) : (⨍ y in ball a r, g (y - z) ∂μ) =
+      ⨍ y in ball (a - z) r, g y ∂μ := by
+    rw [← average_add_ball (μ := μ) (fun y => g (y - z)) a r,
+      ← average_add_ball (μ := μ) g (a - z) r]
+    apply setAverage_congr_fun measurableSet_ball
+    exact Filter.Eventually.of_forall fun x _ => by congr 1; abel
+  have hgmean : ∀ z ∈ tsupport ρ, g (a - z) ≤ ⨍ y in ball a r, g (y - z) ∂μ := by
+    intro z hz
+    have hz' := hzdist z hz
+    have hcent : a - z ∈ closedBall a (r + ε) := by
+      rw [mem_closedBall]
+      linarith
+    have hball : closedBall (a - z) r ⊆ closedBall a (r + ε) := by
+      intro x hx
+      rw [mem_closedBall] at hx ⊢
+      linarith [dist_triangle x (a - z) a]
+    have havg : (⨍ y in ball (a - z) r, g y ∂μ) =
+        ⨍ y in ball (a - z) r, u y ∂μ := by
+      apply setAverage_congr_fun measurableSet_ball
+      exact Filter.Eventually.of_forall fun y hy => heq (hball (ball_subset_closedBall hy))
+    rw [heq hcent, htranslate, havg]
+    exact hmean (a - z) (hK hcent) r hr (hball.trans hK)
+  have hρbound : ∀ z, ε < ‖z‖ → ρ z = 0 := by
+    intro z hz
+    apply image_eq_zero_of_notMem_tsupport
+    intro hzs
+    exact (not_le_of_gt hz) (mem_closedBall_zero_iff.mp (hρ hzs))
+  have hconv (y : E) (hy : y ∈ closedBall a r) :
+      ((U.indicator u) ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) y =
+      (g ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) y := by
+    apply LatticeProb.PegdenSmart.convolution_eq_of_eqOn hρbound
+    intro x hx
+    have hxK : x ∈ closedBall a (r + ε) := by
+      rw [mem_closedBall] at hx hy ⊢
+      linarith [dist_triangle x y a]
+    rw [indicator_of_mem (hK hxK), heq hxK]
+  have hm := convolution_le_ballAverage_of_translates (μ := μ) hg hρs hρc hρ0 a r hgmean
+  rw [hconv a (mem_closedBall_self hr.le)]
+  have havg : (⨍ y in ball a r, ((U.indicator u) ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) y ∂μ) =
+      ⨍ y in ball a r, (g ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) y ∂μ := by
+    apply setAverage_congr_fun measurableSet_ball
+    exact Filter.Eventually.of_forall fun y hy => hconv y (ball_subset_closedBall hy)
+  rw [havg]
+  exact hm
+
+/-- Local smoothness and the sub-mean inequality on all sufficiently small balls
+imply a nonnegative Laplacian. -/
+theorem laplacian_nonneg_of_contDiffOn_of_local_le_ballAverage {U : Set E} (hU : IsOpen U) {f : E → ℝ} (hf : ContDiffOn ℝ ∞ f U)
+    {a : E} (ha : a ∈ U) {η : ℝ} (hη : 0 < η)
+    (hmean : ∀ r : ℝ, 0 < r → r < η → f a ≤ ⨍ y in ball a r, f y ∂μ) :
+    0 ≤ Δ f a := by
+  obtain ⟨g, V, hV, haV, hg, heq⟩ :=
+    exists_smooth_extension_near_compact isCompact_singleton hU (singleton_subset_iff.mpr ha) hf
+  have haV' : a ∈ V := haV (mem_singleton a)
+  obtain ⟨δ, hδ, hδV⟩ := Metric.isOpen_iff.mp hV a haV'
+  have hgmean : ∀ r : ℝ, 0 < r → r < min δ η → g a ≤ ⨍ y in ball a r, g y ∂μ := by
+    intro r hr hrmin
+    have hrV : ball a r ⊆ V := (ball_subset_ball (lt_of_lt_of_le hrmin (min_le_left _ _)).le).trans hδV
+    have havg : (⨍ y in ball a r, g y ∂μ) = ⨍ y in ball a r, f y ∂μ := by
+      apply setAverage_congr_fun measurableSet_ball
+      exact Filter.Eventually.of_forall fun y hy => heq (hrV hy)
+    rw [heq haV', havg]
+    exact hmean r hr (lt_of_lt_of_le hrmin (min_le_right _ _))
+  have h := laplacian_nonneg_of_le_ballAverage (μ := μ) hg a (lt_min hδ hη) hgmean
+  have hev : g =ᶠ[𝓝 a] f := by
+    filter_upwards [hV.mem_nhds haV'] with y hy
+    exact heq hy
+  rw [(InnerProductSpace.laplacian_congr_nhds hev).eq_of_nhds] at h
+  exact h
+
+/-- A continuous function with the ball sub-mean property has nonnegative
+distributional Laplacian. -/
+theorem integral_mul_laplacian_nonneg_of_le_ballAverage {U : Set E} (hU : IsOpen U) {u φ : E → ℝ} (hu : ContinuousOn u U)
+    (hmean : ∀ x ∈ U, ∀ r : ℝ, 0 < r → closedBall x r ⊆ U →
+      u x ≤ ⨍ y in ball x r, u y ∂μ)
+    (hφ : ContDiff ℝ ∞ φ) (hc : HasCompactSupport φ) (hφU : tsupport φ ⊆ U)
+    (hφ0 : ∀ x, 0 ≤ φ x) : 0 ≤ ∫ x, u x * Δ φ x ∂μ := by
+  obtain ⟨ε, ρ, hε0, hε, hρ⟩ := LatticeProb.PegdenSmart.exists_mollifier_sequence μ
+  have hρs : ∀ n, ContDiff ℝ ∞ (ρ n) := fun n => (hρ n).1
+  have hρc : ∀ n, HasCompactSupport (ρ n) := fun n => (hρ n).2.1
+  have hρsupp : ∀ n, tsupport (ρ n) ⊆ closedBall 0 (ε n) := fun n => (hρ n).2.2.1
+  have hρ0 : ∀ n y, 0 ≤ ρ n y := fun n => (hρ n).2.2.2.1
+  have hρ1 : ∀ n, ∫ y, ρ n y ∂μ = 1 := fun n => (hρ n).2.2.2.2
+  have hρbound : ∀ n y, ε n < ‖y‖ → ρ n y = 0 := by
+    intro n y hy
+    apply image_eq_zero_of_notMem_tsupport
+    intro hys
+    exact (not_le_of_gt hy) (mem_closedBall_zero_iff.mp (hρsupp n hys))
+  apply integral_mul_laplacian_nonneg_of_mollify (μ := μ) hU hu hφ hc hφU hφ0
+    hε0 hε hρs hρc hρ0 hρ1 hρbound
+  obtain ⟨δ, hδ, hδU⟩ := hc.exists_thickening_subset_open hU hφU
+  have hsmall : ∀ᶠ n in atTop, ε n < δ / 4 :=
+    hε.eventually (gt_mem_nhds (by positivity))
+  filter_upwards [hsmall] with n hn x hx
+  let V := thickening (δ / 2) (tsupport φ)
+  have hV : IsOpen V := isOpen_thickening
+  have hxV : x ∈ V := self_subset_thickening (half_pos hδ) (tsupport φ) hx
+  have hVsmooth : ContDiffOn ℝ ∞ ((U.indicator u) ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ n) V := by
+    apply (LatticeProb.PegdenSmart.contDiffOn_mollify (μ := μ) hU hu (hε0 n)
+      (hρs n) (hρc n) (hρbound n)).mono
+    intro y hy z hz
+    obtain ⟨w, hw, hyw⟩ := mem_thickening_iff.mp hy
+    apply hδU
+    apply mem_thickening_iff.mpr
+    refine ⟨w, hw, ?_⟩
+    have hzy := mem_closedBall.mp hz
+    linarith [dist_triangle z y w]
+  apply laplacian_nonneg_of_contDiffOn_of_local_le_ballAverage (μ := μ) hV hVsmooth hxV
+    (by positivity : 0 < δ / 4)
+  intro r hr hrδ
+  apply mollify_le_ballAverage (μ := μ) hu hmean (hρs n).continuous (hρc n) (hρ0 n)
+    (hρsupp n) x hr
+  intro y hy
+  apply hδU
+  apply mem_thickening_iff.mpr
+  refine ⟨x, hx, ?_⟩
+  have hy' := mem_closedBall.mp hy
+  linarith
 
 end LatticeProb.Ishii
