@@ -955,6 +955,44 @@ theorem measure_le_mul_measure_inter_of_kernelAverage {μ : Measure GMSSpace}
           funext p; rfl, lintegral_indicator_const hT, Measure.restrict_apply hT]
       simp [Set.inter_comm]
 
+/-- A threshold event for a rooted indicator's capped-square average is measurable in the
+capped-square σ-algebra and satisfies the corresponding conditional measure bound. -/
+theorem measurableSet_kernelAverage_indicator_threshold_and_measure_le
+    {μ : Measure GMSSpace} (hMT : MassTransport μ) {m : ℝ≥0∞}
+    (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    {B : Set (GMSSpace × DyadicCoord × ℂ)} (hB : MeasurableSet B)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ q : DyadicCoord, IsCompatible q.2.1 →
+        IsCompatible q.2.2 → ∀ w : ℂ,
+        ((H', similarityCoord s u q, s • w + similarityOffset s u) ∈ B ↔ (H, q, w) ∈ B))
+    (c : ℝ≥0∞) :
+    let Y : Set (GMSSpace × DyadicCoord) := {p | 1 ≤ c *
+      kernelAverage m (B.indicator (fun _ => (1 : ℝ≥0∞))) (p.1, p.2, 0)}
+    MeasurableSet[cappedSquareSigma m] Y ∧
+      ∀ A, MeasurableSet[cappedSquareSigma m] A → A ⊆ Y →
+        μ.prod dyadicLaw A ≤ c * μ.prod dyadicLaw (A ∩ {p | (p.1, p.2, (0 : ℂ)) ∈ B}) := by
+  let G := B.indicator (fun _ => (1 : ℝ≥0∞))
+  have hG : Measurable G := measurable_const.indicator hB
+  have hGi : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ q : DyadicCoord, IsCompatible q.2.1 →
+        IsCompatible q.2.2 → ∀ w : ℂ,
+        G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w) := by
+    intro s u hs H H' h q h₁ h₂ w
+    change B.indicator (fun _ => (1 : ℝ≥0∞))
+      (H', similarityCoord s u q, s • w + similarityOffset s u) =
+      B.indicator (fun _ => (1 : ℝ≥0∞)) (H, q, w)
+    by_cases hw : (H, q, w) ∈ B
+    · rw [indicator_of_mem ((hinv s u hs H H' h q h₁ h₂ w).2 hw), indicator_of_mem hw]
+    · rw [indicator_of_notMem (fun hmem => hw ((hinv s u hs H H' h q h₁ h₂ w).1 hmem)),
+        indicator_of_notMem hw]
+  constructor
+  · exact measurableSet_le measurable_const
+      (measurable_const.mul (measurable_kernelAverage_origin hm0 hmtop hG hGi))
+  · intro A hA hAY
+    apply measure_le_mul_measure_inter_of_kernelAverage hMT hm0 hmtop hB hinv hA
+    filter_upwards [ae_restrict_mem (cappedSquareSigma_le m A hA)] with p hp
+    exact hAY hp
+
 /-! ### Last-time decomposition over finitely many indices of a linear order -/
 
 section LastTime
