@@ -85,7 +85,7 @@ theorem isStoppingTime_dyUp {𝔽 : Filtration ℝ≥0 m0} {τ : Ω → ℝ≥0}
   refine MeasurableSet.congr
     (𝔽.mono hle _ (hτ (((⌊i * (2 ^ n : ℝ≥0)⌋₊ : ℕ) : ℝ≥0) / 2 ^ n))) ?_
   ext ω
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   exact ENNReal.coe_le_coe.trans ((dyUp_le_iff n (τ ω) i).symm.trans ENNReal.coe_le_coe.symm)
 
 theorem countable_range_dyUp (n : ℕ) (τ : Ω → ℝ≥0) :

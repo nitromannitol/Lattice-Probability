@@ -105,7 +105,7 @@ theorem map_prod_pair_of_forall_map (P : Measure Ω) [IsProbabilityMeasure P]
     (h : ∀ y, R.map (F y) = Q) :
     (P.prod R).map (fun p => (p.1, F p.1 p.2)) = P.prod Q := by
   have hF' : Measurable fun p : Ω × β => F p.1 p.2 := hF
-  haveI : IsProbabilityMeasure Q := by
+  have : IsProbabilityMeasure Q := by
     obtain ⟨y⟩ := nonempty_of_isProbabilityMeasure P
     rw [← h y]
     exact inferInstance

@@ -99,10 +99,10 @@ theorem ae_neg_le_twoPointLaw (a : ℝ) : ∀ᵐ z ∂(twoPointLaw a), -|a| ≤ 
   rw [ae_iff, twoPointLaw, Measure.smul_apply, Measure.coe_add, Pi.add_apply,
     Measure.dirac_apply' _ hs, Measure.dirac_apply' _ hs]
   have h1 : a ∉ {z : ℝ | ¬ (-|a| ≤ z)} := by
-    simp only [Set.mem_setOf_eq, not_not]
+    simp only [Set.mem_ofPred_eq, not_not]
     exact neg_abs_le a
   have h2 : -a ∉ {z : ℝ | ¬ (-|a| ≤ z)} := by
-    simp only [Set.mem_setOf_eq, not_not]
+    simp only [Set.mem_ofPred_eq, not_not]
     have := le_abs_self a
     linarith
   rw [Set.indicator_of_notMem h1, Set.indicator_of_notMem h2]
@@ -442,8 +442,8 @@ theorem posMass_shift_ge {δ₀ : ℝ} {ν : ℝ → Measure ℤ} {θ M K : ℝ}
   obtain ⟨hδ₀, hθ, hprob, hmeanν, -, hexp, hcoup⟩ := hfam
   have hδmem : δ ∈ Set.Icc (0:ℝ) δ₀ := ⟨hδ.1.le, hδ.2⟩
   have h0mem : (0:ℝ) ∈ Set.Icc (0:ℝ) δ₀ := ⟨le_rfl, hδ₀.le⟩
-  haveI hpδ : IsProbabilityMeasure (ν δ) := hprob δ hδmem
-  haveI hp0 : IsProbabilityMeasure (ν 0) := hprob 0 h0mem
+  have hpδ : IsProbabilityMeasure (ν δ) := hprob δ hδmem
+  have hp0 : IsProbabilityMeasure (ν 0) := hprob 0 h0mem
   have hiδ : Integrable (fun k : ℤ => ((k : ℝ))) (ν δ) :=
     integrable_intCast_of_exp hθ (ν δ) (hexp δ hδmem).1
   have hi0 : Integrable (fun k : ℤ => ((k : ℝ))) (ν 0) :=
@@ -521,7 +521,7 @@ theorem exists_twoPoint_comparison {δ₀ : ℝ} {ν : ℝ → Measure ℤ} {θ 
   have hfam' : NearFamily δ₀ ν θ M K := hfam
   obtain ⟨hδ₀, hθ, hprob, hmeanν, hnc, hexp, -⟩ := hfam
   have h0mem : (0:ℝ) ∈ Set.Icc (0:ℝ) δ₀ := ⟨le_rfl, hδ₀.le⟩
-  haveI hp0 : IsProbabilityMeasure (ν 0) := hprob 0 h0mem
+  have hp0 : IsProbabilityMeasure (ν 0) := hprob 0 h0mem
   have hi0 : Integrable (fun k : ℤ => ((k : ℝ))) (ν 0) :=
     integrable_intCast_of_exp hθ (ν 0) (hexp 0 h0mem).1
   have hmean0 : ∫ k, ((k : ℝ)) ∂(ν 0) = 0 := by
@@ -538,7 +538,7 @@ theorem exists_twoPoint_comparison {δ₀ : ℝ} {ν : ℝ → Measure ℤ} {θ 
   have hδ2 : δ ≤ p₀ / (2 * (max K 0 + 1)) := le_trans hδ.2 (min_le_right _ _)
   have hδmem : δ ∈ Set.Ioc (0:ℝ) δ₀ := ⟨hδ.1, hδ1⟩
   have hδicc : δ ∈ Set.Icc (0:ℝ) δ₀ := ⟨hδ.1.le, hδ1⟩
-  haveI hpδ : IsProbabilityMeasure (ν δ) := hprob δ hδicc
+  have hpδ : IsProbabilityMeasure (ν δ) := hprob δ hδicc
   have hiδ : Integrable (fun k : ℤ => ((k : ℝ))) (ν δ) :=
     integrable_intCast_of_exp hθ (ν δ) (hexp δ hδicc).1
   have hid : Integrable (id : ℝ → ℝ) (shiftLaw δ (ν δ)) := integrable_id_shiftLaw δ (ν δ) hiδ

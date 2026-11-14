@@ -210,10 +210,10 @@ theorem abs_add_rpow_le {p : ℝ} (hp1 : 1 ≤ p) (hp2 : p ≤ 2) (a b : ℝ) :
     |a + b| ^ p
       ≤ |a| ^ p + p * (if 0 ≤ a then (1 : ℝ) else -1) * |a| ^ (p - 1) * b + 2 * |b| ^ p := by
   rcases le_or_gt 0 a with ha | ha
-  · rw [if_pos ha, abs_of_nonneg ha]
+  · rw [ite_eq_left ha, abs_of_nonneg ha]
     have h := abs_add_rpow_le_of_nonneg hp1 hp2 ha b
     linarith
-  · rw [if_neg (by linarith), abs_of_neg ha]
+  · rw [ite_eq_right (by linarith), abs_of_neg ha]
     have hna : (0 : ℝ) ≤ -a := by linarith
     have h := abs_add_rpow_le_of_nonneg hp1 hp2 hna (-b)
     have e1 : |(-a) + (-b)| = |a + b| := by

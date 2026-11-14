@@ -40,9 +40,9 @@ theorem measurable_comb (S : Set ι) [DecidablePred (· ∈ S)] :
     Measurable (fun p : (Π i, X i) × (Π i, X i) => comb S p.1 p.2) := by
   refine Measurable.of_eval fun i => ?_
   by_cases hi : i ∈ S
-  · simp only [comb, hi, if_pos]
+  · simp only [comb, hi, ite_eq_left]
     fun_prop
-  · simp only [comb, hi, if_neg, not_false_iff]
+  · simp only [comb, hi, ite_eq_right, not_false_iff]
     fun_prop
 
 /-- **Splicing is measure preserving.**  Reading the field on `S` from one
@@ -58,7 +58,7 @@ theorem measurePreserving_comb (μ : ∀ i, Measure (X i)) [∀ i, IsProbability
       = (Set.pi (↑(s.filter (· ∈ S))) t) ×ˢ (Set.pi (↑(s.filter (fun i => i ∉ S))) t) := by
     ext p
     simp only [Set.mem_preimage, Set.mem_pi, Set.mem_prod, Finset.coe_filter,
-      Set.mem_setOf_eq, Finset.mem_coe]
+      Set.mem_ofPred_eq, Finset.mem_coe]
     constructor
     · intro h
       refine ⟨fun i hi => ?_, fun i hi => ?_⟩
@@ -258,7 +258,7 @@ theorem integral_mul_partialInt (S : Set ι) [DecidablePred (· ∈ S)] {F g : (
       = ∫ ω, g ω * partialInt μ S F ω ∂(Measure.infinitePi μ) := by
     rw [integral_prod _ hkey]
     exact integral_congr_ae (Filter.Eventually.of_forall fun ω => by
-      simp only []
+      simp only
       rw [integral_const_mul]
       rfl)
   have h2 : ∫ p, g (comb S p.1 p.2) * F (comb S p.1 p.2)

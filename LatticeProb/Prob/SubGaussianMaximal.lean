@@ -85,7 +85,7 @@ theorem measure_sum_bernoulli_le {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Me
   have hset : {ω | ∑ i ∈ Finset.range m, β i ω ≤ m / 2 - r} =
       {ω | r ≤ ∑ i ∈ Finset.range m, (1 / 2 - β i ω)} := by
     ext ω
-    simp only [Set.mem_setOf_eq, hsum]
+    simp only [Set.mem_ofPred_eq, hsum]
     constructor <;> intro h <;> linarith
   have hind' : iIndepFun (fun i ω => 1 / 2 - β i ω) P :=
     hind.comp (fun _ x => 1 / 2 - x) (fun _ => measurable_const.sub measurable_id)

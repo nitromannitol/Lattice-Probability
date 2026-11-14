@@ -352,7 +352,7 @@ theorem tendsto_measureReal_weighted {V : Type*} (ν : Measure ℝ) [IsProbabili
       ⊆ {ξ : V → ℝ | (ε / 3) * A n ≤ |U ξ|} ∪ {ξ : V → ℝ | (ε / 3) * A n ≤ |T ξ|} := by
     intro ξ hξ
     by_contra hcon
-    simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_le] at hcon
+    simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_le] at hcon
     obtain ⟨h1, h2⟩ := hcon
     have hbA : |b * A n| < (ε / 3) * A n := by
       rw [abs_mul, abs_of_nonneg hA0.le]

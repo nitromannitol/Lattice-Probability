@@ -72,7 +72,7 @@ lemma prob_good_compl : D.prob (D.good)ᶜ = 0 := by
       ω.1 (some (Sum.inl (n, i))) ∈ (D.B (D.reg n) i)ᶜ}) ∪
       ⋃ m, ⋃ i, {ω : SkΩ S | P (D.B m i) = 0 ∧ ω.1 none ∈ D.B m i}) ?_ ?_
   · intro ω hω
-    simp only [good, mem_compl_iff, mem_inter_iff, Set.mem_setOf_eq, not_and_or, not_forall,
+    simp only [good, mem_compl_iff, mem_inter_iff, mem_ofPred_eq, not_and_or, not_forall,
       not_not] at hω
     rcases hω with ⟨n, i, hne, hmem⟩ | ⟨m, i, h0, hmem⟩
     · exact Or.inl (mem_iUnion₂.2 ⟨n, i, hne, hmem⟩)
@@ -82,7 +82,7 @@ lemma prob_good_compl : D.prob (D.good)ᶜ = 0 := by
 
 /-- The bad event has probability zero, by the Borel–Cantelli lemma. -/
 lemma prob_bad : D.prob D.bad = 0 := by
-  refine measure_setOf_frequently_eq_zero ?_
+  refine measure_setOfPred_frequently_eq_zero ?_
   have hle : ∀ m, D.prob {ω : SkΩ S | ω.1 none ∈ D.B m 0 ∨ ¬ ω.2 ≤ thr m} ≤
       ENNReal.ofReal (skEps m) + ENNReal.ofReal (skEps m) := by
     intro m

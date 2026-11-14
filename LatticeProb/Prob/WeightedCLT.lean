@@ -122,7 +122,7 @@ theorem tendsto_prod_sub_prod_of_quadratic (N : ℕ → ℕ) (a : (n : ℕ) → 
             rw [Metric.mem_ball, Real.dist_eq, sub_zero]
             exact (hn i).trans_lt (by linarith)
           have h := hδbound hi
-          simpa only [Set.mem_setOf_eq, Real.norm_eq_abs, abs_sq] using h
+          simpa only [Set.mem_ofPred_eq, Real.norm_eq_abs, abs_sq] using h
       _ = ε / (2 * B) * ∑ i, a n i ^ 2 := (Finset.mul_sum ..).symm
       _ ≤ ε / (2 * B) * B := mul_le_mul_of_nonneg_left hb (by positivity)
   have heq : ε / (2 * B) * B = ε / 2 := by field_simp

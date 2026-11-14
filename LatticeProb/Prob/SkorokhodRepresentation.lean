@@ -55,7 +55,7 @@ theorem exists_skorokhod_representation
     refine measure_mono_null (t := (D.good)ᶜ ∪ D.bad) ?_
       (measure_union_null D.prob_good_compl D.prob_bad)
     intro ω hω
-    rw [mem_setOf_eq] at hω
+    rw [mem_ofPred_eq] at hω
     by_contra hc
     simp only [mem_union, mem_compl_iff, not_or, not_not] at hc
     exact hω (D.tendsto_X' hc.1 hc.2)

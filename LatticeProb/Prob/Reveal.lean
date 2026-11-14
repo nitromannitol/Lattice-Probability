@@ -78,7 +78,7 @@ theorem prod_coords {d : ℕ} {ν : Measure ℤ} [IsProbabilityMeasure ν]
     Integrable (fun a : Site d → ℤ => ∏ y ∈ N, w y (a y)) (iidLaw d ν)
     ∧ ∫ a, ∏ y ∈ N, w y (a y) ∂(iidLaw d ν) = ∏ y ∈ N, ∫ k, w y k ∂ν := by
   classical
-  haveI : IsProbabilityMeasure (iidLaw d ν) := by
+  have : IsProbabilityMeasure (iidLaw d ν) := by
     unfold iidLaw; infer_instance
   induction N using Finset.induction_on with
   | empty => simp

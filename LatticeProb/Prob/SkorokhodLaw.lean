@@ -83,7 +83,7 @@ lemma prob_two {a b : SkIdx} (hab : a ≠ b) {U V : Set S} (hU : MeasurableSet U
       (Set.pi (({a, b} : Finset SkIdx) : Set SkIdx)
         (fun j => if j = a then U else if j = b then V else univ)) ×ˢ Iic c := by
     ext ω
-    simp only [Set.mem_setOf_eq, mem_prod, Set.mem_pi, Finset.coe_insert, Finset.coe_singleton,
+    simp only [mem_ofPred_eq, mem_prod, Set.mem_pi, Finset.coe_insert, Finset.coe_singleton,
       mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq, ↓reduceIte, mem_Iic,
       hab.symm]
     tauto
@@ -100,7 +100,7 @@ lemma prob_one (a : SkIdx) {U : Set S} (hU : MeasurableSet U) (c : I) :
   have : {ω : SkΩ S | ¬ ω.2 ≤ c ∧ ω.1 a ∈ U} =
       (Set.pi (({a} : Finset SkIdx) : Set SkIdx) fun _ => U) ×ˢ Ioi c := by
     ext ω
-    simp only [Set.mem_setOf_eq, mem_prod, Set.mem_pi, Finset.coe_singleton, mem_singleton_iff,
+    simp only [mem_ofPred_eq, mem_prod, Set.mem_pi, Finset.coe_singleton, mem_singleton_iff,
       forall_eq, mem_Ioi, not_le]
     tauto
   rw [this, prob, Measure.prod_prod, Measure.infinitePi_pi (X := fun _ => S) (μ := D.ν) (fun _ _ => hU),
@@ -140,7 +140,7 @@ lemma preimage_X'_of_le {n : ℕ} (hn : D.φ 0 ≤ n) (A : Set S) :
         ω.1 (some (Sum.inl (n, i))) ∈ A}) ∪
       {ω | ¬ ω.2 ≤ thr (D.reg n) ∧ ω.1 (some (Sum.inr n)) ∈ A} := by
   ext ω
-  simp only [mem_preimage, X', hn, true_and, mem_union, mem_iUnion, Set.mem_setOf_eq,
+  simp only [mem_preimage, X', hn, true_and, mem_union, mem_iUnion, mem_ofPred_eq,
     Finset.mem_range, exists_prop]
   split_ifs with h
   · constructor

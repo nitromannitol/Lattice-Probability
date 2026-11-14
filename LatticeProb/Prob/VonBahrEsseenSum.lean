@@ -73,7 +73,7 @@ theorem measure_abs_ge_le_div_rpow {Ω : Type*} [MeasurableSpace Ω] (P : Measur
     exact ENNReal.measurable_ofReal.comp_aemeasurable (hm.comp_aemeasurable hfm.aemeasurable)
   have hset : {ω | t ≤ |f ω|} = {ω | ENNReal.ofReal (t ^ p) ≤ ENNReal.ofReal (|f ω| ^ p)} := by
     ext ω
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · intro h
       exact ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow (le_of_lt ht) h (by linarith))
@@ -178,8 +178,8 @@ theorem integral_middle_eq_zero {p : ℝ} (hp : 1 ≤ p)
     intro x
     have habsif : |(if 0 ≤ x then (1 : ℝ) else -1)| = 1 := by
       by_cases hx0 : 0 ≤ x
-      · rw [if_pos hx0, abs_of_nonneg (by norm_num)]
-      · rw [if_neg hx0, abs_neg, abs_one]
+      · rw [ite_eq_left hx0, abs_of_nonneg (by norm_num)]
+      · rw [ite_eq_right hx0, abs_neg, abs_one]
     have habs : |φ x| = |x| ^ (p - 1) := by
       rw [hφ, abs_mul, habsif, one_mul, abs_of_nonneg (Real.rpow_nonneg (abs_nonneg x) _)]
     rw [habs]
@@ -232,8 +232,8 @@ theorem integral_abs_rpow_finsetSum_le {p : ℝ} (hp1 : 1 ≤ p) (hp2 : p ≤ 2)
           intro ω
           have habs : |(if 0 ≤ ∑ i ∈ s, Y i ω then (1 : ℝ) else -1)| = 1 := by
             by_cases hx0 : 0 ≤ ∑ i ∈ s, Y i ω
-            · rw [if_pos hx0, abs_of_nonneg (by norm_num)]
-            · rw [if_neg hx0, abs_neg, abs_one]
+            · rw [ite_eq_left hx0, abs_of_nonneg (by norm_num)]
+            · rw [ite_eq_right hx0, abs_neg, abs_one]
           rw [Real.norm_eq_abs, abs_mul, abs_mul, habs, one_mul,
             abs_of_nonneg (Real.rpow_nonneg (abs_nonneg _) _)]
           exact mul_abs_rpow_le_add_rpow hp1 _ _

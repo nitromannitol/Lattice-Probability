@@ -149,7 +149,7 @@ theorem ae_modulus_of_kolmogorov {k : ℕ} {a b : Fin k → ℝ}
     measure_limsup_atTop_eq_zero hsum
   rw [ae_iff]
   refine measure_mono_null (fun ω hω => ?_) hBC
-  simp only [Set.mem_setOf_eq, not_exists] at hω
+  simp only [Set.mem_ofPred_eq, not_exists] at hω
   rw [mem_limsup_iff_frequently_mem, Filter.frequently_atTop]
   intro n₀
   have h1 : ¬ (∀ s ∈ Set.Icc a b, ∀ r ∈ Set.Icc a b,
