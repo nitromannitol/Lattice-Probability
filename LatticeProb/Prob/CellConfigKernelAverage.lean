@@ -103,4 +103,93 @@ theorem kernelAverage_similarity (m : ℝ≥0∞) {G : GMSSpace × DyadicCoord �
         rw [key]
     _ = kernelAverage m G (H, q, w) := by rw [← mul_assoc, hinv, one_mul]
 
+/-! ### Block constancy and the witnesses of `𝓕_m` -/
+
+/-- **The kernel is constant on the selected square**: for a dyadic system with compatible offset
+sequences, an off-grid root `w` whose selected generation is `j` and an off-grid point `z` of the
+square of generation `j` at `w`, the kernel rooted at `z` is the kernel rooted at `w` (the squares of
+generations `j` and `j + 1` at `z` are those at `w`, so `j` is also selected at `z`). -/
+theorem averageKernel_eq_of_mem_squareAt {m : ℝ≥0∞} {H : GMSSpace} {q : DyadicCoord}
+    (h₁ : IsCompatible q.2.1) (h₂ : IsCompatible q.2.2) {w z : ℂ}
+    (hw : IsOffGrid q.1 q.2.1 q.2.2 w) (hz : IsOffGrid q.1 q.2.1 q.2.2 z) {j : ℤ}
+    (hj : j ∈ selectionSet (complexCells H.1) m q w) (hzj : z ∈ squareAt q.1 q.2.1 q.2.2 j w)
+    (w₁ : ℂ) : averageKernel m (H, (q, z), w₁) = averageKernel m (H, (q, w), w₁) := by
+  have e0 : squareAt q.1 q.2.1 q.2.2 j w = squareAt q.1 q.2.1 q.2.2 j z :=
+    squareAt_eq_of_mem hz hzj
+  have e1 : squareAt q.1 q.2.1 q.2.2 (j + 1) w = squareAt q.1 q.2.1 q.2.2 (j + 1) z :=
+    squareAt_eq_of_mem hz (squareAt_mono_of_isCompatible h₁ h₂ w (Int.le_add_one le_rfl) hzj)
+  have hjz : j ∈ selectionSet (complexCells H.1) m q z :=
+    ⟨by rw [← e0]; exact hj.1, by rw [← e1]; exact hj.2⟩
+  dsimp only [averageKernel]
+  rw [selectedSum_eq_of_mem (monotone_cellMass_squareAt h₁ h₂ hz) hjz,
+    selectedSum_eq_of_mem (monotone_cellMass_squareAt h₁ h₂ hw) hj, e0]
+
+/-- **The kernel average is constant on the selected square** (deterministic form). -/
+theorem kernelAverage_eq_of_mem_squareAt (m : ℝ≥0∞) (G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞)
+    {H : GMSSpace} {q : DyadicCoord} (h₁ : IsCompatible q.2.1) (h₂ : IsCompatible q.2.2)
+    {w z : ℂ} (hw : IsOffGrid q.1 q.2.1 q.2.2 w) (hz : IsOffGrid q.1 q.2.1 q.2.2 z) {j : ℤ}
+    (hj : j ∈ selectionSet (complexCells H.1) m q w) (hzj : z ∈ squareAt q.1 q.2.1 q.2.2 j w) :
+    kernelAverage m G (H, q, z) = kernelAverage m G (H, q, w) := by
+  dsimp only [kernelAverage]
+  exact lintegral_congr fun w₁ => by
+    rw [averageKernel_eq_of_mem_squareAt h₁ h₂ hw hz hj hzj w₁]
+
+/-- **Block constancy of the kernel average**: for every configuration `H`, every cell mass
+`m ∈ (0, ∞)` and almost every dyadic system, the kernel average rooted at almost every point of the
+capped square `S_m^0(H, D)` around the origin is the kernel average rooted at the origin. -/
+theorem ae_kernelAverage_eq_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    (G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞) (H : GMSSpace) :
+    ∀ᵐ q ∂dyadicLaw, ∀ᵐ z ∂volume, z ∈ originCappedSquare m H q →
+      kernelAverage m G (H, q, z) = kernelAverage m G (H, q, 0) := by
+  have := countable_cells H.2
+  filter_upwards [ae_isCompatible_isOffGrid_system 0,
+    ae_exists_isCappedSquare_squareAt_cellMass 0 (locallyFinite_complexCells H.2)
+      (iUnion_complexCells H.2) isCompact_complexCells (volume_complexCells_ne_zero H.2)]
+    with q hq hex
+  obtain ⟨j, hj1, hj2, hcap⟩ := hex m hm0 hmtop
+  filter_upwards [ae_isOffGrid_volume q.1 q.2.1 q.2.2] with z hz hzS
+  have hzj : z ∈ squareAt q.1 q.2.1 q.2.2 j 0 := by
+    rw [← hcap.cappedSquare_eq]
+    exact hzS
+  exact kernelAverage_eq_of_mem_squareAt m G hq.1 hq.2.1 hq.2.2 hz ⟨hj1, hj2⟩ hzj
+
+/-- **At the origin the kernel average is the uniform average over the capped square**: for every
+configuration and every cell mass `m ∈ (0, ∞)`, almost surely in the dyadic system,
+`A_m G(H, D, 0) = |S_m^0|⁻¹ ∫_{S_m^0} G(H, D, z) dz`. -/
+theorem ae_kernelAverage_origin_eq {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    (G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞) (H : GMSSpace) :
+    ∀ᵐ q ∂dyadicLaw, kernelAverage m G (H, q, 0) = cappedSquareAverage m G H q := by
+  filter_upwards [ae_averageKernel_eq H 0] with q hq
+  dsimp only [kernelAverage, cappedSquareAverage]
+  exact lintegral_congr fun z => by rw [hq m hm0 hmtop z]
+
+/-- **The strict upper level sets of the kernel average are witnesses of `𝓕_m`**, for a measurable
+`G ≥ 0` invariant under the joint similarity at every dyadic system with compatible offset
+sequences. -/
+theorem isCappedSquareWitness_kernelAverage {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hG : Measurable G)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
+        G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w))
+    (t : ℝ≥0∞) : IsCappedSquareWitness m (kernelAverage m G ⁻¹' Ioi t) := by
+  refine ⟨measurable_kernelAverage m hG measurableSet_Ioi,
+    fun s u hs H H' h q h₁ h₂ w => ?_, fun H => ?_⟩
+  · have e := kernelAverage_similarity m hG h h₁ h₂ (hinv s u hs H H' h q h₁ h₂) w
+    simp only [mem_preimage, e]
+  · filter_upwards [ae_kernelAverage_eq_origin hm0 hmtop G H] with q hq
+    filter_upwards [hq] with z hz hzS
+    simp only [mem_preimage, hz hzS]
+
+/-- **The kernel average at the origin is `𝓕_m`-measurable**: `(H, D) ↦ A_m G(H, D, 0)` is
+measurable for the σ-algebra `𝓕_m` (`cappedSquareSigma`), for a measurable invariant `G ≥ 0`. -/
+theorem measurable_kernelAverage_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hG : Measurable G)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
+        G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w)) :
+    Measurable[cappedSquareSigma m] fun p : GMSSpace × DyadicCoord =>
+      kernelAverage m G (p.1, p.2, 0) :=
+  measurable_of_Ioi (mδ := cappedSquareSigma m) fun t =>
+    ⟨_, isCappedSquareWitness_kernelAverage hm0 hmtop hG hinv t, rfl⟩
+
 end LatticeProb.CellConfigCappedSquare
