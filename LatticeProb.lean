@@ -564,6 +564,7 @@ import LatticeProb.Analysis.Sobolev.ConvolutionJetsIntegrable
 import LatticeProb.Analysis.Sobolev.FrechetKolmogorovMollifyProved
 import LatticeProb.Analysis.Sobolev.RellichCmNetReduction
 import LatticeProb.Analysis.Sobolev.BandLimitedCmBound
+import LatticeProb.Analysis.Sobolev.RieszHeat
 import LatticeProb.External.RellichKondrachovNegSobolev
 import LatticeProb.External.PotentialKernelAsymptotics
 import LatticeProb.External.PotentialKernelAsymptoticsProved
