@@ -108,4 +108,114 @@ theorem tendsto_integral_heatKernel_reflect_time {d : ℕ} (hd : 1 ≤ d)
     (integral_sub_left_eq_self (fun y : Fin d → ℝ =>
       heatKernel d τ (x - y) * v (t - τ, y)) volume x)
 
+/-- The spatial heat operator commutes with reflection about a point. -/
+theorem contOp_comp_sub_left {d : ℕ} {f : (Fin d → ℝ) → ℝ} (hf : ContDiff ℝ ∞ f)
+    (x y : Fin d → ℝ) :
+    contOp d (fun z => f (x - z)) y = contOp d f (x - y) := by
+  let F : ℝ × (Fin d → ℝ) → ℝ := fun q => f q.2
+  have hF : ContDiff ℝ ∞ F := hf.comp contDiff_snd
+  have hG : ContDiff ℝ ∞ (fun q : ℝ × (Fin d → ℝ) => F ((0, x) - q)) :=
+    hF.comp (contDiff_const.sub contDiff_id)
+  unfold contOp
+  have h1 := lap_slice hG 0 y
+  have h2 := lap_slice hF 0 (x - y)
+  change lap (fun z => f (x - z)) y = _ at h1
+  change lap f (x - y) = _ at h2
+  rw [h1, h2]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i hi
+  simpa only [Prod.mk_sub_mk, sub_zero] using
+    (fderiv_fderiv_comp_sub_left_apply hF (0, x) (0, y) (spaceDir d i) (spaceDir d i))
+
+/-- At positive time the heat kernel is smooth as a function of the spatial variable. -/
+theorem contDiff_heatKernel_space {d : ℕ} (hd : 1 ≤ d) {τ : ℝ} (hτ : 0 < τ) :
+    ContDiff ℝ ∞ (heatKernel d τ) := by
+  apply contDiff_iff_contDiffAt.mpr
+  intro x
+  have hu : IsOpen {p : ℝ × (Fin d → ℝ) | 0 < p.1} :=
+    isOpen_lt continuous_const continuous_fst
+  have h := (contDiffOn_heatKernel hd).contDiffAt (hu.mem_nhds (show (τ, x) ∈ {p : ℝ × (Fin d → ℝ) | 0 < p.1} from hτ))
+  exact h.comp x ((contDiffAt_const.prodMk contDiffAt_id))
+
+/-- The reflected kernel satisfies the backward heat equation at positive time. -/
+theorem hasDerivAt_heatKernel_backward {d : ℕ} (hd : 1 ≤ d)
+    {s t : ℝ} (hst : s < t) (x y : Fin d → ℝ) :
+    HasDerivAt (fun r => heatKernel d (t - r) (x - y))
+      (-contOp d (fun z => heatKernel d (t - s) (x - z)) y) s := by
+  have hp : 0 < t - s := sub_pos.mpr hst
+  have h := (heatKernel_hasDerivAt hd (x - y) hp).comp s ((hasDerivAt_id s).const_sub t)
+  rw [contOp_comp_sub_left (contDiff_heatKernel_space hd hp)]
+  simpa only [Function.comp_def, mul_neg, mul_one] using h
+
+/-- Coordinate second derivatives agree with the iterated Fréchet derivatives. -/
+theorem lap_eq_sum_fderiv {d : ℕ} {f : (Fin d → ℝ) → ℝ} (hf : ContDiff ℝ ∞ f)
+    (x : Fin d → ℝ) :
+    lap f x = ∑ i : Fin d, fderiv ℝ (fun z => fderiv ℝ f z (Pi.single i 1)) x (Pi.single i 1) := by
+  unfold lap
+  refine Finset.sum_congr rfl fun i _ => ?_
+  have hslice (g : (Fin d → ℝ) → ℝ) (hg : Differentiable ℝ g) (t : ℝ) :
+      HasDerivAt (fun t => g (Function.update x i t))
+        (fderiv ℝ g (Function.update x i t) (Pi.single i 1)) t :=
+    (hg _).hasFDerivAt.comp_hasDerivAt t (hasDerivAt_update x i t)
+  have h1 : (fun t => deriv (fun t' => f (Function.update x i t')) t) =
+      fun t => fderiv ℝ f (Function.update x i t) (Pi.single i 1) := by
+    funext t
+    exact (hslice f (hf.differentiable (by simp)) t).deriv
+  rw [h1]
+  have h2 := hslice (fun z => fderiv ℝ f z (Pi.single i 1))
+    ((contDiff_fderiv_apply hf _).differentiable (by simp)) (x i)
+  rw [Function.update_eq_self] at h2
+  exact h2.deriv
+
+private theorem integral_mul_fderiv_eq_neg {d : ℕ} {f g : (Fin d → ℝ) → ℝ}
+    (hf : ContDiff ℝ ∞ f) (hg : ContDiff ℝ ∞ g) (hgc : HasCompactSupport g)
+    (w : Fin d → ℝ) :
+    ∫ y, f y * fderiv ℝ g y w = -∫ y, fderiv ℝ f y w * g y := by
+  have hf' := (contDiff_fderiv_apply hf w).continuous
+  have hg' := (contDiff_fderiv_apply hg w).continuous
+  have hgc' := hgc.fderiv_apply ℝ w
+  refine integral_mul_fderiv_eq_neg_fderiv_mul_of_integrable ?_ ?_ ?_
+    (fun y _ => hf.differentiable (by simp) y) (fun y _ => hg.differentiable (by simp) y)
+  · exact (hf'.mul hg.continuous).integrable_of_hasCompactSupport hgc.mul_left
+  · exact (hf.continuous.mul hg').integrable_of_hasCompactSupport hgc'.mul_left
+  · exact (hf.continuous.mul hg.continuous).integrable_of_hasCompactSupport hgc.mul_left
+
+private theorem integral_mul_fderiv_fderiv_eq {d : ℕ} {f g : (Fin d → ℝ) → ℝ}
+    (hf : ContDiff ℝ ∞ f) (hg : ContDiff ℝ ∞ g) (hgc : HasCompactSupport g)
+    (w : Fin d → ℝ) :
+    ∫ y, f y * fderiv ℝ (fun z => fderiv ℝ g z w) y w =
+      ∫ y, fderiv ℝ (fun z => fderiv ℝ f z w) y w * g y := by
+  have h1 := integral_mul_fderiv_eq_neg hf (contDiff_fderiv_apply hg w) (hgc.fderiv_apply ℝ w) w
+  have h2 := integral_mul_fderiv_eq_neg (contDiff_fderiv_apply hf w) hg hgc w
+  rw [h1, h2, neg_neg]
+
+/-- The spatial heat operator is symmetric against a compactly supported smooth function. -/
+theorem integral_mul_contOp {d : ℕ} {f g : (Fin d → ℝ) → ℝ}
+    (hf : ContDiff ℝ ∞ f) (hg : ContDiff ℝ ∞ g) (hgc : HasCompactSupport g) :
+    ∫ y, f y * contOp d g y = ∫ y, contOp d f y * g y := by
+  unfold contOp
+  simp_rw [lap_eq_sum_fderiv hg, lap_eq_sum_fderiv hf]
+  have hi : ∀ i : Fin d, Integrable (fun y => f y *
+      fderiv ℝ (fun z => fderiv ℝ g z (Pi.single i 1)) y (Pi.single i 1)) := fun i =>
+    (hf.continuous.mul (contDiff_fderiv_apply (contDiff_fderiv_apply hg _) _).continuous)
+      |>.integrable_of_hasCompactSupport (((hgc.fderiv_apply ℝ _).fderiv_apply ℝ _).mul_left)
+  have hj : ∀ i : Fin d, Integrable (fun y =>
+      fderiv ℝ (fun z => fderiv ℝ f z (Pi.single i 1)) y (Pi.single i 1) * g y) := fun i =>
+    ((contDiff_fderiv_apply (contDiff_fderiv_apply hf _) _).continuous.mul hg.continuous)
+      |>.integrable_of_hasCompactSupport hgc.mul_left
+  have e1 : ∀ y, f y * ((∑ i : Fin d,
+      fderiv ℝ (fun z => fderiv ℝ g z (Pi.single i 1)) y (Pi.single i 1)) / (2 * d)) =
+      (∑ i : Fin d, f y * fderiv ℝ (fun z => fderiv ℝ g z (Pi.single i 1)) y (Pi.single i 1)) /
+        (2 * d) := fun y => by rw [mul_div_assoc', Finset.mul_sum]
+  have e2 : ∀ y, (∑ i : Fin d,
+      fderiv ℝ (fun z => fderiv ℝ f z (Pi.single i 1)) y (Pi.single i 1)) / (2 * d) * g y =
+      (∑ i : Fin d, fderiv ℝ (fun z => fderiv ℝ f z (Pi.single i 1)) y (Pi.single i 1) * g y) /
+        (2 * d) := fun y => by rw [div_mul_eq_mul_div, Finset.sum_mul]
+  simp_rw [e1, e2]
+  rw [integral_div, integral_div, integral_finsetSum _ fun i _ => hi i,
+    integral_finsetSum _ fun i _ => hj i]
+  congr 1
+  exact Finset.sum_congr rfl fun i _ => integral_mul_fderiv_fderiv_eq hf hg hgc _
+
 end LatticeProb.Heat
