@@ -1,6 +1,7 @@
 import LatticeProb.Analysis.WeakLaplaceMollify
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 import Mathlib.Geometry.Manifold.PartitionOfUnity
+import Mathlib.MeasureTheory.Integral.Average
 
 /-!
 # Sub-mean-value inequalities and the distributional Laplacian
@@ -262,6 +263,17 @@ theorem integral_mul_laplacian_nonneg_of_mollify {U : Set E} (hU : IsOpen U)
   have hyx := mem_closedBall.mp hy
   linarith [dist_triangle y x z]
 
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [BorelSpace E] [μ.IsAddHaarMeasure] in
+/-- A nonnegative ball-average increment has a nonnegative quadratic coefficient. -/
+theorem nonneg_of_le_ballAverage_of_tendsto {f : E → ℝ} {a : E} {δ c L : ℝ} (hδ : 0 < δ) (hc : 0 < c)
+    (hmean : ∀ r : ℝ, 0 < r → r < δ → f a ≤ ⨍ y in ball a r, f y ∂μ)
+    (hlim : Tendsto (fun r : ℝ => ((⨍ y in ball a r, f y ∂μ) - f a) / r ^ 2)
+      (𝓝[>] 0) (𝓝 (c * L))) : 0 ≤ L := by
+  have h : 0 ≤ c * L := ge_of_tendsto hlim ?_
+  · exact nonneg_of_mul_nonneg_left (by simpa only [mul_comm] using h) hc
+  · filter_upwards [Ioo_mem_nhdsGT hδ] with r hr
+    exact div_nonneg (sub_nonneg.mpr (hmean r hr.1 hr.2)) (sq_nonneg r)
+
 /-- The integral of a linear function over a ball centred at the origin vanishes. -/
 theorem integral_linear_ball_zero (L : E →L[ℝ] ℝ) (r : ℝ) :
     ∫ x in ball (0 : E) r, L x ∂μ = 0 := by
@@ -273,5 +285,17 @@ theorem integral_linear_ball_zero (L : E →L[ℝ] ℝ) (r : ℝ) :
       measurableEmbedding_neg L (ball 0 r)
   simp only [map_neg, integral_neg] at h
   linarith
+
+/-- The integral of a linear function of the displacement from the centre of a ball vanishes. -/
+theorem integral_linear_sub_center_ball (L : E →L[ℝ] ℝ) (a : E) (r : ℝ) :
+    ∫ y in ball a r, L (y - a) ∂μ = 0 := by
+  have hpre : (fun x : E => a + x) ⁻¹' ball a r = ball 0 r := by
+    ext x
+    simp [mem_ball, dist_eq_norm]
+  have h := (measurePreserving_add_left μ a).setIntegral_preimage_emb
+    (measurableEmbedding_addLeft a) (fun y => L (y - a)) (ball a r)
+  rw [hpre] at h
+  simp only [add_sub_cancel_left] at h
+  rw [← h, integral_linear_ball_zero]
 
 end LatticeProb.Ishii
