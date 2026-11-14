@@ -5,8 +5,8 @@ import LatticeProb.Prob.PathSpaceDUnif
 /-!
 # Compact sets of path laws from a modulus bound at a countable family of levels
 
-Let `E` be a proper metric space and `x₀ ∈ E`.  Fix scales `δ k > 0`, `k ∈ ℕ`.  The set of probability
-measures `μ` on `C(ℝ≥0, E)` that are carried by paths starting within distance `1` of `x₀` and that
+Let `E` be a proper metric space, `x₀ ∈ E` and `r ∈ ℝ`.  Fix scales `δ k > 0`, `k ∈ ℕ`.  The set of probability
+measures `μ` on `C(ℝ≥0, E)` that are carried by paths starting within distance `r` of `x₀` and that
 satisfy, for every `k`, the modulus bound
 `μ (pathModulusFailure (k + 1) (δ k)) ≤ 1 / (k + 1)`
 is tight, hence relatively compact for the Lévy–Prokhorov metric (Prokhorov's theorem).  The
@@ -35,24 +35,24 @@ theorem pathModulusFailure_mono_level [MetricSpace E] {L L' : ℝ} (hL : 0 < L) 
 
 /-- **Compact sets of path laws.**  For a proper metric space `E`, `x₀ : E` and positive scales
 `δ k`, there is a compact set `K` of probability measures on the path space (Lévy–Prokhorov metric)
-containing every probability measure `μ` that charges only paths starting within `1` of `x₀` and has
+containing every probability measure `μ` that charges only paths starting within distance `r` of `x₀` and has
 `μ (pathModulusFailure (k + 1) (δ k)) ≤ 1 / (k + 1)` for all `k`. -/
 theorem exists_isCompact_pathLaws [MetricSpace E] [ProperSpace E] [MeasurableSpace C(ℝ≥0, E)]
-    [BorelSpace C(ℝ≥0, E)] (x₀ : E) (δ : ℕ → ℝ≥0) (hδ : ∀ k, 0 < δ k) :
+    [BorelSpace C(ℝ≥0, E)] (x₀ : E) (r : ℝ) (δ : ℕ → ℝ≥0) (hδ : ∀ k, 0 < δ k) :
     ∃ K : Set (LevyProkhorov (ProbabilityMeasure C(ℝ≥0, E))), IsCompact K ∧
       ∀ μ : ProbabilityMeasure C(ℝ≥0, E),
-        (μ : Measure C(ℝ≥0, E)) {f : C(ℝ≥0, E) | 1 < dist (f 0) x₀} = 0 →
+        (μ : Measure C(ℝ≥0, E)) {f : C(ℝ≥0, E) | r < dist (f 0) x₀} = 0 →
         (∀ k : ℕ, (μ : Measure C(ℝ≥0, E)) (pathModulusFailure ((k : ℝ) + 1) (δ k)) ≤
           ENNReal.ofReal (1 / ((k : ℝ) + 1))) →
         LevyProkhorov.probabilityMeasureHomeomorph μ ∈ K := by
   set S : Set (ProbabilityMeasure C(ℝ≥0, E)) := {μ |
-    (μ : Measure C(ℝ≥0, E)) {f : C(ℝ≥0, E) | 1 < dist (f 0) x₀} = 0 ∧
+    (μ : Measure C(ℝ≥0, E)) {f : C(ℝ≥0, E) | r < dist (f 0) x₀} = 0 ∧
     ∀ k : ℕ, (μ : Measure C(ℝ≥0, E)) (pathModulusFailure ((k : ℝ) + 1) (δ k)) ≤
       ENNReal.ofReal (1 / ((k : ℝ) + 1))} with hS
   have hSt : IsTightMeasureSet {((ν : ProbabilityMeasure C(ℝ≥0, E)) : Measure C(ℝ≥0, E)) | ν ∈ S} := by
     refine isTightMeasureSet_of_pathModuli _ x₀ ?_ ?_
     · intro ζ _
-      refine ⟨1, ?_⟩
+      refine ⟨r, ?_⟩
       rintro _ ⟨ν, hν, rfl⟩
       rw [hν.1]
       exact zero_le
