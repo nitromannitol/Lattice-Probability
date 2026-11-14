@@ -904,3 +904,20 @@ import LatticeProb.Analysis.AlexandrovLocal
 import LatticeProb.Analysis.Alexandrov
 import LatticeProb.Analysis.WeakLaplaceMollify
 import LatticeProb.Analysis.JensenSmooth
+
+-- Modules adapted from Leonardo Bonanno's lean-formalizations: top modules of the copied import closures
+import LatticeProb.Bonanno
+import LatticeProb.Bonanno.HigherDimLFPP.TwoD.CircleCorollary
+import LatticeProb.Bonanno.HigherDimLQGContinuity.Param.Prop18
+import LatticeProb.Bonanno.LQGMetric.Assembly.MainFinal
+import LatticeProb.Bonanno.LQGMetric.Field.CircleSmearDilate
+import LatticeProb.Bonanno.LQGMetric.Field.ExistGFFStd
+import LatticeProb.Bonanno.MatedCRTHarmonic.Frozen.Theorem3_2
+import LatticeProb.Bonanno.MeshOnly.MeshOnlyHeatBound
+import LatticeProb.Bonanno.ReflectedGMS.GMS.Theorem116
+import LatticeProb.Bonanno.SupercriticalLFPPAS.Field.LocalizedHeatEstimates
+import LatticeProb.Bonanno.SupercriticalLQGUniqueness.B2.DG20Conc.LaneA4RProved
+import LatticeProb.Bonanno.SupercriticalLQGUniqueness.B2.Polylog.P6Closing
+import LatticeProb.Bonanno.SupercriticalLQGUniqueness.B2.Strong.WeakOfStrong
+import LatticeProb.Bonanno.SupercriticalLQGUniqueness.Frozen.ExistsUnique_isLFPPNormalizer
+import LatticeProb.Bonanno.SupercriticalLQGUniqueness.Uniqueness.Measurability.GeodesicCodes.PathLength
