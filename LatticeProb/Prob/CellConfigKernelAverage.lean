@@ -22,6 +22,11 @@ the rooted form `A_m G` is the function whose level sets are witnesses of `𝓕_
 * `kernelAverage_similarity`: `A_m G` is invariant under the joint similarity
   `(H, D, w) ↦ (C(H - u), C(D - u), C(w - u))` at every dyadic system with compatible offset
   sequences, when `G` is.
+* `ae_kernelAverage_eq_origin`: block constancy; almost surely `A_m G` is constant on the capped square
+  `S_m^0` around the origin, and `ae_kernelAverage_origin_eq`: there it is the uniform average.
+* `measurable_kernelAverage_origin`: `(H, D) ↦ A_m G(H, D, 0)` is `𝓕_m`-measurable.
+* `kernelAverage_origin_ae_eq_condExp`: under the mass-transport principle, `A_m G(·, ·, 0)` is a version
+  of `E[G(H, D, 0) | 𝓕_m]`.
 -/
 
 open MeasureTheory Set
@@ -191,5 +196,90 @@ theorem measurable_kernelAverage_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop 
       kernelAverage m G (p.1, p.2, 0) :=
   measurable_of_Ioi (mδ := cappedSquareSigma m) fun t =>
     ⟨_, isCappedSquareWitness_kernelAverage hm0 hmtop hG hinv t, rfl⟩
+
+/-! ### The conditional expectation given `𝓕_m` -/
+
+section CondExp
+
+variable {μ : Measure GMSSpace}
+
+/-- **Set-integral identity on the product space**: under the mass-transport principle, for every
+cell mass `m ∈ (0, ∞)`, every measurable invariant `G ≥ 0` and every event `A ∈ 𝓕_m`,
+`∫_A A_m G(H, D, 0) d(μ ⊗ P) = ∫_A G(H, D, 0) d(μ ⊗ P)`, with `P` the law of the uniform dyadic
+system. -/
+theorem setLIntegral_kernelAverage_origin (hMT : MassTransport μ) {m : ℝ≥0∞} (hm0 : m ≠ 0)
+    (hmtop : m ≠ ∞) {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hG : Measurable G)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
+        G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w))
+    {A : Set (GMSSpace × DyadicCoord)} (hA : MeasurableSet[cappedSquareSigma m] A) :
+    ∫⁻ p in A, kernelAverage m G (p.1, p.2, 0) ∂μ.prod dyadicLaw =
+      ∫⁻ p in A, G (p.1, p.2, 0) ∂μ.prod dyadicLaw := by
+  have : IsProbabilityMeasure (unifIco 1) := isProbabilityMeasure_unifIco one_pos
+  have hAm : MeasurableSet A := cappedSquareSigma_le m A hA
+  have hK : Measurable fun p : GMSSpace × DyadicCoord => kernelAverage m G (p.1, p.2, 0) :=
+    (measurable_kernelAverage m hG).comp
+      (measurable_fst.prodMk (measurable_snd.prodMk measurable_const))
+  have hG0 : Measurable fun p : GMSSpace × DyadicCoord => G (p.1, p.2, 0) :=
+    hG.comp (measurable_fst.prodMk (measurable_snd.prodMk measurable_const))
+  have hind : ∀ f : GMSSpace × DyadicCoord → ℝ≥0∞, ∀ p,
+      A.indicator f p = A.indicator (fun _ => (1 : ℝ≥0∞)) p * f p := by
+    intro f p
+    by_cases hp : p ∈ A
+    · rw [Set.indicator_of_mem hp, Set.indicator_of_mem hp, one_mul]
+    · rw [Set.indicator_of_notMem hp, Set.indicator_of_notMem hp, zero_mul]
+  have e1 : ∫⁻ p in A, kernelAverage m G (p.1, p.2, 0) ∂μ.prod dyadicLaw =
+      ∫⁻ H, ∫⁻ q, A.indicator (fun _ => (1 : ℝ≥0∞)) (H, q) * cappedSquareAverage m G H q
+        ∂dyadicLaw ∂μ := by
+    rw [← lintegral_indicator hAm, lintegral_congr (hind _),
+      lintegral_prod (fun p => A.indicator (fun _ => (1 : ℝ≥0∞)) p *
+        kernelAverage m G (p.1, p.2, 0)) ((measurable_const.indicator hAm).mul hK).aemeasurable]
+    refine lintegral_congr fun H => lintegral_congr_ae ?_
+    filter_upwards [ae_kernelAverage_origin_eq hm0 hmtop G H] with q hq
+    rw [hq]
+  have e2 : ∫⁻ p in A, G (p.1, p.2, 0) ∂μ.prod dyadicLaw =
+      ∫⁻ H, ∫⁻ q, A.indicator (fun _ => (1 : ℝ≥0∞)) (H, q) * G (H, q, 0) ∂dyadicLaw ∂μ := by
+    rw [← lintegral_indicator hAm, lintegral_congr (hind _),
+      lintegral_prod (fun p => A.indicator (fun _ => (1 : ℝ≥0∞)) p * G (p.1, p.2, 0))
+        ((measurable_const.indicator hAm).mul hG0).aemeasurable]
+  rw [e1, e2, lintegral_indicator_mul_cappedSquareAverage hMT hm0 hmtop hG hinv hA]
+
+/-- **`avg_m G = E[G | 𝓕_m]`** (arXiv 1807.07515, proof of Lemma 2.7): under the mass-transport
+principle, for a finite law `μ` of the configuration, every cell mass `m ∈ (0, ∞)` and every
+measurable `G ≥ 0` invariant under the joint similarity with `E[G(H, D, 0)] < ∞`, the kernel average
+at the origin, i.e. almost surely the uniform average `|S_m^0|⁻¹ ∫_{S_m^0} G(H, D, z) dz`, is a
+version of the conditional expectation of `G(H, D, 0)` given `𝓕_m` under `μ ⊗ P`. -/
+theorem kernelAverage_origin_ae_eq_condExp [IsFiniteMeasure μ] (hMT : MassTransport μ)
+    {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞) {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞}
+    (hG : Measurable G)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
+        G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w))
+    (hfin : ∫⁻ p, G (p.1, p.2, 0) ∂μ.prod dyadicLaw ≠ ∞) :
+    (fun p : GMSSpace × DyadicCoord => (kernelAverage m G (p.1, p.2, 0)).toReal)
+      =ᵐ[μ.prod dyadicLaw]
+        (μ.prod dyadicLaw)[fun p => (G (p.1, p.2, 0)).toReal | cappedSquareSigma m] := by
+  have hK : Measurable fun p : GMSSpace × DyadicCoord => kernelAverage m G (p.1, p.2, 0) :=
+    (measurable_kernelAverage m hG).comp
+      (measurable_fst.prodMk (measurable_snd.prodMk measurable_const))
+  have hG0 : Measurable fun p : GMSSpace × DyadicCoord => G (p.1, p.2, 0) :=
+    hG.comp (measurable_fst.prodMk (measurable_snd.prodMk measurable_const))
+  have hKfin : ∫⁻ p, kernelAverage m G (p.1, p.2, 0) ∂μ.prod dyadicLaw ≠ ∞ := by
+    have h := setLIntegral_kernelAverage_origin hMT hm0 hmtop hG hinv
+      (@MeasurableSet.univ _ (cappedSquareSigma m))
+    simp only [Measure.restrict_univ] at h
+    rw [h]
+    exact hfin
+  have hKm := measurable_kernelAverage_origin hm0 hmtop hG hinv
+  have : IsProbabilityMeasure (unifIco 1) := isProbabilityMeasure_unifIco one_pos
+  refine ae_eq_condExp_of_forall_setIntegral_eq (cappedSquareSigma_le m)
+    (integrable_toReal_of_lintegral_ne_top hG0.aemeasurable hfin)
+    (fun s _ _ => (integrable_toReal_of_lintegral_ne_top hK.aemeasurable hKfin).integrableOn)
+    (fun s hs _ => ?_) hKm.ennreal_toReal.stronglyMeasurable.aestronglyMeasurable
+  rw [integral_toReal hK.aemeasurable (ae_restrict_of_ae (ae_lt_top hK hKfin)),
+    integral_toReal hG0.aemeasurable (ae_restrict_of_ae (ae_lt_top hG0 hfin)),
+    setLIntegral_kernelAverage_origin hMT hm0 hmtop hG hinv hs]
+
+end CondExp
 
 end LatticeProb.CellConfigCappedSquare
