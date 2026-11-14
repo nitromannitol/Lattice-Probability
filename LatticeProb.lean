@@ -472,6 +472,7 @@ import LatticeProb.Analysis.BrownianHeatTime
 import LatticeProb.Prob.BrownianExitKelvin
 import LatticeProb.Analysis.PoissonBallKernel
 import LatticeProb.Analysis.PoissonBallIntegral
+import LatticeProb.Analysis.PoissonBall
 import LatticeProb.Prob.BrownianContAll
 import LatticeProb.Prob.RegularVariation
 import LatticeProb.Prob.Karamata
