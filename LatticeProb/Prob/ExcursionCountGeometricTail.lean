@@ -14,7 +14,11 @@ excursions of `B` above its running minimum of length larger than `ε` completed
 * `measure_succ_le_pathExcursionCount_le`: the one-step bound above (the horizon of the restart is sent to infinity);
 * `measure_le_pathExcursionCount_le_pow`: the geometric tail;
 * `pathExcursionCount_eq_zero_of_le`, `measure_one_le_pathExcursionCount_lt_one`: no long excursion is completed when
-  the first passage happens by time `ε`, which has positive probability, so the ratio `P(1 ≤ J)` is smaller than `1`.
+  the first passage happens by time `ε`, which has positive probability, so the ratio `P(1 ≤ J)` is smaller than `1`;
+* `lintegral_natCast_eq_tsum_measure_le`, `lintegral_natCast_mul_pred_eq_tsum`: tail-sum formulas for the first and
+  second factorial moments of an `ℕ`-valued random variable;
+* `lintegral_pathExcursionCount_le`, `lintegral_pathExcursionCount_lt_top`: `E J ≤ p / (1 - p) < ∞`, `p = P(1 ≤ J)`;
+* `lintegral_pathExcursionCount_mul_pred_le`: `E[J (J - 1)] ≤ 2 q² / (1 - q)²`, `q = P(1 ≤ J)`.
 -/
 
 open MeasureTheory ProbabilityTheory Set
@@ -119,5 +123,109 @@ theorem measure_one_le_pathExcursionCount_lt_one [IsProbabilityMeasure P] (hB : 
           P {ω | 1 ≤ pathExcursionCount (fun t => B t ω) b ε}ᶜ :=
         ENNReal.lt_add_right (measure_ne_top _ _) fun h => hpos (measure_mono_null hsub h)
     _ = 1 := by rw [measure_add_measure_compl hmeas, measure_univ]
+
+section Moments
+
+variable {Ω' : Type*} [MeasurableSpace Ω'] {μ : Measure Ω'}
+
+/-- **Tail-sum formula.** For an `ℕ`-valued random variable `X`, `E X = ∑ₖ P(k + 1 ≤ X)`. -/
+theorem lintegral_natCast_eq_tsum_measure_le {X : Ω' → ℕ} (hX : ∀ k, MeasurableSet {ω | k ≤ X ω}) :
+    ∫⁻ ω, (X ω : ℝ≥0∞) ∂μ = ∑' k : ℕ, μ {ω | k + 1 ≤ X ω} := by
+  have h : ∀ ω, (X ω : ℝ≥0∞) = ∑' k : ℕ, {ω | k + 1 ≤ X ω}.indicator 1 ω := by
+    intro ω
+    rw [tsum_eq_sum (s := Finset.range (X ω)) fun k hk => indicator_of_notMem (by
+        simp only [Finset.mem_range, not_lt] at hk
+        show ¬ (k + 1 ≤ X ω)
+        omega) _]
+    trans ∑ k ∈ Finset.range (X ω), (1 : ℝ≥0∞)
+    · simp
+    · refine Finset.sum_congr rfl fun k hk => (indicator_of_mem (a := ω) (s := {ω | k + 1 ≤ X ω}) ?_ 1).symm
+      simp only [Finset.mem_range] at hk
+      show k + 1 ≤ X ω
+      omega
+  simp_rw [h]
+  rw [lintegral_tsum fun k => (measurable_one.indicator (hX (k + 1))).aemeasurable]
+  simp_rw [lintegral_indicator_one (hX _)]
+
+/-- **Tail-sum formula for the second factorial moment.** For an `ℕ`-valued random variable `X`,
+`E[X (X - 1)] = ∑ₖ 2 k P(k + 1 ≤ X)`. -/
+theorem lintegral_natCast_mul_pred_eq_tsum {X : Ω' → ℕ} (hX : ∀ k, MeasurableSet {ω | k ≤ X ω}) :
+    ∫⁻ ω, ((X ω * (X ω - 1) : ℕ) : ℝ≥0∞) ∂μ = ∑' k : ℕ, 2 * (k : ℝ≥0∞) * μ {ω | k + 1 ≤ X ω} := by
+  have h : ∀ ω, ((X ω * (X ω - 1) : ℕ) : ℝ≥0∞) =
+      ∑' k : ℕ, {ω | k + 1 ≤ X ω}.indicator (fun _ => 2 * (k : ℝ≥0∞)) ω := by
+    intro ω
+    rw [tsum_eq_sum (s := Finset.range (X ω)) fun k hk => indicator_of_notMem (by
+        simp only [Finset.mem_range, not_lt] at hk
+        show ¬ (k + 1 ≤ X ω)
+        omega) _]
+    trans ∑ k ∈ Finset.range (X ω), 2 * (k : ℝ≥0∞)
+    · rw [← Finset.sum_range_id_mul_two (X ω), Nat.cast_mul, Nat.cast_sum, Finset.sum_mul]
+      refine Finset.sum_congr rfl fun k _ => ?_
+      push_cast
+      ring
+    · refine Finset.sum_congr rfl fun k hk =>
+        (indicator_of_mem (a := ω) (s := {ω | k + 1 ≤ X ω}) ?_ (fun _ => 2 * (k : ℝ≥0∞))).symm
+      simp only [Finset.mem_range] at hk
+      show k + 1 ≤ X ω
+      omega
+  simp_rw [h]
+  rw [lintegral_tsum fun k => (measurable_const.indicator (hX (k + 1))).aemeasurable]
+  simp_rw [lintegral_indicator_const (hX _)]
+
+end Moments
+
+/-- **Finite mean of the excursion count.** For a real Brownian motion with continuous paths, `b ≥ 0` and `ε > 0`:
+`E J ≤ p (1 - p)⁻¹` with `p = P(1 ≤ J)`. -/
+theorem lintegral_pathExcursionCount_le [IsProbabilityMeasure P]
+    (hB : IsBrownianReal B P) (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω) {b : ℝ}
+    (hb : 0 ≤ b) (hε : 0 < ε) :
+    ∫⁻ ω, (pathExcursionCount (fun t => B t ω) b ε : ℝ≥0∞) ∂P ≤
+      P {ω | 1 ≤ pathExcursionCount (fun t => B t ω) b ε} *
+        (1 - P {ω | 1 ≤ pathExcursionCount (fun t => B t ω) b ε})⁻¹ := by
+  rw [lintegral_natCast_eq_tsum_measure_le (measurableSet_le_pathExcursionCount hm hcont b hε),
+    ← ENNReal.tsum_geometric_add_one]
+  exact ENNReal.tsum_le_tsum fun k => measure_le_pathExcursionCount_le_pow hB hm hcont hb hε (k + 1)
+
+theorem lintegral_pathExcursionCount_lt_top [IsProbabilityMeasure P]
+    (hB : IsBrownianReal B P) (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω) {b : ℝ}
+    (hb : 0 ≤ b) (hε : 0 < ε) :
+    ∫⁻ ω, (pathExcursionCount (fun t => B t ω) b ε : ℝ≥0∞) ∂P < ⊤ :=
+  (lintegral_pathExcursionCount_le hB hm hcont hb hε).trans_lt (ENNReal.mul_lt_top (measure_lt_top _ _)
+    (ENNReal.inv_lt_top.2 (tsub_pos_of_lt (measure_one_le_pathExcursionCount_lt_one hB hm hcont b hε))))
+
+/-- **Second factorial moment of the excursion count.** For a real Brownian motion with continuous paths, `b ≥ 0` and
+`ε > 0`: `E[J (J - 1)] ≤ 2 q² / (1 - q)²` with `q = P(1 ≤ J)`. -/
+theorem lintegral_pathExcursionCount_mul_pred_le [IsProbabilityMeasure P]
+    (hB : IsBrownianReal B P) (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω) {b : ℝ}
+    (hb : 0 ≤ b) (hε : 0 < ε) :
+    ∫⁻ ω, ((pathExcursionCount (fun t => B t ω) b ε * (pathExcursionCount (fun t => B t ω) b ε - 1) : ℕ) :
+        ℝ≥0∞) ∂P ≤
+      ENNReal.ofReal (2 * (P {ω | 1 ≤ pathExcursionCount (fun t => B t ω) b ε}).toReal ^ 2 /
+        (1 - (P {ω | 1 ≤ pathExcursionCount (fun t => B t ω) b ε}).toReal) ^ 2) := by
+  rw [lintegral_natCast_mul_pred_eq_tsum (measurableSet_le_pathExcursionCount hm hcont b hε)]
+  have hp := measure_one_le_pathExcursionCount_lt_one hB hm hcont b hε
+  set p := P {ω | 1 ≤ pathExcursionCount (fun t => B t ω) b ε} with hp_def
+  set q := p.toReal with hq_def
+  have hq0 : 0 ≤ q := ENNReal.toReal_nonneg
+  have hq1 : q < 1 := by
+    have := (ENNReal.toReal_lt_toReal hp.ne_top ENNReal.one_ne_top).2 hp
+    rwa [ENNReal.toReal_one] at this
+  have hpq : p = ENNReal.ofReal q := (ENNReal.ofReal_toReal hp.ne_top).symm
+  have hs := (hasSum_coe_mul_geometric_of_norm_lt_one (r := q)
+    (by rwa [Real.norm_eq_abs, abs_of_nonneg hq0])).mul_left (2 * q)
+  have hterm : ∀ k : ℕ, ENNReal.ofReal (2 * q * (k * q ^ k)) = 2 * (k : ℝ≥0∞) * p ^ (k + 1) := by
+    intro k
+    rw [hpq, ENNReal.ofReal_mul (by positivity : (0 : ℝ) ≤ 2 * q),
+      ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2), ENNReal.ofReal_mul (by positivity : (0 : ℝ) ≤ k),
+      ENNReal.ofReal_pow hq0, ENNReal.ofReal_natCast, ENNReal.ofReal_ofNat]
+    ring
+  calc ∑' k : ℕ, 2 * (k : ℝ≥0∞) * P {ω | k + 1 ≤ pathExcursionCount (fun t => B t ω) b ε}
+      ≤ ∑' k : ℕ, 2 * (k : ℝ≥0∞) * p ^ (k + 1) := ENNReal.tsum_le_tsum fun k => by
+        gcongr _ * ?_
+        exact measure_le_pathExcursionCount_le_pow hB hm hcont hb hε (k + 1)
+    _ = ∑' k : ℕ, ENNReal.ofReal (2 * q * (k * q ^ k)) := by simp_rw [hterm]
+    _ = ENNReal.ofReal (∑' k : ℕ, 2 * q * (k * q ^ k)) :=
+        (ENNReal.ofReal_tsum_of_nonneg (fun k => by positivity) hs.summable).symm
+    _ = ENNReal.ofReal (2 * q ^ 2 / (1 - q) ^ 2) := by rw [hs.tsum_eq]; congr 1; ring
 
 end LatticeProb.LadderSet
