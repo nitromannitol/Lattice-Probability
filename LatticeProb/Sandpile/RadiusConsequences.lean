@@ -97,7 +97,7 @@ theorem fdbr_parallel_terminal
     by_contra hc
     have hc' : 2 * (d : ℤ) ≤ pconf s0 K y := not_lt.mp hc
     have h1 : podo s0 (K + 1) y = podo s0 K y := congrFun (hglobal (K + 1) (by omega)) y
-    rw [podo_succ, if_pos hc'] at h1
+    rw [podo_succ, ite_eq_left hc'] at h1
     omega
   have hpk0 : ∀ y, 0 ≤ podo s0 K y := fun y => (podo_isLegal s0).nonneg K y
   have hwp : ∀ y, u T0 y ≤ podo s0 K y := fun y =>

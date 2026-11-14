@@ -171,7 +171,7 @@ theorem fodo_of_mem (S : Set (Site d)) (s0 w0 : Site d → ℤ) (t : ℕ) {x : S
     fodo S s0 w0 t x = w0 x := by
   cases t with
   | zero => rfl
-  | succ t => rw [fodo_succ]; exact if_pos hx
+  | succ t => rw [fodo_succ]; exact ite_eq_left hx
 
 /-- A frozen odometer started from a nonnegative initial condition stays
 nonnegative. -/
@@ -183,8 +183,8 @@ theorem fodo_nonneg (S : Set (Site d)) (s0 w0 : Site d → ℤ)
   | succ t ih =>
     rw [fodo_succ]
     by_cases hx : x ∈ S
-    · rw [if_pos hx]; exact hw0nn x
-    · rw [if_neg hx]
+    · rw [ite_eq_left hx]; exact hw0nn x
+    · rw [ite_eq_right hx]
       have := ih x
       split_ifs <;> linarith
 
@@ -193,7 +193,7 @@ theorem fodo_succ_of_notMem (S : Set (Site d)) (s0 w0 : Site d → ℤ) (t : ℕ
     (hx : x ∉ S) :
     fodo S s0 w0 (t + 1) x =
       fodo S s0 w0 t x + (if 2 * d ≤ fconf S s0 w0 t x then 1 else 0) := by
-  rw [fodo_succ, if_neg hx]
+  rw [fodo_succ, ite_eq_right hx]
 
 /-- A site off the frozen set with at least `2d` chips topples at the next
 step. -/
@@ -201,7 +201,7 @@ theorem fodo_topple_of_ge (S : Set (Site d)) (s0 w0 : Site d → ℤ) (t : ℕ) 
     (hx : x ∉ S) (h0 : fodo S s0 w0 t x = 0) (hge : 2 * d ≤ fconf S s0 w0 t x) :
     fodo S s0 w0 (t + 1) x = 1 := by
   classical
-  rw [fodo_succ, if_neg hx, if_pos hge, h0]
+  rw [fodo_succ, ite_eq_right hx, ite_eq_left hge, h0]
   ring
 
 end LatticeProb.Sandpile

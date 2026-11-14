@@ -99,7 +99,7 @@ theorem wave_mono_n (η : Site d → ℤ) (hd : (0 : ℤ) < 2 * (d : ℤ)) (z : 
   | succ t ih =>
     by_cases h : x = z
     · simp [h]; exact_mod_cast hnm
-    · simp only [wave_succ, if_neg h]
+    · simp only [wave_succ, ite_eq_right h]
       refine Int.ediv_le_ediv hd ?_
       have h1 := nbrSumZ_mono (fun y => ih y) x
       linarith
@@ -130,7 +130,7 @@ theorem wave_mono_t (η : Site d → ℤ) (hη : ∀ y, 0 ≤ η y) (hd : (0 : �
     by_cases h : x = z
     · simp [h]
     · rw [wave_zero]
-      simp only [if_neg h]
+      simp only [ite_eq_right h]
       exact wave_nonneg η hη n z 1 x
   | succ t ih =>
     by_cases h : x = z

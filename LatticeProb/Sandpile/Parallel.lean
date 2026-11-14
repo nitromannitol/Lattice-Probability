@@ -84,6 +84,6 @@ theorem podo_eq_zero (s0 : Site d → ℤ) (hd : 0 < d) (hs : ∀ x, s0 x = 0) :
     intro x
     have hlap : lap (podo s0 t) x = 0 := by simp [lap, nbrSumZ, ih]
     have hpc0 : pconf s0 t x = 0 := by simp [pconf, hlap, hs]
-    rw [podo_succ, ih x, hpc0, if_neg (not_le.mpr hdz), add_zero]
+    rw [podo_succ, ih x, hpc0, ite_eq_right (not_le.mpr hdz), add_zero]
 
 end LatticeProb.Sandpile

@@ -74,8 +74,8 @@ theorem recOdo_succ (d : ℕ) (V : Finset (Site d)) (t : ℕ) (x : Site d) :
         (if 2 * (d : ℤ) ≤ (d : ℤ) + lap (recOdo d V t) x then 1 else 0) := by
   rw [recOdo, fodo_succ]
   by_cases hx : x ∈ (↑V : Set (Site d))ᶜ
-  · rw [if_pos hx, if_pos hx]
-  · rw [if_neg hx, if_neg hx]
+  · rw [ite_eq_left hx, ite_eq_left hx]
+  · rw [ite_eq_right hx, ite_eq_right hx]
     congr 1
 
 /-- Off `V` the recurrence odometer never moves. -/
@@ -87,7 +87,7 @@ theorem recOdo_of_notMem (d : ℕ) (V : Finset (Site d)) (t : ℕ) {x : Site d}
 /-- On `V` the recurrence odometer starts at `0`. -/
 theorem recOdo_zero_of_mem (d : ℕ) (V : Finset (Site d)) {x : Site d} (hx : x ∈ V) :
     recOdo d V 0 x = 0 := by
-  rw [recOdo_zero, if_neg (fun h => h.1 hx)]
+  rw [recOdo_zero, ite_eq_right (fun h => h.1 hx)]
 
 /-- The recurrence odometer is nonnegative. -/
 theorem recOdo_nonneg (d : ℕ) (V : Finset (Site d)) (t : ℕ) (x : Site d) :
@@ -100,8 +100,8 @@ theorem recOdo_mono (d : ℕ) (V : Finset (Site d)) (t : ℕ) (x : Site d) :
     recOdo d V t x ≤ recOdo d V (t + 1) x := by
   rw [recOdo_succ]
   by_cases hx : x ∈ (↑V : Set (Site d))ᶜ
-  · rw [if_pos hx, recOdo_of_notMem d V t (by simpa using hx)]
-  · rw [if_neg hx]
+  · rw [ite_eq_left hx, recOdo_of_notMem d V t (by simpa using hx)]
+  · rw [ite_eq_right hx]
     split_ifs <;> omega
 
 /-- The recurrence odometer is at most `1` on `V`. -/
@@ -113,7 +113,7 @@ theorem recOdo_le_one (d : ℕ) (hd : 1 ≤ d) (V : Finset (Site d)) (t : ℕ) {
     | zero => intro x hx; rw [recOdo_zero_of_mem d V hx]; omega
     | succ t ih =>
       intro x hx
-      rw [recOdo_succ, if_neg (by simpa using hx)]
+      rw [recOdo_succ, ite_eq_right (by simpa using hx)]
       have hnb : nbrSumZ (recOdo d V t) x ≤ 2 * (d : ℤ) := by
         rw [nbrSumZ]
         have h2 : ∀ i : Fin d, recOdo d V t (x + unit i) + recOdo d V t (x - unit i) ≤ 2 := by
@@ -174,7 +174,7 @@ theorem exists_max_unfilled (d : ℕ) (V : Finset (Site d)) (t : ℕ)
     omega
   · have hb : x + unit i ∈ Graph.outerBoundary (lattice d) (↑V : Set (Site d)) :=
       ⟨hmem, x, hxs.1, adj_add_unit x i⟩
-    rw [recOdo_of_notMem d V t hmem, if_pos hb]
+    rw [recOdo_of_notMem d V t hmem, ite_eq_left hb]
 
 /-- A site of `V` with no toppling yet and all `+eᵢ` neighbours toppled
 topples at the next step. -/
@@ -182,8 +182,8 @@ theorem recOdo_topple (d : ℕ) (hd : 1 ≤ d) (V : Finset (Site d)) (t : ℕ) {
     (hx : x ∈ V) (h0 : recOdo d V t x = 0)
     (hup : ∀ i : Fin d, 1 ≤ recOdo d V t (x + unit i)) :
     recOdo d V (t + 1) x = 1 := by
-  rw [recOdo_succ, if_neg (by simpa using hx), h0, zero_add]
-  rw [if_pos]
+  rw [recOdo_succ, ite_eq_right (by simpa using hx), h0, zero_add]
+  rw [ite_eq_left]
   rw [lap, nbrSumZ, h0, mul_zero, sub_zero]
   have hsum : (d : ℤ) ≤ ∑ i : Fin d, (recOdo d V t (x + unit i) + recOdo d V t (x - unit i)) := by
     have hle : (∑ _ : Fin d, (1 : ℤ)) ≤
