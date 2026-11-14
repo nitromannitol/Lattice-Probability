@@ -27,6 +27,9 @@ the rooted form `A_m G` is the function whose level sets are witnesses of `𝓕_
 * `measurable_kernelAverage_origin`: `(H, D) ↦ A_m G(H, D, 0)` is `𝓕_m`-measurable.
 * `cappedSquareSigma_anti`: `𝓕_{m'} ≤ 𝓕_m` for `0 < m ≤ m' < ∞`, and
   `antitone_cappedSquareSigma_natCast_add_one`: `k ↦ 𝓕_{k+1}` is antitone.
+* `ae_kernelAverage_mul_origin`, `ae_kernelAverage_indicator_mul_origin`: taking out a factor that is
+  constant on the capped square (in particular the indicator of an event of `𝓕_m`), without any
+  integrability.
 * `kernelAverage_origin_ae_eq_condExp`: under the mass-transport principle, `A_m G(·, ·, 0)` is a version
   of `E[G(H, D, 0) | 𝓕_m]`.
 -/
@@ -234,6 +237,56 @@ theorem cappedSquareSigma_anti {m m' : ℝ≥0∞} (hm0 : m ≠ 0) (hmm' : m ≤
 theorem antitone_cappedSquareSigma_natCast_add_one :
     Antitone fun k : ℕ => cappedSquareSigma ((k : ℝ≥0∞) + 1) := fun k l hkl =>
   cappedSquareSigma_anti (by simp) (by exact_mod_cast Nat.add_le_add_right hkl 1) (by simp)
+
+/-! ### Taking out a block-constant factor -/
+
+/-- **Taking out a block-constant factor**: if, for almost every dyadic system, `φ(H, D, ·)` equals
+its value at the origin almost everywhere on the capped square `S_m^0(H, D)`, then almost surely
+`A_m (φ G)(H, D, 0) = φ(H, D, 0) · A_m G(H, D, 0)` whenever `φ(H, D, 0) < ∞`. No integrability or
+measurability of `G` is needed. -/
+theorem ae_kernelAverage_mul_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    (φ G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞) (H : GMSSpace)
+    (hφ : ∀ᵐ q ∂dyadicLaw, ∀ᵐ z ∂volume, z ∈ originCappedSquare m H q →
+      φ (H, q, z) = φ (H, q, 0)) :
+    ∀ᵐ q ∂dyadicLaw, φ (H, q, 0) ≠ ∞ →
+      kernelAverage m (fun x => φ x * G x) (H, q, 0) =
+        φ (H, q, 0) * kernelAverage m G (H, q, 0) := by
+  filter_upwards [hφ, ae_kernelAverage_origin_eq hm0 hmtop G H,
+    ae_kernelAverage_origin_eq hm0 hmtop (fun x => φ x * G x) H] with q hq hG hφG hfin
+  rw [hφG, hG]
+  simp only [cappedSquareAverage]
+  rw [← lintegral_const_mul' _ _ hfin]
+  refine lintegral_congr_ae ?_
+  filter_upwards [hq] with z hz
+  by_cases hzS : z ∈ originCappedSquare m H q
+  · rw [hz hzS]
+    ring
+  · rw [Set.indicator_of_notMem hzS]
+    simp only [mul_zero, zero_mul]
+
+/-- **Taking out an event of `𝓕_m`**: for a witness `B` of `𝓕_m`, almost surely
+`A_m (1_B G)(H, D, 0) = 1_B(H, D, 0) · A_m G(H, D, 0)`. -/
+theorem ae_kernelAverage_indicator_mul_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    {B : Set (GMSSpace × DyadicCoord × ℂ)} (hB : IsCappedSquareWitness m B)
+    (G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞) (H : GMSSpace) :
+    ∀ᵐ q ∂dyadicLaw,
+      kernelAverage m (fun x => B.indicator (fun _ => (1 : ℝ≥0∞)) x * G x) (H, q, 0) =
+        B.indicator (fun _ => (1 : ℝ≥0∞)) (H, q, 0) * kernelAverage m G (H, q, 0) := by
+  have hφ : ∀ᵐ q ∂dyadicLaw, ∀ᵐ z ∂volume, z ∈ originCappedSquare m H q →
+      B.indicator (fun _ => (1 : ℝ≥0∞)) (H, q, z) =
+        B.indicator (fun _ => (1 : ℝ≥0∞)) (H, q, 0) := by
+    filter_upwards [hB.2.2 H] with q hq
+    filter_upwards [hq] with z hz hzS
+    by_cases h0 : (H, q, (0 : ℂ)) ∈ B
+    · rw [Set.indicator_of_mem h0, Set.indicator_of_mem ((hz hzS).2 h0)]
+    · rw [Set.indicator_of_notMem h0, Set.indicator_of_notMem fun h => h0 ((hz hzS).1 h)]
+  filter_upwards [ae_kernelAverage_mul_origin hm0 hmtop _ G H hφ] with q hq
+  refine hq ?_
+  by_cases h0 : (H, q, (0 : ℂ)) ∈ B
+  · rw [Set.indicator_of_mem h0]
+    exact ENNReal.one_ne_top
+  · rw [Set.indicator_of_notMem h0]
+    exact ENNReal.zero_ne_top
 
 /-! ### The conditional expectation given `𝓕_m` -/
 
