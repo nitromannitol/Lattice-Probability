@@ -100,11 +100,11 @@ def pop (k : Cursor V) (c : Finset V) : Cursor V :=
 
 /-- A cursor advances by exactly one at a popped vertex. -/
 theorem pop_apply_of_mem (k : Cursor V) (c : Finset V) {v : V} (hv : v ∈ c) :
-    pop k c v = k v + 1 := if_pos hv
+    pop k c v = k v + 1 := ite_eq_left hv
 
 /-- A cursor is unchanged outside the popped set. -/
 theorem pop_apply_of_not_mem (k : Cursor V) (c : Finset V) {v : V} (hv : v ∉ c) :
-    pop k c v = k v := if_neg hv
+    pop k c v = k v := ite_eq_right hv
 
 /-- The actual selected instruction is unchanged outside the popped set. -/
 theorem top_pop_of_not_mem (σ : Stacks A) (k : Cursor V) (c : Finset V)
@@ -116,7 +116,7 @@ theorem top_pop_of_not_mem (σ : Stacks A) (k : Cursor V) (c : Finset V)
 theorem pop_comm (k : Cursor V) (c d : Finset V) : pop (pop k c) d = pop (pop k d) c := by
   funext v
   by_cases hc : v ∈ c <;> by_cases hd : v ∈ d <;>
-    simp only [pop, hc, hd, if_true, if_false]
+    simp only [pop, hc, hd, ite_true, ite_false]
 
 /-- Popping can only increase vertex cursors. -/
 theorem le_pop (k : Cursor V) (c : Finset V) : k ≤ pop k c := by

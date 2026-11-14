@@ -167,7 +167,7 @@ theorem span_nonrootIncidence_eq_top [Fintype V] (J : CopiedGraph V E)
       have hz : q ((J.augmentedIncidence F R).col (Sum.inr r)) = 0 := by
         ext x
         change (if x.val = r.val then (1 : ℤ) else 0) = 0
-        exact if_neg (fun hx : x.val = r.val => x.property (hx.symm ▸ r.property))
+        exact ite_eq_right (fun hx : x.val = r.val => x.property (hx.symm ▸ r.property))
       rw [hz]
       exact T.zero_mem
   rw [J.span_augmentedIncidence_eq_top F R hcover] at hle
@@ -176,7 +176,7 @@ theorem span_nonrootIncidence_eq_top [Fintype V] (J : CopiedGraph V E)
   let g : V → ℤ := fun x => if h : x ∉ R then f ⟨x, h⟩ else 0
   have hg : q g = f := by
     ext x
-    exact dif_pos x.property
+    exact dite_eq_left x.property
   have hmem : q g ∈ T := hle Submodule.mem_top
   exact hg ▸ hmem
 

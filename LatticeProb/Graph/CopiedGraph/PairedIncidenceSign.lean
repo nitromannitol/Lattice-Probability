@@ -43,11 +43,11 @@ theorem isUnit_det_appendRootColumns_incidence {d k : ℕ} {E : Type*}
   congr 1
   ext x j
   refine Fin.addCases (fun a => ?_) (fun r => ?_) j
-  · simp only [Matrix.appendRootColumns_castAdd, Matrix.submatrix_apply, id_eq,
+  · simp only [Matrix.submatrix_apply, id_eq,
       e, Equiv.trans_apply, finSumFinEquiv_symm_apply_castAdd, Equiv.sumCongr_apply,
       augmentedIncidence, Sum.map_inl, Sum.elim_inl]
     simp only [Matrix.appendRootColumns, Fin.addCases_left]
-  · simp only [Matrix.appendRootColumns_natAdd, Matrix.submatrix_apply, id_eq,
+  · simp only [Matrix.submatrix_apply, id_eq,
       e, Equiv.trans_apply, finSumFinEquiv_symm_apply_natAdd, Equiv.sumCongr_apply,
       augmentedIncidence, Sum.map_inr, Sum.elim_inr, unitColumn]
     have hi : (i r).val = I.orderEmbOfFin hI r := Finset.coe_orderIsoOfFin_apply I hI r

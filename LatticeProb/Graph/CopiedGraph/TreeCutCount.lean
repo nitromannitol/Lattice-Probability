@@ -36,7 +36,7 @@ theorem signedPathTraversal_treeCutEquiv (J : CopiedGraph V E)
   change J.signedPathTraversal T.val u v e =
     (if J.reaches F.val.val (J.left e) u then (1 : ℝ) else 0) -
     (if J.reaches F.val.val (J.right e) u then (1 : ℝ) else 0)
-  rw [signedPathTraversal, if_pos T.property]
+  rw [signedPathTraversal, ite_eq_left T.property]
   by_cases hl : J.reaches F.val.val (J.left e) u
   · have hr : ¬J.reaches F.val.val (J.right e) u := fun hr =>
       hcolors ⟨fun _ => hr, fun _ => hl⟩
@@ -77,7 +77,7 @@ theorem sum_signedPathTraversal_eq_count_sub (J : CopiedGraph V E)
       · intro T _
         rfl
       · intro T hT
-        exact if_neg hT
+        exact ite_eq_right hT
     _ = ∑ F : forestEvent, weight F.val := by
       apply Fintype.sum_equiv (treeCutEquiv J u v hu e)
       intro T

@@ -69,8 +69,8 @@ theorem exitHeat_of_notMem {C : Set V} {x : V} (hx : x ∉ C) (y : V) :
     ∀ k : ℕ, exitHeat G C y k x = heat G k x y := by
   intro k
   cases k with
-  | zero => rw [exitHeat_zero, if_neg hx]; rfl
-  | succ k => rw [exitHeat_succ, if_neg hx]
+  | zero => rw [exitHeat_zero, ite_eq_right hx]; rfl
+  | succ k => rw [exitHeat_succ, ite_eq_right hx]
 
 theorem exitHeat_nonneg (C : Set V) (y : V) : ∀ (k : ℕ) (x : V), 0 ≤ exitHeat G C y k x := by
   intro k
@@ -103,12 +103,12 @@ theorem heat_eq_killedHeat_add_exitHeat (C : Set V) (y : V) :
   | succ k ih =>
       intro x
       by_cases hx : x ∈ C
-      · rw [exitHeat_succ, if_pos hx, killedHeat_succ, if_pos hx, heat_succ]
+      · rw [exitHeat_succ, ite_eq_left hx, killedHeat_succ, ite_eq_left hx, heat_succ]
         rw [show (∑ z ∈ G.neighborFinset x, killedHeat G C k z y) / (G.degree x : ℝ)
               = walkOp G (fun z => killedHeat G C k z y) x from rfl]
         rw [← walkOp_add']
         exact congrArg (fun f => walkOp G f x) (funext fun z => ih z)
-      · rw [exitHeat_succ, if_neg hx, killedHeat_succ, if_neg hx, zero_add]
+      · rw [exitHeat_succ, ite_eq_right hx, killedHeat_succ, ite_eq_right hx, zero_add]
 
 /-! ### Summing the decomposition -/
 
@@ -124,12 +124,12 @@ theorem sum_range_exitHeat_succ (C : Set V) (y : V) (n : ℕ) (x : V) :
       = if x ∈ C then walkOp G (fun z => ∑ k ∈ Finset.range n, exitHeat G C y k z) x
         else meanLocalTime G (n + 1) x y := by
   by_cases hx : x ∈ C
-  · rw [if_pos hx, Finset.sum_range_succ']
-    have h0 : exitHeat G C y 0 x = 0 := by rw [exitHeat_zero, if_pos hx]
+  · rw [ite_eq_left hx, Finset.sum_range_succ']
+    have h0 : exitHeat G C y 0 x = 0 := by rw [exitHeat_zero, ite_eq_left hx]
     rw [h0, add_zero]
     rw [← walkOp_sum_range]
-    exact Finset.sum_congr rfl fun k _ => by rw [exitHeat_succ, if_pos hx]
-  · rw [if_neg hx, meanLocalTime]
+    exact Finset.sum_congr rfl fun k _ => by rw [exitHeat_succ, ite_eq_left hx]
+  · rw [ite_eq_right hx, meanLocalTime]
     exact Finset.sum_congr rfl fun k _ => exitHeat_of_notMem hx y k
 
 theorem sum_range_exitHeat_nonneg (C : Set V) (y : V) (n : ℕ) (x : V) :
@@ -148,10 +148,10 @@ theorem sum_range_exitHeat_le (hdeg : ∀ v : V, 0 < G.degree v) (C : Set V) (y 
       intro x
       rw [sum_range_exitHeat_succ]
       by_cases hx : x ∈ C
-      · rw [if_pos hx]
+      · rw [ite_eq_left hx]
         refine le_trans (walkOp_mono (g := fun _ => M) (fun v => ih v) x) ?_
         rw [walkOp_const_of_deg_pos (hdeg x)]
-      · rw [if_neg hx]
+      · rw [ite_eq_right hx]
         exact hout x hx (n + 1)
 
 /-! ### The summed identity -/

@@ -76,10 +76,10 @@ theorem det_laplacian_minor_int {d k : ℕ} {E : Type*} [Fintype E]
       rw [Matrix.det_transpose]
       by_cases h : G.IsRootedForest (I : Set (Fin (d + k))) F.val ∧
         G.IsRootedForest (J : Set (Fin (d + k))) F.val
-      · rw [dif_pos h]
+      · rw [dite_eq_left h]
         exact G.paired_incidence_minor_sign F.val (q F) I J hI hJ h.1
           (rootMatchingPerm i j h.1 h.2) (rootMatchingPerm_reaches i j h.1 h.2)
-      · rw [dif_neg h, mul_zero]
+      · rw [dite_eq_right h, mul_zero]
         by_cases hR : G.IsRootedForest (I : Set (Fin (d + k))) F.val
         · have hS : ¬G.IsRootedForest (J : Set (Fin (d + k))) F.val :=
             fun hS => h ⟨hR, hS⟩

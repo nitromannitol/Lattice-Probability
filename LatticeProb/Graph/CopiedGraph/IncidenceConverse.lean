@@ -21,7 +21,7 @@ theorem unitColumn_injective : Function.Injective (unitColumn (V := V)) := by
   by_contra hxy
   have hx := congrFun h x
   change (if x = x then (1 : ℤ) else 0) = (if x = y then 1 else 0) at hx
-  rw [if_pos rfl, if_neg hxy] at hx
+  rw [ite_eq_left rfl, ite_eq_right hxy] at hx
   exact one_ne_zero hx
 
 /-- An erased-copy walk puts that copy's column in the span of the other columns,
@@ -64,7 +64,7 @@ theorem eq_of_reaches_roots_of_linearIndependent_nonrootIncidence
     have hvx : v.val ≠ x := fun h => v.property (h.symm ▸ hx)
     have hvy : v.val ≠ y := fun h => v.property (h.symm ▸ hy)
     change (if v.val = x then (1 : ℤ) else 0) - (if v.val = y then 1 else 0) = 0
-    rw [if_neg hvx, if_neg hvy, sub_self]
+    rw [ite_eq_right hvx, ite_eq_right hvy, sub_self]
   have hz : unitColumn x - unitColumn y = 0 :=
     (Submodule.disjoint_def.mp hdj) _ (J.unitColumn_sub_mem_span_of_reaches F hwalk) hk
   exact unitColumn_injective (sub_eq_zero.mp hz)

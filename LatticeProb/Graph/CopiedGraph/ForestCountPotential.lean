@@ -86,7 +86,7 @@ theorem positiveLaplacian_forestCountPotential (J : CopiedGraph V E)
     (u v : V) (hu : u ≠ v) (hconn : ∀ a b : V, J.reaches Finset.univ a b) (x : V) :
     positiveLaplacian J (forestCountPotential J u v) x =
       (if x = u then (1 : ℝ) else 0) - (if x = v then (1 : ℝ) else 0) := by
-  letI : Nonempty V := ⟨v⟩
+  let : Nonempty V := ⟨v⟩
   have hcard : (Fintype.card J.SpanningTree : ℝ) ≠ 0 :=
     Nat.cast_ne_zero.mpr (Nat.ne_of_gt (J.card_spanningTree_pos hconn))
   change positiveLaplacian J
@@ -103,7 +103,7 @@ theorem forestCountPotential_poisson (J : CopiedGraph V E) (u v : V) (hu : u ≠
         if x = u then (1 : ℝ) else 0 := by
   refine ⟨forestCountPotential_ground J u v hu, ?_⟩
   intro x hx
-  rw [positiveLaplacian_forestCountPotential J u v hu hconn, if_neg hx, sub_zero]
+  rw [positiveLaplacian_forestCountPotential J u v hu hconn, ite_eq_right hx, sub_zero]
 
 /-- The averaged signed traversal is the stored endpoint drop of the literal
 forest-count potential, with the same original tree-count normalization. -/

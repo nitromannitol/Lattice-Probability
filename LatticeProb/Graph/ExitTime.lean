@@ -45,7 +45,7 @@ theorem measurableSet_stayIn (C : Set V) (k : ℕ) :
   have hC : MeasurableSet C := (Set.to_countable C).measurableSet
   have : stayIn (V := V) C k = ⋂ j ∈ Finset.range (k + 1), (fun X : ℕ → V => X j) ⁻¹' C := by
     ext X
-    simp only [stayIn, Set.mem_setOf_eq, Set.mem_iInter, Finset.mem_range, Set.mem_preimage]
+    simp only [stayIn, Set.mem_ofPred_eq, Set.mem_iInter, Finset.mem_range, Set.mem_preimage]
     exact ⟨fun h j hj => h j (by omega), fun h j hj => h j (by omega)⟩
   rw [this]
   exact MeasurableSet.biInter (Set.to_countable _) fun j _ => (measurable_pi_apply j) hC
@@ -61,7 +61,7 @@ time exceeds `k`. -/
 theorem stayIn_eq_lt_exitTime (C : Set V) (k : ℕ) :
     stayIn (V := V) C k = {X | (k : ℕ∞) < exitTime C X} := by
   ext X
-  simp only [stayIn, Set.mem_setOf_eq]
+  simp only [stayIn, Set.mem_ofPred_eq]
   constructor
   · intro h
     have hle : ((k + 1 : ℕ) : ℕ∞) ≤ exitTime C X := by
@@ -140,7 +140,7 @@ theorem walkLaw_stayIn_eq (hdeg : ∀ v : V, 0 < G.degree v) (C : Set V) :
         ext ω
         rw [Set.mem_preimage]
         by_cases h : x = v ∧ x ∈ C
-        · rw [if_pos h]
+        · rw [ite_eq_left h]
           simp only [Set.mem_univ, iff_true]
           refine ⟨?_, fun j hj => ?_⟩
           · show walkPath G x ω 0 = v
@@ -148,7 +148,7 @@ theorem walkLaw_stayIn_eq (hdeg : ∀ v : V, 0 < G.degree v) (C : Set V) :
           · rw [Nat.le_zero.mp hj]
             show walkPath G x ω 0 ∈ C
             rw [hval]; exact h.2
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           simp only [Set.mem_empty_iff_false, iff_false]
           rintro ⟨h1, h2⟩
           refine h ⟨?_, ?_⟩
@@ -157,11 +157,11 @@ theorem walkLaw_stayIn_eq (hdeg : ∀ v : V, 0 < G.degree v) (C : Set V) :
       rw [walkLaw, Measure.map_apply (measurable_walkPath x)
         (measurableSet_eqAt_inter_stayIn C 0 v), hpre, killedHeat_zero]
       by_cases h : x = v ∧ x ∈ C
-      · rw [if_pos h, if_pos h.2, if_pos h.1, measure_univ, ENNReal.ofReal_one]
-      · rw [if_neg h, measure_empty]
+      · rw [ite_eq_left h, ite_eq_left h.2, ite_eq_left h.1, measure_univ, ENNReal.ofReal_one]
+      · rw [ite_eq_right h, measure_empty]
         by_cases hxC : x ∈ C
-        · rw [if_pos hxC, if_neg (fun hc => h ⟨hc, hxC⟩), ENNReal.ofReal_zero]
-        · rw [if_neg hxC, ENNReal.ofReal_zero]
+        · rw [ite_eq_left hxC, ite_eq_right (fun hc => h ⟨hc, hxC⟩), ENNReal.ofReal_zero]
+        · rw [ite_eq_right hxC, ENNReal.ofReal_zero]
   | succ k ih =>
       intro x v
       have hS := measurableSet_eqAt_inter_stayIn C (k + 1) v
@@ -173,20 +173,20 @@ theorem walkLaw_stayIn_eq (hdeg : ∀ v : V, 0 < G.degree v) (C : Set V) :
         intro y _
         rw [Measure.map_apply (measurable_cons x) hS]
         by_cases hx : x ∈ C
-        · rw [cons_preimage_stayIn_of_mem hx k v, if_pos hx, ih y v]
-        · rw [cons_preimage_stayIn_of_not_mem hx k v, if_neg hx, measure_empty]
+        · rw [cons_preimage_stayIn_of_mem hx k v, ite_eq_left hx, ih y v]
+        · rw [cons_preimage_stayIn_of_not_mem hx k v, ite_eq_right hx, measure_empty]
       rw [Finset.sum_congr rfl hterm]
       by_cases hx : x ∈ C
-      · simp only [if_pos hx]
-        rw [killedHeat_succ, if_pos hx, smul_eq_mul]
+      · simp only [ite_eq_left hx]
+        rw [killedHeat_succ, ite_eq_left hx, smul_eq_mul]
         show _ = ENNReal.ofReal ((∑ y ∈ G.neighborFinset x, killedHeat G C k y v) /
           (G.degree x : ℝ))
         rw [
           ← ENNReal.ofReal_sum_of_nonneg (fun y _ => killedHeat_nonneg _ k y v),
           ENNReal.ofReal_div_of_pos (by exact_mod_cast hdeg x)]
         rw [ENNReal.ofReal_natCast, ENNReal.div_eq_inv_mul]
-      · simp only [if_neg hx, Finset.sum_const_zero, smul_zero]
-        rw [killedHeat_succ, if_neg hx, ENNReal.ofReal_zero]
+      · simp only [ite_eq_right hx, Finset.sum_const_zero, smul_zero]
+        rw [killedHeat_succ, ite_eq_right hx, ENNReal.ofReal_zero]
 
 /-! ### The survival probability on path space -/
 
@@ -195,7 +195,7 @@ theorem stayIn_eq_biUnion (C : Finset V) (k : ℕ) :
     stayIn (V := V) (C : Set V) k
       = ⋃ v ∈ C, ({X : ℕ → V | X k = v} ∩ stayIn (C : Set V) k) := by
   ext X
-  simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq, exists_prop, stayIn]
+  simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq, exists_prop, stayIn]
   constructor
   · intro hX
     exact ⟨X k, hX k le_rfl, rfl, hX⟩
@@ -231,13 +231,13 @@ theorem exitTime_eq_top_iff (C : Set V) (X : ℕ → V) :
     exitTime C X = ⊤ ↔ ∀ k : ℕ, X ∈ stayIn C k := by
   constructor
   · intro h k
-    rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, h]
+    rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, h]
     exact Ne.lt_top (by simp)
   · intro h
     by_contra hne
     obtain ⟨m, hm⟩ := ENat.ne_top_iff_exists.mp hne
     have := h m
-    rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, ← hm] at this
+    rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, ← hm] at this
     exact absurd this (lt_irrefl _)
 
 /-- **The walk leaves `C` almost surely.** -/
@@ -294,13 +294,13 @@ theorem preimage_exitNat_succ (C : Set V) (m : ℕ) :
       simp at h
     obtain ⟨r, hr⟩ := ENat.ne_top_iff_exists.mp hne
     rw [← hr] at h
-    simp only [ENat.toNat_coe] at h
+    simp only [ENat.toNat_natCast] at h
     subst h
     rw [stayIn_eq_lt_exitTime, stayIn_eq_lt_exitTime]
     refine ⟨?_, ?_⟩
-    · rw [Set.mem_setOf_eq, ← hr]
+    · rw [Set.mem_ofPred_eq, ← hr]
       exact_mod_cast Nat.lt_succ_self m
-    · rw [Set.mem_setOf_eq, ← hr]
+    · rw [Set.mem_ofPred_eq, ← hr]
       exact_mod_cast lt_irrefl (m + 1)
   · rintro ⟨h1, h2⟩
     have hout : X (m + 1) ∉ C := by
@@ -311,7 +311,7 @@ theorem preimage_exitNat_succ (C : Set V) (m : ℕ) :
         · have : j = m + 1 := by omega
           rw [this]; exact hc)
     have hlt : ∀ j < m + 1, X j ∈ C := fun j hj => h1 j (by omega)
-    rw [exitTime_eq_natCast_of C hout hlt, ENat.toNat_coe]
+    rw [exitTime_eq_natCast_of C hout hlt, ENat.toNat_natCast]
 
 omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
 theorem preimage_exitNat_zero (C : Set V) :
@@ -326,16 +326,16 @@ theorem preimage_exitNat_zero (C : Set V) :
     · exact Or.inr ((exitTime_eq_top_iff C X).mp hne)
     · obtain ⟨r, hr⟩ := ENat.ne_top_iff_exists.mp hne
       rw [← hr] at h
-      simp only [ENat.toNat_coe] at h
+      simp only [ENat.toNat_natCast] at h
       subst h
       refine Or.inl ?_
-      rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, ← hr]
+      rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, ← hr]
       exact_mod_cast lt_irrefl 0
   · rintro (h | h)
     · have hout : X 0 ∉ C := by
         by_contra hc
         exact h (fun j hj => by rw [Nat.le_zero.mp hj]; exact hc)
-      rw [exitTime_eq_natCast_of C (n := 0) hout (by omega), ENat.toNat_coe]
+      rw [exitTime_eq_natCast_of C (n := 0) hout (by omega), ENat.toNat_natCast]
     · rw [(exitTime_eq_top_iff C X).mpr h]
       simp
 
@@ -362,7 +362,7 @@ theorem exitNat_eq_tsum_indicator (C : Set V) {X : ℕ → V} (hX : exitTime C X
   obtain ⟨r, hr⟩ := ENat.ne_top_iff_exists.mp hX
   have hmem : ∀ k : ℕ, X ∈ stayIn C k ↔ k < r := by
     intro k
-    rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, ← hr]
+    rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, ← hr]
     exact_mod_cast Iff.rfl
   have hzero : ∀ k ∉ Finset.range r, (stayIn C k).indicator (fun _ => (1 : ℝ≥0∞)) X = 0 := by
     intro k hk
@@ -376,7 +376,7 @@ theorem exitNat_eq_tsum_indicator (C : Set V) {X : ℕ → V} (hX : exitTime C X
     rw [hmem k]
     simpa using hk
   rw [Finset.sum_congr rfl this, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one,
-    ← hr, ENat.toNat_coe]
+    ← hr, ENat.toNat_natCast]
 
 theorem walkLaw_stayIn_eq_real (hdeg : ∀ v : V, 0 < G.degree v) (C : Set V) (k : ℕ) (x v : V) :
     (walkLaw G x).real ({X : ℕ → V | X k = v} ∩ stayIn C k) = killedHeat G C k x v := by
@@ -474,7 +474,7 @@ theorem integral_sum_range_exitNat (hdeg : ∀ v : V, 0 < G.degree v) (C : Finse
     obtain ⟨r, hr⟩ := ENat.ne_top_iff_exists.mp hX
     have hmem : ∀ k : ℕ, X ∈ stayIn (C : Set V) k ↔ k < r := by
       intro k
-      rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, ← hr]
+      rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, ← hr]
       exact_mod_cast Iff.rfl
     have hzero : ∀ k ∉ Finset.range r, g k X = 0 := by
       intro k hk
@@ -482,7 +482,7 @@ theorem integral_sum_range_exitNat (hdeg : ∀ v : V, 0 < G.degree v) (C : Finse
       refine Set.indicator_of_notMem ?_ (fun X : ℕ → V => f (X k))
       rw [hmem k]
       simpa using hk
-    rw [tsum_eq_sum hzero, ← hr, ENat.toNat_coe]
+    rw [tsum_eq_sum hzero, ← hr, ENat.toNat_natCast]
     refine Finset.sum_congr rfl fun k hk => ?_
     rw [hg]
     refine (Set.indicator_of_mem ?_ (fun X : ℕ → V => f (X k))).symm
@@ -558,7 +558,7 @@ def exitTrunc (C : Set V) (N : ℕ) (X : ℕ → V) : ℕ :=
 omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
 theorem exitTrunc_of_notMem {C : Set V} {N : ℕ} {X : ℕ → V} (h : X ∉ stayIn C N) :
     exitTrunc C N X = (exitTime C X).toNat := by
-  rw [exitTrunc, if_neg h]
+  rw [exitTrunc, ite_eq_right h]
 
 omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
 /-- Off `stayIn C N` the walk has left `C` by time `N`, at the time the exit
@@ -580,15 +580,15 @@ theorem exitTime_eq_natCast_of_notMem {C : Set V} {N : ℕ} {X : ℕ → V}
   have hrj : r ≤ j := by
     rw [← hr] at hle
     exact_mod_cast hle
-  refine ⟨by rw [← hr, ENat.toNat_coe], by rw [← hr, ENat.toNat_coe]; omega, ?_⟩
-  rw [← hr, ENat.toNat_coe, stayIn_eq_lt_exitTime, Set.mem_setOf_eq, ← hr]
+  refine ⟨by rw [← hr, ENat.toNat_natCast], by rw [← hr, ENat.toNat_natCast]; omega, ?_⟩
+  rw [← hr, ENat.toNat_natCast, stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, ← hr]
   exact_mod_cast lt_irrefl r
 
 omit [MeasurableSpace V] [MeasurableSingletonClass V] [Countable V] [DecidableEq V] in
 theorem exitTrunc_le (C : Set V) (N : ℕ) (X : ℕ → V) : exitTrunc C N X ≤ N := by
   classical
   by_cases h : X ∈ stayIn C N
-  · rw [exitTrunc, if_pos h]
+  · rw [exitTrunc, ite_eq_left h]
   · rw [exitTrunc_of_notMem h]
     exact (exitTime_eq_natCast_of_notMem h).2.1
 
@@ -598,10 +598,10 @@ theorem isStopping_exitTrunc (C : Set V) (N : ℕ) : IsStopping (exitTrunc C N) 
   classical
   intro k X Y hXY hk
   by_cases hX : X ∈ stayIn C N
-  · have hkN : k = N := by rw [exitTrunc, if_pos hX] at hk; exact hk.symm
+  · have hkN : k = N := by rw [exitTrunc, ite_eq_left hX] at hk; exact hk.symm
     subst hkN
     have hY : Y ∈ stayIn C k := fun j hj => (hXY j hj) ▸ hX j hj
-    rw [exitTrunc, if_pos hY]
+    rw [exitTrunc, ite_eq_left hY]
   · obtain ⟨hEq, -, hnot⟩ := exitTime_eq_natCast_of_notMem hX
     rw [exitTrunc_of_notMem hX] at hk
     subst hk
@@ -610,7 +610,7 @@ theorem isStopping_exitTrunc (C : Set V) (N : ℕ) : IsStopping (exitTrunc C N) 
       refine hnot fun j hj => ?_
       rcases Nat.lt_or_ge j ((exitTime C X).toNat) with hj' | hj'
       · have : X ∈ stayIn C j := by
-          rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, hEq]
+          rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, hEq]
           exact_mod_cast hj'
         exact this j le_rfl
       · have : j = (exitTime C X).toNat := by omega
@@ -618,7 +618,7 @@ theorem isStopping_exitTrunc (C : Set V) (N : ℕ) : IsStopping (exitTrunc C N) 
     have hin : ∀ i < (exitTime C X).toNat, X i ∈ C := by
       intro i hi
       have : X ∈ stayIn C i := by
-        rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, hEq]
+        rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, hEq]
         exact_mod_cast hi
       exact this i le_rfl
     have hYout : Y ((exitTime C X).toNat) ∉ C := by
@@ -627,7 +627,7 @@ theorem isStopping_exitTrunc (C : Set V) (N : ℕ) : IsStopping (exitTrunc C N) 
       rw [← hXY i (by omega)]; exact hin i hi
     have hYnot : Y ∉ stayIn C N := fun hc =>
       hYout (hc _ ((exitTime_eq_natCast_of_notMem hX).2.1))
-    rw [exitTrunc_of_notMem hYnot, exitTime_eq_natCast_of C hYout hYin, ENat.toNat_coe]
+    rw [exitTrunc_of_notMem hYnot, exitTime_eq_natCast_of C hYout hYin, ENat.toNat_natCast]
 
 omit [DecidableEq V] in
 theorem measurable_comp_shiftPath_stopping {τ : (ℕ → V) → ℕ} (hτ : IsStopping τ) {N : ℕ}
@@ -688,7 +688,7 @@ theorem exitTrunc_spec (C : Set V) (N : ℕ) {k : ℕ} {X Y : ℕ → V}
     refine hnot fun j hj => ?_
     rcases Nat.lt_or_ge j ((exitTime C X).toNat) with hj' | hj'
     · have hmem : X ∈ stayIn C j := by
-        rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, hEq]
+        rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, hEq]
         exact_mod_cast hj'
       exact hmem j le_rfl
     · have : j = (exitTime C X).toNat := by omega
@@ -696,7 +696,7 @@ theorem exitTrunc_spec (C : Set V) (N : ℕ) {k : ℕ} {X Y : ℕ → V}
   have hin : ∀ i < (exitTime C X).toNat, X i ∈ C := by
     intro i hi
     have hmem : X ∈ stayIn C i := by
-      rw [stayIn_eq_lt_exitTime, Set.mem_setOf_eq, hEq]
+      rw [stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, hEq]
       exact_mod_cast hi
     exact hmem i le_rfl
   have hYout : Y ((exitTime C X).toNat) ∉ C := by rw [← hXY _ le_rfl]; exact hout
@@ -710,7 +710,7 @@ theorem notMem_stayIn_of_le {C : Set V} {X : ℕ → V} (hX : exitTime C X ≠ �
     {N : ℕ} (hN : (exitTime C X).toNat ≤ N) : X ∉ stayIn C N := by
   obtain ⟨r, hr⟩ := ENat.ne_top_iff_exists.mp hX
   have hnot : X ∉ stayIn C ((exitTime C X).toNat) := by
-    rw [← hr, ENat.toNat_coe, stayIn_eq_lt_exitTime, Set.mem_setOf_eq, ← hr]
+    rw [← hr, ENat.toNat_natCast, stayIn_eq_lt_exitTime, Set.mem_ofPred_eq, ← hr]
     exact_mod_cast lt_irrefl r
   exact fun hc => hnot (stayIn_antitone C hN hc)
 
@@ -743,13 +743,13 @@ theorem markov_exitTime (hdeg : ∀ v : V, 0 < G.degree v) (C : Finset V)
       exitTrunc (C : Set V) N X = k → HN N X = HN N Y := by
     intro N k X Y hXY hk
     by_cases hX : X ∈ stayIn (C : Set V) N
-    · have hkN : k = N := by rw [exitTrunc, if_pos hX] at hk; exact hk.symm
+    · have hkN : k = N := by rw [exitTrunc, ite_eq_left hX] at hk; exact hk.symm
       subst hkN
       have hY : Y ∈ stayIn (C : Set V) k := mem_stayIn_transfer _ _ hXY hX
       simp [hHNdef, hX, hY]
     · obtain ⟨hY, hEX, -⟩ := exitTrunc_spec (C : Set V) N hXY hX hk
       rw [hHNdef]
-      simp only [hX, hY, if_false]
+      simp only [hX, hY, ite_false]
       rw [hHdep k X Y hXY hEX]
   have hHNdepUpTo : ∀ N : ℕ, DependsUpTo N (HN N) := by
     intro N X Y hXY
@@ -792,7 +792,7 @@ theorem markov_exitTime (hdeg : ∀ v : V, 0 < G.degree v) (C : Finset V)
     have hnot : X ∉ stayIn (C : Set V) N := notMem_stayIn_of_le hX hN
     show F (shiftPath ((exitTime (C : Set V) X).toNat) X) * H X = A N X
     rw [hAdef, hHNdef]
-    simp only [exitTrunc_of_notMem hnot, hnot, if_false, mul_one]
+    simp only [exitTrunc_of_notMem hnot, hnot, ite_false, mul_one]
   have hlimB : ∀ᵐ X ∂(walkLaw G x),
       Filter.Tendsto (fun N => B N X) Filter.atTop
         (nhds (pathExp G F (X ((exitTime (C : Set V) X).toNat)) * H X)) := by
@@ -802,7 +802,7 @@ theorem markov_exitTime (hdeg : ∀ v : V, 0 < G.degree v) (C : Finset V)
     have hnot : X ∉ stayIn (C : Set V) N := notMem_stayIn_of_le hX hN
     show pathExp G F (X ((exitTime (C : Set V) X).toNat)) * H X = B N X
     rw [hBdef, hHNdef]
-    simp only [exitTrunc_of_notMem hnot, hnot, if_false, mul_one]
+    simp only [exitTrunc_of_notMem hnot, hnot, ite_false, mul_one]
   have hAint := MeasureTheory.tendsto_integral_of_dominated_convergence
     (μ := walkLaw G x) (F := A)
     (f := fun X => F (shiftPath ((exitTime (C : Set V) X).toNat) X) * H X)

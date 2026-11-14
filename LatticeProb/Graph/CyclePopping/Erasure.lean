@@ -81,9 +81,9 @@ theorem consume_closed (k : Cursor V) {a b : V} (p : Path a b) (e : b ⟶ a)
   funext v
   by_cases hv : v = b
   · subst v
-    simp only [pop, Finset.mem_singleton, if_true, List.mem_toFinset, hb, if_false,
+    simp only [pop, Finset.mem_singleton, ite_true, List.mem_toFinset, hb, ite_false,
       Finset.mem_union, or_true]
-  · simp only [pop, Finset.mem_singleton, hv, if_false, Finset.mem_union, or_false]
+  · simp only [pop, Finset.mem_singleton, hv, ite_false, Finset.mem_union, or_false]
 
 /-- **Loop erasure realizes legal cycle popping.** Every finite raw trace read from
 literal arrow stacks, avoiding roots at its departures, produces a finite legal pop run.
@@ -135,16 +135,16 @@ theorem loop_erase_pop_run (R : Set V) (σ : ArrowStacks (V := V)) (k : Cursor V
       have hpre : prefixTo (loopErase p) c hc = u := by
         simpa only [← huq] using prefixTo_comp_start u q hqn (huq ▸ hc)
       refine ⟨pop l q.vertices.toFinset, hl.tail hcycle, ?_, ?_⟩
-      · rw [loopErase, dif_pos hc, hpre]
+      · rw [loopErase, dite_eq_left hc, hpre]
         exact hprefix
-      · rw [loopErase, dif_pos hc, hpre, consume_pop, consume,
+      · rw [loopErase, dite_eq_left hc, hpre, consume_pop, consume,
           ← hconsume, huq]
         change pop (consume l u) q.vertices.toFinset = consume l (u.comp (q.cons e))
         rw [consume_comp, consume_closed (consume l u) q e hqn]
     · refine ⟨l, hl, ?_, ?_⟩
-      · rw [loopErase, dif_neg hc]
+      · rw [loopErase, dite_eq_right hc]
         exact ⟨hs, he⟩
-      · rw [loopErase, dif_neg hc, consume, consume, hconsume]
+      · rw [loopErase, dite_eq_right hc, consume, consume, hconsume]
 
 /-- Chronological consumption adds the exact number of departures from each vertex. -/
 theorem consume_apply (k : Cursor V) {a b : V} (p : Path a b) (v : V) :

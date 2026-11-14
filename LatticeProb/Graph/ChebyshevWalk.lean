@@ -337,7 +337,7 @@ theorem abs_aeval_T_apply_le_one {A : Matrix ι ι ℝ} (hA : A.IsHermitian)
     apply Finset.sum_congr rfl
     intro l _
     rw [Finset.sum_eq_single l]
-    · simp only [if_true]
+    · simp only [ite_true]
     · intro b _ hb; simp [hb]
     · intro hl; exact absurd (Finset.mem_univ l) hl
   rw [hentry]

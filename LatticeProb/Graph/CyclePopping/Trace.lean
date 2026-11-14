@@ -69,7 +69,7 @@ theorem consume_of_nodup (k : Cursor V) {a b : V} (p : Path a b)
   | nil =>
     funext v
     simp only [consume, departures, Path.vertices_nil, List.dropLast_singleton,
-      List.toFinset_nil, pop, Finset.notMem_empty, if_false]
+      List.toFinset_nil, pop, Finset.notMem_empty, ite_false]
   | @cons b c p e ih =>
     have hn := (List.nodup_concat p.vertices c).mp hp
     have hb : b ∉ departures p := by
@@ -82,9 +82,9 @@ theorem consume_of_nodup (k : Cursor V) {a b : V} (p : Path a b)
     funext v
     by_cases hv : v = b
     · subst v
-      simp only [pop, Finset.mem_singleton, if_true, List.mem_toFinset, hb, if_false,
+      simp only [pop, Finset.mem_singleton, ite_true, List.mem_toFinset, hb, ite_false,
         Finset.mem_union, or_true]
-    · simp only [pop, Finset.mem_singleton, hv, if_false, Finset.mem_union, or_false]
+    · simp only [pop, Finset.mem_singleton, hv, ite_false, Finset.mem_union, or_false]
 
 omit [DecidableEq V] in
 /-- A selected path follows the endpoint function of the visible stack arrows. -/
@@ -182,8 +182,8 @@ theorem closed_excursion_pop (R : Set V) (σ : ArrowStacks (V := V)) (k : Cursor
   funext v
   by_cases hv : v = b
   · subst v
-    simp only [pop, Finset.mem_singleton, if_true, List.mem_toFinset, hb, if_false,
+    simp only [pop, Finset.mem_singleton, ite_true, List.mem_toFinset, hb, ite_false,
       Finset.mem_union, or_true]
-  · simp only [pop, Finset.mem_singleton, hv, if_false, Finset.mem_union, or_false]
+  · simp only [pop, Finset.mem_singleton, hv, ite_false, Finset.mem_union, or_false]
 
 end LatticeProb.Graph.CyclePopping

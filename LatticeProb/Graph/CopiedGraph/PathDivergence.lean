@@ -20,7 +20,7 @@ theorem signedPathTraversal_add (J : CopiedGraph V E) (T : J.SpanningTree)
   rw [signedPathTraversal_eq_cut_difference, signedPathTraversal_eq_cut_difference,
     signedPathTraversal_eq_cut_difference]
   by_cases he : e ∈ T.val
-  · simp only [if_pos he]
+  · simp only [ite_eq_left he]
     ring
   · simp [he]
 
@@ -75,7 +75,7 @@ theorem signedPathTraversal_root_divergence (J : CopiedGraph V E)
   · subst q
     simp [signedPathTraversal_self]
   · obtain ⟨e, he, hunique⟩ := J.existsUnique_incident_path_copy T x q hxq
-    rw [if_neg hxq]
+    rw [ite_eq_right hxq]
     calc
       _ = ∑ f : E, if f = e then (1 : ℝ) else 0 := by
         apply Finset.sum_congr rfl

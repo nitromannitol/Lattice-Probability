@@ -102,7 +102,7 @@ theorem heat_eq_transMat_pow (x : V) (n : ℕ) {i j : ℕ} (hij : i + j ≤ n) {
       show (if u = y then (1 : ℝ) else 0) = _
       by_cases h : u = y
       · subst h; simp
-      · rw [if_neg h, if_neg (fun h' => h (congrArg Subtype.val h'))]
+      · rw [ite_eq_right h, ite_eq_right (fun h' => h (congrArg Subtype.val h'))]
   | succ j ih =>
       set Q := transMat G S
       have hN : G.neighborFinset u ⊆ S := fun z hz =>
@@ -116,17 +116,17 @@ theorem heat_eq_transMat_pow (x : V) (n : ℕ) {i j : ℕ} (hij : i + j ≤ n) {
           = ∑ z ∈ S, F z := by
         rw [← Finset.sum_coe_sort S F]
         refine Finset.sum_congr rfl fun w _ => ?_
-        rw [hF]; dsimp only; rw [dif_pos w.2]
+        rw [hF]; dsimp only; rw [dite_eq_left w.2]
       have hzero : ∀ z ∈ S, z ∉ G.neighborFinset u → F z = 0 := by
         intro z hz hzN
-        rw [hF]; dsimp only; rw [dif_pos hz]
+        rw [hF]; dsimp only; rw [dite_eq_left hz]
         have hadj : ¬ G.Adj u z := fun h => hzN ((G.mem_neighborFinset u z).2 h)
-        simp only [Q, transMat, if_neg hadj, zero_mul]
+        simp only [Q, transMat, ite_eq_right hadj, zero_mul]
       have hnb : ∀ z ∈ G.neighborFinset u, F z = (G.degree u : ℝ)⁻¹ * heat G j z y := by
         intro z hz
         have hadj : G.Adj u z := (G.mem_neighborFinset u z).1 hz
-        rw [hF]; dsimp only; rw [dif_pos (hN hz)]
-        simp only [Q, transMat, if_pos hadj]
+        rw [hF]; dsimp only; rw [dite_eq_left (hN hz)]
+        simp only [Q, transMat, ite_eq_left hadj]
         rw [ih (i := i + 1) (by omega) (mem_ballFinset_succ_of_adj G hu hadj)]
       show walkOp G (fun z => heat G j z y) u = _
       rw [pow_succ', Matrix.mul_apply, hsum, ← Finset.sum_subset hN hzero,
@@ -144,8 +144,8 @@ theorem symMat_isHermitian (S : Finset V) : (symMat G S).IsHermitian := by
   refine Matrix.IsHermitian.ext fun u v => ?_
   simp only [symMat, star_trivial]
   by_cases h : G.Adj (u : V) v
-  · rw [if_pos h.symm, if_pos h, mul_comm]
-  · rw [if_neg (fun h' => h h'.symm), if_neg h]
+  · rw [ite_eq_left h.symm, ite_eq_left h, mul_comm]
+  · rw [ite_eq_right (fun h' => h h'.symm), ite_eq_right h]
 
 /-- The symmetrized transition matrix is `A u v = √(deg u) Q u v / √(deg v)`. -/
 theorem symMat_eq (hdeg : ∀ v : V, 0 < G.degree v) (S : Finset V) (u v : S) :
@@ -155,14 +155,14 @@ theorem symMat_eq (hdeg : ∀ v : V, 0 < G.degree v) (S : Finset V) (u v : S) :
   have hv : (0 : ℝ) < G.degree (v : V) := by exact_mod_cast hdeg v
   simp only [symMat, transMat]
   by_cases h : G.Adj (u : V) v
-  · rw [if_pos h, if_pos h, Real.sqrt_mul hu.le]
+  · rw [ite_eq_left h, ite_eq_left h, Real.sqrt_mul hu.le]
     set a := Real.sqrt (G.degree (u : V) : ℝ) with ha
     have ha0 : 0 < a := Real.sqrt_pos.mpr hu
     have hb0 : 0 < Real.sqrt (G.degree (v : V) : ℝ) := Real.sqrt_pos.mpr hv
     have hsq : (G.degree (u : V) : ℝ) = a * a := (Real.mul_self_sqrt hu.le).symm
     rw [hsq]
     field_simp
-  · rw [if_neg h, if_neg h, mul_zero, zero_div]
+  · rw [ite_eq_right h, ite_eq_right h, mul_zero, zero_div]
 
 /-- Powers of the killed transition matrix through the symmetrized one:
 `Qʲ u v = √(deg v) / √(deg u) · Aʲ u v`. -/
@@ -180,8 +180,8 @@ theorem transMat_pow_eq (hdeg : ∀ v : V, 0 < G.degree v) (S : Finset V) (j : �
   | zero =>
       rw [pow_zero, pow_zero, Matrix.one_apply]
       by_cases h : u = v
-      · subst h; rw [if_pos rfl, div_self (hpos u).ne', one_mul]
-      · rw [if_neg h, mul_zero]
+      · subst h; rw [ite_eq_left rfl, div_self (hpos u).ne', one_mul]
+      · rw [ite_eq_right h, mul_zero]
   | succ j ih =>
       rw [pow_succ', pow_succ', Matrix.mul_apply, Matrix.mul_apply, Finset.mul_sum]
       refine Finset.sum_congr rfl fun w _ => ?_
@@ -203,7 +203,7 @@ theorem sum_transMat_le_one (hdeg : ∀ v : V, 0 < G.degree v) (S : Finset V) (u
       ≤ (G.neighborFinset (u : V)).card := by
     refine Finset.card_le_card_of_injOn Subtype.val ?_ Subtype.val_injective.injOn
     intro v hv
-    simp only [Finset.coe_filter, Finset.mem_univ, true_and, Set.mem_setOf_eq] at hv
+    simp only [Finset.coe_filter, Finset.mem_univ, true_and, Set.mem_ofPred_eq] at hv
     exact (G.mem_neighborFinset _ _).2 hv
   rw [G.card_neighborFinset_eq_degree] at hcard
   have hcard' : ((Finset.univ.filter fun v : S => G.Adj (u : V) v).card : ℝ)
@@ -235,7 +235,7 @@ theorem aeval_symMat_apply_eq_zero (S : Finset V) (p : ℝ[X]) (u v : S)
         have hadj : G.Adj (a : V) w := by
           by_contra hna
           apply hw
-          simp only [symMat, if_neg hna, zero_mul]
+          simp only [symMat, ite_eq_right hna, zero_mul]
         obtain ⟨q, hq⟩ := ih w b (fun h0 => hw (by rw [h0, mul_zero]))
         exact ⟨SimpleGraph.Walk.cons hadj q, by rw [SimpleGraph.Walk.length_cons, hq]⟩
   have hzero : ∀ j, j < G.dist u v → (symMat G S ^ j) u v = 0 := by
@@ -328,7 +328,7 @@ theorem walkLaw_eval_le_carneVaropoulos [MeasurableSpace V] [MeasurableSingleton
     walkLaw G x {X : ℕ → V | X n = y}
       ≤ ENNReal.ofReal (2 * Real.sqrt ((G.degree y : ℝ) / G.degree x)
           * Real.exp (-((G.dist x y : ℝ) ^ 2) / (2 * n))) := by
-  haveI : Countable V := countable_of_connected G hG
+  have : Countable V := countable_of_connected G hG
   have hdeg : ∀ v : V, 0 < G.degree v := by
     intro v
     obtain ⟨w, hw⟩ := exists_ne v

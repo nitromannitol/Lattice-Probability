@@ -54,7 +54,7 @@ theorem componentIndicator_vecMul_nonroot_incidence_eq_zero {K : Type*} [CommRin
         (if (a i).val = J.left (b j).val then (1 : K) else 0) -
           (if (a i).val = J.right (b j).val then 1 else 0)) = 0 := by
   let w := J.componentIndicator K F x
-  have hwroot : ∀ r ∈ R, w r = 0 := fun r hr => if_neg (hmiss r hr)
+  have hwroot : ∀ r ∈ R, w r = 0 := fun r hr => ite_eq_right (hmiss r hr)
   ext j
   rw [Matrix.vecMul_apply_eq_sum, Pi.zero_apply]
   calc
@@ -95,7 +95,7 @@ theorem det_nonroot_incidence_eq_zero_of_missing_root {K : Type*} [CommRing K] [
     have hz' := congrFun hz (a.symm ⟨x, hx⟩)
     change w (a (a.symm ⟨x, hx⟩)).val = 0 at hz'
     rw [a.apply_symm_apply] at hz'
-    exact one_ne_zero ((if_pos hxx).symm.trans hz')
+    exact one_ne_zero ((ite_eq_left hxx).symm.trans hz')
   · exact J.componentIndicator_vecMul_nonroot_incidence_eq_zero F R a b x hmiss
 
 /-- A component missing every root annihilates both the copy columns and root unit columns. -/
@@ -117,9 +117,9 @@ theorem componentIndicator_vecMul_augmented_incidence_eq_zero {K : Type*} [CommR
     exact sub_eq_zero.mpr (J.componentIndicator_left_eq_right K F x f.property)
   | inr r =>
     simp only [Sum.elim_inr]
-    have hwr : w r.val = 0 := if_neg (hmiss r.val r.property)
+    have hwr : w r.val = 0 := ite_eq_right (hmiss r.val r.property)
     simpa only [mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-      if_true] using hwr
+      ite_true] using hwr
 
 /-- **Component indicator kernel.** The same component indicator kills the original copy columns and all root unit columns. -/
 theorem det_augmented_incidence_eq_zero_of_missing_root {K : Type*} [CommRing K] [IsDomain K]
@@ -134,7 +134,7 @@ theorem det_augmented_incidence_eq_zero_of_missing_root {K : Type*} [CommRing K]
   refine ⟨w, ?_, ?_⟩
   · intro hz
     have hz' := congrFun hz x
-    exact one_ne_zero ((if_pos (show J.reaches F x x from .refl)).symm.trans hz')
+    exact one_ne_zero ((ite_eq_left (show J.reaches F x x from .refl)).symm.trans hz')
   · exact J.componentIndicator_vecMul_augmented_incidence_eq_zero F R e x hmiss
 
 end
