@@ -101,7 +101,7 @@ theorem LatticeProb.dyadicIncBoundPi_of_notMem {k : ℕ} {Ω : Type*} [Measurabl
   apply lt_of_not_ge
   intro hh
   apply hnot
-  simp only [badSetPi, Set.mem_iUnion, Set.mem_setOf_eq]
+  simp only [badSetPi, Set.mem_iUnion, Set.mem_ofPred_eq]
   exact ⟨i, j, hmem, hh⟩
 
 theorem LatticeProb.card_boxIdx_level_le (k n : ℕ) :

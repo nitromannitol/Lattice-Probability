@@ -286,7 +286,7 @@ theorem lintegral_orthant_eq {n : ℕ} (b : Fin n → ℝ)
   have hpre : (MeasurableEquiv.toLp 2 (Fin n → ℝ)) ⁻¹'
       {y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i} = Set.Iic b := by
     ext x
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_Iic, Pi.le_def,
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_Iic, Pi.le_def,
       MeasurableEquiv.coe_toLp]
   have hcongr : ∀ x : Fin n → ℝ,
       ({y : EuclideanSpace ℝ (Fin n) | ∀ i, y i ≤ b i}).indicator f

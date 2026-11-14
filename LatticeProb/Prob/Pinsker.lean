@@ -14,7 +14,7 @@ theorem LatticeProb.integral_sub_log_integral_exp_le_of_klDiv_le
     (∫ x, f x ∂μ) - Real.log (∫ x, Real.exp (f x) ∂ν) ≤ δ := by
   have hne : klDiv μ ν ≠ ⊤ := ne_top_of_le_ne_top ENNReal.ofReal_ne_top hkl
   obtain ⟨hac, hint⟩ := klDiv_ne_top_iff.mp hne
-  haveI := isProbabilityMeasure_tilted he
+  have := isProbabilityMeasure_tilted he
   have hnonneg := integral_llr_add_sub_measure_univ_nonneg
     (hac.trans (absolutelyContinuous_tilted he)) (integrable_llr_tilted_right hac hf hint he)
   simp only [probReal_univ, add_sub_cancel_right] at hnonneg

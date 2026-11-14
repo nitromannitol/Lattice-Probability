@@ -140,7 +140,7 @@ example (μ : Measure ℝ) [IsProbabilityMeasure μ] (r : ℝ≥0) (hr : 0 < r) 
     measurableSet_le measurable_const (continuous_fst.edist continuous_snd).measurable
   have hempty : (fun x : ℝ => (x, x)) ⁻¹' {p : ℝ × ℝ | (r : ℝ≥0∞) ≤ edist p.1 p.2} = ∅ := by
     ext x
-    simp only [mem_preimage, mem_setOf_eq, edist_self, mem_empty_iff_false, iff_false, not_le]
+    simp only [mem_preimage, mem_ofPred_eq, edist_self, mem_empty_iff_false, iff_false, not_le]
     exact ENNReal.coe_pos.mpr hr
   apply levyProkhorovEDist_le_of_coupling μ μ (μ.map fun x : ℝ => (x, x))
   · simp only [Measure.fst, Measure.map_map measurable_fst hdiag, Function.comp_def]

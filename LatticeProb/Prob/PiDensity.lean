@@ -105,7 +105,7 @@ open ProbabilityTheory in
 theorem pi_gaussianReal_eq_withDensity {ι : Type*} [Fintype ι] :
     Measure.pi (fun _ : ι => gaussianReal 0 1)
       = (volume : Measure (ι → ℝ)).withDensity fun x => ∏ i, gaussianPDF 0 1 (x i) := by
-  haveI hprob : IsProbabilityMeasure ((volume : Measure ℝ).withDensity (gaussianPDF 0 1)) := by
+  have hprob : IsProbabilityMeasure ((volume : Measure ℝ).withDensity (gaussianPDF 0 1)) := by
     rw [← gaussianReal_of_var_ne_zero 0 one_ne_zero]
     infer_instance
   have hone : ∀ _ : ι, (gaussianReal 0 1 : Measure ℝ)

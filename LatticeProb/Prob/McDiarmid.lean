@@ -227,7 +227,7 @@ private theorem rmarg_update_sub_le {ι : Type*} [DecidableEq ι] {Ω : ι → T
     (hbd : ∀ (i : ι) (x y : ∀ i, Ω i), (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i)
     {s : Finset ι} {i : ι} (_hi : i ∉ s) (x : ∀ i, Ω i) (z z' : Ω i) :
     rmarg μ s f (Function.update x i z) - rmarg μ s f (Function.update x i z') ≤ c i := by
-  haveI hp : IsProbabilityMeasure (Measure.pi (fun j : s => μ j)) := inferInstance
+  have hp : IsProbabilityMeasure (Measure.pi (fun j : s => μ j)) := inferInstance
   have hoff : ∀ j, j ≠ i → Function.update x i z j = Function.update x i z' j := by
     intro j hj
     rw [Function.update_of_ne hj, Function.update_of_ne hj]
@@ -238,8 +238,8 @@ private theorem rmarg_update_sub_le {ι : Type*} [DecidableEq ι] {Ω : ι → T
     refine hbd i _ _ ?_
     intro j hj
     by_cases hjs : j ∈ s
-    · simp only [Function.updateFinset_def, dif_pos hjs]
-    · simp only [Function.updateFinset_def, dif_neg hjs]
+    · simp only [Function.updateFinset_def, dite_eq_left hjs]
+    · simp only [Function.updateFinset_def, dite_eq_right hjs]
       exact hoff j hj
   have hI1 : Integrable (fun y : (∀ j : s, Ω j) =>
       f (Function.updateFinset (Function.update x i z) s y)) (Measure.pi (fun j : s => μ j)) :=
@@ -425,7 +425,7 @@ private theorem lmarginal_ofReal_exp_insert_le {ι : Type*} [DecidableEq ι] {Ω
     (∫⋯∫⁻_(insert i s), (fun y => ENNReal.ofReal (Real.exp (t * f y))) ∂μ) x
       ≤ ENNReal.ofReal (Real.exp (t * rmarg μ (insert i s) f x
           + t ^ 2 * (∑ j ∈ insert i s, c j ^ 2) / 8)) := by
-  letI : Nonempty (Ω i) := nonempty_of_isProbabilityMeasure (μ i)
+  let : Nonempty (Ω i) := nonempty_of_isProbabilityMeasure (μ i)
   have hF : Measurable (fun y : (∀ i, Ω i) => ENNReal.ofReal (Real.exp (t * f y))) :=
       ((hf.const_mul t).exp).ennreal_ofReal
   rw [lmarginal_insert _ hF hi]
@@ -646,7 +646,7 @@ theorem mcdiarmid {ι : Type*} [Fintype ι] [DecidableEq ι] {Ω : ι → Type*}
     (t : ℝ) (ht : 0 ≤ t) :
     (Measure.pi μ).real {x | t ≤ f x - ∫ y, f y ∂(Measure.pi μ)}
       ≤ Real.exp (-2 * t ^ 2 / ∑ i, c i ^ 2) := by
-  haveI : ∀ i, Nonempty (Ω i) := fun i => nonempty_of_isProbabilityMeasure (μ i)
+  have : ∀ i, Nonempty (Ω i) := fun i => nonempty_of_isProbabilityMeasure (μ i)
   have hc : ∀ i, 0 ≤ c i := nonneg_of_bound f c hbd
   obtain ⟨B, hB⟩ := exists_bound f c hbd
   have hsg := hasSubgaussianMGF_sub_integral μ f hf B hB c hc hbd

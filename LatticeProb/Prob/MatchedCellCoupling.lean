@@ -67,8 +67,8 @@ lemma matchedCellCoupling_fst {X Y : Type*}
     (μ : Measure X) (ν : Measure Y) [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     (E : Set X) (F : Set Y) :
     (matchedCellCoupling μ ν E F).fst = cappedRestrict μ E (min (μ E) (ν F)) := by
-  letI := cappedRestrict_isFiniteMeasure μ E (min_le_left _ (ν F))
-  letI := cappedRestrict_isFiniteMeasure ν F (min_le_right (μ E) _)
+  let := cappedRestrict_isFiniteMeasure μ E (min_le_left _ (ν F))
+  let := cappedRestrict_isFiniteMeasure ν F (min_le_right (μ E) _)
   apply balancedProduct_fst
   rw [cappedRestrict_univ ν F (min_le_right _ _),
     cappedRestrict_univ μ E (min_le_left _ _)]
@@ -80,8 +80,8 @@ lemma matchedCellCoupling_snd {X Y : Type*}
     (μ : Measure X) (ν : Measure Y) [IsFiniteMeasure μ] [IsFiniteMeasure ν]
     (E : Set X) (F : Set Y) :
     (matchedCellCoupling μ ν E F).snd = cappedRestrict ν F (min (μ E) (ν F)) := by
-  letI := cappedRestrict_isFiniteMeasure μ E (min_le_left _ (ν F))
-  letI := cappedRestrict_isFiniteMeasure ν F (min_le_right (μ E) _)
+  let := cappedRestrict_isFiniteMeasure μ E (min_le_left _ (ν F))
+  let := cappedRestrict_isFiniteMeasure ν F (min_le_right (μ E) _)
   apply balancedProduct_snd
   rw [cappedRestrict_univ ν F (min_le_right _ _),
     cappedRestrict_univ μ E (min_le_left _ _)]

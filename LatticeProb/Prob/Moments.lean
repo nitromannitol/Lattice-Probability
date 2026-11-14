@@ -252,7 +252,7 @@ theorem measureReal_abs_sum_ge_le (s : Finset ι) {ε : ℝ} (hε : 0 < ε) :
       (integrable_sum_pow_four X (fun i => (hmeas i).aestronglyMeasurable) h4 s) (by norm_num)
   have hset : {ω | ε ≤ |∑ i ∈ s, X i ω|} = {ω | ε ^ 2 ≤ (∑ i ∈ s, X i ω) ^ 2} := by
     ext ω
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · intro h
       nlinarith [abs_nonneg (∑ i ∈ s, X i ω), sq_abs (∑ i ∈ s, X i ω)]

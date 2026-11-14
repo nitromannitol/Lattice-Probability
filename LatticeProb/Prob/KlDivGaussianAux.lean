@@ -26,7 +26,7 @@ theorem llr_gaussianReal_eq {v : ℝ≥0} (hv : v ≠ 0) (m : ℝ) :
           ProbabilityTheory.gaussianPDFReal m v x) := by
   rw [ProbabilityTheory.gaussianReal_of_var_ne_zero 0 hv,
     ProbabilityTheory.gaussianReal_of_var_ne_zero m hv]
-  haveI : SigmaFinite (MeasureTheory.volume.withDensity (ProbabilityTheory.gaussianPDF 0 v)) :=
+  have : SigmaFinite (MeasureTheory.volume.withDensity (ProbabilityTheory.gaussianPDF 0 v)) :=
     SigmaFinite.withDensity_of_ne_top
       (Filter.Eventually.of_forall fun x => (ProbabilityTheory.gaussianPDF_lt_top (μ := 0) (v := v)).ne)
   filter_upwards [MeasureTheory.Measure.rnDeriv_withDensity_right

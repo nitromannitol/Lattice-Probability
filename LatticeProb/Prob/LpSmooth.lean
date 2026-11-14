@@ -123,8 +123,8 @@ theorem exists_lp_two_smooth {p : ℝ} (hp : 2 ≤ p) :
   obtain ⟨C, hCpos, halg⟩ := exists_two_smooth_const hp (C₁ := C₀) (by linarith)
   refine ⟨C, hCpos, ?_⟩
   intro α β _ _ κ ρ hκ hρ X Y hXm hYm hXp hYp hY0
-  haveI := hκ
-  haveI := hρ
+  have := hκ
+  have := hρ
   set A : ℝ := ∫ b, |X b| ^ p ∂ρ with hA
   set B : ℝ := ∫ q : α × β, |Y q.1 q.2| ^ p ∂(κ.prod ρ) with hB
   have hA0 : 0 ≤ A := integral_nonneg fun b => Real.rpow_nonneg (abs_nonneg _) _
@@ -420,7 +420,7 @@ theorem integrable_eval_rpow_fam (μ : Fin N → Measure ℝ) [∀ i, IsProbabil
     refine Integrable.fintype_prod (f := fun j z => if j = i then |z| ^ p else 1) fun j => ?_
     by_cases hj : j = i
     · subst hj; simpa using h
-    · simp only [if_neg hj]
+    · simp only [ite_eq_right hj]
       exact integrable_const (1 : ℝ)
   refine hprod.congr (Filter.Eventually.of_forall fun ξ => ?_)
   show (∏ j, if j = i then |ξ j| ^ p else 1) = |ξ i| ^ p
@@ -560,7 +560,7 @@ theorem exists_lp_square_pi {p : ℝ} (hp : 2 ≤ p) :
   induction N with
   | zero =>
       intro μ hμ F hFm ℓ hℓ hLip hmom
-      haveI := hμ
+      have := hμ
       have hsub : ∀ ξ : Fin 0 → ℝ, F ξ = F 0 := fun ξ => congrArg F (Subsingleton.elim _ _)
       have hm : ∫ η, F η ∂(Measure.pi μ) = F 0 := by
         rw [integral_congr_ae (Filter.Eventually.of_forall hsub)]
@@ -576,13 +576,13 @@ theorem exists_lp_square_pi {p : ℝ} (hp : 2 ≤ p) :
   | succ M ih =>
       intro μ hμ F hFm ℓ hℓ hLip hmom
       classical
-      haveI := hμ
+      have := hμ
       set κ : Measure ℝ := μ 0 with hκdef
       set tμ : Fin M → Measure ℝ := fun j => μ (Fin.succAbove 0 j) with htμdef
-      haveI htp : ∀ j, IsProbabilityMeasure (tμ j) := fun j => hμ _
+      have htp : ∀ j, IsProbabilityMeasure (tμ j) := fun j => hμ _
       set ρ : Measure (Fin M → ℝ) := Measure.pi tμ with hρdef
-      haveI : IsProbabilityMeasure ρ := by rw [hρdef]; infer_instance
-      haveI hκp : IsProbabilityMeasure κ := hμ 0
+      have : IsProbabilityMeasure ρ := by rw [hρdef]; infer_instance
+      have hκp : IsProbabilityMeasure κ := hμ 0
       -- the Lipschitz property, split into the head and the tail
       have hLip0 : ∀ (x y : ℝ) (η : Fin M → ℝ),
           |F (Fin.cons x η) - F (Fin.cons y η)| ≤ ℓ 0 * |x - y| := by
@@ -811,8 +811,8 @@ theorem exists_two_smooth_sq :
   obtain ⟨C, hCpos, hsm⟩ := exists_lp_two_smooth (p := 2) le_rfl
   refine ⟨C, hCpos, ?_⟩
   intro α β _ _ κ ρ hκ hρ X Y hXm hYm hX2 hY2 hY0
-  haveI := hκ
-  haveI := hρ
+  have := hκ
+  have := hρ
   have hX2' : Integrable (fun b => |X b| ^ (2 : ℝ)) ρ :=
     hX2.congr (Filter.Eventually.of_forall fun b => (abs_rpow_two (X b)).symm)
   have hY2' : Integrable (fun q : α × β => |Y q.1 q.2| ^ (2 : ℝ)) (κ.prod ρ) :=
@@ -898,7 +898,7 @@ theorem exists_efron_stein_L2 :
   induction M with
   | zero =>
       intro μ hμ G hGm hG2 hE
-      haveI := hμ
+      have := hμ
       have hsub : ∀ ξ : Fin 0 → ℝ, G ξ = G 0 := fun ξ => congrArg G (Subsingleton.elim _ _)
       have hm : ∫ η, G η ∂(Measure.pi μ) = G 0 := by
         rw [integral_congr_ae (Filter.Eventually.of_forall hsub)]
@@ -912,13 +912,13 @@ theorem exists_efron_stein_L2 :
   | succ M ih =>
       intro μ hμ G hGm hG2 hE
       classical
-      haveI := hμ
+      have := hμ
       set κ : Measure ℝ := μ 0 with hκdef
       set tμ : Fin M → Measure ℝ := fun j => μ (Fin.succAbove 0 j) with htμdef
-      haveI htp : ∀ j, IsProbabilityMeasure (tμ j) := fun j => hμ _
+      have htp : ∀ j, IsProbabilityMeasure (tμ j) := fun j => hμ _
       set ρ : Measure (Fin M → ℝ) := Measure.pi tμ with hρdef
-      haveI : IsProbabilityMeasure ρ := by rw [hρdef]; infer_instance
-      haveI hκp : IsProbabilityMeasure κ := hμ 0
+      have : IsProbabilityMeasure ρ := by rw [hρdef]; infer_instance
+      have hκp : IsProbabilityMeasure κ := hμ 0
       have hMP : MeasurePreserving
           (fun q : ℝ × (Fin M → ℝ) => (Fin.cons q.1 q.2 : Fin (M + 1) → ℝ))
           (κ.prod ρ) (Measure.pi μ) := measurePreserving_cons μ
@@ -1190,8 +1190,8 @@ theorem measurePreserving_update (μ : Fin (N + 1) → Measure ℝ)
   classical
   set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (N + 1) => ℝ) i with hedef
   set π' : Measure (Fin N → ℝ) := Measure.pi fun j : Fin N => μ (i.succAbove j) with hπ'
-  haveI : ∀ j : Fin N, IsProbabilityMeasure (μ (i.succAbove j)) := fun j => inferInstance
-  haveI : IsProbabilityMeasure π' := by rw [hπ']; infer_instance
+  have : ∀ j : Fin N, IsProbabilityMeasure (μ (i.succAbove j)) := fun j => inferInstance
+  have : IsProbabilityMeasure π' := by rw [hπ']; infer_instance
   have he : MeasurePreserving e (Measure.pi μ) ((μ i).prod π') :=
     measurePreserving_piFinSuccAbove μ i
   have h1 : MeasurePreserving (Prod.map (⇑e) (id : ℝ → ℝ))

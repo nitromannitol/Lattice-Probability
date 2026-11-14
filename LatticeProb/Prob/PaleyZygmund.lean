@@ -57,7 +57,7 @@ theorem paley_zygmund {α : Type*} [MeasurableSpace α] (P : Measure α) [IsProb
       nlinarith [hθ0, hm0]
     · have hf0 : f x = 0 := by simp [hfdef, Set.indicator_of_notMem h]
       have hle : X x ≤ θ * m := by
-        rw [hAdef, Set.mem_setOf_eq] at h
+        rw [hAdef, Set.mem_ofPred_eq] at h
         exact not_lt.mp h
       rw [hf0, mul_zero, add_zero]
       exact hle

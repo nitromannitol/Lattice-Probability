@@ -178,7 +178,7 @@ theorem lintegral_posPart_eq (ν : Measure ℝ) [IsFiniteMeasure ν] (t : ℝ) :
     simp only [mem_Ioi] at hs
     have hEq : {z : ℝ | s < max (-z - t) 0} = Iio (-(s + t)) := by
       ext z
-      simp only [mem_setOf_eq, mem_Iio, lt_max_iff]
+      simp only [mem_ofPred_eq, mem_Iio, lt_max_iff]
       constructor
       · rintro (h | h)
         · linarith
@@ -220,7 +220,7 @@ theorem integral_posPart_eq {ν : Measure ℝ} [IsFiniteMeasure ν] {t : ℝ}
     simp only [mem_Ioi] at hs
     have hEq : {z : ℝ | s < max (-z - t) 0} = Iio (-(s + t)) := by
       ext z
-      simp only [mem_setOf_eq, mem_Iio, lt_max_iff]
+      simp only [mem_ofPred_eq, mem_Iio, lt_max_iff]
       constructor
       · rintro (h | h)
         · linarith
