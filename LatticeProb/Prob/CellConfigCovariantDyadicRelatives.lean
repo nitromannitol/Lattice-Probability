@@ -81,6 +81,36 @@ theorem volume_dyadicDescendant {i : ℕ} {a b ℓ : ℝ} (hℓ : 0 ≤ ℓ)
     ← ENNReal.ofReal_mul (mul_nonneg (div_nonneg hℓ hp.le) (div_nonneg hℓ hp.le)),
     heq, ENNReal.ofReal_mul hℓ]
 
+/-- A dyadic descendant is contained in its parent square. -/
+theorem dyadicDescendant_subset {i : ℕ} {a b ℓ : ℝ} (hℓ : 0 ≤ ℓ)
+    {S : Set ℂ} (hS : S ∈ dyadicDescendants i a b ℓ) :
+    S ⊆ cornerSquare a b ℓ := by
+  obtain ⟨n₁, n₂, hn₁, hn₂, rfl⟩ := hS
+  have hp : (0 : ℝ) < (2 : ℝ) ^ i := by positivity
+  have hd : 0 ≤ ℓ / (2 : ℝ) ^ i := div_nonneg hℓ hp.le
+  have hn₁' : (n₁ : ℝ) + 1 ≤ (2 : ℝ) ^ i := by exact_mod_cast hn₁
+  have hn₂' : (n₂ : ℝ) + 1 ≤ (2 : ℝ) ^ i := by exact_mod_cast hn₂
+  have hu₁ : ((n₁ : ℝ) + 1) * (ℓ / (2 : ℝ) ^ i) ≤ ℓ := by
+    calc
+      _ ≤ (2 : ℝ) ^ i * (ℓ / (2 : ℝ) ^ i) := mul_le_mul_of_nonneg_right hn₁' hd
+      _ = ℓ := by field_simp
+  have hu₂ : ((n₂ : ℝ) + 1) * (ℓ / (2 : ℝ) ^ i) ≤ ℓ := by
+    calc
+      _ ≤ (2 : ℝ) ^ i * (ℓ / (2 : ℝ) ^ i) := mul_le_mul_of_nonneg_right hn₂' hd
+      _ = ℓ := by field_simp
+  intro z hz
+  obtain ⟨h₁, h₂, h₃, h₄⟩ := mem_cornerSquare.mp hz
+  have hl₁ : 0 ≤ (n₁ : ℝ) * (ℓ / (2 : ℝ) ^ i) := mul_nonneg (by positivity) hd
+  have hl₂ : 0 ≤ (n₂ : ℝ) * (ℓ / (2 : ℝ) ^ i) := mul_nonneg (by positivity) hd
+  apply mem_cornerSquare.mpr
+  constructor
+  · linarith
+  constructor
+  · nlinarith
+  constructor
+  · linarith
+  · nlinarith
+
 theorem forall_mem_dyadicAncestors_iff {P : Set ℂ → Prop} {i : ℕ} {a b ℓ : ℝ} :
     (∀ S ∈ dyadicAncestors i a b ℓ, P S) ↔ ∀ n₁ n₂ : ℕ, n₁ < 2 ^ i → n₂ < 2 ^ i →
       P (cornerSquare (a - n₁ * ℓ) (b - n₂ * ℓ) (2 ^ i * ℓ)) :=
@@ -648,6 +678,19 @@ theorem one_le_mul_cappedSquareAverage_of_descendant
     _ ≤ (4 : ℝ≥0∞) ^ l *
         cappedSquareAverage m (B.indicator (fun _ => (1 : ℝ≥0∞))) H q :=
       mul_le_mul_of_nonneg_left hint (by positivity)
+
+/-- The descendant average estimate with containment supplied by dyadic geometry. -/
+theorem one_le_mul_cappedSquareAverage_of_descendant_mem
+    {m : ℝ≥0∞} {H : GMSSpace} {q : DyadicCoord} {a b ℓ : ℝ} (hℓ : 0 < ℓ)
+    {i l : ℕ} (hil : i ≤ l) {S : Set ℂ}
+    (hS : S ∈ dyadicDescendants i a b ℓ)
+    (hparent : originCappedSquare m H q = cornerSquare a b ℓ)
+    {B : Set (GMSSpace × DyadicCoord × ℂ)}
+    (hbad : ∀ᵐ z ∂volume, z ∈ S → (H, q, z) ∈ B) :
+    1 ≤ (4 : ℝ≥0∞) ^ l *
+      cappedSquareAverage m (B.indicator (fun _ => (1 : ℝ≥0∞))) H q :=
+  one_le_mul_cappedSquareAverage_of_descendant hℓ hil hS hparent
+    (hparent ▸ dyadicDescendant_subset hℓ.le hS) hbad
 
 /-- A lower bound for a rooted event's capped-square average gives a conditional measure bound.
 The geometric lower bound is an explicit hypothesis. -/
