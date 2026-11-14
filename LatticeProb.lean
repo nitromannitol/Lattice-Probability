@@ -893,3 +893,4 @@ import LatticeProb.External.LevinePeresShell
 import LatticeProb.Analysis.ConvexSubgradient
 import LatticeProb.Analysis.ConvexResolvent
 import LatticeProb.Analysis.AlexandrovTaylor
+import LatticeProb.Analysis.AlexandrovLocal
