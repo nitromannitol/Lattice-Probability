@@ -1168,6 +1168,25 @@ theorem ae_ae_eventually_diam_le [IsFiniteMeasure μ] (hMT : MassTransport μ)
       (Filter.Eventually.of_forall (measurableSet_smallInnerCells_cornerSquare δ)) hE
   exact ae_ae_eventually_diam_le_of_interior hMT hΦ hL28
 
+
+/-- The diameter estimate along all sufficiently large integer generations. -/
+theorem ae_ae_eventually_diam_le_int [IsFiniteMeasure μ] (hMT : MassTransport μ)
+    (hL : ConnectedAlongLines μ) (hFE : FiniteExpectation μ) :
+    ∀ᵐ H ∂μ, ∀ᵐ q ∂dyadicLaw, ∀ ε ∈ Ioo (0 : ℝ) 1, ∀ᶠ k : ℤ in atTop,
+      ∀ K : Cell, K ∈ H.1.restrict (planeCoord '' squareAt q.1 q.2.1 q.2.2 k 0) →
+        Metric.diam (K : Set Plane) ≤ ε * (2 : ℝ) ^ (q.1 + (k : ℝ)) := by
+  filter_upwards [ae_ae_eventually_diam_le hMT hL hFE] with H hH
+  filter_upwards [hH] with q hq
+  intro ε hε
+  obtain ⟨N, hN⟩ := eventually_atTop.1 (hq ε hε)
+  filter_upwards [eventually_ge_atTop (N : ℤ)] with k hk
+  have hk0 : 0 ≤ k := le_trans (Int.natCast_nonneg N) hk
+  have hkN : N ≤ k.toNat := by omega
+  have hcast : (k.toNat : ℤ) = k := Int.toNat_of_nonneg hk0
+  have hreal : (k.toNat : ℝ) = (k : ℝ) := by exact_mod_cast hcast
+  have h := hN k.toNat hkN
+  simpa only [hcast, hreal] using h
+
 end Main
 
 end LatticeProb.CellConfigCappedSquare
