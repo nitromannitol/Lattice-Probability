@@ -606,6 +606,49 @@ theorem ae_ae_eventually_dyadicAncestor_side_four {μ : Measure GMSSpace}
 
 /-! ### A conditional resampling estimate -/
 
+/-- If almost every point of a descendant belongs to a rooted event, its area gives a lower
+bound for the event's average over the parent square. -/
+theorem one_le_mul_cappedSquareAverage_of_descendant
+    {m : ℝ≥0∞} {H : GMSSpace} {q : DyadicCoord} {a b ℓ : ℝ} (hℓ : 0 < ℓ)
+    {i l : ℕ} (hil : i ≤ l) {S : Set ℂ}
+    (hS : S ∈ dyadicDescendants i a b ℓ)
+    (hparent : originCappedSquare m H q = cornerSquare a b ℓ)
+    (hsub : S ⊆ originCappedSquare m H q)
+    {B : Set (GMSSpace × DyadicCoord × ℂ)}
+    (hbad : ∀ᵐ z ∂volume, z ∈ S → (H, q, z) ∈ B) :
+    1 ≤ (4 : ℝ≥0∞) ^ l *
+      cappedSquareAverage m (B.indicator (fun _ => (1 : ℝ≥0∞))) H q := by
+  have hSm : MeasurableSet S := by
+    obtain ⟨n₁, n₂, _, _, rfl⟩ := hS
+    exact measurableSet_cornerSquare _ _ _
+  have harea0 : volume (originCappedSquare m H q) ≠ 0 := by
+    rw [hparent, volume_cornerSquare]
+    exact mul_ne_zero (ENNReal.ofReal_pos.mpr hℓ).ne' (ENNReal.ofReal_pos.mpr hℓ).ne'
+  have hareatop : volume (originCappedSquare m H q) ≠ ∞ := by
+    rw [hparent, volume_cornerSquare]
+    exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top
+  have harea : volume (originCappedSquare m H q) ≤ (4 : ℝ≥0∞) ^ l * volume S := by
+    rw [hparent, ← volume_dyadicDescendant hℓ.le hS, mul_comm]
+    exact mul_le_mul_of_nonneg_right (pow_le_pow_right₀ (by norm_num) hil) (by positivity)
+  have hint : (volume (originCappedSquare m H q))⁻¹ * volume S ≤
+      cappedSquareAverage m (B.indicator (fun _ => (1 : ℝ≥0∞))) H q := by
+    rw [cappedSquareAverage, ← lintegral_indicator_const hSm]
+    refine lintegral_mono_ae ?_
+    filter_upwards [hbad] with z hz
+    by_cases hzS : z ∈ S
+    · simp [hzS, hsub hzS, hz hzS]
+    · simp [hzS]
+  calc
+    1 = (volume (originCappedSquare m H q))⁻¹ * volume (originCappedSquare m H q) :=
+      (ENNReal.inv_mul_cancel harea0 hareatop).symm
+    _ ≤ (volume (originCappedSquare m H q))⁻¹ * ((4 : ℝ≥0∞) ^ l * volume S) :=
+      mul_le_mul_of_nonneg_left harea (by positivity)
+    _ = (4 : ℝ≥0∞) ^ l * ((volume (originCappedSquare m H q))⁻¹ * volume S) := by
+      ac_rfl
+    _ ≤ (4 : ℝ≥0∞) ^ l *
+        cappedSquareAverage m (B.indicator (fun _ => (1 : ℝ≥0∞))) H q :=
+      mul_le_mul_of_nonneg_left hint (by positivity)
+
 /-- A lower bound for a rooted event's capped-square average gives a conditional measure bound.
 The geometric lower bound is an explicit hypothesis. -/
 theorem measure_le_mul_measure_inter_of_kernelAverage {μ : Measure GMSSpace}
