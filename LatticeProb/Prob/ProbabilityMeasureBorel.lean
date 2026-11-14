@@ -66,7 +66,7 @@ theorem giry_le_borel_probabilityMeasure :
 
 omit [PseudoMetrizableSpace E] [SeparableSpace E] in
 /-- `ν ↦ ∫ f dν` is measurable for the Giry `σ`-algebra, `f` bounded and continuous. -/
-theorem measurable_integral_probabilityMeasure (f : E →ᵇ ℝ) :
+theorem measurable_integral_probabilityMeasure_of_boundedContinuous (f : E →ᵇ ℝ) :
     Measurable (fun ν : ProbabilityMeasure E => ∫ x, f x ∂(ν : Measure E)) := by
   have hcoe : Measurable (fun ν : ProbabilityMeasure E => (ν : Measure E)) :=
     measurable_subtype_coe
@@ -121,7 +121,7 @@ theorem borel_le_giry_probabilityMeasure :
   obtain ⟨g, ⟨hgfin, hgsub⟩, rfl⟩ := hsB ha
   refine MeasurableSet.sInter hgfin.countable fun t ht => ?_
   obtain ⟨f, V, hV, rfl⟩ := hgsub ht
-  exact (measurable_integral_probabilityMeasure f) hV.measurableSet
+  exact (measurable_integral_probabilityMeasure_of_boundedContinuous f) hV.measurableSet
 
 /-- The Borel `σ`-algebra of the weak topology on `ProbabilityMeasure E` is the Giry `σ`-algebra
 (Kechris, Thm 17.24), for `E` separable pseudo-metrizable with its Borel `σ`-algebra. -/
