@@ -782,6 +782,33 @@ theorem ae_squareAt_eq_dyadicDescendant {s : ℝ} {o₁ o₂ : ℕ → ℝ}
   have hB : b = gridFloor s o₂ (j - i) z.im := eq_latticeFloor hp hb h3 h4'
   rw [squareAt, hA, hB]
 
+/-- A bad descendant gives a rooted mass-tail witness at almost every point of it,
+provided the next generation of the parent has at least the threshold mass. -/
+theorem ae_mem_rootedBadSquareMassTail_of_dyadicDescendant
+    {E : Set ℂ → GMSSpace → Prop} {H : GMSSpace} {q : DyadicCoord}
+    (h₁ : IsCompatible q.2.1) (h₂ : IsCompatible q.2.2) (j : ℤ) (w : ℂ)
+    {i l : ℕ} (hil : i ≤ l) {S : Set ℂ}
+    (hS : S ∈ dyadicDescendants i (gridFloor q.1 q.2.1 j w.re)
+      (gridFloor q.1 q.2.2 j w.im) ((2 : ℝ) ^ (q.1 + (j : ℝ))))
+    (hbad : ¬ E S H) {m : ℝ≥0∞}
+    (hm : m ≤ cellMass volume (complexCells H.1) (squareAt q.1 q.2.1 q.2.2 (j + 1) w)) :
+    ∀ᵐ z ∂volume, z ∈ S → (H, q, z) ∈ rootedBadSquareMassTail E (l + 1) m := by
+  have hsub : S ⊆ squareAt q.1 q.2.1 q.2.2 j w := by
+    exact dyadicDescendant_subset (by positivity) hS
+  filter_upwards [ae_squareAt_eq_dyadicDescendant h₁ h₂ j w i hS,
+    ae_isOffGrid_volume q.1 q.2.1 q.2.2] with z hzS hz hzmem
+  have hzparent : z ∈ squareAt q.1 q.2.1 q.2.2 (j + 1) w :=
+    squareAt_mono_of_isCompatible h₁ h₂ w (by omega) (hsub hzmem)
+  have heq : squareAt q.1 q.2.1 q.2.2 (j + 1) w =
+      squareAt q.1 q.2.1 q.2.2 (j + 1) z := squareAt_eq_of_mem hz hzparent
+  have hmono := cellMass_mono volume (complexCells H.1)
+    (squareAt_mono_of_isCompatible (s := q.1) h₁ h₂ z
+      (show j + 1 ≤ j - (i : ℤ) + ((l : ℤ) + 1) by omega))
+  refine ⟨j - i, ?_, ?_⟩
+  · rw [← hzS hzmem]
+    exact hbad
+  · exact (heq ▸ hm).trans hmono
+
 /-! ### A conditional resampling estimate -/
 
 /-- If almost every point of a descendant belongs to a rooted event, its area gives a lower
