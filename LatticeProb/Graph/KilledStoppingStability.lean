@@ -290,16 +290,16 @@ theorem aemeasurable_stopped_position {d : ℕ} {B : ℝ≥0 → Ω → Euclidea
   have hcC : ∀ ω, Continuous fun t => C t ω := by
     intro ω
     by_cases hω : ω ∈ S
-    · simpa only [C, Set.piecewise, if_pos hω] using
+    · simpa only [C, Set.piecewise, ite_eq_left hω] using
         (show Continuous (fun t => B t ω) from hω)
-    · simpa only [C, Set.piecewise, if_neg hω] using
+    · simpa only [C, Set.piecewise, ite_eq_right hω] using
         (continuous_const : Continuous fun _ : ℝ≥0 => (0 : EuclideanSpace ℝ (Fin d)))
   have hY : NullMeasurable (fun ω => C (τ ω) ω) P :=
     (measurable_uncurry_of_continuous_of_measurable hcC hmC).comp
       (hτ.nullMeasurable.measurable'.prodMk measurable_id)
   refine hY.aemeasurable.congr ?_
   filter_upwards [hc] with ω hω
-  exact if_pos hω
+  exact ite_eq_left hω
 
 /-- A stopped payoff with a continuous reward and a Brownian stopping time is almost-everywhere
 measurable. -/

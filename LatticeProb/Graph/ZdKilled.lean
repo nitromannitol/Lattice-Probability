@@ -55,12 +55,12 @@ theorem killedPayoff_eq [NeZero d] (D : Set (Site d)) (ζ : Site d → ℝ) (n :
   rw [LatticeProb.Graph.killedPayoff, zdKilledPayoff]
   refine Finset.sum_congr rfl fun k _ => ?_
   by_cases hk : ∀ i ≤ k, X i ∈ D
-  · rw [if_pos hk, Set.indicator_of_mem (show k ∈ {k : ℕ | ∀ i ≤ k, X i ∈ D} from hk)]
+  · rw [ite_eq_left hk, Set.indicator_of_mem (show k ∈ {k : ℕ | ∀ i ≤ k, X i ∈ D} from hk)]
     rw [excess_config, degree_eq]
     field_simp
     push_cast
     ring
-  · rw [if_neg hk, Set.indicator_of_notMem (show k ∉ {k : ℕ | ∀ i ≤ k, X i ∈ D} from hk)]
+  · rw [ite_eq_right hk, Set.indicator_of_notMem (show k ∉ {k : ℕ | ∀ i ≤ k, X i ∈ D} from hk)]
 
 theorem killedPayoff_dependsUpTo [NeZero d] (D : Set (Site d)) (ζ : Site d → ℝ) (n : ℕ)
     {τ : (ℕ → Site d) → ℕ} (hτ : LatticeProb.Graph.IsStopping τ) (hle : ∀ X, τ X ≤ n) :
@@ -81,8 +81,8 @@ theorem killedPayoff_dependsUpTo [NeZero d] (D : Set (Site d)) (ζ : Site d → 
     · intro h i hi; rw [← hkle i hi]; exact h i hi
     · intro h i hi; rw [hkle i hi]; exact h i hi
   by_cases h : ∀ i ≤ k, X i ∈ D
-  · rw [if_pos h, if_pos (hset.mp h), hkle k le_rfl]
-  · rw [if_neg h, if_neg (fun hc => h (hset.mpr hc))]
+  · rw [ite_eq_left h, ite_eq_left (hset.mp h), hkle k le_rfl]
+  · rw [ite_eq_right h, ite_eq_right (fun hc => h (hset.mpr hc))]
 
 theorem walkExp_killedPayoff_eq_integral [NeZero d]
     (hW : LatticeProb.Graph.WalkAverageIsIntegral) (D : Set (Site d)) (ζ : Site d → ℝ)
@@ -124,7 +124,7 @@ theorem zdKilledOdometer_eq [NeZero d] (D : Set (Site d)) (ζ : Site d → ℝ) 
       · rw [LatticeProb.Graph.killedOdometer_succ_of_mem _ hx, hfun, walkOp_eq]
         show _ = (if x ∈ D then
           max 0 (ζ x + LatticeProb.walkOp (zdKilledOdometer D ζ n) x) else 0)
-        rw [if_pos hx]
+        rw [ite_eq_left hx]
         congr 2
         rw [show LatticeProb.Graph.excess (config ζ) x / ((lattice d).degree x : ℝ)
             = LatticeProb.Graph.scenery (lattice d) (config ζ) x from rfl,
@@ -132,14 +132,14 @@ theorem zdKilledOdometer_eq [NeZero d] (D : Set (Site d)) (ζ : Site d → ℝ) 
       · rw [LatticeProb.Graph.killedOdometer_of_notMem _ hx]
         show (0 : ℝ) = (if x ∈ D then
           max 0 (ζ x + LatticeProb.walkOp (zdKilledOdometer D ζ n) x) else 0)
-        rw [if_neg hx]
+        rw [ite_eq_right hx]
 
 /-- **The optimal-stopping representation of the localized odometer on the
 lattice.** -/
 theorem localizedStopping (hW : LatticeProb.Graph.WalkAverageIsIntegral)
     (d : ℕ) (hd : 1 ≤ d) (D : Set (Site d)) (ζ : Site d → ℝ) (n : ℕ) (x : Site d) :
     IsLUB (zdKilledStopValues D ζ n x) (zdKilledOdometer D ζ n x) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   rw [← killedStopValues_eq hW, ← zdKilledOdometer_eq]
   exact LatticeProb.Graph.isLUB_killedOdometer (degree_pos_lattice hd)
     (LatticeProb.Graph.excess (config ζ)) D n x
@@ -154,7 +154,7 @@ theorem localizedStopping' (d : ℕ) (hd : 1 ≤ d) (D : Set (Site d)) (ζ : Sit
 theorem sSup_zdKilledStopValues (d : ℕ) (hd : 1 ≤ d) (D : Set (Site d)) (ζ : Site d → ℝ)
     (n : ℕ) (x : Site d) :
     sSup (zdKilledStopValues D ζ n x) = zdKilledOdometer D ζ n x := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   refine (localizedStopping' d hd D ζ n x).csSup_eq ⟨0, ?_⟩
   rw [← killedStopValues_eq LatticeProb.Graph.walkAverageIsIntegral]
   exact LatticeProb.Graph.zero_mem_killedStopValues _ D n x
@@ -166,7 +166,7 @@ theorem zdKilledOdometer_succ_of_mem (D : Set (Site d)) (ζ : Site d → ℝ)
       = max 0 (ζ x + LatticeProb.walkOp (zdKilledOdometer D ζ n) x) := by
   show (if x ∈ D then
     max 0 (ζ x + LatticeProb.walkOp (zdKilledOdometer D ζ n) x) else 0) = _
-  rw [if_pos hx]
+  rw [ite_eq_left hx]
 
 theorem zdKilledOdometer_of_notMem (D : Set (Site d)) (ζ : Site d → ℝ)
     {x : Site d} (hx : x ∉ D) (n : ℕ) : zdKilledOdometer D ζ n x = 0 := by
@@ -175,6 +175,6 @@ theorem zdKilledOdometer_of_notMem (D : Set (Site d)) (ζ : Site d → ℝ)
   | succ n =>
       show (if x ∈ D then
         max 0 (ζ x + LatticeProb.walkOp (zdKilledOdometer D ζ n) x) else 0) = 0
-      rw [if_neg hx]
+      rw [ite_eq_right hx]
 
 end LatticeProb.Graph.Zd

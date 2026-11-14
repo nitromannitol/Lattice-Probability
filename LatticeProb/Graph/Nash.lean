@@ -182,8 +182,8 @@ theorem sq_le_sum_abs_sub_sq [Infinite V] (hG : G.Connected) (g : V → ℝ) (T 
   have hinj : Set.InjOn p.getVert ↑(Finset.range j) := by
     intro i hi i' hi' heq
     simp only [Finset.coe_range, Set.mem_Iio] at hi hi'
-    exact hpath.getVert_injOn (by simp only [Set.mem_setOf_eq]; omega)
-      (by simp only [Set.mem_setOf_eq]; omega) heq
+    exact hpath.getVert_injOn (by simp only [Set.mem_ofPred_eq]; omega)
+      (by simp only [Set.mem_ofPred_eq]; omega) heq
   have himg : (Finset.range j).image p.getVert ⊆ T := by
     intro y hy
     rw [Finset.mem_image] at hy

@@ -55,7 +55,7 @@ theorem zdOdometer_eq [NeZero d] (η : Site d → ℝ) :
       have hfun : LatticeProb.Graph.odometer (lattice d) (config η) n = zdOdometer η n := funext ih
       rw [LatticeProb.Graph.odometerRecursion (latticeConnected d) _ n x, walkOp_eq, scenery_config,
         hfun, zdOdometer]
-      simp only []
+      simp only
       rw [max_comm, add_comm]
 
 /-- `S_n = ∑_{k<n} ζ(X_k)`, the scenery sum along the trajectory. -/
@@ -123,7 +123,7 @@ theorem stopValues_eq [NeZero d] (hW : LatticeProb.Graph.WalkAverageIsIntegral)
 theorem parkingStopping (hW : LatticeProb.Graph.WalkAverageIsIntegral)
     (d : ℕ) (hd : 1 ≤ d) (η : Site d → ℝ) (n : ℕ) (x : Site d) :
     IsLUB (zdStopValues η n x) (zdOdometer η n x) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   rw [← stopValues_eq hW, ← zdOdometer_eq]
   exact (LatticeProb.Graph.randomWalkRepresentation (latticeConnected d) (config η) n x).1
 
@@ -133,7 +133,7 @@ theorem sandpileOptimalStopping (hW : LatticeProb.Graph.WalkAverageIsIntegral)
     zdOdometer ζ n x = zdStoppingValue ζ n x ∧
       zdStoppingValue ζ n x
         = ∫ X, sceneryPartialSum ζ (zdOptimalStop ζ n X) X ∂(siteWalkLaw d x) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hval : ∀ (m : ℕ) (z : Site d),
       zdStoppingValue ζ m z = LatticeProb.Graph.value (lattice d) (LatticeProb.Graph.excess (config ζ)) m z := by
     intro m z
@@ -144,7 +144,7 @@ theorem sandpileOptimalStopping (hW : LatticeProb.Graph.WalkAverageIsIntegral)
     rw [zdOptimalStop, LatticeProb.Graph.optimalStop]
     congr 1
     ext k
-    simp only [Set.mem_setOf_eq, hval]
+    simp only [Set.mem_ofPred_eq, hval]
   have hrep := LatticeProb.Graph.randomWalkRepresentation (latticeConnected d) (config ζ) n x
   have hsup : LatticeProb.Graph.value (lattice d) (LatticeProb.Graph.excess (config ζ)) n x
       = LatticeProb.Graph.odometer (lattice d) (config ζ) n x :=

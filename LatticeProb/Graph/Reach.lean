@@ -65,12 +65,12 @@ theorem heat_forward : ∀ (k : ℕ) (x y : V),
       by_cases h : G.Adj x y
       · have hxy : y ∈ G.neighborFinset x := (SimpleGraph.mem_neighborFinset _ _ _).2 h
         have hyx : x ∈ G.neighborFinset y := (SimpleGraph.mem_neighborFinset _ _ _).2 h.symm
-        rw [if_pos hxy, if_pos hyx, one_div]
+        rw [ite_eq_left hxy, ite_eq_left hyx, one_div]
       · have hxy : y ∉ G.neighborFinset x := fun hh =>
           h ((SimpleGraph.mem_neighborFinset _ _ _).1 hh)
         have hyx : x ∉ G.neighborFinset y := fun hh =>
           h (((SimpleGraph.mem_neighborFinset _ _ _).1 hh).symm)
-        rw [if_neg hxy, if_neg hyx, zero_div]
+        rw [ite_eq_right hxy, ite_eq_right hyx, zero_div]
   | succ k ih =>
       intro x y
       rw [heat_succ, walkOp]
