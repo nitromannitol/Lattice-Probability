@@ -724,6 +724,64 @@ theorem exists_forall_ge_not_mem_rootedBadSquareMassTail {E : Set ℂ → GMSSpa
   have hmass := cellMass_mono volume (complexCells H.1) hsub
   exact (not_lt_of_ge (hm.trans (hjm.trans hmass))) hN
 
+/-- Each dyadic descendant belongs to the corresponding finer generation. -/
+theorem dyadicDescendant_mem_generationSquares {s : ℝ} {o₁ o₂ : ℕ → ℝ}
+    (h₁ : IsCompatible o₁) (h₂ : IsCompatible o₂) (j : ℤ) (w : ℂ) (i : ℕ)
+    {S : Set ℂ}
+    (hS : S ∈ dyadicDescendants i (gridFloor s o₁ j w.re) (gridFloor s o₂ j w.im)
+      ((2 : ℝ) ^ (s + (j : ℝ)))) :
+    S ∈ generationSquares s o₁ o₂ (j - i) := by
+  obtain ⟨n₁, n₂, _, _, rfl⟩ := hS
+  have hp : (2 : ℝ) ^ (s + (j : ℝ)) / (2 : ℝ) ^ i =
+      (2 : ℝ) ^ (s + ((j - i : ℤ) : ℝ)) := by
+    have h := two_rpow_add_natCast s (j - i) i
+    have hji : j - (i : ℤ) + i = j := by omega
+    rw [hji] at h
+    push_cast at h
+    rw [h]
+    field_simp
+    push_cast
+    rfl
+  have hadd (o : ℕ → ℝ) (ho : IsCompatible o) (x : ℝ) (n : ℕ) :
+      gridFloor s o j x + n * (2 : ℝ) ^ (s + ((j - i : ℤ) : ℝ)) ∈
+        gridPoints s o (j - i) := by
+    have hbase := gridPoints_subset_of_le ho s (show j - (i : ℤ) ≤ j by omega)
+      (gridFloor_mem s o j x)
+    simp only [gridPoints, mem_shiftedLattice] at hbase ⊢
+    obtain ⟨k, hk⟩ := hbase
+    refine ⟨k + n, ?_⟩
+    push_cast
+    rw [hk]
+    ring
+    push_cast
+    congr 2
+    ring
+  refine ⟨gridFloor s o₁ j w.re + n₁ * ((2 : ℝ) ^ (s + (j : ℝ)) / (2 : ℝ) ^ i), ?_,
+    gridFloor s o₂ j w.im + n₂ * ((2 : ℝ) ^ (s + (j : ℝ)) / (2 : ℝ) ^ i), ?_, ?_⟩
+  · simpa only [hp] using hadd o₁ h₁ w.re n₁
+  · simpa only [hp] using hadd o₂ h₂ w.im n₂
+  · simp only [hp]
+
+/-- Almost every point of a descendant selects that square in the finer generation. -/
+theorem ae_squareAt_eq_dyadicDescendant {s : ℝ} {o₁ o₂ : ℕ → ℝ}
+    (h₁ : IsCompatible o₁) (h₂ : IsCompatible o₂) (j : ℤ) (w : ℂ) (i : ℕ)
+    {S : Set ℂ}
+    (hS : S ∈ dyadicDescendants i (gridFloor s o₁ j w.re) (gridFloor s o₂ j w.im)
+      ((2 : ℝ) ^ (s + (j : ℝ)))) :
+    ∀ᵐ z ∂volume, z ∈ S → S = squareAt s o₁ o₂ (j - i) z := by
+  have hgen := dyadicDescendant_mem_generationSquares h₁ h₂ j w i hS
+  obtain ⟨a, ha, b, hb, rfl⟩ := hgen
+  filter_upwards [ae_isOffGrid_volume s o₁ o₂] with z hz hmem
+  obtain ⟨h1, h2, h3, h4⟩ := hmem
+  have h2' : z.re < a + (2 : ℝ) ^ (s + ((j - i : ℤ) : ℝ)) :=
+    lt_of_le_of_ne h2 fun h => (hz (j - i)).1 (h ▸ add_mem_shiftedLattice ha)
+  have h4' : z.im < b + (2 : ℝ) ^ (s + ((j - i : ℤ) : ℝ)) :=
+    lt_of_le_of_ne h4 fun h => (hz (j - i)).2 (h ▸ add_mem_shiftedLattice hb)
+  have hp : (0 : ℝ) < (2 : ℝ) ^ (s + ((j - i : ℤ) : ℝ)) := by positivity
+  have hA : a = gridFloor s o₁ (j - i) z.re := eq_latticeFloor hp ha h1 h2'
+  have hB : b = gridFloor s o₂ (j - i) z.im := eq_latticeFloor hp hb h3 h4'
+  rw [squareAt, hA, hB]
+
 /-! ### A conditional resampling estimate -/
 
 /-- If almost every point of a descendant belongs to a rooted event, its area gives a lower
