@@ -45,26 +45,29 @@ noncomputable abbrev originCappedSquare (m : ℝ≥0∞) (H : GMSSpace) (q : Dya
   cappedSquare (dyadicSquares q.1 q.2.1 q.2.2) (cellMass volume (complexCells H.1)) m 0
 
 /-- A rooted witness for an event of `𝓕_m`: a measurable set of triples `(H, D, w)`, invariant
-under the joint similarity `(H, D, w) ↦ (C(H - u), C(D - u), C(w - u))`, whose membership is, for
-every `H` and almost every `D`, the same at almost every root `z ∈ S_m^0(H, D)` as at the origin. -/
+under the joint similarity `(H, D, w) ↦ (C(H - u), C(D - u), C(w - u))` for every dyadic system `D`
+with compatible offset sequences (a set of full measure), whose membership is, for every `H` and
+almost every `D`, the same at almost every root `z ∈ S_m^0(H, D)` as at the origin. -/
 def IsCappedSquareWitness (m : ℝ≥0∞) (B : Set (GMSSpace × DyadicCoord × ℂ)) : Prop :=
   MeasurableSet B ∧
     (∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
-      ∀ (q : DyadicCoord) (w : ℂ),
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
         ((H', similarityCoord s u q, s • w + similarityOffset s u) ∈ B ↔ (H, q, w) ∈ B)) ∧
     ∀ H : GMSSpace, ∀ᵐ q ∂dyadicLaw, ∀ᵐ z ∂volume, z ∈ originCappedSquare m H q →
       ((H, q, z) ∈ B ↔ (H, q, 0) ∈ B)
 
 theorem isCappedSquareWitness_compl {m : ℝ≥0∞} {B : Set (GMSSpace × DyadicCoord × ℂ)}
     (hB : IsCappedSquareWitness m B) : IsCappedSquareWitness m Bᶜ :=
-  ⟨hB.1.compl, fun s u hs H H' h q w => not_congr (hB.2.1 s u hs H H' h q w),
+  ⟨hB.1.compl, fun s u hs H H' h q h₁ h₂ w =>
+    not_congr (hB.2.1 s u hs H H' h q h₁ h₂ w),
     fun H => (hB.2.2 H).mono fun _ hq => hq.mono fun _ hz hzS => not_congr (hz hzS)⟩
 
 theorem isCappedSquareWitness_iUnion {m : ℝ≥0∞} {B : ℕ → Set (GMSSpace × DyadicCoord × ℂ)}
     (hB : ∀ i, IsCappedSquareWitness m (B i)) : IsCappedSquareWitness m (⋃ i, B i) := by
-  refine ⟨MeasurableSet.iUnion fun i => (hB i).1, fun s u hs H H' h q w => ?_, fun H => ?_⟩
+  refine ⟨MeasurableSet.iUnion fun i => (hB i).1, fun s u hs H H' h q h₁ h₂ w => ?_,
+    fun H => ?_⟩
   · simp only [mem_iUnion]
-    exact exists_congr fun i => (hB i).2.1 s u hs H H' h q w
+    exact exists_congr fun i => (hB i).2.1 s u hs H H' h q h₁ h₂ w
   · filter_upwards [ae_all_iff.2 fun i => (hB i).2.2 H] with q hq
     filter_upwards [ae_all_iff.2 hq] with z hz hzS
     simp only [mem_iUnion]
@@ -77,7 +80,7 @@ unchanged by scaling and by translating a point of `S_m^0(H, D)` to the origin, 
 def cappedSquareSigma (m : ℝ≥0∞) : MeasurableSpace (GMSSpace × DyadicCoord) where
   MeasurableSet' A := ∃ B, IsCappedSquareWitness m B ∧ A = {p | (p.1, p.2, (0 : ℂ)) ∈ B}
   measurableSet_empty :=
-    ⟨∅, ⟨MeasurableSet.empty, fun _ _ _ _ _ _ _ _ => Iff.rfl,
+    ⟨∅, ⟨MeasurableSet.empty, fun _ _ _ _ _ _ _ _ _ _ => Iff.rfl,
       fun _ => Filter.Eventually.of_forall fun _ => Filter.Eventually.of_forall fun _ _ => Iff.rfl⟩,
       Set.ext fun _ => Iff.rfl⟩
   measurableSet_compl A := by
@@ -103,15 +106,15 @@ noncomputable def cappedSquareAverage (m : ℝ≥0∞) (G : GMSSpace × DyadicCo
     (originCappedSquare m H q).indicator (fun _ => (1 : ℝ≥0∞)) z * G (H, q, z)
 
 /-- **Set-integral form of `avg_m F = E[F | 𝓕_m]`**: under the mass-transport principle, for every
-cell mass `m ∈ (0, ∞)`, every measurable `G(H, D, w) ≥ 0` invariant under the joint similarity and
-every event `A ∈ 𝓕_m`,
+cell mass `m ∈ (0, ∞)`, every measurable `G(H, D, w) ≥ 0` invariant under the joint similarity (for
+every dyadic system with compatible offset sequences) and every event `A ∈ 𝓕_m`,
 `E[1_A |S_m^0|⁻¹ ∫_{S_m^0} G(H, D, z) dz] = E[1_A G(H, D, 0)]`
 (arXiv 1807.07515, proof of Lemma 2.7, from the re-sampling property of Lemma 2.3). -/
 theorem lintegral_indicator_mul_cappedSquareAverage {μ : Measure GMSSpace}
     (hMT : MassTransport μ) {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
     {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hG : Measurable G)
     (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
-      ∀ (q : DyadicCoord) (w : ℂ),
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
         G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w))
     {A : Set (GMSSpace × DyadicCoord)} (hA : MeasurableSet[cappedSquareSigma m] A) :
     ∫⁻ H, ∫⁻ q, A.indicator (fun _ => (1 : ℝ≥0∞)) (H, q) * cappedSquareAverage m G H q
@@ -119,16 +122,16 @@ theorem lintegral_indicator_mul_cappedSquareAverage {μ : Measure GMSSpace}
       ∫⁻ H, ∫⁻ q, A.indicator (fun _ => (1 : ℝ≥0∞)) (H, q) * G (H, q, 0) ∂dyadicLaw ∂μ := by
   obtain ⟨B, ⟨hBm, hBcov, hBc⟩, rfl⟩ := hA
   have hcov : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
-      ∀ (q : DyadicCoord) (w : ℂ),
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
         B.indicator (fun _ => (1 : ℝ≥0∞)) (H', similarityCoord s u q,
             s • w + similarityOffset s u) *
           G (H', similarityCoord s u q, s • w + similarityOffset s u) =
         B.indicator (fun _ => (1 : ℝ≥0∞)) (H, q, w) * G (H, q, w) := by
-    intro s u hs H H' hHH' q w
-    rw [hinv s u hs H H' hHH' q w]
+    intro s u hs H H' hHH' q h₁ h₂ w
+    rw [hinv s u hs H H' hHH' q h₁ h₂ w]
     by_cases hw : (H, q, w) ∈ B
-    · rw [indicator_of_mem ((hBcov s u hs H H' hHH' q w).2 hw), indicator_of_mem hw]
-    · rw [indicator_of_notMem (fun h => hw ((hBcov s u hs H H' hHH' q w).1 h)),
+    · rw [indicator_of_mem ((hBcov s u hs H H' hHH' q h₁ h₂ w).2 hw), indicator_of_mem hw]
+    · rw [indicator_of_notMem (fun h => hw ((hBcov s u hs H H' hHH' q h₁ h₂ w).1 h)),
         indicator_of_notMem hw]
   have key := lintegral_cappedSquare_average_eq_joint hMT hm0 hmtop
     (G := fun p => B.indicator (fun _ => (1 : ℝ≥0∞)) p * G p)

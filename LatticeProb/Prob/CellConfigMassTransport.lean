@@ -107,11 +107,12 @@ noncomputable def jointTransportKernel (m : ℝ≥0∞) (G : GMSSpace × DyadicC
 
 /-- **Covariance of the joint transport kernel**: if `H'` is `C(H - u)` and `G` is invariant under
 the joint similarity of the configuration, the dyadic system and the point,
-`G(H', C(D - u), T w) = G(H, D, w)`, then `F(H', C(w₀ - u), C(w₁ - u)) = s⁻² F(H, w₀, w₁)`. -/
+`G(H', C(D - u), T w) = G(H, D, w)` for every dyadic system with compatible offset sequences (a set
+of full measure), then `F(H', C(w₀ - u), C(w₁ - u)) = s⁻² F(H, w₀, w₁)`. -/
 theorem jointTransportKernel_similarity {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
     {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hGm : Measurable G) {s : ℝ} {u : Plane}
     {hs : 0 < s} {H H' : GMSSpace} (hHH' : IsSimilar s u hs H H')
-    (hG : ∀ (q : DyadicCoord) (w : ℂ),
+    (hG : ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
       G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w))
     (w₀ w₁ : Plane) :
     jointTransportKernel m G (H', positiveSimilarity s u w₀, positiveSimilarity s u w₁) =
@@ -134,8 +135,10 @@ theorem jointTransportKernel_similarity {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop 
     _ = ∫⁻ q, ENNReal.ofReal ((s ^ 2)⁻¹) *
           (averageKernel m (H, (q, planeCoord.symm w₀), planeCoord.symm w₁) *
             G (H, q, planeCoord.symm w₁)) ∂(unifIco 1).prod (offsetLaw.prod offsetLaw) :=
-        lintegral_congr_ae ((ae_averageKernel_similarity hHH' (planeCoord.symm w₀)).mono
-          fun q hq => by beta_reduce; rw [hq m hm0 hmtop (planeCoord.symm w₁), hG, mul_assoc])
+        lintegral_congr_ae (((ae_averageKernel_similarity hHH' (planeCoord.symm w₀)).and
+          ae_isCompatible_system).mono fun q hq => by
+            beta_reduce
+            rw [hq.1 m hm0 hmtop (planeCoord.symm w₁), hG q hq.2.1 hq.2.2, mul_assoc])
     _ = _ := lintegral_const_mul _ (hmeas H _ _)
 
 /-- **The joint transport kernel is measurable** in the configuration and the two points, for a
@@ -227,13 +230,13 @@ theorem lintegral_jointTransportKernel_zero_right {m : ℝ≥0∞} (hm0 : m ≠ 
 /-- **Joint mass transport for the capped squares** ((B.6) of arXiv 1807.07515, joint form): under
 the mass-transport principle, for every cell mass `m ∈ (0, ∞)` and every measurable
 `G(H, D, w) ≥ 0` invariant under the joint similarity, `G(C(H - u), C(D - u), C(w - u)) =
-G(H, D, w)`, `E[|S_m^0|⁻¹ ∫ 1(z ∈ S_m^0) G(H, D, z) dz] = E[G(H, D, 0)]`, both expectations taken
+G(H, D, w)` for every dyadic system `D` with compatible offset sequences, `E[|S_m^0|⁻¹ ∫ 1(z ∈ S_m^0) G(H, D, z) dz] = E[G(H, D, 0)]`, both expectations taken
 over the configuration and the independent uniform dyadic system `D`. -/
 theorem lintegral_cappedSquare_average_eq_joint {μ : Measure GMSSpace} (hMT : MassTransport μ)
     {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞) {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞}
     (hG : Measurable G)
     (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
-      ∀ (q : DyadicCoord) (w : ℂ),
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
         G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w)) :
     ∫⁻ H, ∫⁻ q, ∫⁻ z, (volume (cappedSquare (dyadicSquares q.1 q.2.1 q.2.2)
           (cellMass volume (complexCells H.1)) m 0))⁻¹ *
