@@ -10,7 +10,7 @@ Let `W` be the law on `C(ℝ≥0, ℝ)` of a standard real Brownian motion and l
 Brownian paths. With `Tᵢ` the first passage time of `lᵢ` at `-a`, the level-passage process is
 `Y a = r₂ (T₂) - r₁ (T₁)`. Given the first paths, `Y a` is centred Gaussian with variance `T₁ + T₂`.
 
-* `pathLaw_map_eval`: the one-dimensional marginals of `W` are `gaussianReal 0 t`.
+* `pathLaw_map_eval_eq_gaussianReal`: the one-dimensional marginals of `W` are `gaussianReal 0 t`.
 * `pathLaw_prod_map_sub_eval`: under `W ⊗ W`, `p.2 t - p.1 s` has law `gaussianReal 0 (s + t)`.
 * `measure_abs_cauchyLevel_le_eq_lintegral`: `ν {|Y a| ≤ r}` is the `W ⊗ W`-average over the first
   paths of `gaussianReal 0 (T₁ + T₂) [-r, r]`.
@@ -33,7 +33,7 @@ variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasur
 
 omit [IsProbabilityMeasure P] in
 /-- The one-dimensional marginals of the Brownian path law. -/
-theorem pathLaw_map_eval (hB : IsBrownianReal B P) (hm : ∀ t, Measurable (B t))
+theorem pathLaw_map_eval_eq_gaussianReal (hB : IsBrownianReal B P) (hm : ∀ t, Measurable (B t))
     (hcont : ∀ ω, Continuous fun t => B t ω) (t : ℝ≥0) :
     (P.map (pathMap B hcont)).map (fun v : C(ℝ≥0, ℝ) => v t) = gaussianReal 0 t := by
   rw [Measure.map_map (continuous_eval_const t).measurable (measurable_pathMap B hm hcont)]
@@ -54,7 +54,7 @@ theorem pathLaw_prod_map_sub_eval (hB : IsBrownianReal B P) (hm : ∀ t, Measura
     have hcomp : (fun v : C(ℝ≥0, ℝ) => -(v s)) =
         (fun x : ℝ => -x) ∘ (fun v : C(ℝ≥0, ℝ) => v s) := rfl
     rw [hcomp, ← Measure.map_map measurable_neg (continuous_eval_const s).measurable,
-      pathLaw_map_eval hB hm hcont s, gaussianReal_map_neg, neg_zero]
+      pathLaw_map_eval_eq_gaussianReal hB hm hcont s, gaussianReal_map_neg, neg_zero]
   have hfun : (fun p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) => p.2 t - p.1 s) =
       (fun x : ℝ × ℝ => x.1 + x.2) ∘
         Prod.map (fun v : C(ℝ≥0, ℝ) => -(v s)) (fun v : C(ℝ≥0, ℝ) => v t) := by
@@ -62,7 +62,7 @@ theorem pathLaw_prod_map_sub_eval (hB : IsBrownianReal B P) (hm : ∀ t, Measura
     simp only [Function.comp_apply, Prod.map_fst, Prod.map_snd]
     ring
   rw [hfun, ← Measure.map_map measurable_add (hs.prodMap ht), ← Measure.map_prod_map _ _ hs ht,
-    hWs, pathLaw_map_eval hB hm hcont t]
+    hWs, pathLaw_map_eval_eq_gaussianReal hB hm hcont t]
   have hconv : ((gaussianReal 0 s).prod (gaussianReal 0 t)).map (fun x : ℝ × ℝ => x.1 + x.2) =
       gaussianReal 0 s ∗ gaussianReal 0 t := rfl
   rw [hconv, gaussianReal_conv_gaussianReal, add_zero]
