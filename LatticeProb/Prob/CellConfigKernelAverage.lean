@@ -25,6 +25,8 @@ the rooted form `A_m G` is the function whose level sets are witnesses of `𝓕_
 * `ae_kernelAverage_eq_origin`: block constancy; almost surely `A_m G` is constant on the capped square
   `S_m^0` around the origin, and `ae_kernelAverage_origin_eq`: there it is the uniform average.
 * `measurable_kernelAverage_origin`: `(H, D) ↦ A_m G(H, D, 0)` is `𝓕_m`-measurable.
+* `cappedSquareSigma_anti`: `𝓕_{m'} ≤ 𝓕_m` for `0 < m ≤ m' < ∞`, and
+  `antitone_cappedSquareSigma_natCast_add_one`: `k ↦ 𝓕_{k+1}` is antitone.
 * `kernelAverage_origin_ae_eq_condExp`: under the mass-transport principle, `A_m G(·, ·, 0)` is a version
   of `E[G(H, D, 0) | 𝓕_m]`.
 -/
@@ -196,6 +198,42 @@ theorem measurable_kernelAverage_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop 
       kernelAverage m G (p.1, p.2, 0) :=
   measurable_of_Ioi (mδ := cappedSquareSigma m) fun t =>
     ⟨_, isCappedSquareWitness_kernelAverage hm0 hmtop hG hinv t, rfl⟩
+
+/-! ### `𝓕_m` decreases in the cell mass -/
+
+/-- **The capped squares increase with the cell mass**: for every configuration `H`, cell masses
+`0 < m ≤ m' < ∞` and almost every dyadic system, `S_m^0(H, D) ⊆ S_{m'}^0(H, D)`. -/
+theorem ae_originCappedSquare_subset {m m' : ℝ≥0∞} (hm0 : m ≠ 0) (hmm' : m ≤ m')
+    (hm'top : m' ≠ ∞) (H : GMSSpace) :
+    ∀ᵐ q ∂dyadicLaw, originCappedSquare m H q ⊆ originCappedSquare m' H q := by
+  have := countable_cells H.2
+  filter_upwards [ae_exists_isCappedSquare_squareAt_cellMass 0 (locallyFinite_complexCells H.2)
+      (iUnion_complexCells H.2) isCompact_complexCells (volume_complexCells_ne_zero H.2)]
+    with q hex z hz
+  obtain ⟨j, -, -, hcap⟩ := hex m hm0 (ne_top_of_le_ne_top hm'top hmm')
+  obtain ⟨j', -, -, hcap'⟩ := hex m' ((pos_iff_ne_zero.2 hm0).trans_le hmm').ne' hm'top
+  have h1 : z ∈ squareAt q.1 q.2.1 q.2.2 j 0 := by
+    rw [← hcap.cappedSquare_eq]
+    exact hz
+  have h2 := hcap'.subset hcap.mem_family hcap.mem (hcap.mass_le.trans hmm') h1
+  rw [← hcap'.cappedSquare_eq] at h2
+  exact h2
+
+/-- **`𝓕_m` decreases in the cell mass** (arXiv 1807.07515, Definition 2.5): for cell masses
+`0 < m ≤ m' < ∞`, every event of `𝓕_{m'}` is an event of `𝓕_m`, since almost surely
+`S_m^0 ⊆ S_{m'}^0`, so a witness of `𝓕_{m'}` is a witness of `𝓕_m`. -/
+theorem cappedSquareSigma_anti {m m' : ℝ≥0∞} (hm0 : m ≠ 0) (hmm' : m ≤ m') (hm'top : m' ≠ ∞) :
+    cappedSquareSigma m' ≤ cappedSquareSigma m := by
+  rintro A ⟨B, hB, rfl⟩
+  refine ⟨B, ⟨hB.1, hB.2.1, fun H => ?_⟩, rfl⟩
+  filter_upwards [hB.2.2 H, ae_originCappedSquare_subset hm0 hmm' hm'top H] with q hq hsub
+  filter_upwards [hq] with z hz hzS
+  exact hz (hsub hzS)
+
+/-- The σ-algebras `𝓕_{k+1}`, `k ∈ ℕ`, form a decreasing sequence. -/
+theorem antitone_cappedSquareSigma_natCast_add_one :
+    Antitone fun k : ℕ => cappedSquareSigma ((k : ℝ≥0∞) + 1) := fun k l hkl =>
+  cappedSquareSigma_anti (by simp) (by exact_mod_cast Nat.add_le_add_right hkl 1) (by simp)
 
 /-! ### The conditional expectation given `𝓕_m` -/
 
