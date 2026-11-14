@@ -1187,6 +1187,21 @@ theorem ae_ae_eventually_diam_le_int [IsFiniteMeasure μ] (hMT : MassTransport �
   have h := hN k.toNat hkN
   simpa only [hcast, hreal] using h
 
+/-- Eventually, every cell meeting an origin square has diameter at most half its side. -/
+theorem ae_ae_eventually_diam_le_half_side [IsFiniteMeasure μ] (hMT : MassTransport μ)
+    (hL : ConnectedAlongLines μ) (hFE : FiniteExpectation μ) :
+    ∀ᵐ H ∂μ, ∀ᵐ q ∂dyadicLaw, ∀ᶠ j : ℤ in atTop, ∀ K : H.1.cells,
+      (complexCells H.1 K ∩ squareAt q.1 q.2.1 q.2.2 j 0).Nonempty →
+        Metric.diam (K.1 : Set Plane) ≤ (2 : ℝ) ^ (q.1 + (j : ℝ)) / 2 := by
+  filter_upwards [ae_ae_eventually_diam_le_int hMT hL hFE] with H hH
+  filter_upwards [hH] with q hq
+  filter_upwards [hq (1 / 2) (by norm_num)] with j hj K hK
+  obtain ⟨z, hzK, hzS⟩ := hK
+  have hmem : K.1 ∈ H.1.restrict (planeCoord '' squareAt q.1 q.2.1 q.2.2 j 0) := by
+    refine ⟨K.2, planeCoord z, ?_, z, hzS, rfl⟩
+    exact hzK
+  simpa [div_eq_mul_inv, mul_comm] using hj K.1 hmem
+
 end Main
 
 end LatticeProb.CellConfigCappedSquare
