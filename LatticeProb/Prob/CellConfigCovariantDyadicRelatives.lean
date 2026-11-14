@@ -1213,4 +1213,41 @@ theorem ae_eventually_not_mem_rootedBadSquareMassTail
     _ ≤ ENNReal.ofReal (max (r : ℝ) 1) := ENNReal.ofReal_le_ofReal (hNr.trans (le_max_left _ _))
     _ = ratMass r := rfl
 
+
+/-- Eventually, every bounded-depth descendant of a rational capped square is good. -/
+theorem ae_ae_eventually_good_rational_cappedSquare_descendants
+    {μ : Measure GMSSpace} [IsFiniteMeasure μ] (hMT : MassTransport μ)
+    {E : Set ℂ → GMSSpace → Prop}
+    (hEm : MeasurableSet {p : (ℝ × ℝ × ℝ) × GMSSpace |
+      E (cornerSquare p.1.1 p.1.2.1 p.1.2.2) p.2})
+    (hcov : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ S : Set ℂ,
+        (E ((fun z : ℂ => s • z + similarityOffset s u) '' S) H' ↔ E S H))
+    (hE : ∀ᵐ H ∂μ, ∀ᵐ q : DyadicCoord ∂dyadicLaw, ∀ᶠ k : ℤ in atTop,
+      E (squareAt q.1 q.2.1 q.2.2 k 0) H) (l : ℕ) :
+    ∀ᵐ H ∂μ, ∀ᵐ q ∂dyadicLaw, ∃ M : ℚ, ∀ r ≥ M, ∃ j : ℤ,
+      originCappedSquare (ratMass r) H q = squareAt q.1 q.2.1 q.2.2 j 0 ∧
+      ∀ (i : ℕ), i ≤ l → ∀ S : Set ℂ,
+        S ∈ dyadicDescendants i (gridFloor q.1 q.2.1 j (0 : ℂ).re)
+          (gridFloor q.1 q.2.2 j (0 : ℂ).im) ((2 : ℝ) ^ (q.1 + (j : ℝ))) → E S H := by
+  have hK := ae_eventually_not_kernelAverage_rootedBadSquareMassTail hMT hEm hcov
+    (l + 1 : ℤ) (c := (4 : ℝ≥0∞) ^ l) (by simp)
+    (ae_eventually_not_mem_rootedBadSquareMassTail hEm hE (l + 1))
+  have : IsProbabilityMeasure (unifIco 1) := isProbabilityMeasure_unifIco one_pos
+  filter_upwards [Measure.ae_ae_of_ae_prod hK] with H hH
+  filter_upwards [hH, ae_exists_cappedSquare_badDescendant_average H E,
+    ae_all_iff.2 fun r : ℚ => ae_kernelAverage_origin_eq (ratMass_ne_zero r)
+      (ratMass_ne_top r)
+      ((rootedBadSquareMassTail E (l + 1) (ratMass r)).indicator (fun _ => (1 : ℝ≥0∞))) H]
+    with q hq hselect heq
+  obtain ⟨M, hM⟩ := hq
+  refine ⟨M, fun r hr => ?_⟩
+  obtain ⟨j, hj, hbad⟩ := hselect (ratMass r) (ratMass_ne_zero r) (ratMass_ne_top r)
+  refine ⟨j, hj, ?_⟩
+  intro i hi S hS
+  by_contra hnot
+  apply hM r hr
+  rw [heq r]
+  exact hbad l i hi S hS hnot
+
 end LatticeProb.CellConfigCappedSquare
