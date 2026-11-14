@@ -1179,4 +1179,38 @@ theorem ae_eventually_not_kernelAverage_rootedBadSquareMassTail
     (fun r => cappedSquareSigma_le _) (fun r => (hbound r).1) hc
     (fun r => (hbound r).2) hTm hT
 
+/-- Eventual goodness of the origin squares excludes rooted bad-square mass tails
+at all sufficiently large rational thresholds. -/
+theorem ae_eventually_not_mem_rootedBadSquareMassTail
+    {μ : Measure GMSSpace} [IsFiniteMeasure μ] {E : Set ℂ → GMSSpace → Prop}
+    (hEm : MeasurableSet {p : (ℝ × ℝ × ℝ) × GMSSpace |
+      E (cornerSquare p.1.1 p.1.2.1 p.1.2.2) p.2})
+    (hE : ∀ᵐ H ∂μ, ∀ᵐ q : DyadicCoord ∂dyadicLaw, ∀ᶠ k : ℤ in atTop,
+      E (squareAt q.1 q.2.1 q.2.2 k 0) H) (d : ℤ) :
+    ∀ᵐ p ∂μ.prod dyadicLaw, ∃ M : ℚ, ∀ r ≥ M,
+      (p.1, p.2, (0 : ℂ)) ∉ rootedBadSquareMassTail E d (ratMass r) := by
+  have hm : MeasurableSet {p : GMSSpace × DyadicCoord | ∃ M : ℚ, ∀ r ≥ M,
+      (p.1, p.2, (0 : ℂ)) ∉ rootedBadSquareMassTail E d (ratMass r)} := by
+    have hM (M : ℚ) : MeasurableSet {p : GMSSpace × DyadicCoord | ∀ r ≥ M,
+        (p.1, p.2, (0 : ℂ)) ∉ rootedBadSquareMassTail E d (ratMass r)} := by
+      apply measurableSet_setOf_forall_countable
+      intro r
+      apply measurableSet_setOf_imp
+      exact ((measurableSet_rootedBadSquareMassTail hEm d (ratMass r)).preimage
+        (measurable_fst.prodMk (measurable_snd.prodMk measurable_const))).compl
+    convert MeasurableSet.iUnion hM using 1
+    ext p
+    simp only [mem_ofPred_eq, mem_iUnion]
+  have : IsProbabilityMeasure (unifIco 1) := isProbabilityMeasure_unifIco one_pos
+  apply (Measure.ae_prod_iff_ae_ae hm).2
+  filter_upwards [hE] with H hH
+  filter_upwards [hH, ae_isCompatible_system] with q hq hc
+  obtain ⟨N, hN⟩ := exists_forall_ge_not_mem_rootedBadSquareMassTail H q hc.1 hc.2 d hq
+  refine ⟨(N : ℚ), fun r hr => hN (ratMass r) ?_⟩
+  have hNr : (N : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr
+  calc
+    (N : ℝ≥0∞) = ENNReal.ofReal (N : ℝ) := by simp
+    _ ≤ ENNReal.ofReal (max (r : ℝ) 1) := ENNReal.ofReal_le_ofReal (hNr.trans (le_max_left _ _))
+    _ = ratMass r := rfl
+
 end LatticeProb.CellConfigCappedSquare
