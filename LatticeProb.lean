@@ -905,6 +905,7 @@ import LatticeProb.Sandpile.FLP.Basic
 import LatticeProb.Sandpile.FLP.OneDimensional
 import LatticeProb.Sandpile.FLP.SlabStabilizer
 import LatticeProb.Sandpile.FLP.LowStabilize
+import LatticeProb.Sandpile.FLP.LowHeightOuter
 import LatticeProb.Sandpile.FLP.BoxBounds
 import LatticeProb.Sandpile.FLP.GreenComparison
 import LatticeProb.External.LevinePeresShell
