@@ -43,6 +43,9 @@ theorem measurable_Yf (β : Tri → E) : Measurable (Yf β) :=
 def IsLoc (F : Finset Tri) (Φ : (Tri → ℝ) → ℝ) : Prop :=
   ∀ Y Y' : Tri → ℝ, (∀ q ∈ F, Y q = Y' q) → Φ Y = Φ Y'
 
+theorem IsLoc.mono {F G : Finset Tri} {Φ : (Tri → ℝ) → ℝ} (h : IsLoc F Φ) (hFG : F ⊆ G) :
+    IsLoc G Φ := fun Y Y' hY => h Y Y' fun q hq => hY q (hFG hq)
+
 /-- Extension by zero of a vector indexed by `F` (Euclidean version). -/
 def extQ (F : Finset Tri) (y : EuclideanSpace ℝ F) : Tri → ℝ :=
   fun q => if h : q ∈ F then y ⟨q, h⟩ else 0

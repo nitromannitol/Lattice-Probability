@@ -35,6 +35,10 @@ open RectCross
 /-- the curve `c` has a sub-arc `c([s,t])` (or `c([t,s])`) in `K` from `c s ∈ A` to `c t ∈ B` -/
 def CrossData (c : ℝ → ℂ) (K A B : Set ℂ) : Prop :=
   ∃ s ∈ Icc (0 : ℝ) 1, ∃ t ∈ Icc (0 : ℝ) 1, (∀ u ∈ uIcc s t, c u ∈ K) ∧ c s ∈ A ∧ c t ∈ B
+theorem CrossData.symm {c : ℝ → ℂ} {K A B : Set ℂ} (h : CrossData c K A B) :
+    CrossData c K B A := by
+  obtain ⟨s, hs, t, ht, hK, hA, hB⟩ := h
+  exact ⟨t, ht, s, hs, fun u hu => hK u (uIcc_comm s t ▸ hu), hB, hA⟩
 
 /-- the rigid motion `z ↦ g.1 z + g.2` -/
 def mot (g : ℂ × ℂ) (z : ℂ) : ℂ := g.1 * z + g.2

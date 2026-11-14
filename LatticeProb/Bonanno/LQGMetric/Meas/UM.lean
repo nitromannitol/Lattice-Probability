@@ -166,6 +166,14 @@ theorem inter (hE : AEEventDeterminedBy E X P) (hF : AEEventDeterminedBy F X P) 
   obtain ⟨T, hT, h2⟩ := hF
   exact ⟨S ∩ T, hS.inter hT, h1.inter h2⟩
 
+/-- monotonicity in `X`: if `X = G ∘ X'` a.s. with `G` measurable, events determined by `X` are
+determined by `X'` -/
+theorem mono {X' : Ω → β} {G : β → α} (h : AEEventDeterminedBy E X P) (hG : Measurable G)
+    (hX : X =ᵐ[P] G ∘ X') : AEEventDeterminedBy E X' P := by
+  obtain ⟨S, hS, hE⟩ := h
+  refine ⟨G ⁻¹' S, hG hS, hE.trans ?_⟩
+  filter_upwards [hX] with ω hω
+  simp [hω]
 
 end AEEventDeterminedBy
 

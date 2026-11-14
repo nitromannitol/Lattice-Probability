@@ -78,6 +78,32 @@ theorem LSCMetric.IsCurve.isClosed_inter_preimage (hP : D.IsCurve P a b) {F : Se
   refine ⟨ht₀, ?_⟩
   rw [Set.mem_preimage, ← hy0]
   exact hyF
+theorem LSCMetric.IsCurve.measurable_restrict (hP : D.IsCurve P a b) :
+    Measurable ((Icc a b).domRestrict P) := by
+  refine measurable_of_isClosed fun s hs => ?_
+  have hrw : (Icc a b).domRestrict P ⁻¹' s =
+      ⋃ n : ℕ, Subtype.val ⁻¹' (Icc a b ∩ P ⁻¹' (s ∩ Metric.closedBall 0 n)) := by
+    ext t
+    simp only [Set.mem_preimage, Set.domRestrict_apply, Set.mem_iUnion, Set.mem_inter_iff,
+      Metric.mem_closedBall, dist_zero_right]
+    constructor
+    · intro h
+      obtain ⟨n, hn⟩ := exists_nat_ge ‖P t‖
+      exact ⟨n, t.2, h, hn⟩
+    · rintro ⟨n, -, h, -⟩
+      exact h
+  rw [hrw]
+  exact MeasurableSet.iUnion fun n =>
+    (hP.isClosed_inter_preimage ((isCompact_closedBall 0 (n : ℝ)).inter_left hs)).measurableSet.preimage
+      measurable_subtype_coe
+
+theorem LSCMetric.IsCurve.aemeasurable (hP : D.IsCurve P a b) :
+    AEMeasurable P (volume.restrict (Icc a b)) :=
+  (aemeasurable_restrict_iff_comap_subtype measurableSet_Icc).2 hP.measurable_restrict.aemeasurable
+
+ 
+
+
 
  
 theorem LSCMetric.IsCurve.continuousOn_of_mapsTo (hP : D.IsCurve P a b) {B : Set ℂ}
