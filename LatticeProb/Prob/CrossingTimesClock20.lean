@@ -4,6 +4,7 @@ Copyright (c) 2026. All rights reserved.
 import Mathlib
 import LatticeProb.Prob.CrossingTimesClock15
 import LatticeProb.Prob.CrossingTimesClock18
+import LatticeProb.Prob.CrossingTimesStrictInverse
 
 /-!
 # The inverse crossing clock of a time-changed Brownian motion is an adapted functional of the Brownian path
@@ -44,7 +45,9 @@ There is `m ∈ (0, ∞)`, depending only on `d`, such that
   `s ≥ 0`, there is a measurable functional `F` with `A_s = F (clock-read path)` almost surely under every
   `K z`, the shift identity `A_{t+s} = A_t + F (clock-read shifted path)`, and, for every `z`, a version of
   `F` that is measurable for the past of the clock-read path up to time `s`;
-* for every `z`, almost surely under `K z`, the crossing clock of the path is a good clock. -/
+* for every `z`, almost surely under `K z`, the crossing clock of the path is a good clock, and the inverse
+  crossing clock of the path is strictly increasing and unbounded along the nonnegative rationals
+  (`InvClockStrict`). -/
 theorem exists_goodAdaptedClockFunctional_timeChangedBM (d : ℕ) (hd : 1 ≤ d) :
     ∃ m : ℝ≥0∞, 0 < m ∧ m < ⊤ ∧
       (∀ (Ω : Type u) [MeasurableSpace Ω] (Q : Measure Ω) [IsProbabilityMeasure Q]
@@ -67,6 +70,7 @@ theorem exists_goodAdaptedClockFunctional_timeChangedBM (d : ℕ) (hd : 1 ≤ d)
           (K z : Measure C(ℝ≥0, EuclideanSpace ℝ (Fin d))) = Q.map X) →
         (∀ z, ∀ᵐ x ∂(K z : Measure C(ℝ≥0, EuclideanSpace ℝ (Fin d))),
           GoodClock (crossClock m fun u => x u)) ∧
+        (∀ z, ∀ᵐ x ∂(K z : Measure C(ℝ≥0, EuclideanSpace ℝ (Fin d))), InvClockStrict m x) ∧
         ∀ s : ℝ≥0, ∃ F : (ℝ≥0 → EuclideanSpace ℝ (Fin d)) → ℝ, Measurable F ∧
           (∀ z, ∀ᵐ x ∂(K z : Measure C(ℝ≥0, EuclideanSpace ℝ (Fin d))),
             (pathClockInv m x s).toReal = F fun t => clockPath m (fun u => x u) t) ∧
@@ -101,10 +105,17 @@ theorem exists_goodAdaptedClockFunctional_timeChangedBM (d : ℕ) (hd : 1 ≤ d)
       obtain ⟨-, -, h0, -, hx⟩ := hω
       rw [hx 0, h0]
       exact hs
+    have hstrict : ∀ z, ∀ᵐ x ∂(K z : Measure C(ℝ≥0, EuclideanSpace ℝ (Fin d))),
+        InvClockStrict m x := by
+      intro z
+      obtain ⟨Ω, mΩ, Q, hQ, B, τ, X, hBM, hmeas, hcont, hX, hτ, hKz⟩ := hcoup z
+      obtain ⟨hB, -⟩ := hm Ω Q z B hBM hmeas hcont
+      rw [hKz]
+      exact ae_map_invClockStrict (B := fun ω t => B t ω) hX hτ hB
     have hcont : ∀ z, ∀ᵐ x ∂(K z : Measure C(ℝ≥0, EuclideanSpace ℝ (Fin d))),
         Continuous fun u : ℝ≥0 => (pathClockInv m x u).toReal := fun z =>
       ae_continuous_pathClockInv_of_good m (key z).2.1
-    refine ⟨fun z => (key z).2.1, fun s => ?_⟩
+    refine ⟨fun z => (key z).2.1, hstrict, fun s => ?_⟩
     obtain ⟨F, hF, hFA, hFshift⟩ := exists_clockFunctional_of_attained hK hM m
       (fun z => (key z).1) (fun z => (key z).2.1) (fun z t s => (key z).2.2.1 t s)
       (fun z t => (key z).2.2.2 t) hcont s
