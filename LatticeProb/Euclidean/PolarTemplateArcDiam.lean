@@ -1,4 +1,4 @@
-import LatticeProb.Bonanno.MatedCRTHarmonic.Topology.PolarTemplate
+import LatticeProb.Bonanno.MatedCRTHarmonic.Core.CellInterfaces
 
 /-!
 # Arcs of the polar crossing template have diameter bounded below
@@ -26,6 +26,9 @@ retraces part of the first), so this arc-diameter bound is the substitute for lo
 * `one_div_le_norm_templateU_sub_phase1` ... `_phase4`: chords of `u`-length `1/25` in one phase.
 * `exists_far_pair`: a far pair inside every window of `u`-length `2/25`.
 * `one_div_le_diam_polarTemplate_image_Icc`: the arc-diameter bound.
+* `div_le_diam_movedTemplate_image_Icc`, `sub_lt_of_diam_movedTemplate_image_Icc_lt`: the same bound
+  for the template moved by a similarity `w ↦ z + r e^{iϑ} w` (`movedTemplate z r ϑ`), and its
+  contrapositive: a parameter interval whose moved arc has diameter `< r/250` has length `< 1/50`.
 -/
 
 set_option autoImplicit false
@@ -200,5 +203,64 @@ theorem one_div_le_diam_polarTemplate_image_Icc (s s' : unitInterval)
     _ = dist (polarTemplate ⟨a / 4, ha⟩) (polarTemplate ⟨b / 4, hb⟩) := by
       rw [dist_eq_norm, hA, hB]
     _ ≤ Metric.diam (polarTemplate '' Icc s s') := Metric.dist_le_diam_of_mem hbdd hmemA hmemB
+
+open MatedCRTHarmonic.CellularEmbedding in
+theorem continuous_movedTemplate (z : ℂ) (r ϑ : ℝ) : Continuous (movedTemplate z r ϑ) := by
+  unfold movedTemplate
+  exact continuous_const.add (continuous_const.mul
+    (polarTemplate.continuous.comp continuous_projIcc))
+
+open MatedCRTHarmonic.CellularEmbedding in
+/-- **Template arc-diameter bound, moved template.** For the polar template moved by the
+similarity `w ↦ z + r e^{iϑ} w`, every arc over a parameter interval `[s, s'] ⊆ [0,1]` of length at
+least `1/50` has diameter at least `r/250`. -/
+theorem div_le_diam_movedTemplate_image_Icc (z : ℂ) {r : ℝ} (hr : 0 ≤ r) (ϑ : ℝ) {s s' : ℝ}
+    (hs : 0 ≤ s) (hs' : s' ≤ 1) (h : 1 / 50 ≤ s' - s) :
+    r / 250 ≤ Metric.diam (movedTemplate z r ϑ '' Icc s s') := by
+  obtain ⟨a, b, hua, hab, hbv, hfar⟩ :=
+    exists_far_pair (u := 4 * s) (v := 4 * s') (by linarith) (by linarith) (by linarith)
+  have ha : a / 4 ∈ Icc (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+  have hb : b / 4 ∈ Icc (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+  have hbdd : Bornology.IsBounded (movedTemplate z r ϑ '' Icc s s') :=
+    (isCompact_Icc.image (continuous_movedTemplate z r ϑ)).isBounded
+  have hmemA : movedTemplate z r ϑ (a / 4) ∈ movedTemplate z r ϑ '' Icc s s' :=
+    mem_image_of_mem _ ⟨by linarith, by linarith⟩
+  have hmemB : movedTemplate z r ϑ (b / 4) ∈ movedTemplate z r ϑ '' Icc s s' :=
+    mem_image_of_mem _ ⟨by linarith, by linarith⟩
+  have hA : movedTemplate z r ϑ (a / 4) =
+      z + (r : ℂ) * Complex.exp ((ϑ : ℂ) * Complex.I) * templateU a := by
+    rw [movedTemplate, Set.projIcc_of_mem zero_le_one ha, polarTemplate_mk (a / 4) ha]
+    congr 3
+    ring
+  have hB : movedTemplate z r ϑ (b / 4) =
+      z + (r : ℂ) * Complex.exp ((ϑ : ℂ) * Complex.I) * templateU b := by
+    rw [movedTemplate, Set.projIcc_of_mem zero_le_one hb, polarTemplate_mk (b / 4) hb]
+    congr 3
+    ring
+  have hnorm : dist (movedTemplate z r ϑ (a / 4)) (movedTemplate z r ϑ (b / 4)) =
+      r * ‖templateU a - templateU b‖ := by
+    rw [dist_eq_norm, hA, hB]
+    have : z + (r : ℂ) * Complex.exp ((ϑ : ℂ) * Complex.I) * templateU a -
+        (z + (r : ℂ) * Complex.exp ((ϑ : ℂ) * Complex.I) * templateU b) =
+        (r : ℂ) * Complex.exp ((ϑ : ℂ) * Complex.I) * (templateU a - templateU b) := by ring
+    rw [this, norm_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hr,
+      Complex.norm_exp_ofReal_mul_I, mul_one]
+  calc r / 250 = r * (1 / 250) := by ring
+    _ ≤ r * ‖templateU a - templateU b‖ := mul_le_mul_of_nonneg_left hfar hr
+    _ = dist (movedTemplate z r ϑ (a / 4)) (movedTemplate z r ϑ (b / 4)) := hnorm.symm
+    _ ≤ Metric.diam (movedTemplate z r ϑ '' Icc s s') :=
+      Metric.dist_le_diam_of_mem hbdd hmemA hmemB
+
+open MatedCRTHarmonic.CellularEmbedding in
+/-- Contrapositive form of `div_le_diam_movedTemplate_image_Icc`: if the moved arc over
+`[s, s'] ⊆ [0,1]` has diameter less than `r/250`, then `s' - s < 1/50`. -/
+theorem sub_lt_of_diam_movedTemplate_image_Icc_lt (z : ℂ) {r ϑ s s' : ℝ} (hs : 0 ≤ s)
+    (hs' : s' ≤ 1) (hdiam : Metric.diam (movedTemplate z r ϑ '' Icc s s') < r / 250) :
+    s' - s < 1 / 50 := by
+  by_contra hcon
+  have hr : 0 ≤ r := by
+    have := Metric.diam_nonneg (s := movedTemplate z r ϑ '' Icc s s')
+    linarith
+  exact (not_le.mpr hdiam) (div_le_diam_movedTemplate_image_Icc z hr ϑ hs hs' (not_lt.mp hcon))
 
 end LatticeProb.PolarTemplate
