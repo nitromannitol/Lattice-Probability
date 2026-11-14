@@ -257,4 +257,91 @@ theorem ae_not_exists_limit_of_markovAt_nat {K : E → ProbabilityMeasure C(ℝ�
     have h2 := hN j (by omega)
     linarith
 
+/-- The oscillation of a path on `[0, 1]` about its starting point, truncated at `1`:
+`min 1 (sup_{r ≤ 1} dist (w r) (w 0))`. -/
+noncomputable def pathOscUnit (w : C(ℝ≥0, E)) : ℝ :=
+  min 1 (sSup ((fun r : ℝ≥0 => dist (w r) (w 0)) '' Set.Icc (0 : ℝ≥0) 1))
+
+omit [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E] [MeasurableSpace C(ℝ≥0, E)]
+  [BorelSpace C(ℝ≥0, E)] in
+theorem continuous_pathOscUnit : Continuous (pathOscUnit (E := E)) := by
+  have hf : Continuous (fun p : C(ℝ≥0, E) × ℝ≥0 => dist (p.1 p.2) (p.1 0)) :=
+    (continuous_eval (X := ℝ≥0) (Y := E)).dist ((continuous_eval_const (0 : ℝ≥0)).comp continuous_fst)
+  exact continuous_const.min (isCompact_Icc.continuous_sSup (f := fun (w : C(ℝ≥0, E)) (r : ℝ≥0) =>
+    dist (w r) (w 0)) hf)
+
+omit [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E] [MeasurableSpace C(ℝ≥0, E)]
+  [BorelSpace C(ℝ≥0, E)] in
+theorem pathOscUnit_nonneg (w : C(ℝ≥0, E)) : 0 ≤ pathOscUnit w :=
+  le_min zero_le_one (Real.sSup_nonneg (by rintro _ ⟨r, _, rfl⟩; exact dist_nonneg))
+
+omit [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E] [MeasurableSpace C(ℝ≥0, E)]
+  [BorelSpace C(ℝ≥0, E)] in
+theorem pathOscUnit_le_one (w : C(ℝ≥0, E)) : pathOscUnit w ≤ 1 := min_le_left _ _
+
+omit [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E] [MeasurableSpace C(ℝ≥0, E)]
+  [BorelSpace C(ℝ≥0, E)] in
+theorem pathOscUnit_congr {w w' : C(ℝ≥0, E)} (h : ∀ r : ℝ≥0, r ≤ 1 → w r = w' r) :
+    pathOscUnit w = pathOscUnit w' := by
+  unfold pathOscUnit
+  rw [Set.image_congr (g := fun r : ℝ≥0 => dist (w' r) (w' 0)) fun r hr => by
+    rw [h r hr.2, h 0 zero_le_one]]
+
+omit [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E] [MeasurableSpace C(ℝ≥0, E)]
+  [BorelSpace C(ℝ≥0, E)] in
+theorem pathOscUnit_pos_of_ne {w : C(ℝ≥0, E)} {r : ℝ≥0} (hr : r ≤ 1) (hne : w r ≠ w 0) :
+    0 < pathOscUnit w := by
+  have hcont : Continuous fun r : ℝ≥0 => dist (w r) (w 0) := w.continuous.dist continuous_const
+  have hbdd := (isCompact_Icc (a := (0 : ℝ≥0)) (b := 1)).bddAbove_image hcont.continuousOn
+  exact lt_min zero_lt_one (lt_of_lt_of_le (dist_pos.2 hne)
+    (le_csSup hbdd ⟨r, ⟨zero_le, hr⟩, rfl⟩))
+
+omit [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E] [MeasurableSpace C(ℝ≥0, E)]
+  [BorelSpace C(ℝ≥0, E)] in
+/-- Along a path with a limit at infinity, the oscillation of the shifted paths `x (n + ·)` on
+`[0, 1]` tends to `0`. -/
+theorem tendsto_pathOscUnit_pathShift {x : C(ℝ≥0, E)} {L : E}
+    (hx : Tendsto (fun u : ℝ≥0 => x u) atTop (𝓝 L)) :
+    Tendsto (fun n : ℕ => pathOscUnit (pathShift x (n : ℝ≥0))) atTop (𝓝 0) := by
+  rw [Metric.tendsto_atTop]
+  intro ε hε
+  obtain ⟨N, hN⟩ := Metric.tendsto_atTop.1 hx (ε / 4) (by positivity)
+  refine ⟨⌈N⌉₊, fun n hn => ?_⟩
+  have hnN : N ≤ (n : ℝ≥0) := (Nat.le_ceil N).trans (by exact_mod_cast hn)
+  have hsup : sSup ((fun r : ℝ≥0 => dist (pathShift x (n : ℝ≥0) r) (pathShift x (n : ℝ≥0) 0)) ''
+      Set.Icc (0 : ℝ≥0) 1) ≤ ε / 2 := by
+    refine csSup_le ⟨_, ⟨0, ⟨le_rfl, zero_le_one⟩, rfl⟩⟩ ?_
+    rintro _ ⟨r, _, rfl⟩
+    have h1 := hN ((n : ℝ≥0) + r) (hnN.trans (le_self_add))
+    have h2 := hN ((n : ℝ≥0) + 0) (by simpa using hnN)
+    simp only [pathShift_apply, add_zero] at h1 h2 ⊢
+    calc dist (x ((n : ℝ≥0) + r)) (x n) ≤ dist (x ((n : ℝ≥0) + r)) L + dist (x n) L := by
+          rw [dist_comm (x n) L]
+          exact dist_triangle _ _ _
+      _ ≤ ε / 2 := by linarith
+  have hnn := pathOscUnit_nonneg (pathShift x (n : ℝ≥0))
+  rw [Real.dist_eq, sub_zero, abs_of_nonneg hnn]
+  exact lt_of_le_of_lt ((min_le_right _ _).trans hsup) (by linarith)
+
+/-- **Paths of a Markov path kernel that are nonconstant on `[0, 1]` with positive probability
+from every starting point have no limit at infinity.**  If `K z` has the Markov property at every
+integer time and, for every `w`, `K w` charges the set of paths with `x r ≠ x 0` for some
+`r ≤ 1`, then `K z`-almost every path has no limit at infinity. -/
+theorem ae_not_exists_limit_of_markovAt_nat_of_nonconstant {K : E → ProbabilityMeasure C(ℝ≥0, E)}
+    (hK : Continuous K) {z : E} (hM : ∀ n : ℕ, MarkovAt K z (n : ℝ≥0))
+    (hnc : ∀ w : E, 0 < (K w : Measure C(ℝ≥0, E)) {x | ∃ r : ℝ≥0, r ≤ 1 ∧ x r ≠ x 0}) :
+    ∀ᵐ x ∂(K z : Measure C(ℝ≥0, E)), ¬ ∃ L : E, Tendsto (fun u : ℝ≥0 => x u) atTop (𝓝 L) := by
+  refine ae_not_exists_limit_of_markovAt_nat hK hM continuous_pathOscUnit pathOscUnit_nonneg
+    pathOscUnit_le_one (fun w w' h => pathOscUnit_congr h)
+    (fun x L hx => tendsto_pathOscUnit_pathShift hx) fun w => ?_
+  have hint : Integrable (pathOscUnit (E := E)) (K w : Measure C(ℝ≥0, E)) :=
+    Integrable.mono' (integrable_const (1 : ℝ)) continuous_pathOscUnit.aestronglyMeasurable
+      (Eventually.of_forall fun y => by
+        rw [Real.norm_of_nonneg (pathOscUnit_nonneg y)]
+        exact pathOscUnit_le_one y)
+  rw [integral_pos_iff_support_of_nonneg pathOscUnit_nonneg hint]
+  refine lt_of_lt_of_le (hnc w) (measure_mono ?_)
+  rintro x ⟨r, hr, hne⟩
+  exact (pathOscUnit_pos_of_ne hr hne).ne'
+
 end LatticeProb
