@@ -121,7 +121,7 @@ theorem integral_ctGauss (hd : 3 ≤ d) {x : Site d} (hx : x ≠ 0) :
   rw [setIntegral_congr_fun measurableSet_Ioi (fun t ht => ctGauss_eq (by omega) ht x),
     integral_const_mul, integral_rpow_neg_mul_exp_neg_div hp ha]
   -- the volume of the unit ball
-  haveI : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, by omega⟩⟩
   have hball : (volume (Metric.ball (0 : EuclideanSpace ℝ (Fin d)) 1)).toReal
       = Real.pi ^ ((d : ℝ) / 2) / Real.Gamma ((d : ℝ) / 2 + 1) := by
     rw [EuclideanSpace.volume_ball, Fintype.card_fin, ENNReal.ofReal_one, one_pow, one_mul,

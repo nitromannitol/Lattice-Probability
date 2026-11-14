@@ -96,7 +96,7 @@ theorem exists_iSup_srwGreen_le (hd : 1 ≤ d) :
         intro x
         have h := srwGreen_one_dim_le n hn1 x
         nlinarith [h, hK, hsqrt1]
-      rw [greenMaxRate, if_pos rfl, ← Real.sqrt_eq_rpow]
+      rw [greenMaxRate, ite_eq_left rfl, ← Real.sqrt_eq_rpow]
       exact ciSup_le hbound
   · let K : ℝ := Real.sqrt 2 ^ 2 * greenConst 2
     refine ⟨(1 + K) / Real.log 2 + K, ?_, fun n hn => ?_⟩
@@ -132,7 +132,7 @@ theorem exists_iSup_srwGreen_le (hd : 1 ≤ d) :
         rw [mul_one]
         exact srwGreen_high_dim_le h3 n hn1 x
       rw [greenMaxRate]
-      rw [if_neg (by omega : d ≠ 1), if_neg (by omega : d ≠ 2)]
+      rw [ite_eq_right (by omega : d ≠ 1), ite_eq_right (by omega : d ≠ 2)]
       exact ciSup_le hbound
 
 /-- The maximum of the truncated Green function is at least a constant times `n^{1/2}`, `log n`
@@ -143,15 +143,15 @@ theorem exists_le_iSup_srwGreen (hd : 1 ≤ d) :
   obtain rfl | rfl | h3 : d = 1 ∨ d = 2 ∨ 3 ≤ d := by omega
   · obtain ⟨c, hc, h⟩ := exists_le_srwGreen_sup_one_dim
     refine ⟨c, hc, fun n hn => ?_⟩
-    rw [greenMaxRate, if_pos rfl, ← Real.sqrt_eq_rpow]
+    rw [greenMaxRate, ite_eq_left rfl, ← Real.sqrt_eq_rpow]
     exact h n (by omega)
   · obtain ⟨c, hc, h⟩ := exists_le_srwGreen_sup_two_dim
     refine ⟨c, hc, fun n hn => ?_⟩
-    rw [greenMaxRate, if_neg (by norm_num), if_pos rfl]
+    rw [greenMaxRate, ite_eq_right (by norm_num), ite_eq_left rfl]
     exact h n hn
   · obtain ⟨c, hc, h⟩ := exists_le_srwGreen_sup_high_dim d h3
     refine ⟨c, hc, fun n hn => ?_⟩
-    rw [greenMaxRate, if_neg (by omega), if_neg (by omega), mul_one]
+    rw [greenMaxRate, ite_eq_right (by omega), ite_eq_right (by omega), mul_one]
     exact h n (by omega)
 
 /-! ### Both norms -/

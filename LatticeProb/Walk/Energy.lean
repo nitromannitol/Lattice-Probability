@@ -85,7 +85,7 @@ lemma towardVec_isDir {p y : Site d} (hne : y ≠ p) :
     by_contra hc
     push Not at hc
     exact hne (funext hc)
-  exact ⟨(h.choose, decide (y h.choose < p h.choose)), by rw [towardVec, dif_pos h]⟩
+  exact ⟨(h.choose, decide (y h.choose < p h.choose)), by rw [towardVec, dite_eq_left h]⟩
 
 /-- Provides the single correction step of the lattice geodesic: a neighbor of y strictly closer to p, used to build the path along which the flow argument runs. -/
 lemma nrm1_toward {p y : Site d} (hne : y ≠ p) :
@@ -98,7 +98,7 @@ lemma nrm1_toward {p y : Site d} (hne : y ≠ p) :
   set j := h.choose with hj
   have hjne : y j ≠ p j := h.choose_spec
   have hstep : towardVec p y = dirVec ((j, decide (y j < p j)) : Dir d) := by
-    rw [towardVec, dif_pos h]
+    rw [towardVec, dite_eq_left h]
   have hsplit : ∀ z : Site d, nrm1 z = (z j).natAbs + ∑ i ∈ Finset.univ.erase j, (z i).natAbs := by
     intro z
     rw [nrm1, ← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
@@ -117,9 +117,9 @@ lemma nrm1_toward {p y : Site d} (hne : y ≠ p) :
     have hpb : (p - y) j = p j - y j := rfl
     rw [hpa, hpb, hv]
     by_cases hlt : y j < p j
-    · rw [if_pos hlt]
+    · rw [ite_eq_left hlt]
       omega
-    · rw [if_neg hlt]
+    · rw [ite_eq_right hlt]
       have : p j < y j := lt_of_le_of_ne (not_lt.mp hlt) (Ne.symm hjne)
       omega
   omega
@@ -389,7 +389,7 @@ theorem reff_le_nrm1 (hd : 0 < d) (A : Finset (Site d)) (x p : Site d)
     rw [Finset.sum_congr rfl (fun y hy => by rw [hterm y hy])]
     rw [Finset.sum_congr rfl (fun y _ => show f y * (if y = x then (1:ℝ) else 0)
         = if y = x then f y else 0 by by_cases hc : y = x <;> simp [hc])]
-    rw [Finset.sum_ite_eq' B x f, if_pos hxB]
+    rw [Finset.sum_ite_eq' B x f, ite_eq_left hxB]
   have hcs := value_sq_le V f x p (hfoff p hp) hpathV
   rw [hEval, ← hLdef] at hcs
   have hLnn : (0:ℝ) ≤ (L:ℝ) := Nat.cast_nonneg L
@@ -409,8 +409,8 @@ lemma exists_far (hd : 0 < d) (B : Finset (Site d)) (x : Site d) :
       intro i
       by_cases hi : i = j₀ <;> simp [hq, hi]
     rw [nrm1, Finset.sum_congr rfl (fun i _ => by rw [hc i])]
-    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j₀), if_pos rfl]
-    rw [Finset.sum_eq_zero (fun i hi => by rw [if_neg (Finset.ne_of_mem_erase hi)]; rfl)]
+    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j₀), ite_eq_left rfl]
+    rw [Finset.sum_eq_zero (fun i hi => by rw [ite_eq_right (Finset.ne_of_mem_erase hi)]; rfl)]
     simp
   have hinj : ∀ k ∈ Finset.range (B.card + 1), ∀ l ∈ Finset.range (B.card + 1),
       q k = q l → k = l := by

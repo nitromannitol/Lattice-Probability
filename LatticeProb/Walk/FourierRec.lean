@@ -43,7 +43,7 @@ theorem cos_mul_cos {d : ℕ} (θ : Fin d → ℝ) (z : Site d) (i : Fin d) :
 theorem integrable_fourierHeat_integrand (d : ℕ) (j : ℕ) (w : Site d) :
     Integrable (fun θ : Fin d → ℝ => charFn d θ ^ j * Real.cos (dotSite θ w))
       (torusMeasure d) := by
-  haveI : IsFiniteMeasure (torusMeasure d) := by
+  have : IsFiniteMeasure (torusMeasure d) := by
     unfold torusMeasure; infer_instance
   have hcont : Continuous (fun θ : Fin d → ℝ => charFn d θ ^ j * Real.cos (dotSite θ w)) := by
     by_cases hd : d = 0

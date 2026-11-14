@@ -462,7 +462,7 @@ theorem exists_tsum_abs_srwHeat_gen_le (hd : 2 ≤ d) :
   have hs₂' : s₂ = 1 ∨ s₂ = -1 := by omega
   by_cases hne : i₁ = i₂
   · subst hne
-    haveI : Nontrivial (Fin d) := Fin.nontrivial_iff_two_le.mpr hd
+    have : Nontrivial (Fin d) := Fin.nontrivial_iff_two_le.mpr hd
     obtain ⟨j, hj⟩ : ∃ j : Fin d, j ≠ i₁ := exists_ne i₁
     have hgi : (Pi.single i₁ s₁ + Pi.single i₁ s₂ : Site d) i₁ = s₁ + s₂ := by
       simp

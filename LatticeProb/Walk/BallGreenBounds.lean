@@ -260,7 +260,7 @@ theorem exists_tsum_near_killedGreen_sq_le :
 
 theorem box_eq_coe_boxFinset (r : ℕ) : box r = ↑(boxFinset (0 : Site 4) r) := by
   ext y
-  simp only [box, Set.mem_setOf_eq, Finset.mem_coe, mem_boxFinset_zero_iff, supNorm_le_iff]
+  simp only [box, Set.mem_ofPred_eq, Finset.mem_coe, mem_boxFinset_zero_iff, supNorm_le_iff]
   constructor
   · intro h i
     rw [Int.abs_eq_natAbs]
@@ -738,14 +738,14 @@ theorem killedHeat_succ_forward (D : Set (Site 4)) (k : ℕ) (x y : Site 4) :
   rw [killedHeat_lattice_symm D (k + 1) x y,
     Graph.Zd.killedHeat_succ_walkOp (d := 4) D k y x]
   by_cases hy : y ∈ D
-  · rw [if_pos hy, if_pos hy]
+  · rw [ite_eq_left hy, ite_eq_left hy]
     simp only [LatticeProb.walkOp, LatticeProb.nbrSum]
     rw [show (2 : ℝ) * ((4 : ℕ) : ℝ) = 8 by norm_num]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [killedHeat_lattice_symm D k (y + unit i) x,
       killedHeat_lattice_symm D k (y - unit i) x]
-  · rw [if_neg hy, if_neg hy]
+  · rw [ite_eq_right hy, ite_eq_right hy]
 theorem killedGreen_eq_avg (D : Set (Site 4)) {y : Site 4} (hy : y ∈ D) (hy0 : y ≠ 0) :
     killedGreen D 0 y
       = (∑ i : Fin 4, (killedGreen D 0 (y + unit i) + killedGreen D 0 (y - unit i))) / 8 := by
@@ -754,14 +754,14 @@ theorem killedGreen_eq_avg (D : Set (Site 4)) {y : Site 4} (hy : y ∈ D) (hy0 :
   have h0 : Graph.killedHeat (lattice 4) D 0 0 y = 0 := by
     rw [Network.killedHeat_zero]
     by_cases h : (0 : Site 4) ∈ D
-    · rw [if_pos h, if_neg (Ne.symm hy0)]
-    · rw [if_neg h]
+    · rw [ite_eq_left h, ite_eq_right (Ne.symm hy0)]
+    · rw [ite_eq_right h]
   have hstep : ∀ k : ℕ,
       Graph.killedHeat (lattice 4) D (k + 1) 0 y
         = (∑ i : Fin 4, (Graph.killedHeat (lattice 4) D k 0 (y + unit i)
             + Graph.killedHeat (lattice 4) D k 0 (y - unit i))) / 8 := by
     intro k
-    rw [killedHeat_succ_forward D k 0 y, if_pos hy]
+    rw [killedHeat_succ_forward D k 0 y, ite_eq_left hy]
   have hsum_i : ∀ i : Fin 4,
       Summable (fun k : ℕ => Graph.killedHeat (lattice 4) D k 0 (y + unit i)
         + Graph.killedHeat (lattice 4) D k 0 (y - unit i)) :=
@@ -1494,7 +1494,7 @@ private theorem sum_inv_six_filter_le (r L : ℕ) (hL : 2 ≤ L) :
     with hg
   have hg0 : g 0 = 0 := by
     simp only [hg]
-    rw [if_neg]
+    rw [ite_eq_right]
     have hL2 : (2 : ℝ) ≤ (L : ℝ) := by exact_mod_cast hL
     linarith
   have hA1 : ∑ u ∈ (boxFinset (0 : Site 4) r).filter (fun u => (L : ℝ) ≤ euclidNorm u),
@@ -1510,7 +1510,7 @@ private theorem sum_inv_six_filter_le (r L : ℕ) (hL : 2 ≤ L) :
       have h4 : Real.sqrt ((4 : ℕ) : ℝ) = 2 := by norm_num
       rwa [h4] at h
     have hcond : (L : ℝ) / 2 ≤ (supNorm u : ℝ) := by linarith
-    simp only [hg, if_pos hcond]
+    simp only [hg, ite_eq_left hcond]
     exact one_div_le_one_div_of_le (by positivity)
       (by apply pow_le_pow_left₀ (by positivity); linarith)
   have hA2 : ∑ u ∈ (boxFinset (0 : Site 4) r).filter (fun u => (L : ℝ) ≤ euclidNorm u),
@@ -1535,7 +1535,7 @@ private theorem sum_inv_six_filter_le (r L : ℕ) (hL : 2 ≤ L) :
       have hklt : (k : ℝ) < (L : ℝ) / 2 := by
         have : (k : ℝ) < (m : ℝ) := by exact_mod_cast hkm
         linarith
-      simp only [hg, if_neg (by linarith : ¬ (L : ℝ) / 2 ≤ (k : ℝ)), mul_zero]
+      simp only [hg, ite_eq_right (by linarith : ¬ (L : ℝ) / 2 ≤ (k : ℝ)), mul_zero]
     have hEq : ∑ k ∈ Finset.Icc 1 r, (shellCard 4 k : ℝ) * g k
         = ∑ k ∈ Finset.Icc m r, (shellCard 4 k : ℝ) * g k :=
       (Finset.sum_subset hsub hzero).symm
@@ -1543,7 +1543,7 @@ private theorem sum_inv_six_filter_le (r L : ℕ) (hL : 2 ≤ L) :
     refine Finset.sum_le_sum fun k hk => ?_
     rw [Finset.mem_Icc] at hk
     by_cases hcond : (L : ℝ) / 2 ≤ (k : ℝ)
-    · simp only [hg, if_pos hcond]
+    · simp only [hg, ite_eq_left hcond]
       have hshell : (shellCard 4 k : ℝ) ≤ 64 * ((k : ℝ) + 1) ^ 3 := by
         have hk1 : 1 ≤ k := le_trans hm1 hk.1
         have h := shellCard_le 4 hk1
@@ -1560,7 +1560,7 @@ private theorem sum_inv_six_filter_le (r L : ℕ) (hL : 2 ≤ L) :
             have hk1 : (0 : ℝ) < (k : ℝ) + 1 := by positivity
             field_simp
             ring
-    · simp only [hg, if_neg hcond, mul_zero]
+    · simp only [hg, ite_eq_right hcond, mul_zero]
       exact div_nonneg (by norm_num) (by positivity)
   have hD : ∑ k ∈ Finset.Icc m r, 64 / ((k : ℝ) + 1) ^ 3 ≤ 64 * (2 / (m : ℝ) ^ 2) := by
     have hsum : ∑ k ∈ Finset.Icc m r, 64 / ((k : ℝ) + 1) ^ 3
@@ -1615,7 +1615,7 @@ theorem exists_tsum_cutField_cube_le :
         ≤ (if (L : ℝ) ≤ euclidNorm u then C0 ^ 3 / (1 + euclidNorm u) ^ 6 else 0) := by
       intro u _
       by_cases huL : (L : ℝ) ≤ euclidNorm u
-      · rw [if_pos huL]
+      · rw [ite_eq_left huL]
         have hgnn : 0 ≤ killedGreen (box r) 0 u := killedGreen_nonneg (box r) 0 u
         have hgle : killedGreen (box r) 0 u ≤ C0 / (1 + euclidNorm u) ^ 2 :=
           le_trans (killedGreen_le_srwGreenInf (box r) u) (hC0 u)
@@ -1638,7 +1638,7 @@ theorem exists_tsum_cutField_cube_le :
               rw [div_pow]
               congr 1
               ring
-      · rw [if_neg huL]
+      · rw [ite_eq_right huL]
         have hle1 : euclidNorm u / (L : ℝ) ≤ 1 := (div_le_one hLpos).mpr (le_of_lt (lt_of_not_ge huL))
         have hzero : φ (euclidNorm u / (L : ℝ)) = 0 :=
           hφ.2.2.1 _ (div_nonneg (euclidNorm_nonneg u) hLpos.le) hle1
@@ -1653,8 +1653,8 @@ theorem exists_tsum_cutField_cube_le :
           rw [Finset.mul_sum, Finset.sum_filter]
           refine Finset.sum_congr rfl fun u _ => ?_
           by_cases huL : (L : ℝ) ≤ euclidNorm u
-          · rw [if_pos huL, if_pos huL]; ring
-          · rw [if_neg huL, if_neg huL]
+          · rw [ite_eq_left huL, ite_eq_left huL]; ring
+          · rw [ite_eq_right huL, ite_eq_right huL]
   calc ∑ u ∈ boxFinset (0 : Site 4) r, cutField r L φ u ^ 3
       ≤ C0 ^ 3 * ∑ u ∈ (boxFinset (0 : Site 4) r).filter (fun u => (L : ℝ) ≤ euclidNorm u),
           1 / (1 + euclidNorm u) ^ 6 := hkey
@@ -1899,7 +1899,7 @@ private lemma neighbor_unitCond_sum (x : Site 4) (F : Site 4 → ℝ) :
       = ∑ y ∈ (lattice 4).neighborFinset x, F y := by
     apply Finset.sum_congr rfl
     intro y hy
-    rw [Network.unitCond, if_pos ((SimpleGraph.mem_neighborFinset _ _ _).mp hy), one_mul]
+    rw [Network.unitCond, ite_eq_left ((SimpleGraph.mem_neighborFinset _ _ _).mp hy), one_mul]
   rw [h1, sum_neighborFinset_eq_nbrSum_four F x, LatticeProb.nbrSum]
 
 /-- The radial indicator of the transition shell `L - 1 ≤ |z| ≤ 2L + 1`. -/
@@ -1921,8 +1921,8 @@ private lemma shellInd_eq_one_iff (L : ℕ) (z : Site 4) :
     shellInd L z = 1 ↔ (L : ℝ) - 1 ≤ euclidNorm z ∧ euclidNorm z ≤ 2 * (L : ℝ) + 1 := by
   unfold shellInd
   by_cases h : (L : ℝ) - 1 ≤ euclidNorm z ∧ euclidNorm z ≤ 2 * (L : ℝ) + 1
-  · rw [if_pos h]; exact ⟨fun _ => h, fun _ => rfl⟩
-  · rw [if_neg h]; exact ⟨fun h1 => absurd h1 (by norm_num), fun h1 => absurd h1 h⟩
+  · rw [ite_eq_left h]; exact ⟨fun _ => h, fun _ => rfl⟩
+  · rw [ite_eq_right h]; exact ⟨fun h1 => absurd h1 (by norm_num), fun h1 => absurd h1 h⟩
 
 private lemma shellInd_eq_zero_iff (L : ℕ) (z : Site 4) :
     shellInd L z = 0 ↔
@@ -2038,7 +2038,7 @@ private lemma sum_neighborFinset_le_eight (F : Site 4 → ℝ) (hF : ∀ y, 0 �
         = ∑ y ∈ (lattice 4).neighborFinset x, F y := by
       apply Finset.sum_congr rfl
       intro y hy
-      rw [Network.unitCond, if_pos ((SimpleGraph.mem_neighborFinset _ _ _).mp hy), one_mul]
+      rw [Network.unitCond, ite_eq_left ((SimpleGraph.mem_neighborFinset _ _ _).mp hy), one_mul]
     rw [← h1, neighbor_unitCond_sum x F]]
   rw [Finset.sum_comm]
   have hper : ∀ i : Fin 4,
@@ -2164,7 +2164,7 @@ private lemma energy_rhs_bound (C₁ : ℝ) (hC₁pos : 0 < C₁)
           rwa [show y + (x - y) = x by abel] at h
         linarith
       have hcx : Network.unitCond (lattice 4) x y ≤ 1 := by
-        rw [Network.unitCond, if_pos hadj]
+        rw [Network.unitCond, ite_eq_left hadj]
       have hgx : g x ^ 2 ≤ 16 * C₁ ^ 2 / (L : ℝ) ^ 4 := by
         have h1 : g x ≤ 4 * C₁ / (L : ℝ) ^ 2 := by
           refine (hgle x).trans ?_
@@ -2446,10 +2446,10 @@ private theorem exists_unit_peel4 {u : Site 4} (hu : u ≠ 0) :
     have hval : (u - g) i = u i - s := by simp [hg, Pi.sub_apply]
     rw [hval, hs]
     rcases lt_trichotomy (u i) 0 with h | h | h
-    · rw [if_neg (not_lt.mpr h.le)]
+    · rw [ite_eq_right (not_lt.mpr h.le)]
       omega
     · exact absurd h hi
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       omega
   calc graphNorm (u - g) + 1
       = (∑ k ∈ (Finset.univ : Finset (Fin 4)).erase i, ((u - g) k).natAbs

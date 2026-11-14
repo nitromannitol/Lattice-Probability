@@ -132,7 +132,7 @@ theorem hasSum_ctHeat (hd : 1 ≤ d) (t : ℝ) (x : Site d) :
     HasSum (fun n : ℕ => Real.exp (-t) * t ^ n / n.factorial * srwHeat d n x)
       (ctHeat d t x) := by
   set μ := volume.restrict (LocalCLT.torusBox d) with hμ
-  haveI : IsFiniteMeasure μ := by
+  have : IsFiniteMeasure μ := by
     rw [hμ]; exact isFiniteMeasure_restrict.mpr (isCompact_Icc.measure_lt_top.ne)
   set χ : (Fin d → ℝ) → ℂ := fun θ =>
     ∏ k, Complex.exp (↑(θ k * ↑(x k)) * Complex.I) with hχdef

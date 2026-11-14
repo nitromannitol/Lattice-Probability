@@ -40,7 +40,7 @@ theorem integral_cos_int_mul_eq (k : ℤ) :
   · subst hk
     simp
     ring
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     exact integral_cos_int_mul k hk
 
 /-- **Orthogonality of the characters**, the nonzero mode, complex form: the
@@ -87,7 +87,7 @@ theorem integral_exp_int_mul_restrict_eq (k : ℤ) :
     rw [Measure.real, hvol, ENNReal.toReal_ofReal]
     · simp
     · positivity
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     exact integral_exp_int_mul_restrict k hk
 
 end LatticeProb

@@ -126,7 +126,7 @@ theorem walkOp_srwGreenInf (hd : 3 ≤ d) (x : Site d) :
 /-- The Green function is harmonic away from the origin. -/
 theorem walkOp_srwGreenInf_of_ne (hd : 3 ≤ d) {x : Site d} (hx : x ≠ 0) :
     walkOp (srwGreenInf d) x = srwGreenInf d x := by
-  rw [walkOp_srwGreenInf hd x, if_neg hx, sub_zero]
+  rw [walkOp_srwGreenInf hd x, ite_eq_right hx, sub_zero]
 
 theorem srwGreenInf_nonneg (x : Site d) : 0 ≤ srwGreenInf d x :=
   tsum_nonneg fun j => srwHeat_nonneg j x
@@ -211,8 +211,8 @@ theorem srwHitProb_origin : srwHitProb d (0 : Site d) = 1 := by
   have hzero : ∀ k : ℕ, srwFirstHit d k (0 : Site d) = if k = 0 then 1 else 0 := by
     intro k
     cases k with
-    | zero => rw [srwFirstHit_zero, if_pos rfl, if_pos rfl]
-    | succ m => rw [srwFirstHit_succ_origin, if_neg (by omega)]
+    | zero => rw [srwFirstHit_zero, ite_eq_left rfl, ite_eq_left rfl]
+    | succ m => rw [srwFirstHit_succ_origin, ite_eq_right (by omega)]
   rw [srwHitProb, tsum_congr hzero, tsum_ite_eq]
 
 /-- **The return probability of the origin.**  The average of the hitting
@@ -224,7 +224,7 @@ theorem walkOp_srwHitProb_origin (hd : 3 ≤ d) :
     lt_of_lt_of_le zero_lt_one (one_le_srwGreenInf_origin hd)
   have hfun : srwHitProb d = fun z => srwGreenInf d z / srwGreenInf d 0 :=
     funext fun z => srwHitProb_eq_green_ratio hd z
-  rw [hfun, walkOp_div_const, walkOp_srwGreenInf hd, if_pos rfl]
+  rw [hfun, walkOp_div_const, walkOp_srwGreenInf hd, ite_eq_left rfl]
   field_simp
 
 /-- `sup_{z ≠ 0} G(0,z)/G(0,0)`, the supremum of the hitting probability away
@@ -239,7 +239,7 @@ theorem nonempty_nonzero_site (hd : 0 < d) : Nonempty {z : Site d // z ≠ 0} :=
   ⟨⟨unit ⟨0, hd⟩, unit_ne_zero _⟩⟩
 
 theorem greenRatioSup_le_one (hd : 0 < d) : greenRatioSup d ≤ 1 := by
-  haveI := nonempty_nonzero_site hd
+  have := nonempty_nonzero_site hd
   exact ciSup_le fun z => srwHitProb_le_one hd _
 
 theorem le_greenRatioSup (hd : 0 < d) {z : Site d} (hz : z ≠ 0) :

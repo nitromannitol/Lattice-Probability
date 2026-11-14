@@ -108,8 +108,8 @@ lemma sum_adj_eq_sum_dir (A : Finset (Site d)) (g : Site d → ℝ)
   rw [← himg, Finset.sum_image hinj, Finset.sum_filter]
   refine Finset.sum_congr rfl fun a _ => ?_
   by_cases hA : x + dirVec a ∈ A
-  · rw [if_pos hA]
-  · rw [if_neg hA, hg _ hA]
+  · rw [ite_eq_left hA]
+  · rw [ite_eq_right hA, hg _ hA]
 
 /-- The sum of a fixed coordinate over the `2d` unit steps vanishes. -/
 lemma sum_dirVec_coord (i : Fin d) : ∑ a : Dir d, ((dirVec a i : ℤ) : ℝ) = 0 := by
@@ -132,9 +132,9 @@ lemma sum_dirVec_sq (i : Fin d) : ∑ a : Dir d, ((dirVec a i : ℤ) : ℝ) ^ 2 
     rw [Fintype.sum_bool]
     by_cases hij : i = j
     · subst hij
-      rw [dirVec_self, dirVec_self, if_pos rfl]
+      rw [dirVec_self, dirVec_self, ite_eq_left rfl]
       norm_num
-    · rw [dirVec_of_ne true hij, dirVec_of_ne false hij, if_neg hij]
+    · rw [dirVec_of_ne true hij, dirVec_of_ne false hij, ite_eq_right hij]
       norm_num
   simp_rw [hj]
   rw [Finset.sum_ite_eq Finset.univ i (fun _ => (2 : ℝ))]

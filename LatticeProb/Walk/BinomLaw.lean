@@ -72,10 +72,10 @@ theorem binomLaw_of_gt (l : ℕ) {j : ℤ} (hj : (l : ℤ) < j) : binomLaw l j =
 /-- With zero trials, the binomial law is the point mass at `0`. -/
 theorem binomLaw_zero (j : ℤ) : binomLaw 0 j = if j = 0 then 1 else 0 := by
   rcases lt_or_ge j 0 with h | h
-  · rw [binomLaw_of_neg 0 h, if_neg (by omega)]
+  · rw [binomLaw_of_neg 0 h, ite_eq_right (by omega)]
   · rcases eq_or_lt_of_le h with h0 | h0
     · simp [binomLaw, ← h0]
-    · rw [binomLaw_of_gt 0 (by exact_mod_cast h0), if_neg (by omega)]
+    · rw [binomLaw_of_gt 0 (by exact_mod_cast h0), ite_eq_right (by omega)]
 
 /-- Pascal's rule for the binomial law: `b_{l+1}(j) = (b_l(j-1) + b_l(j))/2`. -/
 theorem binomLaw_succ (n : ℕ) (j : ℤ) :
@@ -89,7 +89,7 @@ theorem binomLaw_succ (n : ℕ) (j : ℤ) :
       ring
     · have hj : j.toNat = (j - 1).toNat + 1 := by omega
       have h1 : (0 : ℤ) ≤ j - 1 := by omega
-      simp only [binomLaw, if_pos h, if_pos h1, hj, Nat.choose_succ_succ']
+      simp only [binomLaw, ite_eq_left h, ite_eq_left h1, hj, Nat.choose_succ_succ']
       rw [pow_succ]
       push_cast
       ring
@@ -102,7 +102,7 @@ theorem binomLaw_symm (n : ℕ) (j : ℤ) : binomLaw n ((n : ℤ) - j) = binomLa
     · rw [binomLaw_of_gt n h', binomLaw_of_neg n (by omega)]
     · have h1 : ((n : ℤ) - j).toNat = n - j.toNat := by omega
       have h2 : j.toNat ≤ n := by omega
-      simp only [binomLaw, if_pos h, if_pos (by omega : (0 : ℤ) ≤ (n : ℤ) - j), h1]
+      simp only [binomLaw, ite_eq_left h, ite_eq_left (by omega : (0 : ℤ) ≤ (n : ℤ) - j), h1]
       rw [Nat.choose_symm h2]
 
 /-! ### The convolution of the binomial law with its translate -/
@@ -213,7 +213,7 @@ theorem conv_zero_eq (l : ℕ) : conv l 0 = (Nat.centralBinom l : ℝ) / 4 ^ l :
     rw [show Finset.Icc (0 : ℤ) (l : ℤ)
         = (Finset.range (l + 1)).map ⟨fun i : ℕ => (i : ℤ), fun a b h => by simpa using h⟩ by
       ext j
-      simp only [Finset.mem_Icc, Finset.mem_map, Finset.mem_range, Function.Embedding.coeFn_mk]
+      simp only [Finset.mem_Icc, Finset.mem_map, Finset.mem_range]
       constructor
       · rintro ⟨h1, h2⟩
         exact ⟨j.toNat, by omega, Int.toNat_of_nonneg h1⟩
@@ -223,7 +223,7 @@ theorem conv_zero_eq (l : ℕ) : conv l 0 = (Nat.centralBinom l : ℝ) / 4 ^ l :
     refine Finset.sum_congr rfl fun i _ => ?_
     show binomLaw l (i : ℤ) * binomLaw l ((i : ℤ) + 0) = ((Nat.choose l i : ℝ) / 2 ^ l) ^ 2
     rw [add_zero]
-    simp only [binomLaw, if_pos (Int.natCast_nonneg i), Int.toNat_natCast]
+    simp only [binomLaw, ite_eq_left (Int.natCast_nonneg i), Int.toNat_natCast]
     ring
   rw [hmap]
   have h4 : (4 : ℝ) ^ l = (2 ^ l) ^ 2 := by
@@ -382,7 +382,7 @@ theorem shiftPartial_recursion (L : ℕ) (q : ℤ) :
 theorem shiftPartial_one (L : ℕ) : shiftPartial L 1 = 2 - 2 * conv L 0 := by
   have h := shiftPartial_recursion L 0
   rw [show (0 : ℤ) + 1 = 1 by norm_num, show (0 : ℤ) - 1 = -1 by norm_num,
-    shiftPartial_zero, shiftPartial_neg, if_pos rfl] at h
+    shiftPartial_zero, shiftPartial_neg, ite_eq_left rfl] at h
   linarith [h]
 
 /-- The partial sums of the shift energy solve the discrete boundary value
@@ -419,7 +419,7 @@ theorem shiftPartial_bound (L : ℕ) : ∀ n : ℕ,
         push_cast
         nlinarith [this, ih1, ih2, hc0]
       · have hrec := shiftPartial_recursion L ((n : ℤ) + 1)
-        rw [show ((n : ℤ) + 1) - 1 = (n : ℤ) by ring, if_neg (by omega)] at hrec
+        rw [show ((n : ℤ) + 1) - 1 = (n : ℤ) by ring, ite_eq_right (by omega)] at hrec
         have hnext : (shiftPartial L ((n : ℤ) + 1 + 1) - shiftPartial L ((n : ℤ) + 1)) - 2
             = ((shiftPartial L ((n : ℤ) + 1) - shiftPartial L (n : ℤ)) - 2)
               - 4 * conv L ((n : ℤ) + 1) := by
@@ -562,7 +562,7 @@ theorem binomLaw_eq_binomPMF (m : ℕ) (j : ℤ) (_hj : j ≡ (m : ℤ) [ZMOD 2]
       have := abs_le.mp hjm
       exact this.1
     omega
-  rw [if_pos h3]
+  rw [ite_eq_left h3]
 
 /-- The binomial local CLT in the form needed here: for the fair binomial law indexed by the
 position `j` of the walk, `sqrt m * P(S_m = j)` is within `C/m` of `2 * gaussianDensity (j/sqrt m)`,
