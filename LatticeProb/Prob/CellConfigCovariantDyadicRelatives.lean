@@ -585,4 +585,154 @@ theorem ae_ae_eventually_dyadicAncestor_side_four {μ : Measure GMSSpace}
   rw [Complex.zero_re, Complex.zero_im]
   exact h
 
+/-! ### Last-time decomposition over finitely many indices of a linear order -/
+
+section LastTime
+
+variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
+
+/-- The last-time piece over a finite set `F` of indices of a linear order: `ω ∈ Y i` and
+`ω ∉ Y j` for every `j ∈ F` with `i < j`. -/
+def lastPieceFinset {ι : Type*} [LinearOrder ι] (Y : ι → Set Ω) (F : Finset ι) (i : ι) :
+    Set Ω :=
+  Y i \ ⋃ j ∈ F.filter (fun j => i < j), Y j
+
+theorem lastPieceFinset_subset {ι : Type*} [LinearOrder ι] (Y : ι → Set Ω) (F : Finset ι)
+    (i : ι) : lastPieceFinset Y F i ⊆ Y i :=
+  sdiff_subset
+
+theorem pairwiseDisjoint_lastPieceFinset {ι : Type*} [LinearOrder ι] (Y : ι → Set Ω)
+    (F : Finset ι) : PairwiseDisjoint (↑F : Set ι) (lastPieceFinset Y F) := by
+  intro i hi j hj hne
+  rw [Function.onFun, Set.disjoint_left]
+  intro ω hω hω'
+  rcases lt_or_gt_of_ne hne with h | h
+  · exact hω.2 (mem_biUnion (Finset.mem_filter.2 ⟨Finset.mem_coe.1 hj, h⟩) hω'.1)
+  · exact hω'.2 (mem_biUnion (Finset.mem_filter.2 ⟨Finset.mem_coe.1 hi, h⟩) hω.1)
+
+theorem biUnion_lastPieceFinset {ι : Type*} [LinearOrder ι] (Y : ι → Set Ω) (F : Finset ι) :
+    ⋃ i ∈ F, lastPieceFinset Y F i = ⋃ i ∈ F, Y i := by
+  refine Subset.antisymm (iUnion₂_mono fun i _ => lastPieceFinset_subset Y F i) ?_
+  intro ω hω
+  simp only [mem_iUnion] at hω
+  obtain ⟨i, hi, hωi⟩ := hω
+  classical
+  let s := F.filter (fun j => ω ∈ Y j)
+  have hne : s.Nonempty := ⟨i, Finset.mem_filter.2 ⟨hi, hωi⟩⟩
+  have hmax : s.max' hne ∈ F ∧ ω ∈ Y (s.max' hne) := Finset.mem_filter.1 (Finset.max'_mem s hne)
+  refine mem_biUnion hmax.1 ⟨hmax.2, ?_⟩
+  simp only [mem_iUnion, not_exists]
+  intro j hj hωj
+  have hj' := Finset.mem_filter.1 hj
+  exact absurd (s.le_max' j (Finset.mem_filter.2 ⟨hj'.1, hωj⟩)) (not_le.2 hj'.2)
+
+/-- **Last-time decomposition over a finite set of indices**: for an antitone family `G` of
+sub-σ-algebras indexed by a linear order, `G i`-measurable events `Y i`, and the conditional lower
+bound `μ A ≤ c * μ (A ∩ T i)` for every `G i`-measurable `A ⊆ Y i`, the union of the `Y i` over a
+finite set `F` has measure at most `c` times the measure of the union of the `T i`. -/
+theorem measure_biUnion_finset_le_mul {ι : Type*} [LinearOrder ι] {G : ι → MeasurableSpace Ω}
+    (hG : Antitone G) (hle : ∀ i, G i ≤ m0) {Y T : ι → Set Ω}
+    (hY : ∀ i, MeasurableSet[G i] (Y i)) {c : ℝ≥0∞}
+    (hR : ∀ i (A : Set Ω), MeasurableSet[G i] A → A ⊆ Y i → μ A ≤ c * μ (A ∩ T i))
+    (F : Finset ι) :
+    μ (⋃ i ∈ F, Y i) ≤ c * μ (⋃ i ∈ F, T i) := by
+  set T' := ⋃ i ∈ F, T i
+  have hLG : ∀ i, MeasurableSet[G i] (lastPieceFinset Y F i) := fun i =>
+    (hY i).diff (Finset.measurableSet_biUnion _ fun j hj =>
+      hG (Finset.mem_filter.1 hj).2.le _ (hY j))
+  have hmeas : ∀ i, MeasurableSet (lastPieceFinset Y F i) := fun i => hle i _ (hLG i)
+  have hdisj := pairwiseDisjoint_lastPieceFinset Y F
+  rw [← biUnion_lastPieceFinset]
+  calc μ (⋃ i ∈ F, lastPieceFinset Y F i)
+      = ∑ i ∈ F, μ (lastPieceFinset Y F i) :=
+        measure_biUnion_finset hdisj fun i _ => hmeas i
+    _ ≤ ∑ i ∈ F, c * μ (lastPieceFinset Y F i ∩ T i) :=
+        Finset.sum_le_sum fun i _ => hR i _ (hLG i) (lastPieceFinset_subset Y F i)
+    _ ≤ ∑ i ∈ F, c * μ.restrict T' (lastPieceFinset Y F i) := by
+        refine Finset.sum_le_sum fun i hi => ?_
+        rw [Measure.restrict_apply (hmeas i)]
+        gcongr
+        exact subset_biUnion_of_mem (u := T) hi
+    _ = c * μ.restrict T' (⋃ i ∈ F, lastPieceFinset Y F i) := by
+        rw [measure_biUnion_finset hdisj fun i _ => hmeas i, Finset.mul_sum]
+    _ ≤ c * μ T' := by
+        refine mul_le_mul_of_nonneg_left ?_ (by positivity)
+        calc μ.restrict T' (⋃ i ∈ F, lastPieceFinset Y F i) ≤ μ.restrict T' univ :=
+              measure_mono (subset_univ _)
+          _ = μ T' := Measure.restrict_apply_univ T'
+
+/-- **Last-time decomposition, tail union over a countable linear order**: under the hypotheses
+of `measure_biUnion_finset_le_mul`, `μ (⋃_{i ≥ M} Y i) ≤ c * μ (⋃_{i ≥ M} T i)`. -/
+theorem measure_biUnion_ge_le_mul_of_countable {ι : Type*} [LinearOrder ι] [Countable ι]
+    {G : ι → MeasurableSpace Ω} (hG : Antitone G) (hle : ∀ i, G i ≤ m0) {Y T : ι → Set Ω}
+    (hY : ∀ i, MeasurableSet[G i] (Y i)) {c : ℝ≥0∞}
+    (hR : ∀ i (A : Set Ω), MeasurableSet[G i] A → A ⊆ Y i → μ A ≤ c * μ (A ∩ T i)) (M : ι) :
+    μ (⋃ i ≥ M, Y i) ≤ c * μ (⋃ i ≥ M, T i) := by
+  have : Nonempty ι := ⟨M⟩
+  obtain ⟨f, hf⟩ := exists_surjective_nat ι
+  let F : ℕ → Finset ι := fun N => ((Finset.range N).image f).filter (fun i => M ≤ i)
+  have hF : ∀ N i, i ∈ F N ↔ (∃ n, n < N ∧ f n = i) ∧ M ≤ i := fun N i => by
+    simp only [F, Finset.mem_filter, Finset.mem_image, Finset.mem_range]
+  have hU : ⋃ i ≥ M, Y i = ⋃ N, ⋃ i ∈ F N, Y i := by
+    ext ω
+    simp only [mem_iUnion, hF]
+    constructor
+    · rintro ⟨i, hi, hω⟩
+      obtain ⟨n, rfl⟩ := hf i
+      exact ⟨n + 1, f n, ⟨⟨n, Nat.lt_succ_self n, rfl⟩, hi⟩, hω⟩
+    · rintro ⟨N, i, ⟨-, hi⟩, hω⟩
+      exact ⟨i, hi, hω⟩
+  have hmono : Monotone fun N => ⋃ i ∈ F N, Y i := by
+    intro N N' hNN' ω hω
+    simp only [mem_iUnion, hF] at hω ⊢
+    obtain ⟨i, ⟨⟨n, hn, rfl⟩, hi⟩, hω⟩ := hω
+    exact ⟨f n, ⟨⟨n, lt_of_lt_of_le hn hNN', rfl⟩, hi⟩, hω⟩
+  rw [hU, hmono.measure_iUnion]
+  refine iSup_le fun N => (measure_biUnion_finset_le_mul hG hle hY hR (F N)).trans ?_
+  refine mul_le_mul_of_nonneg_left (measure_mono fun ω hω => ?_) (by positivity)
+  simp only [mem_iUnion, hF] at hω ⊢
+  obtain ⟨i, ⟨-, hi⟩, hω⟩ := hω
+  exact ⟨i, hi, hω⟩
+
+/-- **Almost surely `Y r` fails for all large rational indices**, from the same statement for `T`:
+for a finite measure, an antitone family `G` of sub-σ-algebras indexed by `ℚ`, `G r`-measurable
+events `Y r`, measurable `T r`, `c ≠ ∞` and the conditional lower bound
+`μ A ≤ c * μ (A ∩ T r)` for every `G r`-measurable `A ⊆ Y r`. -/
+theorem ae_exists_forall_ge_not_mem_rat [IsFiniteMeasure μ] {G : ℚ → MeasurableSpace Ω}
+    (hG : Antitone G) (hle : ∀ r, G r ≤ m0) {Y T : ℚ → Set Ω}
+    (hY : ∀ r, MeasurableSet[G r] (Y r)) {c : ℝ≥0∞} (hc : c ≠ ∞)
+    (hR : ∀ r (A : Set Ω), MeasurableSet[G r] A → A ⊆ Y r → μ A ≤ c * μ (A ∩ T r))
+    (hTm : ∀ r, MeasurableSet (T r)) (hT : ∀ᵐ ω ∂μ, ∃ M : ℚ, ∀ r ≥ M, ω ∉ T r) :
+    ∀ᵐ ω ∂μ, ∃ M : ℚ, ∀ r ≥ M, ω ∉ Y r := by
+  let U : ℕ → Set Ω := fun n => ⋃ r ≥ (n : ℚ), T r
+  have hanti : Antitone U := by
+    intro n n' hnn' ω hω
+    obtain ⟨r, hr, hωr⟩ := mem_iUnion₂.1 hω
+    exact mem_iUnion₂.2 ⟨r, le_trans (by exact_mod_cast hnn') hr, hωr⟩
+  have hnull : ∀ n, NullMeasurableSet (U n) μ := fun n =>
+    (MeasurableSet.biUnion (to_countable _) fun r _ => hTm r).nullMeasurableSet
+  have h0 : μ (⋂ n, U n) = 0 := by
+    rw [ae_iff] at hT
+    refine measure_mono_null (fun ω hω => ?_) hT
+    rw [mem_iInter] at hω
+    show ¬∃ M : ℚ, ∀ r ≥ M, ω ∉ T r
+    rintro ⟨M, hM⟩
+    obtain ⟨n, hn⟩ := exists_nat_ge M
+    obtain ⟨r, hr, hωr⟩ := mem_iUnion₂.1 (hω n)
+    exact hM r (le_trans hn hr) hωr
+  have hlim := tendsto_measure_iInter_atTop hnull hanti ⟨0, measure_ne_top μ _⟩
+  rw [h0] at hlim
+  have hclim : Tendsto (fun n => c * μ (U n)) atTop (𝓝 0) := by
+    simpa using ENNReal.Tendsto.const_mul hlim (Or.inr hc)
+  rw [ae_iff]
+  refine nonpos_iff_eq_zero.1 (ge_of_tendsto' hclim fun n => ?_)
+  refine (measure_mono fun ω hω => ?_).trans
+    (measure_biUnion_ge_le_mul_of_countable hG hle hY hR (n : ℚ))
+  have hω' : ¬∃ M : ℚ, ∀ r ≥ M, ω ∉ Y r := hω
+  refine mem_iUnion₂.2 ?_
+  by_contra hne
+  exact hω' ⟨n, fun r hr hωr => hne ⟨r, hr, hωr⟩⟩
+
+end LastTime
+
 end LatticeProb.CellConfigCappedSquare
