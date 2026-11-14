@@ -86,13 +86,13 @@ theorem KR_bump_rest {i j : Fin d} (n : Fin d → ℕ) (x : Site d)
   have hyi : ∀ b : Bool, (x + dirVec ((m, b) : Dir d)) i = x i := by
     intro b
     cases b
-    · rw [add_dirVec_false_apply, if_neg hi]
-    · rw [add_dirVec_true_apply, if_neg hi]
+    · rw [add_dirVec_false_apply, ite_eq_right hi]
+    · rw [add_dirVec_true_apply, ite_eq_right hi]
   have hyj : ∀ b : Bool, (x + dirVec ((m, b) : Dir d)) j = x j := by
     intro b
     cases b
-    · rw [add_dirVec_false_apply, if_neg hj]
-    · rw [add_dirVec_true_apply, if_neg hj]
+    · rw [add_dirVec_false_apply, ite_eq_right hj]
+    · rw [add_dirVec_true_apply, ite_eq_right hj]
   rw [KR_site_congr n x _ (hyi true) (hyj true), KR_site_congr n x _ (hyi false) (hyj false)]
   unfold KR
   rw [Function.update_of_ne hi, Function.update_of_ne hj]
@@ -109,12 +109,12 @@ theorem KR_bump_rest {i j : Fin d} (n : Fin d → ℕ) (x : Site d)
         S1 (n l) ((x + dirVec ((m, b) : Dir d)) l) = S1 (n l) (x l) := by
       intro b l hl
       cases b
-      · rw [add_dirVec_false_apply, if_neg (Finset.ne_of_mem_erase hl)]
-      · rw [add_dirVec_true_apply, if_neg (Finset.ne_of_mem_erase hl)]
+      · rw [add_dirVec_false_apply, ite_eq_right (Finset.ne_of_mem_erase hl)]
+      · rw [add_dirVec_true_apply, ite_eq_right (Finset.ne_of_mem_erase hl)]
     rw [Finset.prod_congr rfl h1, Finset.prod_congr rfl (h2 true),
       Finset.prod_congr rfl (h2 false)]
-    rw [Function.update_self, add_dirVec_true_apply, add_dirVec_false_apply, if_pos rfl,
-      if_pos rfl, S1_succ]
+    rw [Function.update_self, add_dirVec_true_apply, add_dirVec_false_apply, ite_eq_left rfl,
+      ite_eq_left rfl, S1_succ]
     ring
   rw [hprod]
   ring
@@ -141,15 +141,15 @@ theorem KR_bump_pair {i j : Fin d} (hij : i ≠ j) (n : Fin d → ℕ) (x : Site
     intro b
     refine Finset.prod_congr rfl fun l hl => ?_
     cases b
-    · rw [add_dirVec_false_apply, if_neg (hne l hl).1]
-    · rw [add_dirVec_true_apply, if_neg (hne l hl).1]
+    · rw [add_dirVec_false_apply, ite_eq_right (hne l hl).1]
+    · rw [add_dirVec_true_apply, ite_eq_right (hne l hl).1]
   have hPj : ∀ b : Bool, ∏ l ∈ E, S1 (n l) ((x + dirVec ((j, b) : Dir d)) l)
       = ∏ l ∈ E, S1 (n l) (x l) := by
     intro b
     refine Finset.prod_congr rfl fun l hl => ?_
     cases b
-    · rw [add_dirVec_false_apply, if_neg (hne l hl).2]
-    · rw [add_dirVec_true_apply, if_neg (hne l hl).2]
+    · rw [add_dirVec_false_apply, ite_eq_right (hne l hl).2]
+    · rw [add_dirVec_true_apply, ite_eq_right (hne l hl).2]
   have hUi : ∏ l ∈ E, S1 (Function.update n i (n i + 1) l) (x l)
       = ∏ l ∈ E, S1 (n l) (x l) :=
     Finset.prod_congr rfl fun l hl => by rw [Function.update_of_ne (hne l hl).1]
@@ -163,8 +163,8 @@ theorem KR_bump_pair {i j : Fin d} (hij : i ≠ j) (n : Fin d → ℕ) (x : Site
   rw [add_dirVec_true_apply, add_dirVec_true_apply, add_dirVec_false_apply,
     add_dirVec_false_apply, add_dirVec_true_apply, add_dirVec_true_apply,
     add_dirVec_false_apply, add_dirVec_false_apply]
-  rw [if_pos rfl, if_neg (Ne.symm hij), if_pos rfl, if_neg (Ne.symm hij),
-    if_pos rfl, if_neg hij, if_pos rfl, if_neg hij]
+  rw [ite_eq_left rfl, ite_eq_right (Ne.symm hij), ite_eq_left rfl, ite_eq_right (Ne.symm hij),
+    ite_eq_left rfl, ite_eq_right hij, ite_eq_left rfl, ite_eq_right hij]
   have hK1 : n i + 1 + n j = (n i + n j) + 1 := by omega
   have hK2 : n i + (n j + 1) = (n i + n j) + 1 := by omega
   rw [hK1, hK2]
@@ -199,7 +199,7 @@ theorem KR_zero_fun (i j : Fin d) (x : Site d) :
     by_cases hx : x = 0
     · subst hx
       simp [S1_zero]
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
       obtain ⟨l, hl⟩ : ∃ l : Fin d, x l ≠ 0 := by
         by_contra hc
         push Not at hc
@@ -213,16 +213,16 @@ theorem KR_zero_fun (i j : Fin d) (x : Site d) :
   · have hx : x ≠ 0 := by
       intro hc
       exact hb ⟨by rw [hc]; rfl, by rw [hc]; rfl⟩
-    rw [if_neg hx]
+    rw [ite_eq_right hx]
     by_cases hs : x i + x j = 0
     · have ht : x i - x j ≠ 0 := by
         intro hc
         exact hb ⟨by omega, by omega⟩
       simp only [add_zero, S1_zero]
-      rw [if_neg ht]
+      rw [ite_eq_right ht]
       ring
     · simp only [add_zero, S1_zero]
-      rw [if_neg hs]
+      rw [ite_eq_right hs]
       ring
 
 

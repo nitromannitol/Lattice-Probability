@@ -168,8 +168,8 @@ theorem gridFn_eq_sum_indicator {f : (Fin d → ℝ) → ℝ} {B : ℝ} (hB : 0 
     intro y _
     by_cases hyy0 : y = y0
     · subst hyy0
-      rw [Set.indicator_of_mem hmemy0, if_pos rfl]
-    · rw [if_neg hyy0]
+      rw [Set.indicator_of_mem hmemy0, ite_eq_left rfl]
+    · rw [ite_eq_right hyy0]
       rw [Set.indicator_of_notMem]
       intro hxmem
       apply hyy0
@@ -180,10 +180,10 @@ theorem gridFn_eq_sum_indicator {f : (Fin d → ℝ) → ℝ} {B : ℝ} (hB : 0 
   rw [Finset.sum_congr rfl hsingle]
   by_cases hy0mem : y0 ∈ sceneryBox d B R
   · rw [Finset.sum_ite_eq' (sceneryBox d B R) y0 (fun _ => f (fun i => (y0 i : ℝ) / R))]
-    rw [if_pos hy0mem]
+    rw [ite_eq_left hy0mem]
     rfl
   · rw [Finset.sum_ite_eq' (sceneryBox d B R) y0 (fun _ => f (fun i => (y0 i : ℝ) / R))]
-    rw [if_neg hy0mem]
+    rw [ite_eq_right hy0mem]
     show f (fun i => ((y0 i : ℝ)) / R) = 0
     by_contra hne
     exact hy0mem (mem_sceneryBox_of_ne_zero hB hbound hR hne)
@@ -299,7 +299,7 @@ theorem tendsto_latticeSum_mul_rpow {f : (Fin d → ℝ) → ℝ} (hfc : Continu
   have hgridMeas : ∀ R : ℝ, Measurable (gridFn f R) := by
     intro R
     apply hfc.measurable.comp
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro i
     exact ((measurable_of_countable (fun k : ℤ => (k : ℝ))).comp
       (Int.measurable_floor.comp

@@ -178,7 +178,7 @@ theorem abs_charFn_pow_mul_le_offBound (hd : 1 ≤ d) {θ : Fin d → ℝ} (hT :
   have houter : ∃ j, Real.pi / 2 < |θ j| := by
     by_contra h
     apply hG
-    rw [gaussRegion, Set.mem_setOf_eq]
+    rw [gaussRegion, Set.mem_ofPred_eq]
     intro i
     exact le_of_not_gt (fun hi => h ⟨i, hi⟩)
   obtain ⟨j0, hj0⟩ := houter

@@ -175,7 +175,7 @@ private lemma integral_sq_offFactor_le (b : ℝ) (hb : 0 < b) :
 /-- The majorant `offBound` is integrable on the torus. -/
 theorem integrableOn_offBound (hd : 1 ≤ d) (n : ℕ) :
     IntegrableOn (offBound d n) (torusBox d) := by
-  haveI : IsFiniteMeasure (volume.restrict (torusBox d)) :=
+  have : IsFiniteMeasure (volume.restrict (torusBox d)) :=
     isFiniteMeasure_restrict.mpr (by rw [volume_torusBox d]; exact ENNReal.ofReal_ne_top)
   have hset : MeasurableSet {t : ℝ | Real.pi / 2 < |t|} := by measurability
   have hmeas : AEStronglyMeasurable (offBound d n) (volume.restrict (torusBox d)) :=
@@ -344,7 +344,7 @@ private lemma integrableOn_offBound_summand (hd : 1 ≤ d) (b : ℝ) (hb : 0 ≤
     IntegrableOn
         (fun θ : Fin d → ℝ => (Real.pi - |θ j|) ^ 2 / (2 * d) * ∏ i, offFactor b (θ i))
       (torusBox d) := by
-  haveI : IsFiniteMeasure (volume.restrict (torusBox d)) :=
+  have : IsFiniteMeasure (volume.restrict (torusBox d)) :=
     isFiniteMeasure_restrict.mpr (by rw [volume_torusBox d]; exact ENNReal.ofReal_ne_top)
   have hset : MeasurableSet {t : ℝ | Real.pi / 2 < |t|} := by measurability
   have hmeas : Measurable fun θ : Fin d → ℝ =>
@@ -444,7 +444,7 @@ theorem exists_integral_offBound_le (hd : 1 ≤ d) :
     congr 1
     funext t
     rw [hb, hc]; ring_nf
-  haveI : IsFiniteMeasure (volume.restrict (torusBox d)) :=
+  have : IsFiniteMeasure (volume.restrict (torusBox d)) :=
     isFiniteMeasure_restrict.mpr (by rw [volume_torusBox d]; exact ENNReal.ofReal_ne_top)
   have hsum_int : ∀ j ∈ (Finset.univ : Finset (Fin d)), IntegrableOn
       (fun θ : Fin d → ℝ => (Real.pi - |θ j|) ^ 2 / (2 * d) * ∏ i, offFactor b (θ i))

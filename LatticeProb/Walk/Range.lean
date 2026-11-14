@@ -74,7 +74,7 @@ theorem measurableSet_visitBy (z : Site d) (t : ℕ) : MeasurableSet (visitBy d 
   have hrw : visitBy d z t = ⋃ j ∈ Finset.range (t + 1),
       (fun X : ℕ → Site d => X j) ⁻¹' {z} := by
     ext X
-    simp only [visitBy, Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_range, Set.mem_preimage,
+    simp only [visitBy, Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_range, Set.mem_preimage,
       Set.mem_singleton_iff]
     exact ⟨fun ⟨j, hj, h⟩ => ⟨j, by omega, h⟩, fun ⟨j, hj, h⟩ => ⟨j, by omega, h⟩⟩
   rw [hrw]
@@ -90,12 +90,12 @@ theorem rangeCard_eq_tsum (X : ℕ → Site d) (t : ℕ) :
         = if z ∈ (Finset.range (t + 1)).image X then 1 else 0 := by
     intro z
     by_cases hz : X ∈ visitBy d z t
-    · rw [Set.indicator_of_mem hz, if_pos ((mem_rangeImage_iff X t z).mpr hz)]
+    · rw [Set.indicator_of_mem hz, ite_eq_left ((mem_rangeImage_iff X t z).mpr hz)]
       rfl
-    · rw [Set.indicator_of_notMem hz, if_neg (fun h => hz ((mem_rangeImage_iff X t z).mp h))]
+    · rw [Set.indicator_of_notMem hz, ite_eq_right (fun h => hz ((mem_rangeImage_iff X t z).mp h))]
   rw [tsum_congr hiff, tsum_eq_sum (s := (Finset.range (t + 1)).image X)
-    (fun z hz => by rw [if_neg hz])]
-  rw [Finset.sum_congr rfl (fun z hz => by rw [if_pos hz]), Finset.sum_const, nsmul_eq_mul,
+    (fun z hz => by rw [ite_eq_right hz])]
+  rw [Finset.sum_congr rfl (fun z hz => by rw [ite_eq_left hz]), Finset.sum_const, nsmul_eq_mul,
     mul_one, rangeCard]
 
 /-- **The expectation of the range** is the sum over the sites of the chance of
@@ -118,7 +118,7 @@ theorem siteWalkLaw_visitBy (hd : 1 ≤ d) [NeZero d] (x z : Site d) (t : ℕ) :
     siteWalkLaw d x (visitBy d z t) = ENNReal.ofReal (srwHitBy d t (x - z)) := by
   have hpre : sitePath x ⁻¹' visitBy d z t = sitePath (x - z) ⁻¹' hitOriginBy d t := by
     ext ξ
-    simp only [Set.mem_preimage, visitBy, hitOriginBy, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, visitBy, hitOriginBy, Set.mem_ofPred_eq]
     constructor
     · rintro ⟨j, hj, h⟩
       exact ⟨j, hj, by rw [sitePath_sub, h, sub_self]⟩
@@ -193,7 +193,7 @@ theorem srwFirstHit_le_srwHeat (j : ℕ) (z : Site d) :
     Finset.single_le_sum
       (f := fun i => srwFirstHit d i z * srwHeat d (j - i) 0)
       (fun i _ => mul_nonneg (srwFirstHit_nonneg i z) (srwHeat_nonneg _ 0)) hmem
-  rw [Nat.sub_self, srwHeat_zero, if_pos rfl, mul_one] at hle
+  rw [Nat.sub_self, srwHeat_zero, ite_eq_left rfl, mul_one] at hle
   rw [hdecomp]
   exact hle
 
@@ -303,7 +303,7 @@ theorem one_le_srwGreen_origin (t : ℕ) : (1 : ℝ) ≤ srwGreen d (t + 1) 0 :=
   have hmem : 0 ∈ Finset.range (t + 1) := Finset.mem_range.mpr (by omega)
   have := Finset.single_le_sum (f := fun k => srwHeat d k (0 : Site d))
     (fun k _ => srwHeat_nonneg k 0) hmem
-  rw [srwHeat_zero, if_pos rfl] at this
+  rw [srwHeat_zero, ite_eq_left rfl] at this
   exact this
 
 /-- **The first moment of the range from below**:

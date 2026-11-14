@@ -25,7 +25,7 @@ variable {d : ℕ}
 theorem charFn_nonneg_of_mem_gaussRegion {θ : Fin d → ℝ} (hθ : θ ∈ gaussRegion d) :
     0 ≤ charFn d θ := by
   have hθ' : ∀ i, |θ i| ≤ Real.pi / 2 := by
-    simpa only [gaussRegion, Set.mem_setOf_eq] using hθ
+    simpa only [gaussRegion, Set.mem_ofPred_eq] using hθ
   rw [charFn]
   apply div_nonneg
   · apply Finset.sum_nonneg
@@ -40,7 +40,7 @@ theorem charFn_le_exp_of_mem_gaussRegion (hd : 1 ≤ d) {θ : Fin d → ℝ}
     (hθ : θ ∈ gaussRegion d) :
     charFn d θ ≤ Real.exp (-(2 / (Real.pi ^ 2 * d)) * ∑ i, θ i ^ 2) := by
   have hθ' : ∀ i, |θ i| ≤ Real.pi / 2 := by
-    simpa only [gaussRegion, Set.mem_setOf_eq] using hθ
+    simpa only [gaussRegion, Set.mem_ofPred_eq] using hθ
   have hd0 : (0 : ℝ) < d := by exact_mod_cast hd
   have hcos_le : ∑ i, Real.cos (θ i) ≤ ∑ i, (1 - 2 / Real.pi ^ 2 * θ i ^ 2) := by
     apply Finset.sum_le_sum
@@ -143,7 +143,7 @@ private lemma sum_cos_sub_one_add_le {d : ℕ} {θ : Fin d → ℝ}
 theorem abs_charFn_sub_exp_le (hd : 1 ≤ d) {θ : Fin d → ℝ} (hθ : θ ∈ gaussRegion d) :
     |charFn d θ - Real.exp (-(∑ i, θ i ^ 2) / (2 * d))| ≤ (∑ i, θ i ^ 2) ^ 2 := by
   have hθ' : ∀ i, |θ i| ≤ Real.pi / 2 := by
-    simpa only [gaussRegion, Set.mem_setOf_eq] using hθ
+    simpa only [gaussRegion, Set.mem_ofPred_eq] using hθ
   have hd0 : (0 : ℝ) < d := by exact_mod_cast hd
   set S : ℝ := ∑ i, θ i ^ 2 with hS
   have hS_nonneg : 0 ≤ S := by rw [hS]; positivity

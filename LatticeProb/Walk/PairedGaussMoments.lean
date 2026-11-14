@@ -225,7 +225,7 @@ private lemma exp_le_exp_compl_gaussRegion {d : ℕ} {n : ℕ} {θ : Fin d → �
     Real.exp (-(n : ℝ) * (∑ i, θ i ^ 2) / (2 * d))
       ≤ Real.exp (-(n : ℝ) * Real.pi ^ 2 / (16 * d))
         * Real.exp (-((n : ℝ) / (4 * d)) * ∑ i, θ i ^ 2) := by
-  rw [Set.mem_compl_iff, gaussRegion, Set.mem_setOf_eq, Classical.not_forall] at hθ
+  rw [Set.mem_compl_iff, gaussRegion, Set.mem_ofPred_eq, Classical.not_forall] at hθ
   obtain ⟨i, hi⟩ := hθ
   have hpi : Real.pi / 2 < |θ i| := lt_of_not_ge hi
   have hsq : Real.pi ^ 2 / 4 ≤ θ i ^ 2 := by

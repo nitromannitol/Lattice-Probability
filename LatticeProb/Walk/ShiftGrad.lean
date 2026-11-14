@@ -91,10 +91,10 @@ theorem exists_unit_peel {u : Site d} (hu : u ≠ 0) :
     have hval : (u - g) i = u i - s := by simp [hg, Pi.sub_apply]
     rw [hval, hs]
     rcases lt_trichotomy (u i) 0 with h | h | h
-    · rw [if_neg (not_lt.mpr h.le)]
+    · rw [ite_eq_right (not_lt.mpr h.le)]
       omega
     · exact absurd h hi
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       omega
   calc graphNorm (u - g) + 1
       = (∑ k ∈ (Finset.univ : Finset (Fin d)).erase i, ((u - g) k).natAbs

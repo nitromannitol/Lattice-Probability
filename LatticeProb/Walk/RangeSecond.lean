@@ -42,8 +42,8 @@ theorem card_sq_le_two_mul_sum_filter {α : Type*} [DecidableEq α] (S : Finset 
       (if f z ≤ f w then (1 : ℕ) else 0) + (if f w < f z then (1 : ℕ) else 0) = 1 := by
     intro z w
     by_cases h : f z ≤ f w
-    · rw [if_pos h, if_neg (by omega)]
-    · rw [if_neg h, if_pos (by omega)]
+    · rw [ite_eq_left h, ite_eq_right (by omega)]
+    · rw [ite_eq_right h, ite_eq_left (by omega)]
   have hsq : S.card ^ 2 = ∑ _z ∈ S, ∑ _w ∈ S, (1 : ℕ) := by
     simp [Finset.sum_const, sq]
   have hB : ∑ z ∈ S, ∑ w ∈ S, (if f w < f z then (1 : ℕ) else 0)
@@ -52,8 +52,8 @@ theorem card_sq_le_two_mul_sum_filter {α : Type*} [DecidableEq α] (S : Finset 
       ≤ ∑ z ∈ S, ∑ w ∈ S, (if f z ≤ f w then (1 : ℕ) else 0) := by
     refine Finset.sum_le_sum fun z _ => Finset.sum_le_sum fun w _ => ?_
     by_cases h : f z < f w
-    · rw [if_pos h, if_pos (le_of_lt h)]
-    · rw [if_neg h]; positivity
+    · rw [ite_eq_left h, ite_eq_left (le_of_lt h)]
+    · rw [ite_eq_right h]; positivity
   have hcard : ∑ z ∈ S, (S.filter fun w => f z ≤ f w).card
       = ∑ z ∈ S, ∑ w ∈ S, (if f z ≤ f w then (1 : ℕ) else 0) :=
     Finset.sum_congr rfl fun z _ => Finset.card_filter _ _
@@ -86,21 +86,21 @@ theorem hitTrunc_le_iff {z : Site d} {t : ℕ} {X : ℕ → Site d} :
   constructor
   · intro h
     by_contra hc
-    rw [hitTrunc, dif_neg hc] at h
+    rw [hitTrunc, dite_eq_right hc] at h
     omega
   · intro h
-    rw [hitTrunc, dif_pos h]
+    rw [hitTrunc, dite_eq_left h]
     exact (Nat.find_spec h).1
 
 theorem hitTrunc_apply {z : Site d} {t : ℕ} {X : ℕ → Site d} (h : ∃ j, j ≤ t ∧ X j = z) :
     X (hitTrunc z t X) = z := by
-  rw [hitTrunc, dif_pos h]
+  rw [hitTrunc, dite_eq_left h]
   exact (Nat.find_spec h).2
 
 theorem hitTrunc_le_of {z : Site d} {t j : ℕ} {X : ℕ → Site d} (hj : j ≤ t) (hX : X j = z) :
     hitTrunc z t X ≤ j := by
   have h : ∃ j, j ≤ t ∧ X j = z := ⟨j, hj, hX⟩
-  rw [hitTrunc, dif_pos h]
+  rw [hitTrunc, dite_eq_left h]
   exact Nat.find_le ⟨hj, hX⟩
 
 theorem isWalkStopping_hitTrunc (z : Site d) (t : ℕ) :
@@ -130,7 +130,7 @@ theorem isWalkStopping_hitTrunc (z : Site d) (t : ℕ) :
     have hYn : ¬ ∃ j, j ≤ t ∧ Y j = z := by
       rintro ⟨j, hj, hjz⟩
       exact hXn ⟨j, hj, by rw [hXY j (by omega)]; exact hjz⟩
-    rw [hitTrunc, dif_neg hYn, hk1]
+    rw [hitTrunc, dite_eq_right hYn, hk1]
 
 /-! ### The pathwise inequality -/
 
@@ -206,11 +206,11 @@ theorem ae_image_subset_boxFinset (hd : 1 ≤ d) [NeZero d] (x : Site d) (t : �
     · simpa [hz] using siteWalkLaw_visitBy_eq_zero hd hz
   rw [ae_iff]
   refine measure_mono_null (fun X hX => ?_) hnull
-  simp only [Set.mem_setOf_eq] at hX
+  simp only [Set.mem_ofPred_eq] at hX
   obtain ⟨w, hwS, hwB⟩ := Finset.not_subset.mp hX
   refine Set.mem_iUnion.mpr ⟨w, ?_⟩
   rw [hA]
-  simp only [hwB, if_false]
+  simp only [hwB, ite_false]
   obtain ⟨j, hj, hjw⟩ := (mem_rangeImage_iff X t w).mp hwS
   exact ⟨j, hj, hjw⟩
 
@@ -219,7 +219,7 @@ theorem ae_image_subset_boxFinset (hd : 1 ≤ d) [NeZero d] (x : Site d) (t : �
 theorem visitBy_eq_setOf_hitTrunc (z : Site d) (t : ℕ) :
     visitBy d z t = {X : ℕ → Site d | hitTrunc z t X ≤ t} := by
   ext X
-  simp only [visitBy, Set.mem_setOf_eq, hitTrunc_le_iff]
+  simp only [visitBy, Set.mem_ofPred_eq, hitTrunc_le_iff]
 
 theorem measurable_hitIndicator (z : Site d) (t : ℕ) :
     Measurable fun X : ℕ → Site d => if hitTrunc z t X ≤ t then (1 : ℝ) else 0 := by
@@ -249,12 +249,12 @@ theorem hitRange_le (z : Site d) (t : ℕ) (X : ℕ → Site d) :
     |if hitTrunc z t X ≤ t then (rangeCard (shiftPath (hitTrunc z t X) X) t : ℝ) else 0|
       ≤ (t : ℝ) + 1 := by
   by_cases h : hitTrunc z t X ≤ t
-  · rw [if_pos h, abs_of_nonneg (by positivity)]
+  · rw [ite_eq_left h, abs_of_nonneg (by positivity)]
     have := rangeCard_le_succ (shiftPath (hitTrunc z t X) X) t
     have hc : ((rangeCard (shiftPath (hitTrunc z t X) X) t : ℕ) : ℝ) ≤ ((t + 1 : ℕ) : ℝ) :=
       Nat.cast_le.mpr this
     simpa using hc
-  · rw [if_neg h, abs_zero]
+  · rw [ite_eq_right h, abs_zero]
     positivity
 
 theorem integrable_hitRange [NeZero d] (x z : Site d) (t : ℕ) :
@@ -326,8 +326,8 @@ theorem integral_hitRange (hd : 1 ≤ d) [NeZero d] (x z : Site d) (t : ℕ) :
 theorem hitRange_nonneg (z : Site d) (t : ℕ) (X : ℕ → Site d) :
     0 ≤ if hitTrunc z t X ≤ t then (rangeCard (shiftPath (hitTrunc z t X) X) t : ℝ) else 0 := by
   by_cases h : hitTrunc z t X ≤ t
-  · rw [if_pos h]; positivity
-  · rw [if_neg h]
+  · rw [ite_eq_left h]; positivity
+  · rw [ite_eq_right h]
 
 theorem rangeCard_sq_le_sum_box (X : ℕ → Site d) (t : ℕ) (B : Finset (Site d))
     (hB : (Finset.range (t + 1)).image X ⊆ B) :
@@ -352,7 +352,7 @@ theorem rangeCard_sq_le_sum_box (X : ℕ → Site d) (t : ℕ) (B : Finset (Site
           (if hitTrunc z t X ≤ t then (rangeCard (shiftPath (hitTrunc z t X) X) t : ℝ) else 0) := by
     refine Finset.sum_congr rfl fun z hz => ?_
     obtain ⟨j, hj, hjz⟩ := (mem_rangeImage_iff X t z).mp hz
-    rw [if_pos (hitTrunc_le_iff.mpr ⟨j, hj, hjz⟩)]
+    rw [ite_eq_left (hitTrunc_le_iff.mpr ⟨j, hj, hjz⟩)]
   rw [h2]
   exact Finset.sum_le_sum_of_subset_of_nonneg hB fun z _ _ => hitRange_nonneg z t X
 

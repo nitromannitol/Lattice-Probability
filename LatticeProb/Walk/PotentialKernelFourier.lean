@@ -241,7 +241,7 @@ dominated convergence. -/
 theorem tendsto_srwGreen_sub_fourierPotential (x : Site 2) :
     Tendsto (fun M : ℕ => srwGreen 2 M 0 - srwGreen 2 M x) atTop (𝓝 (fourierPotential x)) := by
   set μ := volume.restrict (LocalCLT.torusBox 2) with hμ
-  haveI : IsFiniteMeasure μ := by
+  have : IsFiniteMeasure μ := by
     rw [hμ]; exact isFiniteMeasure_restrict.mpr (isCompact_Icc.measure_lt_top.ne)
   simp_rw [srwGreen_sub_eq_integral]
   unfold fourierPotential
@@ -268,7 +268,7 @@ theorem tendsto_srwGreen_sub_fourierPotential (x : Site 2) :
 theorem fourierPotential_eq_integral_ctHeat (x : Site 2) :
     fourierPotential x = ∫ t in Set.Ioi 0, (ctHeat 2 t 0 - ctHeat 2 t x) := by
   set μ := volume.restrict (LocalCLT.torusBox 2) with hμ
-  haveI : IsFiniteMeasure μ := by
+  have : IsFiniteMeasure μ := by
     rw [hμ]; exact isFiniteMeasure_restrict.mpr (isCompact_Icc.measure_lt_top.ne)
   set ν := volume.restrict (Set.Ioi (0 : ℝ)) with hν
   set f : (Fin 2 → ℝ) → ℝ → ℝ := fun θ t =>

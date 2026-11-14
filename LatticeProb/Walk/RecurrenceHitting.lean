@@ -137,7 +137,7 @@ theorem siteWalkLaw_two_dim_hitOrigin (x : Site 2) :
 /-- Hitting any fixed site is a measurable path event. Time zero is included. -/
 theorem measurableSet_hit_site (a : Site d) :
     MeasurableSet {X : ℕ → Site d | ∃ n : ℕ, X n = a} := by
-  simp only [Set.setOf_exists]
+  simp only [Set.ofPred_exists]
   exact MeasurableSet.iUnion fun n => measurableSet_eq_fun (measurable_pi_apply n)
     measurable_const
 
