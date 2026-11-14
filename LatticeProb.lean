@@ -466,6 +466,7 @@ import LatticeProb.Prob.BrownianStoppingFactor
 import LatticeProb.Prob.BrownianRestartCanonical
 import LatticeProb.Prob.BrownianRestartLaw
 import LatticeProb.Prob.BrownianPathPaste
+import LatticeProb.Prob.BrownianMarginalDensity
 import LatticeProb.Prob.BrownianContAll
 import LatticeProb.Prob.RegularVariation
 import LatticeProb.Prob.Karamata
