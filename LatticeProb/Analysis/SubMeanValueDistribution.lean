@@ -230,4 +230,48 @@ theorem integral_mul_laplacian_nonneg_of_local_smooth_approximation {f : ℕ →
   filter_upwards [hf] with n ⟨U, hU, hφU, hn, hn0⟩
   exact integral_mul_laplacian_nonneg_of_contDiffOn (μ := μ) hU hn hφ hc hφU hφ0 hn0
 
+/-- A nonnegative Laplacian for sufficiently fine mollifications implies the distributional
+inequality. -/
+theorem integral_mul_laplacian_nonneg_of_mollify {U : Set E} (hU : IsOpen U)
+    {u φ : E → ℝ} (hu : ContinuousOn u U) (hφ : ContDiff ℝ ∞ φ)
+    (hc : HasCompactSupport φ) (hφU : tsupport φ ⊆ U) (hφ0 : ∀ x, 0 ≤ φ x)
+    {ε : ℕ → ℝ} (hε0 : ∀ n, 0 < ε n) (hε : Tendsto ε atTop (𝓝 0))
+    {ρ : ℕ → E → ℝ} (hρs : ∀ n, ContDiff ℝ ∞ (ρ n))
+    (hρc : ∀ n, HasCompactSupport (ρ n)) (hρ0 : ∀ n y, 0 ≤ ρ n y)
+    (hρ1 : ∀ n, ∫ y, ρ n y ∂μ = 1)
+    (hρ : ∀ n y, ε n < ‖y‖ → ρ n y = 0)
+    (hΔ : ∀ᶠ n in atTop, ∀ x ∈ tsupport φ,
+      0 ≤ Δ ((U.indicator u) ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ n) x) :
+    0 ≤ ∫ x, u x * Δ φ x ∂μ := by
+  have hunif := LatticeProb.PegdenSmart.tendstoUniformlyOn_mollify (μ := μ) hU hu hε
+    hρs hρc hρ0 hρ1 hρ hc hφU
+  obtain ⟨δ, hδ, hδU⟩ := hc.exists_thickening_subset_open hU hφU
+  have hsmall : ∀ᶠ n in atTop, ε n < δ / 2 :=
+    hε.eventually (gt_mem_nhds (half_pos hδ))
+  apply integral_mul_laplacian_nonneg_of_local_smooth_approximation (μ := μ) hφ hc hφ0 ?_ hunif
+  filter_upwards [hsmall, hΔ] with n hn hnΔ
+  refine ⟨thickening (δ / 2) (tsupport φ), isOpen_thickening,
+    self_subset_thickening (half_pos hδ) (tsupport φ), ?_, hnΔ⟩
+  apply (LatticeProb.PegdenSmart.contDiffOn_mollify (μ := μ) hU hu (hε0 n)
+    (hρs n) (hρc n) (hρ n)).mono
+  intro x hx y hy
+  obtain ⟨z, hz, hxz⟩ := mem_thickening_iff.mp hx
+  apply hδU
+  apply mem_thickening_iff.mpr
+  refine ⟨z, hz, ?_⟩
+  have hyx := mem_closedBall.mp hy
+  linarith [dist_triangle y x z]
+
+/-- The integral of a linear function over a ball centred at the origin vanishes. -/
+theorem integral_linear_ball_zero (L : E →L[ℝ] ℝ) (r : ℝ) :
+    ∫ x in ball (0 : E) r, L x ∂μ = 0 := by
+  have h : ∫ x in ball (0 : E) r, L (-x) ∂μ = ∫ x in ball (0 : E) r, L x ∂μ := by
+    have hpre : (fun x : E => -x) ⁻¹' ball (0 : E) r = ball 0 r := by
+      ext x
+      simp
+    simpa only [hpre] using (Measure.measurePreserving_neg μ).setIntegral_preimage_emb
+      measurableEmbedding_neg L (ball 0 r)
+  simp only [map_neg, integral_neg] at h
+  linarith
+
 end LatticeProb.Ishii
