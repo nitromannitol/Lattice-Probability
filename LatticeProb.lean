@@ -921,3 +921,14 @@ import LatticeProb.Bonanno.SupercriticalLQGUniqueness.B2.Polylog.P6Closing
 import LatticeProb.Bonanno.SupercriticalLQGUniqueness.B2.Strong.WeakOfStrong
 import LatticeProb.Bonanno.SupercriticalLQGUniqueness.Frozen.ExistsUnique_isLFPPNormalizer
 import LatticeProb.Bonanno.SupercriticalLQGUniqueness.Uniqueness.Measurability.GeodesicCodes.PathLength
+
+-- Modules adapted from openai/math (Apache-2.0): top modules of the copied import closures
+import LatticeProb.OpenAI.Analysis.BiholderTransport.Volume.Measurable
+import LatticeProb.OpenAI.Analysis.PDE.Dirichlet.Maximum
+import LatticeProb.OpenAI.Geometry.Cannon.PlaneTopology.PairComponentClosure
+import LatticeProb.OpenAI.Geometry.Cannon.PlaneTopology.TamePairJordanRegions
+import LatticeProb.OpenAI.Probability.CriticalPercolation.Clusters.InfiniteUniqueness
+import LatticeProb.OpenAI.Probability.CriticalPercolation.Criticality.PositiveCritical
+import LatticeProb.OpenAI.Probability.CriticalZ3.Subunit
+import LatticeProb.OpenAI.Probability.InvariantIsing.Gaussian.IndexedGaussianMaximum
+import LatticeProb.OpenAI.Probability.SpanningForest.GraphFUSFLaw
