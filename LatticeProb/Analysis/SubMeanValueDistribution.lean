@@ -2,6 +2,8 @@ import LatticeProb.Analysis.WeakLaplaceMollify
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.MeasureTheory.Integral.Average
+import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
+import Mathlib.Analysis.InnerProductSpace.Projection.Reflection
 
 /-!
 # Sub-mean-value inequalities and the distributional Laplacian
@@ -297,5 +299,73 @@ theorem integral_linear_sub_center_ball (L : E →L[ℝ] ℝ) (a : E) (r : ℝ) 
   rw [hpre] at h
   simp only [add_sub_cancel_left] at h
   rw [← h, integral_linear_ball_zero]
+
+
+private theorem integral_comp_linearIsometryEquiv_ball (R : E ≃ₗᵢ[ℝ] E) (g : E → ℝ)
+    (r : ℝ) : ∫ x in ball (0 : E) r, g (R x) ∂μ = ∫ x in ball (0 : E) r, g x ∂μ := by
+  have hR : MeasurePreserving R μ μ := by
+    rw [Measure.isAddLeftInvariant_eq_smul μ (volume : Measure E)]
+    exact R.measurePreserving.smul_measure _
+  have hpre : R ⁻¹' ball (0 : E) r = ball 0 r := by
+    ext x
+    simp only [mem_preimage, mem_ball, dist_zero_right, R.norm_map]
+  simpa only [hpre] using hR.setIntegral_preimage_emb
+    R.toMeasurableEquiv.measurableEmbedding g (ball 0 r)
+
+/-- Orthogonal coordinate functions have zero mixed moment on a centred ball. -/
+theorem integral_inner_mul_inner_ball_eq_zero (u v : E) (huv : ⟪u, v⟫_ℝ = 0) (r : ℝ) :
+    ∫ x in ball (0 : E) r, ⟪u, x⟫_ℝ * ⟪v, x⟫_ℝ ∂μ = 0 := by
+  let R := (ℝ ∙ u).reflection
+  have hu : R u = u :=
+    Submodule.reflection_mem_subspace_eq_self (Submodule.mem_span_singleton_self u)
+  have hv : R v = -v := by
+    dsimp [R]
+    rw [Submodule.reflection_singleton_apply, huv]
+    simp
+  have h := integral_comp_linearIsometryEquiv_ball (μ := μ) R
+    (fun x => ⟪u, x⟫_ℝ * ⟪v, x⟫_ℝ) r
+  have hinner (x : E) : ⟪u, R x⟫_ℝ * ⟪v, R x⟫_ℝ =
+      -(⟪u, x⟫_ℝ * ⟪v, x⟫_ℝ) := by
+    have h1 := R.inner_map_map u x
+    have h2 := R.inner_map_map v x
+    rw [hu] at h1
+    rw [hv, inner_neg_left] at h2
+    have h2x : ⟪v, R x⟫_ℝ = -⟪v, x⟫_ℝ := by linarith
+    rw [h1, h2x, mul_neg]
+  simp_rw [hinner, integral_neg] at h
+  linarith
+
+/-- Vectors of equal norm have equal quadratic moments on a centred ball. -/
+theorem integral_inner_sq_ball_eq (u v : E) (h : ‖u‖ = ‖v‖) (r : ℝ) :
+    ∫ x in ball (0 : E) r, ⟪u, x⟫_ℝ ^ 2 ∂μ =
+      ∫ x in ball (0 : E) r, ⟪v, x⟫_ℝ ^ 2 ∂μ := by
+  let R := (ℝ ∙ (u - v))ᗮ.reflection
+  have hu : R u = v := Submodule.reflection_sub h
+  have hi := integral_comp_linearIsometryEquiv_ball (μ := μ) R
+    (fun x => ⟪v, x⟫_ℝ ^ 2) r
+  have hinner (x : E) : ⟪v, R x⟫_ℝ = ⟪u, x⟫_ℝ := by
+    simpa only [hu] using R.inner_map_map u x
+  simp_rw [hinner] at hi
+  exact hi
+
+/-- A unit coordinate has positive quadratic moment on a ball of positive radius. -/
+theorem integral_inner_sq_ball_pos (u : E) (hu : ‖u‖ = 1) {r : ℝ} (hr : 0 < r) :
+    0 < ∫ x in ball (0 : E) r, ⟪u, x⟫_ℝ ^ 2 ∂μ := by
+  let f : E → ℝ := fun x => ⟪u, x⟫_ℝ ^ 2
+  have hf : Continuous f := (continuous_const.inner continuous_id).pow 2
+  have hfi : IntegrableOn f (ball (0 : E) r) μ :=
+    hf.continuousOn.integrableOn_compact (isCompact_closedBall (0 : E) r) |>.mono_set ball_subset_closedBall
+  apply (setIntegral_pos_iff_support_of_nonneg_ae (ae_of_all _ fun x => sq_nonneg _) hfi).2
+  have hopen : IsOpen (Function.support f ∩ ball (0 : E) r) :=
+    hf.isOpen_support.inter isOpen_ball
+  apply hopen.measure_pos (μ := μ)
+  use (r / 2) • u
+  constructor
+  · have hinner : ⟪u, (r / 2) • u⟫_ℝ = r / 2 := by
+      simp [real_inner_smul_right, hu]
+    simp [Function.mem_support, f, hinner, ne_of_gt (half_pos hr)]
+  · simp only [mem_ball, dist_zero_right, norm_smul, Real.norm_eq_abs, hu, mul_one,
+      abs_of_pos (half_pos hr)]
+    linarith
 
 end LatticeProb.Ishii
