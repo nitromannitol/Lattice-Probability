@@ -944,3 +944,4 @@ import LatticeProb.Analysis.JensenWeak
 import LatticeProb.Analysis.HeatKernel
 import LatticeProb.Analysis.Sobolev.HeatEnergy
 import LatticeProb.Analysis.ViscositySubMean
+import LatticeProb.Analysis.HeatInterior
