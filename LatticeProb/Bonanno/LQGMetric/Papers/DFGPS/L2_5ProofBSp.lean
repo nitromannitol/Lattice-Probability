@@ -37,6 +37,8 @@ theorem isCompact_closure_dyadicDomainsC (W : dyadicDomainsC) : IsCompact (closu
 instance (W : dyadicDomainsC) : CompactSpace (closure (W : Set ℂ)) :=
   isCompact_iff_compactSpace.1 (isCompact_closure_dyadicDomainsC W)
 
+instance : PolishSpace DyFam := inferInstance
+
 instance : PolishSpace DyProd := inferInstanceAs (PolishSpace (C(ℂ × ℂ, ℝ) × DyFam))
 
 theorem continuous_dyProd_fst : Continuous (fun x : DyProd => x.1) := continuous_fst

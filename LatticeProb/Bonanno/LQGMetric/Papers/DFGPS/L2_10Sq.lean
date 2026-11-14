@@ -164,6 +164,10 @@ theorem mem_iUnion_sqG {C : ℝ} (hC : 0 < C) (d : C(sq1 × sq1, ℝ)) (hd : IsM
     exact (le_abs_self _).trans_lt this
   · exact hCa.trans_le (hmA x ⟨sqC_mono (innSide_le_half R) hx.1, hx.2⟩)
 
+instance : PolishSpace C(sq1 × sq1, ℝ) := by
+  have := compactSpace_sq1
+  exact polishSpace_continuousMap _ _
+
 /-- **DFGPS T:953–957** (first display of the proof of Lemma 2.10, on `S_1(0)` and for the
 internal metric): for `p < 1` there is `R` with `P[𝔞_ε⁻¹ D_h^ε(·,·;S_1(0)) ∈ sqG C R] ≥ p` for all
 small `ε`. From `Lem2_8` (tightness and limits are metrics) and `exists_eventually_measure_ge`. -/
