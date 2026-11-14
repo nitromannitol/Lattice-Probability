@@ -148,7 +148,7 @@ lemma finitePartitionCouplingKernel_apply [Fintype ι]
     (hdF : Pairwise (fun i j ↦ Disjoint (F i) (F j))) (a : S) :
     finitePartitionCouplingKernel κ ν hE hF hdE hdF a =
       finitePartitionCoupling (κ a) (ν a) E F := by
-  simp only [finitePartitionCouplingKernel, Kernel.add_apply, balancedProductKernel_apply,
+  simp only [finitePartitionCouplingKernel, add_apply, balancedProductKernel_apply,
     residualKernel, Kernel.coe_mk, Kernel.fst_apply, Kernel.snd_apply,
     finiteMatchedKernel_apply, finitePartitionCoupling, completeSubcoupling,
     Measure.fst, Measure.snd]

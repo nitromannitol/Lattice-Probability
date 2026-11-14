@@ -56,7 +56,7 @@ theorem measure_event_inter_values (P : Measure Ω) (X : ∀ q, Ω → A q)
   have heB : B = F ⁻¹' (F '' B) := event_eq_preimage_image X S B hB
   have heT : {ω | ∀ q ∈ T, X q ω = a q} = H ⁻¹' {fun q : T => a q} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_singleton_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_singleton_iff]
     constructor
     · intro h
       funext q
@@ -71,7 +71,7 @@ theorem measure_event_inter_values (P : Measure Ω) (X : ∀ q, Ω → A q)
   congr 1
   have he : {ω | ∀ q ∈ T, X q ω = a q} = ⋂ q ∈ T, X q ⁻¹' {a q} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_preimage, Set.mem_singleton_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_preimage, Set.mem_singleton_iff]
   rw [he]
   exact hind.measure_inter_preimage_eq_mul T (fun q _ => measurableSet_singleton (a q))
 

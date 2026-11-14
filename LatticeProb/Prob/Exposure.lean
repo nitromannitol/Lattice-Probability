@@ -87,7 +87,7 @@ theorem measure_inter_evalBox_of_update_invariant [DecidableEq ι]
       have hsplit : A ∩ {ω : Π i, X i | ∀ j ∈ insert a s, ω j ∈ t j}
           = (A ∩ {ω : Π i, X i | ∀ j ∈ s, ω j ∈ t j}) ∩ {ω : Π i, X i | ω a ∈ t a} := by
         ext ω
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Finset.mem_insert]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Finset.mem_insert]
         constructor
         · rintro ⟨hA', hbox⟩
           exact ⟨⟨hA', fun j hj => hbox j (Or.inr hj)⟩, hbox a (Or.inl rfl)⟩

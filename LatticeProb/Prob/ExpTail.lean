@@ -152,7 +152,7 @@ theorem even_convex_exp_tail_le {f : ℝ → ℝ} (hf : ConvexOn ℝ Set.univ f)
     Real.exp (-t) * f 1 + (1 - Real.exp (-t)) * f 0 ≤
       ∫ x, f ((t + 1)⁻¹ * x) ∂(ProbabilityTheory.expMeasure 1) := by
   let μ := ProbabilityTheory.expMeasure 1
-  haveI : IsProbabilityMeasure μ := isProbabilityMeasure_expMeasure (by norm_num)
+  have : IsProbabilityMeasure μ := isProbabilityMeasure_expMeasure (by norm_num)
   have ht1 : t + 1 ≠ 0 := by linarith
   have hm : μ.real (Set.Ioi t) = Real.exp (-t) := expMeasure_one_Ioi_real ht
   have hm0 : μ (Set.Ioi t) ≠ 0 := by

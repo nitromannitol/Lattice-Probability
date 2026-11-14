@@ -230,7 +230,7 @@ theorem LatticeProb.ae_ergodic_conditionalMeasure {X : Type*} [mX : MeasurableSp
     {T : X → X} (hT : MeasurePreserving T Q Q) :
     ∀ᵐ x ∂Q, Ergodic T (condExpKernel Q (MeasurableSpace.invariants T) x) := by
   obtain ⟨C, hcount, hpi, hgen⟩ := LatticeProb.exists_countable_generating_piSystem (X := X)
-  letI : Countable C := hcount.to_subtype
+  let : Countable C := hcount.to_subtype
   have hc : ∀ A : C, ∀ᵐ x ∂Q,
       ∀ᵐ y ∂condExpKernel Q (MeasurableSpace.invariants T) x,
         Tendsto (fun n => LatticeProb.bAvg T (A.val.indicator (fun _ => (1 : ℝ))) n y)

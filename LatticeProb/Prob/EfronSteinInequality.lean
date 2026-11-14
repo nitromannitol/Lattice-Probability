@@ -44,7 +44,7 @@ theorem integrable_eval_comp (ν : Measure ℝ) [IsProbabilityMeasure ν] (f : �
     refine Integrable.fintype_prod (f := fun j z => if j = i then f z else 1) fun j => ?_
     by_cases hj : j = i
     · simpa [hj] using hf
-    · simp only [if_neg hj]
+    · simp only [ite_eq_right hj]
       exact integrable_const (1 : ℝ)
   refine h.congr (Filter.Eventually.of_forall fun ξ => ?_)
   show (∏ j, if j = i then f (ξ j) else 1) = f (ξ i)

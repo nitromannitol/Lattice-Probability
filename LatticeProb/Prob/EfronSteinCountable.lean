@@ -41,9 +41,9 @@ theorem measurable_truncate (S : Set V) [DecidablePred (· ∈ S)] :
     Measurable (truncate S : (V → ℝ) → V → ℝ) := by
   refine Measurable.of_eval fun i => ?_
   by_cases hi : i ∈ S
-  · simp only [truncate, comb, hi, if_pos]
+  · simp only [truncate, comb, hi, ite_eq_left]
     exact measurable_pi_apply i
-  · simp only [truncate, comb, hi, if_neg, not_false_iff]
+  · simp only [truncate, comb, hi, ite_eq_right, not_false_iff]
     exact measurable_const
 
 /-- The sigma-algebra of the coordinates in `S`. -/
@@ -286,7 +286,7 @@ theorem siteEnergy_partialInt_le {S : Set V} [DecidablePred (· ∈ S)] {v : V} 
     rw [this]
     refine integral_congr_ae (Filter.Eventually.of_forall fun η => ?_)
     rw [hD]
-    simp only []
+    simp only
     rw [comb_update hv]
   -- Jensen, coordinate by coordinate
   have hjensen : ∀ q : (V → ℝ) × ℝ,
@@ -422,9 +422,9 @@ theorem variance_le_half_sum_of_local (S : Finset V) {Φ : (V → ℝ) → ℝ}
   have hspmeas : Measurable sp := by
     refine Measurable.of_eval fun v => ?_
     by_cases hv : v ∈ S
-    · simp only [hsp, hv, dif_pos]
+    · simp only [hsp, hv, dite_eq_left]
       exact measurable_pi_apply _
-    · simp only [hsp, hv, dif_neg, not_false_iff]
+    · simp only [hsp, hv, dite_eq_right, not_false_iff]
       exact measurable_const
   set G : (Fin k → ℝ) → ℝ := fun x => Φ (sp x) with hG
   have hGm : Measurable G := hΦm.comp hspmeas
@@ -432,7 +432,7 @@ theorem variance_le_half_sum_of_local (S : Finset V) {Φ : (V → ℝ) → ℝ}
     intro ω
     refine hloc _ _ ?_
     intro v hv
-    simp only [hsp, hv, dif_pos, hT]
+    simp only [hsp, hv, dite_eq_left, hT]
     congr 1
     exact congrArg Subtype.val (S.equivFin.symm_apply_apply ⟨v, hv⟩)
   have hTupd : ∀ (ω : V → ℝ) (j : Fin k) (t : ℝ),
@@ -442,7 +442,7 @@ theorem variance_le_half_sum_of_local (S : Finset V) {Φ : (V → ℝ) → ℝ}
     simp only [hT, Function.update_apply]
     by_cases hj : j' = j
     · subst hj; simp
-    · rw [if_neg hj, if_neg (fun h => hj (heinj h))]
+    · rw [ite_eq_right hj, ite_eq_right (fun h => hj (heinj h))]
   -- transporting integrals
   have hint : ∀ f : (Fin k → ℝ) → ℝ, AEStronglyMeasurable f (Measure.pi fun _ : Fin k => ν) →
       ∫ x, f x ∂(Measure.pi fun _ : Fin k => ν) = ∫ ω, f (T ω) ∂P := by
@@ -509,7 +509,7 @@ theorem variance_le_half_sum_of_local (S : Finset V) {Φ : (V → ℝ) → ℝ}
     rw [hGmean, hint (fun x => (G x - ∫ ω', Φ ω' ∂P) ^ 2)
       (((hGm.sub measurable_const).pow_const 2).aestronglyMeasurable)]
     exact integral_congr_ae (Filter.Eventually.of_forall fun ω => by
-      simp only []
+      simp only
       rw [hGT])
   rw [hlhs] at hmain
   have hsum : ∑ j : Fin k, siteEnergyReal ν Φ (e j) = ∑ v ∈ S, siteEnergyReal ν Φ v := by

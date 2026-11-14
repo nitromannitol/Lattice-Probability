@@ -42,8 +42,8 @@ theorem hybrid_succ (ξ η : Fin N → ℝ) (k : ℕ) (hk : k < N) :
     have hne : (i : ℕ) ≠ k := fun hc => h (Fin.ext hc)
     unfold hybrid
     by_cases h2 : (i : ℕ) < k
-    · rw [if_pos (by omega), if_pos h2]
-    · rw [if_neg (by omega), if_neg h2]
+    · rw [ite_eq_left (by omega), ite_eq_left h2]
+    · rw [ite_eq_right (by omega), ite_eq_right h2]
 
 /-- The coordinate Lipschitz bounds add up. -/
 theorem abs_sub_le_sum_lip (F : (Fin N → ℝ) → ℝ) (ℓ : Fin N → ℝ)
@@ -65,7 +65,7 @@ theorem abs_sub_le_sum_lip (F : (Fin N → ℝ) → ℝ) (ℓ : Fin N → ℝ)
           rw [hybrid_succ ξ η m hmN]
           refine le_trans (hLip (hybrid ξ η m) ⟨m, hmN⟩ (η ⟨m, hmN⟩)) ?_
           rw [hybrid_apply_self ξ η m hmN, hg]
-          simp only [dif_pos hmN]
+          simp only [dite_eq_left hmN]
           exact le_rfl
         have htri : |F ξ - F (hybrid ξ η (m + 1))|
             ≤ |F ξ - F (hybrid ξ η m)| + |F (hybrid ξ η m) - F (hybrid ξ η (m + 1))| := by
@@ -421,7 +421,7 @@ theorem integrable_eval_abs (ν : Measure ℝ) [IsProbabilityMeasure ν]
     refine Integrable.fintype_prod (f := fun j z => if j = i then |z| else 1) fun j => ?_
     by_cases hj : j = i
     · simpa [hj] using habs
-    · simp only [if_neg hj]
+    · simp only [ite_eq_right hj]
       exact integrable_const (1 : ℝ)
   refine h.congr (Filter.Eventually.of_forall fun ξ => ?_)
   show (∏ j, if j = i then |ξ j| else 1) = |ξ i|

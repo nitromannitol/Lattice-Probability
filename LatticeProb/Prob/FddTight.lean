@@ -466,7 +466,7 @@ theorem not_continuousOn_stepField :
   have h2 : Tendsto (fun z : ℝ => if z ≤ 1 / 2 then (0 : ℝ) else 1) (𝓝[>] (1 / 2)) (𝓝 1) := by
     refine Tendsto.congr' ?_ tendsto_const_nhds
     filter_upwards [self_mem_nhdsWithin] with z hz
-    rw [if_neg (not_le.mpr (Set.mem_Ioi.mp hz))]
+    rw [ite_eq_right (not_le.mpr (Set.mem_Ioi.mp hz))]
   have : (1 : ℝ) = 0 := tendsto_nhds_unique h2 (by simpa using h1)
   norm_num at this
 

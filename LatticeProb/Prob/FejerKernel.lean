@@ -173,7 +173,7 @@ theorem fejerKernel_tail {T : ℝ} (hT : 0 < T) {h : ℝ} (hh : 0 < h) :
   have hpi := Real.pi_pos
   have hset : {w : ℝ | h < |w|} = Iio (-h) ∪ Ioi h := by
     ext w
-    simp only [mem_setOf_eq, mem_union, mem_Iio, mem_Ioi]
+    simp only [mem_ofPred_eq, mem_union, mem_Iio, mem_Ioi]
     constructor
     · intro hw
       rcases le_or_gt 0 w with h0 | h0

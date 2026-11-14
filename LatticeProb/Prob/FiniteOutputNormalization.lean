@@ -18,7 +18,7 @@ mass divided by the cardinality. The chosen output guards the empty-carrier case
 theorem mass_eq_sum_div_card {T : Type*} [Fintype T] (m : T → ℝ≥0∞)
     (heq : ∀ t u, m t = m u) (t : T) :
     m t = (∑ u, m u) / (Fintype.card T : ℝ≥0∞) := by
-  letI : Nonempty T := ⟨t⟩
+  let : Nonempty T := ⟨t⟩
   have hsum : (∑ u, m u) = m t * (Fintype.card T : ℝ≥0∞) := by
     simp only [heq _ t, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm]
   rw [hsum]

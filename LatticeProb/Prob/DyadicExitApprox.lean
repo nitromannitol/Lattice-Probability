@@ -68,7 +68,7 @@ theorem nnrealApproxSeq_isStoppingTime (𝓕 : Filtration ℝ≥0 m0)
   suffices MeasurableSet[𝓕 t] {ω | τ ω ≤ s} by
     convert this using 1
     ext ω
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     exact nnrealApproxSeq_le_iff τ n ω t
   exact 𝓕.mono' (div_le_of_le_mul₀ h2.le (by positivity) (Nat.floor_le (by positivity))) _ (hτ s)
 
@@ -211,13 +211,13 @@ theorem isStoppingTime_const_withTop (𝓕 : Filtration ℝ≥0 m0) (c : ℝ≥0
   by_cases h : c ≤ t
   · have hset : {ω : Ω | (c : WithTop ℝ≥0) ≤ (t : WithTop ℝ≥0)} = Set.univ := by
       ext ω
-      simp only [Set.mem_setOf_eq, Set.mem_univ, iff_true]
+      simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
       exact WithTop.coe_le_coe.mpr h
     rw [hset]
     exact MeasurableSet.univ
   · have hset : {ω : Ω | (c : WithTop ℝ≥0) ≤ (t : WithTop ℝ≥0)} = ∅ := by
       ext ω
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       exact fun hle ↦ h (WithTop.coe_le_coe.mp hle)
     rw [hset]
     exact @MeasurableSet.empty Ω (𝓕 t)
