@@ -131,7 +131,7 @@ def swapAlong (e : {x // x ∈ s} ≃ {x // x ∈ t}) : ι → ι := fun i =>
 
 theorem swapAlong_mem_of_mem (e : {x // x ∈ s} ≃ {x // x ∈ t}) {i : ι} (h : i ∈ s) :
     swapAlong e i ∈ t := by
-  rw [swapAlong, dif_pos h]
+  rw [swapAlong, dite_eq_left h]
   exact (e ⟨i, h⟩).2
 
 theorem swapAlong_notMem_of_mem (hst : Disjoint s t) (e : {x // x ∈ s} ≃ {x // x ∈ t})
@@ -139,23 +139,23 @@ theorem swapAlong_notMem_of_mem (hst : Disjoint s t) (e : {x // x ∈ s} ≃ {x 
   (Finset.disjoint_left.mp hst) hc (swapAlong_mem_of_mem e h)
 
 theorem swapAlong_eq_self (e : {x // x ∈ s} ≃ {x // x ∈ t}) {i : ι} (h1 : i ∉ s) (h2 : i ∉ t) :
-    swapAlong e i = i := by rw [swapAlong, dif_neg h1, dif_neg h2]
+    swapAlong e i = i := by rw [swapAlong, dite_eq_right h1, dite_eq_right h2]
 
 theorem swapAlong_involutive (hst : Disjoint s t) (e : {x // x ∈ s} ≃ {x // x ∈ t}) :
     Function.Involutive (swapAlong e) := by
   intro i
   by_cases h1 : i ∈ s
-  · have hin : swapAlong e i = (e ⟨i, h1⟩ : ι) := by rw [swapAlong, dif_pos h1]
+  · have hin : swapAlong e i = (e ⟨i, h1⟩ : ι) := by rw [swapAlong, dite_eq_left h1]
     have hj : (e ⟨i, h1⟩ : ι) ∈ t := (e ⟨i, h1⟩).2
     have hjs : (e ⟨i, h1⟩ : ι) ∉ s := fun hc => (Finset.disjoint_left.mp hst) hc hj
-    rw [hin, swapAlong, dif_neg hjs, dif_pos hj]
+    rw [hin, swapAlong, dite_eq_right hjs, dite_eq_left hj]
     have : (⟨(e ⟨i, h1⟩ : ι), hj⟩ : {x // x ∈ t}) = e ⟨i, h1⟩ := rfl
     rw [this, Equiv.symm_apply_apply]
   · by_cases h2 : i ∈ t
     · have hin : swapAlong e i = (e.symm ⟨i, h2⟩ : ι) := by
-        rw [swapAlong, dif_neg h1, dif_pos h2]
+        rw [swapAlong, dite_eq_right h1, dite_eq_left h2]
       have hk : (e.symm ⟨i, h2⟩ : ι) ∈ s := (e.symm ⟨i, h2⟩).2
-      rw [hin, swapAlong, dif_pos hk]
+      rw [hin, swapAlong, dite_eq_left hk]
       have : (⟨(e.symm ⟨i, h2⟩ : ι), hk⟩ : {x // x ∈ s}) = e.symm ⟨i, h2⟩ := rfl
       rw [this, Equiv.apply_symm_apply]
     · rw [swapAlong_eq_self e h1 h2, swapAlong_eq_self e h1 h2]

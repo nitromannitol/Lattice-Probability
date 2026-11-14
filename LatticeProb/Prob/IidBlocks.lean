@@ -119,7 +119,7 @@ theorem measure_avoidsConstantBlocks (a : A) (L n : ℕ) :
     have he : avoidsConstantBlocks a L (n + 1) =
         avoidsConstantBlocks a L n ∩ (constantBlock a L n)ᶜ := by
       ext ω
-      simp only [avoidsConstantBlocks, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_compl_iff]
+      simp only [avoidsConstantBlocks, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_compl_iff]
       constructor
       · intro h
         exact ⟨fun j hj => h j (Nat.lt_succ_of_lt hj), h n (Nat.lt_succ_self n)⟩

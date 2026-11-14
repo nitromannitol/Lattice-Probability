@@ -146,7 +146,7 @@ theorem tail_iSup_abs_le (hX : IsGaussianProcess X P) (h0 : ∀ t, ∫ ω, X t �
       {ω | M + u ≤ ⨆ t, X t ω} ∪ {ω | M + u ≤ ⨆ t, -X t ω} := by
     intro ω hω
     by_contra hn
-    simp only [mem_union, mem_setOf_eq, not_or, not_le] at hn
+    simp only [mem_union, mem_ofPred_eq, not_or, not_le] at hn
     have hle : ⨆ t, |X t ω| ≤ max (⨆ t, X t ω) (⨆ t, -X t ω) :=
       ciSup_le fun t => by
         rw [abs_eq_max_neg]

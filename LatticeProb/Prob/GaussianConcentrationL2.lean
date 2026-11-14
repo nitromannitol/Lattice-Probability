@@ -88,7 +88,7 @@ theorem gaussian_lipschitz_concentration_l2_fin (n : ℕ)
         = {x : Fin n → ℝ |
           t ≤ F x - ∫ y, F y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)} := by
       ext ω
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       constructor <;> intro h <;> linarith
     rw [hev]
     refine (ENNReal.le_ofReal_iff_toReal_le (measure_ne_top _ _)

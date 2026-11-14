@@ -25,7 +25,7 @@ theorem convex_integer_minorant (f : ℝ → ℝ) (hf : ConvexOn ℝ Set.univ f)
       (if 1 ≤ k then f 1 + f (-1) - 2 * f 0 else 0) ≤ f (k : ℝ) := by
   have hgap := convex_integer_gap_nonneg f hf
   by_cases hk : 1 ≤ k
-  · rw [if_pos hk]
+  · rw [ite_eq_left hk]
     by_cases hk1 : k = 1
     · subst k
       norm_num only [Int.cast_one]
@@ -35,7 +35,7 @@ theorem convex_integer_minorant (f : ℝ → ℝ) (hf : ConvexOn ℝ Set.univ f)
         (Set.mem_univ _) (Set.mem_univ _) (by norm_num) hkR
       norm_num only [sub_zero, one_mul] at h
       nlinarith [mul_nonneg (le_of_lt (sub_pos.mpr hkR)) hgap]
-  · rw [if_neg hk, add_zero]
+  · rw [ite_eq_right hk, add_zero]
     by_cases hk0 : k = 0
     · subst k
       simp

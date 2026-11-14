@@ -81,7 +81,7 @@ definite. -/
 private lemma posDef_schur {A : Matrix ι ι ℝ} {B : Matrix ι κ ℝ} {D : Matrix κ κ ℝ}
     (hS : (Matrix.fromBlocks A B Bᵀ D).PosDef) : (D - Bᵀ * A⁻¹ * B).PosDef := by
   have hA : A.PosDef := posDef_block₁₁ hS
-  letI : Invertible A := hA.isUnit.invertible
+  let : Invertible A := hA.isUnit.invertible
   have hBt : Bᴴ = Bᵀ := Matrix.conjTranspose_eq_transpose_of_trivial B
   have hS' : (Matrix.fromBlocks A B Bᴴ D).PosDef := by rwa [hBt]
   rw [← hBt]
@@ -162,7 +162,7 @@ theorem covDensityOn_fromBlocks (A : Matrix ι ι ℝ) (B : Matrix ι κ ℝ) (D
   have hA : A.PosDef := posDef_block₁₁ hS
   have hΔ : (D - Bᵀ * A⁻¹ * B).PosDef := posDef_schur hS
   have hdet : (Matrix.fromBlocks A B Bᵀ D).det = A.det * (D - Bᵀ * A⁻¹ * B).det := by
-    letI : Invertible A := hA.isUnit.invertible
+    let : Invertible A := hA.isUnit.invertible
     rw [Matrix.det_fromBlocks₁₁, Matrix.invOf_eq_nonsing_inv]
   have h2pi : 0 < 2 * Real.pi := by positivity [Real.pi_pos]
   unfold covDensityOn

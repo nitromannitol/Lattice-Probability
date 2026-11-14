@@ -63,7 +63,7 @@ theorem stdGaussian_euclidean_eq_withDensity (ι : Type*) [Fintype ι] :
 theorem pi_gaussianReal_eq_withDensity' {ι : Type*} [Fintype ι] (v : ℝ≥0) (hv : v ≠ 0) :
     Measure.pi (fun _ : ι => gaussianReal 0 v)
       = (volume : Measure (ι → ℝ)).withDensity fun x => ∏ i, gaussianPDF 0 v (x i) := by
-  haveI hprob : IsProbabilityMeasure ((volume : Measure ℝ).withDensity (gaussianPDF 0 v)) := by
+  have hprob : IsProbabilityMeasure ((volume : Measure ℝ).withDensity (gaussianPDF 0 v)) := by
     rw [← gaussianReal_of_var_ne_zero 0 hv]
     infer_instance
   have hpi : Measure.pi (fun _ : ι => gaussianReal 0 v)

@@ -172,7 +172,7 @@ theorem mgf_centred_pos (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L t : ℝ) (hL 
     0 < ∫ x, Real.exp (t * (f x - ∫ y, f y
       ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
       ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) := by
-  haveI : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
+  have : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
     isProbabilityMeasure_pi_gaussianReal n
   have hint := integrable_exp_sub_integral n f L t hL hf
   have hsupp : Function.support (fun x => Real.exp (t * (f x - ∫ y, f y
@@ -181,7 +181,7 @@ theorem mgf_centred_pos (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L t : ℝ) (hL 
     simp
   rw [integral_pos_iff_support_of_nonneg_ae
     (Filter.Eventually.of_forall fun x => (Real.exp_pos _).le) hint, hsupp]
-  haveI : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
+  have : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
     isProbabilityMeasure_pi_gaussianReal n
   simp
 
@@ -348,7 +348,7 @@ theorem integral_sub_integral_eq_zero (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L
     (hf : LipschitzWith ⟨L, hL.le⟩ f) :
     ∫ x, (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
       ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) = 0 := by
-  haveI : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
+  have : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
     isProbabilityMeasure_pi_gaussianReal n
   have hid : Integrable (id : (Fin n → ℝ) → (Fin n → ℝ))
       (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
@@ -377,7 +377,7 @@ theorem hasDerivAt_mgf_centred (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L t : �
         ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
         (Measure.pi fun _ : Fin n => gaussianReal 0 1) = Set.univ := by
       ext s
-      simp only [integrableExpSet, Set.mem_setOf_eq, Set.mem_univ, iff_true]
+      simp only [integrableExpSet, Set.mem_ofPred_eq, Set.mem_univ, iff_true]
       exact integrable_exp_sub_integral n f L s hL hf
     rw [hsub, interior_univ]
     exact Set.mem_univ t
@@ -611,7 +611,7 @@ theorem herbstBound_l2_of_logSobolev (n : ℕ) (h : GaussianLogSobolev n)
           ring
   rcases Nat.eq_zero_or_pos n with h0 | h0
   · subst h0
-    haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+    have : Subsingleton (Fin 0 → ℝ) := inferInstance
     have hconst : ∀ x : Fin 0 → ℝ, f x = f (fun _ => 0) :=
       fun x => congrArg f (Subsingleton.elim x _)
     have h1 : ∫ x, Real.exp (lam * (f x - ∫ y, f y
@@ -717,7 +717,7 @@ theorem integrable_exp_sub_integral_l2 (n : ℕ) (f : (Fin n → ℝ) → ℝ) (
       (Measure.pi fun _ : Fin n => gaussianReal 0 1) := by
   rcases Nat.eq_zero_or_pos n with h0 | h0
   · subst h0
-    haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+    have : Subsingleton (Fin 0 → ℝ) := inferInstance
     have hconst : ∀ x : Fin 0 → ℝ, f x = f (fun _ => 0) :=
       fun x => congrArg f (Subsingleton.elim x _)
     have h1 : ∀ x : Fin 0 → ℝ, f x - ∫ y, f y
@@ -767,7 +767,7 @@ theorem integrable_mul_exp_sub_integral_l2 (n : ℕ) (f : (Fin n → ℝ) → �
       (Measure.pi fun _ : Fin n => gaussianReal 0 1) := by
   rcases Nat.eq_zero_or_pos n with h0 | h0
   · subst h0
-    haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+    have : Subsingleton (Fin 0 → ℝ) := inferInstance
     have hconst : ∀ x : Fin 0 → ℝ, f x = f (fun _ => 0) :=
       fun x => congrArg f (Subsingleton.elim x _)
     have h1 : ∀ x : Fin 0 → ℝ, f x - ∫ y, f y
@@ -815,7 +815,7 @@ theorem mgf_centred_pos_l2 (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L t : ℝ) (
     0 < ∫ x, Real.exp (t * (f x - ∫ y, f y
       ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)))
       ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) := by
-  haveI : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
+  have : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
     isProbabilityMeasure_pi_gaussianReal n
   have hint := integrable_exp_sub_integral_l2 n f L t hL hf
   have hsupp : Function.support (fun x => Real.exp (t * (f x - ∫ y, f y
@@ -831,7 +831,7 @@ theorem integral_sub_integral_eq_zero_l2 (n : ℕ) (f : (Fin n → ℝ) → ℝ)
     (hf : ∀ x y : Fin n → ℝ, |f x - f y| ≤ L * Real.sqrt (∑ i, (x i - y i) ^ 2)) :
     ∫ x, (f x - ∫ y, f y ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1))
       ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1) = 0 := by
-  haveI : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
+  have : IsProbabilityMeasure (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
     isProbabilityMeasure_pi_gaussianReal n
   have hid : Integrable (id : (Fin n → ℝ) → (Fin n → ℝ))
       (Measure.pi fun _ : Fin n => gaussianReal 0 1) :=
@@ -841,7 +841,7 @@ theorem integral_sub_integral_eq_zero_l2 (n : ℕ) (f : (Fin n → ℝ) → ℝ)
   have hfint : Integrable f (Measure.pi fun _ : Fin n => gaussianReal 0 1) := by
     rcases Nat.eq_zero_or_pos n with h0 | h0
     · subst h0
-      haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+      have : Subsingleton (Fin 0 → ℝ) := inferInstance
       have hconst : ∀ x : Fin 0 → ℝ, f x = f (fun _ => 0) :=
         fun x => congrArg f (Subsingleton.elim x _)
       rw [show f = fun _ => f (fun _ => 0) from funext hconst]
@@ -887,7 +887,7 @@ theorem hasDerivAt_mgf_centred_l2 (n : ℕ) (f : (Fin n → ℝ) → ℝ) (L t :
         ∂(Measure.pi fun _ : Fin n => gaussianReal 0 1)) t := by
   rcases Nat.eq_zero_or_pos n with h0 | h0
   · subst h0
-    haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+    have : Subsingleton (Fin 0 → ℝ) := inferInstance
     have hconst : ∀ x : Fin 0 → ℝ, f x = f (fun _ => 0) :=
       fun x => congrArg f (Subsingleton.elim x _)
     have h1 : ∀ x : Fin 0 → ℝ, f x - ∫ y, f y
@@ -1279,7 +1279,7 @@ theorem gaussian_lipschitz_concentration_l2_of_logSobolevL2 (n : ℕ)
       (fun lam hlam => ?_) (fun lam hlam => ?_)
     · rcases Nat.eq_zero_or_pos n with h0 | h0
       · subst h0
-        haveI : Subsingleton (Fin 0 → ℝ) := inferInstance
+        have : Subsingleton (Fin 0 → ℝ) := inferInstance
         have hconst : ∀ x : Fin 0 → ℝ, f x = f (fun _ => 0) :=
           fun x => congrArg f (Subsingleton.elim x _)
         have h1 : ∀ x : Fin 0 → ℝ, f x - ∫ y, f y

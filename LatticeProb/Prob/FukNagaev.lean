@@ -391,7 +391,7 @@ theorem fukNagaev_trunc {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι] (P : M
       refine le_trans (measure_mono ?_)
         (measure_abs_ge_le_div_rpow P hp1 (hint i).aestronglyMeasurable (hpint i) hβpos)
       intro ω hω
-      simp only [Set.mem_setOf_eq] at hω ⊢
+      simp only [Set.mem_ofPred_eq] at hω ⊢
       exact le_of_lt hω
     have hnn : ∀ i : ι, 0 ≤ (∫ ω, |Y i ω| ^ p ∂P) / β ^ p := by
       intro i
@@ -810,7 +810,7 @@ theorem fukNagaev_bound_one_sided {Ω ι : Type*} [MeasurableSpace Ω] [Fintype 
   refine le_trans (measure_mono ?_)
     (fukNagaev_bound P Y hindep hint hmean hp hpint hsq hMpdef hB hB2 ht)
   intro ω hω
-  simp only [Set.mem_setOf_eq] at hω ⊢
+  simp only [Set.mem_ofPred_eq] at hω ⊢
   exact le_trans hω (le_abs_self _)
 
 /-- The Fuk-Nagaev inequality when the total variance is only bounded above. -/
@@ -876,7 +876,7 @@ theorem fukNagaev_tail :
   intro p hp
   refine ⟨fukNagaevExp p, fukNagaevConst p, fukNagaevExp_pos hp, fukNagaevConst_pos hp, ?_⟩
   intro Ω ι _ _ P hP Y hindep hint hmean Mp B hMp hfin hB hB2 hsq t ht
-  haveI := hP
+  have := hP
   have hbr : ∀ i, Integrable (fun ω => |Y i ω| ^ p) P ∧
       (∫⁻ ω, ENNReal.ofReal (|Y i ω| ^ p) ∂P).toReal = ∫ ω, |Y i ω| ^ p ∂P :=
     fun i => integrable_abs_rpow_of_lintegral P (hint i).aestronglyMeasurable (hfin i)

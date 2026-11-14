@@ -94,7 +94,7 @@ theorem borellTIS_gaussianVector (hn : (Finset.univ : Finset (Fin n)).Nonempty)
   have hmeas : MeasurableSet {x : Fin n → ℝ | u ≤ Finset.univ.sup' hn x - m} :=
     measurableSet_le measurable_const (hsc.measurable.sub measurable_const)
   have e := measureReal_preimage_eq hX hmap hmeas
-  simp only [preimage_setOf_eq] at e
+  simp only [preimage_ofPred_eq] at e
   rw [e]
   exact borellTIS_finiteMax hn v hvσ hu
 

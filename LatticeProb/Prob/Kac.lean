@@ -40,13 +40,13 @@ private theorem retTime_eq_iff' (T : Ω → Ω) (A : Set Ω) (x : Ω) {n : ℕ} 
   classical
   unfold retTime
   by_cases h : ∃ n, 0 < n ∧ T^[n] x ∈ A
-  · rw [dif_pos h, Nat.find_eq_iff h]
+  · rw [dite_eq_left h, Nat.find_eq_iff h]
     constructor
     · intro hp
       exact ⟨hp.1.2, fun j hj hjn hmem => hp.2 j hjn ⟨hj, hmem⟩⟩
     · rintro ⟨hmem, havoid⟩
       exact ⟨⟨hn, hmem⟩, fun j hjn hpj => havoid j hpj.1 hjn hpj.2⟩
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     constructor
     · intro h0; omega
     · rintro ⟨hmem, _⟩
@@ -60,7 +60,7 @@ private theorem measurableSet_avoidCondition {Ω : Type*} [MeasurableSpace Ω] {
   have hset : {x : Ω | ∀ j, 0 < j → j < l → T^[j] x ∉ A}
       = ⋂ j : ℕ, (((T^[j]) ⁻¹' A)ᶜ ∪ {x : Ω | ¬ (0 < j ∧ j < l)}) := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_union, Set.mem_compl_iff,
+    simp only [mem_ofPred_eq, Set.mem_iInter, Set.mem_union, Set.mem_compl_iff,
       Set.mem_preimage]
     constructor
     · intro h j
@@ -93,14 +93,14 @@ private theorem measurableSet_retTime_preimage_singleton {Ω : Type*} [Measurabl
       simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_compl_iff, Set.mem_iUnion]
       unfold retTime
       by_cases h : ∃ n, 0 < n ∧ T^[n] x ∈ A
-      · rw [dif_pos h]
+      · rw [dite_eq_left h]
         constructor
         · intro hf
           exact absurd hf ((Nat.find_spec h).1).ne'
         · intro hc
           obtain ⟨k, hk, hmem⟩ := h
           exact absurd ⟨k - 1, by rw [Nat.sub_add_cancel hk]; exact hmem⟩ hc
-      · rw [dif_neg h]
+      · rw [dite_eq_right h]
         constructor
         · intro _ hk
           obtain ⟨k, hk'⟩ := hk
@@ -113,7 +113,7 @@ private theorem measurableSet_retTime_preimage_singleton {Ω : Type*} [Measurabl
     have hset : (retTime T A) ⁻¹' {m + 1}
         = {x | T^[m + 1] x ∈ A} ∩ {x | ∀ j, 0 < j → j < m + 1 → T^[j] x ∉ A} := by
       ext x
-      simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff, Set.mem_setOf_eq]
+      simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_inter_iff, mem_ofPred_eq]
       exact retTime_eq_iff' T A x (Nat.succ_pos m)
     rw [hset]
     exact MeasurableSet.inter ((hT.iterate (m + 1)) hA) (measurableSet_avoidCondition hT hA (m + 1))
@@ -133,7 +133,7 @@ private theorem measurableSet_retSet_and_avoidSet {T : Ω → Ω} (hT : Measurab
   · rw [show retSet T A B n = (T^[n]) ⁻¹' B ∩
         Set.iInter (fun k : {j : ℕ // 0 < j ∧ j < n} => (T^[k.1]) ⁻¹' Aᶜ) from by
       ext x
-      simp only [retSet, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_preimage, Set.mem_iInter,
+      simp only [retSet, mem_ofPred_eq, Set.mem_inter_iff, Set.mem_preimage, Set.mem_iInter,
         Set.mem_compl_iff]
       exact ⟨fun h => ⟨h.1, fun k => h.2 k.1 k.2.1 k.2.2⟩,
         fun h => ⟨h.1, fun j hj1 hj2 => h.2 ⟨j, hj1, hj2⟩⟩⟩]
@@ -141,7 +141,7 @@ private theorem measurableSet_retSet_and_avoidSet {T : Ω → Ω} (hT : Measurab
   · rw [show avoidSet T A B n = (T^[n]) ⁻¹' B ∩
         Set.iInter (fun k : Fin n => (T^[k.1]) ⁻¹' Aᶜ) from by
       ext x
-      simp only [avoidSet, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_preimage, Set.mem_iInter,
+      simp only [avoidSet, mem_ofPred_eq, Set.mem_inter_iff, Set.mem_preimage, Set.mem_iInter,
         Set.mem_compl_iff]
       exact ⟨fun h => ⟨h.1, fun k => h.2 k.1 k.2⟩,
         fun h => ⟨h.1, fun j hj => h.2 ⟨j, hj⟩⟩⟩]
@@ -152,7 +152,7 @@ omit [MeasurableSpace Ω] in
 private theorem preimage_avoidSet_eq_union' (T : Ω → Ω) (A B : Set Ω) (n : ℕ) :
     T ⁻¹' avoidSet T A B n = (A ∩ retSet T A B (n + 1)) ∪ avoidSet T A B (n + 1) := by
   ext x
-  simp only [mem_preimage, avoidSet, retSet, mem_setOf_eq, mem_inter_iff, mem_union]
+  simp only [mem_preimage, avoidSet, retSet, mem_ofPred_eq, mem_inter_iff, mem_union]
   constructor
   · rintro ⟨hB, hA⟩
     by_cases hx : x ∈ A
@@ -222,7 +222,7 @@ omit [MeasurableSpace Ω] in
 private theorem inter_retSet_succ_eq_inter_retTime_eq (T : Ω → Ω) (A : Set Ω) (n : ℕ) :
     A ∩ retSet T A A (n + 1) = A ∩ {x | retTime T A x = n + 1} := by
   ext x
-  simp only [Set.mem_inter_iff, Set.mem_setOf_eq, retSet]
+  simp only [Set.mem_inter_iff, mem_ofPred_eq, retSet]
   constructor
   · rintro ⟨ha, hcond⟩
     exact ⟨ha, (retTime_eq_iff' T A x (Nat.succ_pos n)).2 hcond⟩
@@ -280,7 +280,7 @@ private theorem tsum_measure_retTime_eq_eq_measure_lt_retTime {μ : Measure Ω} 
     ∑' k : ℕ, μ (A ∩ {x | retTime T A x = n + 1 + k}) = μ (A ∩ {x | n < retTime T A x}) := by
   have hset : A ∩ {x | n < retTime T A x} = ⋃ k, A ∩ {x | retTime T A x = n + 1 + k} :=
     Set.ext fun x => by
-      simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_iUnion]
+      simp only [Set.mem_inter_iff, mem_ofPred_eq, Set.mem_iUnion]
       constructor
       · rintro ⟨hxA, hlt⟩
         obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_lt hlt
@@ -293,7 +293,7 @@ private theorem tsum_measure_retTime_eq_eq_measure_lt_retTime {μ : Measure Ω} 
       :=
     fun k l hkl => Set.disjoint_left.mpr (by
       intro x hx hxl
-      simp only [Set.mem_inter_iff, Set.mem_setOf_eq] at hx hxl
+      simp only [Set.mem_inter_iff, mem_ofPred_eq] at hx hxl
       exact hkl (by omega))
   rw [← measure_iUnion hdisj hmeas]
   exact congrArg μ hset.symm
@@ -314,7 +314,7 @@ private theorem natCast_retTime_eq_tsum_indicator_lt (T : Ω → Ω) (A : Set Ω
     ((retTime T A x : ℕ) : ℝ≥0∞) =
       ∑' n : ℕ, ({y | n < retTime T A y} : Set Ω).indicator (fun _ => (1 : ℝ≥0∞)) x := by
   classical
-  simp only [Set.indicator_apply, Set.mem_setOf_eq]
+  simp only [Set.indicator_apply, mem_ofPred_eq]
   exact natCast_eq_tsum_ite_lt (retTime T A x)
 
 /-- `∫⁻_A retTime` equals `∑' n, μ (A ∩ {n < retTime})`, by the layer-cake formula. -/
@@ -381,7 +381,7 @@ private theorem measurableSet_basin_subset_and_forward_invariant {T : Ω → Ω}
     MeasurableSet {x | ∃ n, T^[n] x ∈ A} ∧ A ⊆ {x | ∃ n, T^[n] x ∈ A} ∧
       T ⁻¹' {x | ∃ n, T^[n] x ∈ A} ⊆ {x | ∃ n, T^[n] x ∈ A} := by
   refine ⟨?_, ?_, ?_⟩
-  · rw [setOf_exists]
+  · rw [ofPred_exists]
     exact MeasurableSet.iUnion fun n => (hT.iterate n) hA
   · intro x hx
     exact ⟨0, by simpa using hx⟩

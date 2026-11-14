@@ -69,12 +69,12 @@ theorem ProbabilityTheory.IsGaussianProcess.map_restrict_eq
     (hcov : ∀ s t, ∫ ω, X s ω * X t ω ∂P = ∫ ω, Y s ω * Y t ω ∂Q)
     (I : Finset T) :
     P.map (fun ω => I.restrict (X · ω)) = Q.map (fun ω => I.restrict (Y · ω)) := by
-  haveI := hX.isProbabilityMeasure
-  haveI := hY.isProbabilityMeasure
+  have := hX.isProbabilityMeasure
+  have := hY.isProbabilityMeasure
   have hgX := LatticeProb.hasGaussianLaw_toLp_restrict hX I
   have hgY := LatticeProb.hasGaussianLaw_toLp_restrict hY I
-  haveI := hgX.isGaussian_map
-  haveI := hgY.isGaussian_map
+  have := hgX.isGaussian_map
+  have := hgY.isGaussian_map
   apply MeasurableEquiv.map_measurableEquiv_injective (MeasurableEquiv.toLp 2 (I → ℝ))
   rw [Measure.map_map (μ := P) (g := MeasurableEquiv.toLp 2 (I → ℝ))
       (f := fun ω => I.restrict (X · ω)) (by fun_prop) (by fun_prop),
@@ -102,8 +102,8 @@ theorem LatticeProb.gaussianProcess_map_eq_of_covariance
     (hmean : ∀ t, ∫ ω, X t ω ∂P = 0) (hmean' : ∀ t, ∫ ω, Y t ω ∂Q = 0)
     (hcov : ∀ s t, ∫ ω, X s ω * X t ω ∂P = ∫ ω, Y s ω * Y t ω ∂Q)
     : P.map (fun ω u => X u ω) = Q.map (fun ω u => Y u ω) := by
-  haveI := hX.isProbabilityMeasure
-  haveI := hY.isProbabilityMeasure
+  have := hX.isProbabilityMeasure
+  have := hY.isProbabilityMeasure
   exact MeasureTheory.Measure.ext_of_map_restrict_eq hmX hmY
     (fun I => hX.map_restrict_eq hY hmX hmY hmean hmean' hcov I)
 

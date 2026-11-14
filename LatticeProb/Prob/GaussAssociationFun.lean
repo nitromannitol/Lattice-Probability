@@ -210,7 +210,7 @@ lemma layerApprox_eq (hfb : ∀ y, |f y| ≤ C) (n : ℕ) (y : ι → ℝ) :
     exact Int.floor_le_floor (mul_le_mul_of_nonneg_left hb.1 hpos.le)
   have hind : ∀ j : ℤ, (layerSet f n j).indicator (1 : (ι → ℝ) → ℝ) y =
       if j ≤ z then 1 else 0 := fun j => by
-    simp only [indicator_apply, layerSet, Set.mem_setOf_eq, Pi.one_apply, z, Int.le_floor]
+    simp only [indicator_apply, layerSet, mem_ofPred_eq, Pi.one_apply, z, Int.le_floor]
   simp only [hind]
   unfold layerApprox
   rw [int_eq_neg_add_sum_ite M z h1 h2]

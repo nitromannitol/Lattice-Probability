@@ -423,7 +423,7 @@ theorem freedman [IsProbabilityMeasure P] {n : ℕ} {ℱ : Filtration ℕ m0} {M
     simpa only [hfun] using hω
   have hset : {ω | M n ω ≤ -r} = {ω | r ≤ (-M) n ω} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Pi.neg_apply]
+    simp only [Set.mem_ofPred_eq, Pi.neg_apply]
     constructor <;> intro h <;> linarith
   rw [hset]
   exact freedman_upper hmart.neg hM0' hb hv hinc' hqv' hr
