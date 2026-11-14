@@ -1,4 +1,5 @@
 import LatticeProb.Prob.CellConfigOriginSquares
+import LatticeProb.Prob.CellConfigCellDiameterSublinear
 import LatticeProb.Prob.CellConfigCovariantDyadicRelatives
 import LatticeProb.Bonanno.ReflectedGMS.Spatial.RootedMassBounds
 
@@ -343,12 +344,6 @@ noncomputable def diamSqDegreeSum (H : CellConfig) (S : Set ℂ) : ℝ≥0∞ :=
 noncomputable def innerDiamSqDegreeSum (H : CellConfig) (S : Set ℂ) : ℝ≥0∞ :=
   ∑' K : H.cells, {K : H.cells | complexCells H K ⊆ S}.indicator (fun K => diamSqDegree H K) K
 
-/-- The dyadic ancestor of side `4 |S_j|` of the square `S_j` around the origin in which `S_j`
-occupies the second row and column. -/
-noncomputable def originAncestorSquare (q : DyadicCoord) (j : ℤ) : Set ℂ :=
-  cornerSquare (gridFloor q.1 q.2.1 j (0 : ℂ).re - (2 : ℝ) ^ (q.1 + (j : ℝ)))
-    (gridFloor q.1 q.2.2 j (0 : ℂ).im - (2 : ℝ) ^ (q.1 + (j : ℝ))) (4 * (2 : ℝ) ^ (q.1 + (j : ℝ)))
-
 theorem area_nonneg (K : Cell) : 0 ≤ CellConfig.area K := ENNReal.toReal_nonneg
 
 theorem pi_nonneg {H : CellConfig} (hH : H.IsCellConfiguration) (K : Cell) : 0 ≤ H.pi K :=
@@ -359,27 +354,6 @@ theorem piStar_nonneg {H : CellConfig} (hH : H.IsCellConfiguration) (K : Cell) :
   tsum_nonneg fun K' => inv_nonneg.2 (hH.c_nonneg K K')
 
 /-! #### Measurability through the label slots -/
-
-/-- A sum over the cells is the sum over the label slots. -/
-theorem tsum_cells_eq_tsum_slot {H : CellConfig} (hH : H.IsCellConfiguration)
-    (F : Cell → ℝ≥0∞) : ∑' K : H.cells, F K = ∑' n, (H.slot n).elim 0 F := by
-  have hinj : Function.Injective (CellConfig.label hH) := by
-    intro K K' h
-    have h1 := CellConfig.slot_label hH K
-    have h2 := CellConfig.slot_label hH K'
-    rw [h] at h1
-    exact Subtype.ext (Option.some_inj.mp (h1.symm.trans h2))
-  have hsupp : Function.support (fun n => (H.slot n).elim 0 F) ⊆
-      Set.range (CellConfig.label hH) := by
-    intro n hn
-    cases hs : H.slot n with
-    | none => exact absurd (by simp only [hs, Option.elim]) hn
-    | some K =>
-      obtain ⟨hK, hl⟩ := (CellConfig.slot_eq_some_iff hH).1 hs
-      exact ⟨⟨K, hK⟩, leastInteriorLabel_unique
-        (CellConfig.leastInteriorLabel_label hH ⟨K, hK⟩) hl⟩
-  rw [← hinj.tsum_eq hsupp]
-  exact tsum_congr fun K => by simp only [CellConfig.slot_label hH K, Option.elim]
 
 theorem slot_elim_ofReal_c {H : CellConfig} {n : ℕ} {K : Cell} (hn : H.slot n = some K)
     (m : ℕ) :
@@ -1019,5 +993,43 @@ theorem exists_limsup_inv_volume_mul_diamSqDegreeSum_le_of_boundary {μ : Measur
           rw [ENNReal.inv_mul_cancel hv0 hvt, one_mul,
             ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 16), ENNReal.ofReal_ofNat]
   exact Filter.limsup_le_of_le (h := hbound)
+
+/-- The diameter-squared degree estimate under connectedness along lines. -/
+private theorem exists_limsup_inv_volume_mul_diamSqDegreeSum_le_of_connectedAlongLines
+    {μ : Measure GMSSpace} [IsProbabilityMeasure μ] (hMT : MassTransport μ)
+    (herg : ErgodicModuloScaling μ) (hL : ConnectedAlongLines μ) (hFE : FiniteExpectation μ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ᵐ H ∂μ, ∀ᵐ q ∂dyadicLaw,
+      limsup (fun j : ℤ => (volume (squareAt q.1 q.2.1 q.2.2 j 0))⁻¹ *
+        diamSqDegreeSum H.1 (squareAt q.1 q.2.1 q.2.2 j 0)) atTop ≤ ENNReal.ofReal C :=
+  exists_limsup_inv_volume_mul_diamSqDegreeSum_le_of_boundary hMT herg hFE
+    (ae_ae_eventually_diam_le_half_side hMT hL hFE)
+
+/-- An eventual diameter-squared degree bound under connectedness along lines. -/
+private theorem exists_eventually_diamSqDegreeSum_le_of_connectedAlongLines
+    {μ : Measure GMSSpace} [IsProbabilityMeasure μ] (hMT : MassTransport μ)
+    (herg : ErgodicModuloScaling μ) (hL : ConnectedAlongLines μ) (hFE : FiniteExpectation μ) :
+    ∃ C : ℝ, 0 < C ∧ ∀ᵐ H ∂μ, ∀ᵐ q ∂dyadicLaw, ∀ᶠ j : ℤ in atTop,
+      diamSqDegreeSum H.1 (squareAt q.1 q.2.1 q.2.2 j 0) ≤
+        ENNReal.ofReal C * volume (squareAt q.1 q.2.1 q.2.2 j 0) := by
+  obtain ⟨C, hC, hlim⟩ :=
+    exists_limsup_inv_volume_mul_diamSqDegreeSum_le_of_connectedAlongLines hMT herg hL hFE
+  refine ⟨C + 1, by linarith, ?_⟩
+  filter_upwards [hlim] with H hH
+  filter_upwards [hH] with q hq
+  have hlt : limsup (fun j : ℤ => (volume (squareAt q.1 q.2.1 q.2.2 j 0))⁻¹ *
+      diamSqDegreeSum H.1 (squareAt q.1 q.2.1 q.2.2 j 0)) atTop < ENNReal.ofReal (C + 1) :=
+    hq.trans_lt ((ENNReal.ofReal_lt_ofReal_iff (by linarith)).2 (by linarith))
+  filter_upwards [Filter.eventually_lt_of_limsup_lt hlt] with j hj
+  have hv0 := volume_squareAt_ne_zero q j
+  have hvt := volume_squareAt_ne_top q j
+  calc
+    diamSqDegreeSum H.1 (squareAt q.1 q.2.1 q.2.2 j 0) =
+        volume (squareAt q.1 q.2.1 q.2.2 j 0) *
+          ((volume (squareAt q.1 q.2.1 q.2.2 j 0))⁻¹ *
+            diamSqDegreeSum H.1 (squareAt q.1 q.2.1 q.2.2 j 0)) := by
+              rw [← mul_assoc, ENNReal.mul_inv_cancel hv0 hvt, one_mul]
+    _ ≤ volume (squareAt q.1 q.2.1 q.2.2 j 0) * ENNReal.ofReal (C + 1) :=
+      mul_le_mul' le_rfl hj.le
+    _ = ENNReal.ofReal (C + 1) * volume (squareAt q.1 q.2.1 q.2.2 j 0) := mul_comm _ _
 
 end LatticeProb.CellConfigCappedSquare
