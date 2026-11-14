@@ -62,7 +62,7 @@ theorem thinPlanar_explicit_of_dense {p ε : ℝ} (hε : 0 < ε) (hp : p ≤ 1 -
       ∀ A : Set (PlanarCarrier → Bool), MeasurableSet A → StrassenAux.IsIncreasingSet A →
         μ A ≤ bernoulliFieldPlanar (1 / 8) one_eighth_le_one A := by
   intro μ hμ hKD hsite A hA hinc
-  haveI := hμ
+  have := hμ
   exact thinPlanar_of_dense (p := p) (ε := ε) hε.le hp hdense hKD hsite hA hinc
 
 end LatticeProb.Percolation

@@ -133,7 +133,7 @@ theorem measure_boxPathEvent_le {d : ℕ} {Ω : Type*} [MeasurableSpace Ω] (μ 
     by_cases hn : Γ.Nodup
     · have he : A Γ = {ω | ∀ a ∈ Γ.toFinset, ω ∈ E a} := by
         ext ω
-        simp only [A, mem_setOf_eq, hn, true_and, List.mem_toFinset]
+        simp only [A, mem_ofPred_eq, hn, true_and, List.mem_toFinset]
       rw [he]
       apply hT
       rw [List.toFinset_card_of_nodup hn, length_of_mem_boxWalkListFamily hΓ]
@@ -143,7 +143,7 @@ theorem measure_boxPathEvent_le {d : ℕ} {Ω : Type*} [MeasurableSpace Ω] (μ 
       exact bot_le
   have he : boxPathEvent n S E = ⋃ Γ ∈ boxWalkListFamily n S, A Γ := by
     ext ω
-    simp only [boxPathEvent, A, mem_setOf_eq, mem_iUnion, exists_prop]
+    simp only [boxPathEvent, A, mem_ofPred_eq, mem_iUnion, exists_prop]
   rw [he]
   calc
     _ ≤ ∑ Γ ∈ boxWalkListFamily n S, μ (A Γ) := measure_biUnion_finset_le _ _

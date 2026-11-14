@@ -38,7 +38,7 @@ theorem exists_thinPlanar_of_dense {p : ℝ} (hp : p < 1) (hdense : DenseSevenEi
           μ A ≤ bernoulliFieldPlanar (1 / 8) one_eighth_le_one A := by
   refine ⟨(1 - p) / 2, by linarith, ?_⟩
   intro μ hμ hKD hsite A hA hinc
-  haveI := hμ
+  have := hμ
   exact thinPlanar_of_dense (p := p) (ε := (1 - p) / 2)
     (by linarith) (by linarith) hdense hKD hsite hA hinc
 
@@ -51,7 +51,7 @@ theorem thinPlanar_of_dense_consumer {p ε : ℝ} (hε : 0 < ε) (hp : p ≤ 1 -
       ∀ A : Set (PlanarCarrier → Bool), MeasurableSet A → StrassenAux.IsIncreasingSet A →
         μ A ≤ bernoulliFieldPlanar (1 / 8) one_eighth_le_one A := by
   intro μ hμ hKD hsite A hA hinc
-  haveI := hμ
+  have := hμ
   exact thinPlanar_of_dense (p := p) (ε := ε) hε.le hp hdense hKD hsite hA hinc
 
 end LatticeProb.Percolation

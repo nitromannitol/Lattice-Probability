@@ -45,7 +45,7 @@ theorem rotorThin_discharge_witness {p : ℝ} (hp : p < 1) (hdense : DenseSevenE
           μ A ≤ consumerBernoulliField (1 / 8) one_eighth_le_one A := by
   refine ⟨by linarith, ?_⟩
   intro μ hμ hKD hsite A hA hinc
-  haveI := hμ
+  have := hμ
   rw [consumerKDependent_iff] at hKD
   rw [consumerIsIncreasing_iff] at hinc
   rw [consumerBernoulliField_eq]

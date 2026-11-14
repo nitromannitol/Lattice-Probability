@@ -183,10 +183,10 @@ theorem sum_map_indicator (l : List (Site × Site)) (x : Site × Site) :
     rw [List.map_cons, List.sum_cons, ih, List.count_cons]
     by_cases h : s = x
     · subst h
-      simp only [if_true, beq_self_eq_true, Nat.cast_add, Nat.cast_one]
+      simp only [ite_true, beq_self_eq_true, Nat.cast_add, Nat.cast_one]
       ring
-    · simp only [if_neg h, Nat.cast_add]
-      rw [if_neg (by simpa using h)]
+    · simp only [ite_eq_right h, Nat.cast_add]
+      rw [ite_eq_right (by simpa using h)]
       simp
 
 /-- The per-step accounting across a vertical step `a → a + (0, 1)`: only that step and its
