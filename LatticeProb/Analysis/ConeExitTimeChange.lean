@@ -69,4 +69,54 @@ theorem coneJointExitBackward_timeChange (X Y : ℝ → ℝ) (e : ℝ ≃o ℝ)
   rw [hset]
   exact (e.symm.map_csSup' hA hbound).symm
 
+/-- Backward cone-vector membership is preserved by an increasing change of
+ time and vertical shifts, provided both coordinates have previously dropped. -/
+theorem mem_backwardConeVectors_timeChange (X Y : ℝ → ℝ) (e : ℝ ≃o ℝ)
+    (c d a s : ℝ)
+    (hne : ∃ t < e s, (∃ r ∈ Icc t (e s), X r < X (e s)) ∧
+      (∃ r ∈ Icc t (e s), Y r < Y (e s))) :
+    (a, s) ∈ backwardConeVectors (fun t => X (e t) - c) (fun t => Y (e t) - d) ↔
+      (e a, e s) ∈ backwardConeVectors X Y := by
+  have hfirst : ∃ t < e s, X t < X (e s) ∨ Y t < Y (e s) := by
+    obtain ⟨t, ht, ⟨x, hx, hx'⟩, hy⟩ := hne
+    have hxs : x < e s := by
+      by_contra h
+      have heq : x = e s := le_antisymm hx.2 (le_of_not_gt h)
+      rw [heq] at hx'
+      exact (lt_irrefl _) hx'
+    exact ⟨x, hxs, Or.inl hx'⟩
+  have hf := coneFirstExitBackward_timeChange X Y e c d s hfirst
+  have hj := coneJointExitBackward_timeChange X Y e c d s hne
+  have hbar : (∀ t ∈ Icc (e.symm (coneFirstExitBackward X Y (e s))) s,
+        X (e s) - c ≤ X (e t) - c ∧ Y (e s) - d ≤ Y (e t) - d) ↔
+      ∀ t ∈ Icc (coneFirstExitBackward X Y (e s)) (e s),
+        X (e s) ≤ X t ∧ Y (e s) ≤ Y t := by
+    constructor
+    · intro h t ht
+      have ht' : e.symm t ∈ Icc (e.symm (coneFirstExitBackward X Y (e s))) s :=
+        ⟨e.symm.monotone ht.1, by simpa only [e.symm_apply_apply] using e.symm.monotone ht.2⟩
+      simpa only [e.apply_symm_apply, sub_le_sub_iff_right] using h (e.symm t) ht'
+    · intro h t ht
+      have ht' : e t ∈ Icc (coneFirstExitBackward X Y (e s)) (e s) :=
+        ⟨by simpa only [e.apply_symm_apply] using e.monotone ht.1, e.monotone ht.2⟩
+      simpa only [sub_le_sub_iff_right] using h (e t) ht'
+  change (a = coneJointExitBackward _ _ s ∧
+      coneJointExitBackward _ _ s < coneFirstExitBackward _ _ s ∧
+      coneFirstExitBackward _ _ s < s ∧ _) ↔
+    (e a = coneJointExitBackward X Y (e s) ∧
+      coneJointExitBackward X Y (e s) < coneFirstExitBackward X Y (e s) ∧
+      coneFirstExitBackward X Y (e s) < e s ∧ _)
+  rw [hf, hj, hbar]
+  constructor
+  · rintro ⟨ha, h1, h2, hb⟩
+    refine ⟨?_, ?_, ?_, hb⟩
+    · simpa only [e.apply_symm_apply] using congrArg e ha
+    · simpa only [e.apply_symm_apply] using e.strictMono h1
+    · simpa only [e.apply_symm_apply] using e.strictMono h2
+  · rintro ⟨ha, h1, h2, hb⟩
+    refine ⟨?_, ?_, ?_, hb⟩
+    · simpa only [e.symm_apply_apply] using congrArg e.symm ha
+    · exact e.symm.strictMono h1
+    · simpa only [e.symm_apply_apply] using e.symm.strictMono h2
+
 end LatticeProb
