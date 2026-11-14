@@ -94,7 +94,7 @@ theorem lintegral_rpow_layer_cake {Ω : Type*} [MeasurableSpace Ω]
       _ ≤ _ := by
           refine mul_le_mul_right (setLIntegral_mono' measurableSet_Ioi fun t ht => ?_) _
           refine mul_le_mul_left (measure_mono fun ω hω => ?_) _
-          simp only [Set.mem_setOf_eq] at hω ⊢
+          simp only [mem_ofPred_eq] at hω ⊢
           rw [hω]
           exact ENNReal.ofReal_lt_top
 
@@ -296,7 +296,7 @@ omit [MeasurableSpace Ω] in
 theorem maximalSet_eq_bAvg (T : Ω → Ω) (h : Ω → ℝ) {c : ℝ} (hc : 0 < c) :
     maximalSet T h c = {x | ∃ n : ℕ, c < bAvg T h n x} := by
   ext x
-  simp only [maximalSet, mem_iUnion, mem_setOf_eq]
+  simp only [maximalSet, mem_iUnion, mem_ofPred_eq]
   constructor
   · rintro ⟨N, hN⟩
     rw [maxBirkhoff_pos_iff] at hN
@@ -403,7 +403,7 @@ theorem marcinkiewicz_abstract
       by_cases htN : t < (N : ℝ)
       · have hset : {x | ENNReal.ofReal t < gN x} = {x | ENNReal.ofReal t < g x} := by
           ext x
-          simp only [gN, Set.mem_setOf_eq]
+          simp only [gN, mem_ofPred_eq]
           constructor
           · intro h; exact lt_of_lt_of_le h (min_le_left _ _)
           · intro h
@@ -413,7 +413,7 @@ theorem marcinkiewicz_abstract
         rw [hset]; exact hweak t ht
       · have hset : {x | ENNReal.ofReal t < gN x} = ∅ := by
           ext x
-          simp only [gN, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+          simp only [gN, mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
           intro h
           have h2 : ENNReal.ofReal t < (N : ℝ≥0∞) := lt_of_lt_of_le h (min_le_right _ _)
           rw [ENNReal.ofReal_lt_iff_lt_toReal ht.le (by simp)] at h2
@@ -430,7 +430,7 @@ theorem marcinkiewicz_abstract
         refine ((measurable_id.pow_const (p-2)).ennreal_ofReal).mul ?_
         rw [show (fun t : ℝ => if ENNReal.ofReal t < gN x then (1:ℝ≥0∞) else 0)
             = ({t : ℝ | ENNReal.ofReal t < gN x}.indicator (fun _ => (1:ℝ≥0∞))) from by
-              funext t; simp only [Set.indicator_apply, Set.mem_setOf_eq]]
+              funext t; simp only [Set.indicator_apply, mem_ofPred_eq]]
         exact measurable_const.indicator
           (measurableSet_lt measurable_id.ennreal_ofReal measurable_const)
       have hstep : ∫⁻ t in Ioi (0:ℝ), ENNReal.ofReal (t ^ (p-2)) *
@@ -439,10 +439,10 @@ theorem marcinkiewicz_abstract
             (if ENNReal.ofReal t < gN x then (1:ℝ≥0∞) else 0) := by
         rw [← lintegral_const_mul (f x) hψ]
         refine setLIntegral_congr_fun measurableSet_Ioi (fun t ht => ?_)
-        simp only [Set.indicator_apply, Set.mem_setOf_eq]
+        simp only [Set.indicator_apply, mem_ofPred_eq]
         by_cases h : ENNReal.ofReal t < gN x
-        · simp only [h, if_true]; ring
-        · simp only [h, if_false, mul_zero]
+        · simp only [h, ite_true]; ring
+        · simp only [h, ite_false, mul_zero]
       rw [hstep, lintegral_Ioi_cond_rpow_eq gN hgNlt p hp x]
       ring
     have hpt : ∀ t : ℝ, 0 < t →
@@ -642,7 +642,7 @@ theorem birkhoffMax_weakType {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
       have hMeq : fM M = fun x => ENNReal.ofReal (h x) := heq.symm
       rw [maximalSet_eq_bAvg T h ht, hMeq]
       ext x
-      simp only [Set.mem_setOf_eq, birkhoffMax]
+      simp only [mem_ofPred_eq, birkhoffMax]
       rw [lt_iSup_iff]
       constructor
       · rintro ⟨n, hn⟩
@@ -668,13 +668,13 @@ theorem birkhoffMax_weakType {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
   have hEmono : Monotone E := by
     intro M N hMN x hx
     have hx' : ENNReal.ofReal t < birkhoffMax T (fM M) x := by
-      simpa only [hE, Set.mem_setOf_eq] using hx
+      simpa only [hE, mem_ofPred_eq] using hx
     have hgoal : ENNReal.ofReal t < birkhoffMax T (fM N) x :=
       lt_of_lt_of_le hx' (birkhoffMax_mono (fun y => min_le_min le_rfl (by exact_mod_cast hMN)) x)
-    simpa only [hE, Set.mem_setOf_eq] using hgoal
+    simpa only [hE, mem_ofPred_eq] using hgoal
   have hEunion : (⋃ M, E M) = {x | ENNReal.ofReal t < birkhoffMax T f x} := by
     ext x
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq, hE]
+    simp only [Set.mem_iUnion, mem_ofPred_eq, hE]
     constructor
     · rintro ⟨M, hM⟩
       exact lt_of_lt_of_le hM (birkhoffMax_mono (fun y => min_le_left _ _) x)

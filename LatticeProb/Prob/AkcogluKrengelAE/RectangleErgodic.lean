@@ -114,8 +114,8 @@ theorem prod_ite_Ico_eq_indicator_anchoredBox {d : ℕ} (c : Fin d → ℝ) (N :
   classical
   rw [Fintype.prod_boole]
   by_cases h : ∀ i, x i ∈ Finset.Ico (0 : ℤ) ⌈(N : ℝ) * c i⌉
-  · rw [if_pos h, if_pos (by simpa only [mem_anchoredBox] using h)]
-  · rw [if_neg h, if_neg (by simpa only [mem_anchoredBox] using h)]
+  · rw [ite_eq_left h, ite_eq_left (by simpa only [mem_anchoredBox] using h)]
+  · rw [ite_eq_right h, ite_eq_right (by simpa only [mem_anchoredBox] using h)]
 
 /-- **The rectangle is the alternating sum of its `2^d` anchored corner boxes.**  For
 `0 ≤ a ≤ b` and every site `x`,
@@ -134,8 +134,8 @@ theorem indicator_rectBox_eq_sum_anchoredBox {d : ℕ} (a b : Fin d → ℝ) (N 
         ∏ i, (if x i ∈ Finset.Ico ⌈(N : ℝ) * a i⌉ ⌈(N : ℝ) * b i⌉ then (1 : ℝ) else 0) := by
       rw [Fintype.prod_boole]
       by_cases h : ∀ i, x i ∈ Finset.Ico ⌈(N : ℝ) * a i⌉ ⌈(N : ℝ) * b i⌉
-      · rw [if_pos h, if_pos (by simpa only [mem_rectBox] using h)]
-      · rw [if_neg h, if_neg (by simpa only [mem_rectBox] using h)]
+      · rw [ite_eq_left h, ite_eq_left (by simpa only [mem_rectBox] using h)]
+      · rw [ite_eq_right h, ite_eq_right (by simpa only [mem_rectBox] using h)]
     rw [h1]
     refine Finset.prod_congr rfl (fun i _ => ?_)
     exact (ite_Ico_sub_ite_Ico (Int.ceil_nonneg (mul_nonneg (Nat.cast_nonneg N) (ha i)))

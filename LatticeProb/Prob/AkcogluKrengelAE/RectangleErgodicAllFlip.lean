@@ -46,8 +46,8 @@ theorem flipSubset_add {d : ℕ} (S : Finset (Fin d)) (z w : Site d) :
     flipSubset S (z + w) = flipSubset S z + flipSubset S w := by
   funext i
   by_cases hi : i ∈ S
-  · simp only [flipSubset, hi, if_true, Pi.add_apply]; abel
-  · simp only [flipSubset, hi, if_false, Pi.add_apply]
+  · simp only [flipSubset, hi, ite_true, Pi.add_apply]; abel
+  · simp only [flipSubset, hi, ite_false, Pi.add_apply]
 
 theorem flipSubset_involutive {d : ℕ} (S : Finset (Fin d)) (z : Site d) :
     flipSubset S (flipSubset S z) = z := by

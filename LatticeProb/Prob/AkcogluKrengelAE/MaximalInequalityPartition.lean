@@ -106,7 +106,7 @@ theorem map_addRight_gridBox_eq_dyCell {d : ℕ} (u : Site d) (J k : ℕ) (w : F
   rw [gridBox, map_addRight_latticeBox_eq, dyCell]
   congr 1 <;> funext i <;>
     simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, natToSite,
-      Finset.mem_univ, if_true] <;>
+      Finset.mem_univ, ite_true] <;>
     (push_cast; ring)
 
 /-- For a nonnegative superadditive `r`, the sum of `r` over the level-`J` dyadic cells tiling
@@ -166,7 +166,7 @@ theorem exists_mem_gridSet_mem_dyCell_of_mem_dyBig {d : ℕ} (u : Site d) (J N :
   refine ⟨fun i => ((y i - (u i - 2 * (2 ^ J : ℤ))) / 2 ^ J).toNat, ?_, ?_⟩
   · rw [gridSet, Fintype.mem_piFinset]
     intro i
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     have h1 := (hbound i).1
     have h2 := (hbound i).2
     have h3 := ediv_nonneg_lt_and_mul_ediv_le (y i - (u i - 2 * (2 ^ J : ℤ)))

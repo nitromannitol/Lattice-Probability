@@ -176,9 +176,9 @@ theorem boxFun_le_trim_subset_add_defect {d : ℕ} {f : Finset (Site d) → Ω �
   induction S using Finset.induction with
   | empty => simp
   | insert i S h ih =>
-    have h1 : (if i ∈ S then a' i else a i) ≤ a' i := by rw [if_neg h]; exact ha i
+    have h1 : (if i ∈ S then a' i else a i) ≤ a' i := by rw [ite_eq_right h]; exact ha i
     have h2 : a' i ≤ b' i := hab i
-    have h3 : b' i ≤ (if i ∈ S then b' i else b i) := by rw [if_neg h]; exact hb i
+    have h3 : b' i ≤ (if i ∈ S then b' i else b i) := by rw [ite_eq_right h]; exact hb i
     have h6 := boxFun_le_trim_add_defect hC hsub (fun j => if j ∈ S then a' j else a j)
       (fun j => if j ∈ S then b' j else b j) i (a' i) (b' i) h1 h2 h3 ω
     have e1 := update_ite_mem_insert S i a a'
@@ -314,7 +314,7 @@ theorem boxFun_le_sum_slabs {d : ℕ} {f : Finset (Site d) → Ω → ℝ} {C : 
 /-- The partial grid over the empty coordinate set is the single point `0`. -/
 theorem gridSet_empty (d n : ℕ) : gridSet d ∅ n = {0} := by
   rw [gridSet]
-  simp only [Finset.notMem_empty, if_false]
+  simp only [Finset.notMem_empty, ite_false]
   exact Fintype.piFinset_singleton 0
 
 
@@ -324,7 +324,7 @@ theorem gridSet_apply_eq_zero_of_notMem {d : ℕ} {s : Finset (Fin d)} {n : ℕ}
     (hw : w ∈ gridSet d s n) (hi : i ∉ s) : w i = 0 := by
   simp only [gridSet, Fintype.mem_piFinset] at hw
   have h := hw i
-  rw [if_neg hi, Finset.mem_singleton] at h
+  rw [ite_eq_right hi, Finset.mem_singleton] at h
   exact h
 
 
@@ -339,20 +339,20 @@ theorem update_mem_gridSet_insert_iff {d : ℕ} {s : Finset (Fin d)} {i : Fin d}
   constructor
   · intro h
     have := h i
-    rw [Function.update_self, if_pos (Finset.mem_insert_self i s)] at this
+    rw [Function.update_self, ite_eq_left (Finset.mem_insert_self i s)] at this
     exact this
   · intro hj a
     by_cases ha : a = i
-    · rw [ha, Function.update_self, if_pos (Finset.mem_insert_self i s)]
+    · rw [ha, Function.update_self, ite_eq_left (Finset.mem_insert_self i s)]
       exact hj
-    · rw [Function.update_apply, if_neg ha]
+    · rw [Function.update_apply, ite_eq_right ha]
       have hwa := hw a
       by_cases has : a ∈ s
-      · rw [if_pos has] at hwa
-        rw [if_pos (Finset.mem_insert_of_mem has)]
+      · rw [ite_eq_left has] at hwa
+        rw [ite_eq_left (Finset.mem_insert_of_mem has)]
         exact hwa
-      · rw [if_neg has] at hwa
-        rw [if_neg (fun hmem => by
+      · rw [ite_eq_right has] at hwa
+        rw [ite_eq_right (fun hmem => by
           rcases Finset.mem_insert.mp hmem with h' | h'
           · exact ha h'
           · exact has h')]
@@ -369,24 +369,24 @@ theorem update_zero_mem_gridSet_of_mem_insert {d : ℕ} {s : Finset (Fin d)} {i 
   refine ⟨?_, ?_⟩
   · intro a
     by_cases ha : a = i
-    · rw [ha, Function.update_self, if_neg hi]
+    · rw [ha, Function.update_self, ite_eq_right hi]
       exact Finset.mem_singleton.mpr rfl
-    · rw [Function.update_apply, if_neg ha]
+    · rw [Function.update_apply, ite_eq_right ha]
       have hwa := hw a
       by_cases has : a ∈ s
-      · rw [if_pos has]
-        rw [if_pos (Finset.mem_insert_of_mem has)] at hwa
+      · rw [ite_eq_left has]
+        rw [ite_eq_left (Finset.mem_insert_of_mem has)] at hwa
         exact hwa
-      · rw [if_neg has]
+      · rw [ite_eq_right has]
         have hni : ¬ a ∈ insert i s := fun hmem => by
           rcases Finset.mem_insert.mp hmem with h' | h'
           · exact ha h'
           · exact has h'
-        rw [if_neg hni] at hwa
+        rw [ite_eq_right hni] at hwa
         rw [Finset.mem_singleton] at hwa ⊢
         exact hwa
   · have := hw i
-    rw [if_pos (Finset.mem_insert_self i s)] at this
+    rw [ite_eq_left (Finset.mem_insert_self i s)] at this
     exact this
 
 /-- A sum over the grid `gridSet d (insert i s) n` splits as a sum over `gridSet d s n` of sums over

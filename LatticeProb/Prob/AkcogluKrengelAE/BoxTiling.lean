@@ -54,7 +54,7 @@ theorem boxGridSet_apply_eq_zero_of_notMem {d : ℕ} {s : Finset (Fin d)} {m : F
     {w : Fin d → ℕ} {i : Fin d} (hw : w ∈ boxGridSet s m) (hi : i ∉ s) : w i = 0 := by
   simp only [boxGridSet, Fintype.mem_piFinset] at hw
   have h := hw i
-  rw [if_neg hi, Finset.mem_singleton] at h
+  rw [ite_eq_right hi, Finset.mem_singleton] at h
   exact h
 
 /-- Updating coordinate `i` of a box point in `boxGridSet s m` to a value `j` lands in
@@ -68,20 +68,20 @@ theorem update_mem_boxGridSet_insert_iff {d : ℕ} {s : Finset (Fin d)} {i : Fin
   constructor
   · intro h
     have := h i
-    rw [Function.update_self, if_pos (Finset.mem_insert_self i s)] at this
+    rw [Function.update_self, ite_eq_left (Finset.mem_insert_self i s)] at this
     exact this
   · intro hj a
     by_cases ha : a = i
-    · rw [ha, Function.update_self, if_pos (Finset.mem_insert_self i s)]
+    · rw [ha, Function.update_self, ite_eq_left (Finset.mem_insert_self i s)]
       exact hj
-    · rw [Function.update_apply, if_neg ha]
+    · rw [Function.update_apply, ite_eq_right ha]
       have hwa := hw a
       by_cases has : a ∈ s
-      · rw [if_pos has] at hwa
-        rw [if_pos (Finset.mem_insert_of_mem has)]
+      · rw [ite_eq_left has] at hwa
+        rw [ite_eq_left (Finset.mem_insert_of_mem has)]
         exact hwa
-      · rw [if_neg has] at hwa
-        rw [if_neg (fun hmem => by
+      · rw [ite_eq_right has] at hwa
+        rw [ite_eq_right (fun hmem => by
           rcases Finset.mem_insert.mp hmem with h' | h'
           · exact ha h'
           · exact has h')]
@@ -97,24 +97,24 @@ theorem update_zero_mem_boxGridSet_of_mem_insert {d : ℕ} {s : Finset (Fin d)} 
   refine ⟨?_, ?_⟩
   · intro a
     by_cases ha : a = i
-    · rw [ha, Function.update_self, if_neg hi]
+    · rw [ha, Function.update_self, ite_eq_right hi]
       exact Finset.mem_singleton.mpr rfl
-    · rw [Function.update_apply, if_neg ha]
+    · rw [Function.update_apply, ite_eq_right ha]
       have hwa := hw a
       by_cases has : a ∈ s
-      · rw [if_pos has]
-        rw [if_pos (Finset.mem_insert_of_mem has)] at hwa
+      · rw [ite_eq_left has]
+        rw [ite_eq_left (Finset.mem_insert_of_mem has)] at hwa
         exact hwa
-      · rw [if_neg has]
+      · rw [ite_eq_right has]
         have hni : ¬ a ∈ insert i s := fun hmem => by
           rcases Finset.mem_insert.mp hmem with h' | h'
           · exact ha h'
           · exact has h'
-        rw [if_neg hni] at hwa
+        rw [ite_eq_right hni] at hwa
         rw [Finset.mem_singleton] at hwa ⊢
         exact hwa
   · have := hw i
-    rw [if_pos (Finset.mem_insert_self i s)] at this
+    rw [ite_eq_left (Finset.mem_insert_self i s)] at this
     exact this
 
 /-- A sum over the box `boxGridSet (insert i s) m` splits as a sum over `boxGridSet s m` of sums
@@ -181,7 +181,7 @@ omit [MeasurableSpace Ω] in
 theorem boxAvg_empty {d : ℕ} (σ : Site d → Ω → Ω) (h : Ω → ℝ) (m : Fin d → ℕ)
     (ω : Ω) :
     boxAvg σ h ∅ m ω = h (σ (natToSite 0) ω) := by
-  simp only [boxAvg, boxGridSet, Finset.notMem_empty, if_false, Fintype.piFinset_singleton,
+  simp only [boxAvg, boxGridSet, Finset.notMem_empty, ite_false, Fintype.piFinset_singleton,
     Finset.sum_singleton, Finset.prod_empty, div_one]
   rfl
 
@@ -375,11 +375,11 @@ theorem sum_boxGridSet_eq_sum_intBox {d : ℕ} (s : Finset (Fin d)) (m : Fin d �
     intro i
     have hwi := hw i
     by_cases hi : i ∈ s
-    · rw [if_pos hi] at hwi ⊢
+    · rw [ite_eq_left hi] at hwi ⊢
       exact Finset.mem_Ico.mpr ⟨Int.natCast_nonneg _, by
         simp only [natToSite]
         exact_mod_cast (Finset.mem_range.mp hwi)⟩
-    · rw [if_neg hi] at hwi ⊢
+    · rw [ite_eq_right hi] at hwi ⊢
       rw [Finset.mem_singleton] at hwi ⊢
       simp [natToSite, hwi]
   · intro x hx
@@ -388,10 +388,10 @@ theorem sum_boxGridSet_eq_sum_intBox {d : ℕ} (s : Finset (Fin d)) (m : Fin d �
     intro i
     have hxi := hx i
     by_cases hi : i ∈ s
-    · rw [if_pos hi] at hxi ⊢
+    · rw [ite_eq_left hi] at hxi ⊢
       rw [Finset.mem_range]
       exact (Int.toNat_lt (Finset.mem_Ico.mp hxi).1).mpr (Finset.mem_Ico.mp hxi).2
-    · rw [if_neg hi] at hxi ⊢
+    · rw [ite_eq_right hi] at hxi ⊢
       rw [Finset.mem_singleton] at hxi ⊢
       rw [hxi]; rfl
   · intro w _hw
@@ -402,9 +402,9 @@ theorem sum_boxGridSet_eq_sum_intBox {d : ℕ} (s : Finset (Fin d)) (m : Fin d �
     funext i
     have hxi := hx i
     by_cases hi : i ∈ s
-    · rw [if_pos hi] at hxi
+    · rw [ite_eq_left hi] at hxi
       exact Int.toNat_of_nonneg (Finset.mem_Ico.mp hxi).1
-    · rw [if_neg hi] at hxi
+    · rw [ite_eq_right hi] at hxi
       rw [Finset.mem_singleton] at hxi
       simp [natToSite, hxi]
   · intro w _hw; rfl
@@ -417,7 +417,7 @@ theorem anchoredBox_eq_intBox {d : ℕ} {c : Fin d → ℝ} (hc : ∀ i, 0 ≤ c
   unfold anchoredBox intBox
   congr 1
   funext i
-  rw [if_pos (Finset.mem_univ i),
+  rw [ite_eq_left (Finset.mem_univ i),
     Int.toNat_of_nonneg (Int.ceil_nonneg (mul_nonneg (Nat.cast_nonneg N) (hc i)))]
 
 omit [MeasurableSpace Ω] in
@@ -434,7 +434,7 @@ theorem sum_boxGridSet_eq_boxAvg_mul {d : ℕ} (σ : Site d → Ω → Ω) (h : 
     intro w hw
     have hmem : w i ∈ (if i ∈ s then Finset.range (m i) else {0}) :=
       Fintype.mem_piFinset.mp hw i
-    rw [if_pos hi, Finset.mem_range] at hmem
+    rw [ite_eq_left hi, Finset.mem_range] at hmem
     omega
   · rw [div_mul_cancel₀ _ hP]
 

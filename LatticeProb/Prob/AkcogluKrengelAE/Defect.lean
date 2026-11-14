@@ -291,7 +291,7 @@ theorem sum_latticeCube_eq_sum_gridSet_natToSite {d : ℕ} {M : Type*} [AddCommM
     (fun w : Fin d → ℕ => natToSite w) ?_ ?_ ?_ ?_ ?_
   · intro z hz
     rw [gridSet, Fintype.mem_piFinset]
-    simp only [Finset.mem_univ, if_true, Finset.mem_range]
+    simp only [Finset.mem_univ, ite_true, Finset.mem_range]
     intro i
     rw [latticeCube, Finset.mem_Icc] at hz
     simp only [Pi.le_def, Pi.zero_apply] at hz
@@ -300,7 +300,7 @@ theorem sum_latticeCube_eq_sum_gridSet_natToSite {d : ℕ} {M : Type*} [AddCommM
     exact (Int.toNat_lt h1).2 (by omega)
   · intro w hw
     rw [gridSet, Fintype.mem_piFinset] at hw
-    simp only [Finset.mem_univ, if_true, Finset.mem_range] at hw
+    simp only [Finset.mem_univ, ite_true, Finset.mem_range] at hw
     rw [latticeCube, Finset.mem_Icc]
     simp only [Pi.le_def, Pi.zero_apply, natToSite]
     refine ⟨fun i => Int.natCast_nonneg (w i), ?_⟩

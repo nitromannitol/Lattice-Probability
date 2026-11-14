@@ -176,7 +176,7 @@ theorem latticeBox_zero_eq_dyCell_succ {d : ℕ} (u : Site d) (j : ℕ) (c : Sit
   rw [dyCell]
   congr 1 <;> funext l <;>
     simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply, Finset.notMem_empty,
-      if_false, Nat.cast_zero, mul_zero, add_zero] <;>
+      ite_false, Nat.cast_zero, mul_zero, add_zero] <;>
     ring
 
 /-- Cutting coordinate `i ∉ s` of a half-box at its lower half matches the half-box description over
@@ -241,7 +241,7 @@ theorem isBoxSplit_latticeBox_update_insert {d : ℕ} (u : Site d) (j : ℕ) (c 
   · show u i + 2 ^ (j + 1) * c i + 2 ^ j * ((w i : ℕ) : ℤ) + 2 ^ j ≤
       u i + 2 ^ (j + 1) * c i + 2 ^ j * ((w i : ℕ) : ℤ) +
         (if i ∈ s then (2 : ℤ) ^ j else 2 ^ (j + 1)) - 1 + 1
-    rw [if_neg hi, pow_succ]
+    rw [ite_eq_right hi, pow_succ]
     linarith
 
 /-- For a superadditive `r`, the sum of `r` over the `2 ^ s.card` half-boxes cut along `s` is at
@@ -277,7 +277,7 @@ theorem dyCell_two_smul_add_eq_latticeBox {d : ℕ} (u : Site d) (j : ℕ) (c : 
           (if l ∈ (Finset.univ : Finset (Fin d)) then (2 : ℤ) ^ j else 2 ^ (j + 1)) - 1) := by
   rw [dyCell]
   congr 1 <;> funext l <;>
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Finset.mem_univ, if_true] <;>
+    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Finset.mem_univ, ite_true] <;>
     ring
 
 /-- A sum over `{0, 1}^d`, viewed as `Fin d → Fin 2`, reindexes as a sum over `gridSet d Finset.univ
@@ -290,7 +290,7 @@ theorem sum_finTwo_eq_sum_gridSet_univ_two {d : ℕ} {M : Type*} [AddCommMonoid 
   · intro e _
     rw [gridSet, Fintype.mem_piFinset]
     intro i
-    simp only [Finset.mem_univ, if_true, Finset.mem_range]
+    simp only [Finset.mem_univ, ite_true, Finset.mem_range]
     exact (e i).isLt
   · intro w _
     exact Finset.mem_univ _
@@ -300,7 +300,7 @@ theorem sum_finTwo_eq_sum_gridSet_univ_two {d : ℕ} {M : Type*} [AddCommMonoid 
     exact Nat.mod_eq_of_lt (e i).isLt
   · intro w hw
     funext i
-    simp only []
+    simp only
     have h2 : w i < 2 := by
       have h3 : w ∈ Fintype.piFinset (fun i : Fin d => if i ∈ Finset.univ then Finset.range 2 else
           {0}) := by

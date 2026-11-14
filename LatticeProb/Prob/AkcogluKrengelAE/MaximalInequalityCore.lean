@@ -101,7 +101,7 @@ theorem mul_card_filter_le_apply_dyBig {d : ℕ} (hd : 1 ≤ d) (r : Finset (Sit
   intro x hx
   obtain ⟨hxS, hex⟩ := Finset.mem_filter.1 hx
   obtain ⟨hk, hjJ, hj, hbad⟩ := hw x hxS
-  simp only [dif_pos hex]
+  simp only [dite_eq_left hex]
   have hc := hex.choose_spec
   have hxc := hc (self_mem_map_addRight_cube x hk)
   exact ⟨hxc, hjJ, dyCell_subset_dyBig_of_mem hu hjJ (hS hxS) hxc,
@@ -263,7 +263,7 @@ theorem measurableSet_bad_le_K {d : ℕ} (R : Finset (Site d) → Ω → ℝ) (h
   have hset : {ω | ∃ k : ℕ, 1 ≤ k ∧ k ≤ K ∧ α * (k : ℝ) ^ d < R (latticeCube d k) ω} =
       ⋃ k ∈ Finset.Icc 1 K, {ω | α * (k : ℝ) ^ d < R (latticeCube d k) ω} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_Icc]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_Icc]
     constructor
     · rintro ⟨k, h1, h2, h3⟩
       exact ⟨k, ⟨h1, h2⟩, h3⟩
@@ -456,7 +456,7 @@ theorem measureReal_exists_heavy_le_akMaxConst_mul_div {d : ℕ} (hd : 1 ≤ d) 
   have hset : ({ω : Ω | ∃ k : ℕ, 1 ≤ k ∧ α * (k : ℝ) ^ d < R (latticeCube d k) ω} : Set Ω) =
       ⋃ K, {ω : Ω | ∃ k : ℕ, 1 ≤ k ∧ k ≤ K ∧ α * (k : ℝ) ^ d < R (latticeCube d k) ω} :=
     Set.ext fun ω => by
-      simp only [Set.mem_setOf_eq, Set.mem_iUnion]
+      simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
       constructor
       · rintro ⟨k, hk1, hk⟩
         exact ⟨k, ⟨k, hk1, le_rfl, hk⟩⟩
