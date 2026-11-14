@@ -45,10 +45,10 @@ lemma glueC_stopAt_hit {y z : C(ℝ≥0, ℝ)} (hT : hitFrom (-a) 0 (y : ℝ≥0
 /-- The measurable path-valued map `y ↦` increments of `y` after its first hit of `-a`. -/
 lemma measurable_shiftGlue (a : ℝ) :
     Measurable fun q : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) =>
-      (shiftPath (glueTime a (q.1 : ℝ≥0 → ℝ)) q.1, glueC a q.1 q.2) := by
+      (restartAt (glueTime a (q.1 : ℝ≥0 → ℝ)) q.1, glueC a q.1 q.2) := by
   have hτm : Measurable fun w : C(ℝ≥0, ℝ) => hitFrom (-a) 0 (w : ℝ≥0 → ℝ) :=
     measurable_hitFrom (r := fun _ => 0) measurable_const (-a)
-  exact ((measurable_shiftPath_path hτm).comp measurable_fst).prodMk (measurable_glueC a)
+  exact ((measurable_restartAt_path hτm).comp measurable_fst).prodMk (measurable_glueC a)
 
 /-- **The pair (increments after the first hit of `-a`, glued path) preserves `R ⊗ ν`.** -/
 theorem map_shiftGlue_prod_eq [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
@@ -59,7 +59,7 @@ theorem map_shiftGlue_prod_eq [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
         ν.map (fun z : C(ℝ≥0, ℝ) => (stopAt (hitFrom c 0 (z : ℝ≥0 → ℝ)) z : ℝ≥0 → ℝ))) :
     ((driftLaw P B hcont (-mu)).prod ν).map
         (fun q : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) =>
-          (shiftPath (glueTime a (q.1 : ℝ≥0 → ℝ)) q.1, glueC a q.1 q.2)) =
+          (restartAt (glueTime a (q.1 : ℝ≥0 → ℝ)) q.1, glueC a q.1 q.2)) =
       (driftLaw P B hcont (-mu)).prod ν := by
   set Lw := driftLaw P B hcont (-mu) with hR
   have hRprob : IsProbabilityMeasure Lw := isProbabilityMeasure_driftLaw hm hcont (-mu)
@@ -71,21 +71,21 @@ theorem map_shiftGlue_prod_eq [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
   symm
   refine Measure.prod_eq fun A B' hA hB' => ?_
   rw [Measure.map_apply hΘ (hA.prod hB'), Measure.prod_apply (hΘ (hA.prod hB'))]
-  have hsh : Measurable fun y : C(ℝ≥0, ℝ) => shiftPath (glueTime a (y : ℝ≥0 → ℝ)) y :=
-    measurable_shiftPath_path hτm
+  have hsh : Measurable fun y : C(ℝ≥0, ℝ) => restartAt (glueTime a (y : ℝ≥0 → ℝ)) y :=
+    measurable_restartAt_path hτm
   have hgl : MeasurableSet {q : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) | glueC a q.1 q.2 ∈ B'} :=
     measurable_glueC a hB'
   set ψ : C(ℝ≥0, ℝ) → ℝ≥0∞ := fun u => ν {z | glueC a u z ∈ B'} with hψdef
   have hψ : Measurable ψ := measurable_measure_prodMk_left hgl
   have key : ∀ y : C(ℝ≥0, ℝ), ν (Prod.mk y ⁻¹'
       ((fun q : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) =>
-        (shiftPath (glueTime a (q.1 : ℝ≥0 → ℝ)) q.1, glueC a q.1 q.2)) ⁻¹' (A ×ˢ B'))) =
-      A.indicator (fun _ => (1 : ℝ≥0∞)) (shiftPath (glueTime a (y : ℝ≥0 → ℝ)) y) * ψ y := by
+        (restartAt (glueTime a (q.1 : ℝ≥0 → ℝ)) q.1, glueC a q.1 q.2)) ⁻¹' (A ×ˢ B'))) =
+      A.indicator (fun _ => (1 : ℝ≥0∞)) (restartAt (glueTime a (y : ℝ≥0 → ℝ)) y) * ψ y := by
     intro y
-    by_cases hy : shiftPath (glueTime a (y : ℝ≥0 → ℝ)) y ∈ A
+    by_cases hy : restartAt (glueTime a (y : ℝ≥0 → ℝ)) y ∈ A
     · simp [hy, ψ, Set.preimage]
     · have : Prod.mk y ⁻¹' ((fun q : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) =>
-          (shiftPath (glueTime a (q.1 : ℝ≥0 → ℝ)) q.1, glueC a q.1 q.2)) ⁻¹' (A ×ˢ B')) = ∅ := by
+          (restartAt (glueTime a (q.1 : ℝ≥0 → ℝ)) q.1, glueC a q.1 q.2)) ⁻¹' (A ×ˢ B')) = ∅ := by
         ext z; simp [hy]
       simp [hy, this]
   simp_rw [key]
@@ -99,8 +99,8 @@ theorem map_shiftGlue_prod_eq [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
     exact lt_top_iff_ne_top.2 hw.2
   rw [Measure.restrict_eq_self_of_ae_mem hmem] at sm
   have hLHS : ∫⁻ w : C(ℝ≥0, ℝ), ψ (stopAt (hitFrom (-a) 0 (w : ℝ≥0 → ℝ)) w) *
-      A.indicator (fun _ => (1 : ℝ≥0∞)) (shiftPath (hitFrom (-a) 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂Lw =
-      ∫⁻ y : C(ℝ≥0, ℝ), A.indicator (fun _ => (1 : ℝ≥0∞)) (shiftPath (glueTime a (y : ℝ≥0 → ℝ)) y) * ψ y ∂Lw := by
+      A.indicator (fun _ => (1 : ℝ≥0∞)) (restartAt (hitFrom (-a) 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂Lw =
+      ∫⁻ y : C(ℝ≥0, ℝ), A.indicator (fun _ => (1 : ℝ≥0∞)) (restartAt (glueTime a (y : ℝ≥0 → ℝ)) y) * ψ y ∂Lw := by
     refine lintegral_congr_ae ?_
     filter_upwards [hae] with w hw
     simp only [hψdef, glueC_stopAt_hit hw.2, glueTime]

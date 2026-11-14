@@ -136,7 +136,7 @@ theorem driftLaw_mul_lintegral_piece_eq_setLIntegral_level [IsProbabilityMeasure
       rw [hsT, hwT] at hwsc
       exact hc.ne hwsc
     show f (firstUpcrossPiece c (w : ℝ≥0 → ℝ)) = f (firstUpcrossPiece c
-      (shiftPath (levelAttemptEnd δ c w).toNNReal w : ℝ≥0 → ℝ))
+      (restartAt (levelAttemptEnd δ c w).toNNReal w : ℝ≥0 → ℝ))
     rw [hρN, hT, ENNReal.toNNReal_coe]
     exact congrArg f (firstUpcrossPiece_eq_shift_of_zero w.continuous hc hw0 hwT hlt)
 

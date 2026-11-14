@@ -72,12 +72,12 @@ theorem lintegral_attemptSuccess_rev_driftLaw [IsProbabilityMeasure P] (hB : IsB
     simp [driftMap_apply, pathMap_apply, show B 0 ω = 0 from h0]
   have hL : ∫⁻ w in {w | hitFrom c' 0 (w : ℝ≥0 → ℝ) < ⊤},
       reflGlueFunctional c' a F (stopAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)) w,
-        shiftPath (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ =
+        restartAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ =
       ∫⁻ w in attemptSuccess c' (c' + a),
         F (upcrossRev (c' + a) (firstUpcrossPiece (c' + a) (w : ℝ≥0 → ℝ))) ∂μ := by
     calc ∫⁻ w in {w | hitFrom c' 0 (w : ℝ≥0 → ℝ) < ⊤},
           reflGlueFunctional c' a F (stopAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)) w,
-            shiftPath (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ
+            restartAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ
         = ∫⁻ w in {w | hitFrom c' 0 (w : ℝ≥0 → ℝ) < ⊤}, (attemptSuccess c' (c' + a)).indicator
             (fun w : C(ℝ≥0, ℝ) =>
               F (upcrossRev (c' + a) (firstUpcrossPiece (c' + a) (w : ℝ≥0 → ℝ)))) w ∂μ := by
@@ -88,7 +88,7 @@ theorem lintegral_attemptSuccess_rev_driftLaw [IsProbabilityMeasure P] (hB : IsB
             rw [upcrossEnd₁_of_zero_start h0]; exact hτT
           have hE := (upcross_stopAt hc' hend').1
           rw [reflGlueFunctional_eq_concatFunctional hc' ha F (x := (stopAt (hitFrom c' 0
-            (w : ℝ≥0 → ℝ)) w, shiftPath (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w))
+            (w : ℝ≥0 → ℝ)) w, restartAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w))
             (by rw [hτT]; simp only [hE]; exact ENNReal.coe_ne_top) (by simp),
             concatFunctional_stopAt_shift (fun p => F (upcrossRev (c' + a) p)) h0 hc' hcc
               (ne_of_lt hτ)]

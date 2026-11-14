@@ -34,8 +34,8 @@ lemma measurable_stopAt_path {τ : C(ℝ≥0, ℝ) → ℝ≥0∞} (hτ : Measur
     (measurable_const.min hτ).ennreal_toNNReal
 
 /-- The increments after a measurable random time form a measurable map of paths. -/
-lemma measurable_shiftPath_path {τ : C(ℝ≥0, ℝ) → ℝ≥0∞} (hτ : Measurable τ) :
-    Measurable fun w : C(ℝ≥0, ℝ) => shiftPath (τ w).toNNReal w := by
+lemma measurable_restartAt_path {τ : C(ℝ≥0, ℝ) → ℝ≥0∞} (hτ : Measurable τ) :
+    Measurable fun w : C(ℝ≥0, ℝ) => restartAt (τ w).toNNReal w := by
   refine measurable_pathValued_of_eval fun s => ?_
   exact (measurable_eval_comp (τ := fun w => (τ w).toNNReal + s) (hτ.ennreal_toNNReal.add_const s)).sub
     (measurable_eval_comp (τ := fun w => (τ w).toNNReal) hτ.ennreal_toNNReal)
@@ -48,7 +48,7 @@ theorem lintegral_stopAt_shift_driftLaw [IsProbabilityMeasure P] (hB : IsBrownia
     (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω) (mu : ℝ)
     {τ : C(ℝ≥0, ℝ) → ℝ≥0∞} (hτm : Measurable τ) (hτ : IsStopFun τ)
     {Φ : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) → ℝ≥0∞} (hΦ : Measurable Φ) :
-    ∫⁻ w in {w | τ w < ⊤}, Φ (stopAt (τ w) w, shiftPath (τ w).toNNReal w)
+    ∫⁻ w in {w | τ w < ⊤}, Φ (stopAt (τ w) w, restartAt (τ w).toNNReal w)
         ∂(driftLaw P B hcont mu) =
       ∫⁻ w in {w | τ w < ⊤}, ∫⁻ v, Φ (stopAt (τ w) w, v) ∂(driftLaw P B hcont mu)
         ∂(driftLaw P B hcont mu) := by
@@ -71,8 +71,8 @@ theorem lintegral_stopAt_shift_driftLaw [IsProbabilityMeasure P] (hB : IsBrownia
     congr 1
   have hAm : MeasurableSet {w : C(ℝ≥0, ℝ) | τ w < ⊤} := measurableSet_lt hτm measurable_const
   have hG : Measurable fun w : C(ℝ≥0, ℝ) =>
-      Φ (stopAt (τ w) w, shiftPath (τ w).toNNReal w) :=
-    hΦ.comp ((measurable_stopAt_path hτm).prodMk (measurable_shiftPath_path hτm))
+      Φ (stopAt (τ w) w, restartAt (τ w).toNNReal w) :=
+    hΦ.comp ((measurable_stopAt_path hτm).prodMk (measurable_restartAt_path hτm))
   have hH : Measurable fun w : C(ℝ≥0, ℝ) => ∫⁻ v, Φ (stopAt (τ w) w, v) ∂μ :=
     Measurable.lintegral_prod_right' (f := fun p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) =>
       Φ (stopAt (τ p.1) p.1, p.2))
@@ -159,11 +159,11 @@ theorem lintegral_attemptSuccess_piece_driftLaw [IsProbabilityMeasure P] (hB : I
     simp [driftMap_apply, pathMap_apply, show B 0 ω = 0 from h0]
   have hL : ∫⁻ w in {w | hitFrom c' 0 (w : ℝ≥0 → ℝ) < ⊤},
       concatFunctional c' c f (stopAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)) w,
-        shiftPath (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ =
+        restartAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ =
       ∫⁻ w in attemptSuccess c' c, f (firstUpcrossPiece c (w : ℝ≥0 → ℝ)) ∂μ := by
     calc ∫⁻ w in {w | hitFrom c' 0 (w : ℝ≥0 → ℝ) < ⊤},
           concatFunctional c' c f (stopAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)) w,
-            shiftPath (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ
+            restartAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ
         = ∫⁻ w in {w | hitFrom c' 0 (w : ℝ≥0 → ℝ) < ⊤}, (attemptSuccess c' c).indicator
             (fun w : C(ℝ≥0, ℝ) => f (firstUpcrossPiece c (w : ℝ≥0 → ℝ))) w ∂μ := by
           refine setLIntegral_congr_fun_ae hAm ?_

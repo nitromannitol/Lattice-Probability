@@ -41,8 +41,8 @@ theorem measurable_pairStopAt (b : ℝ) : Measurable (pairStopAt b) :=
 
 /-- The increments of a pair of paths after the first passage of its first path are measurable. -/
 theorem measurable_pairShiftAt (b : ℝ) : Measurable (pairShiftAt b) :=
-  (measurable_shiftPath_of (measurable_hitFrom_neg_fst b).ennreal_toNNReal measurable_fst).prodMk
-    (measurable_shiftPath_of (measurable_hitFrom_neg_fst b).ennreal_toNNReal measurable_snd)
+  (measurable_restartAt_of (measurable_hitFrom_neg_fst b).ennreal_toNNReal measurable_fst).prodMk
+    (measurable_restartAt_of (measurable_hitFrom_neg_fst b).ennreal_toNNReal measurable_snd)
 
 section PathLaw
 
@@ -114,7 +114,7 @@ theorem lintegral_pairStopAt_pairShiftAt (hB : IsBrownianReal B P) (hm : ∀ t, 
   have hpair : ∀ {G : (C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ)) × (C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ)) → ℝ≥0∞},
       Measurable G → ∫⁻ p, G (S p, H p) ∂μ = ∫⁻ p, ∫⁻ q, G (S p, q) ∂μ ∂μ := by
     intro G hG
-    exact lintegral_pair_stopAt_shiftPath hB hm hcont hB hm hcont
+    exact lintegral_pair_stopAt_restartAt hB hm hcont hB hm hcont
       (measurable_hitFrom (r := fun _ => 0) measurable_const (-b)) (isStopFun_hitFrom_zero (-b))
       hfin hG
   have hSH : Measurable fun q : (C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ)) × (C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ)) =>

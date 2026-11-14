@@ -6,10 +6,10 @@ import LatticeProb.Prob.BrownianRestartPath
 # Shifting a path to its first zero
 
 First hits and the first up-crossing interval of a continuous path `w` after its first zero
-`τ₀ = hitFrom 0 0 w` are read off the increments `shiftPath τ₀ w` of the path after `τ₀`:
+`τ₀ = hitFrom 0 0 w` are read off the increments `restartAt τ₀ w` of the path after `τ₀`:
 
 * `LatticeProb.hitFrom_add_coe`: `hitFrom a (T + r) w = T + hitFrom (a - w T) r (w (T + ·) - w T)`.
-* `LatticeProb.upcrossEnd₁_eq_add_shift`: `d₁ w = τ₀ + hitFrom c 0 (shiftPath τ₀ w)`.
+* `LatticeProb.upcrossEnd₁_eq_add_shift`: `d₁ w = τ₀ + hitFrom c 0 (restartAt τ₀ w)`.
 * `LatticeProb.firstUpcrossPiece_eq_shift`: if the shifted path reaches `c`, the piece of `w` on
   its first up-crossing interval equals that of the shifted path.
 * `LatticeProb.upcrossEnd₂_eq_add_shift`: `d₂ w = d₁ w + upcrossReturn c (w (d₁ + ·) - c)`, where

@@ -93,7 +93,7 @@ lemma indicator_hitFrom_top_stopAt {y : C(ℝ≥0, ℝ)} {c : ℝ}
 lemma lintegral_levelSuccess_shift_driftLaw [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
     (hm : ∀ t, Measurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω) (mu : ℝ) (c : ℝ)
     {Ψ : C(ℝ≥0, ℝ) → ℝ≥0∞} (hΨ : Measurable Ψ) :
-    ∫⁻ y in levelSuccess a c, Ψ (shiftPath (hitFrom c 0 (y : ℝ≥0 → ℝ)).toNNReal y)
+    ∫⁻ y in levelSuccess a c, Ψ (restartAt (hitFrom c 0 (y : ℝ≥0 → ℝ)).toNNReal y)
         ∂(driftLaw P B hcont mu) =
       driftLaw P B hcont mu (levelSuccess a c) * ∫⁻ v, Ψ v ∂(driftLaw P B hcont mu) := by
   have hτm : Measurable fun w : C(ℝ≥0, ℝ) => hitFrom c 0 (w : ℝ≥0 → ℝ) :=
@@ -115,15 +115,15 @@ lemma lintegral_levelSuccess_shift_driftLaw [IsProbabilityMeasure P] (hB : IsBro
   have h1 : ∫⁻ w in {w | hitFrom c 0 (w : ℝ≥0 → ℝ) < ⊤},
       ({p : C(ℝ≥0, ℝ) | hitFrom (-a) 0 (p : ℝ≥0 → ℝ) = ⊤}.indicator (fun _ => (1 : ℝ≥0∞))
           (stopAt (hitFrom c 0 (w : ℝ≥0 → ℝ)) w) *
-        Ψ (shiftPath (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w)) ∂(driftLaw P B hcont mu) =
-      ∫⁻ w in levelSuccess a c, Ψ (shiftPath (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w)
+        Ψ (restartAt (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w)) ∂(driftLaw P B hcont mu) =
+      ∫⁻ w in levelSuccess a c, Ψ (restartAt (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w)
         ∂(driftLaw P B hcont mu) := by
     have e : ∀ w ∈ {w : C(ℝ≥0, ℝ) | hitFrom c 0 (w : ℝ≥0 → ℝ) < ⊤},
         ({p : C(ℝ≥0, ℝ) | hitFrom (-a) 0 (p : ℝ≥0 → ℝ) = ⊤}.indicator (fun _ => (1 : ℝ≥0∞))
           (stopAt (hitFrom c 0 (w : ℝ≥0 → ℝ)) w) *
-        Ψ (shiftPath (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w)) =
+        Ψ (restartAt (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w)) =
           (levelSuccess a c).indicator
-            (fun w => Ψ (shiftPath (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w)) w := by
+            (fun w => Ψ (restartAt (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w)) w := by
       intro w hw
       rw [indicator_hitFrom_top_stopAt hw]
       by_cases h : w ∈ levelSuccess a c
@@ -167,13 +167,13 @@ theorem lintegral_levelSuccess_stop_glue_eq_mul [IsProbabilityMeasure P] (hB : I
         (glueC a y z : ℝ≥0 → ℝ)) (glueC a y z) : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) ∂ν
         ∂(driftLaw P B hcont (-mu)) =
       ∫⁻ y in levelSuccess a (b - a), F (upcrossRev b (firstUpcrossPiece b
-        ((-(shiftPath (hitFrom (b - a) 0 (y : ℝ≥0 → ℝ)).toNNReal y) : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ)))
+        ((-(restartAt (hitFrom (b - a) 0 (y : ℝ≥0 → ℝ)).toNNReal y) : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ)))
         ∂(driftLaw P B hcont (-mu)) := by
     refine lintegral_congr_ae ((ae_restrict_iff' (measurableSet_levelSuccess a (b - a))).2 ?_)
     filter_upwards [ae_hitFrom_neg_ne_top_driftLaw_neg hB hm hcont hmu ha.le] with y ⟨hy, hT⟩ hyH
     have : ∀ᵐ z ∂ν, F ((stopAt (hitFrom b 0 (glueC a y z : ℝ≥0 → ℝ))
         (glueC a y z) : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) = F (upcrossRev b (firstUpcrossPiece b
-        ((-(shiftPath (hitFrom (b - a) 0 (y : ℝ≥0 → ℝ)).toNNReal y) : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ))) := by
+        ((-(restartAt (hitFrom (b - a) 0 (y : ℝ≥0 → ℝ)).toNNReal y) : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ))) := by
       filter_upwards [hν0] with z hz
       rw [stopAt_glueC_of_levelSuccess ha hab hz hT hyH, ContinuousMap.coe_neg]
     rw [lintegral_congr_ae this, lintegral_const, measure_univ, mul_one]

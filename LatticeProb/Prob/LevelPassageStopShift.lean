@@ -12,8 +12,8 @@ independent increments of the level-passage process of a pair of paths:
 
 * `hitFrom_neg_le_hitFrom_neg`: `T_a ≤ T_b`;
 * `hitFrom_neg_stopAt_hitFrom_neg`: stopping `w` at `T_b` does not change `T_a`;
-* `hitFrom_neg_eq_add_shiftPath`: if `T_b < ∞`, then `T_c = T_b + T'_{c-b}`, where `T'` is the
-  first passage time of the increments `shiftPath T_b w` after `T_b`.
+* `hitFrom_neg_eq_add_restartAt`: if `T_b < ∞`, then `T_c = T_b + T'_{c-b}`, where `T'` is the
+  first passage time of the increments `restartAt T_b w` after `T_b`.
 
 For a pair of paths `p = (l, r)`, `passageValue a p = r (T_a(l))` is the value of the second path
 at the first passage of the first path at `-a`. For two pairs `q = (q₁, q₂)` the level process
@@ -93,10 +93,10 @@ lemma hitFrom_neg_eq_hitFrom_neg_from (hw0 : w 0 = 0) (hb : 0 ≤ b) (hbc : b �
 /-- **Additivity of first passages.** For a path started at `0`, `0 ≤ b ≤ c` and a finite first
 passage time `T_b` at `-b`, the first passage at `-c` is `T_b` plus the first passage at `-(c - b)`
 of the increments of the path after `T_b`. -/
-theorem hitFrom_neg_eq_add_shiftPath (hw0 : w 0 = 0) (hb : 0 ≤ b) (hbc : b ≤ c)
+theorem hitFrom_neg_eq_add_restartAt (hw0 : w 0 = 0) (hb : 0 ≤ b) (hbc : b ≤ c)
     (hT : hitFrom (-b) 0 (w : ℝ≥0 → ℝ) ≠ ⊤) :
     hitFrom (-c) 0 (w : ℝ≥0 → ℝ) = hitFrom (-b) 0 (w : ℝ≥0 → ℝ) +
-      hitFrom (-(c - b)) 0 (shiftPath (hitFrom (-b) 0 (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ) := by
+      hitFrom (-(c - b)) 0 (restartAt (hitFrom (-b) 0 (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ) := by
   obtain ⟨t, ht, -, hwt, -⟩ := exists_hitFrom_eq w.continuous hT
   rw [hitFrom_neg_eq_hitFrom_neg_from hw0 hb hbc, ht, ENNReal.toNNReal_coe,
     hitFrom_at_first_hit hwt (-c), show -c - -b = -(c - b) by ring]
@@ -118,8 +118,8 @@ def pairStopAt (b : ℝ) (p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ)) : C(ℝ≥0, �
 
 /-- The increments of a pair of paths after the first passage of the first path at `-b`. -/
 def pairShiftAt (b : ℝ) (p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ)) : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) :=
-  (shiftPath (hitFrom (-b) 0 (p.1 : ℝ≥0 → ℝ)).toNNReal p.1,
-    shiftPath (hitFrom (-b) 0 (p.1 : ℝ≥0 → ℝ)).toNNReal p.2)
+  (restartAt (hitFrom (-b) 0 (p.1 : ℝ≥0 → ℝ)).toNNReal p.1,
+    restartAt (hitFrom (-b) 0 (p.1 : ℝ≥0 → ℝ)).toNNReal p.2)
 
 /-- The level-passage process of two pairs of paths `q = (q₁, q₂)`: at level `a`, the passage value
 of `q₂` minus the passage value of `q₁`. -/
@@ -141,19 +141,19 @@ theorem passageValue_eq_add_pairShiftAt {p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ)}
     passageValue c p = passageValue b p + passageValue (c - b) (pairShiftAt b p) := by
   have hT : hitFrom (-b) 0 (p.1 : ℝ≥0 → ℝ) ≠ ⊤ :=
     ne_top_of_le_ne_top hc (hitFrom_neg_le_hitFrom_neg hp hb hbc)
-  have hsum := hitFrom_neg_eq_add_shiftPath hp hb hbc hT
+  have hsum := hitFrom_neg_eq_add_restartAt hp hb hbc hT
   obtain ⟨t, ht, -, -, -⟩ := exists_hitFrom_eq p.1.continuous hT
   rw [ht, ENNReal.toNNReal_coe] at hsum
-  have hH : hitFrom (-(c - b)) 0 (shiftPath t p.1 : ℝ≥0 → ℝ) ≠ ⊤ := by
+  have hH : hitFrom (-(c - b)) 0 (restartAt t p.1 : ℝ≥0 → ℝ) ≠ ⊤ := by
     intro htop
     rw [htop, add_top] at hsum
     exact hc hsum
-  obtain ⟨u, hu, -, -, -⟩ := exists_hitFrom_eq (shiftPath t p.1).continuous hH
+  obtain ⟨u, hu, -, -, -⟩ := exists_hitFrom_eq (restartAt t p.1).continuous hH
   simp only [passageValue, pairShiftAt]
   rw [hsum, ht]
   simp only [ENNReal.toNNReal_coe]
   rw [hu, ← ENNReal.coe_add]
-  simp only [ENNReal.toNNReal_coe, shiftPath_apply]
+  simp only [ENNReal.toNNReal_coe, restartAt_apply]
   ring
 
 /-- The level process at levels `0 ≤ a ≤ b` is a function of the two pairs stopped at their

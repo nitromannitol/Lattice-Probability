@@ -143,7 +143,7 @@ theorem driftLaw_mul_lintegral_piece_eq_setLIntegral [IsProbabilityMeasure P]
         hitFrom 0 (hitFrom c' 0 (w : ℝ≥0 → ℝ)) (w : ℝ≥0 → ℝ) := min_eq_left hle
     have hfin : hitFrom 0 (hitFrom c' 0 (w : ℝ≥0 → ℝ)) (w : ℝ≥0 → ℝ) ≠ ⊤ := hρeq ▸ hρ
     show f (firstUpcrossPiece c (w : ℝ≥0 → ℝ)) = f (firstUpcrossPiece c
-      (shiftPath (exitFrom 0 c (hitFrom c' 0 (w : ℝ≥0 → ℝ)) (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ))
+      (restartAt (exitFrom 0 c (hitFrom c' 0 (w : ℝ≥0 → ℝ)) (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ))
     rw [hρeq]
     exact congrArg f (firstUpcrossPiece_eq_shift_of_fail w.continuous hw0 hc' hcc hle hfin)
 

@@ -83,10 +83,10 @@ theorem lintegral_expNeg_piece_upcrossEnd₁_restart [IsProbabilityMeasure P]
   have hexp : Measurable fun ω => expNeg q (τ ω) := (measurable_expNeg q).comp hτm
   have step1 : ∀ ω, expNeg q (upcrossEnd₁ c (fun t => X t ω)) *
       f (firstUpcrossPiece c (fun t => X t ω)) =
-      expNeg q (τ ω) * G (shiftPath (τ ω).toNNReal (pathMap X hXc ω)) := fun ω =>
+      expNeg q (τ ω) * G (restartAt (τ ω).toNNReal (pathMap X hXc ω)) := fun ω =>
     expNeg_upcrossEnd₁_mul_piece_eq hc q (pathMap X hXc ω) f
   have hsupp : Function.support (fun ω => expNeg q (τ ω) *
-      G (shiftPath (τ ω).toNNReal (pathMap X hXc ω))) ⊆ {ω | τ ω < ⊤} := by
+      G (restartAt (τ ω).toNNReal (pathMap X hXc ω))) ⊆ {ω | τ ω < ⊤} := by
     intro ω hω
     by_contra hne
     have : τ ω = ⊤ := by simpa using hne
@@ -99,11 +99,11 @@ theorem lintegral_expNeg_piece_upcrossEnd₁_restart [IsProbabilityMeasure P]
   calc ∫⁻ ω, expNeg q (upcrossEnd₁ c (fun t => X t ω)) *
         f (firstUpcrossPiece c (fun t => X t ω)) ∂P
       = ∫⁻ ω in {ω | τ ω < ⊤}, expNeg q (τ ω) *
-          G (shiftPath (τ ω).toNNReal (pathMap X hXc ω)) ∂P := by
+          G (restartAt (τ ω).toNNReal (pathMap X hXc ω)) ∂P := by
         rw [setLIntegral_eq_of_support_subset hsupp]
         exact lintegral_congr step1
     _ = ∫⁻ ω in {ω | τ ω < ⊤},
-          Φ (stopAt (τ ω) (pathMap X hXc ω), shiftPath (τ ω).toNNReal (pathMap X hXc ω)) ∂P := by
+          Φ (stopAt (τ ω) (pathMap X hXc ω), restartAt (τ ω).toNNReal (pathMap X hXc ω)) ∂P := by
         refine setLIntegral_congr_fun hmeas fun ω hω => ?_
         have hne : hitFrom 0 0 ((pathMap X hXc ω : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) ≠ ⊤ := hω.ne
         have hz : hitFrom 0 0 (stopAt (τ ω) (pathMap X hXc ω) : ℝ≥0 → ℝ) = τ ω :=

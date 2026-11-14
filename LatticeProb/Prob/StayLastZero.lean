@@ -39,7 +39,7 @@ lemma lastZero_levelSuccess_split {δ c : ℝ} {w : C(ℝ≥0, ℝ)} (h0 : w 0 =
     (hLS : w ∈ levelSuccess δ c) (hδ : 0 < δ) {s₀ : ℝ≥0}
     (hz : s₀ < lastZeroBefore w (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal) :
     hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ) < ⊤ ∧ (∀ t : ℝ≥0, t ≤ s₀ → -δ < w t) ∧
-      shiftPath (hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ)).toNNReal w ∈ levelSuccess δ c := by
+      restartAt (hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ)).toNNReal w ∈ levelSuccess δ c := by
   have hLS' : hitFrom c 0 (w : ℝ≥0 → ℝ) < hitFrom (-δ) 0 (w : ℝ≥0 → ℝ) := hLS
   have hTtop : hitFrom c 0 (w : ℝ≥0 → ℝ) ≠ ⊤ := ne_top_of_lt hLS'
   obtain ⟨Tn, hTn, -, hwT, -⟩ := exists_hitFrom_eq w.continuous hTtop
@@ -70,8 +70,8 @@ lemma lastZero_levelSuccess_split {δ c : ℝ} {w : C(ℝ≥0, ℝ)} (h0 : w 0 =
       exact_mod_cast hs.2.trans (ht.trans (hs0z'.trans (hzs1.trans hs1T)))
     exact absurd (h1.trans h2) (not_le.2 hLS')
   · rw [hzeq, ENNReal.toNNReal_coe]
-    show hitFrom c 0 ((shiftPath z w : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) <
-      hitFrom (-δ) 0 ((shiftPath z w : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ)
+    show hitFrom c 0 ((restartAt z w : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) <
+      hitFrom (-δ) 0 ((restartAt z w : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ)
     have e1 := hitFrom_add_coe c z 0 (w : ℝ≥0 → ℝ)
     have e2 := hitFrom_add_coe (-δ) z 0 (w : ℝ≥0 → ℝ)
     rw [add_zero, hwz, sub_zero] at e1 e2
@@ -81,8 +81,8 @@ lemma lastZero_levelSuccess_split {δ c : ℝ} {w : C(ℝ≥0, ℝ)} (h0 : w 0 =
         (hTn ▸ hitFrom_mono_start zero_le _)
     have e4 : hitFrom (-δ) 0 (w : ℝ≥0 → ℝ) ≤ hitFrom (-δ) (z : ℝ≥0∞) (w : ℝ≥0 → ℝ) :=
       hitFrom_mono_start zero_le _
-    have hsh : ((shiftPath z w : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) = fun s => w (z + s) - 0 := by
-      ext s; simp [shiftPath, hwz]
+    have hsh : ((restartAt z w : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) = fun s => w (z + s) - 0 := by
+      ext s; simp [restartAt, hwz]
     rw [hsh]
     have hlt : (z : ℝ≥0∞) + hitFrom c 0 (fun s => w (z + s) - 0) <
         (z : ℝ≥0∞) + hitFrom (-δ) 0 (fun s => w (z + s) - 0) := by
@@ -96,7 +96,7 @@ and the increments of `w` after `ζ` stay above `-δ` forever. -/
 lemma lastZero_staySet_split {δ : ℝ} {w : C(ℝ≥0, ℝ)} (hst : w ∈ staySet δ) {s₀ b : ℝ≥0}
     (hz : s₀ < lastZeroBefore w b) :
     hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ) < ⊤ ∧ (∀ t : ℝ≥0, t ≤ s₀ → -δ < w t) ∧
-      shiftPath (hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ)).toNNReal w ∈ staySet δ := by
+      restartAt (hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ)).toNNReal w ∈ staySet δ := by
   have hne : {s : ℝ≥0 | s ≤ b ∧ w s = 0}.Nonempty := by
     by_contra hne
     rw [Set.not_nonempty_iff_eq_empty] at hne
@@ -112,7 +112,7 @@ lemma lastZero_staySet_split {δ : ℝ} {w : C(ℝ≥0, ℝ)} (hst : w ∈ stayS
   refine ⟨by rw [hzeq]; exact ENNReal.coe_lt_top, fun t _ => hst t, ?_⟩
   rw [hzeq, ENNReal.toNNReal_coe]
   intro u
-  have : (shiftPath z w : C(ℝ≥0, ℝ)) u = w (z + u) := by simp [shiftPath, hwz]
+  have : (restartAt z w : C(ℝ≥0, ℝ)) u = w (z + u) := by simp [restartAt, hwz]
   rw [this]
   exact hst _
 
@@ -133,7 +133,7 @@ theorem driftLaw_le_of_late_zero_split [IsProbabilityMeasure P] (hm : ∀ t, Mea
     {S X : Set C(ℝ≥0, ℝ)} (hS : MeasurableSet S) (hB : IsBrownianReal B P)
     (hX : ∀ᵐ w ∂(driftLaw P B hcont mu), w ∈ X →
       hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ) < ⊤ ∧ (∀ t : ℝ≥0, t ≤ s₀ → -δ < w t) ∧
-        shiftPath (hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ)).toNNReal w ∈ S) :
+        restartAt (hitFrom 0 (s₀ : ℝ≥0∞) (w : ℝ≥0 → ℝ)).toNNReal w ∈ S) :
     driftLaw P B hcont mu X ≤
       driftLaw P B hcont mu {w | ∀ t : ℝ≥0, t ≤ s₀ → -δ < w t} * driftLaw P B hcont mu S := by
   set μ := driftLaw P B hcont mu with hμ
@@ -163,8 +163,8 @@ theorem driftLaw_le_of_late_zero_split [IsProbabilityMeasure P] (hm : ∀ t, Mea
   set Z : Set C(ℝ≥0, ℝ) := {w | ζ w < ⊤} with hZdef
   have hZ : MeasurableSet Z := hζm measurableSet_Iio
   set g : C(ℝ≥0, ℝ) → C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) :=
-    fun w => (stopAt (ζ w) w, shiftPath (ζ w).toNNReal w) with hgdef
-  have hgm : Measurable g := (measurable_stopAt_path hζm).prodMk (measurable_shiftPath_path hζm)
+    fun w => (stopAt (ζ w) w, restartAt (ζ w).toNNReal w) with hgdef
+  have hgm : Measurable g := (measurable_stopAt_path hζm).prodMk (measurable_restartAt_path hζm)
   set Y : Set C(ℝ≥0, ℝ) := Z ∩ g ⁻¹' (Stay ×ˢ S) with hYdef
   have hYm : MeasurableSet Y := hZ.inter (hgm (hStay.prod hS))
   have h1 : μ X ≤ μ Y := by

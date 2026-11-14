@@ -43,7 +43,7 @@ theorem lintegral_mul_shift_restart [IsProbabilityMeasure P]
     (hAstop : ∀ w : C(ℝ≥0, ℝ), τ' w ≠ ⊤ → A (stopAt (τ' w) w) = A w)
     (hAtop : ∀ w : C(ℝ≥0, ℝ), τ' w = ⊤ → A w = 0) :
     ∫⁻ ω, A (pathMap X hXc ω) *
-        R (shiftPath (τ' (pathMap X hXc ω)).toNNReal (pathMap X hXc ω)) ∂P
+        R (restartAt (τ' (pathMap X hXc ω)).toNNReal (pathMap X hXc ω)) ∂P
       = (∫⁻ ω, A (pathMap X hXc ω) ∂P) *
         ∫⁻ v, R v ∂((P.map (pathMap B hcont)).map (driftMap mu)) := by
   have hXm : ∀ t, Measurable (X t) := fun t =>
@@ -55,7 +55,7 @@ theorem lintegral_mul_shift_restart [IsProbabilityMeasure P]
   have hΦ : Measurable fun p : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) => A p.1 * R p.2 :=
     (hA.comp measurable_fst).mul (hR.comp measurable_snd)
   have hsupp : Function.support (fun ω => A (pathMap X hXc ω) *
-      R (shiftPath (τ' (pathMap X hXc ω)).toNNReal (pathMap X hXc ω))) ⊆
+      R (restartAt (τ' (pathMap X hXc ω)).toNNReal (pathMap X hXc ω))) ⊆
       {ω | τ' (pathMap X hXc ω) < ⊤} := by
     intro ω hω
     by_contra hne
@@ -107,7 +107,7 @@ theorem lintegral_expNeg_piece_upcrossEnd₂_restart [IsProbabilityMeasure P]
       expNeg q (upcrossEnd₂ c (w : ℝ≥0 → ℝ)) * f (firstUpcrossPiece c (w : ℝ≥0 → ℝ)) =
         (expNeg q (upcrossEnd₁ c (w : ℝ≥0 → ℝ)) * f (firstUpcrossPiece c (w : ℝ≥0 → ℝ))) *
           expNeg q (upcrossReturn c
-            (shiftPath (upcrossEnd₁ c (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ)) := by
+            (restartAt (upcrossEnd₁ c (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ)) := by
     intro w
     by_cases hd : upcrossEnd₁ c (w : ℝ≥0 → ℝ) = ⊤
     · have h2 : upcrossEnd₂ c (w : ℝ≥0 → ℝ) = ⊤ := upcrossEnd₂_eq_top_of_end₁ c hd

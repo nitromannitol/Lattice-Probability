@@ -9,7 +9,7 @@ import LatticeProb.Prob.BrownianDriftRestartHit
 For a real Brownian motion `B` with continuous paths, the sample path is the element
 `pathMap B hcont ω` of `C(ℝ≥0, ℝ)`.  At a stopping time `τ : Ω → ℝ≥0∞` of the natural filtration
 we cut the path in two pieces: the path stopped at `τ`, `stopAt (τ ω) (pathMap B hcont ω)`, and
-the increments after `τ`, `shiftPath (τ ω).toNNReal (pathMap B hcont ω)` (on `{τ < ∞}`).
+the increments after `τ`, `restartAt (τ ω).toNNReal (pathMap B hcont ω)` (on `{τ < ∞}`).
 
 * `LatticeProb.measurable_stopAt_pathMap`: the stopped path is measurable for the sigma-algebra
   of the past at `τ`.
@@ -34,7 +34,7 @@ def stopAt (T : ℝ≥0∞) (w : C(ℝ≥0, ℝ)) : C(ℝ≥0, ℝ) where
       fun _ => ((min_le_left _ _).trans_lt ENNReal.coe_lt_top).ne)
 
 /-- The increments of the path `w` after the time `T`, as a path started at `0`. -/
-def shiftPath (T : ℝ≥0) (w : C(ℝ≥0, ℝ)) : C(ℝ≥0, ℝ) where
+def restartAt (T : ℝ≥0) (w : C(ℝ≥0, ℝ)) : C(ℝ≥0, ℝ) where
   toFun s := w (T + s) - w T
   continuous_toFun :=
     (w.continuous.comp (continuous_const.add continuous_id)).sub continuous_const
@@ -42,8 +42,8 @@ def shiftPath (T : ℝ≥0) (w : C(ℝ≥0, ℝ)) : C(ℝ≥0, ℝ) where
 @[simp] lemma stopAt_apply (T : ℝ≥0∞) (w : C(ℝ≥0, ℝ)) (s : ℝ≥0) :
     stopAt T w s = w (min (s : ℝ≥0∞) T).toNNReal := rfl
 
-@[simp] lemma shiftPath_apply (T : ℝ≥0) (w : C(ℝ≥0, ℝ)) (s : ℝ≥0) :
-    shiftPath T w s = w (T + s) - w T := rfl
+@[simp] lemma restartAt_apply (T : ℝ≥0) (w : C(ℝ≥0, ℝ)) (s : ℝ≥0) :
+    restartAt T w s = w (T + s) - w T := rfl
 
 /-- Stopping a path at `∞` leaves it unchanged. -/
 @[simp] lemma stopAt_top (w : C(ℝ≥0, ℝ)) : stopAt ⊤ w = w := by
@@ -88,9 +88,9 @@ variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {B : ℝ≥0 → Ω 
 
 /-- The increments of the sample path after a measurable random time form a measurable map
 into `C(ℝ≥0, ℝ)`. -/
-theorem measurable_shiftPath_pathMap (hm : ∀ t, Measurable (B t))
+theorem measurable_restartAt_pathMap (hm : ∀ t, Measurable (B t))
     (hcont : ∀ ω, Continuous fun t => B t ω) {σ : Ω → ℝ≥0} (hσ : Measurable σ) :
-    Measurable fun ω => shiftPath (σ ω) (pathMap B hcont ω) := by
+    Measurable fun ω => restartAt (σ ω) (pathMap B hcont ω) := by
   rw [ContinuousMapBorel.ContinuousMap.measurable_iff_eval]
   intro u
   have hj : Measurable (Function.uncurry B) :=
@@ -146,12 +146,12 @@ theorem map_pair_restart_path [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
       fun ω => (σ ω : ℝ≥0∞))
     {α : Type*} [MeasurableSpace α] {Y : Ω → α} (hY : Measurable[hσ.measurableSpace] Y)
     {E : Set Ω} (hE : MeasurableSet[hσ.measurableSpace] E) :
-    Measure.map (fun ω => (Y ω, shiftPath (σ ω) (pathMap B hcont ω))) (P.restrict E)
+    Measure.map (fun ω => (Y ω, restartAt (σ ω) (pathMap B hcont ω))) (P.restrict E)
       = (Measure.map Y (P.restrict E)).prod (Measure.map (pathMap B hcont) P) := by
   have hσm : Measurable σ := measurable_coe_nnreal_ennreal_iff.1 hσ.measurable'
   have hYm : Measurable Y := hY.mono hσ.measurableSpace_le le_rfl
-  have hS := measurable_shiftPath_pathMap hm hcont hσm
-  have hW : Measurable fun ω => (Y ω, shiftPath (σ ω) (pathMap B hcont ω)) := hYm.prodMk hS
+  have hS := measurable_restartAt_pathMap hm hcont hσm
+  have hW : Measurable fun ω => (Y ω, restartAt (σ ω) (pathMap B hcont ω)) := hYm.prodMk hS
   have : IsFiniteMeasure (Measure.map Y (P.restrict E)) :=
     ⟨by rw [Measure.map_apply hYm MeasurableSet.univ, Set.preimage_univ]
         exact measure_lt_top _ _⟩
@@ -162,7 +162,7 @@ theorem map_pair_restart_path [IsProbabilityMeasure P] (hB : IsBrownianReal B P)
   rw [Measure.map_apply hW (hs.prod ht), Measure.restrict_apply (hW (hs.prod ht)),
     Measure.map_apply hYm hs, Measure.restrict_apply (hYm hs),
     Measure.map_apply (measurable_pathMap B hm hcont) ht]
-  have hset : ((fun ω => (Y ω, shiftPath (σ ω) (pathMap B hcont ω))) ⁻¹'
+  have hset : ((fun ω => (Y ω, restartAt (σ ω) (pathMap B hcont ω))) ⁻¹'
         (s ×ˢ ((fun w : C(ℝ≥0, ℝ) => (w : ℝ≥0 → ℝ)) ⁻¹' Γ))) ∩ E
       = (E ∩ (Y ⁻¹' s)) ∩ {ω | (fun u : ℝ≥0 => B (σ ω + u) ω - B (σ ω) ω) ∈ Γ} := by
     ext ω
@@ -183,20 +183,20 @@ theorem lintegral_restart_path_finite [IsProbabilityMeasure P] (hB : IsBrownianR
     {α : Type*} [MeasurableSpace α] {Y : Ω → α} (hY : Measurable[hσ.measurableSpace] Y)
     {E : Set Ω} (hE : MeasurableSet[hσ.measurableSpace] E)
     {Φ : α × C(ℝ≥0, ℝ) → ℝ≥0∞} (hΦ : Measurable Φ) :
-    ∫⁻ ω in E, Φ (Y ω, shiftPath (σ ω) (pathMap B hcont ω)) ∂P
+    ∫⁻ ω in E, Φ (Y ω, restartAt (σ ω) (pathMap B hcont ω)) ∂P
       = ∫⁻ ω in E, ∫⁻ w, Φ (Y ω, w) ∂(P.map (pathMap B hcont)) ∂P := by
   have hσm : Measurable σ := measurable_coe_nnreal_ennreal_iff.1 hσ.measurable'
   have hYm : Measurable Y := hY.mono hσ.measurableSpace_le le_rfl
-  have hW : Measurable fun ω => (Y ω, shiftPath (σ ω) (pathMap B hcont ω)) :=
-    hYm.prodMk (measurable_shiftPath_pathMap hm hcont hσm)
+  have hW : Measurable fun ω => (Y ω, restartAt (σ ω) (pathMap B hcont ω)) :=
+    hYm.prodMk (measurable_restartAt_pathMap hm hcont hσm)
   have : IsProbabilityMeasure (Measure.map (pathMap B hcont) P) :=
     (Measure.isProbabilityMeasure_map_iff (measurable_pathMap B hm hcont).aemeasurable).2 inferInstance
   have : IsFiniteMeasure (Measure.map Y (P.restrict E)) :=
     ⟨by rw [Measure.map_apply hYm MeasurableSet.univ, Set.preimage_univ]
         exact measure_lt_top _ _⟩
-  calc ∫⁻ ω in E, Φ (Y ω, shiftPath (σ ω) (pathMap B hcont ω)) ∂P
+  calc ∫⁻ ω in E, Φ (Y ω, restartAt (σ ω) (pathMap B hcont ω)) ∂P
       = ∫⁻ p, Φ p ∂(Measure.map
-          (fun ω => (Y ω, shiftPath (σ ω) (pathMap B hcont ω))) (P.restrict E)) :=
+          (fun ω => (Y ω, restartAt (σ ω) (pathMap B hcont ω))) (P.restrict E)) :=
         (lintegral_map hΦ hW).symm
     _ = ∫⁻ p, Φ p ∂((Measure.map Y (P.restrict E)).prod (Measure.map (pathMap B hcont) P)) := by
         rw [map_pair_restart_path hB hm hcont hσ hY hE]
@@ -220,11 +220,11 @@ theorem lintegral_restart_path [IsProbabilityMeasure P] (hB : IsBrownianReal B P
     (hτ : IsStoppingTime (natFiltration (liftOne B) (stronglyMeasurable_liftOne hm)) τ)
     {Φ : C(ℝ≥0, ℝ) × C(ℝ≥0, ℝ) → ℝ≥0∞} (hΦ : Measurable Φ) :
     ∫⁻ ω in {ω | τ ω < ⊤},
-        Φ (stopAt (τ ω) (pathMap X hXc ω), shiftPath (τ ω).toNNReal (pathMap X hXc ω)) ∂P
+        Φ (stopAt (τ ω) (pathMap X hXc ω), restartAt (τ ω).toNNReal (pathMap X hXc ω)) ∂P
       = ∫⁻ ω in {ω | τ ω < ⊤}, ∫⁻ w, Φ (stopAt (τ ω) (pathMap X hXc ω), w)
         ∂((P.map (pathMap B hcont)).map (driftMap mu)) ∂P := by
-  have hshift : ∀ (T : ℝ≥0) ω, shiftPath T (pathMap X hXc ω)
-      = driftMap mu (shiftPath T (pathMap B hcont ω)) := by
+  have hshift : ∀ (T : ℝ≥0) ω, restartAt T (pathMap X hXc ω)
+      = driftMap mu (restartAt T (pathMap B hcont ω)) := by
     intro T ω
     ext s
     simp [hXinc]
@@ -258,7 +258,7 @@ theorem lintegral_restart_path [IsProbabilityMeasure P] (hB : IsBrownianReal B P
     measurable_stopAt_pathMap hXad hXc (hσ N)
   have key : ∀ N,
       ∫⁻ ω in E N, Φ (stopAt (τ ω) (pathMap X hXc ω),
-          shiftPath (τ ω).toNNReal (pathMap X hXc ω)) ∂P
+          restartAt (τ ω).toNNReal (pathMap X hXc ω)) ∂P
         = ∫⁻ ω in E N, ∫⁻ w, Φ (stopAt (τ ω) (pathMap X hXc ω), w)
           ∂((P.map (pathMap B hcont)).map (driftMap mu)) ∂P := by
     intro N
@@ -268,9 +268,9 @@ theorem lintegral_restart_path [IsProbabilityMeasure P] (hB : IsBrownianReal B P
       have h1 : (σ N ω : ℝ≥0∞) = τ ω := by rw [hσe, min_eq_left (le_of_lt hω)]
       exact ⟨h1, by rw [← h1, ENNReal.toNNReal_coe]⟩
     have e1 : ∫⁻ ω in E N, Φ (stopAt (σ N ω : ℝ≥0∞) (pathMap X hXc ω),
-          driftMap mu (shiftPath (σ N ω) (pathMap B hcont ω))) ∂P
+          driftMap mu (restartAt (σ N ω) (pathMap B hcont ω))) ∂P
         = ∫⁻ ω in E N, Φ (stopAt (τ ω) (pathMap X hXc ω),
-          shiftPath (τ ω).toNNReal (pathMap X hXc ω)) ∂P :=
+          restartAt (τ ω).toNNReal (pathMap X hXc ω)) ∂P :=
       setLIntegral_congr_fun (hEm N) fun ω hω => by
         rw [(hon ω hω).1, (hon ω hω).2, hshift]
     have e2 : ∫⁻ ω in E N, ∫⁻ w, Φ (stopAt (σ N ω : ℝ≥0∞) (pathMap X hXc ω), driftMap mu w)

@@ -131,7 +131,7 @@ theorem stopAt_glueC_of_levelSuccess (ha : 0 < a) (hab : a < b) (hz : z 0 = 0)
     (hlt : hitFrom (b - a) 0 (y : ℝ≥0 → ℝ) < hitFrom (-a) 0 (y : ℝ≥0 → ℝ)) :
     ((stopAt (hitFrom b 0 (glueC a y z : ℝ≥0 → ℝ)) (glueC a y z) : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) =
       upcrossRev b (firstUpcrossPiece b
-        (-((shiftPath (hitFrom (b - a) 0 (y : ℝ≥0 → ℝ)).toNNReal y : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ))) := by
+        (-((restartAt (hitFrom (b - a) 0 (y : ℝ≥0 → ℝ)).toNNReal y : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ))) := by
   have hb : 0 < b := ha.trans hab
   have hTe := hitFrom_neg_eq_glueTime hT
   set T := glueTime a y with hTdef
@@ -140,10 +140,10 @@ theorem stopAt_glueC_of_levelSuccess (ha : 0 < a) (hab : a < b) (hz : z 0 = 0)
   obtain ⟨τ, hτe, -, hyτ, -⟩ := exists_hitFrom_eq y.continuous hτfin
   have hτT : τ ≤ T := ENNReal.coe_le_coe.1 (by rw [← hτe]; exact hlt'.le)
   rw [hτe, ENNReal.toNNReal_coe]
-  set v : ℝ≥0 → ℝ := -((shiftPath τ y : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) with hvdef
+  set v : ℝ≥0 → ℝ := -((restartAt τ y : C(ℝ≥0, ℝ)) : ℝ≥0 → ℝ) with hvdef
   have hvapp : ∀ u, v u = (b - a) - y (τ + u) := fun u => by
-    rw [hvdef]; simp only [Pi.neg_apply, shiftPath_apply, hyτ]; ring
-  have hv_cont : Continuous v := (shiftPath τ y).continuous.neg
+    rw [hvdef]; simp only [Pi.neg_apply, restartAt_apply, hyτ]; ring
+  have hv_cont : Continuous v := (restartAt τ y).continuous.neg
   have hv0 : v 0 = 0 := by rw [hvapp]; simp [hyτ]
   have hvhit : hitFrom b 0 v = ((T - τ : ℝ≥0) : ℝ≥0∞) := by
     refine le_antisymm ?_ (le_iInf₂ fun s hs => ?_)

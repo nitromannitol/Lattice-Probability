@@ -58,7 +58,7 @@ if and only if it hits `c` before `-δ` and its increments after the first hit o
 lemma mem_staySet_iff_split {δ c : ℝ} (hδ : 0 < δ) {w : C(ℝ≥0, ℝ)} (hw0 : w 0 = 0)
     (hτ : hitFrom c 0 (w : ℝ≥0 → ℝ) ≠ ⊤) :
     w ∈ staySet δ ↔ w ∈ levelSuccess δ c ∧
-      shiftPath (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w ∈ staySet (δ + c) := by
+      restartAt (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w ∈ staySet (δ + c) := by
   obtain ⟨T, hT, -, hwT, -⟩ := exists_hitFrom_eq w.continuous hτ
   rw [hT, ENNReal.toNNReal_coe]
   constructor
@@ -68,7 +68,7 @@ lemma mem_staySet_iff_split {δ c : ℝ} (hδ : 0 < δ) {w : C(ℝ≥0, ℝ)} (h
       show hitFrom c 0 (w : ℝ≥0 → ℝ) < hitFrom (-δ) 0 (w : ℝ≥0 → ℝ)
       rw [htop]; exact lt_top_iff_ne_top.2 hτ
     · have := h (T + s)
-      simp only [shiftPath_apply, hwT]
+      simp only [restartAt_apply, hwT]
       linarith
   · rintro ⟨hS, hsh⟩ t
     have hS' : hitFrom c 0 (w : ℝ≥0 → ℝ) < hitFrom (-δ) 0 (w : ℝ≥0 → ℝ) := hS
@@ -83,7 +83,7 @@ lemma mem_staySet_iff_split {δ c : ℝ} (hδ : 0 < δ) {w : C(ℝ≥0, ℝ)} (h
       rw [hT] at hS'
       exact absurd (h1.trans h2) (not_le.2 hS')
     · have := hsh (t - T)
-      simp only [shiftPath_apply, hwT, add_tsub_cancel_of_le hTt] at this
+      simp only [restartAt_apply, hwT, add_tsub_cancel_of_le hTt] at this
       linarith
 
 end Stay
@@ -131,7 +131,7 @@ theorem lintegral_stay_stopAt_driftLaw [IsProbabilityMeasure P] (hB : IsBrownian
     exact hBs.stopAt_lt_iff_of_min_le hτ w t (by rw [ht]; exact min_le_right _ _)
   have hL : ∫⁻ w, (levelSuccess δ c).indicator F (stopAt (hitFrom c 0 (w : ℝ≥0 → ℝ)) w) *
         (staySet (δ + c)).indicator (fun _ => (1 : ℝ≥0∞))
-          (shiftPath (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ =
+          (restartAt (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w) ∂μ =
       ∫⁻ w in staySet δ, F (stopAt (hitFrom c 0 (w : ℝ≥0 → ℝ)) w) ∂μ := by
     rw [← lintegral_indicator (measurableSet_staySet δ)]
     refine lintegral_congr_ae ?_
@@ -142,7 +142,7 @@ theorem lintegral_stay_stopAt_driftLaw [IsProbabilityMeasure P] (hB : IsBrownian
       simp [Set.indicator_of_mem hw, Set.indicator_of_mem ((hstopS w hwt).2 h1), h2]
     · rw [Set.indicator_of_notMem hw]
       by_cases h1 : w ∈ levelSuccess δ c
-      · have h2 : shiftPath (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w ∉ staySet (δ + c) :=
+      · have h2 : restartAt (hitFrom c 0 (w : ℝ≥0 → ℝ)).toNNReal w ∉ staySet (δ + c) :=
           fun h2 => hw (hiff.2 ⟨h1, h2⟩)
         simp [Set.indicator_of_notMem h2]
       · simp [Set.indicator_of_notMem (fun h => h1 ((hstopS w hwt).1 h))]

@@ -101,7 +101,7 @@ lemma upcross_stopAt (hc : 0 < c) {w : C(ℝ≥0, ℝ)} {D : ℝ≥0}
 /-- First hits after the first hit time `T` of `c'`, read on the increments after `T`. -/
 lemma hitFrom_at_first_hit {w : C(ℝ≥0, ℝ)} {T : ℝ≥0} {c' : ℝ} (hwT : w T = c') (a : ℝ) :
     hitFrom a (T : ℝ≥0∞) (w : ℝ≥0 → ℝ) =
-      T + hitFrom (a - c') 0 (shiftPath T w : ℝ≥0 → ℝ) := by
+      T + hitFrom (a - c') 0 (restartAt T w : ℝ≥0 → ℝ) := by
   have h := hitFrom_add_coe a T 0 (w : ℝ≥0 → ℝ)
   rw [add_zero] at h
   have e : a - w T = a - c' := by rw [hwT]
@@ -112,7 +112,7 @@ lemma hitFrom_at_first_hit {w : C(ℝ≥0, ℝ)} {T : ℝ≥0} {c' : ℝ} (hwT :
 lemma mem_attemptSuccess_iff_shift {w : C(ℝ≥0, ℝ)}
     (hτ : hitFrom c' 0 (w : ℝ≥0 → ℝ) ≠ ⊤) :
     w ∈ attemptSuccess c' c ↔
-      shiftPath (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w ∈ legSuccess c' c := by
+      restartAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w ∈ legSuccess c' c := by
   obtain ⟨T, hτT, -, hwT, -⟩ := exists_hitFrom_eq w.continuous hτ
   simp only [attemptSuccess, legSuccess, Set.mem_ofPred_eq, hτT, ENNReal.toNNReal_coe]
   rw [hitFrom_at_first_hit hwT c, hitFrom_at_first_hit hwT 0, zero_sub]
@@ -126,7 +126,7 @@ theorem firstUpcrossPiece_eq_concatAt {w : C(ℝ≥0, ℝ)} (hw0 : w 0 = 0) (hc'
     (hcc : c' < c) (hS : w ∈ attemptSuccess c' c) :
     firstUpcrossPiece c (w : ℝ≥0 → ℝ) =
       concatAt (upcrossLen c' (w : ℝ≥0 → ℝ)) (firstUpcrossPiece c' (w : ℝ≥0 → ℝ))
-        (legStop c' c (shiftPath (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) : ℝ≥0 → ℝ) := by
+        (legStop c' c (restartAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) : ℝ≥0 → ℝ) := by
   have hw := w.continuous
   have hc : 0 < c := hc'.trans hcc
   have hτ : hitFrom c' 0 (w : ℝ≥0 → ℝ) ≠ ⊤ := by
@@ -193,18 +193,18 @@ theorem firstUpcrossPiece_eq_concatAt {w : C(ℝ≥0, ℝ)} (hw0 : w 0 = 0) (hc'
   rw [hτT, ENNReal.toNNReal_coe] at hSshift ⊢
   have h1 := hitFrom_at_first_hit hwT c
   rw [hρR] at h1
-  have hlt : hitFrom (c - c') 0 (shiftPath T w : ℝ≥0 → ℝ) <
-      hitFrom (-c') 0 (shiftPath T w : ℝ≥0 → ℝ) := hSshift
-  have hexit : exitFrom (-c') (c - c') 0 (shiftPath T w : ℝ≥0 → ℝ) =
-      hitFrom (c - c') 0 (shiftPath T w : ℝ≥0 → ℝ) := by
+  have hlt : hitFrom (c - c') 0 (restartAt T w : ℝ≥0 → ℝ) <
+      hitFrom (-c') 0 (restartAt T w : ℝ≥0 → ℝ) := hSshift
+  have hexit : exitFrom (-c') (c - c') 0 (restartAt T w : ℝ≥0 → ℝ) =
+      hitFrom (c - c') 0 (restartAt T w : ℝ≥0 → ℝ) := by
     unfold exitFrom; exact min_eq_right hlt.le
-  obtain ⟨e, he⟩ : ∃ e : ℝ≥0, hitFrom (c - c') 0 (shiftPath T w : ℝ≥0 → ℝ) = e :=
+  obtain ⟨e, he⟩ : ∃ e : ℝ≥0, hitFrom (c - c') 0 (restartAt T w : ℝ≥0 → ℝ) = e :=
     ⟨_, (ENNReal.coe_toNNReal hlt.ne_top).symm⟩
   have hRe : R = T + e := by
     have : ((R : ℝ≥0) : ℝ≥0∞) = ((T + e : ℝ≥0) : ℝ≥0∞) := by
       rw [ENNReal.coe_add, ← he]; exact h1
     exact_mod_cast this
-  have hleg : (legStop c' c (shiftPath T w) : ℝ≥0 → ℝ) = fun u => w (T + min u e) - w T := by
+  have hleg : (legStop c' c (restartAt T w) : ℝ≥0 → ℝ) = fun u => w (T + min u e) - w T := by
     funext u
     unfold legStop
     rw [hexit, he, stopAt_coe]
@@ -250,7 +250,7 @@ finite first hit `τ` of `c'`, the functional of (the path stopped at `τ`, its 
 theorem concatFunctional_stopAt_shift (f : (ℝ≥0 → ℝ) → ℝ≥0∞) {w : C(ℝ≥0, ℝ)} (hw0 : w 0 = 0)
     (hc' : 0 < c') (hcc : c' < c) (hτ : hitFrom c' 0 (w : ℝ≥0 → ℝ) ≠ ⊤) :
     concatFunctional c' c f (stopAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)) w,
-        shiftPath (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) =
+        restartAt (hitFrom c' 0 (w : ℝ≥0 → ℝ)).toNNReal w) =
       (attemptSuccess c' c).indicator
         (fun w : C(ℝ≥0, ℝ) => f (firstUpcrossPiece c (w : ℝ≥0 → ℝ))) w := by
   obtain ⟨T, hτT, -, hwT, -⟩ := exists_hitFrom_eq w.continuous hτ
@@ -260,7 +260,7 @@ theorem concatFunctional_stopAt_shift (f : (ℝ≥0 → ℝ) → ℝ≥0∞) {w 
   have hpiece := firstUpcrossPiece_stopAt c' w hend'
   have hlen : upcrossLen c' (stopAt (T : ℝ≥0∞) w : ℝ≥0 → ℝ) = upcrossLen c' (w : ℝ≥0 → ℝ) := by
     unfold upcrossLen; rw [hE, hSt, hend']
-  have hmem : shiftPath T w ∈ legSuccess c' c ↔ w ∈ attemptSuccess c' c := by
+  have hmem : restartAt T w ∈ legSuccess c' c ↔ w ∈ attemptSuccess c' c := by
     have := (mem_attemptSuccess_iff_shift (c := c) hτ).symm
     rwa [hτT, ENNReal.toNNReal_coe] at this
   rw [hτT, ENNReal.toNNReal_coe]

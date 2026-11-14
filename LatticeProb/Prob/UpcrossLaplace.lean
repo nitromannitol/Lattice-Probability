@@ -88,8 +88,8 @@ theorem expNeg_upcrossEnd₁_mul_piece_eq {c : ℝ} (hc : 0 < c) (q : ℝ) (w : 
     (f : (ℝ≥0 → ℝ) → ℝ≥0∞) :
     expNeg q (upcrossEnd₁ c (w : ℝ≥0 → ℝ)) * f (firstUpcrossPiece c (w : ℝ≥0 → ℝ)) =
       expNeg q (hitFrom 0 0 (w : ℝ≥0 → ℝ)) *
-        (f (firstUpcrossPiece c (shiftPath (hitFrom 0 0 (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ)) *
-          expNeg q (upcrossEnd₁ c (shiftPath (hitFrom 0 0 (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ))) := by
+        (f (firstUpcrossPiece c (restartAt (hitFrom 0 0 (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ)) *
+          expNeg q (upcrossEnd₁ c (restartAt (hitFrom 0 0 (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ))) := by
   by_cases h0 : hitFrom 0 0 (w : ℝ≥0 → ℝ) = ⊤
   · have : upcrossEnd₁ c (w : ℝ≥0 → ℝ) = ⊤ := by
       unfold upcrossEnd₁; rw [h0, hitFrom_top]
@@ -98,8 +98,8 @@ theorem expNeg_upcrossEnd₁_mul_piece_eq {c : ℝ} (hc : 0 < c) (q : ℝ) (w : 
   · obtain ⟨T, hT, hwT, hd1⟩ := upcrossEnd₁_eq_add_shift (c := c) w.continuous h0
     have hTnn : (hitFrom 0 0 (w : ℝ≥0 → ℝ)).toNNReal = T := by rw [hT, ENNReal.toNNReal_coe]
     rw [hTnn]
-    have hv : (shiftPath T w : ℝ≥0 → ℝ) = fun s => w (T + s) - w T := rfl
-    have hv0 : (shiftPath T w : ℝ≥0 → ℝ) 0 = 0 := by simp
+    have hv : (restartAt T w : ℝ≥0 → ℝ) = fun s => w (T + s) - w T := rfl
+    have hv0 : (restartAt T w : ℝ≥0 → ℝ) 0 = 0 := by simp
     rw [upcrossEnd₁_of_zero_start hv0, hv]
     by_cases hfin : hitFrom c 0 (fun s => w (T + s) - w T) = ⊤
     · rw [hd1, hfin]
@@ -114,7 +114,7 @@ theorem expNeg_upcrossEnd₂_mul_piece_eq (c q : ℝ) (w : C(ℝ≥0, ℝ)) (f :
       (expNeg q (upcrossEnd₁ c (stopAt (upcrossEnd₁ c (w : ℝ≥0 → ℝ)) w : ℝ≥0 → ℝ)) *
         f (firstUpcrossPiece c (stopAt (upcrossEnd₁ c (w : ℝ≥0 → ℝ)) w : ℝ≥0 → ℝ))) *
         expNeg q (upcrossReturn c
-          (shiftPath (upcrossEnd₁ c (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ)) := by
+          (restartAt (upcrossEnd₁ c (w : ℝ≥0 → ℝ)).toNNReal w : ℝ≥0 → ℝ)) := by
   by_cases hd : upcrossEnd₁ c (w : ℝ≥0 → ℝ) = ⊤
   · have h2 : upcrossEnd₂ c (w : ℝ≥0 → ℝ) = ⊤ := by
       unfold upcrossEnd₂; rw [hd, hitFrom_top, hitFrom_top]
@@ -123,7 +123,7 @@ theorem expNeg_upcrossEnd₂_mul_piece_eq (c q : ℝ) (w : C(ℝ≥0, ℝ)) (f :
   · obtain ⟨D, hD, hwD, hd2⟩ := upcrossEnd₂_eq_add_shift w.continuous hd
     have e1 : upcrossEnd₁ c (stopAt (D : ℝ≥0∞) w : ℝ≥0 → ℝ) = D :=
       ((isStopFun_upcrossEnd₁ c w D).1 hD.le).trans hD
-    have hsh : (shiftPath D w : ℝ≥0 → ℝ) = fun s => w (D + s) - w D := rfl
+    have hsh : (restartAt D w : ℝ≥0 → ℝ) = fun s => w (D + s) - w D := rfl
     rw [hD, ENNReal.toNNReal_coe, hd2, e1, firstUpcrossPiece_stopAt c w hD, hsh, expNeg_add]
     ring
 
