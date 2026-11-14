@@ -310,4 +310,107 @@ theorem lintegral_radial_cutoff_swap [FiniteDimensional ℝ E] [MeasurableSpace 
     fun_prop
   exact lintegral_lintegral_swap (hh.indicator hs).aemeasurable
 
+/-- The radial cutoff integral is controlled by the Riesz potential. -/
+theorem lintegral_radial_cutoff_le_riesz [FiniteDimensional ℝ E] [MeasurableSpace E]
+    [BorelSpace E] [Nontrivial E] (μ : Measure E) [μ.IsAddHaarMeasure]
+    (a z : E) {r : ℝ} (hr : 0 < r) {g : E → ℝ≥0∞} (hg : Measurable g) :
+    ∫⁻ t in Icc (0 : ℝ) 1, ENNReal.ofReal (t ^ (-(Module.finrank ℝ E : ℝ) - 1)) *
+      ∫⁻ w in Metric.ball a r ∩ Metric.closedBall z (2 * r * t),
+        g w * ‖w - z‖ₑ ∂μ ∂volume ≤
+    ENNReal.ofReal ((2 * r) ^ Module.finrank ℝ E / (Module.finrank ℝ E : ℝ)) *
+      ∫⁻ w in Metric.ball a r, g w * ‖w - z‖ₑ ^ (1 - (Module.finrank ℝ E : ℝ)) ∂μ := by
+  classical
+  let d := Module.finrank ℝ E
+  let R := 2 * r
+  let k : ℝ → ℝ≥0∞ := fun t => ENNReal.ofReal (t ^ (-(d : ℝ) - 1))
+  have hR : 0 < R := by dsimp [R]; positivity
+  have hd : 0 < d := Module.finrank_pos
+  have hswap := lintegral_radial_cutoff_swap μ a z r hg
+  dsimp only at hswap
+  have heq : (∫⁻ t in Icc (0 : ℝ) 1, k t *
+      ∫⁻ w in Metric.ball a r ∩ Metric.closedBall z (R * t), g w * ‖w - z‖ₑ ∂μ) =
+      ∫⁻ t in Icc (0 : ℝ) 1, ∫⁻ w in Metric.ball a r,
+        ({p : ℝ × E | ‖p.2 - z‖ ≤ R * p.1}).indicator
+          (fun p => k p.1 * (g p.2 * ‖p.2 - z‖ₑ)) (t, w) ∂μ ∂volume := by
+    apply lintegral_congr
+    intro t
+    rw [← lintegral_const_mul' (k t) _ (by simp [k])]
+    rw [inter_comm, ← Measure.restrict_restrict Metric.isClosed_closedBall.measurableSet,
+      ← lintegral_indicator Metric.isClosed_closedBall.measurableSet]
+    apply lintegral_congr
+    intro w
+    have hw : w ∈ Metric.closedBall z (R * t) ↔ ‖w - z‖ ≤ R * t := by
+      simp [Metric.mem_closedBall, dist_eq_norm]
+    by_cases h : ‖w - z‖ ≤ R * t
+    · simp [h, hw.mpr h]
+    · have hn : w ∉ Metric.closedBall z (R * t) := fun hm => h (hw.mp hm)
+      simp [h, hn]
+  calc
+    _ = ∫⁻ w in Metric.ball a r, ∫⁻ t in Icc (0 : ℝ) 1,
+        ({p : ℝ × E | ‖p.2 - z‖ ≤ R * p.1}).indicator
+          (fun p => k p.1 * (g p.2 * ‖p.2 - z‖ₑ)) (t, w) ∂volume ∂μ := by
+      rw [heq]
+      exact hswap
+    _ ≤ ∫⁻ w in Metric.ball a r,
+        ENNReal.ofReal (R ^ d / (d : ℝ)) * (g w * ‖w - z‖ₑ ^ (1 - (d : ℝ))) ∂μ := by
+      apply lintegral_mono_ae
+      filter_upwards [ae_restrict_of_ae (Measure.ae_ne μ z)] with w hw
+      have hx : 0 < ‖w - z‖ := norm_pos_iff.mpr (sub_ne_zero.mpr hw)
+      have heq' : (∫⁻ t in Icc (0 : ℝ) 1,
+          ({p : ℝ × E | ‖p.2 - z‖ ≤ R * p.1}).indicator
+            (fun p => k p.1 * (g p.2 * ‖p.2 - z‖ₑ)) (t, w) ∂volume) =
+          (∫⁻ t in Icc (0 : ℝ) 1, (Ici (‖w - z‖ / R)).indicator k t ∂volume) *
+            (g w * ‖w - z‖ₑ) := by
+        rw [← lintegral_mul_const _ ((by fun_prop : Measurable k).indicator measurableSet_Ici)]
+        apply lintegral_congr
+        intro t
+        have ht : (‖w - z‖ ≤ R * t) ↔ t ∈ Ici (‖w - z‖ / R) := by
+          simp only [mem_Ici, div_le_iff₀ hR, mul_comm]
+        by_cases h : ‖w - z‖ ≤ R * t
+        · simp [h, ht.mp h]
+        · have hn : t ∉ Ici (‖w - z‖ / R) := fun hm => h (ht.mpr hm)
+          simp [h, hn]
+      rw [heq']
+      have h := lintegral_cutoff_riesz hx hR hd
+      rw [← Real.enorm_eq_ofReal (norm_nonneg _), enorm_norm] at h
+      calc
+        _ = g w * ((∫⁻ t in Icc (0 : ℝ) 1,
+            (Ici (‖w - z‖ / R)).indicator k t ∂volume) * ‖w - z‖ₑ) := by ac_rfl
+        _ ≤ g w * (ENNReal.ofReal (R ^ d / (d : ℝ)) *
+            ‖w - z‖ₑ ^ (1 - (d : ℝ))) := mul_le_mul_right h _
+        _ = _ := by ac_rfl
+    _ = _ := by rw [lintegral_const_mul' _ _ (by simp)]
+
+/-- Averaging the oscillation over a ball is bounded by a Riesz potential. -/
+theorem segmentAverage_potential [FiniteDimensional ℝ E]
+    [MeasurableSpace E] [BorelSpace E] [Nontrivial E] (μ : Measure E) [μ.IsAddHaarMeasure]
+    [CompleteSpace F] (f : E → F) (a z : E) (r : ℝ) (hr : 0 < r)
+    (hf : ContDiffOn ℝ 1 f (Metric.ball a r)) (hz : z ∈ Metric.ball a r) :
+    ∫⁻ y in Metric.ball a r, ‖f z - f y‖ₑ ∂μ ≤
+      ENNReal.ofReal ((2 * r) ^ Module.finrank ℝ E / (Module.finrank ℝ E : ℝ)) *
+        ∫⁻ w in Metric.ball a r,
+          ‖fderiv ℝ f w‖ₑ * ‖w - z‖ₑ ^ (1 - (Module.finrank ℝ E : ℝ)) ∂μ := by
+  classical
+  let g := (Metric.ball a r).indicator (fun x => ‖fderiv ℝ f x‖ₑ)
+  have hg : Measurable g := measurable_indicator_enorm_fderiv hf
+  calc
+    _ ≤ ∫⁻ t in Icc (0 : ℝ) 1, ∫⁻ y in Metric.ball a r,
+        ‖fderiv ℝ f (z + t • (y - z))‖ₑ * ‖y - z‖ₑ ∂μ ∂volume :=
+      lintegral_enorm_sub_le_segment_integral_swapped μ hf hz
+    _ = ∫⁻ t in Icc (0 : ℝ) 1, ∫⁻ y in Metric.ball a r,
+        g (z + t • (y - z)) * ‖y - z‖ₑ ∂μ ∂volume := by
+      apply lintegral_congr_ae
+      filter_upwards [self_mem_ae_restrict measurableSet_Icc] with t ht
+      apply lintegral_congr_ae
+      filter_upwards [self_mem_ae_restrict Metric.isOpen_ball.measurableSet] with y hy
+      dsimp [g]
+      rw [Set.indicator_of_mem (segment_mem_ball_and_norm_le hz hy ht).1]
+    _ ≤ _ := (lintegral_segment_le_radial_cutoff μ hz hg).trans
+      (lintegral_radial_cutoff_le_riesz μ a z hr hg) |>.trans_eq (by
+        congr 1
+        apply lintegral_congr_ae
+        filter_upwards [self_mem_ae_restrict Metric.isOpen_ball.measurableSet] with w hw
+        dsimp [g]
+        rw [Set.indicator_of_mem hw])
+
 end LatticeProb.PegdenSmart
