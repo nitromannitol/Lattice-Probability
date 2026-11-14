@@ -178,4 +178,70 @@ theorem prokhorovLE_bind {μ ν : Measure E} [IsProbabilityMeasure μ] [IsProbab
     _ = (ν.bind κ') (thickening (ε + η) A) +
         (ENNReal.ofReal ε + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e) := by ring
 
+/-- **One step of a chain with a support set and a decoupled continuity radius.**  As
+`prokhorovLE_bind`, but the continuity hypothesis on `κ'` is only needed at the starting points
+`y` of a measurable set `H` of full `μ`-measure, and its thickening radius `r_c` is independent of
+the additive error `η` and of the scale `δ`; the conclusion has radius `ε + r_c` and error
+`ε + η + ρ + e`.  This is the form that iterates when the continuity of the kernel `κ'` holds in
+total variation (small `η`) at a fixed radius `r_c`. -/
+theorem prokhorovLE_bind_split {μ ν : Measure E} [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
+    {κ κ' : E → Measure E} (hκ : Measurable κ) (hκ' : Measurable κ')
+    [∀ y, IsProbabilityMeasure (κ' y)] {ε δ r_c η ρ e : ℝ} (hε : 0 ≤ ε) (hη : 0 ≤ η)
+    (hρ0 : 0 ≤ ρ) (he : 0 ≤ e) (hP : ProkhorovLE μ ν δ e)
+    (hK : ∀ y, ProkhorovLE (κ y) (κ' y) ε ε) {H G : Set E} (hH : MeasurableSet H)
+    (hμH : μ Hᶜ = 0) (hG : ν Gᶜ ≤ ENNReal.ofReal ρ)
+    (hcont : ∀ b ∈ G, ∀ y ∈ H, dist y b < δ → ∀ A : Set E, MeasurableSet A →
+      κ' y A ≤ κ' b (thickening r_c A) + ENNReal.ofReal η) :
+    ProkhorovLE (μ.bind κ) (ν.bind κ') (ε + r_c) (ε + η + ρ + e) := by
+  intro A hA
+  have hA' : MeasurableSet (thickening ε A) := isOpen_thickening.measurableSet
+  have hA'' : MeasurableSet (thickening r_c (thickening ε A)) := isOpen_thickening.measurableSet
+  have hAt : MeasurableSet (thickening (ε + r_c) A) := isOpen_thickening.measurableSet
+  rw [Measure.bind_apply hA hκ.aemeasurable]
+  set f : E → ℝ≥0∞ := fun y => κ' y (thickening ε A) with hf
+  set g : E → ℝ≥0∞ := fun b => κ' b (thickening r_c (thickening ε A)) with hg
+  have hfm : Measurable f := (Measure.measurable_coe hA').comp hκ'
+  have hgm : Measurable g := (Measure.measurable_coe hA'').comp hκ'
+  have hfHm : Measurable (H.indicator f) := hfm.indicator hH
+  have hfH1 : ∀ y, H.indicator f y ≤ 1 := fun y =>
+    (Set.indicator_le_self H f y).trans prob_le_one
+  have hae : ∀ᵐ y ∂μ, y ∈ H := ae_iff.2 hμH
+  have step1 : ∫⁻ y, κ y A ∂μ ≤ ∫⁻ y, H.indicator f y ∂μ + ENNReal.ofReal ε := by
+    calc ∫⁻ y, κ y A ∂μ ≤ ∫⁻ y, (f y + ENNReal.ofReal ε) ∂μ :=
+          lintegral_mono fun y => hK y A hA
+      _ = ∫⁻ y, f y ∂μ + ENNReal.ofReal ε := by
+          rw [lintegral_add_right _ measurable_const]
+          simp
+      _ = ∫⁻ y, H.indicator f y ∂μ + ENNReal.ofReal ε := by
+          congr 1
+          refine lintegral_congr_ae ?_
+          filter_upwards [hae] with y hy
+          rw [Set.indicator_of_mem hy]
+  have step2 : ∫⁻ y, H.indicator f y ∂μ ≤
+      ∫⁻ b, g b ∂ν + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e := by
+    refine lintegral_le_add_of_prokhorovLE hη hP hfHm hgm hfH1 (fun b => prob_le_one) hG ?_
+    intro b hb y hy
+    by_cases hyH : y ∈ H
+    · rw [Set.indicator_of_mem hyH]
+      exact hcont b hb y hyH hy (thickening ε A) hA'
+    · rw [Set.indicator_of_notMem hyH]
+      exact zero_le
+  have step3 : ∫⁻ b, g b ∂ν ≤ (ν.bind κ') (thickening (ε + r_c) A) := by
+    rw [Measure.bind_apply hAt hκ'.aemeasurable]
+    refine lintegral_mono fun b => measure_mono ?_
+    exact (thickening_thickening_subset r_c ε A).trans
+      (thickening_mono (le_of_eq (add_comm _ _)) A)
+  have hsum : ENNReal.ofReal (ε + η + ρ + e) =
+      ENNReal.ofReal ε + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e := by
+    rw [ENNReal.ofReal_add (by positivity) he, ENNReal.ofReal_add (by positivity) hρ0,
+      ENNReal.ofReal_add hε hη]
+  rw [hsum]
+  calc ∫⁻ y, κ y A ∂μ ≤ ∫⁻ y, H.indicator f y ∂μ + ENNReal.ofReal ε := step1
+    _ ≤ (∫⁻ b, g b ∂ν + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e) +
+        ENNReal.ofReal ε := by gcongr
+    _ ≤ ((ν.bind κ') (thickening (ε + r_c) A) + ENNReal.ofReal η + ENNReal.ofReal ρ +
+        ENNReal.ofReal e) + ENNReal.ofReal ε := by gcongr
+    _ = (ν.bind κ') (thickening (ε + r_c) A) +
+        (ENNReal.ofReal ε + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e) := by ring
+
 end LatticeProb
