@@ -470,6 +470,7 @@ import LatticeProb.Prob.BrownianMarginalDensity
 import LatticeProb.Prob.BrownianOccupationTrunc
 import LatticeProb.Analysis.BrownianHeatTime
 import LatticeProb.Prob.BrownianExitKelvin
+import LatticeProb.Prob.BrownianBallOccupation
 import LatticeProb.Analysis.HeatMollify
 import LatticeProb.Analysis.HeatCompactness
 import LatticeProb.Analysis.HeatRepresentation
