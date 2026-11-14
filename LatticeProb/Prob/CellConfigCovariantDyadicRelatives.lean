@@ -706,6 +706,24 @@ theorem rootedBadSquareMassTail_similarity {E : Set ℂ → GMSSpace → Prop}
   · rintro ⟨j, hj⟩
     exact ⟨j + δ, (hindex j).2 hj⟩
 
+/-- If the squares around the origin are eventually good, the origin section of the
+rooted bad-square mass tail is empty above a finite threshold. -/
+theorem exists_forall_ge_not_mem_rootedBadSquareMassTail {E : Set ℂ → GMSSpace → Prop}
+    (H : GMSSpace) (q : DyadicCoord) (h₁ : IsCompatible q.2.1)
+    (h₂ : IsCompatible q.2.2) (d : ℤ)
+    (hE : ∀ᶠ j : ℤ in atTop, E (squareAt q.1 q.2.1 q.2.2 j 0) H) :
+    ∃ N : ℕ, ∀ m : ℝ≥0∞, (N : ℝ≥0∞) ≤ m →
+      (H, q, 0) ∉ rootedBadSquareMassTail E d m := by
+  obtain ⟨J, hJ⟩ := eventually_atTop.1 hE
+  obtain ⟨N, hN⟩ := ENNReal.exists_nat_gt (cellMass_squareAt_ne_top H q (J + d))
+  refine ⟨N, fun m hm hbad => ?_⟩
+  obtain ⟨j, hj, hjm⟩ := hbad
+  have hjJ : j < J := lt_of_not_ge fun h => hj (hJ j h)
+  have hsub := squareAt_mono_of_isCompatible (s := q.1) h₁ h₂ 0
+    (show j + d ≤ J + d by omega)
+  have hmass := cellMass_mono volume (complexCells H.1) hsub
+  exact (not_lt_of_ge (hm.trans (hjm.trans hmass))) hN
+
 /-! ### A conditional resampling estimate -/
 
 /-- If almost every point of a descendant belongs to a rooted event, its area gives a lower
