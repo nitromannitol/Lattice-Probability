@@ -471,6 +471,7 @@ import LatticeProb.Prob.BrownianOccupationTrunc
 import LatticeProb.Analysis.BrownianHeatTime
 import LatticeProb.Prob.BrownianExitKelvin
 import LatticeProb.Analysis.HeatMollify
+import LatticeProb.Analysis.HeatCompactness
 import LatticeProb.Analysis.HeatRepresentation
 import LatticeProb.Analysis.Sobolev.NegEnergy
 import LatticeProb.Analysis.PoissonBallKernel
