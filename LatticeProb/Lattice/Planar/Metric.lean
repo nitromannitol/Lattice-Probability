@@ -130,10 +130,10 @@ theorem exists_far_visited {V : Finset Site} {g f₀ : Site} (h : InFiniteCompon
   rw [inFiniteComponent_iff] at h
   obtain ⟨hgV, hfin⟩ := h
   have hgS : g ∈ hfin.toFinset := by
-    simp only [Set.Finite.mem_toFinset, Set.mem_setOf_eq]
+    simp only [Set.Finite.mem_toFinset, Set.mem_ofPred_eq]
     exact Relation.ReflTransGen.refl
   obtain ⟨z, hz, hmax⟩ := Finset.exists_max_image hfin.toFinset (fun z => linfDist z f₀) ⟨g, hgS⟩
-  simp only [Set.Finite.mem_toFinset, Set.mem_setOf_eq] at hz
+  simp only [Set.Finite.mem_toFinset, Set.mem_ofPred_eq] at hz
   have hzV : z ∉ V := AvoidReach.notMem hgV hz
   -- a neighbour of `z` one step farther from `f₀`
   obtain ⟨z', hadj, hfar⟩ : ∃ z' : Site, squareGraph.Adj z z' ∧ linfDist z' f₀ = linfDist z f₀ + 1 := by
@@ -156,7 +156,7 @@ theorem exists_far_visited {V : Finset Site} {g f₀ : Site} (h : InFiniteCompon
     omega
   · exfalso
     have hz'S : z' ∈ hfin.toFinset := by
-      simp only [Set.Finite.mem_toFinset, Set.mem_setOf_eq]
+      simp only [Set.Finite.mem_toFinset, Set.mem_ofPred_eq]
       exact Relation.ReflTransGen.tail hz ⟨hzV, hz'V, hadj⟩
     have := hmax z' hz'S
     omega
