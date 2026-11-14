@@ -96,4 +96,63 @@ theorem integral_mul_laplacian_eq_zero_of_subsingleton [Subsingleton E] (f φ : 
   rw [hφ]
   simp
 
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] in
+private theorem integrable_of_continuousOn_compact {g : E → ℝ} {K : Set E}
+    (hK : IsCompact K) (hg : ContinuousOn g K) (h0 : ∀ x ∉ K, g x = 0) :
+    Integrable g μ :=
+  (hg.integrableOn_compact hK).integrable_of_forall_notMem_eq_zero h0
+
+/-- Uniform convergence on the support of a compactly supported test function passes through
+integration against its Laplacian. -/
+theorem tendsto_integral_mul_laplacian_of_tendstoUniformlyOn {f : ℕ → E → ℝ}
+    {g φ : E → ℝ} (hφ : ContDiff ℝ ∞ φ) (hc : HasCompactSupport φ)
+    (hunif : TendstoUniformlyOn f g atTop (tsupport φ))
+    (hcont : ∀ᶠ n in atTop, ContinuousOn (f n) (tsupport φ)) :
+    Tendsto (fun n => ∫ x, f n x * Δ φ x ∂μ) atTop (𝓝 (∫ x, g x * Δ φ x ∂μ)) := by
+  have hΔ : Continuous (Δ φ) := by
+    rw [laplacian_eq_sum_fderiv hφ]
+    exact continuous_finsetSum _ fun i _ =>
+      (LatticeProb.PegdenSmart.contDiff_fderiv_apply
+        (LatticeProb.PegdenSmart.contDiff_fderiv_apply hφ _) _).continuous
+  have hΔ0 : ∀ x ∉ tsupport φ, Δ φ x = 0 := by
+    intro x hx
+    have hev : φ =ᶠ[𝓝 x] fun _ => (0 : ℝ) := notMem_tsupport_iff_eventuallyEq.1 hx
+    rw [(InnerProductSpace.laplacian_congr_nhds hev).eq_of_nhds]
+    simp
+  have hg : ContinuousOn g (tsupport φ) := hunif.continuousOn hcont.frequently
+  refine tendsto_integral_filter_of_dominated_convergence (fun x => (|g x| + 1) * |Δ φ x|)
+    ?_ ?_ ?_ ?_
+  · filter_upwards [hcont] with n hn
+    exact (integrable_of_continuousOn_compact hc (hn.mul hΔ.continuousOn)
+      fun x hx => by simp [hΔ0 x hx]).aestronglyMeasurable
+  · filter_upwards [Metric.tendstoUniformlyOn_iff.mp hunif 1 one_pos] with n hn
+    refine Eventually.of_forall fun x => ?_
+    by_cases hx : x ∈ tsupport φ
+    · have h1 : dist (g x) (f n x) < 1 := hn x hx
+      rw [Real.dist_eq, abs_sub_comm] at h1
+      rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
+      refine mul_le_mul_of_nonneg_right ?_ (abs_nonneg _)
+      have := abs_sub_abs_le_abs_sub (f n x) (g x)
+      linarith
+    · simp [hΔ0 x hx]
+  · exact integrable_of_continuousOn_compact hc
+      ((hg.abs.add continuousOn_const).mul hΔ.abs.continuousOn) fun x hx => by simp [hΔ0 x hx]
+  · refine Eventually.of_forall fun x => ?_
+    by_cases hx : x ∈ tsupport φ
+    · exact (hunif.tendsto_at hx).mul_const _
+    · simp [hΔ0 x hx]
+
+/-- The distributional inequality is preserved by locally uniform limits of smooth functions
+with nonnegative Laplacian on the support of the test function. -/
+theorem integral_mul_laplacian_nonneg_of_smooth_approximation {f : ℕ → E → ℝ}
+    {g φ : E → ℝ} (hφ : ContDiff ℝ ∞ φ) (hc : HasCompactSupport φ)
+    (hφ0 : ∀ x, 0 ≤ φ x) (hf : ∀ n, ContDiff ℝ ∞ (f n))
+    (hf0 : ∀ᶠ n in atTop, ∀ x ∈ tsupport φ, 0 ≤ Δ (f n) x)
+    (hunif : TendstoUniformlyOn f g atTop (tsupport φ)) :
+    0 ≤ ∫ x, g x * Δ φ x ∂μ := by
+  have hlim := tendsto_integral_mul_laplacian_of_tendstoUniformlyOn (μ := μ) hφ hc hunif
+    (Filter.Eventually.of_forall fun n => (hf n).continuous.continuousOn)
+  exact ge_of_tendsto hlim (hf0.mono fun n hn =>
+    integral_mul_laplacian_nonneg_of_laplacian_nonneg (hf n) hφ hc hφ0 hn)
+
 end LatticeProb.Ishii
