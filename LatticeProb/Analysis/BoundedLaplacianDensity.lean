@@ -1,18 +1,22 @@
 import LatticeProb.Analysis.WeakLaplaceMollify
 import LatticeProb.Analysis.LaplacianCalculus
 import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.Normed.Module.HahnBanach
+import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
+import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+import Mathlib.LinearAlgebra.Isomorphisms
 import Mathlib.Geometry.Manifold.PartitionOfUnity
-import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 
 /-!
-# Bounds for distributional Laplacians
+# Bounded density of the distributional Laplacian
 
-A two-sided bound on the distributional Laplacian bounds the Laplacian of its
-local mollifications.
+A continuous function whose distributional Laplacian has a two-sided bound
+has a measurable weak Laplacian with the same pointwise bound.
 -/
 
 open MeasureTheory Metric Filter Topology Set
-open scoped InnerProductSpace ContDiff Convolution
+open scoped InnerProductSpace ContDiff CompactlySupported NNReal ENNReal
 open Laplacian
 
 namespace LatticeProb.PegdenSmart
@@ -72,35 +76,6 @@ theorem exists_smooth_cutoff {U C : Set E} (hU : IsOpen U) (hC : IsCompact C)
   exact ⟨χ, hχ, hχc, hχts ▸ hVsub.trans inter_subset_left,
     fun x => (hχrange ⟨x, rfl⟩).1, fun x hx => (hχone x).1 hx,
     fun x => (hχrange ⟨x, rfl⟩).2⟩
-
-omit [MeasurableSpace E] [BorelSpace E] in
-/-- A compactly supported continuous function can be uniformly approximated
-by smooth functions supported in a fixed compact subset of an open set. -/
-theorem exists_smooth_uniform_approx {U : Set E} (hU : IsOpen U)
-    {f : E → ℝ} (hf : Continuous f) (hfc : HasCompactSupport f)
-    (hfU : tsupport f ⊆ U) :
-    ∃ C : Set E, IsCompact C ∧ C ⊆ U ∧ ∀ ε : ℝ, 0 < ε →
-      ∃ g : E → ℝ, ContDiff ℝ ∞ g ∧ HasCompactSupport g ∧ tsupport g ⊆ C ∧
-        ∀ x, |g x - f x| ≤ ε := by
-  obtain ⟨χ, hχ, hχc, hχU, hχ0, hχ1, hχle⟩ :=
-    exists_smooth_cutoff hU hfc.isCompact hfU
-  refine ⟨tsupport χ, hχc.isCompact, hχU, fun ε hε => ?_⟩
-  have hfu : UniformContinuous f :=
-    hf.uniformContinuous_of_tendsto_cocompact hfc.is_zero_at_infty
-  obtain ⟨g, hg, hga⟩ := hfu.exists_contDiff_dist_le hε
-  refine ⟨fun x => χ x * g x, hχ.mul hg, hχc.mul_right, tsupport_mul_subset_left, fun x => ?_⟩
-  have hχf : χ x * f x = f x := by
-    by_cases hx : x ∈ tsupport f
-    · rw [hχ1 x hx, one_mul]
-    · rw [image_eq_zero_of_notMem_tsupport hx, mul_zero]
-  have hχabs : |χ x| ≤ 1 := abs_le.mpr ⟨by linarith [hχ0 x], hχle x⟩
-  have hgabs : |g x - f x| < ε := by simpa [Real.dist_eq] using hga x
-  calc
-    |χ x * g x - f x| = |χ x| * |g x - f x| := by
-      have heq : χ x * g x - f x = χ x * (g x - f x) := by nlinarith [hχf]
-      rw [heq, abs_mul]
-    _ ≤ 1 * |g x - f x| := mul_le_mul_of_nonneg_right hχabs (abs_nonneg _)
-    _ ≤ ε := by simpa using hgabs.le
 
 /-- The distributional Laplacian pairing is integrable for a test function
 supported inside the domain of continuity. -/
@@ -189,45 +164,249 @@ theorem abs_integral_mul_laplacian_le {U : Set E} (hU : IsOpen U)
     nlinarith
   nlinarith [mul_le_mul_of_nonneg_left hqint hK]
 
-/-- A nonnegative unit-mass mollifier turns a two-sided distributional bound
-into a pointwise bound on the mollified Laplacian. -/
-theorem abs_laplacian_mollify_le_of_two_sided {U : Set E} (hU : IsOpen U)
-    {u : E → ℝ} (hu : ContinuousOn u U) {K : ℝ}
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- Smooth compactly supported test functions on an open set, viewed as a
+subspace of real-valued functions on the ambient space. -/
+def smoothTestSpace (U : Set E) : Submodule ℝ (E → ℝ) where
+  carrier := {φ | ContDiff ℝ ∞ φ ∧ HasCompactSupport φ ∧ tsupport φ ⊆ U}
+  zero_mem' := by
+    exact ⟨contDiff_const, by simp [HasCompactSupport], by simp⟩
+  add_mem' := by
+    intro f g hf hg
+    exact ⟨hf.1.add hg.1, hf.2.1.add hg.2.1,
+      (tsupport_add f g).trans (union_subset hf.2.2 hg.2.2)⟩
+  smul_mem' := by
+    intro c f hf
+    refine ⟨hf.1.const_smul c, ?_, ?_⟩
+    · exact hf.2.1.smul_left
+    · exact (tsupport_smul_subset_right (fun _ => c) f).trans hf.2.2
+
+omit [FiniteDimensional ℝ E] in
+/-- Each test function is integrable. -/
+theorem smoothTestSpace.integrable {U : Set E} (φ : smoothTestSpace U) :
+    Integrable (φ : E → ℝ) μ := φ.2.1.continuous.integrable_of_hasCompactSupport φ.2.2.1
+
+/-- The canonical map from test functions to their `L¹` classes. -/
+noncomputable def smoothTestSpace.toL1 (U : Set E) : smoothTestSpace U →ₗ[ℝ] Lp ℝ 1 μ where
+  toFun φ := (memLp_one_iff_integrable.mpr (smoothTestSpace.integrable (μ := μ) φ)).toLp (φ : E → ℝ)
+  map_add' φ ψ := by
+    rw [← MemLp.toLp_add]
+    rfl
+  map_smul' c φ := by
+    rw [← MemLp.toLp_const_smul]
+    rfl
+
+omit [FiniteDimensional ℝ E] in
+/-- The norm of a test function in `L¹` is the integral of its absolute value. -/
+theorem smoothTestSpace.norm_toL1 {U : Set E} (φ : smoothTestSpace U) :
+    ‖smoothTestSpace.toL1 (μ := μ) U φ‖ = ∫ x, |(φ : E → ℝ) x| ∂μ := by
+  have hi := smoothTestSpace.integrable (μ := μ) φ
+  change ‖(memLp_one_iff_integrable.mpr hi).toLp (φ : E → ℝ)‖ = _
+  rw [Lp.norm_toLp, eLpNorm_one_eq_lintegral_enorm,
+    ← integral_norm_eq_lintegral_enorm hi.aestronglyMeasurable]
+  simp only [Real.norm_eq_abs]
+  exact hi.aestronglyMeasurable
+
+/-- The distributional Laplacian pairing as a linear functional on tests. -/
+noncomputable def smoothTestSpace.laplacianPairing {U : Set E} {u : E → ℝ}
+    (hu : ContinuousOn u U) : smoothTestSpace U →ₗ[ℝ] ℝ where
+  toFun φ := ∫ x, u x * Δ (φ : E → ℝ) x ∂μ
+  map_add' φ ψ := by
+    have hiφ := integrable_mul_laplacian (μ := μ) hu φ.2.1 φ.2.2.1 φ.2.2.2
+    have hiψ := integrable_mul_laplacian (μ := μ) hu ψ.2.1 ψ.2.2.1 ψ.2.2.2
+    rw [← integral_add hiφ hiψ]
+    congr 1; funext x
+    change u x * Δ ((φ : E → ℝ) + (ψ : E → ℝ)) x = _
+    rw [(φ.2.1.of_le (by simp)).contDiffAt.laplacian_add
+      (ψ.2.1.of_le (by simp)).contDiffAt]
+    ring
+  map_smul' c φ := by
+    simp only [RingHom.id_apply, smul_eq_mul, ← integral_const_mul]
+    congr 1; funext x
+    change u x * Δ (c • (φ : E → ℝ)) x = _
+    rw [InnerProductSpace.laplacian_smul c (φ.2.1.of_le (by simp)).contDiffAt]
+    simp only [smul_eq_mul]
+    ring
+
+/-- A bounded distributional Laplacian extends to a bounded linear functional
+on `L¹`, preserving its bound. -/
+theorem exists_l1_extension_of_two_sided {U : Set E} (hU : IsOpen U)
+    {u : E → ℝ} (hu : ContinuousOn u U) {K : ℝ} (hK : 0 ≤ K)
     (hle : ∀ φ : E → ℝ, ContDiff ℝ ∞ φ → HasCompactSupport φ → tsupport φ ⊆ U →
-      (∀ x, 0 ≤ φ x) → |∫ x, u x * Δ φ x ∂μ| ≤ K * ∫ x, φ x ∂μ)
-    {ρ : E → ℝ} {ε : ℝ} (hε : 0 < ε) (hρs : ContDiff ℝ ∞ ρ)
-    (hρc : HasCompactSupport ρ) (hρ : ∀ y, ε < ‖y‖ → ρ y = 0)
-    (hρ0 : ∀ y, 0 ≤ ρ y) (hρ1 : ∫ y, ρ y ∂μ = 1) {x₀ : E}
-    (hx₀ : closedBall x₀ ε ⊆ U) :
-    |Δ ((U.indicator u) ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) x₀| ≤ K := by
-  obtain ⟨η, hη, g, hg, hgu, hloc⟩ := exists_local_conv (μ := μ) hU hu hε hρ hx₀
-  have hev : ((U.indicator u) ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) =ᶠ[𝓝 x₀]
-      (g ⋆[ContinuousLinearMap.mul ℝ ℝ, μ] ρ) := by
-    filter_upwards [ball_mem_nhds x₀ hη] with x hx using hloc x hx
-  rw [(InnerProductSpace.laplacian_congr_nhds hev).eq_of_nhds,
-    laplacian_convolution hg.locallyIntegrable hρs hρc]
-  have hψ : ContDiff ℝ ∞ (fun t => ρ (x₀ - t)) := hρs.comp (contDiff_const.sub contDiff_id)
-  have hψc : HasCompactSupport (fun t => ρ (x₀ - t)) :=
-    hρc.comp_homeomorph (Homeomorph.subLeft x₀)
-  have hψU : tsupport (fun t => ρ (x₀ - t)) ⊆ U := by
-    refine (closure_minimal (fun t ht => ?_) isClosed_closedBall).trans hx₀
-    by_contra hnot
-    rw [mem_closedBall, not_le, dist_eq_norm'] at hnot
-    exact ht (hρ _ hnot)
-  have h := hle _ hψ hψc hψU (fun t => hρ0 (x₀ - t))
-  simp only [laplacian_comp_sub_left hρs x₀] at h
-  rw [integral_sub_left_eq_self ρ μ x₀, hρ1, mul_one] at h
-  simp only [convolution_def, ContinuousLinearMap.mul_apply']
-  have h1 : ∫ t, g t * Δ ρ (x₀ - t) ∂μ = ∫ t, u t * Δ ρ (x₀ - t) ∂μ := by
-    refine integral_congr_ae (Filter.Eventually.of_forall fun t => ?_)
-    by_cases ht : t ∈ closedBall x₀ ε
-    · simp only [hgu ht]
-    · have ht' : ε < ‖x₀ - t‖ := by
-        rw [mem_closedBall, not_le, dist_eq_norm'] at ht
-        exact ht
-      dsimp only
-      rw [laplacian_eq_zero_of_eq_zero hρ ht', mul_zero, mul_zero]
-  rw [h1]
-  exact h
+      (∀ x, 0 ≤ φ x) → |∫ x, u x * Δ φ x ∂μ| ≤ K * ∫ x, φ x ∂μ) :
+    ∃ F : StrongDual ℝ (Lp ℝ 1 μ), ‖F‖ ≤ K ∧
+      ∀ φ : smoothTestSpace U, F (smoothTestSpace.toL1 (μ := μ) U φ) =
+        ∫ x, u x * Δ (φ : E → ℝ) x ∂μ := by
+  let J := smoothTestSpace.toL1 (μ := μ) U
+  let T := smoothTestSpace.laplacianPairing (μ := μ) hu
+  have hbound : ∀ φ, ‖T φ‖ ≤ K * ‖J φ‖ := by
+    intro φ
+    rw [smoothTestSpace.norm_toL1]
+    exact abs_integral_mul_laplacian_le hU hu hK hle φ.2.1 φ.2.2.1 φ.2.2.2
+  have hker : LinearMap.ker J ≤ LinearMap.ker T := by
+    intro φ hφ
+    rw [LinearMap.mem_ker] at hφ ⊢
+    have h := hbound φ
+    rw [hφ, norm_zero, mul_zero] at h
+    exact norm_le_zero_iff.mp h
+  let G : LinearMap.range J →ₗ[ℝ] ℝ :=
+    (LinearMap.ker J).liftQ T hker |>.comp J.quotKerEquivRange.symm.toLinearMap
+  have hG (φ : smoothTestSpace U) : G ⟨J φ, LinearMap.mem_range_self J φ⟩ = T φ := by
+    simp [G, LinearMap.quotKerEquivRange_symm_apply_image]
+  have hGb : ∀ z : LinearMap.range J, ‖G z‖ ≤ K * ‖z‖ := by
+    rintro ⟨_, ⟨φ, rfl⟩⟩
+    simpa [hG] using hbound φ
+  let L : StrongDual ℝ (LinearMap.range J) := G.mkContinuous K hGb
+  have hL : ‖L‖ ≤ K := L.opNorm_le_bound hK hGb
+  obtain ⟨F, hF, hFnorm⟩ := exists_extension_norm_eq (LinearMap.range J) L
+  refine ⟨F, hFnorm ▸ hL, fun φ => ?_⟩
+  exact (hF ⟨J φ, LinearMap.mem_range_self J φ⟩).trans (hG φ)
+
+/-- The canonical inclusion of compactly supported continuous functions in `L¹`. -/
+noncomputable def compactlySupportedToL1 : C_c(E, ℝ) →ₗ[ℝ] Lp ℝ 1 μ where
+  toFun f := (memLp_one_iff_integrable.mpr f.integrable).toLp f
+  map_add' f g := by
+    rw [← MemLp.toLp_add]
+    rfl
+  map_smul' c f := by
+    rw [← MemLp.toLp_const_smul]
+    rfl
+
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] in
+/-- The `L¹` norm of a compactly supported continuous function. -/
+theorem norm_compactlySupportedToL1 (f : C_c(E, ℝ)) :
+    ‖compactlySupportedToL1 (μ := μ) f‖ = ∫ x, |f x| ∂μ := by
+  change ‖(memLp_one_iff_integrable.mpr f.integrable).toLp f‖ = _
+  rw [Lp.norm_toLp, eLpNorm_one_eq_lintegral_enorm,
+    ← integral_norm_eq_lintegral_enorm f.integrable.aestronglyMeasurable]
+  · simp only [Real.norm_eq_abs]
+  · exact f.integrable.aestronglyMeasurable
+
+/-- Adding `K` times integration to a norm-`K` functional makes it positive. -/
+noncomputable def l1PositiveMap (F : StrongDual ℝ (Lp ℝ 1 μ)) (K : ℝ)
+    (hF : ‖F‖ ≤ K) : C_c(E, ℝ) →ₚ[ℝ] ℝ :=
+  PositiveLinearMap.mk₀
+    (F.toLinearMap.comp (compactlySupportedToL1 (μ := μ)) +
+      K • (CompactlySupportedContinuousMap.integralPositiveLinearMap μ).toLinearMap)
+    (by
+      intro f hf
+      have hb := F.le_opNorm (compactlySupportedToL1 (μ := μ) f)
+      have hnorm : ‖compactlySupportedToL1 (μ := μ) f‖ = ∫ x, f x ∂μ := by
+        rw [norm_compactlySupportedToL1]
+        congr 1; funext x
+        exact abs_of_nonneg (hf x)
+      rw [hnorm, Real.norm_eq_abs] at hb
+      have hi : 0 ≤ ∫ x, f x ∂μ := integral_nonneg hf
+      have hb' : |F (compactlySupportedToL1 (μ := μ) f)| ≤ K * ∫ x, f x ∂μ :=
+        hb.trans (mul_le_mul_of_nonneg_right hF hi)
+      change 0 ≤ F (compactlySupportedToL1 (μ := μ) f) + K * ∫ x, f x ∂μ
+      linarith [(abs_le.mp hb').1])
+
+/-- A bounded `L¹` functional gives a positive measure dominated by `2K` times
+the reference measure. -/
+theorem exists_dominated_measure_of_l1 (F : StrongDual ℝ (Lp ℝ 1 μ))
+    {K : ℝ} (hK : 0 ≤ K) (hF : ‖F‖ ≤ K) :
+    ∃ ν : Measure E, ν.Regular ∧ ν ≤ (Real.toNNReal (2 * K)) • μ ∧
+      ∀ f : C_c(E, ℝ), ∫ x, f x ∂ν =
+        F (compactlySupportedToL1 (μ := μ) f) + K * ∫ x, f x ∂μ := by
+  let P := l1PositiveMap (μ := μ) F K hF
+  have hneg : ‖-F‖ ≤ K := by simpa using hF
+  let Q := l1PositiveMap (μ := μ) (-F) K hneg
+  let ν := RealRMK.rieszMeasure P
+  let ξ := RealRMK.rieszMeasure Q
+  let c : ℝ≥0 := Real.toNNReal (2 * K)
+  have hc : (c : ℝ) = 2 * K := Real.coe_toNNReal _ (by positivity)
+  have : ν.Regular := by dsimp [ν]; infer_instance
+  have : ξ.Regular := by dsimp [ξ]; infer_instance
+  have : IsFiniteMeasureOnCompacts (ν + ξ) := ⟨fun _ h => by
+    rw [Measure.add_apply]
+    exact ENNReal.add_lt_top.mpr ⟨h.measure_lt_top, h.measure_lt_top⟩⟩
+  have hsum : ν + ξ = c • μ := by
+    apply Measure.ext_of_integral_eq_on_compactlySupported
+    intro f
+    rw [integral_add_measure f.integrable f.integrable, integral_smul_nnreal_measure]
+    change (∫ x, f x ∂(RealRMK.rieszMeasure P)) +
+      (∫ x, f x ∂(RealRMK.rieszMeasure Q)) = c • ∫ x, f x ∂μ
+    rw [RealRMK.integral_rieszMeasure, RealRMK.integral_rieszMeasure]
+    change F (compactlySupportedToL1 (μ := μ) f) + K * (∫ x, f x ∂μ) +
+      ((-F) (compactlySupportedToL1 (μ := μ) f) + K * (∫ x, f x ∂μ)) =
+      (c : ℝ) * ∫ x, f x ∂μ
+    rw [hc]
+    simp only [neg_apply]
+    ring
+  refine ⟨ν, inferInstance, ?_, fun f => ?_⟩
+  · calc ν ≤ ν + ξ := Measure.le_add_right le_rfl
+      _ = (Real.toNNReal (2 * K)) • μ := hsum
+  · change (∫ x, f x ∂(RealRMK.rieszMeasure P)) = _
+    rw [RealRMK.integral_rieszMeasure]
+    rfl
+
+/-- A bounded functional on `L¹` is represented on compactly supported
+continuous functions by a pointwise bounded measurable function. -/
+theorem exists_bounded_density_of_l1 (F : StrongDual ℝ (Lp ℝ 1 μ))
+    {K : ℝ} (hK : 0 ≤ K) (hF : ‖F‖ ≤ K) :
+    ∃ s : E → ℝ, Measurable s ∧ (∀ x, |s x| ≤ K) ∧
+      ∀ f : C_c(E, ℝ), F (compactlySupportedToL1 (μ := μ) f) = ∫ x, s x * f x ∂μ := by
+  obtain ⟨ν, hνreg, hνle, hνint⟩ := exists_dominated_measure_of_l1 (μ := μ) F hK hF
+  let c : ℝ≥0 := Real.toNNReal (2 * K)
+  have hc : (c : ℝ) = 2 * K := Real.coe_toNNReal _ (by positivity)
+  have hνle' : ν ≤ (c : ℝ≥0∞) • μ := hνle
+  have hνac : ν ≪ μ := Measure.absolutelyContinuous_of_le_smul hνle'
+  have : SigmaFinite ν := Measure.sigmaFinite_of_le (c • μ) hνle
+  have hrn : μ.withDensity (ν.rnDeriv μ) = ν := Measure.withDensity_rnDeriv_eq ν μ hνac
+  have hrtop : ∀ᵐ x ∂μ, ν.rnDeriv μ x < (⊤ : ℝ≥0∞) := Measure.rnDeriv_lt_top ν μ
+  have hrle : ∀ᵐ x ∂μ, ν.rnDeriv μ x ≤ (c : ℝ≥0∞) := by
+    refine ae_le_of_forall_setLIntegral_le_of_sigmaFinite (ν.measurable_rnDeriv μ) fun A _ _ => ?_
+    calc
+      (∫⁻ x in A, ν.rnDeriv μ x ∂μ) ≤ ν A := Measure.setLIntegral_rnDeriv_le A
+      _ ≤ ((c : ℝ≥0∞) • μ) A := hνle' A
+      _ = ∫⁻ _ in A, (c : ℝ≥0∞) ∂μ := by simp [Measure.smul_apply]
+  let t : E → ℝ := fun x => (ν.rnDeriv μ x).toReal
+  have htm : Measurable t := (ν.measurable_rnDeriv μ).ennreal_toReal
+  have htb : ∀ᵐ x ∂μ, 0 ≤ t x ∧ t x ≤ 2 * K := by
+    filter_upwards [hrle] with x hx
+    constructor
+    · exact ENNReal.toReal_nonneg
+    · have h := ENNReal.toReal_mono (by simp : (c : ℝ≥0∞) ≠ (⊤ : ℝ≥0∞)) hx
+      simpa [t, hc] using h
+  let s : E → ℝ := fun x => max (-K) (min K (t x - K))
+  have hsm : Measurable s := (measurable_const.max (measurable_const.min (htm.sub_const K)))
+  have hsb : ∀ x, |s x| ≤ K := by
+    intro x
+    apply abs_le.mpr
+    constructor
+    · exact le_max_left _ _
+    · exact max_le (by linarith) (min_le_left _ _)
+  have hst : ∀ᵐ x ∂μ, s x = t x - K := by
+    filter_upwards [htb] with x hx
+    change max (-K) (min K (t x - K)) = t x - K
+    rw [min_eq_right (by linarith [hx.2]), max_eq_right (by linarith [hx.1])]
+  refine ⟨s, hsm, hsb, fun f => ?_⟩
+  have hti : Integrable (fun x => t x * f x) μ :=
+    f.integrable.bdd_mul htm.aestronglyMeasurable (htb.mono fun x hx => by
+      rw [Real.norm_eq_abs, abs_of_nonneg hx.1]
+      exact hx.2)
+  have htd : ∫ x, f x ∂ν = ∫ x, t x * f x ∂μ := by
+    rw [← hrn, integral_withDensity_eq_integral_toReal_smul (ν.measurable_rnDeriv μ) hrtop]
+    rfl
+  have heq : (∫ x, s x * f x ∂μ) = (∫ x, t x * f x ∂μ) - K * ∫ x, f x ∂μ := by
+    rw [← integral_const_mul K, ← integral_sub hti (f.integrable.const_mul K)]
+    exact integral_congr_ae (hst.mono fun x hx => by dsimp only; rw [hx]; ring)
+  rw [heq, ← htd, hνint]
+  ring
+
+/-- A continuous function whose distributional Laplacian is bounded above and
+below by `K` has a measurable weak Laplacian bounded pointwise by `K`. -/
+theorem exists_density_of_two_sided {U : Set E} (hU : IsOpen U)
+    {u : E → ℝ} (hu : ContinuousOn u U) {K : ℝ} (hK : 0 ≤ K)
+    (hle : ∀ φ : E → ℝ, ContDiff ℝ ∞ φ → HasCompactSupport φ → tsupport φ ⊆ U →
+      (∀ x, 0 ≤ φ x) → |∫ x, u x * Δ φ x ∂μ| ≤ K * ∫ x, φ x ∂μ) :
+    ∃ s : E → ℝ, Measurable s ∧ (∀ x, |s x| ≤ K) ∧ IsWeakSolutionLaplace μ U u s := by
+  obtain ⟨F, hF, hpair⟩ := exists_l1_extension_of_two_sided (μ := μ) hU hu hK hle
+  obtain ⟨s, hsm, hsb, hs⟩ := exists_bounded_density_of_l1 (μ := μ) F hK hF
+  refine ⟨s, hsm, hsb, fun φ hφ hφc hφU => ?_⟩
+  let ψ : smoothTestSpace U := ⟨φ, hφ, hφc, hφU⟩
+  let f : C_c(E, ℝ) := ⟨⟨φ, hφ.continuous⟩, hφc⟩
+  exact (hpair ψ).symm.trans (hs f)
 
 end LatticeProb.PegdenSmart
