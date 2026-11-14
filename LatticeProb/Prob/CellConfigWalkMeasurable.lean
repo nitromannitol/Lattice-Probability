@@ -22,7 +22,12 @@ measurability lemma from Definition 1.15:
 * `ae_jumpTimesUnbounded_of_recurrent`, `aemeasurable_interpolatedWalk_of_recurrent`: under the
   law of the walk on a recurrent configuration the jump times diverge almost surely, so the
   rescaled interpolated walk is an a.e.-measurable random element of `C([0,∞), ℂ)` for every
-  scale `ε`.
+  scale `ε`;
+* `exists_adj_of_horizontal_connected`, `ae_forall_exists_adj`: under connectedness along lines
+  (GMS hypothesis 3) every cell has a neighbour, almost surely;
+* `ae_aemeasurable_interpolatedWalk`: under connectedness along lines and almost sure recurrence
+  (the second conclusion of GMS Theorem 1.16), almost every configuration carries an a.e.-measurable
+  rescaled walk from every starting cell, for every choice of points and every scale.
 -/
 
 set_option autoImplicit false
@@ -142,5 +147,65 @@ theorem aemeasurable_interpolatedWalk_of_isCellConfiguration (hH : H.IsCellConfi
     AEMeasurable (H.interpolatedWalk p ε) Q :=
   haveI := countable_cells_of_locallyFinite hH.locallyFinite
   aemeasurable_interpolatedWalk_of_recurrent hrec (holding_pos_of_forall_exists_adj hH hadj) hQ p ε
+
+/-- In a connected graph a vertex with some other vertex has a neighbour: the first step of a walk
+to that vertex. -/
+theorem exists_adj_of_connected_of_ne {V : Type*} {G : SimpleGraph V} (hG : G.Connected)
+    {u v : V} (h : u ≠ v) : ∃ x, G.Adj u x :=
+  let ⟨p⟩ := hG.preconnected u v
+  ⟨p.snd, p.adj_snd (SimpleGraph.Walk.not_nil_of_ne h)⟩
+
+/-- **Under connectedness along horizontal lines every cell has a neighbour.** A horizontal segment
+starting at a point `z` of the cell `K` and longer than the diameter of `K` ends at a point `w` of
+another cell `K'`; both cells meet the segment, so in the connected graph of the cells meeting it
+the first step of a path from `K` to `K'` is a neighbour of `K`. -/
+theorem exists_adj_of_horizontal_connected (hH : H.IsCellConfiguration)
+    (hconn : ∀ a b y : ℝ, a < b → (H.inducedGraph (horizontal a b y)).Connected)
+    (K : H.cells) : ∃ K' : H.cells, H.Adj K K' := by
+  obtain ⟨z, hz⟩ := (K : Cell).nonempty
+  have hR0 : 0 < Metric.diam ((K : Cell) : Set Plane) + 1 := by
+    have := Metric.diam_nonneg (s := ((K : Cell) : Set Plane)); linarith
+  obtain ⟨w, hw0, hw1⟩ : ∃ w : Plane,
+      w 0 = z 0 + (Metric.diam ((K : Cell) : Set Plane) + 1) ∧ w 1 = z 1 :=
+    ⟨WithLp.toLp 2 ![z 0 + (Metric.diam ((K : Cell) : Set Plane) + 1), z 1], by simp, by simp⟩
+  have hwK : w ∉ ((K : Cell) : Set Plane) := by
+    intro hwK
+    have h1 : dist (z 0) (w 0) ≤ dist z w := PiLp.dist_apply_le z w 0
+    have h2 : dist z w ≤ Metric.diam ((K : Cell) : Set Plane) :=
+      Metric.dist_le_diam_of_mem (K : Cell).isCompact.isBounded hz hwK
+    rw [hw0, Real.dist_eq, show ∀ a b : ℝ, a - (a + b) = -b from fun a b => by ring, abs_neg,
+      abs_of_pos hR0] at h1
+    linarith
+  have hwU : w ∈ ⋃ K' ∈ H.cells, ((K' : Cell) : Set Plane) := by
+    rw [hH.iUnion_eq_univ]; exact mem_univ w
+  obtain ⟨K', hK', hwK'⟩ := mem_iUnion₂.1 hwU
+  have hlt : z 0 < z 0 + (Metric.diam ((K : Cell) : Set Plane) + 1) := by linarith
+  have hzS : z ∈ horizontal (z 0) (z 0 + (Metric.diam ((K : Cell) : Set Plane) + 1)) (z 1) :=
+    show z 0 ≤ z 0 ∧ z 0 ≤ _ ∧ z 1 = z 1 from ⟨le_rfl, hlt.le, rfl⟩
+  have hwS : w ∈ horizontal (z 0) (z 0 + (Metric.diam ((K : Cell) : Set Plane) + 1)) (z 1) :=
+    show z 0 ≤ w 0 ∧ w 0 ≤ _ ∧ w 1 = z 1 from ⟨by rw [hw0]; linarith, hw0.le, hw1⟩
+  obtain ⟨x, hx⟩ := exists_adj_of_connected_of_ne (hconn _ _ (z 1) hlt)
+    (u := ⟨K, z, hz, hzS⟩) (v := ⟨⟨K', hK'⟩, w, hwK', hwS⟩) (fun h => hwK (by
+      have h' : (K : Cell) = K' := congrArg Subtype.val (Subtype.ext_iff.1 h)
+      rw [h']; exact hwK'))
+  exact ⟨x.1, (SimpleGraph.induce_adj.1 hx).2.1⟩
+
+/-- **Almost surely every cell has a neighbour** under connectedness along lines (GMS hypothesis 3
+of Theorem 1.16). -/
+theorem ae_forall_exists_adj {μ : Measure GMSSpace} (h : ConnectedAlongLines μ) :
+    ∀ᵐ H ∂μ, ∀ K : H.1.cells, ∃ K' : H.1.cells, H.1.Adj K K' :=
+  h.mono fun H hH => exists_adj_of_horizontal_connected H.2 hH.1
+
+/-- **Under the hypotheses of GMS Theorem 1.16 the rescaled walk is almost surely a random path.**
+Given connectedness along lines and almost sure recurrence (the second conclusion of Theorem 1.16),
+for almost every configuration the rescaled interpolated walk is an a.e.-measurable random element
+of `C([0,∞), ℂ)` under the law of the walk from every starting cell, for every choice of points and
+every scale. -/
+theorem ae_aemeasurable_interpolatedWalk {μ : Measure GMSSpace} (h : ConnectedAlongLines μ)
+    (hrec : ∀ᵐ H ∂μ, H.1.Recurrent) :
+    ∀ᵐ H ∂μ, ∀ (K₀ : H.1.cells) (Q : Measure (ℕ → H.1.cells)), H.1.IsSRWLaw K₀ Q →
+      ∀ (p : H.1.cells → Plane) (ε : ℝ≥0), AEMeasurable (H.1.interpolatedWalk p ε) Q := by
+  filter_upwards [ae_forall_exists_adj h, hrec] with H hadj hr K₀ Q hQ p ε
+  exact aemeasurable_interpolatedWalk_of_isCellConfiguration H.2 hadj hr hQ p ε
 
 end LatticeProb.CellConfigWalk
