@@ -1,3 +1,4 @@
+import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.Analysis.InnerProductSpace.Laplacian
 
@@ -18,6 +19,7 @@ subharmonic on `U`; dually, if every test function touching `u` from below has L
 ## Main results
 
 * `LatticeProb.Ishii.IsViscSubharmonic`, `LatticeProb.Ishii.IsViscSuperharmonic`: the definitions.
+* `LatticeProb.Ishii.IsViscSubharmonic.le_of_le_on_sphere`: comparison with a harmonic function.
 * `LatticeProb.Ishii.laplacian_norm_sq`: `Δ ‖·‖ ^ 2 = 2 d`.
 * `LatticeProb.Ishii.isViscSubharmonic_add_sq`, `LatticeProb.Ishii.isViscSuperharmonic_sub_sq`:
   the quadratic shifts.
@@ -65,6 +67,61 @@ theorem laplacian_eq_zero_of_finrank_eq_zero (hd : Module.finrank ℝ E = 0) (f 
 theorem laplacian_smul_norm_sq (c : ℝ) (x : E) :
     Δ (c • fun y : E => ‖y‖ ^ 2) x = c * (2 * Module.finrank ℝ E) := by
   rw [laplacian_smul c (contDiff_norm_sq ℝ (n := 2)).contDiffAt, laplacian_norm_sq, smul_eq_mul]
+
+/-- A continuous viscosity subharmonic function is bounded above by a harmonic function
+on a ball if the same inequality holds on the sphere. -/
+theorem IsViscSubharmonic.le_of_le_on_sphere [Nontrivial E] {U : Set E} {v : E → ℝ}
+    (hv : ContinuousOn v U) (hvisc : IsViscSubharmonic U v)
+    {a : E} {r : ℝ} (hball : Metric.closedBall a r ⊆ U) {h : E → ℝ}
+    (hhc : ContinuousOn h (Metric.closedBall a r))
+    (hh : HarmonicOnNhd h (Metric.ball a r))
+    (hboundary : ∀ x ∈ Metric.sphere a r, v x ≤ h x) :
+    ∀ x ∈ Metric.ball a r, v x ≤ h x := by
+  intro x hx
+  by_contra hn
+  have hm : 0 < v x - h x := sub_pos.mpr (lt_of_not_ge hn)
+  have hx' : x ∈ Metric.closedBall a r := Metric.ball_subset_closedBall hx
+  have hc : IsCompact (Metric.closedBall a r) := isCompact_closedBall a r
+  obtain ⟨y, _, hymax⟩ := hc.exists_isMaxOn ⟨x, hx'⟩
+    ((continuous_norm.pow 2).continuousOn : ContinuousOn (fun z : E => ‖z‖ ^ 2) _)
+  obtain ⟨ε, hε, hεsmall⟩ := exists_pos_mul_lt hm (‖y‖ ^ 2)
+  let F : E → ℝ := fun z => v z - h z + ε * ‖z‖ ^ 2
+  have hFc : ContinuousOn F (Metric.closedBall a r) :=
+    ((hv.mono hball).sub hhc).add ((continuous_norm.pow 2).const_mul ε).continuousOn
+  obtain ⟨z, hz, hzmax⟩ := hc.exists_isMaxOn ⟨x, hx'⟩ hFc
+  have hFx : v x - h x ≤ F x := by
+    dsimp [F]
+    nlinarith [sq_nonneg ‖x‖]
+  have hFz : v x - h x ≤ F z := hFx.trans (hzmax hx')
+  have hzball : z ∈ Metric.ball a r := by
+    rw [Metric.mem_closedBall] at hz
+    rw [Metric.mem_ball]
+    by_contra hznot
+    have heq : dist z a = r := le_antisymm hz (le_of_not_gt hznot)
+    have hzs : z ∈ Metric.sphere a r := Metric.mem_sphere.mpr heq
+    have hq : ‖z‖ ^ 2 ≤ ‖y‖ ^ 2 := hymax hz
+    have hb := hboundary z hzs
+    dsimp [F] at hFz
+    nlinarith [mul_le_mul_of_nonneg_left hq hε.le]
+  have hlocal : IsLocalMax F z := hzmax.isLocalMax
+    (Filter.mem_of_superset (Metric.isOpen_ball.mem_nhds hzball) Metric.ball_subset_closedBall)
+  have hh' := hh z hzball
+  have hq : ContDiffAt ℝ 2 (ε • fun w : E => ‖w‖ ^ 2) z :=
+    ((contDiff_norm_sq ℝ (n := 2)).const_smul ε).contDiffAt
+  have hmax : IsLocalMax (fun w => v w - (h - ε • fun w : E => ‖w‖ ^ 2) w) z := by
+    have heq : (fun w => v w - (h - ε • fun w : E => ‖w‖ ^ 2) w) = F := by
+      funext w
+      simp only [F, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+      ring
+    rw [heq]
+    exact hlocal
+  have hvineq := hvisc z (hball hz) (h - ε • fun w : E => ‖w‖ ^ 2)
+    (hh'.1.sub hq) hmax
+  rw [hh'.1.laplacian_sub hq, laplacian_smul_norm_sq] at hvineq
+  have hhlap : Δ h z = 0 := hh'.2.self_of_nhds
+  have hdim : (0 : ℝ) < Module.finrank ℝ E := by exact_mod_cast Module.finrank_pos (R := ℝ) (M := E)
+  rw [hhlap] at hvineq
+  nlinarith
 
 /-- **Quadratic shift, subharmonic case.** If every function touching `u` from above at a point
 of `U` has Laplacian at least `-K` there, then `u + K / (2 d) ‖x‖ ^ 2` is viscosity subharmonic
