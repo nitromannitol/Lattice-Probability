@@ -903,6 +903,7 @@ import LatticeProb.Analysis.AlexandrovTaylor
 import LatticeProb.Analysis.AlexandrovLocal
 import LatticeProb.Analysis.Alexandrov
 import LatticeProb.Analysis.WeakLaplaceMollify
+import LatticeProb.Analysis.ViscositySubharmonic
 import LatticeProb.Analysis.JensenSmooth
 
 -- Modules adapted from Leonardo Bonanno's lean-formalizations: top modules of the copied import closures
