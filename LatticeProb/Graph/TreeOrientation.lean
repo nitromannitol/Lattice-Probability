@@ -23,7 +23,7 @@ theorem adj_eq_snd_or_eq_snd {V : Type*} {G : SimpleGraph V} (hG : G.IsTree)
       w.support = [r] := by
     subst v
     have he : w = Walk.nil := Subtype.mk.inj
-      (hG.isAcyclic.path_unique ⟨w, hw⟩ ⟨Walk.nil, Walk.IsPath.nil⟩)
+      ((hG.isAcyclic.subsingleton_path _ _).elim ⟨w, hw⟩ ⟨Walk.nil, Walk.IsPath.nil⟩)
     rw [he]
     rfl
   by_cases hb : b ∈ p.support

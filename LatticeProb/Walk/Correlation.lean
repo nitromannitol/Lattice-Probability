@@ -134,7 +134,7 @@ theorem sum_range_succ_srwHeat_le (hd : 0 < d) (m : ℕ) :
       norm_num
     rw [hsplit]
     have h0 : ((0 : ℝ) + 1) * srwHeat d 0 (0 : Site d) = 1 := by
-      rw [srwHeat_zero, if_pos rfl]
+      rw [srwHeat_zero, ite_eq_left rfl]
       ring
     rw [h0]
     have hterm : ∀ s ∈ Finset.Ico 1 m,
@@ -247,11 +247,11 @@ theorem corrRate_mul_corrScale {d : ℕ} (hd : 1 ≤ d) (hd4 : d ≤ 4) {m n : �
   by_cases h1 : d = 1
   · subst h1
     have hcr : corrRate 1 m n = ((m : ℝ) / (n : ℝ)) ^ ((1 : ℝ) / 4) := by
-      rw [corrRate, if_neg (by norm_num), if_neg (by norm_num)]
-    have hcm : corrScale 1 m = (m : ℝ) * Real.sqrt (m : ℝ) := by rw [corrScale, if_pos rfl]
-    have hcn : corrScale 1 n = (n : ℝ) * Real.sqrt (n : ℝ) := by rw [corrScale, if_pos rfl]
+      rw [corrRate, ite_eq_right (by norm_num), ite_eq_right (by norm_num)]
+    have hcm : corrScale 1 m = (m : ℝ) * Real.sqrt (m : ℝ) := by rw [corrScale, ite_eq_left rfl]
+    have hcn : corrScale 1 n = (n : ℝ) * Real.sqrt (n : ℝ) := by rw [corrScale, ite_eq_left rfl]
     have hct : corrTarget 1 m n = (m : ℝ) * Real.sqrt (n : ℝ) := by
-      rw [corrTarget, if_pos rfl]
+      rw [corrTarget, ite_eq_left rfl]
     rw [hcr, hcm, hcn, hct, rpow_quarter_eq (by positivity), hq]
     set a := Real.sqrt (Real.sqrt (m : ℝ)) with ha
     set b := Real.sqrt (Real.sqrt (n : ℝ)) with hb
@@ -271,13 +271,13 @@ theorem corrRate_mul_corrScale {d : ℕ} (hd : 1 ≤ d) (hd4 : d ≤ 4) {m n : �
   · subst h2
     have hcr : corrRate 2 m n
         = (1 + Real.log ((n : ℝ) / (m : ℝ))) * Real.sqrt ((m : ℝ) / (n : ℝ)) := by
-      rw [corrRate, if_pos rfl]
+      rw [corrRate, ite_eq_left rfl]
     have hcm : corrScale 2 m = (m : ℝ) := by
-      rw [corrScale, if_neg (by norm_num), if_pos rfl]
+      rw [corrScale, ite_eq_right (by norm_num), ite_eq_left rfl]
     have hcn : corrScale 2 n = (n : ℝ) := by
-      rw [corrScale, if_neg (by norm_num), if_pos rfl]
+      rw [corrScale, ite_eq_right (by norm_num), ite_eq_left rfl]
     have hct : corrTarget 2 m n = (m : ℝ) * (1 + Real.log ((n : ℝ) / (m : ℝ))) := by
-      rw [corrTarget, if_neg (by norm_num), if_pos rfl]
+      rw [corrTarget, ite_eq_right (by norm_num), ite_eq_left rfl]
     rw [hcr, hcm, hcn, hct]
     have hsq : Real.sqrt ((m : ℝ) / (n : ℝ)) * Real.sqrt (m : ℝ) * Real.sqrt (n : ℝ)
         = (m : ℝ) := by
@@ -293,13 +293,13 @@ theorem corrRate_mul_corrScale {d : ℕ} (hd : 1 ≤ d) (hd4 : d ≤ 4) {m n : �
   by_cases h3 : d = 3
   · subst h3
     have hcr : corrRate 3 m n = ((m : ℝ) / (n : ℝ)) ^ ((1 : ℝ) / 4) := by
-      rw [corrRate, if_neg (by norm_num), if_neg (by norm_num)]
+      rw [corrRate, ite_eq_right (by norm_num), ite_eq_right (by norm_num)]
     have hcm : corrScale 3 m = Real.sqrt (m : ℝ) := by
-      rw [corrScale, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl]
+      rw [corrScale, ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl]
     have hcn : corrScale 3 n = Real.sqrt (n : ℝ) := by
-      rw [corrScale, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl]
+      rw [corrScale, ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl]
     have hct : corrTarget 3 m n = Real.sqrt (m : ℝ) := by
-      rw [corrTarget, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl]
+      rw [corrTarget, ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl]
     rw [hcr, hcm, hcn, hct, rpow_quarter_eq (by positivity), hq]
     set a := Real.sqrt (Real.sqrt (m : ℝ)) with ha
     set b := Real.sqrt (Real.sqrt (n : ℝ)) with hb
@@ -313,13 +313,16 @@ theorem corrRate_mul_corrScale {d : ℕ} (hd : 1 ≤ d) (hd4 : d ≤ 4) {m n : �
     have hln : (0 : ℝ) ≤ Real.log (n : ℝ) := Real.log_nonneg (by exact_mod_cast hn)
     have hcr : corrRate 4 m n
         = Real.sqrt ((1 + Real.log (m : ℝ)) / (1 + Real.log (n : ℝ))) := by
-      rw [corrRate, if_neg (by norm_num), if_pos rfl]
+      rw [corrRate, ite_eq_right (by norm_num), ite_eq_left rfl]
     have hcm : corrScale 4 m = 1 + Real.log (m : ℝ) := by
-      rw [corrScale, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num)]
+      rw [corrScale, ite_eq_right (by norm_num), ite_eq_right (by norm_num),
+        ite_eq_right (by norm_num)]
     have hcn : corrScale 4 n = 1 + Real.log (n : ℝ) := by
-      rw [corrScale, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num)]
+      rw [corrScale, ite_eq_right (by norm_num), ite_eq_right (by norm_num),
+        ite_eq_right (by norm_num)]
     have hct : corrTarget 4 m n = 1 + Real.log (m : ℝ) := by
-      rw [corrTarget, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num)]
+      rw [corrTarget, ite_eq_right (by norm_num), ite_eq_right (by norm_num),
+        ite_eq_right (by norm_num)]
     rw [hcr, hcm, hcn, hct, Real.sqrt_div' _ (by linarith)]
     have hsn4 : (0 : ℝ) < Real.sqrt (1 + Real.log (n : ℝ)) :=
       Real.sqrt_pos.mpr (by linarith)
@@ -356,25 +359,27 @@ theorem corrScale_le_varianceRate {t : ℕ} (ht : 2 ≤ t) (hd : 1 ≤ d) (hd4 :
     linarith
   by_cases h1 : d = 1
   · subst h1
-    rw [corrScale, if_pos rfl, varianceRate, if_pos rfl,
+    rw [corrScale, ite_eq_left rfl, varianceRate, ite_eq_left rfl,
       show (3 : ℝ) / 2 = 1 + 1 / 2 by norm_num, Real.rpow_add htpos, Real.rpow_one,
       ← Real.sqrt_eq_rpow]
     nlinarith [hA, mul_nonneg htpos.le (Real.sqrt_nonneg (t : ℝ))]
   by_cases h2 : d = 2
   · subst h2
-    rw [corrScale, if_neg (by norm_num), if_pos rfl, varianceRate, if_neg (by norm_num),
-      if_pos rfl]
+    rw [corrScale, ite_eq_right (by norm_num), ite_eq_left rfl, varianceRate,
+      ite_eq_right (by norm_num),
+      ite_eq_left rfl]
     nlinarith [hA, htpos]
   by_cases h3 : d = 3
   · subst h3
-    rw [corrScale, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl, varianceRate,
-      if_neg (by norm_num), if_neg (by norm_num), if_pos rfl, ← Real.sqrt_eq_rpow]
+    rw [corrScale, ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl,
+      varianceRate,
+      ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl, ← Real.sqrt_eq_rpow]
     nlinarith [hA, Real.sqrt_nonneg (t : ℝ)]
   · have h4 : d = 4 := by omega
     subst h4
-    rw [corrScale, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num),
-      varianceRate, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num),
-      if_pos rfl]
+    rw [corrScale, ite_eq_right (by norm_num), ite_eq_right (by norm_num),
+      ite_eq_right (by norm_num), varianceRate, ite_eq_right (by norm_num),
+      ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl]
     have hkey : (1 : ℝ) ≤ (1 / Real.log 2) * Real.log (t : ℝ) := by
       rw [one_div, inv_mul_eq_div, le_div_iff₀ hlog2, one_mul]
       exact hlogt
@@ -504,7 +509,7 @@ theorem exists_tsum_srwGreen_mul_le_target (hd : 1 ≤ d) (hd4 : d ≤ 4) :
       rwa [show (4 : ℝ) * (n : ℝ) = 2 ^ 2 * (n : ℝ) by norm_num,
         Real.sqrt_mul (by norm_num), Real.sqrt_sq (by norm_num)] at hh
     have hct : corrTarget 1 m n = (m : ℝ) * Real.sqrt (n : ℝ) := by
-      rw [corrTarget, if_pos rfl]
+      rw [corrTarget, ite_eq_left rfl]
     rw [hct]
     have hstep1 : P1 ≤ 1 + 2 * diagConst 1 * ((m : ℝ) * Real.sqrt (m : ℝ)) := by
       refine hP1.trans ?_
@@ -553,7 +558,7 @@ theorem exists_tsum_srwGreen_mul_le_target (hd : 1 ≤ d) (hd4 : d ≤ 4) :
       rw [Real.log_mul (by norm_num) hnpos.ne'] at hle
       linarith
     have hct : corrTarget 2 m n = (m : ℝ) * (1 + L) := by
-      rw [corrTarget, if_neg (by norm_num), if_pos rfl]
+      rw [corrTarget, ite_eq_right (by norm_num), ite_eq_left rfl]
     rw [hct]
     have hstep1 : P1 ≤ 1 + 2 * diagConst 2 * (m : ℝ) := by
       refine hP1.trans ?_
@@ -593,7 +598,7 @@ theorem exists_tsum_srwGreen_mul_le_target (hd : 1 ≤ d) (hd4 : d ≤ 4) :
     have hDS := diagSum_three_le m
     have hP2 := sum_Ico_srwHeat_three_le hm (m + n)
     have hct : corrTarget 3 m n = Real.sqrt (m : ℝ) := by
-      rw [corrTarget, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl]
+      rw [corrTarget, ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl]
     rw [hct]
     have hstep1 : P1 ≤ 1 + 4 * diagConst 3 * Real.sqrt (m : ℝ) := by
       refine hP1.trans ?_
@@ -623,7 +628,8 @@ theorem exists_tsum_srwGreen_mul_le_target (hd : 1 ≤ d) (hd4 : d ≤ 4) :
     have hDS := diagSum_four_le m
     have hP2 := sum_Ico_srwHeat_four_le hm (m + n)
     have hct : corrTarget 4 m n = 1 + Real.log (m : ℝ) := by
-      rw [corrTarget, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num)]
+      rw [corrTarget, ite_eq_right (by norm_num), ite_eq_right (by norm_num),
+        ite_eq_right (by norm_num)]
     rw [hct]
     have hstep1 : P1 ≤ 1 + 2 * diagConst 4 * (1 + Real.log (m : ℝ)) := by
       refine hP1.trans ?_

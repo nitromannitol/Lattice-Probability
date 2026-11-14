@@ -131,7 +131,8 @@ theorem char_integrable (d : ℕ) (z : Fin (d+1) → ℤ) :
       exact MeasureTheory.Measure.pi_Ioc_ae_eq_pi_Icc (μ := fun _ => volume)
     rw [show torusBox (d+1) = Set.Icc (fun _ => (-Real.pi)) (fun _ => Real.pi) from rfl, ← measure_congr h2, Real.volume_pi_Ioc]
     simp
-  haveI : IsFiniteMeasure (volume.restrict (torusBox (d+1))) := ⟨by rwa [Measure.restrict_apply_univ]⟩
+  have : IsFiniteMeasure (volume.restrict (torusBox (d+1))) :=
+    ⟨by rwa [Measure.restrict_apply_univ]⟩
   refine MeasureTheory.Integrable.of_bound ?_ 1 ?_
   · exact (continuous_finsetProd _ (fun j _ => by continuity)).aestronglyMeasurable
   · filter_upwards with θ
@@ -147,7 +148,7 @@ theorem integral_char_one (k : ℤ) :
     simp
     norm_num [max_eq_left (by positivity : (0:ℝ) ≤ Real.pi + Real.pi)]
     ring
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     have heq : ∀ t : ℝ, Complex.exp (Complex.ofReal (t * (k:ℝ)) * Complex.I)
         = Complex.exp (Complex.ofReal ((k:ℝ) * t) * Complex.I) := fun t => by rw [mul_comm t (k:ℝ)]
     rw [MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall heq)]
@@ -232,17 +233,17 @@ theorem integral_char_delta (d : ℕ) (x : Site d) :
   · subst hx
     have h1 : ∏ j, (if (0 : Fin d → ℤ) j = 0 then 2 * Real.pi else 0) = (2 * Real.pi) ^ d := by
       simp [Finset.prod_const]
-    rw [h1, if_pos rfl]
+    rw [h1, ite_eq_left rfl]
     norm_num [Complex.ofReal_pow, Complex.ofReal_mul, Complex.ofReal_one]
   · have h0 : ∏ j, (if x j = 0 then 2 * Real.pi else 0) = 0 := by
       by_contra hne
       have hall : ∀ j, x j = 0 := by
         intro j
         by_contra hxj
-        have hz : (if x j = 0 then 2 * Real.pi else 0) = 0 := if_neg hxj
+        have hz : (if x j = 0 then 2 * Real.pi else 0) = 0 := ite_eq_right hxj
         exact hne (Finset.prod_eq_zero (Finset.mem_univ j) hz)
       exact hx (funext hall)
-    rw [h0, if_neg hx]
+    rw [h0, ite_eq_right hx]
     simp
 
 /-- The character of `x + v` factors as the character of `x` times the
@@ -428,11 +429,9 @@ theorem fourier_integrand_norm_le_one (d : ℕ) (j : ℕ) (x : Site d)
   have ha : ‖(∏ k, Complex.exp (Complex.ofReal (θ k * ((x k : ℤ) : ℝ)) * Complex.I))‖ ≤ 1 := by
     rw [norm_prod]
     simp [Complex.norm_exp]
-  apply mul_le_one₀
-  · exact ha
-  · exact norm_nonneg _
-  · rw [norm_pow, norm_div, h1, h2, hd]
-    exact pow_le_one₀ (div_nonneg (abs_nonneg _) (Nat.cast_nonneg d)) havg
+  refine (mul_le_of_le_one_left (norm_nonneg _) ha).trans ?_
+  rw [norm_pow, norm_div, h1, h2, hd]
+  exact pow_le_one₀ (div_nonneg (abs_nonneg _) (Nat.cast_nonneg d)) havg
 
 /-- The Fourier integrand is integrable: it is bounded by one on a finite box. -/
 theorem fourier_integrand_integrable (d : ℕ) (j : ℕ) (x : Site d) :
@@ -446,7 +445,7 @@ theorem fourier_integrand_integrable (d : ℕ) (j : ℕ) (x : Site d) :
       exact MeasureTheory.Measure.pi_Ioc_ae_eq_pi_Icc (μ := fun _ => volume)
     rw [show torusBox d = Set.Icc (fun _ => (-Real.pi)) (fun _ => Real.pi) from rfl, ← measure_congr h2, Real.volume_pi_Ioc]
     simp
-  haveI : IsFiniteMeasure (volume.restrict (torusBox d)) := ⟨by rwa [Measure.restrict_apply_univ]⟩
+  have : IsFiniteMeasure (volume.restrict (torusBox d)) := ⟨by rwa [Measure.restrict_apply_univ]⟩
   refine MeasureTheory.Integrable.of_bound ?_ 1 ?_
   · exact fourier_integrand_aemeasurable d j x
   · filter_upwards with θ
@@ -1591,7 +1590,7 @@ theorem volume_hyperplane_eq_zero (d : ℕ) (i : Fin d) (c : ℝ) :
     simp [Set.mem_pi]
   rw [hset, volume_pi_pi]
   refine Finset.prod_eq_zero (Finset.mem_univ i) ?_
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl]
   have hsub : ({c} : Set ℝ) ⊆ Set.Icc c c := by
     intro x hx
     simp only [Set.mem_singleton_iff] at hx
@@ -1691,7 +1690,7 @@ theorem integral_gauss_tail_le (d : ℕ) (c : ℝ) (hc : 0 < c) :
       Real.exp (- c * ∑ i, θ i ^ 2) ≤ Real.exp (- c * (Real.pi / 2) ^ 2) := by
     intro θ hθ
     obtain ⟨hθ1, hθ2⟩ := hθ
-    simp only [Set.mem_setOf_eq] at hθ2
+    simp only [Set.mem_ofPred_eq] at hθ2
     push Not at hθ2
     obtain ⟨i₀, hi₀⟩ := hθ2
     have h1 : (Real.pi / 2) ^ 2 ≤ θ i₀ ^ 2 := by

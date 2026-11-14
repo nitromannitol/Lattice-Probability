@@ -94,7 +94,8 @@ theorem IsEPath.cut {E : Finset (V × V)} {S : Finset V} {l : List V} {u : V}
       intro h0
       have h0' : 0 < (s ++ y :: t).length := by simp
       have := h.head_mem h0'
-      rwa [List.get_eq_getElem, List.getElem_append_left (List.length_pos_of_ne_nil hs)] at this ⊢
+      rw [List.get_eq_getElem, List.getElem_append_left (List.length_pos_of_ne_nil hs)] at this ⊢
+      assumption
     tail_not_mem := by
       intro i hi hi1
       have hi' : i < (s ++ y :: t).length := by
@@ -189,11 +190,11 @@ theorem exists_epath (E : Finset (V × V)) (S : Finset V) (y : V) (hy : y ∉ S)
             outdeg (E.erase (u, u)) v ≤ indeg (E.erase (u, u)) v := by
           intro v hv hvu
           rw [indeg_erase _ _ heE, outdeg_erase _ _ heE]
-          simp only [Ne.symm hvu, if_false, Nat.sub_zero]
+          simp only [Ne.symm hvu, ite_false, Nat.sub_zero]
           exact hbal v hv hvu
         have hexc' : outdeg (E.erase (u, u)) u < indeg (E.erase (u, u)) u := by
           rw [indeg_erase _ _ heE, outdeg_erase _ _ heE]
-          simp only [if_true]
+          simp only [ite_true]
           have h1 : 0 < outdeg E u :=
             Finset.card_pos.2 ⟨(u, u), Finset.mem_filter.2 ⟨heE, rfl⟩⟩
           omega
@@ -203,16 +204,16 @@ theorem exists_epath (E : Finset (V × V)) (S : Finset V) (y : V) (hy : y ∉ S)
             outdeg (E.erase (u, y)) v ≤ indeg (E.erase (u, y)) v := by
           intro v hv hvu
           rw [indeg_erase _ _ heE, outdeg_erase _ _ heE]
-          simp only [Ne.symm hvu, if_false, Nat.sub_zero]
+          simp only [Ne.symm hvu, ite_false, Nat.sub_zero]
           by_cases hvy : v = y
           · subst hvy
-            simp only [if_true]
+            simp only [ite_true]
             omega
-          · simp only [Ne.symm hvy, if_false, Nat.sub_zero]
+          · simp only [Ne.symm hvy, ite_false, Nat.sub_zero]
             exact hbal v hv hvy
         have hexc' : outdeg (E.erase (u, y)) u < indeg (E.erase (u, y)) u := by
           rw [indeg_erase _ _ heE, outdeg_erase _ _ heE]
-          simp only [Ne.symm huy, if_false, Nat.sub_zero, if_true]
+          simp only [Ne.symm huy, ite_false, Nat.sub_zero, ite_true]
           have := hbal u hu huy
           have h1 : 0 < outdeg E u :=
             Finset.card_pos.2 ⟨(u, y), Finset.mem_filter.2 ⟨heE, rfl⟩⟩
