@@ -197,7 +197,7 @@ theorem map_floor_stepLaw (n : ℕ) (hn : 0 < n) :
       exact ⟨by rwa [floor_mul_of_mem_Ico hn hu], i, hi, hu⟩
   have hTsub : (T : Set ℕ) ⊆ ((Finset.range n : Finset ℕ) : Set ℕ) := by
     intro i hi
-    simp only [hT, Finset.coe_filter, Set.mem_setOf_eq] at hi
+    simp only [hT, Finset.coe_filter, Set.mem_ofPred_eq] at hi
     exact Finset.mem_coe.mpr hi.1
   rw [hsplit, measure_biUnion_finset ((pairwiseDisjoint_Ico_div n).subset hTsub)
     (fun i _ => measurableSet_Ico)]
@@ -352,7 +352,7 @@ theorem integral_walkLaw_firstStep (x : V) (hx : 0 < G.degree x)
       = (G.degree x : ℝ)⁻¹ * ∑ y ∈ G.neighborFinset x, ∫ X, f (cons x X) ∂(walkLaw G y) := by
   have hint : ∀ y : V, Integrable f ((walkLaw G y).map (cons x)) := by
     intro y
-    haveI : IsProbabilityMeasure ((walkLaw G y).map (cons x)) :=
+    have : IsProbabilityMeasure ((walkLaw G y).map (cons x)) :=
       inferInstance
     exact Integrable.mono' (integrable_const C) hfm.aestronglyMeasurable
       (Filter.Eventually.of_forall hC)
@@ -414,7 +414,7 @@ theorem measurable_of_dependsUpTo {α : Type*} [MeasurableSpace α] {n : ℕ}
   have hfact : f = g ∘ fun X : ℕ → V => fun i : Fin (n + 1) => X i := by
     funext X
     refine (hf X _ fun k hk => ?_).symm ▸ rfl
-    rw [dif_pos (by omega : k < n + 1)]
+    rw [dite_eq_left (by omega : k < n + 1)]
   rw [hfact]
   exact Measurable.of_discrete.comp (Measurable.of_eval fun i => measurable_pi_apply _)
 
@@ -453,7 +453,7 @@ theorem ae_walkLaw_start (x : V) : ∀ᵐ X ∂(walkLaw G x), X 0 = x := by
   rw [hwl, Measure.map_apply (measurable_walkPath x) hset]
   have : (walkPath G x) ⁻¹' {X : ℕ → V | ¬ X 0 = x} = ∅ := by
     ext ω
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_not]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_not]
     rfl
   rw [this, measure_empty]
 
@@ -649,7 +649,7 @@ theorem measurableSet_prefix (w : ℕ → V) (m : ℕ) :
   have he : {X : ℕ → V | ∀ k ≤ m, X k = w k}
       = ⋂ k ∈ Finset.range (m + 1), (fun X : ℕ → V => X k) ⁻¹' {w k} := by
     ext X
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Finset.mem_range, Set.mem_preimage,
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Finset.mem_range, Set.mem_preimage,
       Set.mem_singleton_iff]
     exact ⟨fun h k hk => h k (by omega), fun h k hk => h k (by omega)⟩
   rw [he]
@@ -700,7 +700,7 @@ theorem walkLaw_prefix (hdeg : ∀ v : V, 0 < G.degree v) :
         rw [Measure.map_apply (measurable_cons x) (measurableSet_prefix w (m + 1))]
         congr 1
         ext X
-        simp only [Set.mem_preimage, Set.mem_setOf_eq]
+        simp only [Set.mem_preimage, Set.mem_ofPred_eq]
         constructor
         · intro h k hk
           exact h (k + 1) (by omega)
