@@ -391,4 +391,45 @@ theorem exists_taylor_remainder_le {f : E → ℝ} (hf : ContDiff ℝ ∞ f) (a 
     _ = dist (fderiv ℝ (fderiv ℝ f) z) (fderiv ℝ (fderiv ℝ f) a) := (dist_eq_norm (fderiv ℝ (fderiv ℝ f) z) (fderiv ℝ (fderiv ℝ f) a)).symm
     _ ≤ ε := (hdist z hz').le
 
+/-- The integral of a quadratic form on a centred ball is its trace times a
+coordinate quadratic moment. -/
+theorem integral_bilinear_ball_eq_trace {ι : Type*} [Fintype ι] (b : OrthonormalBasis ι ℝ E) (i₀ : ι)
+    (H : E →L[ℝ] E →L[ℝ] ℝ) (r : ℝ) :
+    ∫ x in ball (0 : E) r, H x x ∂μ =
+      (∫ x in ball (0 : E) r, ⟪b i₀, x⟫_ℝ ^ 2 ∂μ) * ∑ i, H (b i) (b i) := by
+  classical
+  let g : ι → ι → E → ℝ := fun i j x => ⟪b i, x⟫_ℝ * ⟪b j, x⟫_ℝ * H (b i) (b j)
+  have hgi (i j : ι) : IntegrableOn (g i j) (ball (0 : E) r) μ := by
+    apply (Continuous.continuousOn ?_).integrableOn_compact (isCompact_closedBall 0 r) |>.mono_set ball_subset_closedBall
+    exact ((continuous_const.inner continuous_id).mul (continuous_const.inner continuous_id)).mul continuous_const
+  have hexp (x : E) : H x x = ∑ i, ∑ j, g i j x := by
+    conv_lhs => rw [← b.sum_repr' x]
+    simp only [map_sum, map_smul, sum_apply,
+      smul_apply, smul_eq_mul, Finset.mul_sum, g]
+    rw [Finset.sum_comm]
+    apply Finset.sum_congr rfl
+    intro i _
+    apply Finset.sum_congr rfl
+    intro j _
+    ring
+  have hg (i j : ι) : ∫ x in ball (0 : E) r, g i j x ∂μ =
+      if i = j then (∫ x in ball (0 : E) r, ⟪b i₀, x⟫_ℝ ^ 2 ∂μ) * H (b i) (b j) else 0 := by
+    simp only [g, integral_mul_const]
+    split_ifs with hij
+    · subst j
+      simp_rw [← pow_two]
+      rw [integral_inner_sq_ball_eq (μ := μ) (b i) (b i₀) (by simp) r]
+    · rw [integral_inner_mul_inner_ball_eq_zero (μ := μ) (b i) (b j) (by
+        simp [orthonormal_iff_ite.mp b.orthonormal, hij]) r, zero_mul]
+  calc
+    _ = ∫ x in ball (0 : E) r, ∑ i, ∑ j, g i j x ∂μ := by
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall hexp
+    _ = ∑ i, ∑ j, ∫ x in ball (0 : E) r, g i j x ∂μ := by
+      rw [integral_finsetSum _ (fun i _ => integrable_finsetSum _ fun j _ => hgi i j)]
+      apply Finset.sum_congr rfl
+      intro i _
+      rw [integral_finsetSum _ (fun j _ => hgi i j)]
+    _ = _ := by simp [hg, Finset.mul_sum]
+
 end LatticeProb.Ishii
