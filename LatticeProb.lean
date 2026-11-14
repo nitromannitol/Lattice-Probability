@@ -912,6 +912,9 @@ import LatticeProb.Sandpile.FLP.Radius
 import LatticeProb.Sandpile.FLP.BoxBounds
 import LatticeProb.Sandpile.FLP.GreenComparison
 import LatticeProb.External.LevinePeresShell
+import LatticeProb.Sandpile.FLP.Shell
+import LatticeProb.External.LevinePeresShellProved
+import LatticeProb.External.FeyLevinePeresRadiusProved
 import LatticeProb.Analysis.ConvexSubgradient
 import LatticeProb.Analysis.ConvexResolvent
 import LatticeProb.Analysis.AlexandrovTaylor
