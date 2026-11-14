@@ -292,4 +292,22 @@ theorem lintegral_segment_le_radial_cutoff [FiniteDimensional ℝ E] [Measurable
   convert lintegral_segment_le_homothety μ hz ht ht0 hg using 1
   rw [← mul_assoc, homothety_density_eq_rpow htpos]
 
+/-- Tonelli's theorem for a radial cutoff. -/
+theorem lintegral_radial_cutoff_swap [FiniteDimensional ℝ E] [MeasurableSpace E]
+    [BorelSpace E] (μ : Measure E) [μ.IsAddHaarMeasure] (a z : E) (r : ℝ)
+    {g : E → ℝ≥0∞} (hg : Measurable g) :
+    let s : Set (ℝ × E) := {p | ‖p.2 - z‖ ≤ 2 * r * p.1}
+    let h : ℝ × E → ℝ≥0∞ := fun p =>
+      ENNReal.ofReal (p.1 ^ (-(Module.finrank ℝ E : ℝ) - 1)) * (g p.2 * ‖p.2 - z‖ₑ)
+    (∫⁻ t in Icc (0 : ℝ) 1, ∫⁻ w in Metric.ball a r, s.indicator h (t, w) ∂μ ∂volume) =
+      ∫⁻ w in Metric.ball a r, ∫⁻ t in Icc (0 : ℝ) 1, s.indicator h (t, w) ∂volume ∂μ := by
+  dsimp only
+  have hs : MeasurableSet {p : ℝ × E | ‖p.2 - z‖ ≤ 2 * r * p.1} := by
+    exact (isClosed_le (by fun_prop) (by fun_prop)).measurableSet
+  have hh : Measurable (fun p : ℝ × E =>
+      ENNReal.ofReal (p.1 ^ (-(Module.finrank ℝ E : ℝ) - 1)) *
+        (g p.2 * ‖p.2 - z‖ₑ)) := by
+    fun_prop
+  exact lintegral_lintegral_swap (hh.indicator hs).aemeasurable
+
 end LatticeProb.PegdenSmart
