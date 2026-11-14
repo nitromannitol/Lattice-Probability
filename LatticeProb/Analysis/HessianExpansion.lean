@@ -31,7 +31,9 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDim
 
 omit [FiniteDimensional ℝ E] in
 /-- Triangle inequality in `L^p(B(x, r))` for functions with values in `E →L[ℝ] E →L[ℝ] ℝ`, the
-first term being bounded by its `L^p` norm on `closedBall x r`. -/
+first term being bounded by its `L^p` norm on `closedBall x r`. The `e`-seminormed monoid and
+continuous addition structures are given explicitly, since instance search does not identify the
+strong topology of this space with the topology of its operator norm. -/
 private theorem eLpNorm_add_le_indicator_closedBall (hp : 1 ≤ p) (a b : E → E →L[ℝ] E →L[ℝ] ℝ)
     (x : E) (r : ℝ) :
     eLpNorm (fun w => a w + b w) p (μ.restrict (ball x r)) ≤
@@ -206,9 +208,9 @@ theorem hasFDerivAt_of_enorm_sub_sub_le [μ.IsAddHaarMeasure] {F : Type*} [Norme
   rw [← ofReal_norm] at h3
   exact (ENNReal.ofReal_le_ofReal_iff (by positivity)).1 h3
 
-/-- The limit `V` of the gradients is Lipschitz in the mean with respect to `G`, and differentiable at
-every strong `L^p` Lebesgue point `x` of `G`, with derivative `G x`, given Morrey's oscillation
-estimate. -/
+/-- Given Morrey's oscillation estimate, the limit `V` of the gradients is Lipschitz in the mean
+with respect to `G`, and differentiable at every strong `L^p` Lebesgue point `x` of `G`, with
+derivative `G x`. -/
 theorem hessianExpansion_of_morrey_gradientLimit
     (h3 : ∀ (E : Type) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
       [MeasurableSpace E] [BorelSpace E] [Nontrivial E] (μ : Measure E) [μ.IsAddHaarMeasure]
@@ -216,8 +218,9 @@ theorem hessianExpansion_of_morrey_gradientLimit
       ∃ C : ℝ≥0, ∀ (F : Type) [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
         (f : E → F) (a : E) (r : ℝ), 0 < r → ContDiffOn ℝ 1 f (ball a r) →
         ∀ z ∈ ball a r, ∀ z' ∈ ball a r,
-          ‖f z - f z'‖ₑ ≤ (C : ℝ≥0∞) * ENNReal.ofReal r ^ (1 - (Module.finrank ℝ E : ℝ) / p.toReal) *
-            eLpNorm (fderiv ℝ f) p (μ.restrict (ball a r))) :
+          ‖f z - f z'‖ₑ ≤
+            (C : ℝ≥0∞) * ENNReal.ofReal r ^ (1 - (Module.finrank ℝ E : ℝ) / p.toReal) *
+              eLpNorm (fderiv ℝ f) p (μ.restrict (ball a r))) :
     ∀ (E : Type) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
       [MeasurableSpace E] [BorelSpace E] [Nontrivial E] (μ : Measure E) [μ.IsAddHaarMeasure]
       (p : ℝ≥0∞), (Module.finrank ℝ E : ℝ≥0∞) < p → p ≠ ⊤ →
