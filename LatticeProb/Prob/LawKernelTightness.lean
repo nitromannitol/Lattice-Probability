@@ -20,7 +20,9 @@ at distance at most `δ` have images at distance more than `1 / L`.
   probabilistic form (no measurability of the random elements is needed).
 * `LatticeProb.exists_delta_forall_of_eventually`: if the bound of (i) holds for all large indices
   of a sequence of random elements, it holds for all indices after shrinking `δ`, because each
-  random element is continuous.
+  random element is continuous.  It is an instance of `LatticeProb.exists_scale_forall_of_eventually`,
+  the same statement for any null-measurable events that increase with the scale and have empty
+  intersection over all scales.
 * `LatticeProb.isTightMeasureSet_map_of_kernelModuli`: tightness of the family of laws.
 -/
 
@@ -155,58 +157,86 @@ theorem exists_isCompact_measure_le_of_kernelModuli (μ : ι → Measure Ω) (X 
 
 end Main
 
-section Upgrade
+section Antitone
 
-variable {Z Y Ω : Type*} [PseudoMetricSpace Z] [ProperSpace Z] [MetricSpace Y]
-  [MeasurableSpace Ω] [MeasurableSpace C(Z, Y)] [BorelSpace C(Z, Y)]
+variable {Ω : Type*} [MeasurableSpace Ω]
 
-/-- A single random continuous map has modulus failure probability tending to `0` with the
-scale. -/
-theorem tendsto_measure_kernelModulusFailure (μ : Measure Ω) [IsFiniteMeasure μ]
-    (X : Ω → C(Z, Y)) (hX : Measurable X) (z₀ : Z) {L : ℝ} (hL : 0 < L) :
-    Tendsto (fun δ : ℝ => μ {ω | X ω ∈ kernelModulusFailure z₀ L δ}) (𝓝[>] 0) (𝓝 0) := by
-  have h := tendsto_measure_biInter_gt (μ := μ)
-    (s := fun δ : ℝ => {ω | X ω ∈ kernelModulusFailure z₀ L δ}) (a := 0)
-    (fun r _ => (hX (isOpen_kernelModulusFailure z₀ L r).measurableSet).nullMeasurableSet)
-    (fun i j _ hij => fun ω hω => kernelModulusFailure_mono z₀ L hij hω)
-    ⟨1, one_pos, measure_ne_top _ _⟩
-  have hempty : (⋂ r > (0 : ℝ), {ω | X ω ∈ kernelModulusFailure z₀ L r}) = ∅ := by
-    refine eq_empty_iff_forall_notMem.2 fun ω hω => ?_
-    simp only [Set.mem_iInter, Set.mem_ofPred_eq] at hω
-    have huc := (isCompact_closedBall z₀ L).uniformContinuousOn_of_continuous
-      (X ω).continuous.continuousOn
-    obtain ⟨δ, hδ, hδf⟩ := Metric.uniformContinuousOn_iff.1 huc (1 / L) (by positivity)
-    obtain ⟨z, w, hz, hw, hzw, hlt⟩ := hω (δ / 2) (half_pos hδ)
-    have := hδf z (mem_closedBall.2 hz) w (mem_closedBall.2 hw) (by linarith)
-    exact absurd hlt (not_lt.2 this.le)
+/-- A family of null-measurable sets, increasing with the scale `δ > 0` and with empty intersection
+over `δ > 0`, has measure tending to `0` as `δ ↓ 0`. -/
+theorem tendsto_measure_of_biInter_eq_empty (μ : Measure Ω) [IsFiniteMeasure μ] (A : ℝ → Set Ω)
+    (hA : ∀ δ, NullMeasurableSet (A δ) μ) (hmono : ∀ δ δ', δ ≤ δ' → A δ ⊆ A δ')
+    (hempty : (⋂ δ > (0 : ℝ), A δ) = ∅) :
+    Tendsto (fun δ : ℝ => μ (A δ)) (𝓝[>] 0) (𝓝 0) := by
+  have h := tendsto_measure_biInter_gt (μ := μ) (s := A) (a := 0) (fun r _ => hA r)
+    (fun i j _ hij => hmono i j hij) ⟨1, one_pos, measure_ne_top _ _⟩
   rw [hempty, measure_empty] at h
   exact h
 
-/-- **From large indices to all indices.**  Let `X n`, `n ∈ ℕ`, be random continuous maps and
-assume that the modulus failure of level `L` at some scale `δ₀` has probability at most `1 / L` for
-all large `n`.  Then there is one scale `δ > 0` with this property for all `n`. -/
-theorem exists_delta_forall_of_eventually (μ : ℕ → Measure Ω) [∀ n, IsFiniteMeasure (μ n)]
-    (X : ℕ → Ω → C(Z, Y)) (hX : ∀ n, Measurable (X n)) (z₀ : Z) {L : ℝ} (hL : 0 < L)
-    (hev : ∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n in atTop,
-      μ n {ω | X n ω ∈ kernelModulusFailure z₀ L δ} ≤ ENNReal.ofReal (1 / L)) :
-    ∃ δ : ℝ, 0 < δ ∧
-      ∀ n, μ n {ω | X n ω ∈ kernelModulusFailure z₀ L δ} ≤ ENNReal.ofReal (1 / L) := by
+/-- **From large indices to all indices.**  Let `A n δ` be null-measurable events increasing with
+`δ`, with empty intersection over `δ > 0` for each `n`.  If `μ n (A n δ₀) ≤ c` for all large `n`
+at some scale `δ₀ > 0` and `c > 0`, then there is one scale `δ > 0` with `μ n (A n δ) ≤ c` for all
+`n`. -/
+theorem exists_scale_forall_of_eventually (μ : ℕ → Measure Ω) [∀ n, IsFiniteMeasure (μ n)]
+    (A : ℕ → ℝ → Set Ω) (hA : ∀ n δ, NullMeasurableSet (A n δ) (μ n))
+    (hmono : ∀ n δ δ', δ ≤ δ' → A n δ ⊆ A n δ')
+    (hempty : ∀ n, (⋂ δ > (0 : ℝ), A n δ) = ∅) {c : ℝ≥0∞} (hc : 0 < c)
+    (hev : ∃ δ₀ : ℝ, 0 < δ₀ ∧ ∀ᶠ n in atTop, μ n (A n δ₀) ≤ c) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ n, μ n (A n δ) ≤ c := by
   obtain ⟨δ₀, hδ₀, hN⟩ := hev
   obtain ⟨N, hN⟩ := eventually_atTop.1 hN
-  have hc : (0 : ℝ≥0∞) < ENNReal.ofReal (1 / L) := ENNReal.ofReal_pos.2 (by positivity)
-  have hsm : ∀ n, ∀ᶠ δ : ℝ in 𝓝[>] 0,
-      μ n {ω | X n ω ∈ kernelModulusFailure z₀ L δ} ≤ ENNReal.ofReal (1 / L) := fun n =>
-    ((tendsto_order.1 (tendsto_measure_kernelModulusFailure (μ n) (X n) (hX n) z₀ hL)).2 _
-      hc).mono fun _ h => h.le
+  have hsm : ∀ n, ∀ᶠ δ : ℝ in 𝓝[>] 0, μ n (A n δ) ≤ c := fun n =>
+    ((tendsto_order.1 (tendsto_measure_of_biInter_eq_empty (μ n) (A n) (hA n) (hmono n)
+      (hempty n))).2 _ hc).mono fun _ h => h.le
   have hall := ((Finset.range N).eventually_all.2 fun n _ => hsm n).and (Ioo_mem_nhdsGT hδ₀)
   obtain ⟨δ, hδ, hδ0, hδδ₀⟩ := hall.exists
   refine ⟨δ, hδ0, fun n => ?_⟩
   by_cases hn : n < N
   · exact hδ n (Finset.mem_range.2 hn)
-  · refine le_trans (measure_mono (μ := μ n) ?_) (hN n (not_lt.1 hn))
-    exact fun ω hω => kernelModulusFailure_mono z₀ L hδδ₀.le hω
+  · exact le_trans (measure_mono (hmono n δ δ₀ hδδ₀.le)) (hN n (not_lt.1 hn))
+
+end Antitone
+
+section Upgrade
+
+variable {Z Y Ω : Type*} [PseudoMetricSpace Z] [ProperSpace Z] [MetricSpace Y]
+  [MeasurableSpace Ω]
+
+/-- A continuous map has no modulus failure of level `L > 0` at arbitrarily small scales. -/
+theorem iInter_kernelModulusFailure_eq_empty (z₀ : Z) {L : ℝ} (hL : 0 < L) :
+    (⋂ δ > (0 : ℝ), kernelModulusFailure (Y := Y) z₀ L δ) = ∅ := by
+  refine eq_empty_iff_forall_notMem.2 fun f hf => ?_
+  simp only [Set.mem_iInter] at hf
+  have huc := (isCompact_closedBall z₀ L).uniformContinuousOn_of_continuous
+    f.continuous.continuousOn
+  obtain ⟨δ, hδ, hδf⟩ := Metric.uniformContinuousOn_iff.1 huc (1 / L) (by positivity)
+  obtain ⟨z, w, hz, hw, hzw, hlt⟩ := hf (δ / 2) (half_pos hδ)
+  have := hδf z (mem_closedBall.2 hz) w (mem_closedBall.2 hw) (by linarith)
+  exact absurd hlt (not_lt.2 this.le)
+
+/-- **From large indices to all indices for random continuous maps.**  Let `X n` be maps
+`Ω → C(Z, Y)` such that the modulus failure events are null-measurable (for instance when `X n` is
+almost everywhere measurable).  If the modulus failure of level `L` at some scale `δ₀` has
+probability at most `1 / L` for all large `n`, there is one scale `δ > 0` with this property for
+all `n`. -/
+theorem exists_delta_forall_of_eventually (μ : ℕ → Measure Ω) [∀ n, IsFiniteMeasure (μ n)]
+    (X : ℕ → Ω → C(Z, Y)) (z₀ : Z) {L : ℝ} (hL : 0 < L)
+    (hX : ∀ n δ, NullMeasurableSet {ω | X n ω ∈ kernelModulusFailure z₀ L δ} (μ n))
+    (hev : ∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n in atTop,
+      μ n {ω | X n ω ∈ kernelModulusFailure z₀ L δ} ≤ ENNReal.ofReal (1 / L)) :
+    ∃ δ : ℝ, 0 < δ ∧
+      ∀ n, μ n {ω | X n ω ∈ kernelModulusFailure z₀ L δ} ≤ ENNReal.ofReal (1 / L) :=
+  exists_scale_forall_of_eventually μ (fun n δ => {ω | X n ω ∈ kernelModulusFailure z₀ L δ}) hX
+    (fun _ _ _ h _ hω => kernelModulusFailure_mono z₀ L h hω)
+    (fun n => by
+      ext ω
+      simp only [Set.mem_iInter, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+      intro h
+      have := iInter_kernelModulusFailure_eq_empty (Y := Y) z₀ hL
+      exact (eq_empty_iff_forall_notMem.1 this) (X n ω) (by simpa using h))
+    (ENNReal.ofReal_pos.2 (by positivity)) hev
 
 end Upgrade
+
 
 section Laws
 
