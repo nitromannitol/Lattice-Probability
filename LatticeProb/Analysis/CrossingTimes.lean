@@ -244,6 +244,138 @@ theorem crossCount_lt_top {f : ℝ≥0 → E} (hf : Continuous f) {ε : ℝ} (h�
     exact_mod_cast h4
   exact lt_of_le_of_lt hbound (ENat.natCast_lt_top N)
 
+/-- For a continuous path and `ε > 0`, the first crossing time after `a` is attained whenever it
+is finite. -/
+theorem exists_nextCrossTime_eq {f : ℝ≥0 → E} (hf : Continuous f) {ε : ℝ} (hε : 0 < ε)
+    {a : ℝ≥0} (h : nextCrossTime ε f a < ⊤) :
+    ∃ s : ℝ≥0, a < s ∧ ε ≤ dist (f s) (f a) ∧ nextCrossTime ε f a = s := by
+  obtain ⟨s₀, hs₀a, hs₀, -⟩ := nextCrossTime_coe_lt_iff.1 h
+  have hSeq : {s : ℝ≥0 | a < s ∧ ε ≤ dist (f s) (f a)} =
+      Set.Ici a ∩ {s | ε ≤ dist (f s) (f a)} := by
+    ext s
+    constructor
+    · rintro ⟨h1, h2⟩
+      exact ⟨h1.le, h2⟩
+    · rintro ⟨h1, h2⟩
+      refine ⟨lt_of_le_of_ne h1 fun hsa => ?_, h2⟩
+      have h3 : ε ≤ dist (f s) (f a) := h2
+      rw [← hsa, dist_self] at h3
+      linarith
+  have hclosed : IsClosed {s : ℝ≥0 | a < s ∧ ε ≤ dist (f s) (f a)} := by
+    rw [hSeq]
+    exact isClosed_Ici.inter (isClosed_le continuous_const (hf.dist continuous_const))
+  have hne : ({s : ℝ≥0 | a < s ∧ ε ≤ dist (f s) (f a)}).Nonempty := ⟨s₀, hs₀a, hs₀⟩
+  have hbdd : BddBelow {s : ℝ≥0 | a < s ∧ ε ≤ dist (f s) (f a)} := ⟨a, fun s hs => hs.1.le⟩
+  have hmem := hclosed.csInf_mem hne hbdd
+  refine ⟨_, hmem.1, hmem.2, le_antisymm
+    (nextCrossTime_le_of_lt (by exact_mod_cast hmem.1) (by simpa using hmem.2)) ?_⟩
+  refine le_nextCrossTime_coe_iff.2 fun s has hs => ?_
+  exact_mod_cast csInf_le hbdd ⟨has, hs⟩
+
+/-- For a continuous path, the first crossing after `a` happens by time `u` iff `f` is at distance
+at least `ε` from `f a` at some time in `(a, u]`. -/
+theorem nextCrossTime_le_iff_exists {f : ℝ≥0 → E} (hf : Continuous f) {ε : ℝ} (hε : 0 < ε)
+    (a u : ℝ≥0) :
+    nextCrossTime ε f a ≤ u ↔ ∃ s : ℝ≥0, a < s ∧ s ≤ u ∧ ε ≤ dist (f s) (f a) := by
+  constructor
+  · intro h
+    obtain ⟨s, has, hs, hEq⟩ :=
+      exists_nextCrossTime_eq hf hε (lt_of_le_of_lt h ENNReal.coe_lt_top)
+    refine ⟨s, has, ?_, hs⟩
+    rw [hEq] at h
+    exact_mod_cast h
+  · rintro ⟨s, has, hsu, hs⟩
+    exact (nextCrossTime_le_of_lt (by exact_mod_cast has) (by simpa using hs)).trans
+      (by exact_mod_cast hsu)
+
+theorem nextCrossTime_le_iff_of_eqOn {f g : ℝ≥0 → E} (hf : Continuous f) (hg : Continuous g)
+    {ε : ℝ} (hε : 0 < ε) {a u : ℝ≥0} (hau : a ≤ u) (hfg : ∀ s ≤ u, f s = g s) :
+    nextCrossTime ε f a ≤ u ↔ nextCrossTime ε g a ≤ u := by
+  rw [nextCrossTime_le_iff_exists hf hε, nextCrossTime_le_iff_exists hg hε]
+  refine exists_congr fun s => ?_
+  constructor
+  · rintro ⟨h1, h2, h3⟩
+    exact ⟨h1, h2, by rwa [← hfg s h2, ← hfg a hau]⟩
+  · rintro ⟨h1, h2, h3⟩
+    exact ⟨h1, h2, by rwa [hfg s h2, hfg a hau]⟩
+
+theorem nextCrossTime_eq_of_eqOn {f g : ℝ≥0 → E} (hf : Continuous f) (hg : Continuous g)
+    {ε : ℝ} (hε : 0 < ε) {a u : ℝ≥0} (hau : a ≤ u) (hfg : ∀ s ≤ u, f s = g s)
+    (h : nextCrossTime ε f a ≤ u) : nextCrossTime ε f a = nextCrossTime ε g a := by
+  have hg' : nextCrossTime ε g a ≤ u := (nextCrossTime_le_iff_of_eqOn hf hg hε hau hfg).1 h
+  obtain ⟨s, has, hs, hEq⟩ := exists_nextCrossTime_eq hf hε (lt_of_le_of_lt h ENNReal.coe_lt_top)
+  obtain ⟨s', has', hs', hEq'⟩ :=
+    exists_nextCrossTime_eq hg hε (lt_of_le_of_lt hg' ENNReal.coe_lt_top)
+  have hsu : s ≤ u := by
+    rw [hEq] at h
+    exact_mod_cast h
+  have hsu' : s' ≤ u := by
+    rw [hEq'] at hg'
+    exact_mod_cast hg'
+  refine le_antisymm ?_ ?_
+  · rw [hEq']
+    refine nextCrossTime_le_of_lt (by exact_mod_cast has') ?_
+    simpa [hfg s' hsu', hfg a hau] using hs'
+  · rw [hEq]
+    refine nextCrossTime_le_of_lt (by exact_mod_cast has) ?_
+    simpa [← hfg s hsu, ← hfg a hau] using hs
+
+private theorem crossTime_eq_of_eqOn_aux {f g : ℝ≥0 → E} (hf : Continuous f)
+    (hg : Continuous g) {ε : ℝ} (hε : 0 < ε) {u : ℝ≥0} (hfg : ∀ s ≤ u, f s = g s) (k : ℕ)
+    (h : crossTime ε f k ≤ u) : crossTime ε f k = crossTime ε g k := by
+  induction k with
+  | zero => simp [crossTime_zero]
+  | succ k ih =>
+    have hk : crossTime ε f k ≤ u := (crossTime_mono ε f (Nat.le_succ k)).trans h
+    have ihk := ih hk
+    obtain ⟨a, ha⟩ : ∃ a : ℝ≥0, (a : ℝ≥0∞) = crossTime ε f k :=
+      ⟨_, ENNReal.coe_toNNReal (ne_top_of_le_ne_top ENNReal.coe_ne_top hk)⟩
+    rw [crossTime_succ, crossTime_succ, ← ihk, ← ha]
+    rw [crossTime_succ, ← ha] at h
+    rw [← ha] at hk
+    exact nextCrossTime_eq_of_eqOn hf hg hε (by exact_mod_cast hk) hfg h
+
+/-- Two continuous paths that agree on `[0, u]` have the same crossing times in `[0, u]`. -/
+theorem crossTime_le_iff_of_eqOn {f g : ℝ≥0 → E} (hf : Continuous f) (hg : Continuous g)
+    {ε : ℝ} (hε : 0 < ε) {u : ℝ≥0} (hfg : ∀ s ≤ u, f s = g s) (k : ℕ) :
+    crossTime ε f k ≤ u ↔ crossTime ε g k ≤ u := by
+  constructor
+  · intro h
+    rw [← crossTime_eq_of_eqOn_aux hf hg hε hfg k h]
+    exact h
+  · intro h
+    rw [← crossTime_eq_of_eqOn_aux hg hf hε (fun s hs => (hfg s hs).symm) k h]
+    exact h
+
+theorem crossTime_eq_of_eqOn {f g : ℝ≥0 → E} (hf : Continuous f) (hg : Continuous g)
+    {ε : ℝ} (hε : 0 < ε) {u : ℝ≥0} (hfg : ∀ s ≤ u, f s = g s) (k : ℕ)
+    (h : crossTime ε f k ≤ u) : crossTime ε f k = crossTime ε g k :=
+  crossTime_eq_of_eqOn_aux hf hg hε hfg k h
+
+/-- The number of `ε`-crossings in `[0, u]` of a continuous path depends only on the path on
+`[0, u]`. -/
+theorem crossCount_congr {f g : ℝ≥0 → E} (hf : Continuous f) (hg : Continuous g) {ε : ℝ}
+    (hε : 0 < ε) {u : ℝ≥0} (hfg : ∀ s ≤ u, f s = g s) :
+    crossCount ε f u = crossCount ε g u := by
+  unfold crossCount
+  refine iSup_congr fun k => ?_
+  by_cases h : crossTime ε f k ≤ u
+  · rw [iSup_pos h, iSup_pos ((crossTime_le_iff_of_eqOn hf hg hε hfg k).1 h)]
+  · have h' : ¬ crossTime ε g k ≤ u := fun h'' => h ((crossTime_le_iff_of_eqOn hf hg hε hfg k).2 h'')
+    rw [iSup_neg h, iSup_neg h']
+
+/-- The crossing times in `[0, u]` of a continuous path are those of the path stopped at `u`. -/
+theorem crossTime_le_iff_stopped {f : ℝ≥0 → E} (hf : Continuous f) {ε : ℝ} (hε : 0 < ε)
+    (u : ℝ≥0) (k : ℕ) :
+    crossTime ε f k ≤ u ↔ crossTime ε (fun s => f (min s u)) k ≤ u :=
+  crossTime_le_iff_of_eqOn hf (hf.comp (continuous_id.min continuous_const)) hε
+    (fun s hs => by simp [min_eq_left hs]) k
+
+theorem crossCount_stopped {f : ℝ≥0 → E} (hf : Continuous f) {ε : ℝ} (hε : 0 < ε) (u : ℝ≥0) :
+    crossCount ε (fun s => f (min s u)) u = crossCount ε f u :=
+  (crossCount_congr hf (hf.comp (continuous_id.min continuous_const)) hε
+    (fun s hs => by simp [min_eq_left hs])).symm
+
 end Crossing
 
 end LatticeProb
