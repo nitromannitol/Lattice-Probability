@@ -486,4 +486,126 @@ theorem average_inner_sq_ball_pos (u : E) (hu : ‖u‖ = 1) {r : ℝ} (hr : 0 <
     ENNReal.toReal_pos (measure_ball_pos μ 0 hr).ne' measure_ball_lt_top.ne
   exact mul_pos (inv_pos.mpr hm) (integral_inner_sq_ball_pos u hu hr)
 
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] in
+/-- Translation moves a ball average to a ball centred at the origin. -/
+theorem average_add_ball (f : E → ℝ) (a : E) (r : ℝ) :
+    ⨍ x in ball (0 : E) r, f (a + x) ∂μ = ⨍ x in ball a r, f x ∂μ := by
+  have hpre : (fun x : E => a + x) ⁻¹' ball a r = ball 0 r := by
+    ext x
+    simp [mem_ball, dist_eq_norm]
+  have hm := (measurePreserving_add_left μ a).measure_preimage_emb
+    (measurableEmbedding_addLeft a) (ball a r)
+  have hi := (measurePreserving_add_left μ a).setIntegral_preimage_emb
+    (measurableEmbedding_addLeft a) f (ball a r)
+  rw [hpre] at hm hi
+  rw [setAverage_eq, setAverage_eq, measureReal_def, measureReal_def, hm, hi]
+/-- A linear function has zero average on a centred ball. -/
+theorem average_linear_ball_zero (L : E →L[ℝ] ℝ) (r : ℝ) :
+    ⨍ x in ball (0 : E) r, L x ∂μ = 0 := by
+  rw [setAverage_eq, integral_linear_ball_zero]
+  simp
+
+/-- A pointwise Taylor remainder bound controls its ball average. -/
+theorem average_taylor_remainder_le {f : E → ℝ} (hf : ContDiff ℝ ∞ f) (a : E) {ε r : ℝ} (hε : 0 ≤ ε)
+    (hr : 0 < r)
+    (ht : ∀ x : E, ‖x‖ ≤ r →
+      |f (a + x) - f a - fderiv ℝ f a x - (1 / 2 : ℝ) *
+        fderiv ℝ (fderiv ℝ f) a x x| ≤ ε * ‖x‖ ^ 2) :
+    (⨍ x in ball (0 : E) r, f (a + x) ∂μ) - f a -
+      (1 / 2 : ℝ) * ⨍ x in ball (0 : E) r, fderiv ℝ (fderiv ℝ f) a x x ∂μ ≤ ε * r ^ 2 := by
+  let L := fderiv ℝ f a
+  let H := fderiv ℝ (fderiv ℝ f) a
+  let R : E → ℝ := fun x => f (a + x) - f a - L x - (1 / 2 : ℝ) * H x x
+  have hcont (g : E → ℝ) (hg : Continuous g) : IntegrableOn g (ball (0 : E) r) μ :=
+    (hg.continuousOn.integrableOn_compact (isCompact_closedBall 0 r)).mono_set ball_subset_closedBall
+  have hF : Continuous (fun x => f (a + x)) := hf.continuous.comp (continuous_const.add continuous_id)
+  have hH : Continuous (fun x => H x x) := (H.continuous.clm_apply continuous_id)
+  have hR : IntegrableOn R (ball (0 : E) r) μ :=
+    hcont _ (((hF.sub continuous_const).sub L.continuous).sub (continuous_const.mul hH))
+  have hbound (x : E) (hx : x ∈ ball (0 : E) r) : R x ≤ ε * r ^ 2 := by
+    have hx' : ‖x‖ ≤ r := (mem_ball_zero_iff.mp hx).le
+    have h := le_trans (le_abs_self (R x)) (ht x hx')
+    exact h.trans (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (norm_nonneg x) hx' 2) hε)
+  have hI := setIntegral_mono_on hR (integrableOn_const (measure_ball_lt_top.ne)) measurableSet_ball hbound
+  have hA : (⨍ x in ball (0 : E) r, R x ∂μ) ≤ ε * r ^ 2 := by
+    rw [setAverage_eq]
+    have hm : 0 < μ.real (ball (0 : E) r) :=
+      ENNReal.toReal_pos (measure_ball_pos μ 0 hr).ne' measure_ball_lt_top.ne
+    have hh := mul_le_mul_of_nonneg_left hI (inv_nonneg.mpr hm.le)
+    simpa [setIntegral_const, smul_eq_mul, hm.ne', mul_assoc] using hh
+  have hm0 : μ (ball (0 : E) r) ≠ 0 := (measure_ball_pos μ 0 hr).ne'
+  have havg : (⨍ x in ball (0 : E) r, R x ∂μ) =
+      (⨍ x in ball (0 : E) r, f (a + x) ∂μ) - f a -
+        (1 / 2 : ℝ) * ⨍ x in ball (0 : E) r, H x x ∂μ := by
+    change (⨍ x in ball (0 : E) r,
+      (((fun x : E => f (a + x)) - (fun _ : E => f a)) - (L : E → ℝ) -
+        (fun x : E => (1 / 2 : ℝ) * H x x)) x ∂μ) = _
+    have hc : IntegrableOn (fun _ : E => f a) (ball 0 r) μ :=
+      integrableOn_const measure_ball_lt_top.ne
+    have hL : IntegrableOn L (ball 0 r) μ := hcont _ L.continuous
+    have hQ : IntegrableOn (fun x => (1 / 2 : ℝ) * H x x) (ball 0 r) μ :=
+      (hcont _ hH).const_mul _
+    rw [setAverage_sub (((hcont _ hF).sub hc).sub hL) hQ,
+      setAverage_sub ((hcont _ hF).sub hc) hL,
+      setAverage_sub (hcont _ hF) hc,
+      setAverage_const hm0 measure_ball_lt_top.ne, average_linear_ball_zero, average_const_mul]
+    ring
+  rw [havg] at hA
+  exact hA
+
+/-- In positive dimension, a smooth function with the local ball sub-mean property has
+a nonnegative Laplacian. -/
+theorem laplacian_nonneg_of_le_ballAverage_of_nontrivial [Nontrivial E] {f : E → ℝ} (hf : ContDiff ℝ ∞ f) (a : E) {δ : ℝ} (hδ : 0 < δ)
+    (hmean : ∀ r : ℝ, 0 < r → r < δ → f a ≤ ⨍ y in ball a r, f y ∂μ) :
+    0 ≤ Δ f a := by
+  classical
+  by_contra hn
+  have hn' : Δ f a < 0 := lt_of_not_ge hn
+  let b := stdOrthonormalBasis ℝ E
+  let i₀ : Fin (Module.finrank ℝ E) := ⟨0, Module.finrank_pos⟩
+  let c : ℝ := ⨍ x in ball (0 : E) 1, ⟪b i₀, x⟫_ℝ ^ 2 ∂μ
+  have hc : 0 < c := average_inner_sq_ball_pos (μ := μ) (b i₀) (by simp [b]) zero_lt_one
+  let ε := -(c * Δ f a) / 4
+  have hε : 0 < ε := div_pos (neg_pos.mpr (mul_neg_of_pos_of_neg hc hn')) (by norm_num)
+  obtain ⟨s, hs, ht⟩ := exists_taylor_remainder_le hf a hε
+  let r := min s δ / 2
+  have hr : 0 < r := half_pos (lt_min hs hδ)
+  have hrs : r ≤ s := (half_le_self (le_of_lt (lt_min hs hδ))).trans (min_le_left _ _)
+  have hrδ : r < δ := lt_of_lt_of_le (half_lt_self (lt_min hs hδ)) (min_le_right _ _)
+  have hbound := average_taylor_remainder_le (μ := μ) hf a hε.le hr
+    (fun x hx => ht x (le_trans hx hrs))
+  have hΔ : Δ f a = ∑ i, fderiv ℝ (fderiv ℝ f) a (b i) (b i) := by
+    rw [laplacian_eq_sum_fderiv hf]
+    apply Finset.sum_congr rfl
+    intro i _
+    have hd : DifferentiableAt ℝ (fderiv ℝ f) a :=
+      (hf.fderiv_right (m := ∞) (by simp)).differentiable (by simp) a
+    rw [fderiv_clm_apply hd (differentiableAt_const (b i))]
+    simp [b]
+  have hq : (⨍ x in ball (0 : E) r, fderiv ℝ (fderiv ℝ f) a x x ∂μ) = r ^ 2 * c * Δ f a := by
+    rw [average_bilinear_ball_eq_trace b i₀, average_inner_sq_ball_scale _ hr, ← hΔ]
+  have hm : f a ≤ ⨍ x in ball (0 : E) r, f (a + x) ∂μ := by
+    rw [average_add_ball]
+    exact hmean r hr hrδ
+  rw [hq] at hbound
+  have hbad : (1 / 2 : ℝ) * (r ^ 2 * c * Δ f a) + ε * r ^ 2 < 0 := by
+    dsimp [ε]
+    have hnprod : c * Δ f a < 0 := mul_neg_of_pos_of_neg hc hn'
+    have hr2 : 0 < r ^ 2 := sq_pos_of_pos hr
+    have := mul_neg_of_pos_of_neg hr2 hnprod
+    nlinarith
+  linarith
+
+/-- A smooth function satisfying the local ball sub-mean property has nonnegative Laplacian. -/
+theorem laplacian_nonneg_of_le_ballAverage {f : E → ℝ} (hf : ContDiff ℝ ∞ f) (a : E) {δ : ℝ} (hδ : 0 < δ)
+    (hmean : ∀ r : ℝ, 0 < r → r < δ → f a ≤ ⨍ y in ball a r, f y ∂μ) :
+    0 ≤ Δ f a := by
+  rcases subsingleton_or_nontrivial E with hE | hE
+  · let _ := hE
+    have hconst : f = fun _ => f 0 := funext fun x => congrArg f (Subsingleton.elim x 0)
+    rw [hconst]
+    simp
+  · let _ := hE
+    exact laplacian_nonneg_of_le_ballAverage_of_nontrivial (μ := μ) hf a hδ hmean
+
 end LatticeProb.Ishii
