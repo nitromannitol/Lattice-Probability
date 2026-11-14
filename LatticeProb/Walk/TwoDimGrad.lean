@@ -71,15 +71,15 @@ theorem srwHeat_two_factor : ∀ (m : ℕ) (x y : ℤ),
       rw [srwHeat_zero, S1_zero, S1_zero]
       by_cases h : x = 0 ∧ y = 0
       · obtain ⟨rfl, rfl⟩ := h
-        rw [if_pos ((vec2_eq_zero_iff 0 0).mpr ⟨rfl, rfl⟩)]
+        rw [ite_eq_left ((vec2_eq_zero_iff 0 0).mpr ⟨rfl, rfl⟩)]
         norm_num
-      · rw [if_neg (fun hc => h ((vec2_eq_zero_iff x y).mp hc))]
+      · rw [ite_eq_right (fun hc => h ((vec2_eq_zero_iff x y).mp hc))]
         have hne : ¬ (x + y = 0 ∧ x - y = 0) := by
           rintro ⟨ha, hb⟩
           exact h ⟨by omega, by omega⟩
         rcases not_and_or.mp hne with hc | hc
-        · rw [if_neg hc]; ring
-        · rw [if_neg hc]; ring
+        · rw [ite_eq_right hc]; ring
+        · rw [ite_eq_right hc]; ring
   | succ m ih =>
       intro x y
       rw [srwHeat_two_succ, ih, ih, ih, ih, S1_succ, S1_succ]

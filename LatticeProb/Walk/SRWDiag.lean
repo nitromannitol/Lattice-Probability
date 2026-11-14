@@ -121,7 +121,8 @@ theorem srwHeat_add (m : ℕ) : ∀ (n : ℕ) (x : Site d),
         rw [srwHeat_zero]
         by_cases h : y = x
         · simp [h]
-        · rw [if_neg (fun hc : x - y = 0 => h (by linear_combination -hc)), if_neg h, mul_zero]
+        · rw [ite_eq_right (fun hc : x - y = 0 => h (by linear_combination -hc)), ite_eq_right h,
+          mul_zero]
       simp_rw [hpt]
       rw [tsum_ite_eq x (srwHeat d m), Nat.add_zero]
   | succ n ih =>

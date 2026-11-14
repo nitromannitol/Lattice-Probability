@@ -310,8 +310,8 @@ theorem exists_tsum_srwGreen_four_sq_le :
   obtain ⟨C, hC, h⟩ := exists_tsum_srwGreen_sq_le (d := 4) (by norm_num)
   refine ⟨C, hC, fun n hn => ?_⟩
   have h1 := h n hn
-  rw [varianceRate, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num),
-    if_pos rfl] at h1
+  rw [varianceRate, ite_eq_right (by norm_num), ite_eq_right (by norm_num),
+    ite_eq_right (by norm_num), ite_eq_left rfl] at h1
   have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)
   have hlog : Real.log (n : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
     Real.log_le_log hnpos (by linarith)

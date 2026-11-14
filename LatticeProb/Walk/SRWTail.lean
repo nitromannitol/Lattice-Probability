@@ -93,7 +93,7 @@ theorem srwSum_exp (θ : ℝ) (m : ℕ) :
   | zero =>
       have hset : Finset.Icc (-((0 : ℕ) : ℤ)) ((0 : ℕ) : ℤ) = {0} := by decide
       have h0 : (![(0 : ℤ)] : Site 1) = 0 := by funext i; fin_cases i; rfl
-      rw [srwSum, hset, Finset.sum_singleton, srwHeat_zero, h0, if_pos rfl]
+      rw [srwSum, hset, Finset.sum_singleton, srwHeat_zero, h0, ite_eq_left rfl]
       norm_num
   | succ m ih =>
       rw [srwSum_succ]

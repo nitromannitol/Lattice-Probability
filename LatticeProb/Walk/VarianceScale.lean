@@ -468,7 +468,7 @@ theorem exists_tsum_srwGreen_sq_le (hd : 1 ≤ d) :
       rw [show (1 : ℝ) = Real.sqrt 1 by simp]
       exact Real.sqrt_le_sqrt (by linarith)
     have hrate : varianceRate 1 t = (t : ℝ) * Real.sqrt t := by
-      rw [varianceRate, if_pos rfl, show (3 : ℝ) / 2 = 1 + 1 / 2 by norm_num,
+      rw [varianceRate, ite_eq_left rfl, show (3 : ℝ) / 2 = 1 + 1 / 2 by norm_num,
         Real.rpow_add htpos, Real.rpow_one, ← Real.sqrt_eq_rpow]
     have hmaster := tsum_srwGreen_sq_le_master (d := 1) hdpos ht1
     have hA := diagSum_one_le t
@@ -483,7 +483,7 @@ theorem exists_tsum_srwGreen_sq_le (hd : 1 ≤ d) :
     have ht1 : 1 ≤ t := by omega
     have ht1R : (1 : ℝ) ≤ (t : ℝ) := by exact_mod_cast ht1
     have hrate : varianceRate 2 t = (t : ℝ) := by
-      rw [varianceRate, if_neg (by norm_num), if_pos rfl]
+      rw [varianceRate, ite_eq_right (by norm_num), ite_eq_left rfl]
     have hmaster := tsum_srwGreen_sq_le_master (d := 2) hdpos ht1
     have hA := diagSum_two_le t
     have hB : (t : ℝ) ^ 2 / Real.sqrt t ^ 2 = (t : ℝ) := tail_eq_two ht1
@@ -499,7 +499,7 @@ theorem exists_tsum_srwGreen_sq_le (hd : 1 ≤ d) :
       rw [show (1 : ℝ) = Real.sqrt 1 by simp]
       exact Real.sqrt_le_sqrt ht1R
     have hrate : varianceRate 3 t = Real.sqrt t := by
-      rw [varianceRate, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl,
+      rw [varianceRate, ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl,
         ← Real.sqrt_eq_rpow]
     have hmaster := tsum_srwGreen_sq_le_master (d := 3) hdpos ht1
     have hA := diagSum_three_le t
@@ -515,8 +515,8 @@ theorem exists_tsum_srwGreen_sq_le (hd : 1 ≤ d) :
     have hlogt : Real.log 2 ≤ Real.log (t : ℝ) :=
       Real.log_le_log (by norm_num) (by exact_mod_cast ht)
     have hrate : varianceRate 4 t = Real.log (t : ℝ) := by
-      rw [varianceRate, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num),
-        if_pos rfl]
+      rw [varianceRate, ite_eq_right (by norm_num), ite_eq_right (by norm_num),
+        ite_eq_right (by norm_num), ite_eq_left rfl]
     have hmaster := tsum_srwGreen_sq_le_master (d := 4) hdpos ht1
     have hA := diagSum_four_le t
     have hB : (t : ℝ) ^ 2 / Real.sqrt t ^ 4 = 1 := tail_eq_four ht1
@@ -530,7 +530,7 @@ theorem exists_tsum_srwGreen_sq_le (hd : 1 ≤ d) :
     refine ⟨1 + 7 * K, by positivity, fun t ht => ?_⟩
     have ht1 : 1 ≤ t := by omega
     have hrate : varianceRate d t = 1 := by
-      rw [varianceRate, if_neg h1, if_neg h2, if_neg h3, if_neg h4]
+      rw [varianceRate, ite_eq_right h1, ite_eq_right h2, ite_eq_right h3, ite_eq_right h4]
     have hmaster := tsum_srwGreen_sq_le_master hdpos ht1
     have hA := diagSum_le_three_of_five_le h5 t
     have hB : (t : ℝ) ^ 2 / Real.sqrt t ^ d ≤ 1 := tail_le_one_of_four_le (by omega) ht1
@@ -674,7 +674,7 @@ theorem exists_le_tsum_srwGreen_sq (hd : 1 ≤ d) :
       have hvn : (0 : ℝ) ≤ Real.sqrt (t : ℝ) := Real.sqrt_nonneg _
       have hvu : Real.sqrt (t : ℝ) ≤ 2 * Real.sqrt (m : ℝ) := by nlinarith
       have hrate : varianceRate 1 t = (t : ℝ) * Real.sqrt t := by
-        rw [varianceRate, if_pos rfl, show (3 : ℝ) / 2 = 1 + 1 / 2 by norm_num,
+        rw [varianceRate, ite_eq_left rfl, show (3 : ℝ) / 2 = 1 + 1 / 2 by norm_num,
           Real.rpow_add htpos, Real.rpow_one, ← Real.sqrt_eq_rpow]
       have hA := diagSum_one_ge hmm
       have hb := hbase t
@@ -693,7 +693,7 @@ theorem exists_le_tsum_srwGreen_sq (hd : 1 ≤ d) :
     · have hmm := hm2 t ht3
       have hct := hcast t ht3
       have hrate : varianceRate 2 t = (t : ℝ) := by
-        rw [varianceRate, if_neg (by norm_num), if_pos rfl]
+        rw [varianceRate, ite_eq_right (by norm_num), ite_eq_left rfl]
       have hA := diagSum_two_ge hmm
       have hb := hbase t
       have hstep : c₀ / 2 * varianceRate 2 t ≤ ∑' y : Site 2, srwGreen 2 t y ^ 2 := by
@@ -718,7 +718,7 @@ theorem exists_le_tsum_srwGreen_sq (hd : 1 ≤ d) :
       have hvn : (0 : ℝ) ≤ Real.sqrt (t : ℝ) := Real.sqrt_nonneg _
       have hvu : Real.sqrt (t : ℝ) ≤ 2 * Real.sqrt (m : ℝ) := by nlinarith
       have hrate : varianceRate 3 t = Real.sqrt t := by
-        rw [varianceRate, if_neg (by norm_num), if_neg (by norm_num), if_pos rfl,
+        rw [varianceRate, ite_eq_right (by norm_num), ite_eq_right (by norm_num), ite_eq_left rfl,
           ← Real.sqrt_eq_rpow]
       have hA := diagSum_three_ge hmm
       have hb := hbase t
@@ -740,8 +740,8 @@ theorem exists_le_tsum_srwGreen_sq (hd : 1 ≤ d) :
       have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast (by omega : 0 < m)
       have htpos : (0 : ℝ) < (t : ℝ) := by exact_mod_cast (by omega : 0 < t)
       have hrate : varianceRate 4 t = Real.log (t : ℝ) := by
-        rw [varianceRate, if_neg (by norm_num), if_neg (by norm_num), if_neg (by norm_num),
-          if_pos rfl]
+        rw [varianceRate, ite_eq_right (by norm_num), ite_eq_right (by norm_num),
+          ite_eq_right (by norm_num), ite_eq_left rfl]
       have hlogle : Real.log (t : ℝ) ≤ Real.log 2 + Real.log (m : ℝ) := by
         have h2m : Real.log (t : ℝ) ≤ Real.log (2 * (m : ℝ)) :=
           Real.log_le_log htpos hct
@@ -762,7 +762,7 @@ theorem exists_le_tsum_srwGreen_sq (hd : 1 ≤ d) :
     by_cases ht3 : 3 ≤ t
     · have hmm := hm2 t ht3
       have hrate : varianceRate d t = 1 := by
-        rw [varianceRate, if_neg h1, if_neg h2, if_neg h3, if_neg h4]
+        rw [varianceRate, ite_eq_right h1, ite_eq_right h2, ite_eq_right h3, ite_eq_right h4]
       have hA : (1 : ℝ) ≤ diagSum d ((t + 1) / 2) := one_le_diagSum hmm
       have hb := hbase t
       have hstep : 2 * c₀ * varianceRate d t ≤ ∑' y : Site d, srwGreen d t y ^ 2 := by

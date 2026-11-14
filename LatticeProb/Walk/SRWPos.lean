@@ -67,7 +67,7 @@ theorem srwHeat_pos {d : ℕ} (hd : 1 ≤ d) {j : ℕ} {x : Site d}
         simp only [graphNorm_zero] at hpar
         have hj : j % 2 = 1 := by omega
         have h1 : 1 ≤ j := Nat.pos_of_ne_zero (fun h => by simp [h] at hj)
-        haveI : Nonempty (Dir d) := ⟨(⟨0, hd⟩, true)⟩
+        have : Nonempty (Dir d) := ⟨(⟨0, hd⟩, true)⟩
         have hpos : 0 < ∑ a : Dir d, srwHeat d j (dirVec a) := by
           apply Finset.sum_pos
           · intro a _
