@@ -1,6 +1,7 @@
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 import Mathlib.MeasureTheory.Integral.Layercake
 import Mathlib.MeasureTheory.Measure.GiryMonad
+import Mathlib.Probability.Kernel.MeasurableLIntegral
 import Mathlib.Topology.MetricSpace.Thickening
 
 /-!
@@ -18,6 +19,10 @@ then `μ.bind κ` is `(ε + η, ε + η + ρ + e)`-close to `ν.bind κ'`.  No c
 needed, and `κ'` may be discontinuous on the complement of `G`.  Iterating gives the
 `n`-step comparison of two chains whose kernels are uniformly close but only one of which is
 continuous away from a small set, with errors adding up linearly in `n`.
+
+The same comparison is proved for joint laws of a chain of histories (`prokhorovLE_bind_append`):
+each history of a space `X` is extended by one sample of a kernel, and the extended laws live on
+`X × E` with the supremum metric.
 
 The proof of the integral inequality `lintegral_le_add_of_prokhorovLE` integrates the level-set
 inequality of `ProkhorovLE` along the layer-cake formula.
@@ -243,5 +248,149 @@ theorem prokhorovLE_bind_split {μ ν : Measure E} [IsProbabilityMeasure μ] [Is
         ENNReal.ofReal e) + ENNReal.ofReal ε := by gcongr
     _ = (ν.bind κ') (thickening (ε + r_c) A) +
         (ENNReal.ofReal ε + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e) := by ring
+
+section AppendKernel
+
+omit [PseudoMetricSpace E] [OpensMeasurableSpace E]
+
+variable {X : Type*} [MeasurableSpace X]
+
+/-- Extension of a history by one sample: the law on `X × E` of `(h, y)` with `y ~ κ h`. -/
+noncomputable def appendKernel (κ : X → Measure E) (h : X) : Measure (X × E) :=
+  (κ h).map (Prod.mk h)
+
+/-- Measurability of the section masses of a measurable family of probability measures. -/
+theorem measurable_section_mass {κ : X → Measure E} [∀ h, IsProbabilityMeasure (κ h)]
+    (hκ : Measurable κ) {s : Set (X × E)} (hs : MeasurableSet s) :
+    Measurable fun h => κ h (Prod.mk h ⁻¹' s) := by
+  let k : ProbabilityTheory.Kernel X E := ⟨κ, hκ⟩
+  have : ProbabilityTheory.IsMarkovKernel k := ⟨fun h => inferInstanceAs (IsProbabilityMeasure (κ h))⟩
+  exact ProbabilityTheory.Kernel.measurable_kernel_prodMk_left (κ := k) hs
+
+theorem appendKernel_apply (κ : X → Measure E) (h : X) {s : Set (X × E)} (hs : MeasurableSet s) :
+    appendKernel κ h s = κ h (Prod.mk h ⁻¹' s) :=
+  Measure.map_apply measurable_prodMk_left hs
+
+theorem measurable_appendKernel {κ : X → Measure E} [∀ h, IsProbabilityMeasure (κ h)]
+    (hκ : Measurable κ) : Measurable (appendKernel κ) := by
+  refine Measure.measurable_of_measurable_coe _ fun s hs => ?_
+  simp_rw [appendKernel_apply κ _ hs]
+  exact measurable_section_mass hκ hs
+
+theorem bind_appendKernel_apply {κ : X → Measure E} [∀ h, IsProbabilityMeasure (κ h)]
+    (hκ : Measurable κ) (μ : Measure X) {s : Set (X × E)} (hs : MeasurableSet s) :
+    (μ.bind (appendKernel κ)) s = ∫⁻ h, κ h (Prod.mk h ⁻¹' s) ∂μ := by
+  rw [Measure.bind_apply hs (measurable_appendKernel hκ).aemeasurable]
+  exact lintegral_congr fun h => appendKernel_apply κ h hs
+
+end AppendKernel
+
+section ThickeningSection
+
+omit [MeasurableSpace E] [OpensMeasurableSpace E]
+
+variable {X : Type*} [PseudoMetricSpace X]
+
+theorem thickening_section_subset (ε : ℝ) (A : Set (X × E)) (h : X) :
+    thickening ε (Prod.mk h ⁻¹' A) ⊆ Prod.mk h ⁻¹' thickening ε A := by
+  intro y hy
+  obtain ⟨y', hy', hd⟩ := mem_thickening_iff.1 hy
+  refine mem_thickening_iff.2 ⟨(h, y'), hy', ?_⟩
+  simpa [Prod.dist_eq] using hd
+
+theorem thickening_section_subset_of_dist_lt {r δ : ℝ} (hδ : δ ≤ r) (A : Set (X × E)) {h b : X}
+    (hb : dist b h < δ) :
+    thickening r (Prod.mk h ⁻¹' A) ⊆ Prod.mk b ⁻¹' thickening r A := by
+  intro y hy
+  obtain ⟨y', hy', hd⟩ := mem_thickening_iff.1 hy
+  refine mem_thickening_iff.2 ⟨(h, y'), hy', ?_⟩
+  rw [Prod.dist_eq]
+  exact max_lt (lt_of_lt_of_le hb hδ) hd
+
+end ThickeningSection
+
+section History
+
+variable {X : Type*} [PseudoMetricSpace X] [MeasurableSpace X]
+
+omit [OpensMeasurableSpace E] in
+/-- **One step of a chain on joint laws.**  The laws `μ, ν` on a history space `X` are compared in
+the one-sided Prokhorov sense at the scale `δ ≤ r_c`; each history `h` is extended by a sample of
+`κ h`, resp. `κ' h`, and the extended laws `μ.bind (appendKernel κ)`, `ν.bind (appendKernel κ')`
+live on `X × E` with the supremum metric.  If the kernels are `ε`-close, and `κ'` satisfies the
+continuity condition `hcont` on the histories of `H` against the histories of `G` (with a
+thickening radius `r_c` independent of the mass error `η`), then the extended laws are
+`(ε + r_c, ε + η + ρ + e)`-close.  This is the form that iterates along a chain of histories. -/
+theorem prokhorovLE_bind_append [OpensMeasurableSpace (X × E)]
+    {μ ν : Measure X} [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
+    {κ κ' : X → Measure E} [∀ h, IsProbabilityMeasure (κ h)] [∀ h, IsProbabilityMeasure (κ' h)]
+    (hκ : Measurable κ) (hκ' : Measurable κ') {ε δ r_c η ρ e : ℝ} (hε : 0 ≤ ε) (hη : 0 ≤ η)
+    (hρ0 : 0 ≤ ρ) (he : 0 ≤ e) (hδ : δ ≤ r_c) (hP : ProkhorovLE μ ν δ e)
+    (hK : ∀ h, ProkhorovLE (κ h) (κ' h) ε ε) {H G : Set X} (hH : MeasurableSet H)
+    (hμH : μ Hᶜ = 0) (hG : ν Gᶜ ≤ ENNReal.ofReal ρ)
+    (hcont : ∀ b ∈ G, ∀ h ∈ H, dist h b < δ → ∀ A : Set E, MeasurableSet A →
+      κ' h A ≤ κ' b (thickening r_c A) + ENNReal.ofReal η) :
+    ProkhorovLE (μ.bind (appendKernel κ)) (ν.bind (appendKernel κ')) (ε + r_c)
+      (ε + η + ρ + e) := by
+  intro A hA
+  have hT : MeasurableSet (thickening ε A) := isOpen_thickening.measurableSet
+  have hT2 : MeasurableSet (thickening r_c (thickening ε A)) := isOpen_thickening.measurableSet
+  have hS : MeasurableSet (thickening (ε + r_c) A) := isOpen_thickening.measurableSet
+  rw [bind_appendKernel_apply hκ μ hA, bind_appendKernel_apply hκ' ν hS]
+  set f : X → ℝ≥0∞ := fun h => κ' h (Prod.mk h ⁻¹' thickening ε A) with hf
+  set g : X → ℝ≥0∞ := fun b => κ' b (Prod.mk b ⁻¹' thickening r_c (thickening ε A)) with hg
+  have hfm : Measurable f := measurable_section_mass hκ' hT
+  have hgm : Measurable g := measurable_section_mass hκ' hT2
+  have hfHm : Measurable (H.indicator f) := hfm.indicator hH
+  have hfH1 : ∀ h, H.indicator f h ≤ 1 := fun h =>
+    (Set.indicator_le_self H f h).trans prob_le_one
+  have hae : ∀ᵐ h ∂μ, h ∈ H := ae_iff.2 hμH
+  have step1 : ∫⁻ h, κ h (Prod.mk h ⁻¹' A) ∂μ ≤
+      ∫⁻ h, H.indicator f h ∂μ + ENNReal.ofReal ε := by
+    calc ∫⁻ h, κ h (Prod.mk h ⁻¹' A) ∂μ ≤ ∫⁻ h, (f h + ENNReal.ofReal ε) ∂μ := by
+          refine lintegral_mono fun h => ?_
+          calc κ h (Prod.mk h ⁻¹' A) ≤ κ' h (thickening ε (Prod.mk h ⁻¹' A)) + ENNReal.ofReal ε :=
+                hK h _ (measurable_prodMk_left hA)
+            _ ≤ f h + ENNReal.ofReal ε :=
+                add_le_add (measure_mono (thickening_section_subset ε A h)) le_rfl
+      _ = ∫⁻ h, f h ∂μ + ENNReal.ofReal ε := by
+          rw [lintegral_add_right _ measurable_const]
+          simp
+      _ = ∫⁻ h, H.indicator f h ∂μ + ENNReal.ofReal ε := by
+          congr 1
+          refine lintegral_congr_ae ?_
+          filter_upwards [hae] with h hh
+          rw [Set.indicator_of_mem hh]
+  have step2 : ∫⁻ h, H.indicator f h ∂μ ≤
+      ∫⁻ b, g b ∂ν + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e := by
+    refine lintegral_le_add_of_prokhorovLE hη hP hfHm hgm hfH1 (fun b => prob_le_one) hG ?_
+    intro b hb h hh
+    by_cases hhH : h ∈ H
+    · rw [Set.indicator_of_mem hhH]
+      calc f h ≤ κ' b (thickening r_c (Prod.mk h ⁻¹' thickening ε A)) + ENNReal.ofReal η :=
+            hcont b hb h hhH hh _ (measurable_prodMk_left hT)
+        _ ≤ g b + ENNReal.ofReal η :=
+            add_le_add (measure_mono
+              (thickening_section_subset_of_dist_lt hδ _ (by rwa [dist_comm]))) le_rfl
+    · rw [Set.indicator_of_notMem hhH]
+      exact zero_le
+  have step3 : ∫⁻ b, g b ∂ν ≤ ∫⁻ b, κ' b (Prod.mk b ⁻¹' thickening (ε + r_c) A) ∂ν := by
+    refine lintegral_mono fun b => measure_mono ?_
+    exact Set.preimage_mono ((thickening_thickening_subset r_c ε A).trans
+      (thickening_mono (le_of_eq (add_comm _ _)) A))
+  have hsum : ENNReal.ofReal (ε + η + ρ + e) =
+      ENNReal.ofReal ε + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e := by
+    rw [ENNReal.ofReal_add (by positivity) he, ENNReal.ofReal_add (by positivity) hρ0,
+      ENNReal.ofReal_add hε hη]
+  rw [hsum]
+  calc ∫⁻ h, κ h (Prod.mk h ⁻¹' A) ∂μ ≤ ∫⁻ h, H.indicator f h ∂μ + ENNReal.ofReal ε := step1
+    _ ≤ (∫⁻ b, g b ∂ν + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e) +
+        ENNReal.ofReal ε := by gcongr
+    _ ≤ (∫⁻ b, κ' b (Prod.mk b ⁻¹' thickening (ε + r_c) A) ∂ν + ENNReal.ofReal η +
+        ENNReal.ofReal ρ + ENNReal.ofReal e) + ENNReal.ofReal ε := by gcongr
+    _ = ∫⁻ b, κ' b (Prod.mk b ⁻¹' thickening (ε + r_c) A) ∂ν +
+        (ENNReal.ofReal ε + ENNReal.ofReal η + ENNReal.ofReal ρ + ENNReal.ofReal e) := by ring
+
+end History
 
 end LatticeProb
