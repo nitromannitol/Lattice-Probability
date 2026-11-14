@@ -69,7 +69,7 @@ theorem rn_dependence_graph {Ω A : Type*} {S : Type} [MeasurableSpace Ω] (P : 
   -- transfer to the image measure
   have hmI : Measurable (fun (ω' : S → Bool) (i : I) => ω' i) := Measurable.of_eval (fun i => measurable_pi_apply _)
   have hmJ : Measurable (fun (ω' : S → Bool) (j : J) => ω' j) := Measurable.of_eval (fun i => measurable_pi_apply _)
-  haveI : IsProbabilityMeasure (P.map F) := (Measure.isProbabilityMeasure_map_iff hmeasF.aemeasurable).mpr inferInstance
+  have : IsProbabilityMeasure (P.map F) := (Measure.isProbabilityMeasure_map_iff hmeasF.aemeasurable).mpr inferInstance
   rw [indepFun_iff_map_prod_eq_prod_map_map hmI.aemeasurable hmJ.aemeasurable]
   have hPI : (fun ω (i : I) => F ω i) = (fun (ω' : S → Bool) (i : I) => ω' i) ∘ F := rfl
   have hPJ : (fun ω (j : J) => F ω j) = (fun (ω' : S → Bool) (j : J) => ω' j) ∘ F := rfl
@@ -195,18 +195,18 @@ theorem rn_bitLaw_true (q : ℝ) : bitLaw q {true} = ENNReal.ofReal q := by
 
 theorem rn_infinitePi_isProb {ι : Type*} {q : ℝ} (h0 : 0 ≤ q) (h1 : q ≤ 1) :
     IsProbabilityMeasure (Measure.infinitePi fun _ : ι => bitLaw q) := by
-  haveI := rn_bitLaw_isProb h0 h1
+  have := rn_bitLaw_isProb h0 h1
   infer_instance
 
 /-- The coordinates of Bernoulli product measure are independent. -/
 theorem rn_bernoulli_iIndep {ι : Type*} {q : ℝ} (h0 : 0 ≤ q) (h1 : q ≤ 1) :
     iIndepFun (fun (i : ι) (ω : ι → Bool) => ω i) (Measure.infinitePi fun _ : ι => bitLaw q) := by
-  haveI := rn_bitLaw_isProb h0 h1
+  have := rn_bitLaw_isProb h0 h1
   exact iIndepFun_infinitePi (P := fun _ : ι => bitLaw q) (X := fun _ => id) (fun _ => measurable_id)
 
 theorem rn_bernoulli_marg {ι : Type*} {q : ℝ} (h0 : 0 ≤ q) (h1 : q ≤ 1) (i : ι) :
     (Measure.infinitePi fun _ : ι => bitLaw q) {ω | ω i = true} = ENNReal.ofReal q := by
-  haveI := rn_bitLaw_isProb h0 h1
+  have := rn_bitLaw_isProb h0 h1
   have : {ω : ι → Bool | ω i = true} = (fun ω : ι → Bool => ω i) ⁻¹' {true} := rfl
   rw [this, ← Measure.map_apply (measurable_pi_apply i) (measurableSet_singleton true),
     Measure.infinitePi_map_eval, rn_bitLaw_true]
@@ -256,7 +256,7 @@ theorem rn_edge_dom (hLSSB : LiggettSchonmannStaceyBoundedDegree)
       simp [h1, h2])
     rn_lineGraph_loc
   set F := (fun (ω : Ω) (e : RnBond d) => X e.1 ω && X (e.1 + unit e.2) ω) with hF
-  haveI : IsProbabilityMeasure (P.map F) := (Measure.isProbabilityMeasure_map_iff hFm.aemeasurable).mpr inferInstance
+  have : IsProbabilityMeasure (P.map F) := (Measure.isProbabilityMeasure_map_iff hFm.aemeasurable).mpr inferInstance
   have hmarg' : ∀ e : RnBond d, ENNReal.ofReal p ≤ (P.map F) {ω' | ω' e = true} := by
     intro e
     have hm : MeasurableSet {ω' : RnBond d → Bool | ω' e = true} := by
@@ -307,7 +307,7 @@ theorem rn_site_dom (hLSSB : LiggettSchonmannStaceyBoundedDegree)
           rw [this, Real.rpow_one]
       _ ≤ ρ₁ ^ (2 * d) := pow_le_pow_left₀ hr0 hr _
   set P : Measure (RnBond d → Bool) := bondPercolation d ρ₁ with hP
-  haveI : IsProbabilityMeasure P := rn_infinitePi_isProb (ι := RnBond d) hρ₁0 h1
+  have : IsProbabilityMeasure P := rn_infinitePi_isProb (ι := RnBond d) hρ₁0 h1
   have hind : iIndepFun (fun (b : RnBond d) (ω : RnBond d → Bool) => ω b) P :=
     rn_bernoulli_iIndep hρ₁0 h1
   obtain ⟨hFm, hdep⟩ := rn_dependence_graph P (fun (b : RnBond d) (ω : RnBond d → Bool) => ω b)
@@ -320,7 +320,7 @@ theorem rn_site_dom (hLSSB : LiggettSchonmannStaceyBoundedDegree)
     (fun x y hne hadj => rn_incident_disjoint hne hadj)
   set F := (fun (ω : RnBond d → Bool) (x : Site d) =>
     decide (∀ b ∈ rn_incident d x, ω b = true)) with hF
-  haveI : IsProbabilityMeasure (P.map F) := (Measure.isProbabilityMeasure_map_iff hFm.aemeasurable).mpr inferInstance
+  have : IsProbabilityMeasure (P.map F) := (Measure.isProbabilityMeasure_map_iff hFm.aemeasurable).mpr inferInstance
   have hmarg' : ∀ x : Site d, ENNReal.ofReal p ≤ (P.map F) {ω' | ω' x = true} := by
     intro x
     have hm : MeasurableSet {ω' : Site d → Bool | ω' x = true} := by
@@ -357,7 +357,7 @@ theorem xlsd_measure_eq_iSup_isClosed [Countable S] (ρ : ℝ) (hρ0 : 0 ≤ ρ)
     {A : Set (S → Bool)} (hA : MeasurableSet A) :
     bernoulliProduct S ρ A =
       ⨆ (F : Set (S → Bool)) (_ : F ⊆ A) (_ : IsClosed F), bernoulliProduct S ρ F := by
-  haveI := xlsd_isProbabilityMeasure (S := S) ρ hρ0 hρ1
+  have := xlsd_isProbabilityMeasure (S := S) ρ hρ0 hρ1
   exact hA.measure_eq_iSup_isClosed_of_ne_top (measure_ne_top _ _)
 
 end

@@ -42,7 +42,7 @@ theorem thinLSS_bridge {p : ℝ} (hp : p < 1) (hdense : DenseSevenEighths p) :
           μ A ≤ bernoulliFieldPlanar (1 / 8) one_eighth_le_one A := by
   refine ⟨(1 - p) / 2, by linarith, ?_⟩
   intro μ hμ hKD hsite A hA hinc
-  haveI := hμ
+  have := hμ
   exact thinPlanar_of_dense (p := p) (ε := (1 - p) / 2)
     (by linarith) (by linarith) hdense hKD hsite hA hinc
 
@@ -80,8 +80,8 @@ theorem thinLSS_bridge_site2 {p : ℝ} (hp : p < 1)
             ≤ bitProduct (1 / 8) one_eighth_le_one (LatticeProb.Site 2) A := by
   refine ⟨(1 - p) / 2, by linarith, ?_⟩
   intro μ hμ hKD hsite A hA hinc
-  haveI := hμ
-  haveI : IsProbabilityMeasure (μ.map fieldEquivPlanar.toFun) :=
+  have := hμ
+  have : IsProbabilityMeasure (μ.map fieldEquivPlanar.toFun) :=
     inferInstance
   have hKD2 : KDependent 2 (μ.map fieldEquivPlanar.toFun) :=
     kDependentPlanar_map_fieldEquivPlanar 2 hKD

@@ -150,7 +150,7 @@ theorem indepFun_map_iff_of_measurable {α β Ω Ω' : Type*} [MeasurableSpace �
     IndepFun X Y (μ.map T) ↔ IndepFun (X ∘ T) (Y ∘ T) μ := by
   have hXT : Measurable (X ∘ T) := hX.comp hT
   have hYT : Measurable (Y ∘ T) := hY.comp hT
-  haveI : IsFiniteMeasure (μ.map T) := by infer_instance
+  have : IsFiniteMeasure (μ.map T) := by infer_instance
   rw [indepFun_iff_map_prod_eq_prod_map_map hX.aemeasurable hY.aemeasurable,
     indepFun_iff_map_prod_eq_prod_map_map hXT.aemeasurable hYT.aemeasurable,
     Measure.map_map (hX.prod hY) hT, Measure.map_map hX hT, Measure.map_map hY hT]
@@ -341,7 +341,7 @@ theorem thinUpper_of_transported_dense {d : ℕ} (p : ℝ)
     (hKD : KDependent 2 μ)
     (hsite : ∀ s : LatticeProb.Site d, ENNReal.ofReal p ≤ μ {ω | ω s = false}) :
     ThinUpper (bitProduct (1 / 8) one_eighth_le_one (LatticeProb.Site d)) μ := by
-  haveI : IsProbabilityMeasure (μ.map bitCompl) :=
+  have : IsProbabilityMeasure (μ.map bitCompl) :=
     inferInstance
   have hKDν : KDependent 2 (μ.map bitCompl) := kDependent_map_bitCompl 2 hKD
   have hsiteν : ∀ s : LatticeProb.Site d,

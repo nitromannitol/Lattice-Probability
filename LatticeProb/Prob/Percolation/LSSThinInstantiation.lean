@@ -108,7 +108,7 @@ theorem thinUpper_of_transported_dense_planar (p : ℝ)
     (hKD : KDependentPlanar 2 μ)
     (hsite : ∀ s : PlanarCarrier, ENNReal.ofReal p ≤ μ {ω | ω s = false}) :
     ThinUpper (bitProduct (1 / 8) one_eighth_le_one PlanarCarrier) μ := by
-  haveI : IsProbabilityMeasure (μ.map bitCompl) :=
+  have : IsProbabilityMeasure (μ.map bitCompl) :=
     inferInstance
   have hKDν : KDependentPlanar 2 (μ.map bitCompl) := kDependentPlanar_map_bitCompl 2 hKD
   have hsiteν : ∀ s : PlanarCarrier,
