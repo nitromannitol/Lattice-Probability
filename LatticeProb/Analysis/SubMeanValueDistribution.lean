@@ -1,4 +1,5 @@
 import LatticeProb.Analysis.WeakLaplaceMollify
+import LatticeProb.Analysis.HessianTaylorRemainder
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.MeasureTheory.Integral.Average
@@ -367,5 +368,27 @@ theorem integral_inner_sq_ball_pos (u : E) (hu : ‖u‖ = 1) {r : ℝ} (hr : 0 
   · simp only [mem_ball, dist_zero_right, norm_smul, Real.norm_eq_abs, hu, mul_one,
       abs_of_pos (half_pos hr)]
     linarith
+
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
+/-- The second-order Taylor remainder of a smooth function is locally quadratic with
+an arbitrarily small coefficient. -/
+theorem exists_taylor_remainder_le {f : E → ℝ} (hf : ContDiff ℝ ∞ f) (a : E) {ε : ℝ} (hε : 0 < ε) :
+    ∃ r > 0, ∀ y : E, ‖y‖ ≤ r →
+      |f (a + y) - f a - fderiv ℝ f a y - (1 / 2 : ℝ) *
+        fderiv ℝ (fderiv ℝ f) a y y| ≤ ε * ‖y‖ ^ 2 := by
+  have hDf : ContDiff ℝ ∞ (fderiv ℝ f) := hf.fderiv_right (by simp)
+  have hH : Continuous (fderiv ℝ (fderiv ℝ f)) := hDf.continuous_fderiv (by simp)
+  obtain ⟨r, hr, hdist⟩ := (Metric.continuous_iff (f := fderiv ℝ (fderiv ℝ f)) |>.mp hH) a ε hε
+  refine ⟨r / 2, half_pos hr, fun y hy => ?_⟩
+  apply LatticeProb.taylor_remainder_le_of_hessian_oscillation (convex_closedBall a (r / 2))
+    (fun z _ => hf.differentiable (by simp) z)
+    (fun z _ => hDf.differentiable (by simp) z)
+    (mem_closedBall_self (half_pos hr).le)
+    (by simpa [mem_closedBall, dist_eq_norm] using hy) hε.le
+  intro z hz
+  have hz' : dist z a < r := lt_of_le_of_lt (mem_closedBall.mp hz) (half_lt_self hr)
+  calc
+    _ = dist (fderiv ℝ (fderiv ℝ f) z) (fderiv ℝ (fderiv ℝ f) a) := (dist_eq_norm (fderiv ℝ (fderiv ℝ f) z) (fderiv ℝ (fderiv ℝ f) a)).symm
+    _ ≤ ε := (hdist z hz').le
 
 end LatticeProb.Ishii
