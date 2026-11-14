@@ -240,4 +240,15 @@ theorem integral_heatKernel_mul_contOp {d : ℕ} (hd : 1 ≤ d) {τ : ℝ} (hτ 
   · exact hv.comp (contDiff_const.prodMk contDiff_id)
   · exact hasCompactSupport_space_slice hvc s
 
+/-- Time derivative of the kernel times a smooth function at positive time. -/
+theorem hasDerivAt_heatKernel_mul {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v)
+    {s t : ℝ} (hst : s < t) (x y : Fin d → ℝ) :
+    HasDerivAt (fun r => heatKernel d (t - r) (x - y) * v (r, y))
+      ((-contOp d (fun z => heatKernel d (t - s) (x - z)) y) * v (s, y) +
+        heatKernel d (t - s) (x - y) * deriv (fun r => v (r, y)) s) s := by
+  have hv' := hasDerivAt_slice_time (hv.differentiable (by simp)) s y
+  rw [hv'.deriv]
+  exact (hasDerivAt_heatKernel_backward hd hst x y).mul hv'
+
 end LatticeProb.Heat
