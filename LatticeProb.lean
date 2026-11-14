@@ -937,3 +937,4 @@ import LatticeProb.OpenAI.Probability.CriticalZ3.Subunit
 import LatticeProb.OpenAI.Probability.InvariantIsing.Gaussian.IndexedGaussianMaximum
 import LatticeProb.OpenAI.Probability.SpanningForest.GraphFUSFLaw
 import LatticeProb.Analysis.JensenWeak
+import LatticeProb.Analysis.HeatKernel
