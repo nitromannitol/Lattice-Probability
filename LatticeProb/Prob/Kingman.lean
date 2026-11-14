@@ -233,7 +233,7 @@ theorem block_bound (hsub : SubadditiveAlong T g) (hg : ∀ n y, 1 ≤ n → 0 �
             (Finset.Ico_subset_Ico (by omega) le_rfl) fun k _ _ => hcostnn k
         linarith [hstep, hIH, hshrink]
       · have hone : g 1 (T^[j] x) ≤ a + blockCost T g a N x j := by
-          rw [blockCost, if_neg hgood]
+          rw [blockCost, ite_eq_right hgood]
           have := le_max_left (g 1 (T^[j] x) - a) 0
           linarith
         have hstep : g m (T^[j] x) ≤ g 1 (T^[j] x) + g (m - 1) (T^[j + 1] x) := by
@@ -441,7 +441,7 @@ theorem measurable_costFn (hgm : ∀ n, Measurable (g n)) (ε : ℝ) (N : ℕ) :
     have : {y : Ω | ∃ n, 1 ≤ n ∧ n ≤ N ∧ g n y < n * (gLow g y + ε)}
         = ⋃ n ∈ Finset.Icc 1 N, {y : Ω | g n y < n * (gLow g y + ε)} := by
       ext y
-      simp only [Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_Icc, exists_prop]
+      simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_Icc, exists_prop]
       constructor
       · rintro ⟨n, h1, h2, h3⟩; exact ⟨n, ⟨h1, h2⟩, h3⟩
       · rintro ⟨n, ⟨h1, h2⟩, h3⟩; exact ⟨n, h1, h2, h3⟩
@@ -460,8 +460,8 @@ theorem costFn_antitone (g : ℕ → Ω → ℝ) (ε : ℝ) {N N' : ℕ} (h : N 
   rw [costFn, costFn]
   by_cases hN : ∃ n, 1 ≤ n ∧ n ≤ N ∧ g n y < n * (gLow g y + ε)
   · obtain ⟨n, h1, h2, h3⟩ := hN
-    rw [if_pos ⟨n, h1, le_trans h2 h, h3⟩, if_pos ⟨n, h1, h2, h3⟩]
-  · rw [if_neg hN]
+    rw [ite_eq_left ⟨n, h1, le_trans h2 h, h3⟩, ite_eq_left ⟨n, h1, h2, h3⟩]
+  · rw [ite_eq_right hN]
     split
     · exact le_max_right _ _
     · exact le_rfl
@@ -479,7 +479,7 @@ theorem exists_costFn_eq_zero {ε : ℝ} (hε : 0 < ε)
   have hn0 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)
   refine ⟨n, hn2, ?_⟩
   rw [div_lt_iff₀ hn0] at hn1
-  rw [costFn, if_pos ⟨n, hn2, le_rfl, by linarith⟩]
+  rw [costFn, ite_eq_left ⟨n, hn2, le_rfl, by linarith⟩]
 
 /-! ### The upper limit is at most the lower limit plus the cost -/
 
@@ -719,7 +719,7 @@ theorem ae_exists_bLimsup_costFn_le [IsFiniteMeasure μ] (hT : MeasurePreserving
   rw [ae_iff]
   refine measure_mono_null ?_ hzero
   intro x hx
-  simp only [Set.mem_setOf_eq, not_exists, not_and, not_le] at hx
+  simp only [Set.mem_ofPred_eq, not_exists, not_and, not_le] at hx
   exact Set.mem_iInter.mpr fun K => hx (K + 1) (by omega)
 
 /-! ### Kingman's subadditive ergodic theorem -/

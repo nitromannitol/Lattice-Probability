@@ -44,9 +44,9 @@ theorem infinitePi_map_comp' {ι α : Type*} [MeasurableSpace α] (ν : Measure 
       simpa using this
     · intro hx k' hk'
       by_cases h : v k' = v k
-      · rw [if_pos h, hv h]
+      · rw [ite_eq_left h, hv h]
         exact hx
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         trivial
   have hpre : (fun (ω : ι → α) (k : κ) => ω (v k)) ⁻¹' (Set.pi ↑s t)
       = Set.pi ↑(s.image v) T := by
