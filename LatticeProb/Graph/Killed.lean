@@ -64,7 +64,7 @@ theorem killedPayoff_of_notMem {ξ : V → ℝ} {D : Set V} {X : ℕ → V} (h :
     killedPayoff G ξ D n X = 0 := by
   classical
   refine Finset.sum_eq_zero fun k _ => ?_
-  rw [if_neg]
+  rw [ite_eq_right]
   intro hk
   exact h (hk 0 (Nat.zero_le k))
 
@@ -74,10 +74,10 @@ theorem killedPayoff_cons (ξ : V → ℝ) (D : Set V) (m : ℕ) (x : V) (X : �
       = if x ∈ D then ξ x / G.degree x + killedPayoff G ξ D m X else 0 := by
   classical
   by_cases hx : x ∈ D
-  · rw [if_pos hx, killedPayoff, Finset.sum_range_succ']
+  · rw [ite_eq_left hx, killedPayoff, Finset.sum_range_succ']
     have h0 : (if ∀ i ≤ 0, cons x X i ∈ D then ξ (cons x X 0) / G.degree (cons x X 0) else 0)
         = ξ x / G.degree x := by
-      rw [if_pos]
+      rw [ite_eq_left]
       · rfl
       · intro i hi
         rw [Nat.le_zero.mp hi]
@@ -94,9 +94,9 @@ theorem killedPayoff_cons (ξ : V → ℝ) (D : Set V) (m : ℕ) (x : V) (X : �
         | 0 => exact hx
         | j + 1 => exact h j (by omega)
     by_cases hk : ∀ i ≤ k, X i ∈ D
-    · rw [if_pos (hiff.mpr hk), if_pos hk]; rfl
-    · rw [if_neg (fun h => hk (hiff.mp h)), if_neg hk]
-  · rw [if_neg hx]
+    · rw [ite_eq_left (hiff.mpr hk), ite_eq_left hk]; rfl
+    · rw [ite_eq_right (fun h => hk (hiff.mp h)), ite_eq_right hk]
+  · rw [ite_eq_right hx]
     exact killedPayoff_of_notMem (by simpa using hx) _
 
 /-! ### The killed odometer and its stopping values -/
@@ -168,7 +168,7 @@ theorem walkExp_killedPayoff_succ (hdeg : ∀ v : V, 0 < G.degree v) (ξ : V →
       refine walkExp_congr fun X' _ => ?_
       have hne : τ (cons x X') ≠ 0 := h0 _ rfl
       obtain ⟨m, hm⟩ : ∃ m, τ (cons x X') = m + 1 := ⟨τ (cons x X') - 1, by omega⟩
-      rw [hm, killedPayoff_cons, if_pos hx, Nat.add_sub_cancel]
+      rw [hm, killedPayoff_cons, ite_eq_left hx, Nat.add_sub_cancel]
     rw [hcong, walkExp_add, walkExp_const' hdeg]
   rw [Finset.sum_congr rfl key, Finset.sum_add_distrib, Finset.sum_const,
     SimpleGraph.card_neighborFinset_eq_degree, nsmul_eq_mul, add_div, walkOp]
@@ -208,7 +208,7 @@ theorem killedOdometer_isLUB (hdeg : ∀ v : V, 0 < G.degree v) (ξ : V → ℝ)
             = max 0 (ξ x / G.degree x + walkOp G (killedOdometer G ξ D n) x) := by
           show (if x ∈ D then
             max 0 (ξ x / G.degree x + walkOp G (killedOdometer G ξ D n) x) else 0) = _
-          rw [if_pos hx]
+          rw [ite_eq_left hx]
         constructor
         · rintro a ⟨τ, hτ, hle, rfl⟩
           by_cases h0 : τ (fun _ => x) = 0
@@ -269,7 +269,7 @@ theorem killedOdometer_isLUB (hdeg : ∀ v : V, 0 < G.degree v) (ξ : V → ℝ)
       · have hzero : killedOdometer G ξ D (n + 1) x = 0 := by
           show (if x ∈ D then
             max 0 (ξ x / G.degree x + walkOp G (killedOdometer G ξ D n) x) else 0) = 0
-          rw [if_neg hx]
+          rw [ite_eq_right hx]
         rw [hzero, killedStopValues_of_notMem ξ hx]
         exact ⟨fun a ha => le_of_eq ha, rfl⟩
 
@@ -294,7 +294,7 @@ theorem killedOdometer_succ_of_mem (ξ : V → ℝ) {D : Set V} {x : V} (hx : x 
   classical
   show (if x ∈ D then
     max 0 (ξ x / G.degree x + walkOp G (killedOdometer G ξ D n) x) else 0) = _
-  rw [if_pos hx]
+  rw [ite_eq_left hx]
 
 theorem killedOdometer_of_notMem (ξ : V → ℝ) {D : Set V} {x : V} (hx : x ∉ D) (n : ℕ) :
     killedOdometer G ξ D n x = 0 := by
@@ -304,6 +304,6 @@ theorem killedOdometer_of_notMem (ξ : V → ℝ) {D : Set V} {x : V} (hx : x �
   | succ n =>
       show (if x ∈ D then
         max 0 (ξ x / G.degree x + walkOp G (killedOdometer G ξ D n) x) else 0) = 0
-      rw [if_neg hx]
+      rw [ite_eq_right hx]
 
 end LatticeProb.Graph

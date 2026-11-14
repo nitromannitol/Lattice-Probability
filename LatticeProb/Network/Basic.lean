@@ -58,7 +58,7 @@ theorem isCond_unitCond : IsCond G (unitCond G) := by
   refine ⟨fun x y => ?_, fun x y h => ?_, fun x y h => ?_⟩
   · by_cases h : G.Adj x y
     · simp [unitCond, h, h.symm]
-    · rw [unitCond, unitCond, if_neg h, if_neg fun hc : G.Adj y x => h hc.symm]
+    · rw [unitCond, unitCond, ite_eq_right h, ite_eq_right fun hc : G.Adj y x => h hc.symm]
   · simp [unitCond, h]
   · simp [unitCond, h]
 
@@ -72,7 +72,7 @@ theorem weight_unitCond [G.LocallyFinite] (x : V) :
   rw [weight]
   rw [Finset.sum_congr rfl (fun y hy => ?_)]
   · rw [Finset.sum_const, SimpleGraph.card_neighborFinset_eq_degree, nsmul_eq_mul, mul_one]
-  · rw [unitCond, if_pos ((SimpleGraph.mem_neighborFinset _ _ _).mp hy)]
+  · rw [unitCond, ite_eq_left ((SimpleGraph.mem_neighborFinset _ _ _).mp hy)]
 
 /-! ### The Laplacian -/
 
@@ -86,7 +86,7 @@ theorem netLaplacian_unitCond [G.LocallyFinite] (f : V → ℝ) (x : V) :
   classical
   rw [netLaplacian, LatticeProb.Graph.laplacian]
   refine Finset.sum_congr rfl fun y hy => ?_
-  rw [unitCond, if_pos ((SimpleGraph.mem_neighborFinset _ _ _).mp hy), one_mul]
+  rw [unitCond, ite_eq_left ((SimpleGraph.mem_neighborFinset _ _ _).mp hy), one_mul]
 
 theorem netLaplacian_add [G.LocallyFinite] (c : V → V → ℝ) (f g : V → ℝ) (x : V) :
     netLaplacian G c (f + g) x = netLaplacian G c f x + netLaplacian G c g x := by
@@ -253,7 +253,7 @@ theorem formOn_eq_neg_two_mul [G.LocallyFinite] {c : V → V → ℝ} (hc : IsCo
         = if y ∈ B then g y * netLaplacian G c f y else 0 := by
       intro y _
       by_cases hyB : y ∈ B
-      · rw [if_pos hyB]
+      · rw [ite_eq_left hyB]
         have : (∑ x ∈ S, c x y * (f x - f y) * g y)
             = ∑ x ∈ G.neighborFinset y, c x y * (f x - f y) * g y := by
           refine (sum_neighborFinset_eq_sum y S _ ?_ ?_).symm
@@ -264,7 +264,7 @@ theorem formOn_eq_neg_two_mul [G.LocallyFinite] {c : V → V → ℝ} (hc : IsCo
             exact hnb y hyB x ((SimpleGraph.mem_neighborFinset _ _ _).mp hx)
         rw [this, netLaplacian, Finset.mul_sum]
         exact Finset.sum_congr rfl fun x _ => by rw [hc.symm x y]; ring
-      · rw [if_neg hyB, hg y hyB]
+      · rw [ite_eq_right hyB, hg y hyB]
         exact Finset.sum_eq_zero fun x _ => by ring
     rw [Finset.sum_congr rfl houter, Finset.sum_ite_mem, Finset.inter_eq_right.mpr hBS]
   rw [hsplit, hA, hB]
