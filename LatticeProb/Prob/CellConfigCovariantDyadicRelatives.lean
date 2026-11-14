@@ -44,7 +44,7 @@ open scoped ENNReal
 
 namespace LatticeProb.CellConfigCappedSquare
 
-open ReflectedGMS ReflectedGMS.GMS DyadicOffset UniformChain
+open ReflectedGMS ReflectedGMS.GMS CellMass CappedSquare DyadicOffset UniformChain
 
 /-! ### Dyadic ancestors and descendants of a square -/
 
@@ -633,6 +633,78 @@ theorem ae_ae_eventually_dyadicAncestor_side_four {μ : Measure GMSSpace}
   rw [Nat.cast_one, one_mul, show ((2 : ℝ) ^ 2 : ℝ) = 4 by norm_num] at h
   rw [Complex.zero_re, Complex.zero_im]
   exact h
+
+/-! ### Rooted bad-square mass tails -/
+
+/-- A bad square at the root whose ancestor `d` generations above it has cell mass at least `m`. -/
+def rootedBadSquareMassTail (E : Set ℂ → GMSSpace → Prop) (d : ℤ) (m : ℝ≥0∞) :
+    Set (GMSSpace × DyadicCoord × ℂ) :=
+  {p | ∃ j : ℤ, ¬ E (squareAt p.2.1.1 p.2.1.2.1 p.2.1.2.2 j p.2.2) p.1 ∧
+    m ≤ cellMass volume (complexCells p.1.1)
+      (squareAt p.2.1.1 p.2.1.2.1 p.2.1.2.2 (j + d) p.2.2)}
+
+/-- The rooted bad-square mass tail is jointly measurable. -/
+theorem measurableSet_rootedBadSquareMassTail {E : Set ℂ → GMSSpace → Prop}
+    (hE : MeasurableSet {p : (ℝ × ℝ × ℝ) × GMSSpace |
+      E (cornerSquare p.1.1 p.1.2.1 p.1.2.2) p.2}) (d : ℤ) (m : ℝ≥0∞) :
+    MeasurableSet (rootedBadSquareMassTail E d m) := by
+  have he (j : ℤ) : MeasurableSet {p : GMSSpace × DyadicCoord × ℂ |
+      E (squareAt p.2.1.1 p.2.1.2.1 p.2.1.2.2 j p.2.2) p.1} := by
+    have hs : Measurable fun p : GMSSpace × DyadicCoord × ℂ => p.2.1.1 :=
+      measurable_snd.fst.fst
+    have hw : Measurable fun p : GMSSpace × DyadicCoord × ℂ => p.2.2 :=
+      measurable_snd.snd
+    have hf := ((measurable_gridFloor j hs measurable_snd.fst.snd.fst
+        (Complex.measurable_re.comp hw)).prodMk
+      ((measurable_gridFloor j hs measurable_snd.fst.snd.snd
+        (Complex.measurable_im.comp hw)).prodMk
+        ((measurable_const : Measurable fun _ : GMSSpace × DyadicCoord × ℂ => (2 : ℝ)).pow
+          (hs.add_const (j : ℝ))))).prodMk measurable_fst
+    exact hE.preimage hf
+  have hm (j : ℤ) : MeasurableSet {p : GMSSpace × DyadicCoord × ℂ |
+      m ≤ cellMass volume (complexCells p.1.1)
+        (squareAt p.2.1.1 p.2.1.2.1 p.2.1.2.2 (j + d) p.2.2)} := by
+    exact measurableSet_le measurable_const ((measurable_cellMass_squareAt (j + d)).comp
+      (measurable_fst.prodMk measurable_snd))
+  convert (MeasurableSet.iUnion fun j : ℤ => (he j).compl.inter (hm j)) using 1
+  ext p
+  simp only [rootedBadSquareMassTail, mem_ofPred_eq, mem_iUnion, mem_inter_iff, mem_compl_iff]
+
+/-- A covariant square event gives an invariant rooted mass tail. -/
+theorem rootedBadSquareMassTail_similarity {E : Set ℂ → GMSSpace → Prop}
+    (hE : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ S : Set ℂ,
+        (E ((fun z : ℂ => s • z + similarityOffset s u) '' S) H' ↔ E S H))
+    (d : ℤ) (m : ℝ≥0∞) (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace)
+    (hHH' : IsSimilar s u hs H H') (q : DyadicCoord)
+    (h₁ : IsCompatible q.2.1) (h₂ : IsCompatible q.2.2) (w : ℂ) :
+    ((H', similarityCoord s u q, s • w + similarityOffset s u) ∈
+      rootedBadSquareMassTail E d m ↔ (H, q, w) ∈ rootedBadSquareMassTail E d m) := by
+  let δ : ℤ := ⌊q.1 + Real.logb 2 s⌋
+  have hsq (j : ℤ) := squareAt_similarityCoord s u hs q h₁ h₂ j w
+  have hmass (j : ℤ) :
+      cellMass volume (complexCells H'.1)
+        (squareAt (similarityCoord s u q).1 (similarityCoord s u q).2.1
+          (similarityCoord s u q).2.2 (j + δ) (s • w + similarityOffset s u)) =
+      cellMass volume (complexCells H.1) (squareAt q.1 q.2.1 q.2.2 j w) := by
+    rw [hsq j, show H'.1 = H.1.similarity s u hs from hHH',
+      cellMass_complexCells_similarity_image]
+  have hindex (j : ℤ) :
+      (¬ E (squareAt (similarityCoord s u q).1 (similarityCoord s u q).2.1
+        (similarityCoord s u q).2.2 (j + δ) (s • w + similarityOffset s u)) H' ∧
+        m ≤ cellMass volume (complexCells H'.1)
+          (squareAt (similarityCoord s u q).1 (similarityCoord s u q).2.1
+            (similarityCoord s u q).2.2 (j + δ + d) (s • w + similarityOffset s u))) ↔
+      (¬ E (squareAt q.1 q.2.1 q.2.2 j w) H ∧
+        m ≤ cellMass volume (complexCells H.1) (squareAt q.1 q.2.1 q.2.2 (j + d) w)) := by
+    rw [hsq j, hE s u hs H H' hHH', show j + δ + d = (j + d) + δ by omega,
+      hmass (j + d)]
+  change (∃ j : ℤ, _) ↔ ∃ j : ℤ, _
+  constructor
+  · rintro ⟨j, hj⟩
+    exact ⟨j - δ, (hindex (j - δ)).1 (by simpa using hj)⟩
+  · rintro ⟨j, hj⟩
+    exact ⟨j + δ, (hindex j).2 hj⟩
 
 /-! ### A conditional resampling estimate -/
 
