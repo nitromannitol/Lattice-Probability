@@ -940,3 +940,4 @@ import LatticeProb.OpenAI.Probability.InvariantIsing.Gaussian.IndexedGaussianMax
 import LatticeProb.OpenAI.Probability.SpanningForest.GraphFUSFLaw
 import LatticeProb.Analysis.JensenWeak
 import LatticeProb.Analysis.HeatKernel
+import LatticeProb.Analysis.Sobolev.HeatEnergy
