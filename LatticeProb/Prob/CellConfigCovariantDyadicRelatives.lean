@@ -63,6 +63,24 @@ def dyadicDescendants (i : ℕ) (a b ℓ : ℝ) : Set (Set ℂ) :=
   {S | ∃ n₁ n₂ : ℕ, n₁ < 2 ^ i ∧ n₂ < 2 ^ i ∧
     S = cornerSquare (a + n₁ * (ℓ / 2 ^ i)) (b + n₂ * (ℓ / 2 ^ i)) (ℓ / 2 ^ i)}
 
+/-- A depth-`i` dyadic descendant has `4⁻ⁱ` times the area of its parent. -/
+theorem volume_dyadicDescendant {i : ℕ} {a b ℓ : ℝ} (hℓ : 0 ≤ ℓ)
+    {S : Set ℂ} (hS : S ∈ dyadicDescendants i a b ℓ) :
+    volume S * (4 : ℝ≥0∞) ^ i = volume (cornerSquare a b ℓ) := by
+  obtain ⟨n₁, n₂, _, _, rfl⟩ := hS
+  rw [volume_cornerSquare, volume_cornerSquare]
+  have hp : (0 : ℝ) < (2 : ℝ) ^ i := by positivity
+  have heq : (ℓ / (2 : ℝ) ^ i) * (ℓ / (2 : ℝ) ^ i) * (4 : ℝ) ^ i = ℓ * ℓ := by
+    rw [show (4 : ℝ) = 2 * 2 by norm_num, mul_pow]
+    field_simp
+  have hfour : (4 : ℝ≥0∞) ^ i = ENNReal.ofReal ((4 : ℝ) ^ i) := by
+    rw [ENNReal.ofReal_pow (by norm_num : (0 : ℝ) ≤ 4)]
+    norm_num
+  rw [← ENNReal.ofReal_mul (div_nonneg hℓ hp.le),
+    hfour,
+    ← ENNReal.ofReal_mul (mul_nonneg (div_nonneg hℓ hp.le) (div_nonneg hℓ hp.le)),
+    heq, ENNReal.ofReal_mul hℓ]
+
 theorem forall_mem_dyadicAncestors_iff {P : Set ℂ → Prop} {i : ℕ} {a b ℓ : ℝ} :
     (∀ S ∈ dyadicAncestors i a b ℓ, P S) ↔ ∀ n₁ n₂ : ℕ, n₁ < 2 ^ i → n₂ < 2 ^ i →
       P (cornerSquare (a - n₁ * ℓ) (b - n₂ * ℓ) (2 ^ i * ℓ)) :=
