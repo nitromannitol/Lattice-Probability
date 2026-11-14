@@ -608,4 +608,32 @@ theorem laplacian_nonneg_of_le_ballAverage {f : E → ℝ} (hf : ContDiff ℝ �
   · let _ := hE
     exact laplacian_nonneg_of_le_ballAverage_of_nontrivial (μ := μ) hf a hδ hmean
 
+/-- A locally smooth function satisfying the ball sub-mean property has nonnegative
+Laplacian at each point of its domain. -/
+theorem laplacian_nonneg_of_contDiffOn_of_le_ballAverage {U : Set E} (hU : IsOpen U) {f : E → ℝ} (hf : ContDiffOn ℝ ∞ f U)
+    {a : E} (ha : a ∈ U)
+    (hmean : ∀ r : ℝ, 0 < r → ball a r ⊆ U → f a ≤ ⨍ y in ball a r, f y ∂μ) :
+    0 ≤ Δ f a := by
+  obtain ⟨g, V, hV, haV, hg, heq⟩ :=
+    exists_smooth_extension_near_compact isCompact_singleton hU (singleton_subset_iff.mpr ha) hf
+  have haV' : a ∈ V := haV (mem_singleton a)
+  obtain ⟨δ, hδ, hδVU⟩ := Metric.isOpen_iff.mp (hV.inter hU) a ⟨haV', ha⟩
+  have hδV : ball a δ ⊆ V := hδVU.trans inter_subset_left
+  have hδU : ball a δ ⊆ U := hδVU.trans inter_subset_right
+  have hgmean : ∀ r : ℝ, 0 < r → r < δ → g a ≤ ⨍ y in ball a r, g y ∂μ := by
+    intro r hr hrδ
+    have hrV : ball a r ⊆ V := (ball_subset_ball hrδ.le).trans hδV
+    have hrU : ball a r ⊆ U := (ball_subset_ball hrδ.le).trans hδU
+    have havg : (⨍ y in ball a r, g y ∂μ) = ⨍ y in ball a r, f y ∂μ := by
+      apply setAverage_congr_fun measurableSet_ball
+      exact Filter.Eventually.of_forall fun y hy => heq (hrV hy)
+    rw [heq haV', havg]
+    exact hmean r hr hrU
+  have h := laplacian_nonneg_of_le_ballAverage (μ := μ) hg a hδ hgmean
+  have hev : g =ᶠ[𝓝 a] f := by
+    filter_upwards [hV.mem_nhds haV'] with y hy
+    exact heq hy
+  rw [(InnerProductSpace.laplacian_congr_nhds hev).eq_of_nhds] at h
+  exact h
+
 end LatticeProb.Ishii
