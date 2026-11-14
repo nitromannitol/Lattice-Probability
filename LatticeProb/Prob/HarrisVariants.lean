@@ -172,12 +172,12 @@ theorem infinitePi_locallyMonotone_fkg [∀ i, LinearOrder (X i)] {S P M : Finse
     have e1 : (fun η => S.piecewise ω η) ⁻¹' (Ap ∩ Am ∩ (Bp ∩ Bm)) =
         (secP ω ∩ Bp) ∩ (secM ω ∩ Bm) := by
       ext η
-      simp only [Set.mem_preimage, Set.mem_inter_iff, hsecP, hsecM, Set.mem_setOf_eq]
+      simp only [Set.mem_preimage, Set.mem_inter_iff, hsecP, hsecM, mem_ofPred_eq]
       rw [ΦBp, ΦBm]
       tauto
     have e2 : (fun η => S.piecewise ω η) ⁻¹' (Ap ∩ Am) = secP ω ∩ secM ω := by
       ext η
-      simp only [Set.mem_preimage, Set.mem_inter_iff, hsecP, hsecM, Set.mem_setOf_eq]
+      simp only [Set.mem_preimage, Set.mem_inter_iff, hsecP, hsecM, mem_ofPred_eq]
     rw [e1, e2,
       infinitePi_real_inter_of_dependsOn_disjoint μ hPM (inter_dep (secP_dep ω) dBp)
         (inter_dep (secM_dep ω) dBm) ((secP_meas ω).inter mBp) ((secM_meas ω).inter mBm),
@@ -215,7 +215,7 @@ theorem infinitePi_locallyMonotone_fkg [∀ i, LinearOrder (X i)] {S P M : Finse
     rw [norm_mul]
     refine mul_le_mul (hbdI _ ω) ?_ (norm_nonneg _) zero_le_one
     rw [Real.norm_of_nonneg (mul_nonneg measureReal_nonneg measureReal_nonneg)]
-    exact mul_le_one₀ measureReal_le_one measureReal_nonneg measureReal_le_one
+    exact (mul_le_of_le_one_left measureReal_nonneg measureReal_le_one).trans measureReal_le_one
   · exact .of_bound (hmeasI mE).aestronglyMeasurable 1 (ae_of_all _ (hbdI _))
 
 end Product

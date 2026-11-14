@@ -140,10 +140,12 @@ theorem integral_abs_quadraticRemainder_le {μ : Measure ℝ}
     _ ≤ ∫ x : ℝ, (J / 6) * (|x| ^ 3 * Real.exp (κ * |x|)) ∂μ := by
       apply integral_mono (integrable_quadraticRemainder hμf hμ1 hμ2).abs (hW.const_mul _)
       intro x
-      convert abs_quadraticRemainder_le hf hJ hκ hbound x using 1 <;> first | rfl | ring
+      convert abs_quadraticRemainder_le hf hJ hκ hbound x using 1
+      first | rfl | ring
     _ = J / 6 * (∫ x : ℝ, |x| ^ 3 * Real.exp (κ * |x|) ∂μ) := integral_const_mul _ _
     _ ≤ J * T / 6 := by
-      convert mul_le_mul_of_nonneg_left hT (div_nonneg hJ (by norm_num : (0 : ℝ) ≤ 6)) using 1 <;> first | rfl | ring
+      convert mul_le_mul_of_nonneg_left hT (div_nonneg hJ (by norm_num : (0 : ℝ) ≤ 6)) using 1
+      first | rfl | ring
 
 /-- **The third-order comparison bound.**  If `μ` and `ν` share their first two
 moments and both have a sub-exponentially controlled third absolute moment

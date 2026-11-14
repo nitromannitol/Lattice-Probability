@@ -18,7 +18,7 @@ def laplaceLaw : Measure ℝ :=
 
 /-- The Laplace law is a probability measure. -/
 instance laplaceLaw_isProbability : IsProbabilityMeasure laplaceLaw := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   refine ⟨?_⟩
   simp [laplaceLaw, Measure.add_apply, Measure.map_apply measurable_neg]

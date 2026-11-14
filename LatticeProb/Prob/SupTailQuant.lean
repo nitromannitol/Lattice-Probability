@@ -89,7 +89,6 @@ theorem measure_sup_abs_gt_le_of_ae_modulus {k : ℕ} {a b : Fin k → ℝ}
   have hsub : {ω | lam < sSup ((fun u => |X u ω|) '' Set.Icc a b)}
       ≤ᵐ[P] {ω | lam ≤ |X a ω| + N} := by
     filter_upwards [hpt] with ω hω hlt
-    change lam ≤ |X a ω| + N
     exact hlt.le.trans (by simpa [hN] using hω)
   have hg : Integrable (fun ω => (2 : ℝ) ^ p * (|X a ω| ^ p + N ^ p)) P :=
     ((hint.add (integrable_const _)).const_mul _)

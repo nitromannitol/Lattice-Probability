@@ -488,7 +488,7 @@ theorem efron_stein_cov :
   induction M with
   | zero =>
       intro μ hμ f g hfm hgm hf2 hg2 hEf hEg
-      haveI := hμ
+      have := hμ
       have hsubf : ∀ ξ : Fin 0 → ℝ, f ξ = f 0 := fun ξ => congrArg f (Subsingleton.elim _ _)
       have hsubg : ∀ ξ : Fin 0 → ℝ, g ξ = g 0 := fun ξ => congrArg g (Subsingleton.elim _ _)
       have hmf : ∫ η, f η ∂(Measure.pi μ) = f 0 := by
@@ -505,9 +505,10 @@ theorem efron_stein_cov :
   | succ M ih =>
       intro μ hμ f g hfm hgm hf2 hg2 hEf hEg
       classical
-      haveI := hμ
-      haveI hκp : IsProbabilityMeasure (μ 0) := hμ 0
-      haveI hρp : IsProbabilityMeasure (Measure.pi (fun j : Fin M => μ (Fin.succAbove 0 j))) := by infer_instance
+      have := hμ
+      have hκp : IsProbabilityMeasure (μ 0) := hμ 0
+      have hρp : IsProbabilityMeasure (Measure.pi (fun j : Fin M => μ (Fin.succAbove 0 j))) := by
+        infer_instance
       set mf : ℝ := ∫ ξ, f ξ ∂(Measure.pi μ) with hmfdef
       set mg : ℝ := ∫ ξ, g ξ ∂(Measure.pi μ) with hmgdef
       have hΦfm : Measurable (headAvg μ f) := measurable_headAvg hfm

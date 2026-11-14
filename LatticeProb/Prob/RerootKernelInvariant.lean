@@ -103,7 +103,7 @@ instance isProbabilityMeasure_rerootKernel (N : Net) : IsProbabilityMeasure (rer
   classical
   rw [rerootKernel]
   by_cases h : ((netGraph N).neighborFinset (netRoot N)).Nonempty
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     constructor
     have hcard : ((netGraph N).neighborFinset (netRoot N)).card
         = (netGraph N).degree (netRoot N) := rfl
@@ -114,7 +114,7 @@ instance isProbabilityMeasure_rerootKernel (N : Net) : IsProbabilityMeasure (rer
     simp only [Measure.dirac_apply_of_mem (Set.mem_univ _)]
     rw [Finset.sum_const, nsmul_eq_mul, mul_one, smul_eq_mul, hcard,
       ENNReal.inv_mul_cancel hpos hne_top]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     infer_instance
 
 /-- **Bullet 1.**  Every `RWRS.invariantSigma 0`-measurable event is invariant for the
@@ -127,7 +127,7 @@ theorem kernelInvariant_of_invariantSigma {B : Set Net}
   have hre : RerootInvariant B := hB.2.2
   rw [rerootKernel]
   by_cases h : ((netGraph N).neighborFinset (netRoot N)).Nonempty
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have hcard : ((netGraph N).neighborFinset (netRoot N)).card
         = (netGraph N).degree (netRoot N) := rfl
     have hpos : (((netGraph N).degree (netRoot N) : ℕ) : ℝ≥0∞) ≠ 0 :=
@@ -148,7 +148,7 @@ theorem kernelInvariant_of_invariantSigma {B : Set Net}
         rw [Set.indicator_of_notMem hN, Set.indicator_of_notMem hyB]
     rw [Finset.sum_congr rfl hconst, Finset.sum_const, nsmul_eq_mul, smul_eq_mul, hcard,
       ← mul_assoc, ENNReal.inv_mul_cancel hpos hne_top, one_mul]
-  · rw [if_neg h, Measure.dirac_apply' _ hB.1]
+  · rw [ite_eq_right h, Measure.dirac_apply' _ hB.1]
     rfl
 
 /-- **Bullet 2.**  The pointwise form at a good network: for connected `N`, the rerooting

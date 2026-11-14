@@ -93,10 +93,10 @@ def KernelInvariant {X : Type*} [MeasurableSpace X] (κ : X → Measure X)
     · have h0 : ∀ n, κ x (f n) = 0 := by
         intro n
         rw [(hf n).2 x]
-        rw [Set.indicator_apply, if_neg (fun hn => hx (Set.mem_iUnion.mpr ⟨n, hn⟩))]
+        rw [Set.indicator_apply, ite_eq_right (fun hn => hx (Set.mem_iUnion.mpr ⟨n, hn⟩))]
       have hle : κ x (⋃ n, f n) ≤ ∑' n, κ x (f n) := measure_iUnion_le f
       have hz : (∑' n, κ x (f n)) = 0 := by simp [h0]
-      rw [Set.indicator_apply, if_neg hx]
+      rw [Set.indicator_apply, ite_eq_right hx]
       exact le_antisymm (le_trans hle (le_of_eq hz)) (by positivity)
 
 /-- The abstract ergodic-decomposition contract of a stationary Markov kernel,
@@ -181,7 +181,7 @@ theorem setLIntegral_kernelInvariant_restrict {X : Type*} [MeasurableSpace X]
     · have hxB : κ x B = 1 := by
         have h := hB x
         rwa [Set.indicator_of_mem hx] at h
-      haveI := hκ x
+      have := hκ x
       have hzero : κ x Bᶜ = 0 := by
         rw [measure_compl hBm (measure_ne_top _ _), hxB]
         simp

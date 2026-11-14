@@ -73,7 +73,7 @@ lemma hasGaussianLaw_shiftVec {Y : Ω' → ι → ℝ} (hY : HasGaussianLaw Y P'
     have : IsGaussian ((shiftMeas P' c).map fun z : Ω' × ℝ => Y z.1) := by
       rw [hmap]; exact hY.isGaussian_map
     have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving (Prod.fst : Ω' × ℝ → Ω') (shiftMeas P' c) P' :=
-      ⟨measurable_fst, by rw [map_fst_shiftMeas] <;> exact MeasureTheory.Measure.AbsolutelyContinuous.rfl⟩
+      ⟨measurable_fst, by rw [map_fst_shiftMeas]⟩
     exact IsGaussian.hasGaussianLaw (hY.aemeasurable.comp_quasiMeasurePreserving hqmp)
   have hg : HasGaussianLaw (fun z : Ω' × ℝ => z.2) (shiftMeas P' c) := by
     have : IsGaussian ((shiftMeas P' c).map fun z : Ω' × ℝ => z.2) := by

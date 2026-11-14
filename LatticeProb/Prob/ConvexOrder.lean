@@ -44,7 +44,7 @@ def symmLaw (μ : Measure ℝ) : Measure ℝ := (μ.prod μ).map (fun p => p.1 -
 
 /-- The reference law is a probability measure. -/
 instance refLaw_isProbability (b c : ℝ) : IsProbabilityMeasure (refLaw b c) := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   have h1 : Measurable fun w : ℝ => b * w + c := by fun_prop
   have h2 : Measurable fun w : ℝ => -(b * w + c) := by fun_prop
@@ -130,7 +130,7 @@ theorem meas_lt_comp_le {μ ν : Measure ℝ} {G : ℝ → ℝ}
       _ ≤ ν {x : ℝ | t < G |x|} := measure_mono h2
   · have hempty : {x : ℝ | t < G |x|} = (∅ : Set ℝ) := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_lt]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_lt]
       by_contra hcon
       exact hS ⟨|x|, abs_nonneg x, not_le.mp hcon⟩
     rw [hempty]
@@ -453,7 +453,7 @@ theorem ennreal_half_add_half (X : ℝ≥0∞) : (2:ℝ≥0∞)⁻¹ • X + (2:
 /-- The upper tail of the unit exponential law at every real threshold, clamped at zero. -/
 theorem expMeasure_one_Ioi_all (t : ℝ) :
     (ProbabilityTheory.expMeasure 1).real (Set.Ioi t) = Real.exp (-(max t 0)) := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   rcases le_or_gt 0 t with ht | ht
   · rw [max_eq_left ht, expMeasure_one_Ioi_real ht]
@@ -471,7 +471,7 @@ theorem expMeasure_one_Ioi_all (t : ℝ) :
 /-- The tail of the reference law past a threshold `s`, in closed form. -/
 theorem refLaw_abs_gt {b c : ℝ} (hb : 0 < b) (hc : 0 ≤ c) (s : ℝ) :
     (refLaw b c).real {x : ℝ | s < |x|} = Real.exp (-(max ((s - c) / b) 0)) := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   have h1 : Measurable fun w : ℝ => b * w + c := by fun_prop
   have h2 : Measurable fun w : ℝ => -(b * w + c) := by fun_prop
@@ -483,7 +483,7 @@ theorem refLaw_abs_gt {b c : ℝ} (hb : 0 < b) (hc : 0 ≤ c) (s : ℝ) :
     refine measure_congr ?_
     filter_upwards [ae_nonneg_expMeasure_one] with w hw
     show (w ∈ g ⁻¹' {x : ℝ | s < |x|}) = (w ∈ Set.Ioi ((s - c) / b))
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_Ioi, eq_iff_iff, hg w hw]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_Ioi, eq_iff_iff, hg w hw]
     rw [div_lt_iff₀ hb]
     constructor
     · intro h; linarith
@@ -565,7 +565,7 @@ theorem convex_integral_le_refLaw {μ : Measure ℝ} [IsProbabilityMeasure μ] {
     (hAle : ∫ z, Real.exp (θ * |z|) ∂μ ≤ A) (hmean : ∫ z, z ∂μ = 0)
     {f : ℝ → ℝ} {K : ℝ≥0} (hf : ConvexOn ℝ Set.univ f) (hfL : LipschitzWith K f) :
     ∫ z, f z ∂μ ≤ ∫ z, f z ∂(refLaw θ⁻¹ (2 * Real.log A / θ)) := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   have hA0 : (0:ℝ) < A := lt_of_lt_of_le one_pos hA
   have hθ' : θ ≠ 0 := ne_of_gt hθ
@@ -625,7 +625,7 @@ theorem convex_integral_le_refLaw {μ : Measure ℝ} [IsProbabilityMeasure μ] {
 square. -/
 theorem integrable_sq_shift_expMeasure (b c : ℝ) :
     Integrable (fun w : ℝ => (b * w + c) ^ 2) (ProbabilityTheory.expMeasure 1) := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   have hi1 : Integrable (fun w : ℝ => b ^ 2 * w ^ 2) (ProbabilityTheory.expMeasure 1) :=
     integrable_sq_expMeasure_one.const_mul _
@@ -643,7 +643,7 @@ theorem integrable_sq_shift_expMeasure (b c : ℝ) :
 closed form. -/
 theorem integral_sq_shift_expMeasure (b c : ℝ) :
     ∫ w, (b * w + c) ^ 2 ∂(ProbabilityTheory.expMeasure 1) = 2 * b ^ 2 + 2 * b * c + c ^ 2 := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   have hi1 : Integrable (fun w : ℝ => b ^ 2 * w ^ 2) (ProbabilityTheory.expMeasure 1) :=
     integrable_sq_expMeasure_one.const_mul _
@@ -663,7 +663,7 @@ theorem integral_sq_shift_expMeasure (b c : ℝ) :
 
 /-- The reference law has an integrable identity function. -/
 theorem integrable_refLaw_id (b c : ℝ) : Integrable (fun x : ℝ => x) (refLaw b c) := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   refine integrable_refLaw measurable_id ?_ ?_
   · exact (integrable_id_expMeasure_one.const_mul b).add (integrable_const c)
@@ -679,7 +679,7 @@ theorem integrable_refLaw_sq (b c : ℝ) : Integrable (fun x : ℝ => x ^ 2) (re
 
 /-- The reference law has mean zero. -/
 theorem integral_refLaw_id (b c : ℝ) : ∫ x, x ∂(refLaw b c) = 0 := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   have hp : Integrable (fun w : ℝ => b * w + c) (ProbabilityTheory.expMeasure 1) :=
     (integrable_id_expMeasure_one.const_mul b).add (integrable_const c)
@@ -731,7 +731,7 @@ scale is below `1`. -/
 theorem integrable_exp_abs_refLaw {b c θ : ℝ} (hb : 0 < b) (hc : 0 ≤ c)
     (hθb : θ * b < 1) :
     Integrable (fun x : ℝ => Real.exp (θ * |x|)) (refLaw b c) := by
-  haveI : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
+  have : IsProbabilityMeasure (ProbabilityTheory.expMeasure 1) :=
     isProbabilityMeasure_expMeasure (by norm_num)
   have hbase : Integrable (fun w : ℝ => Real.exp (θ * c) * Real.exp (θ * b * |w|))
       (ProbabilityTheory.expMeasure 1) :=
