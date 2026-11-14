@@ -467,6 +467,7 @@ import LatticeProb.Prob.BrownianRestartCanonical
 import LatticeProb.Prob.BrownianRestartLaw
 import LatticeProb.Prob.BrownianPathPaste
 import LatticeProb.Prob.BrownianMarginalDensity
+import LatticeProb.Prob.BrownianOccupationTrunc
 import LatticeProb.Analysis.BrownianHeatTime
 import LatticeProb.Prob.BrownianExitKelvin
 import LatticeProb.Prob.BrownianContAll
