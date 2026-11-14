@@ -432,4 +432,58 @@ theorem integral_bilinear_ball_eq_trace {ι : Type*} [Fintype ι] (b : Orthonorm
       rw [integral_finsetSum _ (fun j _ => hgi i j)]
     _ = _ := by simp [hg, Finset.mul_sum]
 
+open scoped Pointwise
+/-- Scaling the radius of a centred ball scales its quadratic moment by the appropriate power. -/
+theorem integral_inner_sq_ball_scale (u : E) {r : ℝ} (hr : 0 < r) :
+    ∫ x in ball (0 : E) r, ⟪u, x⟫_ℝ ^ 2 ∂μ =
+      r ^ Module.finrank ℝ E * r ^ 2 * ∫ x in ball (0 : E) 1, ⟪u, x⟫_ℝ ^ 2 ∂μ := by
+  have hs : r • ball (0 : E) 1 = ball 0 r := by
+    rw [_root_.smul_ball hr.ne']
+    simp [Real.norm_eq_abs, abs_of_pos hr]
+  have h := Measure.setIntegral_comp_smul_of_pos μ (fun x => ⟪u, x⟫_ℝ ^ 2) (ball (0 : E) 1) hr
+  rw [hs] at h
+  simp only [real_inner_smul_right, mul_pow, integral_const_mul, smul_eq_mul] at h
+  have hp : r ^ Module.finrank ℝ E ≠ 0 := pow_ne_zero _ hr.ne'
+  field_simp at h
+  linarith
+
+/-- Scaling the radius of a centred ball scales its Haar measure by the dimension power. -/
+theorem measureReal_ball_scale {r : ℝ} (hr : 0 < r) :
+    μ.real (ball (0 : E) r) = r ^ Module.finrank ℝ E * μ.real (ball (0 : E) 1) := by
+  have hs : r • ball (0 : E) 1 = ball 0 r := by
+    rw [_root_.smul_ball hr.ne']
+    simp [Real.norm_eq_abs, abs_of_pos hr]
+  have h := Measure.setIntegral_comp_smul_of_pos μ (fun _ : E => (1 : ℝ)) (ball (0 : E) 1) hr
+  rw [hs] at h
+  simp only [setIntegral_const, smul_eq_mul, mul_one] at h
+  have hp : r ^ Module.finrank ℝ E ≠ 0 := pow_ne_zero _ hr.ne'
+  field_simp at h
+  linarith
+/-- A quadratic coordinate average on a centred ball scales as the square of the radius. -/
+theorem average_inner_sq_ball_scale (u : E) {r : ℝ} (hr : 0 < r) :
+    ⨍ x in ball (0 : E) r, ⟪u, x⟫_ℝ ^ 2 ∂μ =
+      r ^ 2 * ⨍ x in ball (0 : E) 1, ⟪u, x⟫_ℝ ^ 2 ∂μ := by
+  rw [setAverage_eq, setAverage_eq, measureReal_ball_scale (μ := μ) hr,
+    integral_inner_sq_ball_scale (μ := μ) u hr]
+  simp only [smul_eq_mul]
+  have hp : r ^ Module.finrank ℝ E ≠ 0 := pow_ne_zero _ hr.ne'
+  field_simp
+
+/-- The average of a quadratic form on a centred ball is its trace times a
+coordinate quadratic moment. -/
+theorem average_bilinear_ball_eq_trace {ι : Type*} [Fintype ι] (b : OrthonormalBasis ι ℝ E) (i₀ : ι)
+    (H : E →L[ℝ] E →L[ℝ] ℝ) (r : ℝ) :
+    ⨍ x in ball (0 : E) r, H x x ∂μ =
+      (⨍ x in ball (0 : E) r, ⟪b i₀, x⟫_ℝ ^ 2 ∂μ) * ∑ i, H (b i) (b i) := by
+  rw [setAverage_eq, setAverage_eq, integral_bilinear_ball_eq_trace b i₀ H r]
+  simp only [smul_eq_mul, mul_assoc]
+
+/-- A unit coordinate has positive quadratic average on a ball of positive radius. -/
+theorem average_inner_sq_ball_pos (u : E) (hu : ‖u‖ = 1) {r : ℝ} (hr : 0 < r) :
+    0 < ⨍ x in ball (0 : E) r, ⟪u, x⟫_ℝ ^ 2 ∂μ := by
+  rw [setAverage_eq]
+  have hm : 0 < μ.real (ball (0 : E) r) :=
+    ENNReal.toReal_pos (measure_ball_pos μ 0 hr).ne' measure_ball_lt_top.ne
+  exact mul_pos (inv_pos.mpr hm) (integral_inner_sq_ball_pos u hu hr)
+
 end LatticeProb.Ishii
