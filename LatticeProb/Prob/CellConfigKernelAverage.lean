@@ -30,6 +30,11 @@ the rooted form `A_m G` is the function whose level sets are witnesses of `𝓕_
 * `ae_kernelAverage_mul_origin`, `ae_kernelAverage_indicator_mul_origin`: taking out a factor that is
   constant on the capped square (in particular the indicator of an event of `𝓕_m`), without any
   integrability.
+* `isCappedSquareWitness_preimage`: the level sets of a measurable, invariant, block-constant
+  function are witnesses of `𝓕_m`.
+* `rootedTailSup`: the rooted tail supremum `sup_N limsup_k A_{k+1}(G ∧ N)`, and
+  `isCappedSquareWitness_rootedTailSup`, `measurable_rootedTailSup_origin`: its level sets are
+  witnesses of every `𝓕_m`, `m ∈ (0, ∞)`, at once.
 * `kernelAverage_origin_ae_eq_condExp`: under the mass-transport principle, `A_m G(·, ·, 0)` is a version
   of `E[G(H, D, 0) | 𝓕_m]`.
 -/
@@ -287,6 +292,133 @@ theorem ae_kernelAverage_indicator_mul_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (
     exact ENNReal.one_ne_top
   · rw [Set.indicator_of_notMem h0]
     exact ENNReal.zero_ne_top
+
+/-! ### Witnesses from block-constant invariant functions; the rooted tail supremum -/
+
+/-- **Level sets of a block-constant invariant function are witnesses of `𝓕_m`**: if `φ ≥ 0` is
+measurable, invariant under the joint similarity at every dyadic system with compatible offset
+sequences, and, for every configuration and almost every dyadic system, equal almost everywhere on
+the capped square `S_m^0` to its value at the origin, then the preimage under `φ` of every
+measurable set is a witness of `𝓕_m`. -/
+theorem isCappedSquareWitness_preimage {m : ℝ≥0∞} {φ : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞}
+    (hφ : Measurable φ)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
+        φ (H', similarityCoord s u q, s • w + similarityOffset s u) = φ (H, q, w))
+    (hblock : ∀ H : GMSSpace, ∀ᵐ q ∂dyadicLaw, ∀ᵐ z ∂volume, z ∈ originCappedSquare m H q →
+      φ (H, q, z) = φ (H, q, 0))
+    {S : Set ℝ≥0∞} (hS : MeasurableSet S) : IsCappedSquareWitness m (φ ⁻¹' S) := by
+  refine ⟨hφ hS, fun s u hs H H' h q h₁ h₂ w => ?_, fun H => ?_⟩
+  · simp only [mem_preimage, hinv s u hs H H' h q h₁ h₂ w]
+  · filter_upwards [hblock H] with q hq
+    filter_upwards [hq] with z hz hzS
+    simp only [mem_preimage, hz hzS]
+
+/-- **A block-constant invariant function is `𝓕_m`-measurable at the origin**: under the
+hypotheses of `isCappedSquareWitness_preimage`, `(H, D) ↦ φ(H, D, 0)` is measurable for the
+σ-algebra `𝓕_m`. -/
+theorem measurable_origin_of_isBlockConstant {m : ℝ≥0∞}
+    {φ : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hφ : Measurable φ)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
+        φ (H', similarityCoord s u q, s • w + similarityOffset s u) = φ (H, q, w))
+    (hblock : ∀ H : GMSSpace, ∀ᵐ q ∂dyadicLaw, ∀ᵐ z ∂volume, z ∈ originCappedSquare m H q →
+      φ (H, q, z) = φ (H, q, 0)) :
+    Measurable[cappedSquareSigma m] fun p : GMSSpace × DyadicCoord => φ (p.1, p.2, 0) :=
+  measurable_of_Ioi (mδ := cappedSquareSigma m) fun _ =>
+    ⟨_, isCappedSquareWitness_preimage hφ hinv hblock measurableSet_Ioi, rfl⟩
+
+/-- **The rooted tail supremum**
+`J̃ G(H, D, w) = sup_N limsup_{k → ∞} A_{k+1}(G ∧ N)(H, D, w)`
+of the kernel averages of the truncations of `G` over the capped squares of integer cell mass
+around the root `w`. It depends only on the tail `k → ∞` of the averages, so it is a witness of
+every `𝓕_m` at once; at the origin it is a rooted version of the supremum over `N` of the
+conditional expectations of `G ∧ N` given the tail σ-algebra `⋂_m 𝓕_m`, which is not integrable in
+general. -/
+noncomputable def rootedTailSup (G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞)
+    (p : GMSSpace × DyadicCoord × ℂ) : ℝ≥0∞ :=
+  ⨆ N : ℕ, Filter.limsup
+    (fun k : ℕ => kernelAverage ((k : ℝ≥0∞) + 1) (fun y => min (G y) (N : ℝ≥0∞)) p)
+    Filter.atTop
+
+/-- The rooted tail supremum of a measurable function is measurable. -/
+theorem measurable_rootedTailSup {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hG : Measurable G) :
+    Measurable (rootedTailSup G) :=
+  Measurable.iSup fun _ => Measurable.limsup fun _ =>
+    measurable_kernelAverage _ (hG.min measurable_const)
+
+/-- **Similarity invariance of the rooted tail supremum**, for a measurable `G ≥ 0` invariant
+under the joint similarity at the dyadic system `q` with compatible offset sequences. -/
+theorem rootedTailSup_similarity {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hG : Measurable G)
+    {s : ℝ} {u : Plane} {hs : 0 < s} {H H' : GMSSpace} (hHH' : IsSimilar s u hs H H')
+    {q : DyadicCoord} (h₁ : IsCompatible q.2.1) (h₂ : IsCompatible q.2.2)
+    (hinv : ∀ z : ℂ, G (H', similarityCoord s u q, s • z + similarityOffset s u) = G (H, q, z))
+    (w : ℂ) :
+    rootedTailSup G (H', similarityCoord s u q, s • w + similarityOffset s u) =
+      rootedTailSup G (H, q, w) := by
+  simp only [rootedTailSup]
+  refine iSup_congr fun N => congrArg (Filter.limsup · Filter.atTop) (funext fun k => ?_)
+  exact kernelAverage_similarity _ (hG.min measurable_const) hHH' h₁ h₂
+    (fun z => by simp only [hinv z]) w
+
+/-- **Block constancy of the rooted tail supremum at every cell mass**: for every cell mass
+`m ∈ (0, ∞)`, every configuration `H` and almost every dyadic system, the rooted tail supremum at
+almost every point of the capped square `S_m^0(H, D)` is its value at the origin. Almost surely
+`S_m^0 ⊆ S_{k+1}^0` for `k + 1 ≥ m`, and `A_{k+1}(G ∧ N)` is constant on `S_{k+1}^0`, so the
+sequences of averages at the two roots agree for all large `k`. -/
+theorem ae_rootedTailSup_eq_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    (G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞) (H : GMSSpace) :
+    ∀ᵐ q ∂dyadicLaw, ∀ᵐ z ∂volume, z ∈ originCappedSquare m H q →
+      rootedTailSup G (H, q, z) = rootedTailSup G (H, q, 0) := by
+  have hsub : ∀ k : ℕ, ∀ᵐ q ∂dyadicLaw, m ≤ (k : ℝ≥0∞) + 1 →
+      originCappedSquare m H q ⊆ originCappedSquare ((k : ℝ≥0∞) + 1) H q := fun k => by
+    by_cases hk : m ≤ (k : ℝ≥0∞) + 1
+    · exact (ae_originCappedSquare_subset hm0 hk (by simp) H).mono fun _ hq _ => hq
+    · exact Filter.Eventually.of_forall fun _ h => absurd h hk
+  have hA : ∀ k N : ℕ, ∀ᵐ q ∂dyadicLaw, ∀ᵐ z ∂volume,
+      z ∈ originCappedSquare ((k : ℝ≥0∞) + 1) H q →
+        kernelAverage ((k : ℝ≥0∞) + 1) (fun y => min (G y) (N : ℝ≥0∞)) (H, q, z) =
+          kernelAverage ((k : ℝ≥0∞) + 1) (fun y => min (G y) (N : ℝ≥0∞)) (H, q, 0) :=
+    fun k N => ae_kernelAverage_eq_origin (by simp) (by simp) _ H
+  obtain ⟨n, hn⟩ := ENNReal.exists_nat_gt hmtop
+  filter_upwards [ae_all_iff.2 hsub, ae_all_iff.2 fun k => ae_all_iff.2 (hA k)] with q hq hqA
+  filter_upwards [ae_all_iff.2 fun k => ae_all_iff.2 (hqA k)] with z hz hzS
+  simp only [rootedTailSup]
+  refine iSup_congr fun N => Filter.limsup_congr ?_
+  filter_upwards [Filter.eventually_ge_atTop n] with k hk
+  have hmk : m ≤ (k : ℝ≥0∞) + 1 := hn.le.trans ((Nat.cast_le.2 hk).trans le_self_add)
+  exact hz k N (hq k hmk hzS)
+
+/-- **The level sets of the rooted tail supremum are witnesses of every `𝓕_m`**: for a measurable
+invariant `G ≥ 0`, every cell mass `m ∈ (0, ∞)` and every measurable set `S`, the set of rooted
+configurations with `J̃ G ∈ S` is a witness of `𝓕_m`. In particular `{J̃ G ≤ R}` is an invariant
+version of the event `{J ≤ R}` for the localisation of the non-integrable case of Lemma 2.7 of
+arXiv 1807.07515. -/
+theorem isCappedSquareWitness_rootedTailSup {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hG : Measurable G)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
+        G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w))
+    {S : Set ℝ≥0∞} (hS : MeasurableSet S) :
+    IsCappedSquareWitness m (rootedTailSup G ⁻¹' S) :=
+  isCappedSquareWitness_preimage (measurable_rootedTailSup hG)
+    (fun s u hs H H' h q h₁ h₂ w =>
+      rootedTailSup_similarity hG h h₁ h₂ (hinv s u hs H H' h q h₁ h₂) w)
+    (fun H => ae_rootedTailSup_eq_origin hm0 hmtop G H) hS
+
+/-- **The rooted tail supremum at the origin is `𝓕_m`-measurable for every cell mass**
+`m ∈ (0, ∞)`, for a measurable invariant `G ≥ 0`. -/
+theorem measurable_rootedTailSup_origin {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    {G : GMSSpace × DyadicCoord × ℂ → ℝ≥0∞} (hG : Measurable G)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace), IsSimilar s u hs H H' →
+      ∀ q : DyadicCoord, IsCompatible q.2.1 → IsCompatible q.2.2 → ∀ w : ℂ,
+        G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w)) :
+    Measurable[cappedSquareSigma m] fun p : GMSSpace × DyadicCoord =>
+      rootedTailSup G (p.1, p.2, 0) :=
+  measurable_origin_of_isBlockConstant (measurable_rootedTailSup hG)
+    (fun s u hs H H' h q h₁ h₂ w =>
+      rootedTailSup_similarity hG h h₁ h₂ (hinv s u hs H H' h q h₁ h₂) w)
+    (fun H => ae_rootedTailSup_eq_origin hm0 hmtop G H)
 
 /-! ### The conditional expectation given `𝓕_m` -/
 
