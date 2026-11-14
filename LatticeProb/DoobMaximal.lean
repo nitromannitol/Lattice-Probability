@@ -348,7 +348,7 @@ theorem measureReal_sup_partialSum_sq_le {B : ℝ} (hg : Measurable g) (hB : ∀
           fun k => (partialSum g k ω) ^ 2}
       = {p | ∃ k ≤ n, (4 * A * B * Real.sqrt n) ≤ |partialSum g k p|} := by
     ext p
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [Finset.le_sup'_iff]
     constructor
     · rintro ⟨k, hk, hkle⟩

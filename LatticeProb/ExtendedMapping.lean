@@ -84,7 +84,7 @@ theorem locallyUniform_of_seq (fs : ℕ → E → ℝ) (f : E → ℝ)
     intro j
     have h : ∃ i, n i = n j := ⟨j, rfl⟩
     have hc : Classical.choose h = j := hmono.injective (Classical.choose_spec h)
-    rw [hzdef, dif_pos h, hc]
+    rw [hzdef, dite_eq_left h, hc]
   have hz : Tendsto z atTop (𝓝 x) := by
     rw [Metric.tendsto_atTop]
     intro δ hδ
@@ -92,7 +92,7 @@ theorem locallyUniform_of_seq (fs : ℕ → E → ℝ) (f : E → ℝ)
     refine ⟨n J, fun m hm => ?_⟩
     rw [hzdef]
     rcases Classical.em (∃ j, n j = m) with h | h
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       set c : ℕ := Classical.choose h with hcdef
       have hj : n c = m := Classical.choose_spec h
       have hJle : J ≤ c := by
@@ -105,7 +105,7 @@ theorem locallyUniform_of_seq (fs : ℕ → E → ℝ) (f : E → ℝ)
         have : (J : ℝ) ≤ (c : ℝ) := by exact_mod_cast hJle
         linarith
       exact lt_of_lt_of_le (lt_of_lt_of_le (hw c) hle) hJ.le
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       simpa using hδ
   have hlim := hseq x z hz
   have hsub : Tendsto (fun j => fs (n j) (z (n j))) atTop (𝓝 (f x)) :=

@@ -43,8 +43,7 @@ theorem mem_boxFinset_iff {y x : Site d} {r : ℕ} :
 is within sup-distance `r` of `y` and whose index is below `η⁺` there. -/
 theorem mem_candidates_iff {η : Site d → ℤ} {y : Site d} {r : ℕ} {p : Label d} :
     p ∈ candidates η y r ↔ (∀ i, |p.1 i - y i| ≤ (r : ℤ)) ∧ p.2 < (η p.1).toNat := by
-  simp only [candidates, Finset.mem_biUnion, Finset.mem_map, Finset.mem_range,
-    Function.Embedding.coeFn_mk]
+  simp only [candidates, Finset.mem_biUnion, Finset.mem_map, Finset.mem_range]
   constructor
   · rintro ⟨x, hx, i, hi, hp⟩
     obtain ⟨rfl, rfl⟩ : x = p.1 ∧ i = p.2 := by
@@ -455,9 +454,9 @@ theorem state_agree_box {D D' : Driver d} (hs : StepsToNeighbour D) (y : Site d)
         unfold nextPos
         rw [hactq, hposq, key]
         by_cases hb : (state D' t).active q = true
-        · rw [if_pos hb, if_pos hb]
+        · rw [ite_eq_left hb, ite_eq_left hb]
           exact hAdata.stack _ (by rwa [hposq] at hpb4) _
-        · rw [if_neg hb, if_neg hb]
+        · rw [ite_eq_right hb, ite_eq_right hb]
       have harr : ∀ x ∈ boxFinset y (r + t + 1),
           arrivalsAt D (state D t) t x = arrivalsAt D' (state D' t) t x := by
         intro x hx

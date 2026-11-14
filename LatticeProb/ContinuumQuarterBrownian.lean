@@ -111,7 +111,7 @@ theorem variance_sum_quarterBrownian (hB : IsQuarterBrownian B P) {m : ℕ}
     Var[fun ω => ∑ k, t k * B (ts k) ω; P]
       = (∑ i, ∑ l, t i * t l * (min (ts i) (ts l) : ℝ)) / 4 := by
   have hgp := isGaussianProcess_quarterBrownian hB
-  haveI : IsProbabilityMeasure P := hgp.isProbabilityMeasure
+  have : IsProbabilityMeasure P := hgp.isProbabilityMeasure
   have hmem : ∀ k : Fin m, MemLp (fun ω => t k * B (ts k) ω) 2 P := fun k =>
     (hgp.hasGaussianLaw_eval (ts k)).memLp_two.const_mul (t k)
   have hmemsum : MemLp (fun ω => ∑ k, t k * B (ts k) ω) 2 P := memLp_finsetSum Finset.univ

@@ -33,7 +33,7 @@ theorem tightLaws (P : Measure Ω) [IsProbabilityMeasure P] (X : ℕ → Ω → 
   rintro μ ⟨n, rfl⟩
   have hpre : (X n) ⁻¹' (Set.Icc (-M) M)ᶜ = {ω | M < |X n ω|} := by
     ext ω
-    simp only [Set.mem_preimage, Set.mem_compl_iff, Set.mem_Icc, Set.mem_setOf_eq,
+    simp only [Set.mem_preimage, Set.mem_compl_iff, Set.mem_Icc, Set.mem_ofPred_eq,
       ← abs_le, not_le]
   rw [Measure.map_apply (hX n) (measurableSet_Icc.compl), hpre]
   exact hM n
@@ -64,7 +64,7 @@ theorem tight_of_integral_abs_le (P : Measure Ω) [IsProbabilityMeasure P] (X : 
     linarith
   have hsub : {ω | M < |X n ω|} ⊆ {ω | M ≤ |X n ω|} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω ⊢
+    simp only [Set.mem_ofPred_eq] at hω ⊢
     exact le_of_lt hω
   have hfin : P {ω | M ≤ |X n ω|} ≠ ⊤ := measure_ne_top P _
   calc P {ω | M < |X n ω|} ≤ P {ω | M ≤ |X n ω|} := measure_mono hsub
@@ -115,7 +115,7 @@ theorem exists_weak_limit (P : Measure Ω) [IsProbabilityMeasure P] (X : ℕ →
       refine hc.congr ?_
       intro n
       exact (hmapint n f hK.continuous).symm
-    haveI : (𝓝 L ⊓ map μs atTop).NeBot := hLcl
+    have : (𝓝 L ⊓ map μs atTop).NeBot := hLcl
     have h1 : Tendsto (fun ν : ProbabilityMeasure ℝ => ∫ x, f' x ∂(ν : Measure ℝ))
         (𝓝 L ⊓ map μs atTop) (𝓝 (∫ x, f' x ∂(L : Measure ℝ))) :=
       (hΨ.continuousAt).mono_left inf_le_left
