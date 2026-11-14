@@ -6,8 +6,8 @@ import LatticeProb.Analysis.HeatMollify
 
 The heat operator maps smooth compactly supported functions to smooth compactly supported sources.
 The reflected heat kernel solves the backward heat equation, and the spatial heat operator is
-symmetric against compactly supported smooth functions. The heat-kernel boundary integral
-converges to the original function as time tends to zero.
+symmetric against compactly supported smooth functions. The resulting Duhamel formula expresses
+a smooth compactly supported function as the heat convolution of its source.
 -/
 
 open MeasureTheory Filter Topology Set
@@ -250,5 +250,433 @@ theorem hasDerivAt_heatKernel_mul {d : ℕ} (hd : 1 ≤ d)
   have hv' := hasDerivAt_slice_time (hv.differentiable (by simp)) s y
   rw [hv'.deriv]
   exact (hasDerivAt_heatKernel_backward hd hst x y).mul hv'
+
+
+/-- The source of a smooth function is supported where the function is supported. -/
+theorem tsupport_heatSource_subset {d : ℕ} {v : ℝ × (Fin d → ℝ) → ℝ}
+    (hv : ContDiff ℝ ∞ v) : tsupport (heatSource d v) ⊆ tsupport v := by
+  apply closure_minimal _ (isClosed_tsupport v)
+  intro q hq
+  by_contra hqv
+  have hzero : fderiv ℝ v q = 0 := fderiv_of_notMem_tsupport ℝ hqv
+  have hzero₂ (i : Fin d) :
+      fderiv ℝ (fun z => fderiv ℝ v z (spaceDir d i)) q = 0 :=
+    fderiv_of_notMem_tsupport ℝ fun h => hqv ((tsupport_fderiv_apply_subset (ρ := v) _) h)
+  have : heatSource d v q = 0 := by
+    rw [heatSource_eq hv]
+    simp [spaceOp, hzero, hzero₂]
+  exact hq this
+
+
+/-- A compactly supported function and its heat source vanish outside a bounded time interval. -/
+theorem exists_heatSource_time_bound {d : ℕ} {v : ℝ × (Fin d → ℝ) → ℝ}
+    (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v) :
+    ∃ R > 0, ∀ q, R < |q.1| → v q = 0 ∧ heatSource d v q = 0 := by
+  obtain ⟨R, hR, hbound⟩ := (hvc.image continuous_fst).isBounded.exists_pos_norm_le
+  refine ⟨R, hR, fun q hq => ?_⟩
+  have hqv : q ∉ tsupport v := by
+    intro hmem
+    have h := hbound q.1 ⟨q, hmem, rfl⟩
+    rw [Real.norm_eq_abs] at h
+    exact (not_le_of_gt hq) h
+  exact ⟨image_eq_zero_of_notMem_tsupport hqv, image_eq_zero_of_notMem_tsupport
+    (fun h => hqv ((tsupport_heatSource_subset hv) h))⟩
+
+
+/-- All time slices of a compactly supported function and its time derivative have a common
+compact spatial support. -/
+theorem exists_compact_space_support {d : ℕ} {v : ℝ × (Fin d → ℝ) → ℝ}
+    (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v) :
+    ∃ K : Set (Fin d → ℝ), IsCompact K ∧ ∀ s y, y ∉ K →
+      v (s, y) = 0 ∧ deriv (fun r => v (r, y)) s = 0 := by
+  refine ⟨Prod.snd '' tsupport v, hvc.image continuous_snd, ?_⟩
+  intro s y hy
+  have hq : (s, y) ∉ tsupport v := fun h => hy ⟨(s, y), h, rfl⟩
+  refine ⟨image_eq_zero_of_notMem_tsupport hq, ?_⟩
+  rw [(hasDerivAt_slice_time (hv.differentiable (by simp)) s y).deriv,
+    fderiv_of_notMem_tsupport ℝ hq]
+  simp
+
+
+/-- The spatial heat operator preserves smoothness. -/
+theorem contDiff_contOp {d : ℕ} {f : (Fin d → ℝ) → ℝ} (hf : ContDiff ℝ ∞ f) :
+    ContDiff ℝ ∞ (contOp d f) := by
+  have heq : contOp d f = fun y => (∑ i : Fin d,
+      fderiv ℝ (fun z => fderiv ℝ f z (Pi.single i 1)) y (Pi.single i 1)) / (2 * d) := by
+    funext y
+    simp only [contOp, lap_eq_sum_fderiv hf]
+  rw [heq]
+  exact (ContDiff.sum fun i _ => contDiff_fderiv_apply (contDiff_fderiv_apply hf _) _).div_const _
+
+
+
+/-- The spatial heat operator preserves compact support. -/
+theorem hasCompactSupport_contOp {d : ℕ} {f : (Fin d → ℝ) → ℝ}
+    (hf : ContDiff ℝ ∞ f) (hfc : HasCompactSupport f) : HasCompactSupport (contOp d f) := by
+  have hs : HasCompactSupport (fun y => ∑ i : Fin d,
+      fderiv ℝ (fun z => fderiv ℝ f z (Pi.single i 1)) y (Pi.single i 1)) := by
+    have h := HasCompactSupport.finset_sum (s := Finset.univ)
+      (fun i _ => (hfc.fderiv_apply ℝ (Pi.single i 1)).fderiv_apply ℝ (Pi.single i 1))
+    convert h using 1
+    ext y
+    simp only [Finset.sum_apply]
+  have h := hs.mul_right (f' := fun _ => (2 * (d : ℝ))⁻¹)
+  convert h using 1
+  ext y
+  simp only [Pi.mul_apply, contOp, lap_eq_sum_fderiv hf, div_eq_mul_inv]
+
+/-- Spatial integration by parts identifies the integral of the kernel-product derivative with
+the integral of the heat source. -/
+theorem integral_heatKernel_mul_time_deriv_eq {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    {s t : ℝ} (hst : s < t) (x : Fin d → ℝ) :
+    (∫ y, (-contOp d (fun z => heatKernel d (t - s) (x - z)) y) * v (s, y) +
+      heatKernel d (t - s) (x - y) * deriv (fun r => v (r, y)) s) =
+    ∫ y, heatKernel d (t - s) (x - y) * heatSource d v (s, y) := by
+  have hp : 0 < t - s := sub_pos.mpr hst
+  have hk : ContDiff ℝ ∞ (fun y => heatKernel d (t - s) (x - y)) :=
+    (contDiff_heatKernel_space hd hp).comp (contDiff_const.sub contDiff_id)
+  have hvs : ContDiff ℝ ∞ (fun y => v (s, y)) := hv.comp (contDiff_const.prodMk contDiff_id)
+  have hvsc : HasCompactSupport (fun y => v (s, y)) := hasCompactSupport_space_slice hvc s
+  have hvt_eq : (fun y => deriv (fun r => v (r, y)) s) =
+      fun y => fderiv ℝ v (s, y) (timeDir d) := by
+    funext y
+    exact (hasDerivAt_slice_time (hv.differentiable (by simp)) s y).deriv
+  have hvt : ContDiff ℝ ∞ (fun y => deriv (fun r => v (r, y)) s) := by
+    rw [hvt_eq]
+    exact (contDiff_fderiv_apply hv _).comp (contDiff_const.prodMk contDiff_id)
+  have hvtc : HasCompactSupport (fun y => deriv (fun r => v (r, y)) s) := by
+    rw [hvt_eq]
+    exact hasCompactSupport_space_slice (hvc.fderiv_apply ℝ _) s
+  have hi₁ : Integrable (fun y => contOp d (fun z => heatKernel d (t - s) (x - z)) y * v (s, y)) :=
+    ((contDiff_contOp hk).continuous.mul hvs.continuous).integrable_of_hasCompactSupport hvsc.mul_left
+  have hi₂ : Integrable (fun y => heatKernel d (t - s) (x - y) * deriv (fun r => v (r, y)) s) :=
+    (hk.continuous.mul hvt.continuous).integrable_of_hasCompactSupport hvtc.mul_left
+  have hi₃ : Integrable (fun y => heatKernel d (t - s) (x - y) * contOp d (fun z => v (s, z)) y) :=
+    (hk.continuous.mul (contDiff_contOp hvs).continuous).integrable_of_hasCompactSupport
+      (hasCompactSupport_contOp hvs hvsc).mul_left
+  have hi₁n : Integrable (fun y => -(contOp d (fun z => heatKernel d (t - s) (x - z)) y * v (s, y))) := hi₁.neg
+  simp_rw [neg_mul]
+  rw [integral_add hi₁n hi₂, integral_neg,
+    ← integral_heatKernel_mul_contOp hd hp hv hvc s x, neg_add_eq_sub, ← integral_sub hi₂ hi₃]
+  apply integral_congr_ae
+  filter_upwards with y
+  simp only [heatSource, mul_sub]
+
+
+/-- The derivative of the spatial heat-kernel integral, under a local integrable derivative bound. -/
+theorem hasDerivAt_integral_heatKernel_mul_of_dominated {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    {s t : ℝ} (hst : s < t) (x : Fin d → ℝ) {U : Set ℝ} (hU : U ∈ 𝓝 s)
+    (hUt : U ⊆ Iio t) {bound : (Fin d → ℝ) → ℝ} (hbi : Integrable bound)
+    (hb : ∀ᵐ y, ∀ r ∈ U, ‖(-contOp d (fun z => heatKernel d (t - r) (x - z)) y) * v (r, y) +
+      heatKernel d (t - r) (x - y) * deriv (fun q => v (q, y)) r‖ ≤ bound y) :
+    HasDerivAt (fun r => ∫ y, heatKernel d (t - r) (x - y) * v (r, y))
+      (∫ y, heatKernel d (t - s) (x - y) * heatSource d v (s, y)) s := by
+  have hcont (r : ℝ) (hrt : r < t) :
+      ContDiff ℝ ∞ (fun y => heatKernel d (t - r) (x - y)) :=
+    (contDiff_heatKernel_space hd (sub_pos.mpr hrt)).comp (contDiff_const.sub contDiff_id)
+  have hslice (r : ℝ) : ContDiff ℝ ∞ (fun y => v (r, y)) :=
+    hv.comp (contDiff_const.prodMk contDiff_id)
+  have htime : Continuous (fun y => deriv (fun r => v (r, y)) s) := by
+    have heq : (fun y => deriv (fun r => v (r, y)) s) =
+        fun y => fderiv ℝ v (s, y) (timeDir d) := by
+      funext y
+      exact (hasDerivAt_slice_time (hv.differentiable (by simp)) s y).deriv
+    rw [heq]
+    exact ((contDiff_fderiv_apply hv _).comp (contDiff_const.prodMk contDiff_id)).continuous
+  have hmeas : ∀ᶠ r in 𝓝 s, AEStronglyMeasurable
+      (fun y => heatKernel d (t - r) (x - y) * v (r, y)) volume := by
+    filter_upwards [hU] with r hr
+    exact ((hcont r (hUt hr)).continuous.mul (hslice r).continuous).aestronglyMeasurable
+  have hint : Integrable (fun y => heatKernel d (t - s) (x - y) * v (s, y)) :=
+    ((hcont s hst).continuous.mul (hslice s).continuous).integrable_of_hasCompactSupport
+      (hasCompactSupport_space_slice hvc s).mul_left
+  have hdmeas : AEStronglyMeasurable (fun y =>
+      (-contOp d (fun z => heatKernel d (t - s) (x - z)) y) * v (s, y) +
+        heatKernel d (t - s) (x - y) * deriv (fun r => v (r, y)) s) volume :=
+    ((((contDiff_contOp (hcont s hst)).continuous.neg.mul (hslice s).continuous).add
+      ((hcont s hst).continuous.mul htime))).aestronglyMeasurable
+  have h := hasDerivAt_integral_of_dominated_loc_of_deriv_le (𝕜 := ℝ) (μ := volume)
+    (F := fun r y => heatKernel d (t - r) (x - y) * v (r, y))
+    (F' := fun r y => (-contOp d (fun z => heatKernel d (t - r) (x - z)) y) * v (r, y) +
+      heatKernel d (t - r) (x - y) * deriv (fun q => v (q, y)) r)
+    (x₀ := s) (s := U) (bound := bound) hU hmeas hint hdmeas hb hbi
+    (ae_of_all _ fun y r hr => hasDerivAt_heatKernel_mul hd hv (hUt hr) x y)
+  rw [integral_heatKernel_mul_time_deriv_eq hd hv hvc hst x] at h
+  exact h.2
+
+
+/-- The reflected kernel is smooth jointly in time and space before the terminal time. -/
+theorem contDiffOn_heatKernel_reflected {d : ℕ} (hd : 1 ≤ d) (t : ℝ) (x : Fin d → ℝ) :
+    ContDiffOn ℝ ∞ (fun q : ℝ × (Fin d → ℝ) => heatKernel d (t - q.1) (x - q.2))
+      {q | q.1 < t} := by
+  have hm : ContDiff ℝ ∞ (fun q : ℝ × (Fin d → ℝ) => (t - q.1, x - q.2)) :=
+    (contDiff_const.sub contDiff_fst).prodMk (contDiff_const.sub contDiff_snd)
+  apply (contDiffOn_heatKernel hd).comp hm.contDiffOn
+  intro q hq
+  change 0 < t - q.1
+  exact sub_pos.mpr hq
+
+/-- The time derivative of the reflected kernel is its backward heat operator. -/
+theorem fderiv_heatKernel_reflected_time {d : ℕ} (hd : 1 ≤ d)
+    {s t : ℝ} (hst : s < t) (x y : Fin d → ℝ) :
+    fderiv ℝ (fun q : ℝ × (Fin d → ℝ) => heatKernel d (t - q.1) (x - q.2))
+      (s, y) (timeDir d) = -contOp d (fun z => heatKernel d (t - s) (x - z)) y := by
+  have hU : IsOpen {q : ℝ × (Fin d → ℝ) | q.1 < t} :=
+    isOpen_lt continuous_fst continuous_const
+  have hdiff : DifferentiableAt ℝ
+      (fun q : ℝ × (Fin d → ℝ) => heatKernel d (t - q.1) (x - q.2)) (s, y) :=
+    ((contDiffOn_heatKernel_reflected hd t x).differentiableOn (by simp)).differentiableAt
+    (hU.mem_nhds (show (s, y) ∈ {q : ℝ × (Fin d → ℝ) | q.1 < t} from hst))
+  have ht : HasDerivAt (fun r => heatKernel d (t - r) (x - y))
+      (fderiv ℝ (fun q : ℝ × (Fin d → ℝ) => heatKernel d (t - q.1) (x - q.2))
+        (s, y) (timeDir d)) s := by
+    have htmp := hdiff.hasFDerivAt.comp_hasDerivAt s
+      ((hasDerivAt_id s).prodMk (hasDerivAt_const s y))
+    simpa only [Function.comp_def, id_eq, timeDir] using htmp
+  exact ht.unique (hasDerivAt_heatKernel_backward hd hst x y)
+
+
+/-- The spatial heat-kernel integral differentiates to the integral of the heat source before
+the terminal time. -/
+theorem hasDerivAt_integral_heatKernel_mul {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    {s t : ℝ} (hst : s < t) (x : Fin d → ℝ) :
+    HasDerivAt (fun r => ∫ y, heatKernel d (t - r) (x - y) * v (r, y))
+      (∫ y, heatKernel d (t - s) (x - y) * heatSource d v (s, y)) s := by
+  let δ : ℝ := (t - s) / 2
+  have hδ : 0 < δ := half_pos (sub_pos.mpr hst)
+  have hδt : s + δ < t := by dsimp [δ]; linarith
+  obtain ⟨K, hK, hsupport⟩ := exists_compact_space_support hv hvc
+  let W : Set (ℝ × (Fin d → ℝ)) := {q | q.1 < t}
+  let G : ℝ × (Fin d → ℝ) → ℝ := fun q => heatKernel d (t - q.1) (x - q.2)
+  let D : ℝ × (Fin d → ℝ) → ℝ := fun q =>
+    fderiv ℝ G q (timeDir d) * v q + G q * fderiv ℝ v q (timeDir d)
+  have hW : IsOpen W := isOpen_lt continuous_fst continuous_const
+  have hG : ContDiffOn ℝ ∞ G W := contDiffOn_heatKernel_reflected hd t x
+  have hD : ContinuousOn D W := by
+    have hG' : ContDiffOn ℝ ∞ (fun q => fderiv ℝ G q (timeDir d)) W :=
+      (hG.fderiv_of_isOpen hW (by simp)).clm_apply contDiffOn_const
+    exact ((hG'.mul hv.contDiffOn).add
+      (hG.mul (contDiff_fderiv_apply hv _).contDiffOn)).continuousOn
+  have hC : IsCompact (Icc (s - δ) (s + δ) ×ˢ K) := isCompact_Icc.prod hK
+  have hCW : Icc (s - δ) (s + δ) ×ˢ K ⊆ W := by
+    intro q hq
+    exact lt_of_le_of_lt hq.1.2 hδt
+  obtain ⟨M, hM, hbound⟩ := (hC.image_of_continuousOn (hD.mono hCW)).isBounded.exists_pos_norm_le
+  have hbi : Integrable (K.indicator (fun _ => M)) :=
+    (integrable_indicator_iff hK.isClosed.measurableSet).mpr (integrableOn_const hK.measure_lt_top.ne)
+  have hU : Ioo (s - δ) (s + δ) ∈ 𝓝 s := Ioo_mem_nhds (by linarith) (by linarith)
+  have hUt : Ioo (s - δ) (s + δ) ⊆ Iio t := fun r hr => lt_trans hr.2 hδt
+  apply hasDerivAt_integral_heatKernel_mul_of_dominated hd hv hvc hst x hU hUt hbi
+  filter_upwards with y
+  intro r hr
+  by_cases hy : y ∈ K
+  · rw [indicator_of_mem hy]
+    have hrt : r < t := hUt hr
+    have hrewrite : (-contOp d (fun z => heatKernel d (t - r) (x - z)) y) * v (r, y) +
+        heatKernel d (t - r) (x - y) * deriv (fun q => v (q, y)) r = D (r, y) := by
+      dsimp [D, G]
+      rw [fderiv_heatKernel_reflected_time hd hrt x y,
+        (hasDerivAt_slice_time (hv.differentiable (by simp)) r y).deriv]
+    rw [hrewrite]
+    exact hbound (D (r, y)) ⟨(r, y), ⟨⟨hr.1.le, hr.2.le⟩, hy⟩, rfl⟩
+  · obtain ⟨hv0, hvt0⟩ := hsupport r y hy
+    simp [indicator_of_notMem hy, hv0, hvt0]
+
+
+/-- The spatial integral of a heat source varies continuously before the terminal time. -/
+theorem continuousOn_integral_heatKernel_mul_source {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    (t : ℝ) (x : Fin d → ℝ) :
+    ContinuousOn (fun r => ∫ y, heatKernel d (t - r) (x - y) * heatSource d v (r, y))
+      (Iio t) := by
+  let K : Set (Fin d → ℝ) := Prod.snd '' tsupport (heatSource d v)
+  have hK : IsCompact K := (hasCompactSupport_heatSource hv hvc).image continuous_snd
+  have hf : ContinuousOn (fun q : ℝ × (Fin d → ℝ) =>
+      heatKernel d (t - q.1) (x - q.2) * heatSource d v q) (Iio t ×ˢ univ) := by
+    have hh := (contDiffOn_heatKernel_reflected hd t x).continuousOn.mul
+      (contDiff_heatSource hv).continuous.continuousOn
+    exact hh.mono (fun q hq => hq.1)
+  apply continuousOn_integral_of_compact_support (μ := volume) hK hf
+  intro r y _ hy
+  have hy' : (r, y) ∉ tsupport (heatSource d v) := fun h => hy ⟨(r, y), h, rfl⟩
+  simp only [image_eq_zero_of_notMem_tsupport hy', mul_zero]
+
+/-- The heat-kernel identity on a compact time interval before the terminal time. -/
+theorem integral_heatKernel_source_interval {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    {a b t : ℝ} (hab : a ≤ b) (hbt : b < t) (x : Fin d → ℝ) :
+    (∫ r in a..b, ∫ y, heatKernel d (t - r) (x - y) * heatSource d v (r, y)) =
+      (∫ y, heatKernel d (t - b) (x - y) * v (b, y)) -
+        ∫ y, heatKernel d (t - a) (x - y) * v (a, y) := by
+  have hsub : Icc a b ⊆ Iio t := fun r hr => lt_of_le_of_lt hr.2 hbt
+  have hg := (continuousOn_integral_heatKernel_mul_source hd hv hvc t x).mono hsub
+  apply intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hab
+  · exact fun r hr => (hasDerivAt_integral_heatKernel_mul hd hv hvc (hsub hr) x).continuousAt.continuousWithinAt
+  · exact fun r hr => hasDerivAt_integral_heatKernel_mul hd hv hvc (hsub (mem_Icc_of_Ioo hr)) x
+  · exact hg.intervalIntegrable_of_Icc hab
+
+
+/-- The reflected heat kernel is jointly measurable, including at the terminal time. -/
+theorem measurable_heatKernel_reflected {d : ℕ} (hd : 1 ≤ d) (t : ℝ) (x : Fin d → ℝ) :
+    Measurable (fun q : ℝ × (Fin d → ℝ) => heatKernel d (t - q.1) (x - q.2)) := by
+  let G : ℝ × (Fin d → ℝ) → ℝ := fun q => heatKernel d (t - q.1) (x - q.2)
+  let W : Set (ℝ × (Fin d → ℝ)) := {q | q.1 < t}
+  have hW : IsOpen W := isOpen_lt continuous_fst continuous_const
+  have hm : Measurable (W.piecewise G (fun _ => 0)) :=
+    (contDiffOn_heatKernel_reflected hd t x).continuousOn.measurable_piecewise
+      continuous_const.continuousOn hW.measurableSet
+  have heq : W.piecewise G (fun _ => 0) = G := by
+    funext q
+    by_cases hq : q ∈ W
+    · simp [hq]
+    · have hq' : t - q.1 ≤ 0 := sub_nonpos.mpr (le_of_not_gt hq)
+      simp [hq, G, heatKernel_of_nonpos hq']
+  rwa [heq] at hm
+
+/-- Every spatial section of the heat-kernel source integrand is integrable. -/
+theorem integrable_heatKernel_mul_source_slice {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    (t r : ℝ) (x : Fin d → ℝ) :
+    Integrable (fun y => heatKernel d (t - r) (x - y) * heatSource d v (r, y)) := by
+  by_cases hrt : r < t
+  · have hk : ContDiff ℝ ∞ (fun y => heatKernel d (t - r) (x - y)) :=
+      (contDiff_heatKernel_space hd (sub_pos.mpr hrt)).comp (contDiff_const.sub contDiff_id)
+    have hv' : ContDiff ℝ ∞ (fun y => heatSource d v (r, y)) :=
+      (contDiff_heatSource hv).comp (contDiff_const.prodMk contDiff_id)
+    exact (hk.continuous.mul hv'.continuous).integrable_of_hasCompactSupport
+      (hasCompactSupport_space_slice (hasCompactSupport_heatSource hv hvc) r).mul_left
+  · have ht : t - r ≤ 0 := sub_nonpos.mpr (le_of_not_gt hrt)
+    simp only [heatKernel_of_nonpos ht, zero_mul]
+    exact integrable_zero _ _ _
+
+
+/-- The space-time heat-kernel source integrand is integrable. -/
+theorem integrable_heatKernel_mul_source {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    (t : ℝ) (x : Fin d → ℝ) :
+    Integrable (fun q : ℝ × (Fin d → ℝ) =>
+      heatKernel d (t - q.1) (x - q.2) * heatSource d v q) := by
+  let F : ℝ × (Fin d → ℝ) → ℝ := fun q =>
+    heatKernel d (t - q.1) (x - q.2) * heatSource d v q
+  have hF : AEStronglyMeasurable F (volume.prod volume) :=
+    ((measurable_heatKernel_reflected hd t x).mul (contDiff_heatSource hv).continuous.measurable).aestronglyMeasurable
+  obtain ⟨M, hM⟩ := (hasCompactSupport_heatSource hv hvc).exists_bound_of_continuous
+    (contDiff_heatSource hv).continuous
+  have hM0 : 0 ≤ M := (norm_nonneg (heatSource d v (0, 0))).trans (hM (0, 0))
+  obtain ⟨R, hR, htime⟩ := exists_heatSource_time_bound hv hvc
+  have hmajor : Integrable ((Icc (-R) R).indicator (fun _ => M)) :=
+    (integrable_indicator_iff measurableSet_Icc).mpr (integrableOn_const measure_Icc_lt_top.ne)
+  have hsec (r : ℝ) : Integrable (fun y => F (r, y)) :=
+    integrable_heatKernel_mul_source_slice hd hv hvc t r x
+  have hnorm (r : ℝ) : ∫ y, ‖F (r, y)‖ ≤ M := by
+    by_cases hrt : r < t
+    · have hp : 0 < t - r := sub_pos.mpr hrt
+      have hk : Integrable (fun y => M * heatKernel d (t - r) (x - y)) :=
+        ((integrable_heatKernel hd hp).comp_sub_left x).const_mul M
+      calc
+        (∫ y, ‖F (r, y)‖) ≤ ∫ y, M * heatKernel d (t - r) (x - y) := by
+          apply integral_mono (hsec r).norm hk
+          intro y
+          dsimp [F]
+          rw [abs_mul, abs_of_nonneg (heatKernel_nonneg hd _ _), ← Real.norm_eq_abs]
+          calc
+            heatKernel d (t - r) (x - y) * ‖heatSource d v (r, y)‖ ≤
+                heatKernel d (t - r) (x - y) * M :=
+              mul_le_mul_of_nonneg_left (hM (r, y)) (heatKernel_nonneg hd _ _)
+            _ = M * heatKernel d (t - r) (x - y) := mul_comm _ _
+        _ = M := by rw [integral_const_mul, integral_sub_left_eq_self, integral_heatKernel hd hp, mul_one]
+    · have ht : t - r ≤ 0 := sub_nonpos.mpr (le_of_not_gt hrt)
+      have hzero : (fun y => ‖F (r, y)‖) = fun _ => 0 := by
+        funext y
+        simp [F, heatKernel_of_nonpos ht]
+      rw [hzero, integral_zero]
+      exact hM0
+  have htime0 (r : ℝ) (hr : r ∉ Icc (-R) R) (y : Fin d → ℝ) : heatSource d v (r, y) = 0 := by
+    have hr' : R < |r| := by
+      apply lt_of_not_ge
+      intro hh
+      have hh' := abs_le.mp hh
+      exact hr ⟨hh'.1, hh'.2⟩
+    exact (htime (r, y) hr').2
+  have houter : Integrable (fun r => ∫ y, ‖F (r, y)‖) := by
+    apply Integrable.mono' hmajor hF.norm.integral_prod_right'
+    filter_upwards with r
+    by_cases hr : r ∈ Icc (-R) R
+    · rw [indicator_of_mem hr, Real.norm_eq_abs, abs_of_nonneg (integral_nonneg (fun _ => norm_nonneg _))]
+      exact hnorm r
+    · rw [indicator_of_notMem hr]
+      have heq : (fun y => |F (r, y)|) = fun _ => 0 := by
+        funext y
+        simp [F, htime0 r hr y]
+      simp [heq]
+  exact (integrable_prod_iff hF).mpr ⟨Filter.Eventually.of_forall hsec, houter⟩
+
+
+/-- A smooth compactly supported function is the heat convolution of its heat source. -/
+theorem heatDuhamel {d : ℕ} (hd : 1 ≤ d)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    (t : ℝ) (x : Fin d → ℝ) :
+    v (t, x) = ∫ q : ℝ × (Fin d → ℝ), heatKernel d (t - q.1) (x - q.2) *
+      (deriv (fun s => v (s, q.2)) q.1 - contOp d (fun y => v (q.1, y)) q.2) := by
+  let F : ℝ × (Fin d → ℝ) → ℝ := fun q =>
+    heatKernel d (t - q.1) (x - q.2) * heatSource d v q
+  let G : ℝ → ℝ := fun r => ∫ y, F (r, y)
+  have hF : Integrable F := integrable_heatKernel_mul_source hd hv hvc t x
+  have hG : Integrable G := hF.integral_prod_left
+  obtain ⟨R, hR, htime⟩ := exists_heatSource_time_bound hv hvc
+  let a : ℝ := min (t - 1) (-R - 1)
+  have hat : a < t := by dsimp [a]; linarith [min_le_left (t - 1) (-R - 1)]
+  have haR : a < -R := by dsimp [a]; linarith [min_le_right (t - 1) (-R - 1)]
+  have hsmall (r : ℝ) (hr : r ≤ a) : R < |r| := by
+    have := neg_le_abs r
+    linarith
+  have hVa : (∫ y, heatKernel d (t - a) (x - y) * v (a, y)) = 0 := by
+    have hzero : ∀ y, v (a, y) = 0 := fun y => (htime (a, y) (hsmall a le_rfl)).1
+    simp [hzero]
+  have hsupp : Function.support G ⊆ Ioc a t := by
+    intro r hr
+    by_contra hn
+    have hz : G r = 0 := by
+      by_cases har : a < r
+      · have htr : t < r := lt_of_not_ge (fun hrt => hn ⟨har, hrt⟩)
+        have ht : t - r ≤ 0 := sub_nonpos.mpr htr.le
+        simp [G, F, heatKernel_of_nonpos ht]
+      · have hr' : r ≤ a := le_of_not_gt har
+        have hzero : ∀ y, heatSource d v (r, y) = 0 := fun y =>
+          (htime (r, y) (hsmall r hr')).2
+        simp [G, F, hzero]
+    exact hr hz
+  have hprimitive : Continuous (fun b => ∫ r in a..b, G r) :=
+    intervalIntegral.continuous_primitive (fun b c => hG.intervalIntegrable) a
+  have htend : Tendsto (fun ε : ℝ => t - ε) (𝓝[>] 0) (𝓝 t) := by
+    have hzero : Tendsto (fun ε : ℝ => ε) (𝓝[>] (0 : ℝ)) (𝓝 (0 : ℝ)) :=
+      tendsto_id.mono_left nhdsWithin_le_nhds
+    simpa using tendsto_const_nhds.sub hzero
+  have hlim : Tendsto (fun ε : ℝ => ∫ r in a..(t - ε), G r)
+      (𝓝[>] 0) (𝓝 (∫ r in a..t, G r)) := (hprimitive.tendsto t).comp htend
+  obtain ⟨M, hM⟩ := hvc.exists_bound_of_continuous hv.continuous
+  have hvbound : ∃ M, ∀ q, |v q| ≤ M := ⟨M, fun q => by simpa [Real.norm_eq_abs] using hM q⟩
+  have hboundary := tendsto_integral_heatKernel_reflect_time hd hv.continuous hvbound t x
+  have hevent : (fun ε : ℝ => ∫ r in a..(t - ε), G r) =ᶠ[𝓝[>] 0]
+      fun ε => ∫ y, heatKernel d ε (x - y) * v (t - ε, y) := by
+    have heps : ∀ᶠ ε : ℝ in 𝓝[>] 0, ε < t - a :=
+      (eventually_lt_nhds (sub_pos.mpr hat)).filter_mono nhdsWithin_le_nhds
+    filter_upwards [self_mem_nhdsWithin, heps] with ε hε hεa
+    change 0 < ε at hε
+    have ha : a ≤ t - ε := by linarith
+    have hb : t - ε < t := by linarith
+    have h := integral_heatKernel_source_interval hd hv hvc ha hb x
+    simpa [G, F, hVa] using h
+  have hlim' : Tendsto (fun ε : ℝ => ∫ r in a..(t - ε), G r) (𝓝[>] 0) (𝓝 (v (t, x))) :=
+    hboundary.congr' hevent.symm
+  have heq := tendsto_nhds_unique hlim hlim'
+  have hfull : (∫ r in a..t, G r) = ∫ q, F q := by
+    rw [intervalIntegral.integral_eq_integral_of_support_subset hsupp]
+    exact (integral_prod F hF).symm
+  rw [hfull] at heq
+  simpa [F, heatSource] using heq.symm
 
 end LatticeProb.Heat
