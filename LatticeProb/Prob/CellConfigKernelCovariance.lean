@@ -28,6 +28,10 @@ kernel of `H`, and hence that `F` has the covariance
   uniform-average kernel.
 * `LatticeProb.CellConfigCappedSquare.cappedTransportKernel_similarity`: covariance of the
   transport kernel.
+* `LatticeProb.CellConfigCappedSquare.measurable_cappedTransportKernel`: the transport kernel is
+  measurable.
+* `LatticeProb.CellConfigCappedSquare.lintegral_cappedTransportKernel_zero_left`: the integral of
+  the transport kernel from the origin is the expected uniform average of `G` over `S_m^0`.
 -/
 
 open MeasureTheory Set
@@ -122,5 +126,58 @@ theorem cappedTransportKernel_similarity {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop
     lintegral_congr_ae ((ae_averageKernel_similarity hHH' (planeCoord.symm w₀)).mono
       fun q hq => hq m hm0 hmtop (planeCoord.symm w₁))
   rw [h1, h2, lintegral_const_mul _ (measurable_averageKernel_dyadic m H _ _), hG, mul_assoc]
+
+/-- **The transport kernel is measurable** in the configuration and the two points, for a
+measurable `G`. -/
+theorem measurable_cappedTransportKernel (m : ℝ≥0∞) {G : GMSSpace × ℂ → ℝ≥0∞}
+    (hG : Measurable G) : Measurable (cappedTransportKernel m G) := by
+  have := isProbabilityMeasure_unifIco (zero_lt_one' ℝ)
+  have hc : Measurable fun z : Plane => planeCoord.symm z := planeCoord.symm.continuous.measurable
+  unfold cappedTransportKernel
+  refine Measurable.mul ?_
+    (hG.comp (measurable_fst.prodMk (hc.comp (measurable_snd.comp measurable_snd))))
+  exact Measurable.lintegral_prod_right'
+    (f := fun x : (GMSSpace × Plane × Plane) × DyadicCoord =>
+      averageKernel m (x.1.1, (x.2, planeCoord.symm x.1.2.1), planeCoord.symm x.1.2.2))
+    ((measurable_averageKernel m).comp ((measurable_fst.comp measurable_fst).prodMk
+      ((measurable_snd.prodMk (hc.comp ((measurable_fst.comp measurable_snd).comp
+        measurable_fst))).prodMk (hc.comp ((measurable_snd.comp measurable_snd).comp
+          measurable_fst)))))
+
+/-- **Left side of the transport identity**: the integral of the transport kernel from the
+origin is the expected uniform average of `G(H, ·)` over the capped square `S_m^0`,
+`∫ F(H, 0, w) dw = E[|S_m^0|⁻¹ ∫ 1(z ∈ S_m^0) G(H, z) dz]`. -/
+theorem lintegral_cappedTransportKernel_zero_left {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    {G : GMSSpace × ℂ → ℝ≥0∞} (hG : Measurable G) (H : GMSSpace) :
+    ∫⁻ w, cappedTransportKernel m G (H, 0, w) ∂volume =
+      ∫⁻ q, ∫⁻ z, (volume (cappedSquare (dyadicSquares q.1 q.2.1 q.2.2)
+          (cellMass volume (complexCells H.1)) m 0))⁻¹ *
+        (cappedSquare (dyadicSquares q.1 q.2.1 q.2.2)
+          (cellMass volume (complexCells H.1)) m 0).indicator (fun _ => (1 : ℝ≥0∞)) z *
+        G (H, z) ∂volume ∂(unifIco 1).prod (offsetLaw.prod offsetLaw) := by
+  have := isProbabilityMeasure_unifIco (zero_lt_one' ℝ)
+  have hK : Measurable fun x : ℂ × DyadicCoord =>
+      averageKernel m (H, (x.2, 0), x.1) * G (H, x.1) :=
+    ((measurable_averageKernel m).comp (measurable_const.prodMk
+      ((measurable_snd.prodMk measurable_const).prodMk measurable_fst))).mul
+      (hG.comp (measurable_const.prodMk measurable_fst))
+  calc ∫⁻ w, cappedTransportKernel m G (H, 0, w) ∂volume
+      = ∫⁻ z : ℂ, ∫⁻ q, averageKernel m (H, (q, 0), z) * G (H, z)
+          ∂(unifIco 1).prod (offsetLaw.prod offsetLaw) ∂volume := by
+        rw [← (MeasurePreserving.symm _ measurePreserving_planeCoordMeas).lintegral_comp_emb
+          planeCoordMeas.symm.measurableEmbedding
+          (fun z : ℂ => ∫⁻ q, averageKernel m (H, (q, 0), z) * G (H, z)
+            ∂(unifIco 1).prod (offsetLaw.prod offsetLaw))]
+        refine lintegral_congr fun w => ?_
+        simp only [cappedTransportKernel, map_zero]
+        rw [lintegral_mul_const _ (measurable_averageKernel_dyadic m H _ _)]
+        rfl
+    _ = ∫⁻ q, ∫⁻ z : ℂ, averageKernel m (H, (q, 0), z) * G (H, z) ∂volume
+          ∂(unifIco 1).prod (offsetLaw.prod offsetLaw) :=
+        lintegral_lintegral_swap (f := fun z q => averageKernel m (H, (q, 0), z) * G (H, z))
+          hK.aemeasurable
+    _ = _ := by
+        refine lintegral_congr_ae ((ae_averageKernel_eq H 0).mono fun q hq => ?_)
+        exact lintegral_congr fun z => by rw [hq m hm0 hmtop z]
 
 end LatticeProb.CellConfigCappedSquare
