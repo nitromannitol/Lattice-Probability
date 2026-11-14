@@ -161,15 +161,15 @@ private theorem exists_nonneg_eq_sum_shell_mul (hd : 1 ≤ d) {R : ℕ} (hR : 4 
     else 0, ?_, ?_⟩
   · intro y
     by_cases hy : y ∈ harnackShell d R
-    · simp only [if_pos hy]
+    · simp only [ite_eq_left hy]
       exact zero_le_two_mul_harnackExt_sub_nbrSum hd _ _ hKB (box d (2 * R)) u hBD hnb hpos hharmB
           (harnackShell_subset_harnackBox_add_div_two hy)
-    · simp only [if_neg hy, le_refl]
+    · simp only [ite_eq_right hy, le_refl]
   · intro x hx
     rw [← harnackExt_eq_of_mem hd (harnackBox d (2 * R - 1)) (harnackBox d (R + R / 2)) u
       (mem_harnackBox_add_div_two_of_mem_box hx), harnackExt_eq_sum_shell_mul_charge hd hR u hharm
           x]
-    exact Finset.sum_congr rfl fun y hy => by simp only [if_pos hy]
+    exact Finset.sum_congr rfl fun y hy => by simp only [ite_eq_left hy]
 
 /-! ### Green function estimates at scale `R` (the analytic input) -/
 

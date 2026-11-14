@@ -34,7 +34,7 @@ everywhere. -/
 private theorem nonneg_of_harmonicOn (hd : 1 ≤ d) (A : Finset (Site d)) (w : Site d → ℝ)
     (hharm : ∀ x ∈ A, nbrSum w x = 2 * (d : ℝ) * w x) (hout : ∀ z, z ∉ A → 0 ≤ w z) :
     ∀ z, 0 ≤ w z := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨q, hq⟩ := exists_not_mem_finset hd A
   have key : ∀ z, (-1 : ℝ) * w z ≤ 0 :=
     Network.le_of_harmonicOn (Graph.Zd.latticeConnected d) Network.isCond_unitCond
@@ -132,7 +132,7 @@ private theorem eq_sum_harnackGreen_mul_laplacian' (hd : 1 ≤ d) (B : Finset (S
       have h1 : (∑ y ∈ B, (if x = y then (1 : ℝ) else 0) * c y)
           = ∑ y ∈ B, (if x = y then c y else 0) :=
         Finset.sum_congr rfl (fun y _ => by rw [ite_mul, one_mul, zero_mul])
-      rw [h1, Finset.sum_ite_eq, if_pos hx]
+      rw [h1, Finset.sum_ite_eq, ite_eq_left hx]
     change nbrSum (fun z => w z - R z) x = 2 * (d : ℝ) * (w x - R x)
     rw [nbrSum_sub w R x, hR, hsplit, hfirst, hsecond]
     have hcx : c x = 2 * (d : ℝ) * w x - nbrSum w x := rfl
@@ -164,7 +164,7 @@ theorem harnackExt_eq_of_mem (hd : 1 ≤ d) (B K : Finset (Site d)) (u : Site d 
     {x : Site d}
     (hx : x ∈ K) : harnackExt B K u x = u x := by
   unfold harnackExt
-  rw [if_pos hx]
+  rw [ite_eq_left hx]
   have hzero : ∀ y ∈ B \ K, harnackGreen (B \ K) x y * nbrSum (fun z => if z ∈ K then u z else 0) y
       = 0 :=
     fun y hy => by
@@ -178,7 +178,7 @@ theorem harnackExt_eq_of_mem (hd : 1 ≤ d) (B K : Finset (Site d)) (u : Site d 
 theorem harnackExt_eq_zero_of_not_mem (hd : 1 ≤ d) (B K : Finset (Site d)) (hK : K ⊆ B)
     (u : Site d → ℝ)
     {x : Site d} (hx : x ∉ B) : harnackExt B K u x = 0 := by
-  simp only [harnackExt, if_neg (show x ∉ K from fun h => hx (hK h)), zero_add]
+  simp only [harnackExt, ite_eq_right (show x ∉ K from fun h => hx (hK h)), zero_add]
   apply Finset.sum_eq_zero
   intro y hy
   rw
@@ -233,11 +233,11 @@ theorem nbrSum_harnackExt_eq_of_mem_sdiff (hd : 1 ≤ d) (B K : Finset (Site d))
     · simp only [ite_mul, one_mul, zero_mul]
       rw
           [Finset.sum_ite_eq (B \ K) x (fun y => nbrSum (fun z => if z ∈ K then u z else 0) y),
-              if_pos hxA])
+              ite_eq_left hxA])
   have hExt : harnackExt B K u x = ∑ y ∈ B \ K, harnackGreen (B \ K) x y * nbrSum
       (fun z => if z ∈ K then u z else 0) y := (by
     simp only [harnackExt]
-    rw [if_neg hxK, zero_add])
+    rw [ite_eq_right hxK, zero_add])
   rw [hstep, hsum2, hExt]
   ring
 
@@ -268,7 +268,7 @@ private theorem harnackExt_le_of_harmonicOn (hd : 1 ≤ d) (B K : Finset (Site d
             = (fun z => u z - harnackExt B K u z) (y - unit i) := (by
       intro i
       obtain ⟨e1, e2⟩ := hnb y hyB i
-      exact ⟨by simp only [if_pos e1], by simp only [if_pos e2]⟩)
+      exact ⟨by simp only [ite_eq_left e1], by simp only [ite_eq_left e2]⟩)
     have h9 : nbrSum (fun z => if z ∈ D then u z - harnackExt B K u z else 0) y
         = nbrSum (fun z => u z - harnackExt B K u z) y :=
       nbrSum_congr (f := fun z => if z ∈ D then u z - harnackExt B K u z else 0)
@@ -281,22 +281,22 @@ private theorem harnackExt_le_of_harmonicOn (hd : 1 ≤ d) (B K : Finset (Site d
     have hv : nbrSum (harnackExt B K u) y = 2 * (d : ℝ) * harnackExt B K u y :=
       nbrSum_harnackExt_eq_of_mem_sdiff hd B K u hyB hyK
     rw [h9, h10, hu, hv]
-    simp only [if_pos (hBD y hyB)]
+    simp only [ite_eq_left (hBD y hyB)]
     ring)
   have h2 : ∀ z, z ∉ B \ K → 0 ≤ (fun z => if z ∈ D then u z - harnackExt B K u z else 0) z := (by
     intro y hy
     change 0 ≤ (if y ∈ D then u y - harnackExt B K u y else 0)
     by_cases hyD : y ∈ D
-    · rw [if_pos hyD]
+    · rw [ite_eq_left hyD]
       by_cases hyK : y ∈ K
       · rw [harnackExt_eq_of_mem hd B K u hyK]; simp
       · have hyB : y ∉ B := fun h => hy (Finset.mem_sdiff.mpr ⟨h, hyK⟩)
         rw [harnackExt_eq_zero_of_not_mem hd B K hK u hyB]
         simpa using hpos y hyD
-    · rw [if_neg hyD])
+    · rw [ite_eq_right hyD])
   have h3 := nonneg_of_harmonicOn hd (B \ K)
     (fun z => if z ∈ D then u z - harnackExt B K u z else 0) h1 h2 x
-  simp only [if_pos (hBD x hx)] at h3
+  simp only [ite_eq_left (hBD x hx)] at h3
   linarith
 
 

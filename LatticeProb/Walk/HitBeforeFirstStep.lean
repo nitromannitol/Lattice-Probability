@@ -101,7 +101,7 @@ theorem measurableSet_hitBefore (step : α → δ → α)
     ((measurable_position step hstep x n) hA).compl
   have hmC (n : ℕ) : MeasurableSet {ω | position step x ω n ∈ C} :=
     (measurable_position step hstep x n) hC
-  simp only [hitBefore, Set.setOf_exists, Set.setOf_and, Set.setOf_forall]
+  simp only [hitBefore, Set.ofPred_exists, Set.ofPred_and, Set.ofPred_forall]
   exact MeasurableSet.iUnion fun n => (hmC n).inter
     (MeasurableSet.iInter fun m => MeasurableSet.iInter fun _ => hmA m)
 

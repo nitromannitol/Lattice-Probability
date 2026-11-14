@@ -45,15 +45,15 @@ theorem srwFirstHit_succ (k : ℕ) (x : Site d) :
     srwFirstHit d (k + 1) x = if x = 0 then 0 else walkOp (srwFirstHit d k) x := rfl
 
 theorem srwFirstHit_succ_origin (k : ℕ) : srwFirstHit d (k + 1) 0 = 0 := by
-  rw [srwFirstHit_succ, if_pos rfl]
+  rw [srwFirstHit_succ, ite_eq_left rfl]
 
 theorem srwFirstHit_succ_of_ne {x : Site d} (hx : x ≠ 0) (k : ℕ) :
     srwFirstHit d (k + 1) x = walkOp (srwFirstHit d k) x := by
-  rw [srwFirstHit_succ, if_neg hx]
+  rw [srwFirstHit_succ, ite_eq_right hx]
 
 theorem srwFirstHit_zero_of_ne {x : Site d} (hx : x ≠ 0) :
     srwFirstHit d 0 x = 0 := by
-  rw [srwFirstHit_zero, if_neg hx]
+  rw [srwFirstHit_zero, ite_eq_right hx]
 
 theorem srwFirstHit_nonneg : ∀ (k : ℕ) (x : Site d), 0 ≤ srwFirstHit d k x := by
   intro k
@@ -99,7 +99,7 @@ theorem srwHeat_eq_sum_srwFirstHit :
       by_cases hx : x = 0
       · subst hx
         rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_range.mpr (by omega))]
-        · rw [srwFirstHit_zero, if_pos rfl, one_mul, Nat.sub_zero]
+        · rw [srwFirstHit_zero, ite_eq_left rfl, one_mul, Nat.sub_zero]
         · intro j _ hj
           obtain ⟨m, rfl⟩ : ∃ m, j = m + 1 := ⟨j - 1, by omega⟩
           rw [srwFirstHit_succ_origin, zero_mul]
@@ -125,7 +125,7 @@ theorem srwHitBy_zero (x : Site d) : srwHitBy d 0 x = if x = 0 then 1 else 0 := 
 
 theorem srwHitBy_succ_origin (k : ℕ) : srwHitBy d (k + 1) (0 : Site d) = 1 := by
   rw [srwHitBy, Finset.sum_eq_single_of_mem 0 (Finset.mem_range.mpr (by omega))]
-  · rw [srwFirstHit_zero, if_pos rfl]
+  · rw [srwFirstHit_zero, ite_eq_left rfl]
   · intro j _ hj
     obtain ⟨m, rfl⟩ : ∃ m, j = m + 1 := ⟨j - 1, by omega⟩
     exact srwFirstHit_succ_origin m
@@ -226,7 +226,7 @@ theorem measurableSet_hitOriginBy (k : ℕ) : MeasurableSet (hitOriginBy d k) :=
   have : hitOriginBy d k
       = ⋃ j ∈ Finset.range (k + 1), (fun X : ℕ → Site d => X j) ⁻¹' {(0 : Site d)} := by
     ext X
-    simp only [hitOriginBy, Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_range,
+    simp only [hitOriginBy, Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_range,
       Set.mem_preimage, Set.mem_singleton_iff]
     exact ⟨fun ⟨j, hj, h⟩ => ⟨j, by omega, h⟩, fun ⟨j, hj, h⟩ => ⟨j, by omega, h⟩⟩
   rw [this]
@@ -236,7 +236,7 @@ theorem measurableSet_hitOriginBy (k : ℕ) : MeasurableSet (hitOriginBy d k) :=
 theorem measurableSet_hitOrigin : MeasurableSet (hitOrigin d) := by
   have : hitOrigin d = ⋃ k : ℕ, hitOriginBy d k := by
     ext X
-    simp only [hitOrigin, hitOriginBy, Set.mem_setOf_eq, Set.mem_iUnion]
+    simp only [hitOrigin, hitOriginBy, Set.mem_ofPred_eq, Set.mem_iUnion]
     exact ⟨fun ⟨j, h⟩ => ⟨j, j, le_rfl, h⟩, fun ⟨_, j, _, h⟩ => ⟨j, h⟩⟩
   rw [this]
   exact MeasurableSet.iUnion fun k => measurableSet_hitOriginBy k
@@ -262,13 +262,13 @@ theorem preimage_hitOriginBy_succ (x : Site d) (k : ℕ) :
       = if x = 0 then Set.univ
         else {ξ : ℕ → Site d | sitePath (x + ξ 0) (tailNat ξ) ∈ hitOriginBy d k} := by
   by_cases hx : x = 0
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     ext ξ
-    simp only [Set.mem_preimage, Set.mem_univ, iff_true, hitOriginBy, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_univ, iff_true, hitOriginBy, Set.mem_ofPred_eq]
     exact ⟨0, by omega, by rw [sitePath_zero]; exact hx⟩
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     ext ξ
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, hitOriginBy]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, hitOriginBy]
     have hkey : ∀ m : ℕ,
         sitePath x ξ (m + 1) = sitePath (x + ξ 0) (tailNat ξ) m := by
       intro m
@@ -301,14 +301,14 @@ theorem siteWalkLaw_hitOriginBy (hd : 1 ≤ d) [NeZero d] :
       rw [siteWalkLaw, Measure.map_apply (measurable_sitePath x) (measurableSet_hitOriginBy 0)]
       have hpre : sitePath x ⁻¹' hitOriginBy d 0 = if x = 0 then Set.univ else ∅ := by
         by_cases hx : x = 0
-        · rw [if_pos hx]
+        · rw [ite_eq_left hx]
           ext ξ
-          simp only [Set.mem_preimage, Set.mem_univ, iff_true, hitOriginBy, Set.mem_setOf_eq]
+          simp only [Set.mem_preimage, Set.mem_univ, iff_true, hitOriginBy, Set.mem_ofPred_eq]
           exact ⟨0, le_rfl, by rw [sitePath_zero]; exact hx⟩
-        · rw [if_neg hx]
+        · rw [ite_eq_right hx]
           ext ξ
           simp only [Set.mem_preimage, Set.mem_empty_iff_false, iff_false, hitOriginBy,
-            Set.mem_setOf_eq]
+            Set.mem_ofPred_eq]
           rintro ⟨j, hj, h⟩
           rw [Nat.le_zero] at hj
           subst hj
@@ -316,9 +316,9 @@ theorem siteWalkLaw_hitOriginBy (hd : 1 ≤ d) [NeZero d] :
           exact hx h
       rw [hpre, srwHitBy_zero]
       by_cases hx : x = 0
-      · rw [if_pos hx, if_pos hx]
+      · rw [ite_eq_left hx, ite_eq_left hx]
         simp
-      · rw [if_neg hx, if_neg hx]
+      · rw [ite_eq_right hx, ite_eq_right hx]
         simp
   | succ k ih =>
       intro x
@@ -326,9 +326,9 @@ theorem siteWalkLaw_hitOriginBy (hd : 1 ≤ d) [NeZero d] :
         (measurableSet_hitOriginBy (k + 1)), preimage_hitOriginBy_succ]
       by_cases hx : x = 0
       · subst hx
-        rw [if_pos rfl, srwHitBy_succ_origin]
+        rw [ite_eq_left rfl, srwHitBy_succ_origin]
         simp
-      · rw [if_neg hx, srwHitBy_succ_of_ne hx]
+      · rw [ite_eq_right hx, srwHitBy_succ_of_ne hx]
         set B : Set (ℕ → Site d) := hitOriginBy d k with hB
         have hBm : MeasurableSet B := measurableSet_hitOriginBy k
         have hshift : Measurable fun ξ : ℕ → Site d => sitePath (x + ξ 0) (tailNat ξ) :=
@@ -370,7 +370,7 @@ theorem siteWalkLaw_hitOrigin (hd : 1 ≤ d) [NeZero d] (x : Site d) :
     siteWalkLaw d x (hitOrigin d) = ENNReal.ofReal (srwHitProb d x) := by
   have hunion : hitOrigin d = ⋃ k : ℕ, hitOriginBy d k := by
     ext X
-    simp only [hitOrigin, hitOriginBy, Set.mem_setOf_eq, Set.mem_iUnion]
+    simp only [hitOrigin, hitOriginBy, Set.mem_ofPred_eq, Set.mem_iUnion]
     exact ⟨fun ⟨j, h⟩ => ⟨j, j, le_rfl, h⟩, fun ⟨_, j, _, h⟩ => ⟨j, h⟩⟩
   have h1 : Filter.Tendsto (fun k => siteWalkLaw d x (hitOriginBy d k)) Filter.atTop
       (nhds (siteWalkLaw d x (hitOrigin d))) := by

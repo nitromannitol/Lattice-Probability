@@ -127,8 +127,8 @@ theorem laplacian_eq_nbrSum_sub (hd : 1 ≤ d) (f : Site d → ℝ) (x : Site d)
 -- Infinite.exists_notMem_finset B
 /-- Every finite set `B` misses some lattice point, since the lattice is infinite. -/
 theorem exists_not_mem_finset (hd : 1 ≤ d) (B : Finset (Site d)) : ∃ q : Site d, q ∉ B := by
-  haveI : NeZero d := ⟨by omega⟩
-  haveI : Infinite (Site d) := Graph.Zd.latticeInfinite d
+  have : NeZero d := ⟨by omega⟩
+  have : Infinite (Site d) := Graph.Zd.latticeInfinite d
   exact Infinite.exists_notMem_finset B
 
 
@@ -137,7 +137,7 @@ theorem exists_not_mem_finset (hd : 1 ≤ d) (B : Finset (Site d)) : ∃ q : Sit
 /-- `harnackGreen B x y ≥ 0`. -/
 private theorem harnackGreen_nonneg (hd : 1 ≤ d) (B : Finset (Site d)) (x y : Site d) :
     0 ≤ harnackGreen B x y := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨q, hq⟩ := Infinite.exists_notMem_finset B
   unfold harnackGreen
   exact Network.killedGreenReal_nonneg (Graph.Zd.latticeConnected d) B hq y x
@@ -149,7 +149,7 @@ private theorem harnackGreen_nonneg (hd : 1 ≤ d) (B : Finset (Site d)) (x y : 
 theorem harnackGreen_eq_zero_of_not_mem (hd : 1 ≤ d) (B : Finset (Site d)) {x : Site d}
     (hx : x ∉ B) (y : Site d) :
     harnackGreen B x y = 0 := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨q, hq⟩ := exists_not_mem_finset hd B
   unfold harnackGreen
   exact Network.killedGreenReal_eq_zero_of_not_mem (Graph.Zd.latticeConnected d) B hq hx y
@@ -165,16 +165,16 @@ theorem nbrSum_harnackGreen_eq (hd : 1 ≤ d) (B : Finset (Site d)) {x y : Site 
     nbrSum (fun w => harnackGreen B w y) x
       = 2 * (d : ℝ) * harnackGreen B x y - (if x = y then 1 else 0) := by
   obtain ⟨q, hq⟩ := exists_not_mem_finset hd B
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hG : (lattice d).Connected := Graph.Zd.latticeConnected d
   have hk := Network.laplacian_killedGreenReal hG B (o := y) (q := q) hy hq (v := x) hx
   have h4 := laplacian_eq_nbrSum_sub hd (fun w => harnackGreen B w y) x
   simp only [harnackGreen] at hk h4 ⊢
   rw [hk] at h4
   by_cases hxy : x = y
-  · rw [if_pos hxy] at h4 ⊢
+  · rw [ite_eq_left hxy] at h4 ⊢
     linarith only [h4]
-  · rw [if_neg hxy] at h4 ⊢
+  · rw [ite_eq_right hxy] at h4 ⊢
     linarith only [h4]
 
 

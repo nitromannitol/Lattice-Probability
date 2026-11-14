@@ -77,8 +77,8 @@ theorem siteWalkLaw_eval_eq [NeZero d] (x : Site d) (n : ℕ) (z : Site d) :
         funext y
         rw [Function.iterate_zero_apply, srwHeat_zero]
         by_cases h : y = z
-        · rw [if_pos h, if_pos (by rw [h, sub_self])]
-        · rw [if_neg h, if_neg (by intro hz; exact h (sub_eq_zero.mp hz).symm)]
+        · rw [ite_eq_left h, ite_eq_left (by rw [h, sub_self])]
+        · rw [ite_eq_right h, ite_eq_right (by intro hz; exact h (sub_eq_zero.mp hz).symm)]
     | succ m ih =>
         rw [Function.iterate_succ_apply', ih]
         funext y
@@ -133,15 +133,15 @@ theorem siteWalkLaw_eval_eval_eq [NeZero d] (x : Site d) {i i' : ℕ} (h : i ≤
   have hHdep : DependsUpTo i H := by
     intro X Y hXY
     have hxi : X i = Y i := hXY i le_rfl
-    simp only [hH, Set.indicator_apply, Set.mem_setOf_eq, hxi, Pi.one_apply]
+    simp only [hH, Set.indicator_apply, Set.mem_ofPred_eq, hxi, Pi.one_apply]
   have hmk := markov_fixed d i x F hFm (CF := 1) hFb H (CH := 1) hHb hHdep
   have hL : ∫ X, F (shiftPath i X) * H X ∂P
       = P.real {X : ℕ → Site d | X i = z ∧ X i' = w} := by
     rw [← integral_indicator_one hSmeas]
     refine integral_congr_ae (Filter.Eventually.of_forall fun X => ?_)
-    simp only []
+    simp only
     rw [hF, hH, Set.indicator_apply, Set.indicator_apply, Set.indicator_apply]
-    simp only [Set.mem_setOf_eq, shiftPath]
+    simp only [Set.mem_ofPred_eq, shiftPath]
     simp only [Nat.add_sub_cancel' h]
     by_cases hz : X i = z <;> by_cases hw : X i' = w <;> simp [hz, hw]
   have hpath : pathExpect d F z = srwHeat d (i' - i) (w - z) := by
@@ -201,7 +201,7 @@ private lemma tsum_indicator_mul (p q : Site d) :
     intro z
     by_cases hz : z = p
     · subst hz; simp
-    · rw [if_neg (Ne.symm hz), if_neg hz, zero_mul]
+    · rw [ite_eq_right (Ne.symm hz), ite_eq_right hz, zero_mul]
   simp_rw [hterm]
   rw [tsum_ite_eq]
   by_cases h : p = q <;> simp [h, eq_comm]
@@ -218,7 +218,7 @@ private lemma tsum_mul_tsum {α β : Type*} (f : α → ℝ≥0∞) (g : β → 
 private lemma interCount_eq (X Y : ℕ → Site d) :
     interCount X Y = ∑' z : Site d, localTime z X * localTime z Y := by
   rw [interCount]
-  simp only [localTime, Set.indicator_apply, Set.mem_setOf_eq]
+  simp only [localTime, Set.indicator_apply, Set.mem_ofPred_eq]
   simp_rw [tsum_mul_tsum]
   rw [ENNReal.tsum_comm]
   apply tsum_congr
@@ -272,12 +272,12 @@ private lemma tsum_ite_le_eq (f : ℕ × ℕ → ℝ≥0∞) :
     simp only [Function.mem_support] at hp
     have hle : a ≤ b := by
       by_contra h
-      simp [if_neg h] at hp
+      simp [ite_eq_right h] at hp
     exact ⟨(a, b - a), by simp [Nat.add_sub_of_le hle]⟩
   rw [(Function.Injective.tsum_eq hg hsupp).symm]
   apply tsum_congr
   intro q
-  rw [if_pos (by omega)]
+  rw [ite_eq_left (by omega)]
 
 /-- Reindexing the lower-triangular pairs by `(i,j) ↦ (i+j, i)`. -/
 private lemma tsum_ite_ge_eq (f : ℕ × ℕ → ℝ≥0∞) :
@@ -294,12 +294,12 @@ private lemma tsum_ite_ge_eq (f : ℕ × ℕ → ℝ≥0∞) :
     simp only [Function.mem_support] at hp
     have hle : b ≤ a := by
       by_contra h
-      simp [if_neg h] at hp
+      simp [ite_eq_right h] at hp
     exact ⟨(b, a - b), by simp [Nat.add_sub_of_le hle]⟩
   rw [(Function.Injective.tsum_eq hg hsupp).symm]
   apply tsum_congr
   intro q
-  rw [if_pos (by omega)]
+  rw [ite_eq_left (by omega)]
 
 /-- Product of two `ℝ≥0∞`-sums over `ℕ`. -/
 private lemma tsum_mul_tsum_ennreal (f g : ℕ → ℝ≥0∞) :
@@ -340,9 +340,9 @@ theorem lintegral_localTime_mul_le (hd : 3 ≤ d) [NeZero d] (x z w : Site d) :
     apply ENNReal.tsum_le_tsum
     intro p
     by_cases h : p.1 ≤ p.2
-    · rw [if_pos h]; exact le_self_add
+    · rw [ite_eq_left h]; exact le_self_add
     · have h' : p.2 ≤ p.1 := le_of_not_ge h
-      rw [if_neg h, if_pos h', zero_add]
+      rw [ite_eq_right h, ite_eq_left h', zero_add]
   have hfirst : (∑' p : ℕ × ℕ, if p.1 ≤ p.2 then P p else 0)
       = ENNReal.ofReal (srwGreenInf d (z - x)) * ENNReal.ofReal (srwGreenInf d (w - z)) := by
     rw [tsum_ite_le_eq]
@@ -757,7 +757,7 @@ theorem exists_lintegral_interCount_sq_le :
             ENNReal.ofReal (C * (1 + euclidNorm (x - y)) ^ (4 - (d : ℝ))) := by
   intro d hd
   obtain ⟨k, rfl⟩ : ∃ k, d = k + 5 := ⟨d - 5, by omega⟩
-  haveI : NeZero (k + 5) := ⟨by omega⟩
+  have : NeZero (k + 5) := ⟨by omega⟩
   obtain ⟨C, hC, h⟩ := exists_tsum_green_four_le k
   exact ⟨C, hC, fun x y => (lintegral_lintegral_interCount_sq_le (by omega) x y).trans (h x y)⟩
 

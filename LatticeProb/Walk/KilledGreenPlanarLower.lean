@@ -106,7 +106,7 @@ potential kernel, then `m ≤ g_D(0, 0)`. -/
 theorem killedGreen_zero_zero_ge_of_outside (L : ℕ) (m : ℝ)
     (hm : ∀ x : Site 2, x ∉ originBox 2 L → m ≤ potentialKernel x / 4) :
     m ≤ Graph.killedGreenReal (lattice 2) (originBox 2 L : Set (Site 2)) 0 0 := by
-  haveI : NeZero (2 : ℕ) := ⟨two_ne_zero⟩
+  have : NeZero (2 : ℕ) := ⟨two_ne_zero⟩
   have hG : (lattice 2).Connected := Graph.Zd.latticeConnected 2
   have hq : (![(L : ℤ) + 1, 0] : Site 2) ∉ originBox 2 L :=
     notMem_originBox_of_lt (i := 0) (by simp)

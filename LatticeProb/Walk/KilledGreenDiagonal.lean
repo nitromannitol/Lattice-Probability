@@ -43,10 +43,10 @@ theorem killedGreen_diag_le_const_of_three_le (hd : 3 ≤ d) :
     · have hnn : (0 : ℝ) ≤ C₂ * ((0 : ℕ) : ℝ) ^ (-(d : ℝ) / 2) :=
         mul_nonneg hC₂pos.le (Real.rpow_nonneg (Nat.cast_nonneg _) _)
       have h1 : srwHeat d 0 0 = 1 := by simp
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       linarith
     · have h2 := hC₂ k hk 0
-      rw [if_neg hk.ne']
+      rw [ite_eq_right hk.ne']
       linarith
   refine ⟨(∑' k : ℕ, (C₂ * (k : ℝ) ^ (-(d : ℝ) / 2) + (if k = 0 then (1 : ℝ) else 0)))
       / (2 * (d : ℝ)) + 1, ?_, ?_⟩
@@ -71,7 +71,7 @@ nonempty set `{0}` is strictly positive, so the diagonal is not a zero or defaul
 theorem killedGreen_diag_pos_control (hd : 1 ≤ d) :
     0 < Graph.killedGreenReal (lattice d) (({0} : Finset (Site d)) : Set (Site d)) 0 0 := by
   rw [killedGreenReal_eq_tsum_killedHeat_div hd ({0} : Finset (Site d)) 0 0]
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨q, hq⟩ := Infinite.exists_notMem_finset ({0} : Finset (Site d))
   have hs := Network.summable_killedHeat (Graph.Zd.latticeConnected d) ({0} : Finset (Site d)) hq 0 0
   have h0 : Graph.killedHeat (lattice d) (({0} : Finset (Site d)) : Set (Site d)) 0 0 0 = 1 := by
@@ -223,7 +223,7 @@ theorem killedGreen_row_sum_le_sq (hd : 2 ≤ d) :
   have hNpos : 0 < K * (L + 1) ^ 2 := Nat.mul_pos (by omega) (pow_pos (Nat.succ_pos L) 2)
   have hd1 : (1 : ℝ) ≤ (d : ℝ) := by exact_mod_cast (by omega : 1 ≤ d)
   have hdpos : (0 : ℝ) < 2 * (d : ℝ) := by linarith
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨q, hq⟩ := Infinite.exists_notMem_finset B
   have hsum : ∑ y ∈ B, ∑' k : ℕ, Graph.killedHeat (lattice d) (B : Set (Site d)) k x y
       = ∑' k : ℕ, Network.survival (lattice d) B k x := by

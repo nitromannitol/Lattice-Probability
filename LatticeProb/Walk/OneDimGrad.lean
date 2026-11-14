@@ -40,7 +40,7 @@ theorem S1_anti (n : ℕ) : ∀ k : ℤ, 0 ≤ k → S1 n (k + 2) ≤ S1 n k := 
   induction n with
   | zero =>
       intro k hk
-      rw [S1_zero, S1_zero, if_neg (by omega)]
+      rw [S1_zero, S1_zero, ite_eq_right (by omega)]
       split
       · norm_num
       · exact le_refl 0

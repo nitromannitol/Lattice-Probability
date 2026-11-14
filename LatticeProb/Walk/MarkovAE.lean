@@ -97,33 +97,33 @@ theorem stopTrunc_le (τ : (ℕ → Site d) → ℕ∞) (N : ℕ) (X : ℕ → S
   rw [stopTrunc]
   split
   · rename_i h
-    obtain ⟨n₀, hn₀, hle⟩ := ENat.le_coe_iff.mp h
-    rw [hn₀, ENat.toNat_coe]; exact hle
+    obtain ⟨n₀, hn₀, hle⟩ := ENat.le_natCast_iff.mp h
+    rw [hn₀, ENat.toNat_natCast]; exact hle
   · exact le_rfl
 
 theorem stopTrunc_of_le {τ : (ℕ → Site d) → ℕ∞} {N : ℕ} {X : ℕ → Site d}
-    (h : τ X ≤ (N : ℕ∞)) : stopTrunc τ N X = (τ X).toNat := if_pos h
+    (h : τ X ≤ (N : ℕ∞)) : stopTrunc τ N X = (τ X).toNat := ite_eq_left h
 
 /-- The truncation of a stopping time is a bounded stopping time. -/
 theorem isWalkStopping_stopTrunc {τ : (ℕ → Site d) → ℕ∞} (hτ : IsWalkStoppingE τ) (N : ℕ) :
     IsWalkStopping (stopTrunc τ N) := by
   intro k X Y hXY hk
   by_cases hX : τ X ≤ (N : ℕ∞)
-  · obtain ⟨n₀, hn₀, hle⟩ := ENat.le_coe_iff.mp hX
+  · obtain ⟨n₀, hn₀, hle⟩ := ENat.le_natCast_iff.mp hX
     have hk' : n₀ = k := by
-      rw [stopTrunc, if_pos hX, hn₀, ENat.toNat_coe] at hk; exact hk
+      rw [stopTrunc, ite_eq_left hX, hn₀, ENat.toNat_natCast] at hk; exact hk
     have hY : τ Y = (n₀ : ℕ∞) := hτ n₀ X Y (fun j hj => hXY j (hk' ▸ hj)) hn₀
     have hYle : τ Y ≤ (N : ℕ∞) := by rw [hY]; exact_mod_cast hle
-    rw [stopTrunc, if_pos hYle, hY, ENat.toNat_coe]
+    rw [stopTrunc, ite_eq_left hYle, hY, ENat.toNat_natCast]
     exact hk'
-  · have hkN : N = k := by rw [stopTrunc, if_neg hX] at hk; exact hk
+  · have hkN : N = k := by rw [stopTrunc, ite_eq_right hX] at hk; exact hk
     have hYnot : ¬ (τ Y ≤ (N : ℕ∞)) := by
       intro hY
-      obtain ⟨m, hm, hmN⟩ := ENat.le_coe_iff.mp hY
+      obtain ⟨m, hm, hmN⟩ := ENat.le_natCast_iff.mp hY
       refine hX ?_
       rw [hτ m Y X (fun j hj => (hXY j (hkN ▸ (hj.trans hmN))).symm) hm]
       exact_mod_cast hmN
-    rw [stopTrunc, if_neg hYnot]
+    rw [stopTrunc, ite_eq_right hYnot]
     exact hkN
 
 /-! ### The strong Markov property at an almost surely finite stopping time -/
@@ -161,17 +161,17 @@ theorem markov_stopping_ae (d : ℕ) [NeZero d] (x : Site d)
       stopTrunc τ N X = k → HN N X = HN N Y := by
     intro N k X Y hXY hk
     by_cases hX : τ X ≤ (N : ℕ∞)
-    · obtain ⟨n₀, hn₀, hle⟩ := ENat.le_coe_iff.mp hX
+    · obtain ⟨n₀, hn₀, hle⟩ := ENat.le_natCast_iff.mp hX
       have hk' : n₀ = k := by
-        rw [stopTrunc, if_pos hX, hn₀, ENat.toNat_coe] at hk; exact hk
+        rw [stopTrunc, ite_eq_left hX, hn₀, ENat.toNat_natCast] at hk; exact hk
       have hY : τ Y = (n₀ : ℕ∞) := hτ n₀ X Y (fun j hj => hXY j (hk' ▸ hj)) hn₀
       have hYle : τ Y ≤ (N : ℕ∞) := by rw [hY]; exact_mod_cast hle
       have hHXY : H X = H Y := hHdep k X Y hXY (hk' ▸ hn₀)
       simp [hHNdef, hX, hYle, hHXY]
-    · have hkN : N = k := by rw [stopTrunc, if_neg hX] at hk; exact hk
+    · have hkN : N = k := by rw [stopTrunc, ite_eq_right hX] at hk; exact hk
       have hYnot : ¬ (τ Y ≤ (N : ℕ∞)) := by
         intro hY
-        obtain ⟨m, hm, hmN⟩ := ENat.le_coe_iff.mp hY
+        obtain ⟨m, hm, hmN⟩ := ENat.le_natCast_iff.mp hY
         refine hX ?_
         rw [hτ m Y X (fun j hj => (hXY j (hkN ▸ (hj.trans hmN))).symm) hm]
         exact_mod_cast hmN
@@ -210,7 +210,7 @@ theorem markov_stopping_ae (d : ℕ) [NeZero d] (x : Site d)
       ∀ᶠ N : ℕ in Filter.atTop, τ X ≤ (N : ℕ∞) := by
     intro X hX
     filter_upwards [Filter.eventually_ge_atTop ((τ X).toNat)] with N hN
-    rw [← ENat.coe_toNat_eq_self.mpr hX]
+    rw [← ENat.natCast_toNat_eq_self.mpr hX]
     exact_mod_cast hN
   have hlimA : ∀ᵐ X ∂(siteWalkLaw d x),
       Filter.Tendsto (fun N => A N X) Filter.atTop
@@ -220,7 +220,7 @@ theorem markov_stopping_ae (d : ℕ) [NeZero d] (x : Site d)
     filter_upwards [hev X hX] with N hN
     show F (shiftPath (τ X).toNat X) * H X = A N X
     rw [hAdef, hHNdef]
-    simp only [stopTrunc_of_le hN, hN, if_true, mul_one]
+    simp only [stopTrunc_of_le hN, hN, ite_true, mul_one]
   have hlimB : ∀ᵐ X ∂(siteWalkLaw d x),
       Filter.Tendsto (fun N => B N X) Filter.atTop
         (nhds (pathExpect d F (X (τ X).toNat) * H X)) := by
@@ -229,7 +229,7 @@ theorem markov_stopping_ae (d : ℕ) [NeZero d] (x : Site d)
     filter_upwards [hev X hX] with N hN
     show pathExpect d F (X (τ X).toNat) * H X = B N X
     rw [hBdef, hHNdef]
-    simp only [stopTrunc_of_le hN, hN, if_true, mul_one]
+    simp only [stopTrunc_of_le hN, hN, ite_true, mul_one]
   have hAint := MeasureTheory.tendsto_integral_of_dominated_convergence
     (μ := siteWalkLaw d x) (F := A)
     (f := fun X => F (shiftPath (τ X).toNat X) * H X)

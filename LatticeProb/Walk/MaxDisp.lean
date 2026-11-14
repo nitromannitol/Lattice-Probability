@@ -79,9 +79,9 @@ theorem reflectAt_apply (j k : ℕ) (ξ : ℕ → Site d) :
 theorem measurable_reflectAt (j : ℕ) : Measurable (reflectAt (d := d) j) := by
   refine Measurable.of_eval fun k => ?_
   by_cases h : k < j
-  · simp only [reflectAt, if_pos h]
+  · simp only [reflectAt, ite_eq_left h]
     exact measurable_pi_apply k
-  · simp only [reflectAt, if_neg h]
+  · simp only [reflectAt, ite_eq_right h]
     exact (measurable_pi_apply k).neg
 
 theorem reflectAt_involutive (j : ℕ) (ξ : ℕ → Site d) :
@@ -163,9 +163,9 @@ theorem incPathLaw_map_reflectAt (d : ℕ) [NeZero d] (j : ℕ) :
   congr 1
   funext k
   by_cases h : k < j
-  · simp only [h, if_pos]
+  · simp only [h, ite_eq_left]
     exact Measure.map_id
-  · simp only [h, if_neg, not_false_iff]
+  · simp only [h, ite_eq_right, not_false_iff]
     exact incLaw_map_neg d
 
 /-! ### Lévy's inequality -/
@@ -202,7 +202,7 @@ theorem measurableSet_firstBig (a : ℝ) (j : ℕ) :
         ∩ ⋂ k ∈ Finset.range j,
           {ξ : ℕ → Site d | a ≤ ((graphNorm (incSum k ξ) : ℕ) : ℝ)}ᶜ := by
     ext ξ
-    simp only [firstBig, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter,
+    simp only [firstBig, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter,
       Set.mem_compl_iff, Finset.mem_range]
   rw [this]
   exact (measurableSet_big a j).inter
@@ -212,7 +212,7 @@ theorem measurableSet_firstBig (a : ℝ) (j : ℕ) :
 theorem bigSome_eq_iUnion (a : ℝ) (n : ℕ) :
     bigSome (d := d) a n = ⋃ j ∈ Finset.range (n + 1), firstBig a j := by
   ext ξ
-  simp only [bigSome, Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_range]
+  simp only [bigSome, Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_range]
   constructor
   · rintro ⟨k, hk, hbig⟩
     classical
@@ -237,7 +237,7 @@ large time. -/
 theorem reflectAt_preimage_firstBig (a : ℝ) (j : ℕ) :
     reflectAt (d := d) j ⁻¹' firstBig a j = firstBig a j := by
   ext ξ
-  simp only [Set.mem_preimage, firstBig, Set.mem_setOf_eq]
+  simp only [Set.mem_preimage, firstBig, Set.mem_ofPred_eq]
   rw [incSum_reflectAt_of_le le_rfl]
   refine and_congr Iff.rfl (forall_congr' fun k => ?_)
   refine forall_congr' fun hk => ?_
@@ -274,7 +274,7 @@ theorem measure_firstBig_le (d : ℕ) [NeZero d] {n j : ℕ} (hj : j ≤ n) (a :
       rw [graphNorm_add_self] at htri
       have h1 : a ≤ ((graphNorm (incSum j ξ) : ℕ) : ℝ) := hξ.1
       have h2 : ((graphNorm (incSum n ξ) : ℕ) : ℝ) < a := by
-        simpa [hA, Set.mem_setOf_eq] using h
+        simpa [hA, Set.mem_ofPred_eq] using h
       have htriR : (2 * (graphNorm (incSum j ξ)) : ℝ)
           ≤ ((graphNorm (incSum n ξ) : ℕ) : ℝ)
             + ((graphNorm (incSum n (reflectAt j ξ)) : ℕ) : ℝ) := by
@@ -349,7 +349,7 @@ theorem stepMgf_nonneg {d : ℕ} (hd : 1 ≤ d) (θ : ℝ) : 0 ≤ stepMgf d θ 
 
 theorem integral_incLaw_exp {d : ℕ} (hd : 1 ≤ d) (θ : ℝ) (i : Fin d) :
     ∫ v, Real.exp (θ * ((v i : ℤ) : ℝ)) ∂(incLaw d) = stepMgf d θ := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   rw [integral_incLaw]
   have hterm : ∀ i' : Fin d,
       Real.exp (θ * (((unit i' : Site d) i : ℤ) : ℝ))
@@ -360,18 +360,18 @@ theorem integral_incLaw_exp {d : ℕ} (hd : 1 ≤ d) (θ : ℝ) (i : Fin d) :
     · subst h
       have h1 : ((unit i' : Site d) i') = 1 := by simp [unit]
       have h2 : ((-unit i' : Site d) i') = -1 := by simp [h1]
-      rw [h1, h2, if_pos rfl]
+      rw [h1, h2, ite_eq_left rfl]
       simp only [Int.cast_one, Int.cast_neg, mul_one, mul_neg_one]
       ring
     · have h1 : ((unit i' : Site d) i) = 0 := by
         simp [unit, Ne.symm h]
       have h2 : ((-unit i' : Site d) i) = 0 := by
         simp [h1]
-      rw [h1, h2, if_neg h]
+      rw [h1, h2, ite_eq_right h]
       norm_num
   rw [Finset.sum_congr rfl fun i' _ => hterm i', Finset.sum_add_distrib,
     Finset.sum_ite_eq' Finset.univ i (fun _ => Real.exp θ + Real.exp (-θ) - 2)]
-  simp only [Finset.mem_univ, if_pos, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+  simp only [Finset.mem_univ, ite_eq_left, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
     nsmul_eq_mul]
   rw [stepMgf, Real.cosh_eq]
   ring
@@ -471,7 +471,7 @@ theorem measure_coord_le {d : ℕ} [NeZero d] (hd : 1 ≤ d) (n : ℕ) (i : Fin 
   have hpre : {ξ : ℕ → Site d | b ≤ -(((incSum n ξ) i : ℤ) : ℝ)}
       = reflectAt (d := d) 0 ⁻¹' {ξ : ℕ → Site d | b ≤ (((incSum n ξ) i : ℤ) : ℝ)} := by
     ext ξ
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, hzero ξ]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, hzero ξ]
     norm_num
   have hmeas : MeasurableSet {ξ : ℕ → Site d | b ≤ (((incSum n ξ) i : ℤ) : ℝ)} := by
     have h1 : Measurable fun z : Site d => ((z i : ℤ) : ℝ) := measurable_of_countable _
@@ -499,7 +499,7 @@ theorem measure_big_le {d : ℕ} [NeZero d] (hd : 1 ≤ d) (n : ℕ) {θ a : ℝ
           ∪ {ξ : ℕ → Site d | a / d ≤ -(((incSum n ξ) i : ℤ) : ℝ)}) := by
     intro ξ hξ
     by_contra hcon
-    simp only [Set.mem_iUnion, Finset.mem_univ, Set.mem_union, Set.mem_setOf_eq,
+    simp only [Set.mem_iUnion, Finset.mem_univ, Set.mem_union, Set.mem_ofPred_eq,
       exists_prop, true_and, not_exists, not_or, not_le] at hcon
     have hbound : ∀ i : Fin d, |(((incSum n ξ) i : ℤ) : ℝ)| < a / d := by
       intro i
@@ -626,7 +626,7 @@ theorem measure_bigSome_eq_zero {d : ℕ} [NeZero d] {n : ℕ} {a : ℝ} (ha : (
   have hsub : bigSome (d := d) a n ⊆ ⋃ j : ℕ, {ξ : ℕ → Site d | graphNorm (ξ j) ≠ 1} := by
     intro ξ hξ
     by_contra hcon
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq, not_exists, not_not] at hcon
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq, not_exists, not_not] at hcon
     obtain ⟨k, hk, hbig⟩ := hξ
     have hle : graphNorm (incSum k ξ) ≤ k := graphNorm_incSum_le fun j _ => hcon j
     have : ((graphNorm (incSum k ξ) : ℕ) : ℝ) ≤ (n : ℝ) := by
@@ -647,7 +647,7 @@ theorem exists_maxDisp_bound (d : ℕ) (hd : 1 ≤ d) :
       ∀ (n : ℕ) (a : ℝ), 1 ≤ n → 0 ≤ a → ∀ x : Site d,
         siteWalkLaw d x {X : ℕ → Site d | ∃ k ≤ n, a ≤ ((graphNorm (X k - x) : ℕ) : ℝ)}
           ≤ ENNReal.ofReal (C * Real.exp (-c * a ^ 2 / n)) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   have hd' : (0 : ℝ) < (d : ℝ) := by
     have : (1 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
     linarith
@@ -663,7 +663,7 @@ theorem exists_maxDisp_bound (d : ℕ) (hd : 1 ≤ d) :
         = ⋃ k ∈ Finset.range (n + 1),
           {X : ℕ → Site d | a ≤ ((graphNorm (X k - x) : ℕ) : ℝ)} := by
       ext X
-      simp only [Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_range]
+      simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_range]
       exact ⟨fun ⟨k, hk, h⟩ => ⟨k, by omega, h⟩, fun ⟨k, hk, h⟩ => ⟨k, by omega, h⟩⟩
     rw [hcast]
     refine MeasurableSet.biUnion (Finset.range (n + 1)).countable_toSet fun k _ => ?_
@@ -675,7 +675,7 @@ theorem exists_maxDisp_bound (d : ℕ) (hd : 1 ≤ d) :
     rw [siteWalkLaw_eq, Measure.map_apply (measurable_sitePath x) hev]
     congr 1
     ext ξ
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, bigSome]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, bigSome]
     refine exists_congr fun k => and_congr Iff.rfl ?_
     rw [sitePath_eq_add_incSum, add_sub_cancel_left]
   rw [hpull]
