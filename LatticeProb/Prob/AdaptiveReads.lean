@@ -72,7 +72,7 @@ theorem measure_finite_reads_of_injective (P : Measure Ω) (X : ∀ q, Ω → A 
   have he : {ω | ∀ i, X (q i) ω = a i} =
       ⋂ i ∈ (Finset.univ : Finset (Fin n)), X (q i) ⁻¹' {a i} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_iInter, Set.mem_preimage, Set.mem_singleton_iff,
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_preimage, Set.mem_singleton_iff,
       Finset.mem_univ, forall_const]
   rw [he]
   exact h

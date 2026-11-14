@@ -207,7 +207,7 @@ theorem measureReal_binomDom_le {μ : Measure Ω} [IsProbabilityMeasure μ]
   have hsub : {ω | (j : ℝ) ≤ binomDomCount G n ω ∧ binomDomHits G A n ω ≤ x} ⊆
       {ω | ε ≤ Z ω} := by
     intro ω ⟨h1, h2⟩
-    simp only [Set.mem_setOf_eq, Z, binomDomWeight_eq, ε]
+    simp only [Set.mem_ofPred_eq, Z, binomDomWeight_eq, ε]
     exact Real.exp_le_exp.2 (by nlinarith)
   have hmk := mul_meas_ge_le_integral_of_nonneg hZ0 hZi ε
   have hint := integral_binomDomWeight_le_one ℱ hG hA hp0 hp1 hl hp n

@@ -79,7 +79,7 @@ theorem openExitTime_mem_frontier [TopologicalSpace E] (hU : IsOpen U)
     apply pos_iff_ne_zero.mpr
     intro htzero
     exact hout (by simpa only [htzero] using hstart)
-  letI : NeBot (𝓝[<] t) := nhdsLT_neBot_of_exists_lt ⟨0, htpos⟩
+  let : NeBot (𝓝[<] t) := nhdsLT_neBot_of_exists_lt ⟨0, htpos⟩
   have hlimit : Tendsto (fun s : ℝ≥0 ↦ B s ω) (𝓝[<] t) (𝓝 (B t ω)) :=
     hcont.continuousAt.tendsto.mono_left nhdsWithin_le_nhds
   have hinside : ∀ᶠ s in 𝓝[<] t, B s ω ∈ U := by

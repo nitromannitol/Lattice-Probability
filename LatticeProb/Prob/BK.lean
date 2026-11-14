@@ -263,7 +263,7 @@ omit [Fintype ι] in
 theorem DEv_empty (A B : Set (ι → Bool)) :
     DEv A B ∅ = {σ : ι → Bool × Bool | (fun i => (σ i).1) ∈ wit A B} := by
   ext σ
-  simp only [DEv, wit, Set.mem_setOf_eq, mixAt_empty, Finset.notMem_empty, not_false_iff,
+  simp only [DEv, wit, Set.mem_ofPred_eq, mixAt_empty, Finset.notMem_empty, not_false_iff,
     forall_true_left]
   constructor
   · rintro ⟨K, L, hK, hL, hKA, hLB, hd⟩
@@ -275,7 +275,7 @@ theorem DEv_univ {A B : Set (ι → Bool)} (hA : IsUpperSet A) (hB : IsUpperSet 
     DEv A B Finset.univ
       = {σ : ι → Bool × Bool | (fun i => (σ i).2) ∈ A ∧ (fun i => (σ i).1) ∈ B} := by
   ext σ
-  simp only [DEv, Set.mem_setOf_eq, mixAt_univ]
+  simp only [DEv, Set.mem_ofPred_eq, mixAt_univ]
   constructor
   · rintro ⟨K, L, hK, hL, hKA, hLB, -⟩
     exact ⟨(mem_iff_exists_indic hA _).mpr ⟨K, hK, hKA⟩,
@@ -358,17 +358,18 @@ theorem bk_step_arith {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) (hpq : p + q = 1
   have hqsum : q * p * 1 + p * p * 1 = p := by nlinarith [hpq]
   by_cases h0 : P0
   · obtain ⟨h1, h10⟩ := f4 h0
-    rw [if_pos h0, if_pos h1, if_pos (f1a h0), if_pos (f1b h0), if_pos h10, if_pos (f2 h1)]
+    rw [ite_eq_left h0, ite_eq_left h1, ite_eq_left (f1a h0), ite_eq_left (f1b h0), ite_eq_left h10,
+      ite_eq_left (f2 h1)]
     linarith
-  · rw [if_neg h0]
+  · rw [ite_eq_right h0]
     by_cases h1 : P1
-    · rw [if_pos h1, if_pos (f2 h1)]
+    · rw [ite_eq_left h1, ite_eq_left (f2 h1)]
       rcases f3 h1 with h | h
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         linarith
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         linarith
-    · rw [if_neg h1]
+    · rw [ite_eq_right h1]
       linarith
 
 /-! ### Adding one coordinate to `S` -/
@@ -395,8 +396,8 @@ theorem mixAt_fill_congr {i : ι} (h : i ≠ j) {T T' : Finset ι} (hT : i ∈ T
     mixAt T (fill j v rest) i = mixAt T' (fill j v' rest) i := by
   simp only [mixAt, fill_of_ne h]
   by_cases hi : i ∈ T
-  · rw [if_pos hi, if_pos (hT.mp hi)]
-  · rw [if_neg hi, if_neg fun hc => hi (hT.mpr hc)]
+  · rw [ite_eq_left hi, ite_eq_left (hT.mp hi)]
+  · rw [ite_eq_right hi, ite_eq_right fun hc => hi (hT.mpr hc)]
 
 omit [Fintype ι] in
 theorem fst_fill_of_ne {i : ι} (h : i ≠ j) (v v' : Bool × Bool)
@@ -569,8 +570,8 @@ theorem prob₂_DEv_le_insert {p : ι → ℝ} (h0 : ∀ i, 0 ≤ p i) (h1 : ∀
     refine Finset.sum_congr rfl fun v _ => ?_
     rw [Set.indicator_apply]
     by_cases hv : fill j v rest ∈ X
-    · rw [if_pos hv, if_pos hv, hw v]; ring
-    · rw [if_neg hv, if_neg hv]; ring
+    · rw [ite_eq_left hv, ite_eq_left hv, hw v]; ring
+    · rw [ite_eq_right hv, ite_eq_right hv]; ring
   rw [expand, expand]
   refine mul_le_mul_of_nonneg_left ?_ hCnn
   rw [expand4, expand4]
@@ -716,10 +717,10 @@ theorem measure_pi_toReal_eq_prob (μ : ι → Measure Bool) [∀ i, IsProbabili
   rw [Finset.sum_filter]
   refine Finset.sum_congr rfl fun ω _ => ?_
   by_cases hω : ω ∈ X
-  · rw [if_pos hω, Set.indicator_of_mem hω, measure_pi_singleton,
+  · rw [ite_eq_left hω, Set.indicator_of_mem hω, measure_pi_singleton,
       ENNReal.toReal_prod, weight]
     exact Finset.prod_congr rfl fun i _ => measure_singleton_bool (μ i) (ω i)
-  · rw [if_neg hω, Set.indicator_of_notMem hω]
+  · rw [ite_eq_right hω, Set.indicator_of_notMem hω]
 
 /-- **The van den Berg-Kesten inequality** for a product of Bernoulli measures on
 a finite product of two-point spaces: two increasing measurable events occur

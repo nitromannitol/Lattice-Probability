@@ -57,7 +57,7 @@ theorem integral_openExit_harmonic_compactSupport {d : ℕ} (hd : 1 ≤ d)
     {f : Euc d → ℝ} (hf : ContDiff ℝ 2 f) (hsupp : HasCompactSupport f)
     (hh : IsHarmonicOn f U) :
     ∫ ω, f (B (openExitTime B U ω).toNNReal ω) ∂P = f x := by
-  haveI := hB.isProbabilityMeasure
+  have := hB.isProbabilityMeasure
   have hdpos : (0 : ℝ) < d := Nat.cast_pos.mpr (by omega)
   have hsd : Real.sqrt d ≠ 0 := (Real.sqrt_pos.mpr hdpos).ne'
   have hc : (Real.sqrt d)⁻¹ ≠ 0 := inv_ne_zero hsd
@@ -92,7 +92,7 @@ theorem integral_openExit_harmonicNearClosure {d : ℕ} (hd : 1 ≤ d)
     {U : Set (Euc d)} (hU : IsOpen U) (hUb : Bornology.IsBounded U)
     {h : Euc d → ℝ} (hh : HarmonicNearClosure h U) :
     ∫ ω, h (B (openExitTime B U ω).toNNReal ω) ∂P = h x := by
-  haveI := hB.isProbabilityMeasure
+  have := hB.isProbabilityMeasure
   by_cases hxU : x ∈ U
   · obtain ⟨W, hW, hUW, hhW⟩ := hh
     obtain ⟨g, V, -, hUV, -, hg, hgc, -, heq, hgharm⟩ :=

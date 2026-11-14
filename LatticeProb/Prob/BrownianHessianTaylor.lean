@@ -155,7 +155,7 @@ theorem standardBrownianLaw_taylor_expectation_bound {d : ℕ}
         fderiv ℝ (fderiv ℝ f) x y y| ≤ ε * ‖y‖ ^ 2 + C * ‖y‖ ^ 4) :
     |(∫ ω, f (x + ω t) ∂μ) - f x - (t : ℝ) / 2 * Δ f x| ≤
       ε * (d : ℝ) * (t : ℝ) + C * (3 * (d : ℝ) ^ 2 * (t : ℝ) ^ 2) := by
-  letI : IsProbabilityMeasure μ := hμ.1
+  let : IsProbabilityMeasure μ := hμ.1
   let R : BrownianPath d → ℝ := fun ω ↦ f (x + ω t) - f x -
     fderiv ℝ f x (ω t) - (1 / 2 : ℝ) * fderiv ℝ (fderiv ℝ f) x (ω t) (ω t)
   have hg : Integrable (fun ω : BrownianPath d ↦ ε * ‖ω t‖ ^ 2 + C * ‖ω t‖ ^ 4) μ :=

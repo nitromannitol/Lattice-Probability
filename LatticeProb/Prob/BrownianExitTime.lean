@@ -68,7 +68,7 @@ theorem measurableSet_comap_exists_le_le_norm [MeasurableSpace Ω] {d : ℕ}
   have hEq : {ω | ∃ s ≤ t, A ≤ ‖B s ω - u‖}
       = ⋂ k : ℕ, {ω | ∃ s ≤ t, A - 1 / (k + 1 : ℝ) < ‖B s ω - u‖} := by
     ext ω
-    simp only [Set.mem_iInter, Set.mem_setOf_eq]
+    simp only [Set.mem_iInter, Set.mem_ofPred_eq]
     constructor
     · rintro ⟨s, hs, hA⟩ k
       refine ⟨s, hs, lt_of_lt_of_le ?_ hA⟩

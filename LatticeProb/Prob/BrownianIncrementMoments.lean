@@ -62,7 +62,7 @@ theorem standardBrownianLaw_integral_coordinate_mul {d : ℕ}
   · have hind : IndepFun (fun ω : BrownianPath d ↦ ω t i)
         (fun ω : BrownianPath d ↦ ω t j) μ :=
       (hμ.2.2.indepFun hij).comp (measurable_pi_apply t) (measurable_pi_apply t)
-    rw [if_neg hij, hind.integral_fun_mul_eq_mul_integral
+    rw [ite_eq_right hij, hind.integral_fun_mul_eq_mul_integral
       ((hμ.2.1 i).integrable_eval t).aestronglyMeasurable
       ((hμ.2.1 j).integrable_eval t).aestronglyMeasurable,
       (hμ.2.1 i).integral_eval, zero_mul]

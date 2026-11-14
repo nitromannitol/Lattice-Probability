@@ -298,11 +298,11 @@ theorem condExp_exp_le_of_factorial {m : MeasurableSpace Ω} (hm : m ≤ m₀) [
     · by_cases hq2 : 2 ≤ q
       · have hq0 : q ≠ 0 := by omega
         have hq1 : q ≠ 1 := by omega
-        simp only [if_neg hq0, if_neg hq1]
+        simp only [ite_eq_right hq0, ite_eq_right hq1]
         exact hterm q hq2
       · have hq1 : q = 1 := by omega
         subst hq1
-        simp only [if_neg (by norm_num : (1 : ℕ) ≠ 0)]
+        simp only [ite_eq_right (by norm_num : (1 : ℕ) ≠ 0)]
         exact h1
   have hall : ∀ᵐ ω ∂μ, ∀ q : ℕ,
       (μ[fun ω' => (lam * X ω') ^ q / (Nat.factorial q : ℝ) | m]) ω

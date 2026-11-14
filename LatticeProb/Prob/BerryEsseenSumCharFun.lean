@@ -86,23 +86,23 @@ private theorem sum_erase_expo_le {ι : Type*} [Fintype ι] [DecidableEq ι] (v 
     intro k
     have := hrt k
     by_cases h : v k * t ^ 2 ≤ 1
-    · simp only [hc, if_pos h]
+    · simp only [hc, ite_eq_left h]
       linarith
-    · simp only [hc, if_neg h]
+    · simp only [hc, ite_eq_right h]
       linarith
   have hcle : c i ≤ 1 := by
     by_cases h : v i * t ^ 2 ≤ 1
-    · simp only [hc, if_pos h]
+    · simp only [hc, ite_eq_left h]
       exact h
-    · simp only [hc, if_neg h]
+    · simp only [hc, ite_eq_right h]
       norm_num
   have hdiff : ∀ k, v k * t ^ 2 - c k ≤ r k * |t| ^ 3 := by
     intro k
     have := hrt k
     by_cases h : v k * t ^ 2 ≤ 1
-    · simp only [hc, if_pos h]
+    · simp only [hc, ite_eq_left h]
       linarith
-    · simp only [hc, if_neg h]
+    · simp only [hc, ite_eq_right h]
       have h' : 1 < v k * t ^ 2 := not_le.mp h
       have := mul_sq_le_of_one_lt (hv0 k) (hr k) h'
       linarith
@@ -156,9 +156,9 @@ private theorem norm_prod_sub_prod_abstract {ι : Type*} [Fintype ι] (a b : ι 
   have hau : ∀ k ∈ (Finset.univ : Finset ι), ‖a k‖ ≤ Real.exp (u k) := by
     intro k _
     by_cases h : v k * t ^ 2 ≤ 1
-    · simp only [hu, if_pos h]
+    · simp only [hu, ite_eq_left h]
       exact ha k h
-    · simp only [hu, if_neg h, Real.exp_zero]
+    · simp only [hu, ite_eq_right h, Real.exp_zero]
       exact ha1 k
   have hbu : ∀ k ∈ (Finset.univ : Finset ι), ‖b k‖ ≤ Real.exp (u k) := by
     intro k _
@@ -166,9 +166,9 @@ private theorem norm_prod_sub_prod_abstract {ι : Type*} [Fintype ι] (a b : ι 
     have := hrt k
     have := hw0 k
     by_cases h : v k * t ^ 2 ≤ 1
-    · simp only [hu, if_pos h]
+    · simp only [hu, ite_eq_left h]
       exact Real.exp_le_exp.mpr (by linarith)
-    · simp only [hu, if_neg h, Real.exp_zero]
+    · simp only [hu, ite_eq_right h, Real.exp_zero]
       exact Real.exp_le_one_iff.mpr (by linarith)
   have hdiff2 : ∀ k, ‖a k - b k‖ ≤ 2 * r k * |t| ^ 3 := by
     intro k

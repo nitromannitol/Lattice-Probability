@@ -38,7 +38,7 @@ theorem berryEsseen_oneDim_indep {Ω ι : Type*} [MeasurableSpace Ω] [Fintype �
         (gaussianReal 0 (∑ i, variance (Y i) P).toNNReal (Set.Iic x)).toReal|
       ≤ 100 * (∑ i, ∫ ω, |Y i ω| ^ 3 ∂P) /
           (∑ i, variance (Y i) P) ^ ((3 : ℝ) / 2) := by
-  haveI hprob : ∀ i, IsProbabilityMeasure (P.map (Y i)) := fun i =>
+  have hprob : ∀ i, IsProbabilityMeasure (P.map (Y i)) := fun i =>
     inferInstance
   have hf : Measurable fun ω => fun i => Y i ω := measurable_pi_iff.mpr hmeas
   have hg : Measurable fun y : ι → ℝ => ∑ i, y i :=

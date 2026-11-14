@@ -86,7 +86,7 @@ private lemma measure_eq_sum_finite_time_slices {Ω : Type*} [MeasurableSpace Ω
     exact hne (hω.2.symm.trans hω'.2)
   have hcover : (⋃ t ∈ I, A ∩ {ω | σ ω = t}) = A := by
     ext ω
-    simp only [mem_iUnion, mem_inter_iff, mem_setOf_eq]
+    simp only [mem_iUnion, mem_inter_iff, mem_ofPred_eq]
     exact ⟨fun ⟨t, ht, hω, heq⟩ ↦ hω, fun hω ↦ ⟨σ ω, hI ω, hω, rfl⟩⟩
   calc
     μ A = μ (⋃ t ∈ I, A ∩ {ω | σ ω = t}) := congrArg μ hcover.symm
@@ -127,7 +127,7 @@ theorem standardBrownianLaw_finiteStopping_inter {d : ℕ}
       intro t ht
       congr 1
       ext ω
-      simp only [mem_inter_iff, mem_setOf_eq, mem_preimage]
+      simp only [mem_inter_iff, mem_ofPred_eq, mem_preimage]
       constructor
       · rintro ⟨⟨hSω, hAω⟩, hσω⟩
         exact ⟨hσω ▸ hSω, hAω, hσω⟩

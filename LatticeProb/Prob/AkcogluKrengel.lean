@@ -126,10 +126,10 @@ private theorem pow_card_mul_prod_update_le_core {d : ℕ} (S : Finset (Fin d)) 
         ≤ ∏ _x ∈ (Finset.univ \ {i} : Finset (Fin d)), (n : ℝ) :=
           Finset.prod_le_prod₀
             (fun x _ => by
-              by_cases hx : x ∈ S <;> simp only [hx, if_true, if_false] <;> positivity)
+              by_cases hx : x ∈ S <;> simp only [hx, ite_true, ite_false] <;> positivity)
             (fun x _ => by
               by_cases hx : x ∈ S
-              · simp only [hx, if_true]
+              · simp only [hx, ite_true]
                 exact_mod_cast hqm
               · simp [hx])
       _ = (n : ℝ) ^ (d - 1) := by rw [Finset.prod_const, hcard]

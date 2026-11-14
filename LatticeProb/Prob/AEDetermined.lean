@@ -72,11 +72,11 @@ theorem exists_ae_eq_measurable_of_aeDeterminedSigma {β : Type*} [mβ : Measura
       ext ω; simp [Φ]
   have hae : ∀ᵐ ω ∂μ, ψ (Y ω) = Φ ω := by
     have hall : ∀ᵐ ω ∂μ, ∀ n, (ω ∈ Y ⁻¹' {b | ψ b n = true} ↔ ω ∈ C n) :=
-      ae_all_iff.2 fun n => eventuallyEq_set.1 (hYC n)
+      ae_all_iff.2 fun n => eventuallyEqSet_iff.1 (hYC n)
     filter_upwards [hall] with ω hω
     funext n
     have := hω n
-    simp only [mem_preimage, mem_setOf_eq] at this
+    simp only [mem_preimage, mem_ofPred_eq] at this
     by_cases hc : ω ∈ C n
     · simpa [Φ, this.2 hc] using hc
     · have : ψ (Y ω) n ≠ true := fun h' => hc (this.1 h')
