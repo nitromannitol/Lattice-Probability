@@ -114,25 +114,25 @@ private theorem killedHeat_add_eq_sum_mul (B : Finset (Site d)) (m n : ℕ) (x y
       rw [Nat.zero_add]
       by_cases hx : x ∈ B
       · have h1 : x ∈ (B : Set (Site d)) := hx
-        simp only [Network.killedHeat_zero, if_pos h1, ite_mul, one_mul, zero_mul,
-          Finset.sum_ite_eq, if_pos hx]
+        simp only [Network.killedHeat_zero, ite_eq_left h1, ite_mul, one_mul, zero_mul,
+          Finset.sum_ite_eq, ite_eq_left hx]
       · have h0 : ¬ (x ∈ (B : Set (Site d))) := hx
         rw [Network.killedHeat_of_source_not_mem (G := lattice d) h0 n y]
         exact (Finset.sum_eq_zero (fun z _ => by
-          simp only [Network.killedHeat_zero, if_neg h0, zero_mul])).symm
+          simp only [Network.killedHeat_zero, ite_eq_right h0, zero_mul])).symm
   | succ m ih =>
       rw [Nat.succ_add]
       by_cases hx : x ∈ B
       · have h1 : x ∈ (B : Set (Site d)) := hx
-        simp only [Graph.Zd.killedHeat_succ_walkOp, if_pos h1]
+        simp only [Graph.Zd.killedHeat_succ_walkOp, ite_eq_left h1]
         simp only [ih]
         rw [walkOp_sum B (fun z w => Graph.killedHeat (lattice d) (B : Set (Site d)) m w z
               * Graph.killedHeat (lattice d) (B : Set (Site d)) n z y) x]
         exact Finset.sum_congr rfl (fun z _ => walkOp_mul_const _ _ x)
       · have h0 : ¬ (x ∈ (B : Set (Site d))) := hx
-        rw [Graph.Zd.killedHeat_succ_walkOp (B : Set (Site d)) (m + n) x y, if_neg h0]
+        rw [Graph.Zd.killedHeat_succ_walkOp (B : Set (Site d)) (m + n) x y, ite_eq_right h0]
         exact (Finset.sum_eq_zero (fun z _ => by
-          rw [Graph.Zd.killedHeat_succ_walkOp (B : Set (Site d)) m x z, if_neg h0,
+          rw [Graph.Zd.killedHeat_succ_walkOp (B : Set (Site d)) m x z, ite_eq_right h0,
             zero_mul])).symm
 
 

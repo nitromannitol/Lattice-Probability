@@ -197,25 +197,25 @@ lemma harmonic_sum (hd : 0 < d) (A : Finset (Site d)) (p : Site d) (hp : p ∉ A
     have hg : ∀ z, z ∉ ({p} : Finset (Site d)) → (if z = p then f p else 0) = 0 := by
       intro z hz
       simp only [Finset.mem_singleton] at hz
-      rw [if_neg hz]
+      rw [ite_eq_right hz]
     rw [← sum_adj_eq_sum_dir ({p} : Finset (Site d)) (fun z => if z = p then f p else 0) hg y,
       Finset.filter_singleton]
     by_cases hap : Adj y p
-    · rw [if_pos hap, if_pos hap]
+    · rw [ite_eq_left hap, ite_eq_left hap]
       simp
-    · rw [if_neg hap, if_neg hap]
+    · rw [ite_eq_right hap, ite_eq_right hap]
       simp
   have hext : ∀ z : Site d, extendZero A φ z = f z - (if z = p then f p else 0) := by
     intro z
     by_cases hz : z ∈ A
     · have hzp : z ≠ p := fun hzp => hp (hzp ▸ hz)
-      rw [show z = ((⟨z, hz⟩ : A) : Site d) from rfl, extendZero_coe, if_neg hzp]
+      rw [show z = ((⟨z, hz⟩ : A) : Site d) from rfl, extendZero_coe, ite_eq_right hzp]
       simp [hφ]
     · rw [extendZero_of_notMem A φ hz]
       by_cases hzp : z = p
-      · rw [if_pos hzp, hzp]
+      · rw [ite_eq_left hzp, hzp]
         ring
-      · rw [if_neg hzp, hoff z (by simp [Finset.mem_insert, hzp, hz]), sub_zero]
+      · rw [ite_eq_right hzp, hoff z (by simp [Finset.mem_insert, hzp, hz]), sub_zero]
   have hmv : dirichletLaplacian A *ᵥ φ = (-(f p)) • χ := by
     funext y
     rw [dirichletLaplacian_mulVec_apply A φ y]
@@ -340,8 +340,8 @@ lemma green_lap' (hd : 0 < d) (B : Finset (Site d)) (ξ : B) (y : Site d) (hy : 
   rw [green_lap hd B ξ y hy]
   congr 1
   by_cases hc : y = (ξ : Site d)
-  · rw [if_pos hc, if_pos (Subtype.ext hc)]
-  · rw [if_neg hc, if_neg (fun hcon => hc (congrArg Subtype.val hcon))]
+  · rw [ite_eq_left hc, ite_eq_left (Subtype.ext hc)]
+  · rw [ite_eq_right hc, ite_eq_right (fun hcon => hc (congrArg Subtype.val hcon))]
 
 /-- The Green function on the finite originBox is nonpositive, providing the sign control needed for the comparison argument in the one-point insertion lemma. -/
 lemma green_nonpos (hd : 0 < d) (B : Finset (Site d)) (ξ : B) (z : Site d) :
@@ -383,7 +383,7 @@ theorem one_point_insertion (hd : 1 ≤ d)
       intro hcon
       have hyx : y = x := congrArg Subtype.val hcon
       exact hx (hyx ▸ hy)
-    rw [if_neg hne, add_zero]
+    rw [ite_eq_right hne, add_zero]
   have hgoff : ∀ z, z ∉ insert x A → green B ξ z = 0 := by
     intro z hz
     rw [green, extendZero_of_notMem B _ (by rwa [hB])]
@@ -437,7 +437,7 @@ theorem one_point_insertion (hd : 1 ≤ d)
   -- third conjunct
   have hthird : 1 / (2 * (d : ℝ)) ≤ Reff A x := by
     have hlap := green_lap hd0 B ξ x hxB
-    rw [if_pos (by rw [hξ])] at hlap
+    rw [ite_eq_left (by rw [hξ])] at hlap
     have hle : (∑ a : Dir d, green B ξ (x + dirVec a)) ≤ 0 :=
       Finset.sum_nonpos fun a _ => green_nonpos hd0 B ξ _
     rw [hReff]

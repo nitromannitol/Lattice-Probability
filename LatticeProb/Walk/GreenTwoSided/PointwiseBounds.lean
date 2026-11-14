@@ -175,7 +175,7 @@ private theorem srwHeat_le_div_pow_of_le_graphNorm' (hd : 1 ≤ d) :
       rw [graphNorm_zero] at hrw
       exfalso
       omega
-    · rw [if_neg hw]
+    · rw [ite_eq_right hw]
       exact div_nonneg (by linarith) (le_of_lt hRpos)
   · have hk1 : 1 ≤ k := hk
     have h11 := rpow_neg_half_le_rpow_neg_half_add (d := d) k hk1

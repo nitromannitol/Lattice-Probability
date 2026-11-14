@@ -98,15 +98,15 @@ private theorem lazyKilled_add_eq_sum_mul (B : Finset (Site d)) (m n : ℕ) (x y
       rw [Nat.zero_add]
       simp only [lazyKilled.eq_1]
       by_cases hx : x ∈ B
-      · simp only [if_pos hx, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq]
-      · simp only [if_neg hx, zero_mul, Finset.sum_const_zero]
+      · simp only [ite_eq_left hx, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq]
+      · simp only [ite_eq_right hx, zero_mul, Finset.sum_const_zero]
         exact lazyKilled_eq_zero_of_not_mem_left B n hx y
   | succ m ih =>
       rw [Nat.add_right_comm]
       simp only [lazyKilled.eq_2]
       rw [ih x]
       by_cases hx : x ∈ B
-      · simp only [if_pos hx]
+      · simp only [ite_eq_left hx]
         simp only [ih]
         rw [Finset.sum_comm, Finset.sum_div, Finset.sum_div]
         have hR :
@@ -184,17 +184,17 @@ private theorem le_lazyKilled_of_forall_le' (hd : 1 ≤ d) (B : Finset (Site d))
   | zero =>
     intro hS' x
     by_cases hx : x ∈ B
-    · rw [lazyKilled_zero_eq, if_pos hx]
+    · rw [lazyKilled_zero_eq, ite_eq_left hx]
       simp only [Function.iterate_zero, id_eq]
       have hδ : delta0 (x - y) ≤ (if x = y then (1 : ℝ) else 0) := by
         by_cases hxy : x = y
-        · rw [sub_eq_zero.mpr hxy, if_pos hxy]
+        · rw [sub_eq_zero.mpr hxy, ite_eq_left hxy]
           simp [delta0]
-        · rw [if_neg hxy]
+        · rw [ite_eq_right hxy]
           have hne : x - y ≠ 0 := fun h => hxy (sub_eq_zero.mp h)
           simp [delta0, hne]
       linarith
-    · rw [lazyKilled_zero_eq, if_neg hx]
+    · rw [lazyKilled_zero_eq, ite_eq_right hx]
       simp only [Function.iterate_zero, id_eq]
       have h0 : delta0 (x - y) ≤ S := by
         simpa only [Function.iterate_zero, id_eq] using hS' 0 le_rfl x hx
@@ -204,7 +204,7 @@ private theorem le_lazyKilled_of_forall_le' (hd : 1 ≤ d) (B : Finset (Site d))
     have ih' : ∀ z : Site d, Q^[r] (delta0 : Site d → ℝ) (z - y) - S ≤ lazyKilled B r z y :=
       fun z => ih (fun j hj z hz => hS' j (Nat.le_succ_of_le hj) z hz) z
     by_cases hx : x ∈ B
-    · rw [lazyKilled_succ_eq, if_pos hx]
+    · rw [lazyKilled_succ_eq, ite_eq_left hx]
       rw [iterate_Q_succ_delta0_eq, sum_iterate_Q_delta0_sub_add_eq r x y]
       have h1 : Q^[r] (delta0 : Site d → ℝ) (x - y) / 2 - lazyKilled B r x y / 2 ≤ S / 2 := by
         linarith [ih' x]
@@ -227,7 +227,7 @@ private theorem le_lazyKilled_of_forall_le' (hd : 1 ≤ d) (B : Finset (Site d))
         rw [show S / 2 * (4 * (d : ℝ)) = 2 * (d : ℝ) * S by ring]
         linarith
       linarith
-    · rw [lazyKilled_succ_eq, if_neg hx]
+    · rw [lazyKilled_succ_eq, ite_eq_right hx]
       have h0 : Q^[r + 1] (delta0 : Site d → ℝ) (x - y) ≤ S := hS' (r + 1) le_rfl x hx
       linarith
 
@@ -314,7 +314,7 @@ private theorem walkOp_sum_choose_killedHeat_eq (B : Finset (Site d)) (r : ℕ) 
           Graph.killedHeat (lattice d) (B : Set (Site d)) k (x + dirVec a) y)
         / (2 * (d : ℝ)) := by
     intro k _
-    rw [Graph.Zd.killedHeat_succ_walkOp (B : Set (Site d)) k x y, Finset.mem_coe, if_pos hxB]
+    rw [Graph.Zd.killedHeat_succ_walkOp (B : Set (Site d)) k x y, Finset.mem_coe, ite_eq_left hxB]
     simp only [walkOp_eq_sum_dir]
     rw [← Finset.mul_sum, mul_div_assoc]
   have hswap : ∑ a : Dir d, ∑ k ∈ Finset.range (r + 1), (r.choose k : ℝ) *
@@ -343,9 +343,9 @@ private theorem lazyKilled_succ_eq_Q (B : Finset (Site d)) (r : ℕ) (x y : Site
     lazyKilled B (r + 1) x y = if x ∈ B then Q (fun z => lazyKilled B r z y) x else 0 := by
   rw [lazyKilled_succ_eq_ite]
   by_cases hxB : x ∈ B
-  · rw [if_pos hxB, if_pos hxB, Q_eq_walkOp, walkOp_eq_sum_dir]
+  · rw [ite_eq_left hxB, ite_eq_left hxB, Q_eq_walkOp, walkOp_eq_sum_dir]
     rw [add_div, div_div, show (2 * (d : ℝ)) * 2 = 4 * (d : ℝ) by ring]
-  · rw [if_neg hxB, if_neg hxB]
+  · rw [ite_eq_right hxB, ite_eq_right hxB]
 
 /-- The binomial-mixture identity: `lazyKilled B r x y = 2^{-r} ∑_{k ≤ r} C(r,k) killedHeat k x
 y`. -/
@@ -362,7 +362,7 @@ private theorem lazyKilled_eq_sum_choose_killedHeat (_unused_hd : 1 ≤ d) (B : 
   | succ r ih =>
     rw [lazyKilled_succ_eq_Q]
     by_cases hxB : x ∈ B
-    · rw [if_pos hxB]
+    · rw [ite_eq_left hxB]
       have hfun : (fun z : Site d => lazyKilled B r z y) = fun z => (2 : ℝ)⁻¹ ^ r *
           (∑ k ∈ Finset.range (r + 1), (r.choose k : ℝ) *
             Graph.killedHeat (lattice d) (B : Set (Site d)) k z y) := funext ih
@@ -372,7 +372,7 @@ private theorem lazyKilled_eq_sum_choose_killedHeat (_unused_hd : 1 ≤ d) (B : 
           [walkOp_sum_choose_killedHeat_eq B r x y hxB, sum_range_choose_killedHeat_succ_eq_add B r
               x y, pow_succ]
       ring
-    · rw [if_neg hxB, Finset.sum_eq_zero (fun k _ => by
+    · rw [ite_eq_right hxB, Finset.sum_eq_zero (fun k _ => by
         rw [Network.killedHeat_of_source_not_mem (C := (B : Set (Site d)))
           (by simpa using hxB) k y, mul_zero]), mul_zero]
 
@@ -388,7 +388,7 @@ private theorem sum_lazyKilled_le_two_mul_tsum_killedHeat' (hd : 1 ≤ d) (B : F
     (x y : Site d) (T : Finset ℕ) :
     ∑ r ∈ T, lazyKilled B r x y
       ≤ 2 * ∑' k : ℕ, Graph.killedHeat (lattice d) (B : Set (Site d)) k x y := by
-  haveI : NeZero d := NeZero.of_pos (by omega)
+  have : NeZero d := NeZero.of_pos (by omega)
   let R : ℕ := T.sup (id : ℕ → ℕ)
   have hsub : T ⊆ Finset.range (R + 1) := by
     intro r hr

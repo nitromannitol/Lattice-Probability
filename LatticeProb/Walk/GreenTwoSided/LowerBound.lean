@@ -42,7 +42,7 @@ private theorem killedHeat_div_two_mul_le_killedHeat_succ (hd : 1 ≤ d) (C : Se
       ≤ Graph.killedHeat (lattice d) C (n + 1) x y := by
   have hnn : ∀ z : Site d, 0 ≤ Graph.killedHeat (lattice d) C n z y :=
     fun z => Network.killedHeat_nonneg (G := lattice d) C n z y
-  rw [Graph.Zd.killedHeat_succ_walkOp, if_pos hx, LatticeProb.walkOp, LatticeProb.nbrSum]
+  rw [Graph.Zd.killedHeat_succ_walkOp, ite_eq_left hx, LatticeProb.walkOp, LatticeProb.nbrSum]
   refine div_le_div_of_nonneg_right ?_ (by positivity)
   rcases hx' with h | h
   · rw [h]
@@ -180,11 +180,11 @@ private theorem inv_two_mul_pow_zero_le_killedHeat_zero (C : Set (Site d)) {x y 
     (hx : x ∈ C)
     (h : graphNorm (x - y) = 0) :
     (2 * (d : ℝ))⁻¹ ^ 0 ≤ Graph.killedHeat (lattice d) C 0 x y := by
-  rw [pow_zero, Network.killedHeat_zero, if_pos hx]
+  rw [pow_zero, Network.killedHeat_zero, ite_eq_left hx]
   have hxy : x = y := by
     have h1 : x - y = 0 := graphNorm_eq_zero_iff.mp h
     simpa using sub_eq_zero.mp h1
-  rw [if_pos hxy]
+  rw [ite_eq_left hxy]
 
 -- Monotone lattice path.  Induction on n generalizing x.  n = 0: x = y (graphNorm_eq_zero_iff),
 -- killedHeat 0 = 1 (Network.killedHeat_zero, hB).  n+1: x ≠ y; step toward y (as
@@ -230,7 +230,7 @@ private theorem killedHeat_div_two_mul_le_killedGreenReal (hd : 1 ≤ d) (B : Fi
     (x y : Site d) :
     Graph.killedHeat (lattice d) (B : Set (Site d)) k x y / (2 * (d : ℝ))
       ≤ Graph.killedGreenReal (lattice d) (B : Set (Site d)) x y := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨q, hq⟩ := Infinite.exists_notMem_finset B
   have hsum : Summable (fun k => Graph.killedHeat (lattice d) (B : Set (Site d)) k x y) :=
     Network.summable_killedHeat (Graph.Zd.latticeConnected d) B hq x y

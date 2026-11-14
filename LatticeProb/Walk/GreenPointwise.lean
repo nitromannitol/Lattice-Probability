@@ -197,7 +197,7 @@ theorem sum_range_srwHeat_le {k : ℕ} {z : Site (k + 4)} (hz : 1 ≤ graphNorm 
     rw [Finset.sum_Ico_consecutive _ (by omega : (0:ℕ) ≤ 1) hm1,
       Finset.sum_Ico_consecutive _ (Nat.zero_le _) hmM', Finset.range_eq_Ico]
   have hzero : ∑ j ∈ Finset.Ico 0 1, srwHeat (k + 4) j z = 0 := by
-    rw [Nat.Ico_zero_eq_range, Finset.sum_range_one, srwHeat_zero, if_neg hzne]
+    rw [Nat.Ico_zero_eq_range, Finset.sum_range_one, srwHeat_zero, ite_eq_right hzne]
   -- the near times
   have hnear : ∑ j ∈ Finset.Ico 1 (graphNorm z ^ 2 + 1), srwHeat (k + 4) j z
       ≤ nearConst (k + 4) / ((graphNorm z : ℕ) : ℝ) ^ (k + 2) := by
@@ -512,7 +512,7 @@ theorem sum_range_weighted_ne (k : ℕ) {v : Site (k + 5)} (hv : 1 ≤ graphNorm
     rw [Finset.sum_Ico_consecutive _ (by omega : (0:ℕ) ≤ 1) hm1,
       Finset.sum_Ico_consecutive _ (Nat.zero_le _) hmM', Finset.range_eq_Ico]
   have hzero : ∑ s ∈ Finset.Ico (0 : ℕ) 1, ((s : ℝ) + 1) * srwHeat (k + 5) s v = 0 := by
-    rw [Nat.Ico_zero_eq_range, Finset.sum_range_one, srwHeat_zero, if_neg hvne]
+    rw [Nat.Ico_zero_eq_range, Finset.sum_range_one, srwHeat_zero, ite_eq_right hvne]
     ring
   -- the near times
   have hnear : ∑ s ∈ Finset.Ico (1 : ℕ) (graphNorm v ^ 2 + 1),
@@ -1041,7 +1041,7 @@ theorem sum_pair_add_le (S T U : Finset ℕ) (f : ℕ → ℝ) (hf : ∀ s, 0 �
     have hinj : Set.InjOn (fun p : ℕ × ℕ => p.1)
         (((S ×ˢ T).filter fun p : ℕ × ℕ => p.1 + p.2 = s)) := by
       intro p hp q hq hpq
-      simp only [Finset.coe_filter, Set.mem_setOf_eq] at hp hq
+      simp only [Finset.coe_filter, Set.mem_ofPred_eq] at hp hq
       have h1 : p.1 = q.1 := hpq
       exact Prod.ext h1 (by omega)
     calc (((S ×ˢ T).filter fun p : ℕ × ℕ => p.1 + p.2 = s)).card
@@ -1235,7 +1235,7 @@ theorem exists_tsum_srwGreenInf_crossed_le (k : ℕ) :
       have : (0 : ℝ) ≤ ((graphNorm (u - v) : ℕ) : ℝ) := by positivity
       linarith
     by_cases hu : supNorm u < M
-    · rw [if_pos hu]
+    · rw [ite_eq_left hu]
       -- `2|u| ≤ |v|`, so `|u - v| ≥ |v|/2` in the sup norm and a fortiori in the graph norm
       have h2u : 2 * supNorm u ≤ supNorm v := by omega
       have htri : supNorm v ≤ supNorm (v - u) + supNorm u := supNorm_sub_le v u
@@ -1265,7 +1265,7 @@ theorem exists_tsum_srwGreenInf_crossed_le (k : ℕ) :
             mul_le_mul_of_nonneg_left hkey (sq_nonneg _)
         _ = 2 ^ (k + 1) * C₂ / (1 + ((supNorm v : ℕ) : ℝ)) ^ (k + 1)
               * srwGreenInf (k + 5) u ^ 2 := by ring
-    · rw [if_neg hu]
+    · rw [ite_eq_right hu]
       have hle : C₂ / (1 + ((graphNorm (u - v) : ℕ) : ℝ)) ^ (k + 1) ≤ C₂ := by
         rw [div_le_iff₀ hden]
         nlinarith [hC₂.le, hone]

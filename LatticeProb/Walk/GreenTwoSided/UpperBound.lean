@@ -240,7 +240,7 @@ theorem killedGreenReal_eq_tsum_killedHeat_div (hd : 1 ≤ d) (B : Finset (Site 
     (x y : Site d) :
     Graph.killedGreenReal (lattice d) (B : Set (Site d)) x y
       = (∑' k : ℕ, Graph.killedHeat (lattice d) (B : Set (Site d)) k x y) / (2 * (d : ℝ)) := by
-  haveI : NeZero d := ⟨by omega⟩
+  have : NeZero d := ⟨by omega⟩
   obtain ⟨q, hq⟩ := Infinite.exists_notMem_finset B
   rw [Network.killedGreenReal_eq_tsum (Graph.Zd.latticeConnected d) B hq x y]
   rw [Graph.Zd.degree_eq]

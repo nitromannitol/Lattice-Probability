@@ -474,7 +474,7 @@ private theorem two_mul_add_one_pow_le_card_ite (w : ℕ → Site d) (x y : Site
     (hiN : i < N) :
     (((2 * t + 1) ^ d : ℕ) : ℝ) ≤ ((if i = 0 then {x} else if i = N then {y}
       else (originBox d t).image (w i + ·) : Finset (Site d)).card : ℝ) := by
-  rw [if_neg (by omega : ¬ i = 0), if_neg (by omega : ¬ i = N)]
+  rw [ite_eq_right (by omega : ¬ i = 0), ite_eq_right (by omega : ¬ i = N)]
   rw [card_image_add_originBox_eq (w i) t]
 
 -- Nat.lt_div_mul_add (0 < 4 d): s < s/(4d) * (4d) + 4d; cast (exact_mod_cast), div_le_iff₀;
@@ -582,12 +582,12 @@ private theorem exists_const_le_lazyKilled_mul_div_pow (hd : 1 ≤ d) :
     fun i h0 hiN => two_mul_add_one_pow_le_card_ite w x y _ (s / (4 * d)) i h0 hiN
   have hx0 : x ∈ S 0 := by
     show x ∈ (if (0 : ℕ) = 0 then {x} else _ : Finset (Site d))
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact Finset.mem_singleton_self x
   have hyN : y ∈ S (8 * d * (K' + 1)) := by
     show y ∈ (if 8 * d * (K' + 1) = 0 then {x} else if 8 * d * (K' + 1) = 8 * d * (K' + 1)
       then {y} else _ : Finset (Site d))
-    rw [if_neg (by omega), if_pos rfl]
+    rw [ite_eq_right (by omega), ite_eq_left rfl]
     exact Finset.mem_singleton_self y
   have h43 := pow_mul_pow_sub_one_le_chain (lazyKilled B) (sum_lazyKilled_mul_le_lazyKilled_add B) S
       n (8 * d * (K' + 1))

@@ -103,7 +103,7 @@ theorem pairCount_le (m n s : ℕ) : pairCount m n s ≤ min (s + 1) m := by
   have hinj : Set.InjOn (fun p : ℕ × ℕ => p.1)
       (((Finset.range m) ×ˢ (Finset.range n)).filter fun p : ℕ × ℕ => p.1 + p.2 = s) := by
     intro p hp q hq hpq
-    simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_product, Finset.mem_range] at hp hq
+    simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_product, Finset.mem_range] at hp hq
     have h1 : p.1 = q.1 := hpq
     exact Prod.ext h1 (by omega)
   refine le_min ?_ ?_

@@ -181,16 +181,16 @@ private theorem sum_ite_eq_eq_pow_div_sq' (hd : 1 ≤ d) (r : ℕ) {t t' : Fin r
       { toFun := fun c x => c.1 x.1
         invFun := fun f => ⟨fun x => if h : x ≠ t ∧ x ≠ t' then f ⟨x, h⟩ else i,
           ⟨by change (if h : t ≠ t ∧ t ≠ t' then f ⟨t, h⟩ else i) = i
-              rw [dif_neg (fun h => h.1 rfl)],
+              rw [dite_eq_right (fun h => h.1 rfl)],
            by change (if h : t' ≠ t ∧ t' ≠ t' then f ⟨t', h⟩ else i) = i
-              rw [dif_neg (fun h => h.2 rfl)]⟩⟩
+              rw [dite_eq_right (fun h => h.2 rfl)]⟩⟩
         left_inv := fun c => by
           apply Subtype.ext
           funext x
           change (if h : x ≠ t ∧ x ≠ t' then c.1 x else i) = c.1 x
           by_cases h : x ≠ t ∧ x ≠ t'
-          · rw [dif_pos h]
-          · rw [dif_neg h]
+          · rw [dite_eq_left h]
+          · rw [dite_eq_right h]
             rcases not_and_or.mp h with h1 | h1
             · rw [not_not.mp h1]
               exact c.2.1.symm
@@ -199,7 +199,7 @@ private theorem sum_ite_eq_eq_pow_div_sq' (hd : 1 ≤ d) (r : ℕ) {t t' : Fin r
         right_inv := fun f => by
           funext y
           change (if h : (y : Fin r) ≠ t ∧ (y : Fin r) ≠ t' then f ⟨(y : Fin r), h⟩ else i) = f y
-          rw [dif_pos y.2] }
+          rw [dite_eq_left y.2] }
     rw [Fintype.card_congr e, Fintype.card_fun, Fintype.card_fin, hidx]
   rw [Finset.sum_boole]
   rw [← Fintype.card_subtype (fun c : Fin r → Fin d => c t = i ∧ c t' = i), hcard,
@@ -320,8 +320,8 @@ private theorem sum_sq_cnt_sub_div_le (hd : 1 ≤ d) (r : ℕ) (i : Fin d) :
         = if t' = t then (d : ℝ) ^ r * ((d : ℝ) - 1) / d ^ 2 else 0 := (by
       intro t'
       by_cases h : t' = t
-      · rw [h, if_pos rfl]; exact hZd t
-      · rw [if_neg h]; exact hZ2off t t' h)
+      · rw [h, ite_eq_left rfl]; exact hZd t
+      · rw [ite_eq_right h]; exact hZ2off t t' h)
     have hsum : ∑ t' : Fin r, ∑ c : Fin r → Fin d,
           (X c t - 1 / d) * (X c t' - 1 / d)
         = ∑ t' : Fin r, (if t' = t then (d : ℝ) ^ r * ((d : ℝ) - 1) / d ^ 2 else 0) :=
@@ -387,7 +387,7 @@ private theorem sum_ite_exists_cnt_lt_le_half_pow (hd : 1 ≤ d) (r : ℕ) (hr :
         intro c _
         by_cases h : ∃ i, (cnt c i : ℝ) < r / (2 * d)
         · obtain ⟨i₀, hi₀⟩ := h
-          rw [if_pos ⟨i₀, hi₀⟩]
+          rw [ite_eq_left ⟨i₀, hi₀⟩]
           have hsingle := Finset.single_le_sum (s := Finset.univ)
             (f := fun i : Fin d => ((cnt c i : ℝ) - r / d) ^ 2 / (r / (2 * d)) ^ 2)
             (fun i _ => div_nonneg (sq_nonneg _) (le_of_lt hden2)) (Finset.mem_univ i₀)
@@ -404,7 +404,7 @@ private theorem sum_ite_exists_cnt_lt_le_half_pow (hd : 1 ≤ d) (r : ℕ) (hr :
             rw [show ((cnt c i₀ : ℝ) - r / d) ^ 2 = (r / d - (cnt c i₀ : ℝ)) ^ 2 by ring]
             exact h2)
           exact le_trans h1 hsingle
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           exact Finset.sum_nonneg (fun i _ => div_nonneg (sq_nonneg _) (le_of_lt hden2)))
     _ = ∑ i : Fin d, ∑ c : Fin r → Fin d, ((cnt c i : ℝ) - r / d) ^ 2 / (r / (2 * d)) ^ 2 :=
         (by rw [Finset.sum_comm])
@@ -500,9 +500,9 @@ private theorem le_of_forall_cnt_ge_of_nonneg (n : ℕ) (F : (Fin n → Fin d) �
     (c : Fin n → Fin d) :
     β * (1 - if ∃ i, (cnt c i : ℝ) < n / (2 * d) then (1 : ℝ) else 0) ≤ F c := by
   by_cases h : ∃ i, (cnt c i : ℝ) < n / (2 * d)
-  · rw [if_pos h, sub_self, mul_zero]
+  · rw [ite_eq_left h, sub_self, mul_zero]
     exact hF0 c
-  · rw [if_neg h, sub_zero, mul_one]
+  · rw [ite_eq_right h, sub_zero, mul_one]
     exact hβ c (fun i => le_of_not_gt (fun hi => h ⟨i, hi⟩))
 
 -- Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fun, Fintype.card_fin,
