@@ -4,6 +4,7 @@ import LatticeProb.Prob.CellConfigOriginSquares
 import LatticeProb.Prob.CellConfigSquareMeasurable
 import LatticeProb.Prob.PiSum
 import LatticeProb.Prob.CellConfigKernelAverage
+import LatticeProb.Prob.CellConfigCappedSquareErgodic
 
 /-!
 # Dyadic ancestors and descendants of the squares around the origin
@@ -1142,5 +1143,40 @@ theorem ae_exists_forall_ge_not_mem_rat [IsFiniteMeasure μ] {G : ℚ → Measur
   exact hω' ⟨n, fun r hr hωr => hne ⟨r, hr, hωr⟩⟩
 
 end LastTime
+
+/-- A rational family of capped-square average thresholds eventually fails when the
+corresponding rooted bad-square tails eventually fail at the origin. -/
+theorem ae_eventually_not_kernelAverage_rootedBadSquareMassTail
+    {μ : Measure GMSSpace} [IsFiniteMeasure μ] (hMT : MassTransport μ)
+    {E : Set ℂ → GMSSpace → Prop}
+    (hE : MeasurableSet {p : (ℝ × ℝ × ℝ) × GMSSpace |
+      E (cornerSquare p.1.1 p.1.2.1 p.1.2.2) p.2})
+    (hcov : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ S : Set ℂ,
+        (E ((fun z : ℂ => s • z + similarityOffset s u) '' S) H' ↔ E S H))
+    (d : ℤ) {c : ℝ≥0∞} (hc : c ≠ ∞)
+    (hT : ∀ᵐ p ∂μ.prod dyadicLaw, ∃ M : ℚ, ∀ r ≥ M,
+      (p.1, p.2, (0 : ℂ)) ∉ rootedBadSquareMassTail E d (ratMass r)) :
+    ∀ᵐ p ∂μ.prod dyadicLaw, ∃ M : ℚ, ∀ r ≥ M,
+      ¬ 1 ≤ c * kernelAverage (ratMass r)
+        ((rootedBadSquareMassTail E d (ratMass r)).indicator (fun _ => (1 : ℝ≥0∞)))
+        (p.1, p.2, 0) := by
+  have : IsProbabilityMeasure (unifIco 1) := isProbabilityMeasure_unifIco one_pos
+  let Y : ℚ → Set (GMSSpace × DyadicCoord) := fun r => {p | 1 ≤ c *
+    kernelAverage (ratMass r)
+      ((rootedBadSquareMassTail E d (ratMass r)).indicator (fun _ => (1 : ℝ≥0∞)))
+      (p.1, p.2, 0)}
+  let T : ℚ → Set (GMSSpace × DyadicCoord) := fun r =>
+    {p | (p.1, p.2, (0 : ℂ)) ∈ rootedBadSquareMassTail E d (ratMass r)}
+  have hbound (r : ℚ) := measurableSet_kernelAverage_indicator_threshold_and_measure_le
+    hMT (ratMass_ne_zero r) (ratMass_ne_top r)
+    (measurableSet_rootedBadSquareMassTail hE d (ratMass r))
+    (rootedBadSquareMassTail_similarity hcov d (ratMass r)) c
+  have hTm (r : ℚ) : MeasurableSet (T r) :=
+    (measurableSet_rootedBadSquareMassTail hE d (ratMass r)).preimage
+      (measurable_fst.prodMk (measurable_snd.prodMk measurable_const))
+  exact ae_exists_forall_ge_not_mem_rat antitone_cappedSquareSigma_ratMass
+    (fun r => cappedSquareSigma_le _) (fun r => (hbound r).1) hc
+    (fun r => (hbound r).2) hTm hT
 
 end LatticeProb.CellConfigCappedSquare
