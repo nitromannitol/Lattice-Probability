@@ -17,12 +17,14 @@ environments*, arXiv 1807.07515, Lemma 2.8) transfer an event `E(S)` which almos
 those which do not belong to `D`) and to the dyadic descendants of `S_k` of side at least
 `2 ^ (-l) |S_k|`.
 
-This file proves the ancestor half, for every event of the square (no covariance is needed). The
+The ancestor half holds for every measurable event of the square without covariance. The
 proof is the stopping-time argument of arXiv 1807.07515: given the base offsets, the squares around
 the origin form a chain driven by independent fair bits, each generation choosing one of the four
 dyadic parents uniformly; we interleave the bits of the two coordinates into a single sequence of
 fair bits, so that the dyadic ancestors within `l` generations are the states which the chain can
 reach in at most `2 l` steps, and apply `LatticeProb.UniformChain.ae_eventually_forall_reach`.
+The descendant half uses similarity covariance, mass transport and capped-square resampling to
+transfer eventual goodness from the origin squares to their bounded-depth descendants.
 
 ## Main definitions
 * `dyadicAncestors i a b ℓ`: the `4 ^ i` dyadic ancestors of side `2 ^ i ℓ` of the square
@@ -38,6 +40,8 @@ reach in at most `2 l` steps, and apply `LatticeProb.UniformChain.ae_eventually_
 * `ae_ae_eventually_forall_dyadicAncestors`: the same for a random cell configuration.
 * `ae_ae_eventually_dyadicAncestor_side_four`: the dyadic ancestor of side `4 |S_k|` in which `S_k`
   occupies the second column and the second row (used in the proof of arXiv 1807.07515, Lemma 2.9).
+* `ae_ae_eventually_forall_dyadicDescendants`: eventual goodness of all bounded-depth descendants.
+* `ae_ae_eventually_forall_dyadic_relatives`: the ancestor and descendant conclusions together.
 -/
 
 open MeasureTheory Filter Set Topology
@@ -1249,5 +1253,81 @@ theorem ae_ae_eventually_good_rational_cappedSquare_descendants
   apply hM r hr
   rw [heq r]
   exact hbad l i hi S hS hnot
+
+/-- Eventually every bounded-depth dyadic descendant of an origin square is good. -/
+theorem ae_ae_eventually_forall_dyadicDescendants
+    {μ : Measure GMSSpace} [IsFiniteMeasure μ] (hMT : MassTransport μ)
+    {E : Set ℂ → GMSSpace → Prop}
+    (hEm : MeasurableSet {p : (ℝ × ℝ × ℝ) × GMSSpace |
+      E (cornerSquare p.1.1 p.1.2.1 p.1.2.2) p.2})
+    (hcov : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ S : Set ℂ,
+        (E ((fun z : ℂ => s • z + similarityOffset s u) '' S) H' ↔ E S H))
+    (hE : ∀ᵐ H ∂μ, ∀ᵐ q : DyadicCoord ∂dyadicLaw, ∀ᶠ k : ℤ in atTop,
+      E (squareAt q.1 q.2.1 q.2.2 k 0) H) (l : ℕ) :
+    ∀ᵐ H ∂μ, ∀ᵐ q : DyadicCoord ∂dyadicLaw, ∀ᶠ j : ℤ in atTop, ∀ i ≤ l,
+      ∀ S ∈ dyadicDescendants i (gridFloor q.1 q.2.1 j 0) (gridFloor q.1 q.2.2 j 0)
+        ((2 : ℝ) ^ (q.1 + (j : ℝ))), E S H := by
+  filter_upwards [ae_ae_eventually_good_rational_cappedSquare_descendants hMT hEm hcov hE l]
+    with H hH
+  filter_upwards [hH, ae_strictMono_cellMass_squareAt_origin H,
+    ae_tendsto_cellMass_squareAt_origin_atTop H, ae_originCappedSquare_cellMass_squareAt_eq H,
+    ae_exists_lt_forall_originCappedSquare_eq H] with q hq hmono htend hcap hstep
+  obtain ⟨M, hM⟩ := hq
+  let B : ℝ := max (M : ℝ) 1
+  have hB : 0 < B := lt_of_lt_of_le zero_lt_one (le_max_right _ _)
+  filter_upwards [htend.eventually (lt_mem_nhds (ENNReal.ofReal_ne_top (r := B)).lt_top)]
+    with j hj
+  let m := cellMass volume (complexCells H.1) (squareAt q.1 q.2.1 q.2.2 j 0)
+  have hmfin : m ≠ ∞ := cellMass_squareAt_ne_top H q j
+  have hmpos : m ≠ 0 := (lt_of_lt_of_le (ENNReal.ofReal_pos.mpr hB) hj.le).ne'
+  obtain ⟨b, hb, hconst⟩ := hstep m hmpos hmfin
+  obtain ⟨r, -, hmr, hrb⟩ := ENNReal.lt_iff_exists_rat_btwn.1 hb
+  have hBr : B < (r : ℝ) := by
+    have h := hj.trans hmr
+    exact (ENNReal.ofReal_lt_ofReal_iff'.1 h).1
+  have hMr : M ≤ r := by
+    have : (M : ℝ) ≤ (r : ℝ) := (le_max_left _ _).trans hBr.le
+    exact_mod_cast this
+  have hrat : ratMass r = ENNReal.ofReal (r : ℝ) := by
+    rw [ratMass, max_eq_left ((le_max_right (M : ℝ) 1).trans hBr.le)]
+  obtain ⟨j', hj', hgood⟩ := hM r hMr
+  have hsquare : squareAt q.1 q.2.1 q.2.2 j' 0 =
+      squareAt q.1 q.2.1 q.2.2 j 0 := by
+    calc
+      _ = originCappedSquare (ratMass r) H q := hj'.symm
+      _ = originCappedSquare m H q := by
+        rw [hrat]
+        exact hconst (ENNReal.ofReal (r : ℝ)) hmr.le hrb
+      _ = _ := hcap j
+  have hindex : j' = j := hmono.injective (congrArg
+    (cellMass volume (complexCells H.1)) hsquare)
+  subst j'
+  exact hgood
+
+/-- Eventually the bounded-depth ancestors and descendants of origin squares are good. -/
+theorem ae_ae_eventually_forall_dyadic_relatives
+    {μ : Measure GMSSpace} [IsFiniteMeasure μ] (hMT : MassTransport μ)
+    {E : Set ℂ → GMSSpace → Prop}
+    (hEm : MeasurableSet {p : (ℝ × ℝ × ℝ) × GMSSpace |
+      E (cornerSquare p.1.1 p.1.2.1 p.1.2.2) p.2})
+    (hcov : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ S : Set ℂ,
+        (E ((fun z : ℂ => s • z + similarityOffset s u) '' S) H' ↔ E S H))
+    (hE : ∀ᵐ H ∂μ, ∀ᵐ q : DyadicCoord ∂dyadicLaw, ∀ᶠ k : ℤ in atTop,
+      E (squareAt q.1 q.2.1 q.2.2 k 0) H) (l : ℕ) :
+    ∀ᵐ H ∂μ, ∀ᵐ q : DyadicCoord ∂dyadicLaw, ∀ᶠ j : ℤ in atTop,
+      (∀ i ≤ l, ∀ S ∈ dyadicAncestors i (gridFloor q.1 q.2.1 j 0)
+        (gridFloor q.1 q.2.2 j 0) ((2 : ℝ) ^ (q.1 + (j : ℝ))), E S H) ∧
+      (∀ i ≤ l, ∀ S ∈ dyadicDescendants i (gridFloor q.1 q.2.1 j 0)
+        (gridFloor q.1 q.2.2 j 0) ((2 : ℝ) ^ (q.1 + (j : ℝ))), E S H) := by
+  have hsections : ∀ᵐ H ∂μ,
+      MeasurableSet {p : ℝ × ℝ × ℝ | E (cornerSquare p.1 p.2.1 p.2.2) H} :=
+    Filter.Eventually.of_forall fun H =>
+      hEm.preimage (measurable_id.prodMk measurable_const)
+  filter_upwards [ae_ae_eventually_forall_dyadicAncestors hsections hE l,
+    ae_ae_eventually_forall_dyadicDescendants hMT hEm hcov hE l] with H ha hd
+  filter_upwards [ha, hd] with q ha hd
+  exact ha.and hd
 
 end LatticeProb.CellConfigCappedSquare
