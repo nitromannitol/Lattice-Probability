@@ -1,5 +1,6 @@
 import LatticeProb.Analysis.WeakLaplaceMollify
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
+import Mathlib.Geometry.Manifold.PartitionOfUnity
 
 /-!
 # Sub-mean-value inequalities and the distributional Laplacian
@@ -88,6 +89,63 @@ theorem integral_mul_laplacian_nonneg_of_laplacian_nonneg {f φ : E → ℝ}
   · have hφx : φ x = 0 := image_eq_zero_of_notMem_tsupport hx
     simp only [Pi.zero_apply, hφx, mul_zero, le_refl]
 
+omit [MeasurableSpace E] [BorelSpace E] [μ.IsAddHaarMeasure] in
+private theorem exists_smooth_extension_near_compact {K U : Set E} (hK : IsCompact K)
+    (hU : IsOpen U) (hKU : K ⊆ U) {f : E → ℝ} (hf : ContDiffOn ℝ ∞ f U) :
+    ∃ (g : E → ℝ) (V : Set E), IsOpen V ∧ K ⊆ V ∧ ContDiff ℝ ∞ g ∧ EqOn g f V := by
+  obtain ⟨L, hL, hKL, hLU⟩ := exists_compact_between hK hU hKU
+  obtain ⟨O, hO, hLO, hOU, hOc⟩ := exists_open_between_and_isCompact_closure hL hU hLU
+  obtain ⟨χ, hχ, _, hχsupp, hχone⟩ :=
+    exists_contMDiff_support_eq_eq_one_iff (I := modelWithCornersSelf ℝ E) (n := ⊤)
+      hO hL.isClosed hLO
+  have hχs : ContDiff ℝ ∞ χ := contMDiff_iff_contDiff.mp hχ
+  let g : E → ℝ := fun x => χ x * f x
+  have hg : ContDiff ℝ ∞ g := by
+    apply contDiff_iff_contDiffAt.mpr
+    intro x
+    by_cases hx : x ∈ U
+    · exact hχs.contDiffAt.mul (hf.contDiffAt (hU.mem_nhds hx))
+    · have hxO : x ∈ (closure O)ᶜ := fun hx' => hx (hOU hx')
+      have heq : g =ᶠ[𝓝 x] fun _ => (0 : ℝ) := by
+        filter_upwards [isClosed_closure.isOpen_compl.mem_nhds hxO] with y hy
+        have hyO : y ∉ O := fun hy' => hy (subset_closure hy')
+        have hχzero : χ y = 0 := by
+          apply Function.notMem_support.mp
+          simpa only [hχsupp] using hyO
+        exact mul_eq_zero_of_left hχzero _
+      exact contDiffAt_const.congr_of_eventuallyEq heq
+  refine ⟨g, interior L, isOpen_interior, hKL, hg, ?_⟩
+  intro x hx
+  change χ x * f x = f x
+  rw [(hχone x).mp (interior_subset hx), one_mul]
+
+/-- Local smoothness and a nonnegative Laplacian near the support imply the distributional
+inequality against a nonnegative test function. -/
+theorem integral_mul_laplacian_nonneg_of_contDiffOn {U : Set E} (hU : IsOpen U)
+    {f φ : E → ℝ} (hf : ContDiffOn ℝ ∞ f U) (hφ : ContDiff ℝ ∞ φ)
+    (hc : HasCompactSupport φ) (hφU : tsupport φ ⊆ U) (hφ0 : ∀ x, 0 ≤ φ x)
+    (hf0 : ∀ x ∈ tsupport φ, 0 ≤ Δ f x) :
+    0 ≤ ∫ x, f x * Δ φ x ∂μ := by
+  obtain ⟨g, V, hV, hKV, hg, heq⟩ := exists_smooth_extension_near_compact hc hU hφU hf
+  have hg0 : ∀ x ∈ tsupport φ, 0 ≤ Δ g x := by
+    intro x hx
+    have hev : g =ᶠ[𝓝 x] f := by
+      filter_upwards [hV.mem_nhds (hKV hx)] with y hy
+      exact heq hy
+    rw [(InnerProductSpace.laplacian_congr_nhds hev).eq_of_nhds]
+    exact hf0 x hx
+  have h := integral_mul_laplacian_nonneg_of_laplacian_nonneg (μ := μ) hg hφ hc hφ0 hg0
+  convert h using 1
+  apply integral_congr_ae
+  filter_upwards [] with x
+  by_cases hx : x ∈ tsupport φ
+  · rw [heq (hKV hx)]
+  · have hev : φ =ᶠ[𝓝 x] fun _ => (0 : ℝ) := notMem_tsupport_iff_eventuallyEq.1 hx
+    have hΔ : Δ φ x = 0 := by
+      rw [(InnerProductSpace.laplacian_congr_nhds hev).eq_of_nhds]
+      simp
+    simp [hΔ]
+
 omit [BorelSpace E] [μ.IsAddHaarMeasure] in
 /-- In a zero-dimensional space, the distributional Laplacian vanishes. -/
 theorem integral_mul_laplacian_eq_zero_of_subsingleton [Subsingleton E] (f φ : E → ℝ) :
@@ -154,5 +212,22 @@ theorem integral_mul_laplacian_nonneg_of_smooth_approximation {f : ℕ → E →
     (Filter.Eventually.of_forall fun n => (hf n).continuous.continuousOn)
   exact ge_of_tendsto hlim (hf0.mono fun n hn =>
     integral_mul_laplacian_nonneg_of_laplacian_nonneg (hf n) hφ hc hφ0 hn)
+
+/-- The distributional inequality is preserved by uniform limits of functions that are smooth
+with nonnegative Laplacian near the test function's support. -/
+theorem integral_mul_laplacian_nonneg_of_local_smooth_approximation {f : ℕ → E → ℝ}
+    {g φ : E → ℝ} (hφ : ContDiff ℝ ∞ φ) (hc : HasCompactSupport φ)
+    (hφ0 : ∀ x, 0 ≤ φ x)
+    (hf : ∀ᶠ n in atTop, ∃ U : Set E, IsOpen U ∧ tsupport φ ⊆ U ∧
+      ContDiffOn ℝ ∞ (f n) U ∧ ∀ x ∈ tsupport φ, 0 ≤ Δ (f n) x)
+    (hunif : TendstoUniformlyOn f g atTop (tsupport φ)) :
+    0 ≤ ∫ x, g x * Δ φ x ∂μ := by
+  have hcont : ∀ᶠ n in atTop, ContinuousOn (f n) (tsupport φ) := by
+    filter_upwards [hf] with n ⟨U, hU, hφU, hn, hn0⟩
+    exact hn.continuousOn.mono hφU
+  have hlim := tendsto_integral_mul_laplacian_of_tendstoUniformlyOn (μ := μ) hφ hc hunif hcont
+  apply ge_of_tendsto hlim
+  filter_upwards [hf] with n ⟨U, hU, hφU, hn, hn0⟩
+  exact integral_mul_laplacian_nonneg_of_contDiffOn (μ := μ) hU hn hφ hc hφU hφ0 hn0
 
 end LatticeProb.Ishii
