@@ -61,8 +61,8 @@ theorem killedHeat_of_source_not_mem {C : Set V} {x : V} (hx : x ∉ C) (k : ℕ
     killedHeat G C k x y = 0 := by
   classical
   cases k with
-  | zero => rw [killedHeat_zero, if_neg hx]
-  | succ k => rw [killedHeat_succ, if_neg hx]
+  | zero => rw [killedHeat_zero, ite_eq_right hx]
+  | succ k => rw [killedHeat_succ, ite_eq_right hx]
 
 theorem killedHeat_of_target_not_mem {C : Set V} {y : V} (hy : y ∉ C) :
     ∀ (k : ℕ) (x : V), killedHeat G C k x y = 0 := by
@@ -73,8 +73,8 @@ theorem killedHeat_of_target_not_mem {C : Set V} {y : V} (hy : y ∉ C) :
       intro x
       rw [killedHeat_zero]
       by_cases hx : x ∈ C
-      · rw [if_pos hx, if_neg (fun h : x = y => hy (h ▸ hx))]
-      · rw [if_neg hx]
+      · rw [ite_eq_left hx, ite_eq_right (fun h : x = y => hy (h ▸ hx))]
+      · rw [ite_eq_right hx]
   | succ k ih =>
       intro x
       rw [killedHeat_succ, Finset.sum_congr rfl (fun z _ => ih z)]
@@ -85,10 +85,10 @@ theorem killedHeat_univ : ∀ (k : ℕ) (x y : V), killedHeat G (Set.univ) k x y
   classical
   intro k
   induction k with
-  | zero => intro x y; rw [killedHeat_zero, if_pos (Set.mem_univ x)]; rfl
+  | zero => intro x y; rw [killedHeat_zero, ite_eq_left (Set.mem_univ x)]; rfl
   | succ k ih =>
       intro x y
-      rw [killedHeat_succ, if_pos (Set.mem_univ x), heat_succ, walkOp,
+      rw [killedHeat_succ, ite_eq_left (Set.mem_univ x), heat_succ, walkOp,
         Finset.sum_congr rfl (fun z _ => ih z y)]
 
 theorem degree_pos_of_mem_neighborFinset {x z : V} (h : z ∈ G.neighborFinset x) :
@@ -136,10 +136,10 @@ theorem killedKer_succ (C : Set V) (k : ℕ) (x y : V) :
   classical
   rw [killedKer, killedHeat_succ]
   by_cases hx : x ∈ C
-  · rw [if_pos hx, if_pos hx]
+  · rw [ite_eq_left hx, ite_eq_left hx]
     simp only [killedKer, ← Finset.sum_div]
     rw [div_div, div_div, mul_comm ((G.degree x : ℝ))]
-  · rw [if_neg hx, if_neg hx, zero_div]
+  · rw [ite_eq_right hx, ite_eq_right hx, zero_div]
 
 /-- The backward recursion: the averaging step may be taken at the second
 argument instead of the first. -/
@@ -158,49 +158,49 @@ theorem killedKer_backward (C : Set V) :
         exact ⟨fun h => h.symm, fun h => h.symm⟩
       by_cases hx : x ∈ C
       · by_cases hy : y ∈ C
-        · rw [if_pos hx, if_pos hy, if_pos hy, if_pos hx]
+        · rw [ite_eq_left hx, ite_eq_left hy, ite_eq_left hy, ite_eq_left hx]
           by_cases hadj : y ∈ G.neighborFinset x
-          · rw [if_pos hadj, if_pos (hxy.mp hadj), div_div, div_div, one_div, one_div,
+          · rw [ite_eq_left hadj, ite_eq_left (hxy.mp hadj), div_div, div_div, one_div, one_div,
               mul_comm ((G.degree y : ℝ)) ((G.degree x : ℝ))]
-          · rw [if_neg hadj, if_neg (fun h => hadj (hxy.mpr h)), zero_div, zero_div]
-        · rw [if_pos hx, if_neg hy, if_neg hy]
+          · rw [ite_eq_right hadj, ite_eq_right (fun h => hadj (hxy.mpr h)), zero_div, zero_div]
+        · rw [ite_eq_left hx, ite_eq_right hy, ite_eq_right hy]
           simp
-      · rw [if_neg hx, if_neg hx]
+      · rw [ite_eq_right hx, ite_eq_right hx]
         by_cases hy : y ∈ C
-        · rw [if_pos hy]
+        · rw [ite_eq_left hy]
           simp
-        · rw [if_neg hy]
+        · rw [ite_eq_right hy]
 
   | succ k ih =>
       intro x y
       rw [killedKer_succ]
       by_cases hx : x ∈ C
       · by_cases hy : y ∈ C
-        · rw [if_pos hx, if_pos hy]
+        · rw [ite_eq_left hx, ite_eq_left hy]
           have hL : ∀ z ∈ G.neighborFinset x, killedKer G C (k + 1) z y
               = (∑ w ∈ G.neighborFinset y, killedKer G C k z w) / G.degree y := by
             intro z _
-            rw [ih z y, if_pos hy]
+            rw [ih z y, ite_eq_left hy]
           have hR : ∀ w ∈ G.neighborFinset y, killedKer G C (k + 1) x w
               = (∑ z ∈ G.neighborFinset x, killedKer G C k z w) / G.degree x := by
             intro w _
-            rw [killedKer_succ, if_pos hx]
+            rw [killedKer_succ, ite_eq_left hx]
           rw [Finset.sum_congr rfl hL, Finset.sum_congr rfl hR, ← Finset.sum_div,
             ← Finset.sum_div, div_div, div_div, Finset.sum_comm,
             mul_comm ((G.degree y : ℝ)) ((G.degree x : ℝ))]
-        · rw [if_pos hx, if_neg hy]
+        · rw [ite_eq_left hx, ite_eq_right hy]
           have hL : ∀ z ∈ G.neighborFinset x, killedKer G C (k + 1) z y = 0 := by
             intro z _
-            rw [ih z y, if_neg hy]
+            rw [ih z y, ite_eq_right hy]
           rw [Finset.sum_congr rfl hL, Finset.sum_const_zero, zero_div]
-      · rw [if_neg hx]
+      · rw [ite_eq_right hx]
         by_cases hy : y ∈ C
-        · rw [if_pos hy]
+        · rw [ite_eq_left hy]
           have hR : ∀ w ∈ G.neighborFinset y, killedKer G C (k + 1) x w = 0 := by
             intro w _
-            rw [killedKer_succ, if_neg hx]
+            rw [killedKer_succ, ite_eq_right hx]
           rw [Finset.sum_congr rfl hR, Finset.sum_const_zero, zero_div]
-        · rw [if_neg hy]
+        · rw [ite_eq_right hy]
 
 /-- Reversibility of the killed walk in the normalized kernel. -/
 theorem killedKer_symm (C : Set V) : ∀ (k : ℕ) (x y : V),
@@ -213,14 +213,14 @@ theorem killedKer_symm (C : Set V) : ∀ (k : ℕ) (x y : V),
       rw [killedKer_zero_eq, killedKer_zero_eq]
       by_cases h : x = y
       · subst h; rfl
-      · rw [if_neg h, if_neg (Ne.symm h)]
+      · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   | succ k ih =>
       intro x y
       rw [killedKer_backward C k x y, killedKer_succ]
       by_cases hy : y ∈ C
-      · rw [if_pos hy, if_pos hy]
+      · rw [ite_eq_left hy, ite_eq_left hy]
         exact congrArg (fun t => t / (G.degree y : ℝ)) (Finset.sum_congr rfl fun w _ => ih x w)
-      · rw [if_neg hy, if_neg hy]
+      · rw [ite_eq_right hy, ite_eq_right hy]
 
 theorem neighborFinset_eq_empty_of_degree_zero {y : V} (hd : G.degree y = 0) :
     G.neighborFinset y = ∅ := by
@@ -236,8 +236,8 @@ theorem killedHeat_eq_zero_of_target_degree_zero (C : Set V) {v : V} (hd : G.deg
       intro y hyv
       rw [killedHeat_zero]
       by_cases hy : y ∈ C
-      · rw [if_pos hy, if_neg hyv]
-      · rw [if_neg hy]
+      · rw [ite_eq_left hy, ite_eq_right hyv]
+      · rw [ite_eq_right hy]
   | succ k ih =>
       intro y _
       rw [killedHeat_succ]
@@ -314,11 +314,11 @@ theorem survival_succ (C : Finset V) (k : ℕ) (x : V) :
     intro v _
     rw [killedHeat_succ]
     by_cases hx : x ∈ C
-    · rw [if_pos (by exact_mod_cast hx : x ∈ (C : Set V)), if_pos hx]
-    · rw [if_neg (by exact_mod_cast hx : x ∉ (C : Set V)), if_neg hx]
+    · rw [ite_eq_left (by exact_mod_cast hx : x ∈ (C : Set V)), ite_eq_left hx]
+    · rw [ite_eq_right (by exact_mod_cast hx : x ∉ (C : Set V)), ite_eq_right hx]
   rw [Finset.sum_congr rfl h]
   by_cases hx : x ∈ C
-  · simp only [if_pos hx]
+  · simp only [ite_eq_left hx]
     rw [← Finset.sum_div]
     congr 1
     rw [Finset.sum_comm]
@@ -352,8 +352,8 @@ theorem survival_succ_le (C : Finset V) : ∀ (k : ℕ) (x : V),
       intro x
       rw [survival_zero]
       by_cases hx : x ∈ C
-      · rw [if_pos hx]; exact survival_le_one C 1 x
-      · rw [if_neg hx, survival_of_not_mem hx]
+      · rw [ite_eq_left hx]; exact survival_le_one C 1 x
+      · rw [ite_eq_right hx, survival_of_not_mem hx]
   | succ k ih =>
       intro x
       rw [survival_succ, survival_succ]
@@ -396,7 +396,7 @@ theorem exists_survival_lt (C : Finset V) {x q : V} (p : G.Walk x q) (hq : q ∉
           exact ⟨v, hadj⟩
         have hdR : (0 : ℝ) < G.degree u := by exact_mod_cast hd
         refine ⟨ε / G.degree u, by positivity, ?_⟩
-        rw [SimpleGraph.Walk.length_cons, survival_succ, if_pos hu, div_le_iff₀ hdR]
+        rw [SimpleGraph.Walk.length_cons, survival_succ, ite_eq_left hu, div_le_iff₀ hdR]
         have hsum : ∑ z ∈ (G.neighborFinset u).erase v, survival G C p'.length z
             ≤ ((G.degree u : ℝ) - 1) := by
           have h1 : ∑ z ∈ (G.neighborFinset u).erase v, survival G C p'.length z
@@ -457,8 +457,8 @@ theorem survival_add_le {C : Finset V} {N : ℕ} {θ : ℝ}
       intro x
       rw [Nat.zero_add, survival_zero]
       by_cases hx : x ∈ C
-      · rw [if_pos hx, mul_one]; exact hθ x
-      · rw [if_neg hx, mul_zero, survival_of_not_mem hx]
+      · rw [ite_eq_left hx, mul_one]; exact hθ x
+      · rw [ite_eq_right hx, mul_zero, survival_of_not_mem hx]
   | succ m ih =>
       intro x
       rw [show m + 1 + N = (m + N) + 1 by omega, survival_succ, survival_succ]
@@ -467,7 +467,7 @@ theorem survival_add_le {C : Finset V} {N : ℕ} {θ : ℝ}
             ≤ θ * ∑ z ∈ G.neighborFinset x, survival G C m z := by
           rw [Finset.mul_sum]
           exact Finset.sum_le_sum fun z _ => ih z
-        rw [if_pos hx, if_pos hx, ← mul_div_assoc, div_eq_mul_inv, div_eq_mul_inv]
+        rw [ite_eq_left hx, ite_eq_left hx, ← mul_div_assoc, div_eq_mul_inv, div_eq_mul_inv]
         exact mul_le_mul_of_nonneg_right hsum (by positivity)
       · simp [hx]
 

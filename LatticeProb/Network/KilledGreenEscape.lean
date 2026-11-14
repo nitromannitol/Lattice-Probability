@@ -171,7 +171,7 @@ theorem sum_tsum_killedHeat_of_escape
   have hstep : ∀ k : ℕ, ∑ w ∈ G.neighborFinset v, killedHeat G (C : Set V) k w x
       = (G.degree v : ℝ) * killedHeat G (C : Set V) (k + 1) v x := by
     intro k
-    rw [killedHeat_succ, if_pos (by exact_mod_cast hv : v ∈ (C : Set V)),
+    rw [killedHeat_succ, ite_eq_left (by exact_mod_cast hv : v ∈ (C : Set V)),
       mul_div_cancel₀ _ (Nat.cast_ne_zero.mpr hdv.ne')]
   rw [hex, tsum_congr hstep, tsum_mul_left, (hsum v).tsum_eq_zero_add]
   ring
@@ -191,17 +191,17 @@ theorem laplacian_killedGreenReal_of_escape
     fun w => killedGreenReal_eq_reversed_of_escape C hesc o w
   have hsum := sum_tsum_killedHeat_of_escape C hesc hdeg o hv
   have hzero : killedHeat G (C : Set V) 0 v o = if v = o then (1 : ℝ) else 0 := by
-    rw [killedHeat_zero, if_pos (by exact_mod_cast hv : v ∈ (C : Set V))]
+    rw [killedHeat_zero, ite_eq_left (by exact_mod_cast hv : v ∈ (C : Set V))]
   rw [laplacian]
   simp only [hu]
   rw [Finset.sum_sub_distrib, Finset.sum_const, SimpleGraph.card_neighborFinset_eq_degree,
     nsmul_eq_mul, ← Finset.sum_div, hsum, hzero]
   by_cases hvo : v = o
   · subst hvo
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     field_simp
     ring
-  · rw [if_neg hvo]
+  · rw [ite_eq_right hvo]
     field_simp
     ring
 
@@ -212,7 +212,7 @@ theorem harmonic_killedGreenReal_of_escape
     (hdeg : ∀ v ∈ C, 0 < G.degree v) {o : V} (ho : o ∈ C) {v : V} (hv : v ∈ C)
     (hvo : v ≠ o) :
     laplacian G (killedGreenReal G (C : Set V) o) v = 0 := by
-  rw [laplacian_killedGreenReal_of_escape C hesc hdeg ho hv, if_neg hvo]
+  rw [laplacian_killedGreenReal_of_escape C hesc hdeg ho hv, ite_eq_right hvo]
   norm_num
 
 /-- The unit source at `o`, without connectivity. -/
@@ -220,6 +220,6 @@ theorem laplacian_killedGreenReal_source_of_escape
     (hesc : ∀ x : V, ∃ (q : V) (_ : G.Walk x q), q ∉ C)
     (hdeg : ∀ v ∈ C, 0 < G.degree v) {o : V} (ho : o ∈ C) :
     laplacian G (killedGreenReal G (C : Set V) o) o = -1 := by
-  rw [laplacian_killedGreenReal_of_escape C hesc hdeg ho ho, if_pos rfl]
+  rw [laplacian_killedGreenReal_of_escape C hesc hdeg ho ho, ite_eq_left rfl]
 
 end LatticeProb.Network

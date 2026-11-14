@@ -72,7 +72,7 @@ theorem sum_tsum_killedHeat (x : V) {v : V} (hv : v ∈ C) :
   have hstep : ∀ k : ℕ, ∑ w ∈ G.neighborFinset v, killedHeat G (C : Set V) k w x
       = (G.degree v : ℝ) * killedHeat G (C : Set V) (k + 1) v x := by
     intro k
-    rw [killedHeat_succ, if_pos (by exact_mod_cast hv : v ∈ (C : Set V)),
+    rw [killedHeat_succ, ite_eq_left (by exact_mod_cast hv : v ∈ (C : Set V)),
       mul_div_cancel₀ _ (Nat.cast_ne_zero.mpr hdv.ne')]
   rw [hex, tsum_congr hstep, tsum_mul_left,
     (hsum v).tsum_eq_zero_add]
@@ -104,17 +104,17 @@ theorem laplacian_killedGreenReal {v : V} (hv : v ∈ (C : Set V)) :
     killedGreenReal_eq_reversed hG C hq o w
   have hsum := sum_tsum_killedHeat hG C ho hq o hvC
   have hzero : killedHeat G (C : Set V) 0 v o = if v = o then (1 : ℝ) else 0 := by
-    rw [killedHeat_zero, if_pos hv]
+    rw [killedHeat_zero, ite_eq_left hv]
   rw [laplacian]
   simp only [hu]
   rw [Finset.sum_sub_distrib, Finset.sum_const, SimpleGraph.card_neighborFinset_eq_degree,
     nsmul_eq_mul, ← Finset.sum_div, hsum, hzero]
   by_cases hvo : v = o
   · subst hvo
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     field_simp
     ring
-  · rw [if_neg hvo]
+  · rw [ite_eq_right hvo]
     field_simp
     ring
 
@@ -122,14 +122,14 @@ include hG ho hq in
 /-- The killed Green function is harmonic on `C` away from the source. -/
 theorem harmonic_killedGreenReal {v : V} (hv : v ∈ (C : Set V)) (hvo : v ≠ o) :
     laplacian G (killedGreenReal G (C : Set V) o) v = 0 := by
-  rw [laplacian_killedGreenReal hG C ho hq hv, if_neg hvo]
+  rw [laplacian_killedGreenReal hG C ho hq hv, ite_eq_right hvo]
   norm_num
 
 include hG ho hq in
 /-- The unit source at `o`. -/
 theorem laplacian_killedGreenReal_source :
     laplacian G (killedGreenReal G (C : Set V) o) o = -1 := by
-  rw [laplacian_killedGreenReal hG C ho hq (by exact_mod_cast ho), if_pos rfl]
+  rw [laplacian_killedGreenReal hG C ho hq (by exact_mod_cast ho), ite_eq_left rfl]
 
 end
 

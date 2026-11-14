@@ -176,7 +176,7 @@ lemma isClosed_zeroOn (hG : G.toSimpleGraph.Connected) (a₀ : V) (A : Finset V)
   have h : (G.zeroOn hG a₀ A : Set (G.DirichletSpace hG a₀)) =
       ⋂ a, ⋂ (_ : a ∈ A), {f : G.DirichletSpace hG a₀ | f a = 0} := by
     ext f
-    simp only [SetLike.mem_coe, mem_zeroOn, Set.mem_iInter, Set.mem_setOf_eq]
+    simp only [SetLike.mem_coe, mem_zeroOn, Set.mem_iInter, Set.mem_ofPred_eq]
   rw [h]
   exact isClosed_iInter fun a => isClosed_iInter fun _ =>
     isClosed_eq (G.evalCLM hG a₀ a).continuous continuous_const

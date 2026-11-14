@@ -93,7 +93,8 @@ theorem dipole_le_source (x : V) : dipole G C a b x ≤ dipole G C a b a := by
   · intro z hz hzab
     have hza : z ≠ a := fun h => hzab (by simp [h])
     have hzb : z ≠ b := fun h => hzab (by simp [h])
-    rw [netLaplacian_unitCond, laplacian_dipole hG C ha hb hq hz, if_neg hza, if_neg hzb]
+    rw [netLaplacian_unitCond, laplacian_dipole hG C ha hb hq hz, ite_eq_right hza,
+      ite_eq_right hzb]
     ring
   · intro z hz
     rw [dipole_vanishes hG C hq hz]
@@ -111,8 +112,8 @@ theorem sink_le_dipole (x : V) : dipole G C a b b ≤ dipole G C a b x := by
   · intro z hz hzab
     have hza : z ≠ a := fun h => hzab (by simp [h])
     have hzb : z ≠ b := fun h => hzab (by simp [h])
-    rw [netLaplacian_unitCond, laplacian_neg, laplacian_dipole hG C ha hb hq hz, if_neg hza,
-      if_neg hzb]
+    rw [netLaplacian_unitCond, laplacian_neg, laplacian_dipole hG C ha hb hq hz, ite_eq_right hza,
+      ite_eq_right hzb]
     ring
   · intro z hz
     show -dipole G C a b z ≤ -dipole G C a b b
@@ -151,7 +152,7 @@ theorem sub_le_one_of_flux {f : V → ℝ} {U : Finset V} {o : V} (ho : o ∈ U)
     Finset.single_le_sum (hterm x hx) hyf
   have h2 := Finset.single_le_sum hinner hx
   rw [← flux] at h2
-  rw [current, unitCond, if_pos hxy, one_mul] at h1
+  rw [current, unitCond, ite_eq_left hxy, one_mul] at h1
   linarith
 
 section
@@ -179,7 +180,7 @@ theorem dipole_edge_le {x y : V} (hx : x ∈ C) (hy : y ∈ C) (hxy : G.Adj x y)
     · intro z hz
       have hzb : z ≠ b := fun h => hbU (h ▸ hz)
       rw [netLaplacian_unitCond, laplacian_dipole hG C ha hb hq (Finset.mem_filter.mp hz).1,
-        if_neg hzb]
+        ite_eq_right hzb]
       ring
     · intro z hz w _ hwU
       have hz2 := (Finset.mem_filter.mp hz).2
@@ -204,7 +205,7 @@ theorem dipole_edge_le {x y : V} (hx : x ∈ C) (hy : y ∈ C) (hxy : G.Adj x y)
     · intro z hz
       have hza : z ≠ a := fun h => haW (h ▸ hz)
       rw [netLaplacian_unitCond, laplacian_neg, hf,
-        laplacian_dipole hG C ha hb hq (Finset.mem_filter.mp hz).1, if_neg hza]
+        laplacian_dipole hG C ha hb hq (Finset.mem_filter.mp hz).1, ite_eq_right hza]
       ring
     · intro z hz w _ hwW
       have hz2 := (Finset.mem_filter.mp hz).2

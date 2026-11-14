@@ -50,13 +50,13 @@ theorem firstHit_succ (C : Set V) (o : V) (k : ℕ) (x : V) :
 
 theorem firstHit_succ_source (C : Set V) (o : V) (k : ℕ) :
     firstHit G C o (k + 1) o = 0 := by
-  rw [firstHit_succ, if_pos rfl]
+  rw [firstHit_succ, ite_eq_left rfl]
 
 theorem firstHit_of_not_mem {C : Set V} {o x : V} (hx : x ∉ C) (hxo : x ≠ o) (k : ℕ) :
     firstHit G C o k x = 0 := by
   cases k with
-  | zero => rw [firstHit_zero, if_neg hxo]
-  | succ k => rw [firstHit_succ, if_neg hxo, if_neg hx]
+  | zero => rw [firstHit_zero, ite_eq_right hxo]
+  | succ k => rw [firstHit_succ, ite_eq_right hxo, ite_eq_right hx]
 
 theorem firstHit_nonneg (C : Set V) (o : V) : ∀ (k : ℕ) (x : V), 0 ≤ firstHit G C o k x := by
   intro k
@@ -86,10 +86,10 @@ theorem killedHeat_eq_sum_firstHit {C : Set V} {o : V} (ho : o ∈ C) :
   | zero =>
       intro x
       rw [Finset.sum_range_one, Nat.sub_self, firstHit_zero, killedHeat_zero, killedHeat_zero,
-        if_pos ho, if_pos rfl, mul_one]
+        ite_eq_left ho, ite_eq_left rfl, mul_one]
       by_cases hx : x ∈ C
-      · rw [if_pos hx]
-      · rw [if_neg hx, if_neg (fun h : x = o => hx (by rw [h]; exact ho))]
+      · rw [ite_eq_left hx]
+      · rw [ite_eq_right hx, ite_eq_right (fun h : x = o => hx (by rw [h]; exact ho))]
   | succ k ih =>
       intro x
       by_cases hxo : x = o
@@ -101,9 +101,9 @@ theorem killedHeat_eq_sum_firstHit {C : Set V} {o : V} (ho : o ∈ C) :
           intro i _
           rw [firstHit_succ_source, zero_mul]
         rw [Finset.sum_congr rfl hzero, Finset.sum_const_zero, zero_add, firstHit_zero,
-          if_pos rfl, one_mul, Nat.sub_zero]
+          ite_eq_left rfl, one_mul, Nat.sub_zero]
       · by_cases hxC : x ∈ C
-        · rw [killedHeat_succ, if_pos hxC]
+        · rw [killedHeat_succ, ite_eq_left hxC]
           have hinner : ∀ z ∈ G.neighborFinset x, killedHeat G C k z o
               = ∑ j ∈ Finset.range (k + 1), firstHit G C o j z * killedHeat G C (k - j) o o :=
             fun z _ => ih z
@@ -116,13 +116,14 @@ theorem killedHeat_eq_sum_firstHit {C : Set V} {o : V} (ho : o ∈ C) :
           rw [Finset.sum_range_succ'
             (fun j => firstHit G C o j x * killedHeat G C (k + 1 - j) o o) (k + 1)]
           have h0 : firstHit G C o 0 x * killedHeat G C (k + 1 - 0) o o = 0 := by
-            rw [firstHit_zero, if_neg hxo, zero_mul]
+            rw [firstHit_zero, ite_eq_right hxo, zero_mul]
           rw [h0, add_zero]
           refine Finset.sum_congr rfl fun j hj => ?_
           have hj' : j < k + 1 := Finset.mem_range.mp hj
-          rw [firstHit_succ, if_neg hxo, if_pos hxC, show k + 1 - (j + 1) = k - j by omega]
+          rw [firstHit_succ, ite_eq_right hxo, ite_eq_left hxC,
+            show k + 1 - (j + 1) = k - j by omega]
           ring
-        · rw [killedHeat_succ, if_neg hxC]
+        · rw [killedHeat_succ, ite_eq_right hxC]
           refine (Finset.sum_eq_zero fun j _ => ?_).symm
           rw [firstHit_of_not_mem hxC hxo, zero_mul]
 
@@ -142,7 +143,7 @@ return at some time followed by a visit in the rest. -/
 theorem killedHeat_renewal {C : Set V} {o : V} (ho : o ∈ C) (k : ℕ) :
     killedHeat G C (k + 1) o o
       = ∑ j ∈ Finset.range (k + 1), firstReturn G C o j * killedHeat G C (k - j) o o := by
-  rw [killedHeat_succ, if_pos ho]
+  rw [killedHeat_succ, ite_eq_left ho]
   have hinner : ∀ z ∈ G.neighborFinset o, killedHeat G C k z o
       = ∑ j ∈ Finset.range (k + 1), firstHit G C o j z * killedHeat G C (k - j) o o :=
     fun z _ => killedHeat_eq_sum_firstHit ho k z
@@ -160,7 +161,7 @@ theorem firstReturn_le_killedHeat {C : Set V} {o : V} (ho : o ∈ C) (k : ℕ) :
     firstReturn G C o k ≤ killedHeat G C (k + 1) o o := by
   rw [killedHeat_renewal ho k]
   have hself : firstReturn G C o k * killedHeat G C (k - k) o o = firstReturn G C o k := by
-    rw [Nat.sub_self, killedHeat_zero, if_pos ho, if_pos rfl, mul_one]
+    rw [Nat.sub_self, killedHeat_zero, ite_eq_left ho, ite_eq_left rfl, mul_one]
   have hmem : k ∈ Finset.range (k + 1) := Finset.mem_range.mpr (by omega)
   have hle := Finset.single_le_sum
     (f := fun j => firstReturn G C o j * killedHeat G C (k - j) o o)
@@ -216,7 +217,8 @@ theorem visitCount_renewal (hG : G.Connected) (C : Finset V) {o q : V} (ho : o �
     fun n => (killedHeat_renewal (by exact_mod_cast ho) n).symm
   rw [tsum_congr hren] at hcauchy
   have htail := hks.sum_add_tsum_nat_add 1
-  rw [Finset.sum_range_one, killedHeat_zero, if_pos (by exact_mod_cast ho), if_pos rfl] at htail
+  rw [Finset.sum_range_one, killedHeat_zero, ite_eq_left (by exact_mod_cast ho),
+    ite_eq_left rfl] at htail
   rw [returnProb, visitCount, hcauchy]
   linarith [htail]
 
@@ -256,7 +258,7 @@ theorem returnProb_eq_mean_equilibrium (hG : G.Connected) (C : Finset V) {o q : 
 /-- From a one-point set the walk is dead after one step. -/
 theorem killedHeat_singleton_succ (o : V) (k : ℕ) :
     killedHeat G ({o} : Set V) (k + 1) o o = 0 := by
-  rw [killedHeat_succ, if_pos (Set.mem_singleton o)]
+  rw [killedHeat_succ, ite_eq_left (Set.mem_singleton o)]
   have hz : ∀ z ∈ G.neighborFinset o, killedHeat G ({o} : Set V) k z o = 0 := by
     intro z hz
     have hadj : G.Adj o z := (SimpleGraph.mem_neighborFinset _ _ _).mp hz
@@ -275,7 +277,7 @@ theorem effRes_singleton (hG : G.Connected) {o q : V} (hq : q ∉ ({o} : Finset 
   rw [effRes, killedGreenReal_eq_tsum hG {o} hq, hcoe]
   have hsingle : ∑' k : ℕ, killedHeat G ({o} : Set V) k o o = 1 := by
     rw [tsum_eq_single 0 ?_]
-    · rw [killedHeat_zero, if_pos (Set.mem_singleton o), if_pos rfl]
+    · rw [killedHeat_zero, ite_eq_left (Set.mem_singleton o), ite_eq_left rfl]
     · intro k hk
       obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
       exact killedHeat_singleton_succ o j

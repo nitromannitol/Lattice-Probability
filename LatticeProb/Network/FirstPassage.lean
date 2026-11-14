@@ -56,7 +56,7 @@ theorem meanLocalTime_le_self : ∀ (n : ℕ) (x y : V),
       intro x y
       by_cases hxy : x = y
       · rw [hxy]
-      · rw [meanLocalTime_succ, if_neg hxy, zero_add]
+      · rw [meanLocalTime_succ, ite_eq_right hxy, zero_add]
         have hB : 0 ≤ meanLocalTime G n y y := meanLocalTime_nonneg n y y
         have hle : walkOp G (fun z => meanLocalTime G n z y) x ≤ meanLocalTime G n y y := by
           rw [walkOp]

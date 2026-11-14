@@ -56,7 +56,7 @@ theorem effRes_pos (hG : G.Connected) (C : Finset V) {o q : V} (ho : o ∈ C) (h
   refine div_pos ?_ (by exact_mod_cast hdeg)
   have hsum := summable_killedHeat hG C hq o o
   have hterm : killedHeat G (C : Set V) 0 o o = 1 := by
-    rw [killedHeat_zero, if_pos (by exact_mod_cast ho), if_pos rfl]
+    rw [killedHeat_zero, ite_eq_left (by exact_mod_cast ho), ite_eq_left rfl]
   refine lt_of_lt_of_le (by norm_num : (0 : ℝ) < 1) ?_
   rw [← hterm]
   exact hsum.le_tsum 0 fun k _ => killedHeat_nonneg _ k o o

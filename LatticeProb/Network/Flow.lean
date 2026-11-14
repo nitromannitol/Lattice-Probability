@@ -110,7 +110,7 @@ theorem sum_sub_mul_flow {w : V → V → ℝ} (hw : IsFlow G w) (S B : Finset V
         = if y ∈ B then -(f y * divergence G w y) else 0 := by
       intro y _
       by_cases hyB : y ∈ B
-      · rw [if_pos hyB]
+      · rw [ite_eq_left hyB]
         have hres : (∑ x ∈ S, f y * w x y) = ∑ x ∈ G.neighborFinset y, f y * w x y := by
           refine (sum_neighborFinset_eq_sum y S _ ?_ ?_).symm
           · intro x hx
@@ -121,7 +121,7 @@ theorem sum_sub_mul_flow {w : V → V → ℝ} (hw : IsFlow G w) (S B : Finset V
         refine eq_neg_of_add_eq_zero_left ?_
         rw [divergence, Finset.mul_sum, ← Finset.sum_add_distrib]
         exact Finset.sum_eq_zero fun x _ => by rw [hw.antisymm y x]; ring
-      · rw [if_neg hyB, hf y hyB]
+      · rw [ite_eq_right hyB, hf y hyB]
         exact Finset.sum_eq_zero fun x _ => by rw [zero_mul]
     rw [Finset.sum_congr rfl houter]
     rw [show (∑ y ∈ S, if y ∈ B then -(f y * divergence G w y) else 0)

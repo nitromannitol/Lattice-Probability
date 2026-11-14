@@ -168,15 +168,15 @@ theorem exists_voltage (hdeg : ∀ v : V, 0 < G.degree v) {a b : V} (hab : a ≠
       laplacian_greenMass hdeg hb]
     by_cases hxa : x = a
     · subst hxa
-      rw [if_neg hab, if_pos rfl]
+      rw [ite_eq_right hab, ite_eq_left rfl]
       field_simp
       ring
     · by_cases hxb : x = b
       · subst hxb
-        rw [if_pos rfl, if_neg hxa]
+        rw [ite_eq_left rfl, ite_eq_right hxa]
         field_simp
         ring
-      · rw [if_neg hxa, if_neg hxb]
+      · rw [ite_eq_right hxa, ite_eq_right hxb]
         ring
 
 

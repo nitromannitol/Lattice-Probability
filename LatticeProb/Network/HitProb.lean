@@ -51,12 +51,12 @@ theorem hitProb_le_one (C : Set V) (o : V) (x : V) : hitProb G C o x ≤ 1 := by
       · subst hx
         have hzero : ∀ k, firstHit G C x (k + 1) x = 0 := fun k => firstHit_succ_source C x k
         rw [Finset.sum_congr rfl (fun k _ => hzero k), Finset.sum_const_zero, zero_add,
-          firstHit_zero, if_pos rfl]
-      · rw [firstHit_zero, if_neg hx, add_zero]
+          firstHit_zero, ite_eq_left rfl]
+      · rw [firstHit_zero, ite_eq_right hx, add_zero]
         by_cases hxC : x ∈ C
         · have hstep : ∀ k, firstHit G C o (k + 1) x
               = (∑ z ∈ G.neighborFinset x, firstHit G C o k z) / G.degree x := fun k => by
-            rw [firstHit_succ, if_neg hx, if_pos hxC]
+            rw [firstHit_succ, ite_eq_right hx, ite_eq_left hxC]
           rw [Finset.sum_congr rfl (fun k _ => hstep k), ← Finset.sum_div]
           refine div_le_one_of_le₀ ?_ (by positivity)
           calc ∑ k ∈ Finset.range (n + 1), ∑ z ∈ G.neighborFinset x, firstHit G C o k z
@@ -68,7 +68,7 @@ theorem hitProb_le_one (C : Set V) (o : V) (x : V) : hitProb G C o x ≤ 1 := by
                 rw [Finset.sum_const, nsmul_eq_mul, mul_one]
                 rfl
         · have hzero : ∀ k, firstHit G C o (k + 1) x = 0 := fun k => by
-            rw [firstHit_succ, if_neg hx, if_neg hxC]
+            rw [firstHit_succ, ite_eq_right hx, ite_eq_right hxC]
           rw [Finset.sum_congr rfl (fun k _ => hzero k), Finset.sum_const_zero]
           norm_num
   rcases n with _ | m
@@ -92,12 +92,12 @@ theorem summable_firstHit (C : Set V) (o : V) (x : V) : Summable fun k => firstH
         · subst hx
           have hzero : ∀ k, firstHit G C x (k + 1) x = 0 := fun k => firstHit_succ_source C x k
           rw [Finset.sum_congr rfl (fun k _ => hzero k), Finset.sum_const_zero, zero_add,
-            firstHit_zero, if_pos rfl]
-        · rw [firstHit_zero, if_neg hx, add_zero]
+            firstHit_zero, ite_eq_left rfl]
+        · rw [firstHit_zero, ite_eq_right hx, add_zero]
           by_cases hxC : x ∈ C
           · have hstep : ∀ k, firstHit G C o (k + 1) x
                 = (∑ z ∈ G.neighborFinset x, firstHit G C o k z) / G.degree x := fun k => by
-              rw [firstHit_succ, if_neg hx, if_pos hxC]
+              rw [firstHit_succ, ite_eq_right hx, ite_eq_left hxC]
             rw [Finset.sum_congr rfl (fun k _ => hstep k), ← Finset.sum_div]
             refine div_le_one_of_le₀ ?_ (by positivity)
             calc ∑ k ∈ Finset.range (n + 1), ∑ z ∈ G.neighborFinset x, firstHit G C o k z
@@ -109,7 +109,7 @@ theorem summable_firstHit (C : Set V) (o : V) (x : V) : Summable fun k => firstH
                   rw [Finset.sum_const, nsmul_eq_mul, mul_one]
                   rfl
           · have hzero : ∀ k, firstHit G C o (k + 1) x = 0 := fun k => by
-              rw [firstHit_succ, if_neg hx, if_neg hxC]
+              rw [firstHit_succ, ite_eq_right hx, ite_eq_right hxC]
             rw [Finset.sum_congr rfl (fun k _ => hzero k), Finset.sum_const_zero]
             norm_num
     rcases n with _ | m
@@ -123,7 +123,7 @@ theorem hitProb_laplacian (C : Set V) (o : V) {x : V} (hxC : x ∈ C) (hx : x �
   have hstep : ∀ k : ℕ, ∑ y ∈ G.neighborFinset x, firstHit G C o k y
       = (G.degree x : ℝ) * firstHit G C o (k + 1) x := by
     intro k
-    rw [firstHit_succ, if_neg hx, if_pos hxC]
+    rw [firstHit_succ, ite_eq_right hx, ite_eq_left hxC]
     by_cases hd : G.degree x = 0
     · have h2 : (G.neighborFinset x).card = 0 := by
         rw [SimpleGraph.card_neighborFinset_eq_degree, hd]
@@ -145,7 +145,7 @@ theorem hitProb_laplacian (C : Set V) (o : V) {x : V} (hxC : x ∈ C) (hx : x �
   rw [laplacian, Finset.sum_sub_distrib, Finset.sum_const,
     SimpleGraph.card_neighborFinset_eq_degree, nsmul_eq_mul, hnb, hitProb]
   have h0 : firstHit G C o 0 x = if x = o then (1 : ℝ) else 0 := firstHit_zero C o x
-  rw [h0, if_neg hx]
+  rw [h0, ite_eq_right hx]
   ring
 
 

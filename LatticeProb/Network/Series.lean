@@ -92,7 +92,7 @@ theorem sum_unitCond_cutPairs (U : Finset V) :
     ∑ p ∈ cutPairs G U, unitCond G p.1 p.2 = ((cutPairs G U).card : ℝ) := by
   classical
   rw [Finset.sum_congr rfl fun p hp => ?_, Finset.sum_const, nsmul_eq_mul, mul_one]
-  rw [unitCond, if_pos (mem_cutPairs.mp hp).2.2]
+  rw [unitCond, ite_eq_left (mem_cutPairs.mp hp).2.2]
 
 /-- **The series law.**  The boundary cuts of a nested chain of sets around the
 source are pairwise disjoint as soon as every edge leaving one set lands inside
@@ -128,14 +128,14 @@ theorem nashWilliams_nested (hG : G.Connected) (C : Finset V) {o q : V} (ho : o 
     rw [netLaplacian_unitCond]
     by_cases hxo : x = o
     · subst hxo
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact laplacian_killedGreenReal_source hG C ho hq
-    · rw [if_neg hxo, neg_zero]
+    · rw [ite_eq_right hxo, neg_zero]
       exact harmonic_killedGreenReal hG C ho hq (by exact_mod_cast hUC k hx) hxo
   have hmain := nashWilliams_le_effRes hG C ho hq (Finset.range L) (fun k => cutPairs G (U k))
     (fun k _ => cutPairs_subset_pairs (hUC k)) hdisj
     (fun k _ p hp => by
-      rw [unitCond, if_pos (mem_cutPairs.mp hp).2.2]
+      rw [unitCond, ite_eq_left (mem_cutPairs.mp hp).2.2]
       norm_num) hcut
   refine le_trans (le_of_eq ?_) hmain
   exact Finset.sum_congr rfl fun k _ => by rw [sum_unitCond_cutPairs]
@@ -160,9 +160,9 @@ theorem card_div_le_effRes (hG : G.Connected) (C : Finset V) {o q : V} (ho : o �
       rw [netLaplacian_unitCond]
       by_cases hxo : x = o
       · subst hxo
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         exact laplacian_killedGreenReal_source hG C ho hq
-      · rw [if_neg hxo, neg_zero]
+      · rw [ite_eq_right hxo, neg_zero]
         exact harmonic_killedGreenReal hG C ho hq (by exact_mod_cast hUC k hx) hxo
     rw [hempty, Finset.sum_empty] at hflux
     linarith
@@ -218,14 +218,14 @@ theorem nashWilliams_upto (hG : G.Connected) (C : Finset V) {o q : V} (ho : o �
     rw [netLaplacian_unitCond]
     by_cases hxo : x = o
     · subst hxo
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact laplacian_killedGreenReal_source hG C ho hq
-    · rw [if_neg hxo, neg_zero]
+    · rw [ite_eq_right hxo, neg_zero]
       exact harmonic_killedGreenReal hG C ho hq (by exact_mod_cast hUC k hk hx) hxo
   have hmain := nashWilliams_le_effRes hG C ho hq (Finset.range L) (fun k => cutPairs G (U k))
     (fun k hk => cutPairs_subset_pairs (hUC k (Finset.mem_range.1 hk))) hdisj
     (fun k _ p hp => by
-      rw [unitCond, if_pos (mem_cutPairs.mp hp).2.2]
+      rw [unitCond, ite_eq_left (mem_cutPairs.mp hp).2.2]
       norm_num) hcut
   refine le_trans (le_of_eq ?_) hmain
   exact Finset.sum_congr rfl fun k _ => by rw [sum_unitCond_cutPairs]

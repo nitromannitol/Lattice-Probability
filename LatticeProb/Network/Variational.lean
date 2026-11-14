@@ -163,7 +163,7 @@ theorem flux_eq_one {c : V → V → ℝ} (hc : IsCond G c) (f : V → ℝ) (U :
     exact Finset.sum_congr rfl fun x _ => by rw [← hlapsum x, hsplit x]
   rw [hint, zero_add] at hmain
   rw [← hmain, Finset.sum_congr rfl (fun x hx => by rw [hlap x hx, neg_neg]),
-    Finset.sum_ite_eq' U o (fun _ => (1 : ℝ)), if_pos ho]
+    Finset.sum_ite_eq' U o (fun _ => (1 : ℝ)), ite_eq_left ho]
 
 /-! ### The effective resistance -/
 
@@ -194,7 +194,7 @@ theorem energyOn_killedGreenReal (hG : G.Connected) (C : Finset V) {o q : V} (ho
         = -(if x = o then killedGreenReal G (C : Set V) o x else 0) by
     by_cases h : x = o <;> simp [h])]
   rw [Finset.sum_neg_distrib, Finset.sum_ite_eq' C o (killedGreenReal G (C : Set V) o),
-    if_pos ho, effRes]
+    ite_eq_left ho, effRes]
   ring
 
 /-! ### The Nash-Williams cutset bound -/
