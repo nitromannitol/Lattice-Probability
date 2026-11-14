@@ -45,7 +45,7 @@ theorem standardBrownianLaw_integral_exit_harmonic_compactSupport {d : ℕ} (hd 
     {f : Euc d → ℝ} (hf : ContDiff ℝ 2 f) (hsupp : HasCompactSupport f)
     (hh : IsHarmonicOn f U) (z : Euc d) :
     (∫ ω, f (z + ω (continuousExitTime U z ω).toNNReal) ∂μ) = f z := by
-  letI : IsProbabilityMeasure μ := hμ.1
+  let : IsProbabilityMeasure μ := hμ.1
   let τ : BrownianPath d → ℝ≥0∞ := continuousExitTime U z
   have hτ : IsStoppingTime (brownianNaturalFiltration d) τ :=
     isStoppingTime_continuousExitTime hU z
@@ -131,7 +131,7 @@ theorem standardBrownianLaw_integral_exit_harmonicNearClosure {d : ℕ} (hd : 1 
     {U : Set (Euc d)} (hU : IsOpen U) (hUb : Bornology.IsBounded U)
     {h : Euc d → ℝ} (hh : HarmonicNearClosure h U) {z : Euc d} (hz : z ∈ U) :
     ∫ ω, h (z + ω (continuousExitTime U z ω).toNNReal) ∂μ = h z := by
-  letI : IsProbabilityMeasure μ := hμ.1
+  let : IsProbabilityMeasure μ := hμ.1
   obtain ⟨W, hW, hUW, hhW⟩ := hh
   obtain ⟨g, V, _, hUV, _, hg, hgc, _, heq, hgharm⟩ :=
     hhW.exists_compactSupport_eq_near_compact hUb.isCompact_closure hW hUW

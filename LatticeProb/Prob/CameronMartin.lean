@@ -99,7 +99,7 @@ covariance kernel `covK`. -/
 lemma covariance_finsetComb (A B : Finset I) (a b : I → ℝ) :
     cov[fun ω ↦ ∑ j ∈ A, a j * X j ω, fun ω ↦ ∑ i ∈ B, b i * X i ω; P] =
       ∑ j ∈ A, a j * ∑ i ∈ B, b i * covK X P j i := by
-  haveI := hX.isProbabilityMeasure
+  have := hX.isProbabilityMeasure
   rw [covariance_fun_sum_left' (X := fun j ω ↦ a j * X j ω)
     (fun j _ ↦ (hX.hasGaussianLaw_eval j).memLp_two.const_mul (a j))
     (memLp_two_finsetComb hX B b)]
@@ -114,7 +114,7 @@ lemma covariance_finsetComb (A B : Finset I) (a b : I → ℝ) :
 /-- For a centered Gaussian `Z`, `E exp Z = exp(Var Z / 2)` and `exp Z` is integrable. -/
 lemma gauss_exp {Z : Ω → ℝ} (hZ : HasGaussianLaw Z P) (hm : P[Z] = 0) :
     Integrable (fun ω ↦ Real.exp (Z ω)) P ∧ ∫ ω, Real.exp (Z ω) ∂P = Real.exp (Var[Z; P] / 2) := by
-  haveI := hX.isProbabilityMeasure
+  have := hX.isProbabilityMeasure
   have hlaw : P.map Z = gaussianReal 0 Var[Z; P].toNNReal := by
     rw [hZ.map_eq_gaussianReal, hm]
   have hLaw : HasLaw Z (gaussianReal 0 Var[Z; P].toNNReal) P := ⟨hZ.aemeasurable, hlaw⟩
@@ -194,8 +194,8 @@ include hmeas hcent in
 lemma map_tiltMeasure_finsetComb (σ : I →₀ ℝ) (J : Finset I) (hσ : σ.support ⊆ J) (c : I → ℝ) :
     (tiltMeasure X P σ).map (fun ω ↦ ∑ j ∈ J, c j * X j ω) =
       P.map (fun ω ↦ (∑ j ∈ J, c j * X j ω) + ∑ j ∈ J, c j * covShift X P σ j) := by
-  haveI := hX.isProbabilityMeasure
-  haveI := isProbabilityMeasure_tiltMeasure hX hcent σ
+  have := hX.isProbabilityMeasure
+  have := isProbabilityMeasure_tiltMeasure hX hcent σ
   set Y : Ω → ℝ := fun ω ↦ ∑ j ∈ J, c j * X j ω with hYdef
   set m : ℝ := ∑ j ∈ J, c j * covShift X P σ j with hmdef
   set w : ℝ≥0 := Var[Y; P].toNNReal with hwdef
@@ -263,7 +263,7 @@ lemma strongDual_restrict_eq_sum (J J' : Finset I) (hJ : J ⊆ J')
   rw [← Finset.sum_subset hJ (fun j _ hj ↦ by simp [hj])]
   rw [← Finset.sum_coe_sort J]
   refine Finset.sum_congr rfl fun j _ ↦ ?_
-  simp only [Finset.restrict, smul_eq_mul, dif_pos j.2]
+  simp only [Finset.restrict, smul_eq_mul, dite_eq_left j.2]
   rw [mul_comm]; rfl
 
 open Classical in
@@ -272,15 +272,15 @@ include hmeas hcent in
 theorem map_tiltMeasure_restrict (σ : I →₀ ℝ) (J : Finset I) :
     (tiltMeasure X P σ).map (fun ω ↦ J.restrict (fun j ↦ X j ω)) =
       P.map (fun ω ↦ J.restrict (fun j ↦ X j ω + covShift X P σ j)) := by
-  haveI := hX.isProbabilityMeasure
-  haveI := isProbabilityMeasure_tiltMeasure hX hcent σ
+  have := hX.isProbabilityMeasure
+  have := isProbabilityMeasure_tiltMeasure hX hcent σ
   have hV : Measurable fun ω ↦ J.restrict (fun j ↦ X j ω) :=
     measurable_pi_iff.mpr fun j ↦ hmeas j
   have hV' : Measurable fun ω ↦ J.restrict (fun j ↦ X j ω + covShift X P σ j) :=
     measurable_pi_iff.mpr fun j ↦ (hmeas j).add_const _
-  haveI : IsProbabilityMeasure ((tiltMeasure X P σ).map fun ω ↦ J.restrict (fun j ↦ X j ω)) :=
+  have : IsProbabilityMeasure ((tiltMeasure X P σ).map fun ω ↦ J.restrict (fun j ↦ X j ω)) :=
     (Measure.isProbabilityMeasure_map_iff hV.aemeasurable).mpr inferInstance
-  haveI : IsProbabilityMeasure (P.map fun ω ↦ J.restrict (fun j ↦ X j ω + covShift X P σ j)) :=
+  have : IsProbabilityMeasure (P.map fun ω ↦ J.restrict (fun j ↦ X j ω + covShift X P σ j)) :=
     (Measure.isProbabilityMeasure_map_iff hV'.aemeasurable).mpr inferInstance
   refine Measure.ext_of_charFunDual (funext fun L ↦ ?_)
   set J' := J ∪ σ.support
@@ -312,14 +312,14 @@ shifted by `K(·,σ)`, as measures on `I → ℝ` with the product σ-algebra. -
 theorem map_tiltMeasure_path (σ : I →₀ ℝ) :
     (tiltMeasure X P σ).map (fun ω j ↦ X j ω) =
       P.map (fun ω j ↦ X j ω + covShift X P σ j) := by
-  haveI := hX.isProbabilityMeasure
-  haveI := isProbabilityMeasure_tiltMeasure hX hcent σ
+  have := hX.isProbabilityMeasure
+  have := isProbabilityMeasure_tiltMeasure hX hcent σ
   have hp : Measurable fun ω j ↦ X j ω := measurable_pi_iff.mpr hmeas
   have hp' : Measurable fun ω j ↦ X j ω + covShift X P σ j :=
     measurable_pi_iff.mpr fun j ↦ (hmeas j).add_const _
-  haveI : IsProbabilityMeasure ((tiltMeasure X P σ).map fun ω j ↦ X j ω) :=
+  have : IsProbabilityMeasure ((tiltMeasure X P σ).map fun ω j ↦ X j ω) :=
     (Measure.isProbabilityMeasure_map_iff hp.aemeasurable).mpr inferInstance
-  haveI : IsProbabilityMeasure (P.map fun ω j ↦ X j ω + covShift X P σ j) :=
+  have : IsProbabilityMeasure (P.map fun ω j ↦ X j ω + covShift X P σ j) :=
     (Measure.isProbabilityMeasure_map_iff hp'.aemeasurable).mpr inferInstance
   refine ext_of_generate_finite (measurableCylinders fun _ : I ↦ ℝ)
     generateFrom_measurableCylinders.symm isPiSystem_measurableCylinders (fun s hs ↦ ?_)
@@ -382,7 +382,7 @@ paths, `|P(X + K(·,σ) ∈ A) − P(X ∈ A)| ≤ (exp K(σ,σ) − 1)^{1/2}`. 
 theorem abs_measureReal_shift_sub_le (σ : I →₀ ℝ) (A : Set (I → ℝ)) (hA : MeasurableSet A) :
     |(P.map fun ω j ↦ X j ω + covShift X P σ j).real A - (P.map fun ω j ↦ X j ω).real A| ≤
       Real.sqrt (Real.exp (covNorm X P σ) - 1) := by
-  haveI := hX.isProbabilityMeasure
+  have := hX.isProbabilityMeasure
   have hp : Measurable fun ω j ↦ X j ω := measurable_pi_iff.mpr hmeas
   set D := tiltDensity X P σ with hDdef
   set g : Ω → ℝ := fun ω ↦ A.indicator 1 (fun j ↦ X j ω) with hgdef

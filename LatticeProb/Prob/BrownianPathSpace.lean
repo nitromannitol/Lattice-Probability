@@ -112,7 +112,7 @@ def restrictBrownianPath {d : ℕ} (t : ℝ≥0) (γ : BrownianPath d) :
 time `t`. -/
 lemma measurable_restrictBrownianPath {d : ℕ} (t : ℝ≥0) :
     Measurable[brownianNaturalFiltration d t] (restrictBrownianPath (d := d) t) := by
-  letI : MeasurableSpace (BrownianPath d) := brownianNaturalFiltration d t
+  let : MeasurableSpace (BrownianPath d) := brownianNaturalFiltration d t
   apply ContinuousMapBorel.ContinuousMap.measurable_iff_eval.mpr
   intro s
   exact (comap_measurable (fun γ : BrownianPath d ↦ γ s.val)).mono
@@ -147,7 +147,7 @@ theorem isStoppingTime_continuousExitTime {d : ℕ} {U : Set (Euc d)}
       natFiltration (fun (s : ℝ≥0) (γ : BrownianPath d) ↦ z + γ s)
         (shift_stronglyMeasurable z) t ≤ brownianNaturalFiltration d t := by
     rw [natFiltration_eq_comap]
-    letI : MeasurableSpace (BrownianPath d) := brownianNaturalFiltration d t
+    let : MeasurableSpace (BrownianPath d) := brownianNaturalFiltration d t
     have hadd : Measurable fun x : Euc d ↦ z + x :=
       (continuous_const.add continuous_id).measurable
     have hmeas : Measurable (fun (γ : BrownianPath d) (s : Set.Iic t) ↦ z + γ (s : ℝ≥0)) := by

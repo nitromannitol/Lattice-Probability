@@ -98,7 +98,7 @@ theorem LatticeProb.ae_ae_eq_of_measurable_conditionalMeasure {X Y : Type*}
   apply Measure.ae_ae_of_ae_compProd (μ := Q.trim hm) (κ := condExpKernel Q m)
     (p := fun z : X × X => g z.2 = g z.1)
   rw [compProd_trim_condExpKernel hm]
-  letI : MeasurableSpace (X × X) := m.prod mX
+  let : MeasurableSpace (X × X) := m.prod mX
   have hd : @Measurable X (X × X) mX (m.prod mX) (fun x => (id x, id x)) :=
     (measurable_id'' hm).prodMk measurable_id
   have hp : @MeasurableSet (X × X) (m.prod mX) {z | g z.2 = g z.1} :=
@@ -132,7 +132,7 @@ theorem LatticeProb.ae_measurePreserving_of_compProd_map_eq {D X : Type*}
     (Q : Measure D) [IsFiniteMeasure Q] (K : Kernel D X) [IsMarkovKernel K]
     {T : X → X} (hT : Measurable T) (h : Q ⊗ₘ K.map T = Q ⊗ₘ K) :
     ∀ᵐ x ∂Q, MeasurePreserving T (K x) (K x) := by
-  letI : IsMarkovKernel (K.map T) := Kernel.IsMarkovKernel.map K hT
+  let : IsMarkovKernel (K.map T) := Kernel.IsMarkovKernel.map K hT
   have hleft := condKernel_compProd Q (K.map T)
   have hright := condKernel_compProd Q K
   simp only [h] at hleft
@@ -146,7 +146,7 @@ theorem LatticeProb.ae_measurePreserving_conditionalMeasure {X : Type*}
     (Q : Measure X) [IsProbabilityMeasure Q] (hm : m ≤ mX) {T : X → X}
     (hT : MeasurePreserving T Q Q) (hi : m ≤ MeasurableSpace.invariants T) :
     ∀ᵐ x ∂Q, MeasurePreserving T (condExpKernel Q m x) (condExpKernel Q m x) := by
-  letI : Nonempty X := nonempty_of_isProbabilityMeasure Q
+  let : Nonempty X := nonempty_of_isProbabilityMeasure Q
   apply ae_of_ae_trim hm
   exact @LatticeProb.ae_measurePreserving_of_compProd_map_eq X X m mX _ _ (Q.trim hm) _
     (condExpKernel Q m) _ T hT.measurable

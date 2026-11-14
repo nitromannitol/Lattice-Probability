@@ -62,7 +62,7 @@ theorem standardBrownianLaw_bounded_stopped_harmonic_difference {d : ℕ}
     (N : ℝ≥0) (hN : ∀ ω, σ ω ≤ N) (z : Euc d)
     (hstay : ∀ ω t, t < σ ω → z + ω t ∈ U) :
     (∫ ω, f (z + ω (σ ω)) - f (z + ω 0) ∂μ) = 0 := by
-  letI : IsProbabilityMeasure μ := hμ.1
+  let : IsProbabilityMeasure μ := hμ.1
   let a : ℕ → ℝ := fun n ↦ ∫ ω,
     f (z + ω (dyadicStoppingTime σ n ω)) - f (z + ω 0) ∂μ
   let I : ℝ := ∫ ω, f (z + ω (σ ω)) - f (z + ω 0) ∂μ

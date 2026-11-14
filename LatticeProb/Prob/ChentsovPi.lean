@@ -116,7 +116,7 @@ theorem edist_gridPt_step (n : ℕ) (j : Fin k → ℤ) (i : Fin k) :
     · exact le_rfl
     · exact ENNReal.ofReal_le_ofReal (by positivity)
   · refine le_trans ?_ (edist_le_pi_edist _ _ i)
-    rw [hcoord i, if_pos rfl]
+    rw [hcoord i, ite_eq_left rfl]
 
 
 /-! ### The chaining bound -/
@@ -138,14 +138,14 @@ theorem chainIdx_zero {k : ℕ} (J₀ J₁ : Fin k → ℤ) :
     chainIdx J₀ J₁ 0 = fun i => 2 * J₀ i := by
   funext i
   rw [chainIdx]
-  simp only [if_neg (Nat.not_lt_zero _)]
+  simp only [ite_eq_right (Nat.not_lt_zero _)]
   ring
 
 theorem chainIdx_top {k : ℕ} (J₀ J₁ : Fin k → ℤ) :
     chainIdx J₀ J₁ k = J₁ := by
   funext i
   rw [chainIdx]
-  simp only [if_pos (Fin.isLt i)]
+  simp only [ite_eq_left (Fin.isLt i)]
   ring
 
 theorem chainIdx_succ {k : ℕ} (J₀ J₁ : Fin k → ℤ) {m : ℕ} (hm : m < k) :
@@ -340,9 +340,9 @@ theorem closeIdx_succ (Ks Kt : Fin k → ℤ) {m : ℕ} (hm : m < k) :
 theorem closeIdx_range {B : ℤ} (Ks Kt : Fin k → ℤ) {m : ℕ} (hs : ∀ i, |Ks i| ≤ B)
     (ht : ∀ i, |Kt i| ≤ B) (i : Fin k) : |closeIdx Ks Kt m i| ≤ B := by
   by_cases h : i.val < m
-  · simp only [closeIdx, if_pos h]
+  · simp only [closeIdx, ite_eq_left h]
     exact ht i
-  · simp only [closeIdx, if_neg h]
+  · simp only [closeIdx, ite_eq_right h]
     exact hs i
 
 /-- Two points of the box of radius `m` at sup-distance at most `2 ^ (-m)` have

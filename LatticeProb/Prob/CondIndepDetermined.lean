@@ -83,7 +83,7 @@ lemma exists_ae_eq_set_of_condIndep_self [IsProbabilityMeasure μ] {G : Measurab
   have hq : μ⟦s' | G⟧ =ᵐ[μ] p := condExp_congr_ae (indOne_ae_eq_of_ae_eq hss'.symm)
   have hr : μ⟦s ∩ s' | G⟧ =ᵐ[μ] p := by
     refine condExp_congr_ae (indOne_ae_eq_of_ae_eq ?_)
-    have := EventuallyEq.inter (EventuallyEq.refl _ s) hss'.symm
+    have := EventuallyEqSet.inter (EventuallyEq.refl _ s) hss'.symm
     rwa [inter_self] at this
   have hpp : ∀ᵐ x ∂μ, p x = p x * p x := by
     filter_upwards [hr, h, hq] with x h1 h2 h3
@@ -115,7 +115,7 @@ theorem aeDeterminedSigma_of_condIndepEv_of_ae_eq [IsProbabilityMeasure μ] {β 
   rintro _ ⟨B, hB, rfl⟩
   refine exists_ae_eq_set_of_condIndep_self hG (hX hB) ?_ (hXY _ _ ⟨B, hB, rfl⟩
     ⟨B, hB, rfl⟩)
-  rw [eventuallyEq_set]
+  rw [eventuallyEqSet_iff]
   filter_upwards [heq] with x hx
   simp [hx]
 

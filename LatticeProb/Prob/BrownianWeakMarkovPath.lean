@@ -36,9 +36,9 @@ theorem indepFun_vectors_of_independent_coordinate_pairs
     (hpairs : iIndepFun (fun i ω ↦ (f i ω, g i ω)) μ)
     (hwithin : ∀ i, IndepFun (f i) (g i) μ) :
     IndepFun (fun ω i ↦ f i ω) (fun ω i ↦ g i ω) μ := by
-  letI (i : ι) : IsProbabilityMeasure (μ.map (f i)) :=
+  let (i : ι) : IsProbabilityMeasure (μ.map (f i)) :=
     (Measure.isProbabilityMeasure_map_iff (hf i).aemeasurable).mpr inferInstance
-  letI (i : ι) : IsProbabilityMeasure (μ.map (g i)) :=
+  let (i : ι) : IsProbabilityMeasure (μ.map (g i)) :=
     (Measure.isProbabilityMeasure_map_iff (hg i).aemeasurable).mpr inferInstance
   have hflaw (i : ι) : HasLaw (f i) (μ.map (f i)) μ := ⟨(hf i).aemeasurable, rfl⟩
   have hglaw (i : ι) : HasLaw (g i) (μ.map (g i)) μ := ⟨(hg i).aemeasurable, rfl⟩
@@ -76,7 +76,7 @@ theorem standardBrownianLaw_indepFun_shift {d : ℕ}
     {μ : Measure (BrownianPath d)} (hμ : IsStandardBrownianLaw μ) (t : ℝ≥0) :
     IndepFun (fun (ω : BrownianPath d) (s : ℝ≥0) ↦ ω (t + s) - ω t)
       (fun (ω : BrownianPath d) (s : Set.Iic t) ↦ ω s) μ := by
-  letI : IsProbabilityMeasure μ := hμ.1
+  let : IsProbabilityMeasure μ := hμ.1
   let f : Fin d → BrownianPath d → (ℝ≥0 → ℝ) :=
     fun i ω s ↦ ω (t + s) i - ω t i
   let g : Fin d → BrownianPath d → (Set.Iic t → ℝ) :=
@@ -99,11 +99,11 @@ theorem standardBrownianLaw_indepFun_shift {d : ℕ}
   let assemblePast : (Fin d → Set.Iic t → ℝ) → (Set.Iic t → Euc d) :=
     fun b s ↦ WithLp.toLp 2 (fun i ↦ b i s)
   have hmF : Measurable assembleFuture := by
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro s
     exact (PiLp.continuous_toLp 2 (fun _ : Fin d ↦ ℝ)).measurable.comp (by fun_prop)
   have hmP : Measurable assemblePast := by
-    apply measurable_pi_lambda
+    apply Measurable.of_eval
     intro s
     exact (PiLp.continuous_toLp 2 (fun _ : Fin d ↦ ℝ)).measurable.comp (by fun_prop)
   exact hvec.comp hmF hmP
@@ -137,7 +137,7 @@ private lemma measurableSpace_brownianPath_eq_comap {d : ℕ} :
   refine iSup_le fun t ↦ ?_
   have heval : Measurable[MeasurableSpace.comap raw inferInstance]
       (fun ω : BrownianPath d ↦ ω t) := by
-    letI : MeasurableSpace (BrownianPath d) := MeasurableSpace.comap raw inferInstance
+    let : MeasurableSpace (BrownianPath d) := MeasurableSpace.comap raw inferInstance
     have hcoords : Measurable (fun (ω : BrownianPath d) (i : Fin d) ↦ ω t i) :=
       (show Measurable (fun (b : Fin d → ℝ≥0 → ℝ) (i : Fin d) ↦ b i t) by
         fun_prop).comp (comap_measurable raw)
@@ -181,11 +181,11 @@ theorem standardBrownianLaw_unique {d : ℕ} {μ ν : Measure (BrownianPath d)}
 lemma standardBrownianLaw_shift {d : ℕ} {μ : Measure (BrownianPath d)}
     (hμ : IsStandardBrownianLaw μ) (t : ℝ≥0) :
     IsStandardBrownianLaw (μ.map (shiftedBrownianPath t)) := by
-  letI : IsProbabilityMeasure μ := hμ.1
+  let : IsProbabilityMeasure μ := hμ.1
   have hprob : IsProbabilityMeasure (μ.map (shiftedBrownianPath t)) :=
     (Measure.isProbabilityMeasure_map_iff (measurable_shiftedBrownianPath t).aemeasurable).mpr
       inferInstance
-  letI := hprob
+  let := hprob
   refine ⟨hprob, fun i ↦ ?_, ?_⟩
   · refine { toIsPreBrownianReal := ?_, cont := ?_ }
     · constructor

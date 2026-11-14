@@ -52,7 +52,7 @@ theorem standardBrownianLaw_stopped_harmonic_step_bound {d : ℕ}
       |∫ ω, A.indicator (fun ω ↦ f (X ω + (ω (t + s) - ω t)) - f (X ω)) ω ∂μ| ≤
         ε * (d : ℝ) * (s : ℝ) + C * (s : ℝ) ^ 2 := by
   classical
-  letI : IsProbabilityMeasure μ := hμ.1
+  let : IsProbabilityMeasure μ := hμ.1
   obtain ⟨C, hC, hR⟩ := uniform_taylor_remainder_of_contDiff_compactSupport hf hsupp hε
   refine ⟨C * (3 * (d : ℝ) ^ 2), by positivity, fun t s X A hX hA hAX ↦ ?_⟩
   have hXall : Measurable X := hX.mono ((brownianNaturalFiltration d).le t) le_rfl
@@ -137,10 +137,10 @@ lemma sum_stopped_differences (g : ℕ → ℝ) (m k : ℕ) :
   | succ m ih =>
     rw [Finset.sum_range_succ, ih]
     by_cases h : m < k
-    · rw [if_pos h, Nat.min_eq_left h.le, Nat.min_eq_left (Nat.succ_le_of_lt h)]
+    · rw [ite_eq_left h, Nat.min_eq_left h.le, Nat.min_eq_left (Nat.succ_le_of_lt h)]
       ring
     · have hk : k ≤ m := Nat.le_of_not_gt h
-      rw [if_neg h, Nat.min_eq_right hk, Nat.min_eq_right (hk.trans (Nat.le_succ m))]
+      rw [ite_eq_right h, Nat.min_eq_right hk, Nat.min_eq_right (hk.trans (Nat.le_succ m))]
       ring
 
 /-- The dyadic telescoping identity. The increment of `g ω` between the dyadic stopping time
@@ -171,7 +171,7 @@ lemma measurableSet_before_nnreal_stopping {d : ℕ} {σ : BrownianPath d → �
   have h := (hσ t).compl
   change MeasurableSet[brownianNaturalFiltration d t]
     ({ω : BrownianPath d | (σ ω : ℝ≥0∞) ≤ (t : ℝ≥0∞)}ᶜ) at h
-  simpa only [compl_setOf, not_le, ENNReal.coe_lt_coe] using h
+  simpa only [compl_ofPred, not_le, ENNReal.coe_lt_coe] using h
 
 /-- Summing the proved one-step bounds up to an actual bounded stopping time.
 The constant is uniform over the stopping time, starting point, and dyadic mesh. -/
@@ -215,11 +215,11 @@ theorem standardBrownianLaw_dyadic_stopped_harmonic_bound {d : ℕ}
       by_cases hω : t < σ ω
       · rw [indicator_of_mem (show ω ∈ {ω | t < σ ω} from hω)]
         dsimp [D]
-        rw [if_pos hω, ← htime]
+        rw [ite_eq_left hω, ← htime]
         congr 2
         abel
       · rw [indicator_of_notMem (show ω ∉ {ω | t < σ ω} from hω)]
-        exact (if_neg hω).symm
+        exact (ite_eq_right hω).symm
     rw [heq] at h
     exact h
   have heq : (fun ω ↦ f (z + ω (dyadicStoppingTime σ n ω)) - f (z + ω 0)) =

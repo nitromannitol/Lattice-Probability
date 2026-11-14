@@ -36,7 +36,7 @@ variable {Ω : Type*} [mΩ : MeasurableSpace Ω] {P : Measure Ω}
 theorem ae_tendsto_div_nat {B : ℝ≥0 → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (hBm : ∀ t, Measurable (B t)) :
     ∀ᵐ ω ∂P, Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * B n ω) atTop (nhds 0) := by
-  haveI : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
+  have : IsProbabilityMeasure P := hB.isGaussianProcess.isProbabilityMeasure
   set X : ℕ → Ω → ℝ := fun i ω => B ((i : ℝ≥0) + 1) ω - B i ω with hX
   have hXm : ∀ i, Measurable (X i) := fun i => (hBm _).sub (hBm _)
   have hlaw : ∀ i, P.map (X i) = gaussianReal 0 1 := by

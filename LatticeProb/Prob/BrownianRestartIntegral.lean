@@ -43,10 +43,10 @@ theorem HasStrongMarkovRestart.map_prod [IsProbabilityMeasure P] {d : ℕ}
           (Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P) := by
   have hYm : Measurable Y := hY.mono hτ.measurableSpace_le le_rfl
   have hEm : MeasurableSet E := hτ.measurableSpace_le _ hE
-  haveI : IsFiniteMeasure (Measure.map Y (P.restrict E)) :=
+  have : IsFiniteMeasure (Measure.map Y (P.restrict E)) :=
     ⟨by rw [Measure.map_apply hYm MeasurableSet.univ, Set.preimage_univ]
         exact measure_lt_top _ _⟩
-  haveI : IsProbabilityMeasure (Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P) :=
+  have : IsProbabilityMeasure (Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P) :=
     inferInstance
   refine (Measure.prod_eq fun s t hs ht => ?_).symm
   have hW : Measurable fun ω => (Y ω, fun t : ℝ≥0 => B (τ ω + t) ω - B (τ ω) ω) :=
@@ -57,7 +57,7 @@ theorem HasStrongMarkovRestart.map_prod [IsProbabilityMeasure P] {d : ℕ}
   have hset : ((fun ω => (Y ω, fun t : ℝ≥0 => B (τ ω + t) ω - B (τ ω) ω)) ⁻¹' (s ×ˢ t)) ∩ E
       = (E ∩ (Y ⁻¹' s)) ∩ {ω | (fun t : ℝ≥0 => B (τ ω + t) ω - B (τ ω) ω) ∈ t} := by
     ext ω
-    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_prod, Set.mem_setOf_eq]
+    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_prod, Set.mem_ofPred_eq]
     tauto
   rw [hset, h.restart τ hτ (E ∩ (Y ⁻¹' s)) (hE.inter (hY hs)) t ht, Set.inter_comm E (Y ⁻¹' s)]
   rfl
@@ -82,10 +82,10 @@ theorem HasStrongMarkovRestart.setIntegral_restart [IsProbabilityMeasure P] {d :
   have hYm : Measurable Y := hY.mono hτ.measurableSpace_le le_rfl
   have hW : Measurable fun ω => (Y ω, fun t : ℝ≥0 => B (τ ω + t) ω - B (τ ω) ω) :=
     hYm.prodMk hmshift
-  haveI : IsFiniteMeasure (Measure.map Y (P.restrict E)) :=
+  have : IsFiniteMeasure (Measure.map Y (P.restrict E)) :=
     ⟨by rw [Measure.map_apply hYm MeasurableSet.univ, Set.preimage_univ]
         exact measure_lt_top _ _⟩
-  haveI : IsProbabilityMeasure (Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P) :=
+  have : IsProbabilityMeasure (Measure.map (fun ω (t : ℝ≥0) => B t ω - B 0 ω) P) :=
     inferInstance
   have hint : Integrable F
       ((Measure.map Y (P.restrict E)).prod

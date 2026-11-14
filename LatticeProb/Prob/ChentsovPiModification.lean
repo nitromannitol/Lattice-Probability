@@ -140,7 +140,7 @@ theorem LatticeProb.ae_exists_notMem_badSetPi {k : ℕ} {Ω : Type*} [Measurable
     measure_limsup_atTop_eq_zero hsum
   rw [ae_iff]
   refine measure_mono_null (fun ω hω => ?_) hBC
-  simp only [Set.mem_setOf_eq, not_exists, not_forall] at hω
+  simp only [Set.mem_ofPred_eq, not_exists, not_forall] at hω
   rw [mem_limsup_iff_frequently_mem, Filter.frequently_atTop]
   intro n₀
   obtain ⟨n, hn, hmem⟩ := hω n₀
@@ -399,14 +399,14 @@ theorem LatticeProb.exists_continuous_modification_pi_all {k : ℕ} {Ω : Type*}
       linarith
     have hlim := tendsto_dtruncPi hb (fun n => (hrpos n).le) hrsum (le_max_left n₀ ⌈‖z‖⌉₊) hzn
     have hEq := tendsto_nhds_unique h2 (hlim.comp hns.tendsto_atTop)
-    rw [if_pos hG]
+    rw [ite_eq_left hG]
     exact hEq
   · intro ω
     by_cases hω : ω ∈ goodSetPi X r
-    · simp only [if_pos hω]
+    · simp only [ite_eq_left hω]
       obtain ⟨n₀, hn₀⟩ := mem_goodSetPi.mp hω
       exact continuous_dlimPi (dyadicIncBoundPi_of_notMem hn₀) (fun n => (hrpos n).le) hrsum
-    · simp only [if_neg hω]
+    · simp only [ite_eq_right hω]
       exact continuous_const
 
 /-- The space-time form with every path continuous. -/

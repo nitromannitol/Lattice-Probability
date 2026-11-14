@@ -101,7 +101,7 @@ theorem dyadicIncBound_of_notMem {r : ℕ → ℝ} (hr : ∀ n, 0 < r n) {ω : �
   intro n hn k hk
   have hmem : k ∈ Finset.range (n * 2 ^ n) := Finset.mem_range.mpr (by omega)
   have := h n hn
-  simp only [badSet, Set.mem_iUnion, Set.mem_setOf_eq, not_exists, exists_prop, not_and] at this
+  simp only [badSet, Set.mem_iUnion, Set.mem_ofPred_eq, not_exists, exists_prop, not_and] at this
   have hlt : edist (X (dyad n (k + 1)) ω) (X (dyad n k) ω) < ENNReal.ofReal (r n) :=
     not_le.mp (this k hmem)
   rw [edist_dist, Real.dist_eq, ENNReal.ofReal_lt_ofReal_iff (hr n)] at hlt
@@ -225,7 +225,7 @@ theorem exists_continuous_modification (hX : IsKolmogorovProcess X P p q M) (hq 
   have hgood : ∀ᵐ ω ∂P, ∃ n₀ : ℕ, ∀ n, n₀ ≤ n → ω ∉ badSet X r n := by
     rw [ae_iff]
     refine measure_mono_null (fun ω hω => ?_) hBC
-    simp only [Set.mem_setOf_eq, not_exists, not_forall] at hω
+    simp only [Set.mem_ofPred_eq, not_exists, not_forall] at hω
     rw [mem_limsup_iff_frequently_mem, Filter.frequently_atTop]
     intro n₀
     obtain ⟨n, hn, hmem⟩ := hω n₀

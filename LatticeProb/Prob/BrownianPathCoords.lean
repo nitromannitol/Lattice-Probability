@@ -142,7 +142,7 @@ law on the path space `BrownianPath 1`: take the continuous version of the Brown
 theorem exists_isStandardBrownianLaw_one :
     ∃ μ : Measure (BrownianPath 1), IsStandardBrownianLaw μ := by
   obtain ⟨Ω, mΩ, P, B, hB, -, -⟩ := exists_isBrownianSpace_cont 1 0
-  haveI : IsProbabilityMeasure P := hB.isProbabilityMeasure
+  have : IsProbabilityMeasure P := hB.isProbabilityMeasure
   obtain ⟨C, hCm, hC, -, -, hcoord, hindep⟩ := hB.exists_continuousVersion
   exact ⟨P.map (pathMap C hC), isStandardBrownianLaw_map_pathMap hCm hC hcoord hindep⟩
 
