@@ -48,6 +48,43 @@ theorem apply_le_len (D : LSCMetric) (P : ℝ → ℂ) {a b : ℝ} (hab : a ≤ 
   eVariationOn.edist_le (D.pt ∘ P) (left_mem_Icc.2 hab) (right_mem_Icc.2 hab)
 
  
+theorem internal_eq_internalEDist (D : LSCMetric) (Y : Set ℂ) (p : Y × Y) :
+    D.internal Y p =
+      LQGMetric.MetricGeometry.internalEDist (D.pt '' Y) (D.pt p.1) (D.pt p.2) := by
+  refine le_antisymm ?_ ?_
+  · refine le_iInf fun γ => ?_
+    have htr : ∀ t ∈ Icc (0 : ℝ) 1, (γ.1.extend t : ℂ) ∈ Y := by
+      intro t ht
+      obtain ⟨x, hx, hxt⟩ := γ.2 ⟨t, ht⟩
+      rw [Path.extend_apply γ.1 ht, ← hxt]
+      exact hx
+    exact iInf_le_of_le (fun t => (γ.1.extend t : ℂ)) <| iInf_le_of_le 0 <| iInf_le_of_le 1 <|
+      iInf_le_of_le ⟨zero_le_one, γ.1.continuous_extend.continuousOn⟩ <| iInf_le_of_le htr <|
+      iInf_le_of_le γ.1.extend_zero <| iInf_le_of_le γ.1.extend_one le_rfl
+  · refine le_iInf fun P => le_iInf fun a => le_iInf fun b => le_iInf fun hP => le_iInf fun hY =>
+      le_iInf fun ha => le_iInf fun hb => ?_
+    have h := LQGMetric.MetricGeometry.internalEDist_le_curveLength (X := D.Space)
+      (Y := D.pt '' Y) (P := D.pt ∘ P) hP.1 hP.2 (fun t ht => ⟨P t, hY t ht, rfl⟩)
+    have ha' : (D.pt ∘ P) a = D.pt p.1 := congrArg D.pt ha
+    have hb' : (D.pt ∘ P) b = D.pt p.2 := congrArg D.pt hb
+    rw [ha', hb'] at h
+    exact h
+
+ 
+
+theorem isExtMetric_internal (D : LSCMetric) (Y : Set ℂ) : IsExtMetric (D.internal Y) := by
+  refine ⟨fun x => ?_, fun x y h => ?_, fun x y => ?_, fun x y z => ?_⟩
+  · rw [internal_eq_internalEDist]
+    exact LQGMetric.MetricGeometry.internalEDist_self ⟨x.1, x.2, rfl⟩
+  · rw [internal_eq_internalEDist] at h
+    have h1 := (LQGMetric.MetricGeometry.edist_le_internalEDist _ _ _).trans h.le
+    exact Subtype.ext (D.isExtMetric.eq_of_eq_zero _ _ (le_antisymm h1 bot_le))
+  · simp only [internal_eq_internalEDist]
+    exact LQGMetric.MetricGeometry.internalEDist_comm _ _ _
+  · simp only [internal_eq_internalEDist]
+    exact LQGMetric.MetricGeometry.internalEDist_triangle _ _ _ _
+
+ 
 
 end LSCMetric
 

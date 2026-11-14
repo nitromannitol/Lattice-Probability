@@ -50,5 +50,70 @@ theorem translateDist_eq_affineComp_one (z : ℂ) (g : DistC) :
   exact congrArg g (testTranslate_eq_testAffinePull_one z φ)
 
  
+theorem map_eq_of_candidate_normalized {Ω Ω' : Type*}
+    [MeasurableSpace Ω] [MeasurableSpace Ω']
+    {P : Measure Ω} {P' : Measure Ω'} {h : Ω → DistC} {h' : Ω' → DistC}
+    (hh : IsNormalizedWholePlaneGFF h P)
+    (hh' : IsNormalizedWholePlaneGFF h' P') :
+    P.map h = P'.map h' :=
+  LQGMetric.CircleAvg.map_eq_of_isNormalizedWPGFF
+    (isNormalizedWholePlaneGFF_iff_old.mp hh)
+    (isNormalizedWholePlaneGFF_iff_old.mp hh')
+
+ 
+theorem map_affine_normalized_of_candidate {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} {h : Ω → DistC}
+    (hh : IsNormalizedWholePlaneGFF h P) {r : ℝ} (hr : 0 < r) (z : ℂ) :
+    P.map (fun ω => addConst (affineComp r z (h ω))
+      (-circleAvg (affineComp r z (h ω)) 1 0)) = P.map h :=
+  LQGMetric.CircleAvg.map_affine_normalized
+    (isNormalizedWholePlaneGFF_iff_old.mp hh) hr z
+
+ 
+theorem normalized_translate_sub_circleAvg {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} {h : Ω → DistC}
+    (hh : IsNormalizedWholePlaneGFF h P) (z : ℂ) :
+    IsNormalizedWholePlaneGFF
+      (fun ω => addConst (translateDist z (h ω)) (-circleAvg (h ω) 1 z)) P := by
+  have hold := isNormalizedWholePlaneGFF_iff_old.mp hh
+  have htrans : IsWholePlaneGFF (fun ω => translateDist z (h ω)) P := by
+    simpa only [translateDist_eq_affineComp_one] using hh.1.affineComp one_pos z
+  have hc : Measurable (fun ω => -circleAvg (h ω) 1 z) :=
+    ((LQGMetric.measurable_circleAvg_left 1 z).comp hh.1.measurable).neg
+  have hwhole := htrans.addConst hc
+  apply isNormalizedWholePlaneGFF_iff_old.mpr
+  refine ⟨hwhole, ?_⟩
+  filter_upwards [LQGMetric.CircleAvg.ae_circleAvg_addConst htrans 0 one_pos]
+    with ω hca
+  rw [hca, translateDist_eq_affineComp_one,
+    LQGMetric.GM.Tight.circleAvg_affineComp_one]
+  ring
+
+ 
+theorem map_normalized_translate_sub_circleAvg {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} {h : Ω → DistC}
+    (hh : IsNormalizedWholePlaneGFF h P) (z : ℂ) :
+    P.map (fun ω => addConst (translateDist z (h ω)) (-circleAvg (h ω) 1 z)) =
+      P.map h := by
+  have hold := isNormalizedWholePlaneGFF_iff_old.mp hh
+  simp only [translateDist_eq_affineComp_one]
+  exact LQGMetric.CircleAvg.map_affine_sub_circleAvg hold one_pos z
+
+ 
+theorem ae_circleAvg_normalized_translate {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} {h : Ω → DistC}
+    (hh : IsNormalizedWholePlaneGFF h P) (z : ℂ) (r : Ioi (0 : ℝ)) :
+    ∀ᵐ ω ∂P,
+      circleAvg (addConst (translateDist z (h ω)) (-circleAvg (h ω) 1 z)) r 0 =
+        circleAvg (h ω) r z - circleAvg (h ω) 1 z := by
+  have htrans : IsWholePlaneGFF (fun ω => translateDist z (h ω)) P := by
+    simpa only [translateDist_eq_affineComp_one] using hh.1.affineComp one_pos z
+  filter_upwards [LQGMetric.CircleAvg.ae_circleAvg_addConst htrans 0 r.2]
+    with ω hω
+  rw [hω, translateDist_eq_affineComp_one,
+    LQGMetric.GM.Tight.circleAvg_affineComp_one]
+  ring
+
+ 
 end SupercriticalLQGUniqueness
 

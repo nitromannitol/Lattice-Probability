@@ -262,6 +262,23 @@ theorem joint_len_le_liminf {G : ℕ → LSCMetric} {D : LSCMetric}
     exact le_iSup_of_le k <| le_iSup_of_le t <| le_iSup_of_le ht <|
       le_iSup_of_le h0 <| le_iSup_of_le hk le_rfl
   exact hsum.trans (liminf_le_liminf (Eventually.of_forall hpart))
+theorem exists_lipschitz_reparam (D : LSCMetric) (P : ℝ → ℂ) {a b : ℝ}
+    (hP : D.IsCurve P a b) (hfin : D.len P a b ≠ ∞) {K : Set ℂ}
+    (htrace : P '' Icc a b ⊆ K) :
+    ∃ γ : Path (D.pt (P a)) (D.pt (P b)),
+      LQGMetric.MetricGeometry.pathLength γ = D.len P a b ∧
+      (∀ t, (γ t : ℂ) ∈ K) ∧
+      LipschitzWith (D.len P a b).toNNReal γ := by
+  obtain ⟨γ, hlen, hrange⟩ :=
+    LQGMetric.MetricGeometry.exists_path_of_curve hP.1 hP.2
+  obtain ⟨γ', hlen', hrange', hlip⟩ :=
+    LQGMetric.MetricGeometry.exists_lipschitz_path γ (hlen ▸ hfin)
+  refine ⟨γ', hlen'.trans hlen, ?_, ?_⟩
+  · intro t
+    exact htrace (hrange (hrange' (Set.mem_range_self t)))
+  · change LipschitzWith
+      (LQGMetric.MetricGeometry.curveLength (D.pt ∘ P) a b).toNNReal γ'
+    simpa only [hlen] using hlip
 
  
 theorem eventual_euclidean_modulus {G : ℕ → LSCMetric} {D : LSCMetric}
@@ -388,6 +405,141 @@ theorem compact_trace_path_subseq {G : ℕ → LSCMetric} {D : LSCMetric}
       (Eventually.of_forall fun n => htrace (φ n) t)
 
  
+theorem compact_path_limit {G : ℕ → LSCMetric} {D : LSCMetric}
+    (hG : Tendsto G atTop (nhds D)) {K E F : Set ℂ}
+    (hK : IsCompact K) (hE : IsClosed E) (hF : IsClosed F)
+    {P : ℕ → unitInterval → ℂ} (htrace : ∀ n t, P n t ∈ K)
+    (hends : ∀ n, P n 0 ∈ E ∧ P n 1 ∈ F)
+    {M : NNReal} (hLip : ∀ n, LipschitzWith M ((G n).pt ∘ P n))
+    {L : ENNReal}
+    (hbound : ∀ n, (G n).len (fun t => P n (projIcc 0 1 zero_le_one t)) 0 1 ≤ L) :
+    ∃ P₀ : C(unitInterval, ℂ),
+      D.IsCurve (fun t => P₀ (projIcc 0 1 zero_le_one t)) 0 1 ∧
+      (∀ t, P₀ t ∈ K) ∧ P₀ 0 ∈ E ∧ P₀ 1 ∈ F ∧
+      D.len (fun t => P₀ (projIcc 0 1 zero_le_one t)) 0 1 ≤ L := by
+  obtain ⟨φ, P₀, hφ, hlim, htrace₀⟩ := compact_trace_path_subseq hG hK htrace hLip
+  have hGφ : Tendsto (fun n => G (φ n)) atTop (nhds D) :=
+    hG.comp hφ.tendsto_atTop
+  have hDlip : LipschitzWith M (D.pt ∘ P₀) :=
+    Toolkit.PathInfimum.lipschitz_limit_of_epi hGφ hlim (fun n => hLip (φ n))
+  have hcurve : D.IsCurve (fun t => P₀ (projIcc 0 1 zero_le_one t)) 0 1 := by
+    refine ⟨zero_le_one, ?_⟩
+    exact (hDlip.continuous.comp continuous_projIcc).continuousOn
+  have hpoint : ∀ t ∈ Icc (0 : ℝ) 1,
+      Tendsto (fun n => P (φ n) (projIcc 0 1 zero_le_one t)) atTop
+        (nhds (P₀ (projIcc 0 1 zero_le_one t))) :=
+    fun t _ => hlim.tendsto_at (projIcc 0 1 zero_le_one t)
+  have hlen := joint_len_le_liminf hGφ hpoint
+  have hlen' : D.len (fun t => P₀ (projIcc 0 1 zero_le_one t)) 0 1 ≤ L :=
+    hlen.trans (liminf_le_of_frequently_le'
+      (Frequently.of_forall fun n => hbound (φ n)))
+  refine ⟨P₀, hcurve, htrace₀, ?_, ?_, hlen'⟩
+  · exact hE.mem_of_tendsto (hlim.tendsto_at 0)
+      (Eventually.of_forall fun n => (hends (φ n)).1)
+  · exact hF.mem_of_tendsto (hlim.tendsto_at 1)
+      (Eventually.of_forall fun n => (hends (φ n)).2)
+
+ 
+def compactPathInf (D : LSCMetric) (K E F : Set ℂ) : ENNReal :=
+  ⨅ (P : ℝ → ℂ) (a : ℝ) (b : ℝ) (_ : D.IsCurve P a b)
+    (_ : ∀ t ∈ Icc a b, P t ∈ K) (_ : P a ∈ E) (_ : P b ∈ F), D.len P a b
+
+private theorem compactPathInf_le (D : LSCMetric) {K E F : Set ℂ}
+    (P : ℝ → ℂ) (a b : ℝ) (hP : D.IsCurve P a b)
+    (hK : ∀ t ∈ Icc a b, P t ∈ K) (hE : P a ∈ E) (hF : P b ∈ F) :
+    compactPathInf D K E F ≤ D.len P a b := by
+  exact iInf_le_of_le P <| iInf_le_of_le a <| iInf_le_of_le b <|
+    iInf_le_of_le hP <| iInf_le_of_le hK <|
+    iInf_le_of_le hE <| iInf_le_of_le hF le_rfl
+
+ 
+theorem compactPathInf_seq_liminf {G : ℕ → LSCMetric} {D : LSCMetric}
+    (hG : Tendsto G atTop (nhds D)) {K E F : Set ℂ}
+    (hK : IsCompact K) (hE : IsCompact E) (hF : IsCompact F) :
+    compactPathInf D K E F ≤ liminf (fun n => compactPathInf (G n) K E F) atTop := by
+  refine le_of_forall_lt fun v hv => ?_
+  obtain ⟨w, hvw, hw⟩ := exists_between hv
+  have hwfin : w ≠ ∞ := ne_top_of_lt hw
+  have htail : ∀ᶠ n in atTop, w ≤ compactPathInf (G n) K E F := by
+    by_contra hn
+    rw [not_eventually] at hn
+    obtain ⟨φ, hφ, hbad⟩ := extraction_of_frequently_atTop hn
+    have hbad' : ∀ n, compactPathInf (G (φ n)) K E F < w :=
+      fun n => lt_of_not_ge (hbad n)
+    have hpaths : ∀ n, ∃ (P : ℝ → ℂ) (a b : ℝ),
+        (G (φ n)).IsCurve P a b ∧
+        (∀ t ∈ Icc a b, P t ∈ K) ∧ P a ∈ E ∧ P b ∈ F ∧
+        (G (φ n)).len P a b < w := by
+      intro n
+      unfold compactPathInf at hbad'
+      obtain ⟨P, a, b, hP, htr, hEa, hFb, hcost⟩ :=
+        (by simpa only [iInf_lt_iff] using hbad' n)
+      exact ⟨P, a, b, hP, htr, hEa, hFb, hcost⟩
+    choose P a b hP htrace hEa hFb hlen using hpaths
+    have hfin : ∀ n, (G (φ n)).len (P n) (a n) (b n) ≠ ∞ :=
+      fun n => ne_top_of_lt (hlen n)
+    have htrace' : ∀ n, P n '' Icc (a n) (b n) ⊆ K := by
+      intro n z hz
+      obtain ⟨t, ht, rfl⟩ := hz
+      exact htrace n t ht
+    choose γ hγlen hγtrace hγlip using fun n =>
+      exists_lipschitz_reparam (G (φ n)) (P n) (hP n) (hfin n) (htrace' n)
+    let Q : ℕ → unitInterval → ℂ := fun n t => γ n t
+    have hQtrace : ∀ n t, Q n t ∈ K := fun n t => hγtrace n t
+    have hQends : ∀ n, Q n 0 ∈ E ∧ Q n 1 ∈ F := by
+      intro n
+      change (γ n 0 : ℂ) ∈ E ∧ (γ n 1 : ℂ) ∈ F
+      rw [(γ n).source, (γ n).target]
+      change P n (a n) ∈ E ∧ P n (b n) ∈ F
+      exact ⟨hEa n, hFb n⟩
+    have hQlip : ∀ n, LipschitzWith w.toNNReal
+        ((G (φ n)).pt ∘ Q n) := by
+      intro n
+      have hmono : ((G (φ n)).len (P n) (a n) (b n)).toNNReal ≤ w.toNNReal :=
+        ENNReal.toNNReal_mono hwfin (hlen n).le
+      exact (hγlip n).weaken hmono
+    have hQbound : ∀ n,
+        (G (φ n)).len (fun t => Q n (projIcc 0 1 zero_le_one t)) 0 1 ≤ w := by
+      intro n
+      change LQGMetric.MetricGeometry.pathLength (γ n) ≤ w
+      exact (hγlen n).le.trans (hlen n).le
+    obtain ⟨P₀, hP₀, hK₀, hE₀, hF₀, hlen₀⟩ :=
+      compact_path_limit (hG.comp hφ.tendsto_atTop) hK hE.isClosed hF.isClosed
+        hQtrace hQends hQlip hQbound
+    have hInf : compactPathInf D K E F ≤
+        D.len (fun t => P₀ (projIcc 0 1 zero_le_one t)) 0 1 := by
+      apply compactPathInf_le D _ 0 1 hP₀
+      · intro t ht
+        rw [projIcc_of_mem zero_le_one ht]
+        exact hK₀ ⟨t, ht⟩
+      · simpa using hE₀
+      · simpa using hF₀
+    exact (not_le_of_gt hw) (hInf.trans hlen₀)
+  exact hvw.trans_le (Filter.le_liminf_of_le (by isBoundedDefault) htail)
+
+
+ 
+
+
+theorem compactPathInf_lsc_of_firstCountable
+    [FirstCountableTopology LSCMetric] {K E F : Set ℂ}
+    (hK : IsCompact K) (hE : IsCompact E) (hF : IsCompact F) :
+    LowerSemicontinuous (fun D : LSCMetric => compactPathInf D K E F) := by
+  apply (lowerSemicontinuous_iff_seq).2
+  intro G D hG
+  exact compactPathInf_seq_liminf hG hK hE hF
+
+ 
+theorem compactPathInf_lsc {K E F : Set ℂ}
+    (hK : IsCompact K) (hE : IsCompact E) (hF : IsCompact F) :
+    LowerSemicontinuous (fun D : LSCMetric => compactPathInf D K E F) :=
+  compactPathInf_lsc_of_firstCountable hK hE hF
+
+theorem compactPathInf_measurable {K E F : Set ℂ}
+    (hK : IsCompact K) (hE : IsCompact E) (hF : IsCompact F) :
+    Measurable (fun D : LSCMetric => compactPathInf D K E F) :=
+  (compactPathInf_lsc hK hE hF).measurable
+
 
 end Uniqueness.Toolkit.CompactPathInfimum
 

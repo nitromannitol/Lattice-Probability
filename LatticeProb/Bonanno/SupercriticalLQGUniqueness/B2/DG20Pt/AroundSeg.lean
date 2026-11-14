@@ -1,7 +1,6 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module SupercriticalLQGUniqueness.B2.DG20Pt.AroundSeg at commit fdb5cad; only the module paths of local imports are changed.
-   Imports of copied modules that this file does not need are replaced by their own imports. -/
-import LatticeProb.Bonanno.SupercriticalLQGUniqueness.B2.Strong.AroundFinite
+   source module SupercriticalLQGUniqueness.B2.DG20Pt.AroundSeg at commit fdb5cad; only the module paths of local imports are changed. -/
+import LatticeProb.Bonanno.SupercriticalLQGUniqueness.B2.DG20Pt.AroundPolarData
 import LatticeProb.Bonanno.LQGMetric.LFPP.PathOps
 import LatticeProb.Bonanno.LQGMetric.Papers.DDDF.RSWPath
 

@@ -218,4 +218,61 @@ theorem continuousOn_plProf (q : ℝ) :
 
 lemma plProf_mem_Icc (q ε r : ℝ) : plProf q ε r ∈ Icc (0 : ℝ) 1 := locProf_mem_Icc _ _
 
+lemma continuousOn_dfgpsProf :
+    ContinuousOn (fun p : ℝ × ℝ => locProf (Real.log p.1) (p.2 : ℂ)) (Ioo (0 : ℝ) 1 ×ˢ univ) :=
+  contDiff_locProf.continuous.comp_continuousOn
+    ((Real.continuousOn_log.comp continuous_fst.continuousOn fun p hp =>
+      (ne_of_gt (mem_prod.1 hp).1.1 : p.1 ≠ 0)).prodMk
+      (Complex.continuous_ofReal.comp continuous_snd).continuousOn)
+
+ 
+
+ 
+def plZT (q ε : ℝ) : ℝ := ofCont (ContinuousMap.const ℂ 1) (plTestT q (ε, 0))
+
+lemma plZT_of_mem (q : ℝ) {ε : ℝ} (hε : ε ∈ Ioo (0 : ℝ) 1) : plZT q ε = plZ q ε hε := by
+  rw [plZT, plTestT_of_mem q hε, ofCont_apply, plZ]
+  simp
+
+theorem continuousOn_plZT (q : ℝ) : ContinuousOn (plZT q) (Ioo (0 : ℝ) 1) :=
+  (map_continuous (ofCont (ContinuousMap.const ℂ 1))).comp_continuousOn
+    ((continuousOn_plTestT q).comp (continuous_id.prodMk continuous_const).continuousOn
+      fun _ hε => ⟨hε, mem_univ _⟩)
+
+ 
+
+theorem plMollify_continuousOn (q : ℝ) (h : DistC) :
+    ContinuousOn (fun p : ℝ × ℂ => if hp : p.1 ∈ Ioo (0 : ℝ) 1 then plMollify q p.1 hp h p.2 else 0)
+      (Ioo (0 : ℝ) 1 ×ˢ univ) := by
+  have hZ : ContinuousOn (fun p : ℝ × ℂ => (plZT q p.1)⁻¹) (Ioo (0 : ℝ) 1 ×ˢ univ) :=
+    ((continuousOn_plZT q).comp continuous_fst.continuousOn fun p hp => (mem_prod.1 hp).1).inv₀
+      fun p hp => by
+        show plZT q p.1 ≠ 0
+        rw [plZT_of_mem q (mem_prod.1 hp).1]; exact (plZ_pos q _ _).ne'
+  have hT : ContinuousOn (fun p : ℝ × ℂ => h (plTestT q p)) (Ioo (0 : ℝ) 1 ×ˢ univ) :=
+    (map_continuous h).comp_continuousOn (continuousOn_plTestT q)
+  refine (hZ.mul hT).congr fun p hp => ?_
+  have hp1 : p.1 ∈ Ioo (0 : ℝ) 1 := (mem_prod.1 hp).1
+  show (if hp : p.1 ∈ Ioo (0 : ℝ) 1 then plMollify q p.1 hp h p.2 else 0) =
+    (plZT q p.1)⁻¹ * h (plTestT q p)
+  simp only [hp1, ↓reduceDIte]
+  rw [plZT_of_mem q hp1]
+  obtain ⟨ε, z⟩ := p
+  rw [plTestT_of_mem q hp1]; rfl
+
+ 
+theorem continuous_plMollify (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (h : DistC) :
+    Continuous (plMollify q ε hε h) := by
+  have hc : ContinuousOn (fun z : ℂ => h (plTestT q (ε, z))) univ :=
+    (map_continuous h).comp_continuousOn ((continuousOn_plTestT q).comp
+      (continuous_const.prodMk continuous_id).continuousOn fun z _ => ⟨hε, mem_univ _⟩)
+  have : plMollify q ε hε h = fun z => (plZ q ε hε)⁻¹ * h (plTestT q (ε, z)) := by
+    funext z; rw [plTestT_of_mem q hε]; rfl
+  rw [this]
+  exact continuous_const.mul (continuousOn_univ.1 hc)
+
+ 
+def plMollifyC (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (h : DistC) : C(ℂ, ℝ) :=
+  ⟨plMollify q ε hε h, continuous_plMollify q ε hε h⟩
+
 end SupercriticalLQGUniqueness.B2.Polylog

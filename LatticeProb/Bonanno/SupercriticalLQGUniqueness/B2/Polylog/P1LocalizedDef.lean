@@ -107,11 +107,31 @@ def plTest (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (z : ℂ) : TestC where
 lemma plTest_apply (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (z w : ℂ) :
     plTest q ε hε z w = plBump q ε hε (z - w) * heatKernel (ε ^ 2 / 2) z w := rfl
 
+theorem tsupport_plTest_subset (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (z : ℂ) :
+    tsupport (plTest q ε hε z : ℂ → ℝ) ⊆ closedBall z (plRad q ε) := by
+  refine closure_minimal (fun w hw => ?_) isClosed_closedBall
+  by_contra hc
+  exact hw (show plBump q ε hε (z - w) * heatKernel (ε ^ 2 / 2) z w = 0 by
+    rw [plBump_comp_eq_zero q ε hε z hc, zero_mul])
+
 lemma plTest_nonneg (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (z w : ℂ) : 0 ≤ plTest q ε hε z w :=
   mul_nonneg (plBump_nonneg _ _ _ _) (heatKernel_nonneg _ (by positivity) _ _)
 
  
+lemma plTest_translate (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (z w : ℂ) :
+    plTest q ε hε z w = plTest q ε hε 0 (w - z) := by
+  rw [plTest_apply, plTest_apply]
+  congr 1
+  · congr 1; ring
+  · unfold heatKernel
+    rw [zero_sub, norm_neg, norm_sub_rev]
+
+ 
 def plZ (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) : ℝ := ∫ w, plTest q ε hε 0 w
+lemma integral_plTest (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (z : ℂ) :
+    ∫ w, plTest q ε hε z w = plZ q ε hε := by
+  simp_rw [plTest_translate q ε hε z]
+  exact integral_sub_right_eq_self (fun w => plTest q ε hε 0 w) z
 
 lemma plZ_pos (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) : 0 < plZ q ε hε := by
   have hc : Continuous (plTest q ε hε 0 : ℂ → ℝ) := (plTest q ε hε 0).continuous
@@ -137,6 +157,22 @@ lemma plZ_le_one (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) : plZ q ε hε ≤ 
  
 def plMollify (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (h : DistC) (z : ℂ) : ℝ :=
   (plZ q ε hε)⁻¹ * h (plTest q ε hε z)
+
+ 
+theorem plMollify_addConst (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (h : DistC) (c : ℝ) (z : ℂ) :
+    plMollify q ε hε (addConst h c) z = plMollify q ε hε h z + c := by
+  unfold plMollify
+  rw [GFFInv.addConst_apply, integral_plTest, mul_add, ← mul_assoc, inv_mul_cancel₀ (plZ_pos q ε hε).ne',
+    one_mul]
+
+ 
+
+theorem plMollify_congr (q ε : ℝ) (hε : ε ∈ Ioo (0 : ℝ) 1) (O : TopologicalSpace.Opens ℂ)
+    {g g' : DistC} (he : restrictTo O g = restrictTo O g') {z : ℂ}
+    (hz : closedBall z (plRad q ε) ⊆ O) :
+    plMollify q ε hε g z = plMollify q ε hε g' z := by
+  unfold plMollify
+  rw [DFGPS.L217.apply_eq_of_restrictTo_eq he _ ((tsupport_plTest_subset q ε hε z).trans hz)]
 
  
 end SupercriticalLQGUniqueness.B2.Polylog

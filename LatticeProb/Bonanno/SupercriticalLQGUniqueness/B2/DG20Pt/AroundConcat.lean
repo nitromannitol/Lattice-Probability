@@ -52,4 +52,21 @@ theorem concatPath_image_Icc (P R : ℝ → ℂ) (hPR : P 1 = R 0) :
 
  
 
+theorem glue4_image_subset (P₀ P₁ P₂ P₃ : ℝ → ℂ) :
+    Strong.glue4 P₀ P₁ P₂ P₃ '' Icc (0 : ℝ) 4 ⊆
+      P₀ '' Icc (0 : ℝ) 1 ∪ P₁ '' Icc (0 : ℝ) 1 ∪
+        P₂ '' Icc (0 : ℝ) 1 ∪ P₃ '' Icc (0 : ℝ) 1 := by
+  rintro z ⟨u, hu, rfl⟩
+  by_cases h₁ : u ≤ 1
+  · exact Or.inl (Or.inl (Or.inl ⟨u, ⟨hu.1, h₁⟩,
+      by simp [Strong.glue4, h₁]⟩))
+  by_cases h₂ : u ≤ 2
+  · exact Or.inl (Or.inl (Or.inr ⟨u - 1, ⟨by linarith, by linarith⟩,
+      by simp [Strong.glue4, h₁, h₂]⟩))
+  by_cases h₃ : u ≤ 3
+  · exact Or.inl (Or.inr ⟨u - 2, ⟨by linarith, by linarith⟩,
+      by simp [Strong.glue4, h₁, h₂, h₃]⟩)
+  · exact Or.inr ⟨u - 3, ⟨by linarith, by linarith [hu.2]⟩,
+      by simp [Strong.glue4, h₁, h₂, h₃]⟩
+
 end SupercriticalLQGUniqueness.B2.DG20Pt
