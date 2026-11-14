@@ -4,8 +4,10 @@ import LatticeProb.Analysis.HeatMollify
 /-!
 # The heat equation with a compactly supported source
 
-For a smooth compactly supported function on space-time, the heat operator produces a smooth
-compactly supported source.
+The heat operator maps smooth compactly supported functions to smooth compactly supported sources.
+The reflected heat kernel solves the backward heat equation, and the spatial heat operator is
+symmetric against compactly supported smooth functions. The heat-kernel boundary integral
+converges to the original function as time tends to zero.
 -/
 
 open MeasureTheory Filter Topology Set
@@ -217,5 +219,25 @@ theorem integral_mul_contOp {d : ℕ} {f g : (Fin d → ℝ) → ℝ}
     integral_finsetSum _ fun i _ => hj i]
   congr 1
   exact Finset.sum_congr rfl fun i _ => integral_mul_fderiv_fderiv_eq hf hg hgc _
+
+/-- Every spatial slice of a compactly supported space-time function has compact support. -/
+theorem hasCompactSupport_space_slice {d : ℕ} {v : ℝ × (Fin d → ℝ) → ℝ}
+    (hv : HasCompactSupport v) (s : ℝ) : HasCompactSupport (fun y => v (s, y)) := by
+  apply (hv.image continuous_snd).of_isClosed_subset (isClosed_tsupport _)
+  apply closure_minimal _ (hv.image continuous_snd).isClosed
+  intro y hy
+  have h : (s, y) ∈ tsupport v := subset_tsupport _ (by simpa using hy)
+  exact ⟨(s, y), h, rfl⟩
+
+/-- The spatial integration-by-parts identity for a positive-time heat kernel. -/
+theorem integral_heatKernel_mul_contOp {d : ℕ} (hd : 1 ≤ d) {τ : ℝ} (hτ : 0 < τ)
+    {v : ℝ × (Fin d → ℝ) → ℝ} (hv : ContDiff ℝ ∞ v) (hvc : HasCompactSupport v)
+    (s : ℝ) (x : Fin d → ℝ) :
+    ∫ y, heatKernel d τ (x - y) * contOp d (fun z => v (s, z)) y =
+      ∫ y, contOp d (fun z => heatKernel d τ (x - z)) y * v (s, y) := by
+  apply integral_mul_contOp
+  · exact (contDiff_heatKernel_space hd hτ).comp (contDiff_const.sub contDiff_id)
+  · exact hv.comp (contDiff_const.prodMk contDiff_id)
+  · exact hasCompactSupport_space_slice hvc s
 
 end LatticeProb.Heat
