@@ -168,5 +168,3 @@ theorem ae_forall_rat_descends {γ : ℝ} {μ : Measure Path2} (hμ : IsCorrelat
   ae_all_iff.2 fun i => ae_all_iff.2 fun q => ae_rat_descends hμ i q
 
 end LatticeProb.CorrelatedBM
-
-end LatticeProb.CorrelatedBM
