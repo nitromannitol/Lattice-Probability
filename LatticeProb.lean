@@ -470,6 +470,7 @@ import LatticeProb.Prob.BrownianMarginalDensity
 import LatticeProb.Prob.BrownianOccupationTrunc
 import LatticeProb.Analysis.BrownianHeatTime
 import LatticeProb.Prob.BrownianExitKelvin
+import LatticeProb.Analysis.PoissonBallKernel
 import LatticeProb.Prob.BrownianContAll
 import LatticeProb.Prob.RegularVariation
 import LatticeProb.Prob.Karamata
