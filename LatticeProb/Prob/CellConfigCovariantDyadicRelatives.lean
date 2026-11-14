@@ -3,6 +3,7 @@ import LatticeProb.Prob.ReverseLastTime
 import LatticeProb.Prob.CellConfigOriginSquares
 import LatticeProb.Prob.CellConfigSquareMeasurable
 import LatticeProb.Prob.PiSum
+import LatticeProb.Prob.CellConfigKernelAverage
 
 /-!
 # Dyadic ancestors and descendants of the squares around the origin
@@ -584,6 +585,58 @@ theorem ae_ae_eventually_dyadicAncestor_side_four {μ : Measure GMSSpace}
   rw [Nat.cast_one, one_mul, show ((2 : ℝ) ^ 2 : ℝ) = 4 by norm_num] at h
   rw [Complex.zero_re, Complex.zero_im]
   exact h
+
+/-! ### A conditional resampling estimate -/
+
+/-- A lower bound for a rooted event's capped-square average gives a conditional measure bound.
+The geometric lower bound is an explicit hypothesis. -/
+theorem measure_le_mul_measure_inter_of_kernelAverage {μ : Measure GMSSpace}
+    (hMT : MassTransport μ) {m : ℝ≥0∞} (hm0 : m ≠ 0) (hmtop : m ≠ ∞)
+    {B : Set (GMSSpace × DyadicCoord × ℂ)} (hB : MeasurableSet B)
+    (hinv : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ q : DyadicCoord, IsCompatible q.2.1 →
+        IsCompatible q.2.2 → ∀ w : ℂ,
+        ((H', similarityCoord s u q, s • w + similarityOffset s u) ∈ B ↔ (H, q, w) ∈ B))
+    {A : Set (GMSSpace × DyadicCoord)} (hA : MeasurableSet[cappedSquareSigma m] A)
+    {c : ℝ≥0∞}
+    (hlower : ∀ᵐ p ∂(μ.prod dyadicLaw).restrict A,
+      1 ≤ c * kernelAverage m (B.indicator (fun _ => (1 : ℝ≥0∞))) (p.1, p.2, 0)) :
+    μ.prod dyadicLaw A ≤ c * μ.prod dyadicLaw (A ∩ {p | (p.1, p.2, (0 : ℂ)) ∈ B}) := by
+  let G := B.indicator (fun _ => (1 : ℝ≥0∞))
+  have hG : Measurable G := measurable_const.indicator hB
+  have hGi : ∀ (s : ℝ) (u : Plane) (hs : 0 < s) (H H' : GMSSpace),
+      IsSimilar s u hs H H' → ∀ q : DyadicCoord, IsCompatible q.2.1 →
+        IsCompatible q.2.2 → ∀ w : ℂ,
+        G (H', similarityCoord s u q, s • w + similarityOffset s u) = G (H, q, w) := by
+    intro s u hs H H' h q h₁ h₂ w
+    change B.indicator (fun _ => (1 : ℝ≥0∞))
+      (H', similarityCoord s u q, s • w + similarityOffset s u) =
+      B.indicator (fun _ => (1 : ℝ≥0∞)) (H, q, w)
+    by_cases hw : (H, q, w) ∈ B
+    · rw [Set.indicator_of_mem ((hinv s u hs H H' h q h₁ h₂ w).2 hw),
+        Set.indicator_of_mem hw]
+    · have hw' : (H', similarityCoord s u q, s • w + similarityOffset s u) ∉ B :=
+        fun hmem => hw ((hinv s u hs H H' h q h₁ h₂ w).1 hmem)
+      rw [Set.indicator_of_notMem hw', Set.indicator_of_notMem hw]
+  have hT : MeasurableSet {p : GMSSpace × DyadicCoord | (p.1, p.2, (0 : ℂ)) ∈ B} :=
+    (measurable_fst.prodMk (measurable_snd.prodMk measurable_const)) hB
+  have hK : Measurable (fun p : GMSSpace × DyadicCoord => kernelAverage m G (p.1, p.2, 0)) :=
+    (measurable_kernelAverage m hG).comp
+      (measurable_fst.prodMk (measurable_snd.prodMk measurable_const))
+  calc
+    μ.prod dyadicLaw A = ∫⁻ _ in A, (1 : ℝ≥0∞) ∂μ.prod dyadicLaw := by simp
+    _ ≤ ∫⁻ p in A, c * kernelAverage m G (p.1, p.2, 0) ∂μ.prod dyadicLaw :=
+      lintegral_mono_ae hlower
+    _ = c * ∫⁻ p in A, kernelAverage m G (p.1, p.2, 0) ∂μ.prod dyadicLaw :=
+      lintegral_const_mul c hK
+    _ = c * ∫⁻ p in A, G (p.1, p.2, 0) ∂μ.prod dyadicLaw := by
+      rw [setLIntegral_kernelAverage_origin hMT hm0 hmtop hG hGi hA]
+    _ = c * μ.prod dyadicLaw (A ∩ {p | (p.1, p.2, (0 : ℂ)) ∈ B}) := by
+      congr 1
+      rw [show (fun p : GMSSpace × DyadicCoord => G (p.1, p.2, 0)) =
+        {p : GMSSpace × DyadicCoord | (p.1, p.2, (0 : ℂ)) ∈ B}.indicator (fun _ => 1) by
+          funext p; rfl, lintegral_indicator_const hT, Measure.restrict_apply hT]
+      simp [Set.inter_comm]
 
 /-! ### Last-time decomposition over finitely many indices of a linear order -/
 
