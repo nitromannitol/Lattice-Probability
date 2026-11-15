@@ -16,7 +16,7 @@ namespace MatedCRTHarmonic.MoTInput
 open MatedCRTHarmonic.MatedCRT
 
 /-- A coupling sample and an independent absolutely continuous phase almost surely
-admit a matching rooted shifted cellular embedding whenever the phase is in the mesh interval. -/
+have a matching rooted shifted cellular embedding whenever the phase is in the mesh interval. -/
 theorem ae_prod_shifted_cellularEmbedding_of_coupling
     {γ : ℝ} {Ω : Type} [MeasurableSpace Ω] {P : Measure Ω}
     {X X₀ hIG₀ : Ω → Field} {B B' B₀ B₀' : ℝ≥0 → Ω → ℝ} {U : Ω → ℝ}
