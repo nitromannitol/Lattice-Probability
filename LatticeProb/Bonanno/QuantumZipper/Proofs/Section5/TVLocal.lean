@@ -1,8 +1,10 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module QuantumZipper.Proofs.Section5.TVLocal at commit fdb5cad; trimmed to bounded duality and its prerequisites. -/
+   source module QuantumZipper.Proofs.Section5.TVLocal at commit fdb5cad; trimmed to bounded duality,
+   product contraction, and their prerequisites. -/
 
 import Mathlib.MeasureTheory.Integral.Layercake
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+import Mathlib.MeasureTheory.Measure.Prod
 
 noncomputable section
 
@@ -179,6 +181,32 @@ theorem lintegral_le_lintegral_add_tvDist {g : α → ℝ≥0∞} (hg : Measurab
   exact key
 
 end Duality
+
+section Prod
+
+variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] {μ ν : Measure α}
+  {ρ : Measure β}
+
+/-- Multiplying on the right by a fixed probability measure is `1`-Lipschitz for `tvDist`. -/
+theorem tvDist_prod_right_le [SFinite μ] [SFinite ν] [IsProbabilityMeasure ρ] :
+    tvDist (μ.prod ρ) (ν.prod ρ) ≤ tvDist μ ν := by
+  refine iSup_le fun t => iSup_le fun ht => sup_le ?_ ?_
+  · have hg : Measurable fun x => ρ (Prod.mk x ⁻¹' t) := measurable_measure_prodMk_left ht
+    have hg1 : ∀ x, ρ (Prod.mk x ⁻¹' t) ≤ 1 := fun x => by
+      have h := measure_mono (μ := ρ) (Set.subset_univ (Prod.mk x ⁻¹' t))
+      simpa using h
+    rw [Measure.prod_apply ht, Measure.prod_apply ht]
+    exact tsub_le_iff_left.mpr (lintegral_le_lintegral_add_tvDist (μ := μ) (ν := ν) hg hg1)
+  · have hg : Measurable fun x => ρ (Prod.mk x ⁻¹' t) := measurable_measure_prodMk_left ht
+    have hg1 : ∀ x, ρ (Prod.mk x ⁻¹' t) ≤ 1 := fun x => by
+      have h := measure_mono (μ := ρ) (Set.subset_univ (Prod.mk x ⁻¹' t))
+      simpa using h
+    rw [Measure.prod_apply ht, Measure.prod_apply ht]
+    exact (tsub_le_iff_left.mpr
+      (lintegral_le_lintegral_add_tvDist (μ := ν) (ν := μ) hg hg1)).trans_eq
+      (tvDist_comm (μ := ν) (ν := μ))
+
+end Prod
 
 end TV
 end QuantumZipper
