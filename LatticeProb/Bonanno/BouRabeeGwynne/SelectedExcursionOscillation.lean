@@ -1,5 +1,6 @@
 /- Adapted from the lean-formalizations of Leonardo Bonanno (https://github.com/leobon12/lean-formalizations),
    source module BouRabeeGwynne.SelectedExcursionOscillation at commit fdb5cad; imports and selected declarations are adapted. -/
+import LatticeProb.Bonanno.BouRabeeGwynne.ClockedExcursionRange
 import LatticeProb.Bonanno.BouRabeeGwynne.ExcursionOscillation
 import LatticeProb.Bonanno.BouRabeeGwynne.WalkSkeletonLaw
 import LatticeProb.Bonanno.BouRabeeGwynne.BrownianSkeletonLaw
@@ -83,6 +84,46 @@ theorem trajectoryLaw_walkSkeleton_ae_oscillation (N : FiniteConductanceNetwork 
   exact ae_of_ae_map (measurable_actualWalkExcursionSequence pos B initial select).aemeasurable hall
 
 end FiniteConductanceNetwork
+
+section
+set_option linter.style.haveILetI false
+
+namespace OrthogonalTiling
+
+theorem trajectoryLaw_selectedBallSkeleton_ae_oscillation {J : Type*}
+    [Countable J] [MeasurableSpace (Option J)] [MeasurableSingletonClass (Option J)]
+    (T : OrthogonalTiling d) {W : Set (Euc d)}
+    [Fintype (T.closedVertices W)] [MeasurableSpace (T.closedVertices W)]
+    [MeasurableSingletonClass (T.closedVertices W)]
+    (centers : J → Euc d) {r : ℝ} (hr : 0 < r)
+    (hBW : ∀ j, ball (centers j) r ⊆ W) (hmesh : T.mesh ≠ ∞)
+    (hA : ∀ v ∈ T.finiteInterior W,
+      0 < (T.finiteNetwork (T.closedVertices W)).totalConductance v)
+    (hB : ∀ j v, v ∈ {v : T.closedVertices W | T.pos v ∈ ball (centers j) r} →
+      0 < (T.finiteNetwork (T.closedVertices W)).totalConductance v)
+    (haccess : (T.finiteNetwork (T.closedVertices W)).BoundaryAccessible (T.finiteInterior W))
+    (select : ℕ → Euc d → Option J) (hs : ∀ n, Measurable (select n))
+    (hselect : ∀ n x j, select n x = some j → x ∈ ball (centers j) r)
+    (initial : J) (v : T.closedVertices W) (hv : T.pos v ∈ ball (centers initial) r) :
+    ∀ᵐ ω ∂(T.finiteNetwork (T.closedVertices W)).trajectoryLaw (T.finiteInterior W) hA v,
+      ∀ n, ClockedWalkExcursion.curve
+        (FiniteConductanceNetwork.actualWalkExcursionSequence (fun w : T.closedVertices W => T.pos w)
+          (fun j => {w | T.pos w ∈ ball (centers j) r}) initial select ω n).2 ∈
+            curveOscillationLe (2 * r + 2 * T.mesh.toReal) := by
+  apply (T.finiteNetwork (T.closedVertices W)).trajectoryLaw_walkSkeleton_ae_oscillation
+    (fun w => T.pos w) (T.pos_injective.comp Subtype.val_injective)
+    (fun j => {w | T.pos w ∈ ball (centers j) r}) hB select hs
+    (fun j _ hw => hBW j hw) hA haccess (by positivity) ?_
+    (fun n w j hw => hselect n (T.pos w) j hw) initial v hv
+  intro j w hw
+  letI : Fintype (T.closedVertices (ball (centers j) r)) :=
+    ((Set.toFinite (T.closedVertices W)).subset (T.closedVertices_mono (hBW j))).fintype
+  letI : MeasurableSpace (T.closedVertices (ball (centers j) r)) := ⊤
+  exact T.ambient_clockedExcursion_ae_oscillation_of_positive (hBW j) hmesh (hB j) w hw
+
+end OrthogonalTiling
+end
+
 theorem standardBrownianLaw_skeleton_ae_oscillation {J : Type*}
     [Countable J] [MeasurableSpace (Option J)] [MeasurableSingletonClass (Option J)]
     (hd : 1 ≤ d) {μ : Measure (BrownianPath d)} [IsProbabilityMeasure μ]
