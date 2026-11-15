@@ -1,14 +1,16 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
    source module QuantumZipper.Proofs.Section5.TVLocal at commit fdb5cad; trimmed to bounded duality,
-   product contraction, and their prerequisites. -/
+   the kernel bind bound, product contraction, and their prerequisites. -/
 
 import Mathlib.MeasureTheory.Integral.Layercake
+import Mathlib.MeasureTheory.Measure.GiryMonad
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.MeasureTheory.Measure.Prod
+import Mathlib.Probability.Kernel.Basic
 
 noncomputable section
 
-open MeasureTheory Filter
+open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal
 
 namespace QuantumZipper
@@ -181,6 +183,42 @@ theorem lintegral_le_lintegral_add_tvDist {g : α → ℝ≥0∞} (hg : Measurab
   exact key
 
 end Duality
+
+/-! ## Kernels and products -/
+
+section Kernel
+
+variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] {μ : Measure α}
+
+/-- Composing one measure with two Markov kernels is `1`-Lipschitz for `tvDist` against the
+average of the pointwise distances (Levin–Peres–Wilmer, *Markov Chains and Mixing Times* §4.1,
+the "TV is non-increasing under applications of a transition matrix" bound in the general
+kernel form). -/
+theorem tvDist_bind_le (κ₁ κ₂ : Kernel α β) [IsMarkovKernel κ₁] [IsMarkovKernel κ₂] :
+    tvDist (μ.bind κ₁) (μ.bind κ₂) ≤ ∫⁻ x, tvDist (κ₁ x) (κ₂ x) ∂μ := by
+  refine iSup_le fun s => iSup_le fun hs => sup_le ?_ ?_
+  · have hb : (μ.bind κ₁) s ≤ (μ.bind κ₂) s + ∫⁻ x, tvDist (κ₁ x) (κ₂ x) ∂μ := by
+      rw [Measure.bind_apply hs κ₁.measurable.aemeasurable,
+        Measure.bind_apply hs κ₂.measurable.aemeasurable]
+      calc ∫⁻ x, κ₁ x s ∂μ ≤ ∫⁻ x, (κ₂ x s + tvDist (κ₁ x) (κ₂ x)) ∂μ :=
+            lintegral_mono fun x =>
+              (le_add_tsub (a := κ₁ x s) (b := κ₂ x s)).trans
+                (add_le_add le_rfl (le_tvDist (μ := κ₁ x) (ν := κ₂ x) hs))
+        _ = ∫⁻ x, κ₂ x s ∂μ + ∫⁻ x, tvDist (κ₁ x) (κ₂ x) ∂μ :=
+            lintegral_add_left (κ₂.measurable_coe hs) _
+    exact tsub_le_iff_left.mpr hb
+  · have hb : (μ.bind κ₂) s ≤ (μ.bind κ₁) s + ∫⁻ x, tvDist (κ₁ x) (κ₂ x) ∂μ := by
+      rw [Measure.bind_apply hs κ₂.measurable.aemeasurable,
+        Measure.bind_apply hs κ₁.measurable.aemeasurable]
+      calc ∫⁻ x, κ₂ x s ∂μ ≤ ∫⁻ x, (κ₁ x s + tvDist (κ₁ x) (κ₂ x)) ∂μ :=
+            lintegral_mono fun x =>
+              (le_add_tsub (a := κ₂ x s) (b := κ₁ x s)).trans
+                (add_le_add le_rfl (le_tvDist' (μ := κ₁ x) (ν := κ₂ x) hs))
+        _ = ∫⁻ x, κ₁ x s ∂μ + ∫⁻ x, tvDist (κ₁ x) (κ₂ x) ∂μ :=
+            lintegral_add_left (κ₁.measurable_coe hs) _
+    exact tsub_le_iff_left.mpr hb
+
+end Kernel
 
 section Prod
 
