@@ -40,4 +40,29 @@ theorem countable_forward_level_visits (f : ℝ → ℝ) (v δ : ℝ) (hδ : 0 <
       rw [hempty]
   exact (hloc.union hiso).mono hcover
 
+/-- Visits to a fixed level preceded by a fixed positive interval above that
+level are countable when distinct local minima have distinct values. -/
+theorem countable_backward_level_visits (f : ℝ → ℝ) (v δ : ℝ) (hδ : 0 < δ)
+    (hdist : ∀ a b, a ≠ b → IsLocalMin f a → IsLocalMin f b → f a ≠ f b) :
+    {x : ℝ | f x = v ∧ ∀ y ∈ Icc (x - δ) x, v ≤ f y}.Countable := by
+  let g : ℝ → ℝ := fun x => f (-x)
+  have hmin : ∀ a, IsLocalMin g a → IsLocalMin f (-a) := by
+    intro a ha
+    have ha' : IsLocalMin g (- -a) := by simpa using ha
+    have h := ha'.comp_continuous
+      (continuous_neg.continuousAt : ContinuousAt (fun x : ℝ => -x) (-a))
+    simpa [g, Function.comp_def] using h
+  have hdistg : ∀ a b, a ≠ b → IsLocalMin g a → IsLocalMin g b → g a ≠ g b := by
+    intro a b hab ha hb
+    exact hdist (-a) (-b) (fun h => hab (neg_injective h)) (hmin a ha) (hmin b hb)
+  have hc := countable_forward_level_visits g v δ hδ hdistg
+  have hp := hc.preimage (neg_injective : Function.Injective (fun x : ℝ => -x))
+  apply hp.mono
+  intro x hx
+  refine ⟨by simpa [g] using hx.1, ?_⟩
+  intro y hy
+  have hmem : -y ∈ Icc (x - δ) x := by
+    constructor <;> linarith [hy.1, hy.2]
+  simpa [g] using hx.2 (-y) hmem
+
 end LatticeProb
