@@ -8,8 +8,9 @@ open Set MeasureTheory TopologicalSpace
 
 namespace LatticeProb
 
-noncomputable local instance : MeasurableSpace (NonemptyCompacts ℂ) := borel _
-local instance : BorelSpace (NonemptyCompacts ℂ) := ⟨rfl⟩
+noncomputable local instance shiftedCellComponentMeasurableSpace :
+    MeasurableSpace (NonemptyCompacts ℂ) := borel _
+local instance shiftedCellComponentBorelSpace : BorelSpace (NonemptyCompacts ℂ) := ⟨rfl⟩
 
 /-- For measurable random curves, meshes and shifts, the event that the intersection
 of two labelled shifted cells has a non-singleton component is null measurable. -/
