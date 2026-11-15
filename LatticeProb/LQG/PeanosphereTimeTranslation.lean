@@ -61,4 +61,47 @@ theorem eqvGen_directRel_time_translate (L R : ℝ → ℝ) (c s t : ℝ) :
       | trans a b d hab hbd ihab ihbd => exact Relation.EqvGen.trans _ _ _ ihab ihbd
     simpa using aux (s + c) (t + c) h
 
+/-- Simultaneous time translation preserves the Peanosphere structure. -/
+theorem Peanosphere.time_translate {ω : MatedCRT.Path2} {η : ℝ → ℂ}
+    (P : Peanosphere ω η) (c : ℝ) :
+    Peanosphere ⟨fun t => ω (t + c), ω.continuous.comp (by fun_prop)⟩
+      (fun t => η (t + c)) := by
+  constructor
+  · exact P.cont.comp (by fun_prop)
+  · intro z
+    obtain ⟨t, ht⟩ := P.surj z
+    exact ⟨t - c, by simpa using ht⟩
+  · exact P.transient.comp (Homeomorph.addRight c).isClosedEmbedding.tendsto_cocompact
+  · intro s t h
+    apply P.merge (s + c) (t + c)
+    rcases h with h | h
+    · exact Or.inl ((directRel_time_translate _ c s t).mp h)
+    · exact Or.inr ((directRel_time_translate _ c s t).mp h)
+  · intro s t h
+    exact (eqvGen_directRel_time_translate _ _ c s t).mpr (P.onlyMerge _ _ h)
+  · intro M T
+    obtain ⟨⟨u, hu, hLu⟩, ⟨v, hv, hLv⟩⟩ := P.liminf_L M (T + |c|)
+    constructor
+    · exact ⟨u - c, by linarith [le_abs_self c], by simpa using hLu⟩
+    · exact ⟨v - c, by linarith [neg_abs_le c], by simpa using hLv⟩
+  · intro M T
+    obtain ⟨⟨u, hu, hRu⟩, ⟨v, hv, hRv⟩⟩ := P.liminf_R M (T + |c|)
+    constructor
+    · exact ⟨u - c, by linarith [le_abs_self c], by simpa using hRu⟩
+    · exact ⟨v - c, by linarith [neg_abs_le c], by simpa using hRv⟩
+  · intro i a b hab ha hb
+    have ha' : IsLocalMin (MatedCRT.lrCoord i · ω) (a + c) := by
+      have h := IsLocalMin.comp_continuous
+        (f := fun t => MatedCRT.lrCoord i t
+          ⟨fun u => ω (u + c), ω.continuous.comp (by fun_prop)⟩)
+        (g := fun t : ℝ => t - c) (b := a + c) (by simpa using ha) (by fun_prop)
+      simpa [MatedCRT.lrCoord, Function.comp_def] using h
+    have hb' : IsLocalMin (MatedCRT.lrCoord i · ω) (b + c) := by
+      have h := IsLocalMin.comp_continuous
+        (f := fun t => MatedCRT.lrCoord i t
+          ⟨fun u => ω (u + c), ω.continuous.comp (by fun_prop)⟩)
+        (g := fun t : ℝ => t - c) (b := b + c) (by simpa using hb) (by fun_prop)
+      simpa [MatedCRT.lrCoord, Function.comp_def] using h
+    exact P.locMinDistinct i (a + c) (b + c) (by simpa using hab) ha' hb'
+
 end MatedCRTHarmonic.RouteM
