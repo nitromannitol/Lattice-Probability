@@ -1,0 +1,137 @@
+import LatticeProb.Walk.UniformVertexRepresentativeCollarAllIndices
+import LatticeProb.Bonanno.BouRabeeGwynne.BrownianStoppedSkeleton
+
+/-! # Uniform comparison with stopped Brownian curves -/
+
+set_option autoImplicit false
+noncomputable section
+
+open Set Metric MeasureTheory ProbabilityTheory BouRabeeGwynne
+open scoped unitInterval ENNReal NNReal
+
+universe u
+
+namespace LatticeProb
+
+/-- A cutoff chosen before the countable label type and a subsequent stage chosen
+before the finite vertex type control the stopped walk and Brownian reconstruction
+under the coupled path conditions. -/
+theorem uniform_vertex_representativeStopped_brownian_of_cell_errors_all_indices
+    {d : ℕ}
+    (hd : 1 ≤ d) {U : Set (Euc d)} (hL : HasLipschitzBoundary U)
+    (hU : IsOpen U) (hUb : Bornology.IsBounded U)
+    (μ : Measure (BrownianPath d)) [IsProbabilityMeasure μ] (hμ : IsStandardBrownianLaw μ)
+    {η τ : ℝ} (hη : 0 < η) (hτ : 0 < τ) :
+    ∃ c > 0, ∀ (J : Type u) [Countable J]
+    [MeasurableSpace (Option J)] [MeasurableSingletonClass (Option J)],
+    ∀ a e δ : ℝ, 0 ≤ a → 0 < e → a + e ≤ c → 0 < δ → δ ≤ c →
+    ∀ T : Set (Euc d), Bornology.IsBounded T → U ⊆ T → ∀ margin : ℝ, 0 < margin →
+    ∃ n : ℕ, ∀ (V : Type*) [Fintype V] [MeasurableSpace V]
+    [MeasurableSingletonClass V]
+    (N : FiniteConductanceNetwork V)
+    (q : V → Euc d) (hinj : Function.Injective q)
+    (B : J → Set V) (hB : ∀ j v, v ∈ B j → 0 < N.totalConductance v)
+    (W : J → Set (Euc d)) (hW : ∀ j, IsOpen (W j))
+    (_hWb : ∀ j, Bornology.IsBounded (W j))
+    (select : ℕ → Euc d → Option J) (hs : ∀ i, Measurable (select i))
+    (m : ℕ → ℕ) (E : ∀ i, Fin (m i) → Set (Euc d))
+    (hE : ∀ i k, MeasurableSet (E i k))
+    (hdE : ∀ i, Pairwise (fun j k => Disjoint (E i j) (E i k)))
+    {A : Set V} (_hBA : ∀ j, B j ⊆ A)
+    (hA : ∀ v ∈ A, 0 < N.totalConductance v) (_haccess : N.BoundaryAccessible A)
+    (initial : J) (v : V) (z : Euc d) (P : TimePartition n)
+    (p : V → Euc d)
+    (_hsub : p ⁻¹' U ⊆ A) (hUpos : ∀ v ∈ p ⁻¹' U, 0 < N.totalConductance v)
+    {mesh R S : ℝ} (_hmesh : 0 ≤ mesh)
+    (_hbuffer : a + e + mesh < δ) (_hpq : ∀ v, dist (p v) (q v) ≤ a)
+    (_hdiam : ∀ i ≤ n, ∀ k, ∀ x ∈ E i k, ∀ y ∈ E i k, dist x y ≤ a)
+    (_hnear : dist (q v) z ≤ a) (_hpoint : R + a + S ≤ e)
+    (_hwrange : ∀ᵐ ω ∂N.trajectoryLaw A hA v, ∀ i,
+      ClockedWalkExcursion.curve (FiniteConductanceNetwork.actualWalkExcursionSequence
+        q B initial select ω i).2 ∈ curveOscillationLe R)
+    (_hbrange : ∀ᵐ ω ∂μ, ∀ i,
+      (brownianSkeletonExcursion W z initial (brownianSelectorForWalk select) i ω).2 ∈
+        curveOscillationLe S)
+    (choice : ∀ i, Fin (m i) → Option J)
+    (_hselect : ∀ i, select i = cellSelector (E i) (choice i))
+    {b : ℝ} (_hb : 0 ≤ b)
+    (_hinside : ∀ i < n, ∀ k j, choice i k = some j → E i k ⊆ W j)
+    (_hcover : ∀ i ≤ n, ∀ j, closure (W j) ⊆ ⋃ k, E i k)
+    (_herror : ∀ i < n, ∀ k j, choice i k = some j →
+      ∀ w : V, q w ∈ E i k → ∀ y ∈ E i k, ∀ l,
+      |(((N.discreteHarmonicMeasure (B j) (hB j) w).map q) (E (i + 1) l)).toReal -
+        (((stoppedBrownianLaw (W j) y μ).map BouRabeeGwynne.CurveSpace.endPoint) (E (i + 1) l)).toReal| ≤
+          b / (m (i + 1) + 1))
+    (_hz : z ∈ W initial)
+    (_hinit : ∀ i, |(((N.discreteHarmonicMeasure (B initial) (hB initial) v).map q)
+      (E 0 i)).toReal - (((stoppedBrownianLaw (W initial) z μ).map BouRabeeGwynne.CurveSpace.endPoint)
+        (E 0 i)).toReal| ≤ b / (m 0 + 1))
+    (_hWT : ∀ j, W j ⊆ T) (_hzU : z ∈ U)
+    (_hmargin : ∀ k x j, select k x = some j → ball x (margin / 2) ⊆ W j)
+    (_hnone : ∀ k x, select k x = none → x ∉ thickening δ U)
+    (r : ℝ≥0)
+    (_hbudget : (n + 1 : ℝ≥0∞) * ENNReal.ofReal b +
+      (ENNReal.ofReal τ + ENNReal.ofReal τ) ≤ (r : ℝ≥0∞))
+    (_hsmall : ENNReal.ofReal (a + e + η) < (r : ℝ≥0∞)),
+    μ {ω | (brownianSkeletonClock W z initial (brownianSelectorForWalk select) n ω).1 =
+      false} ≤ ENNReal.ofReal τ ∧
+    ∃ ρ : Measure ((ℕ → V) × C(unitInterval, Euc d)),
+      IsProbabilityMeasure ρ ∧ ρ.fst = N.trajectoryLaw A hA v ∧
+      ρ.map (fun x => (FiniteConductanceNetwork.actualWalkExcursionSequence
+        q B initial select x.1, x.2)) =
+        (N.walkBrownianJointLaw q hinj B hB W hW μ select hs m E hE hdE initial v z).map
+          (fun x => (x.1, pastedBrownianCurve P x.2)) ∧
+      ρ.snd = (μ.map (fun ω k => brownianSkeletonExcursion W z initial
+        (brownianSelectorForWalk select) k ω)).map (pastedBrownianCurve P) ∧
+      ((∀ᵐ x ∂ρ, (FiniteConductanceNetwork.actualWalkExcursionSequence
+          q B initial select x.1, x.2) ∉
+            pastedCollarBad P e (innerDomain U (a + e)) (thickening δ U) η →
+        (FiniteConductanceNetwork.actualWalkStage q B initial
+          (fun i w => select i (q w)) n x.1).1 ≠ ⊤ ∧
+        ∃ k : ℕ, k ≤ (FiniteConductanceNetwork.actualWalkStage q B initial
+          (fun i w => select i (q w)) n x.1).1.untopD 0 ∧
+        FiniteConductanceNetwork.exitTime (p ⁻¹' U) x.1 = (k : WithTop ℕ) ∧
+        (∀ j < k, dist (p (x.1 (j + 1))) (p (x.1 j)) ≤ mesh) ∧
+        ∃ t, x.2 t ∉ thickening δ U) →
+      levyProkhorovEDist
+        ((N.trajectoryLaw (p ⁻¹' U) hUpos v).map (stoppedPolygonalCurve p (p ⁻¹' U)))
+        (stoppedBrownianLaw U z μ) ≤ (r : ℝ≥0∞) + ENNReal.ofReal τ) := by
+  obtain ⟨c, hc, hcprop⟩ := uniform_vertex_representativeStopped_coupling_of_cell_errors_all_indices
+    hd hL hU hUb μ hμ hη hτ
+  refine ⟨c, hc, ?_⟩
+  intro J _ _ _ a e δ ha he hae hδ hδc T hT hUT margin hmarginpos
+  obtain ⟨n, hn⟩ := hcprop J a e δ ha he hae hδ hδc T hT hUT margin hmarginpos
+  refine ⟨n, ?_⟩
+  intro V _ _ _ N q hinj B hB W hW hWb select hs m E hE hdE A hBA hA haccess
+    initial v z P p hsub hUpos mesh R S hmesh hbuffer hpq hdiam hnear
+    hpoint hwrange hbrange choice hselect b hb hinside hcover herror hz hinit
+    hWT hzU hmargin hnone r hbudget hsmall
+  obtain ⟨htail, ρ, hρprob, hρfst, hρjoint, hρsnd, hcomparison⟩ :=
+    hn V N q hinj B hB W hW hWb select hs m E hE hdE hBA hA haccess
+      initial v z P p hsub hUpos hmesh hbuffer hpq hdiam hnear hpoint
+      hwrange hbrange choice hselect hb hinside hcover herror hz hinit hWT hzU
+      hmargin hnone r hbudget hsmall
+  refine ⟨htail, ρ, hρprob, hρfst, hρjoint, hρsnd, ?_⟩
+  intro hgood
+  have hnone' : ∀ i x, brownianSelectorForWalk select i x = none → x ∉ U := by
+    intro i x hn hx
+    exact hnone (i - 1) x hn (self_subset_thickening hδ U hx)
+  have hr : (0 : ℝ≥0) < τ.toNNReal := Real.toNNReal_pos.mpr hτ
+  have hright : levyProkhorovEDist
+      (((μ.map (fun ω k => brownianSkeletonExcursion W z initial
+        (brownianSelectorForWalk select) k ω)).map (pastedBrownianCurve P)).map
+          (unitCurveExitProjection U)) (stoppedBrownianLaw U z μ) ≤ ENNReal.ofReal τ := by
+    rw [levyProkhorovEDist_comm]
+    rw [Measure.map_map (measurable_unitCurveExitProjection hU) (measurable_pastedBrownianCurve P)]
+    change levyProkhorovEDist (stoppedBrownianLaw U z μ)
+      ((μ.map (fun ω k => brownianSkeletonExcursion W z initial
+        (brownianSelectorForWalk select) k ω)).map
+          (reconstructedBrownianStoppedCurve U P)) ≤ ENNReal.ofReal τ
+    have hrec := levyProkhorov_stoppedBrownian_reconstruction_le hd hμ W hW hWb z initial
+      (brownianSelectorForWalk select) (fun i => hs (i - 1)) hU hnone' n P τ.toNNReal hr
+      (by simpa only [ENNReal.coe_nnreal_eq, Real.coe_toNNReal τ (le_of_lt hτ)] using htail)
+    simpa only [ENNReal.coe_nnreal_eq, Real.coe_toNNReal τ (le_of_lt hτ)] using hrec
+  exact (levyProkhorovEDist_triangle _ _ _).trans (add_le_add (hcomparison hgood) hright)
+
+end LatticeProb
+end
