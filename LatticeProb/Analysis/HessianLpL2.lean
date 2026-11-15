@@ -341,6 +341,204 @@ theorem hessian_energy_bound (d : ℕ) (h2 : HessianEnergyStmt d)
     simp [hdη0 x hx]
   exact hessian_energy_bound_of_integrable d h2 w η hw hη hc hs hI hF hA hCross hG
 
+private theorem continuousOn_norm_map {X F : Type*} [TopologicalSpace X]
+    [NormedAddCommGroup F] {s : Set X} {f : X → F} (hf : ContinuousOn f s) :
+    ContinuousOn (fun x => ‖f x‖) s := hf.norm
+
+/-- The Hessian of a locally smooth function is continuous on its domain. -/
+theorem hessian_continuousOn (d : ℕ) (w : Euc d → ℝ)
+    (hw : ContDiffOn ℝ ∞ w (ball (0 : Euc d) (4 / 3))) :
+    ContinuousOn (fun x => ‖fderiv ℝ (fderiv ℝ w) x‖)
+      (ball (0 : Euc d) (4 / 3)) := by
+  have hB : ContinuousOn (fderiv ℝ (fderiv ℝ w)) (ball (0 : Euc d) (4 / 3)) :=
+    (hw.fderiv_of_isOpen isOpen_ball (m := 1) (by simp)).continuousOn_fderiv_of_isOpen
+      isOpen_ball (by simp)
+  exact continuousOn_norm_map (X := Euc d) (F := Euc d →L[ℝ] (Euc d →L[ℝ] ℝ)) hB
+
+/-- A locally smooth function has square-integrable Hessian on the inner ball. -/
+theorem hessian_memLp_inner (d : ℕ) (w : Euc d → ℝ)
+    (hw : ContDiffOn ℝ ∞ w (ball (0 : Euc d) (4 / 3))) :
+    MemLp (fun x => ‖fderiv ℝ (fderiv ℝ w) x‖) 2
+      (volume.restrict (ball (0 : Euc d) 1)) := by
+  have hsub : closedBall (0 : Euc d) 1 ⊆ ball (0 : Euc d) (4 / 3) :=
+    closedBall_subset_ball (by norm_num)
+  have hc := hessian_continuousOn d w hw
+  have hint : IntegrableOn (fun x => ‖fderiv ℝ (fderiv ℝ w) x‖ ^ 2)
+      (closedBall (0 : Euc d) 1) volume :=
+    ((hc.pow 2).mono hsub).integrableOn_compact (isCompact_closedBall _ _)
+  have hmeas : AEStronglyMeasurable (fun x => ‖fderiv ℝ (fderiv ℝ w) x‖)
+      (volume.restrict (ball (0 : Euc d) 1)) :=
+    (hc.mono (ball_subset_closedBall.trans hsub)).aestronglyMeasurable measurableSet_ball
+  exact (memLp_two_iff_integrable_sq hmeas).2 (hint.mono_set ball_subset_closedBall)
+
+/-- The square of the real `L²` seminorm is the integral of the square. -/
+theorem lpNorm_two_sq {α : Type*} [MeasurableSpace α] (μ : Measure α) (f : α → ℝ)
+    (hf : MemLp f 2 μ) : lpNorm f 2 μ ^ 2 = ∫ x, f x ^ 2 ∂μ := by
+  rw [lpNorm_eq_integral_norm_rpow_toReal (by norm_num) (by simp) hf.aestronglyMeasurable]
+  simp only [ENNReal.toReal_ofNat, Real.rpow_two, Real.norm_eq_abs, sq_abs]
+  rw [← one_div, ← Real.sqrt_eq_rpow, Real.sq_sqrt]
+  exact integral_nonneg fun x => sq_nonneg _
+
+/-- An integral estimate of squares implies the corresponding `L²` estimate. -/
+theorem eLpNorm_two_le_of_integral_sq {α : Type*} [MeasurableSpace α]
+    (μ ν : Measure α) (h f g : α → ℝ) (hh : MemLp h 2 μ)
+    (hf : MemLp f 2 ν) (hg : MemLp g 2 ν) {A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hi : (∫ x, h x ^ 2 ∂μ) ≤ A * (∫ x, f x ^ 2 ∂ν) + B * ∫ x, g x ^ 2 ∂ν) :
+    eLpNorm h 2 μ ≤ ENNReal.ofReal (Real.sqrt A + Real.sqrt B) *
+      (eLpNorm f 2 ν + eLpNorm g 2 ν) := by
+  rw [← lpNorm_two_sq μ h hh, ← lpNorm_two_sq ν f hf, ← lpNorm_two_sq ν g hg] at hi
+  have hsA := Real.sq_sqrt hA
+  have hsB := Real.sq_sqrt hB
+  have hsa := Real.sqrt_nonneg A
+  have hsb := Real.sqrt_nonneg B
+  have hx : 0 ≤ lpNorm h 2 μ := lpNorm_nonneg
+  have hy : 0 ≤ lpNorm f 2 ν := lpNorm_nonneg
+  have hz : 0 ≤ lpNorm g 2 ν := lpNorm_nonneg
+  have ht : 0 ≤ Real.sqrt A * lpNorm f 2 ν + Real.sqrt B * lpNorm g 2 ν :=
+    add_nonneg (mul_nonneg hsa hy) (mul_nonneg hsb hz)
+  have hreal : lpNorm h 2 μ ≤ (Real.sqrt A + Real.sqrt B) *
+      (lpNorm f 2 ν + lpNorm g 2 ν) := by
+    have hsq : lpNorm h 2 μ ^ 2 ≤
+        (Real.sqrt A * lpNorm f 2 ν + Real.sqrt B * lpNorm g 2 ν) ^ 2 := by
+      nlinarith [mul_nonneg (mul_nonneg hsa hy) (mul_nonneg hsb hz)]
+    have hroot : lpNorm h 2 μ ≤
+        Real.sqrt A * lpNorm f 2 ν + Real.sqrt B * lpNorm g 2 ν := by nlinarith
+    nlinarith [mul_nonneg hsa hz, mul_nonneg hsb hy]
+  have he := ENNReal.ofReal_le_ofReal hreal
+  rw [ENNReal.ofReal_mul (add_nonneg hsa hsb), ENNReal.ofReal_add hy hz,
+    ofReal_lpNorm hh, ofReal_lpNorm hf, ofReal_lpNorm hg] at he
+  exact he
+
+/-- Integrate a function over a set containing its support. -/
+private theorem integral_eq_setIntegral_of_zero_outside {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (s : Set α) (f : α → ℝ) (hf : ∀ x ∉ s, f x = 0) :
+    (∫ x, f x ∂μ) = ∫ x in s, f x ∂μ := by
+  rw [← setIntegral_univ]
+  exact setIntegral_eq_of_subset_of_forall_sdiff_eq_zero MeasurableSet.univ
+    (Set.subset_univ s) (fun x hx => hf x hx.2)
+
+/-- The two cutoff energy estimates imply an interior integral estimate. -/
+theorem hessian_integral_bound (d : ℕ) (h1 : EnergyIneqStmt d) (h2 : HessianEnergyStmt d)
+    (η θ : Euc d → ℝ) (M N : ℝ)
+    (hη : ContDiff ℝ ∞ η) (hcη : HasCompactSupport η)
+    (hsη : tsupport η ⊆ ball (0 : Euc d) (7 / 6))
+    (hvη : ∀ x, 0 ≤ η x ∧ η x ≤ 1)
+    (hoη : ∀ x ∈ ball (0 : Euc d) 1, η x = 1)
+    (hdη : ∀ x, ‖fderiv ℝ η x‖ ≤ M)
+    (hθ : ContDiff ℝ ∞ θ) (hcθ : HasCompactSupport θ)
+    (hsθ : tsupport θ ⊆ ball (0 : Euc d) (4 / 3))
+    (hvθ : ∀ x, 0 ≤ θ x ∧ θ x ≤ 1)
+    (hoθ : ∀ x ∈ ball (0 : Euc d) (7 / 6), θ x = 1)
+    (hdθ : ∀ x, ‖fderiv ℝ θ x‖ ≤ N)
+    (w : Euc d → ℝ) (hw : ContDiffOn ℝ ∞ w (ball (0 : Euc d) (4 / 3)))
+    (hf : eLpNorm (Δ w) 2 (volume.restrict (ball (0 : Euc d) (4 / 3))) +
+      eLpNorm w 2 (volume.restrict (ball (0 : Euc d) (4 / 3))) ≠ ⊤) :
+    (∫ x in ball (0 : Euc d) 1, ‖fderiv ℝ (fderiv ℝ w) x‖ ^ 2) ≤
+      (4 + 6 * M ^ 2) * (∫ x in ball (0 : Euc d) (4 / 3), Δ w x ^ 2) +
+        6 * M ^ 2 * (1 + 4 * N ^ 2) * ∫ x in ball (0 : Euc d) (4 / 3), w x ^ 2 := by
+  let U := ball (0 : Euc d) (4 / 3)
+  let V := ball (0 : Euc d) 1
+  let I : Euc d → ℝ := fun x => η x ^ 2 * ∑ i, ∑ j,
+    (fderiv ℝ (fderiv ℝ w) x (stdOrthonormalBasis ℝ (Euc d) i)
+      (stdOrthonormalBasis ℝ (Euc d) j)) ^ 2
+  let F : Euc d → ℝ := fun x => η x ^ 2 * Δ w x ^ 2
+  let G : Euc d → ℝ := fun x => ‖fderiv ℝ η x‖ ^ 2 * ‖fderiv ℝ w x‖ ^ 2
+  let T : Euc d → ℝ := fun x => θ x ^ 2 * ‖fderiv ℝ w x‖ ^ 2
+  have hsηU : tsupport η ⊆ U := hsη.trans (ball_subset_ball (by norm_num))
+  have hlocal (ρ : Euc d → ℝ) (hc : HasCompactSupport ρ) (hs : tsupport ρ ⊆ U)
+      (g : Euc d → ℝ) (hg : ContinuousOn g U)
+      (hz : ∀ x ∉ tsupport ρ, g x = 0) : Integrable g :=
+    ((hg.mono hs).integrableOn_compact hc).integrable_of_forall_notMem_eq_zero hz
+  have hη0 (x : Euc d) (hx : x ∉ tsupport η) : η x = 0 := image_eq_zero_of_notMem_tsupport hx
+  have hθ0 (x : Euc d) (hx : x ∉ tsupport θ) : θ x = 0 := image_eq_zero_of_notMem_tsupport hx
+  have hD0 (x : Euc d) (hx : x ∉ tsupport η) : fderiv ℝ η x = 0 :=
+    fderiv_of_notMem_tsupport ℝ hx
+  have hW : ContinuousOn (fderiv ℝ w) U :=
+    hw.continuousOn_fderiv_of_isOpen isOpen_ball (by simp)
+  have hB : ContinuousOn (fderiv ℝ (fderiv ℝ w)) U :=
+    (hw.fderiv_of_isOpen isOpen_ball (m := 1) (by simp)).continuousOn_fderiv_of_isOpen
+      isOpen_ball (by simp)
+  have hD : ContinuousOn (fderiv ℝ η) U :=
+    (hη.fderiv_right (m := ∞) (by simp)).continuous.continuousOn
+  have hΔ : ContinuousOn (Δ w) U := by
+    rw [InnerProductSpace.laplacian_eq_iteratedFDeriv_stdOrthonormalBasis]
+    simp only [iteratedFDeriv_two_apply]
+    apply continuousOn_finsetSum
+    intro i hi
+    exact (hB.clm_apply continuousOn_const).clm_apply continuousOn_const
+  have hIi : Integrable I := by
+    apply hlocal η hcη hsηU
+    · apply (hη.continuous.continuousOn.pow 2).mul
+      apply continuousOn_finsetSum
+      intro i hi
+      apply continuousOn_finsetSum
+      intro j hj
+      exact ((hB.clm_apply continuousOn_const).clm_apply continuousOn_const).pow 2
+    · intro x hx
+      simp [I, hη0 x hx]
+  have hFi : Integrable F := by
+    apply hlocal η hcη hsηU _ ((hη.continuous.continuousOn.pow 2).mul (hΔ.pow 2))
+    intro x hx
+    simp [hη0 x hx]
+  have hGi : Integrable G := by
+    apply hlocal η hcη hsηU _ ((hD.norm.pow 2).mul (hW.norm.pow 2))
+    intro x hx
+    simp [hD0 x hx]
+  have hTi : Integrable T := by
+    apply hlocal θ hcθ hsθ _ ((hθ.continuous.continuousOn.pow 2).mul (hW.norm.pow 2))
+    intro x hx
+    simp [hθ0 x hx]
+  obtain ⟨hf2, hw2⟩ := integrable_sq_data d w hf
+  have he : (∫ x, I x) ≤ 4 * (∫ x, F x) + 6 * ∫ x, G x :=
+    hessian_energy_bound d h2 w η hw hη hcη hsηU
+  have hlo : (∫ x in V, ‖fderiv ℝ (fderiv ℝ w) x‖ ^ 2) ≤ ∫ x, I x := by
+    calc
+      _ ≤ ∫ x in V, I x := by
+        apply setIntegral_mono_on (hessian_memLp_inner d w hw).integrable_sq hIi.integrableOn
+          measurableSet_ball
+        intro x hx
+        dsimp only [I]
+        rw [hoη x hx]
+        simpa using bilinear_norm_sq_le_sum d (fderiv ℝ (fderiv ℝ w) x)
+      _ ≤ ∫ x, I x := by
+        apply setIntegral_le_integral hIi
+        exact Filter.Eventually.of_forall fun x => mul_nonneg (sq_nonneg _)
+          (Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => sq_nonneg _)
+  have hFu : (∫ x, F x) ≤ ∫ x in U, Δ w x ^ 2 := by
+    rw [integral_eq_setIntegral_of_zero_outside volume U F]
+    · apply setIntegral_mono_on hFi.integrableOn hf2 measurableSet_ball
+      intro x hx
+      have hη2 : η x ^ 2 ≤ 1 := by nlinarith [(hvη x).1, (hvη x).2]
+      simpa only [F, one_mul] using mul_le_mul_of_nonneg_right hη2 (sq_nonneg (Δ w x))
+    · intro x hx
+      simp [F, hη0 x (fun hxη => hx (hsηU hxη))]
+  have hMn : 0 ≤ M := (norm_nonneg (fderiv ℝ η 0)).trans (hdη 0)
+  have hGT : (∫ x, G x) ≤ M ^ 2 * ∫ x, T x := by
+    calc
+      _ ≤ ∫ x, M ^ 2 * T x := by
+        apply integral_mono hGi (hTi.const_mul (M ^ 2))
+        intro x
+        by_cases hx : x ∈ tsupport η
+        · have ht := hoθ x (hsη hx)
+          have hd2 : ‖fderiv ℝ η x‖ ^ 2 ≤ M ^ 2 := by
+            nlinarith [norm_nonneg (fderiv ℝ η x), hdη x]
+          dsimp only [G, T]
+          rw [ht]
+          simpa using mul_le_mul_of_nonneg_right hd2 (sq_nonneg ‖fderiv ℝ w x‖)
+        · simp [G, hD0 x hx, T, mul_nonneg (sq_nonneg M) (mul_nonneg (sq_nonneg _) (sq_nonneg _))]
+      _ = _ := integral_const_mul _ _
+  have hTu : (∫ x, T x) = ∫ x in U, T x := by
+    apply integral_eq_setIntegral_of_zero_outside
+    intro x hx
+    simp [T, hθ0 x (fun hxθ => hx (hsθ hxθ))]
+  have henergy := h1 w θ hw hθ hcθ hsθ hvθ N hdθ hf2 hw2
+  rw [← hTu] at henergy
+  have hm2 : 0 ≤ M ^ 2 := sq_nonneg M
+  change (∫ x in V, ‖fderiv ℝ (fderiv ℝ w) x‖ ^ 2) ≤
+    (4 + 6 * M ^ 2) * (∫ x in U, Δ w x ^ 2) +
+      6 * M ^ 2 * (1 + 4 * N ^ 2) * ∫ x in U, w x ^ 2
+  nlinarith [mul_nonneg hm2 (sub_nonneg.mpr henergy)]
+
 /-- It suffices to prove the interior estimate when the right-hand side is finite. -/
 theorem l2HessEucStmt_of_finite_rhs (d : ℕ)
     (h : ∃ C : ℝ≥0∞, C ≠ ⊤ ∧ ∀ w : Euc d → ℝ,
@@ -361,6 +559,30 @@ theorem l2HessEucStmt_of_finite_rhs (d : ℕ)
   · refine (hbound w hw hf).trans ?_
     gcongr
     exact le_add_of_nonneg_right bot_le
+
+/-- The two cutoff energy identities imply the interior `L²` Hessian estimate. -/
+theorem L12c_assemble (d : ℕ) (h1 : EnergyIneqStmt d) (h2 : HessianEnergyStmt d) :
+    L2HessEucStmt d := by
+  obtain ⟨η, θ, M, N, hη, hcη, hsη, hvη, hoη, hdη, hθ, hcθ, hsθ, hvθ, hoθ, hdθ⟩ :=
+    exists_nested_hessian_cutoffs d
+  let A : ℝ := 4 + 6 * M ^ 2
+  let B : ℝ := 6 * M ^ 2 * (1 + 4 * N ^ 2)
+  have hA : 0 ≤ A := by dsimp [A]; positivity
+  have hB : 0 ≤ B := by dsimp [B]; positivity
+  apply l2HessEucStmt_of_finite_rhs d
+  refine ⟨ENNReal.ofReal (Real.sqrt A + Real.sqrt B), by simp, ?_⟩
+  intro w hw hf
+  have hfmem : MemLp (Δ w) 2 (volume.restrict (ball (0 : Euc d) (4 / 3))) :=
+    (ENNReal.add_ne_top.mp hf).1.lt_top
+  have hwmem : MemLp w 2 (volume.restrict (ball (0 : Euc d) (4 / 3))) :=
+    (ENNReal.add_ne_top.mp hf).2.lt_top
+  exact eLpNorm_two_le_of_integral_sq
+    (volume.restrict (ball (0 : Euc d) 1))
+    (volume.restrict (ball (0 : Euc d) (4 / 3)))
+    (fun x => ‖fderiv ℝ (fderiv ℝ w) x‖) (Δ w) w
+    (hessian_memLp_inner d w hw) hfmem hwmem hA hB
+    (hessian_integral_bound d h1 h2 η θ M N hη hcη hsη hvη hoη hdη
+      hθ hcθ hsθ hvθ hoθ hdθ w hw hf)
 
 /-- The interior estimate in the zero-dimensional model space. -/
 theorem l2HessEucStmt_zero : L2HessEucStmt 0 := by
