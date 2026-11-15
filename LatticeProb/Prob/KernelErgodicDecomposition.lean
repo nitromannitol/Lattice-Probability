@@ -1,40 +1,6 @@
 /-
-A bounded start toward the ergodic decomposition of a stationary random rooted
-network (`RWRS.External.ErgodicDecomposition`, Benjamini--Curien, Section 2.1,
-via `rwrs.tex` `lem:01-stationary`).
-
-The library already proves the ergodic decomposition of a probability-preserving
-transformation on a standard Borel space (`LatticeProb.ergodic_decomposition`)
-and the invariance of the conditional fibres under a countable family of such
-transformations (`LatticeProb.exists_invariant_conditionalMeasures`).  A
-stationary random rooted network is *not* a single measure-preserving
-transformation: stationarity is invariance under the uniform-neighbour
-rerooting Markov kernel, and the conditioning σ-algebra is the σ-algebra of
-events invariant under every such rerooting.  This file supplies the library
-vocabulary for that Markov formulation and proves the smallest independent
-step, that conditioning a stationary law on a kernel-invariant event preserves
-the stationarity identity -- the paper's use of a rerooting-invariant event in
-`rwrs.tex:347`.
-
-One faithfulness caveat is recorded with the gap: `RWRS.IsStationaryNet`
-tests stationarity only against *isomorphism-invariant* observables, while
-`LatticeProb.KernelStationary` below is the stronger version tested against
-every measurable set.  The stronger hypothesis is the one the sub-lemma uses;
-the RWRS bridge must either restrict it to `invariantSigma 0` or show the two
-agree for a stationary law.
-
-**Exact remaining gap** (toward `RWRS.External.ErgodicDecomposition`).  The
-last clause of `LatticeProb.KernelErgodicDecomposition`: for `Q`-a.e. `N`, the
-conditional measure `condExpKernel Q (invariantSigma 0) N` is itself stationary
-for the rerooting kernel and trivial on `invariantSigma 0`.  The library proves
-the *deterministic* analogue (`ergodic_decomposition`, fibre preservation in
-`ae_measurePreserving_conditionalMeasure`); the Markov analogue is open, and
-the event-restriction identity below is only its first step.  The RWRS
-instantiation additionally needs `X = RWRS.Net 0` (its `StandardBorelSpace`
-instance synthesizes), `κ N =` the uniform average of `dirac (netReroot N y)`
-over neighbours `y` of the root, `m = RWRS.invariantSigma 0`, the invariant-
-observable restriction of the stationarity test, and the fact that
-`RWRS.NetGood`-a.e. network has every `m`-measurable event kernel-invariant.
+Stationarity and invariant events for Markov kernels, including the fact that
+restriction to an invariant event preserves stationarity.
 -/
 import LatticeProb.Prob.ErgodicDecomposition
 
@@ -56,7 +22,7 @@ def KernelInvariant {X : Type*} [MeasurableSpace X] (κ : X → Measure X)
   ∀ x, κ x B = B.indicator (fun _ => (1 : ℝ≥0∞)) x
 
 /-- The kernel-invariant events form a σ-algebra: the largest sub-σ-algebra on which
-`KernelInvariant` holds.  This is the `m` of `KernelErgodicDecomposition`. -/
+`KernelInvariant` holds. -/
 @[reducible] def kernelInvariantSigma {X : Type*} [MeasurableSpace X] (κ : X → Measure X)
     [∀ x, IsProbabilityMeasure (κ x)] : MeasurableSpace X where
   MeasurableSet' B := MeasurableSet B ∧ KernelInvariant κ B
@@ -98,27 +64,6 @@ def KernelInvariant {X : Type*} [MeasurableSpace X] (κ : X → Measure X)
       have hz : (∑' n, κ x (f n)) = 0 := by simp [h0]
       rw [Set.indicator_apply, ite_eq_right hx]
       exact le_antisymm (le_trans hle (le_of_eq hz)) (by positivity)
-
-/-- The abstract ergodic-decomposition contract of a stationary Markov kernel,
-disintegrated over the σ-algebra `m` of kernel-invariant events.  This is the
-library form of `RWRS.External.ErgodicDecomposition`; its last clause is the
-open part recorded in the module docstring. -/
-def KernelErgodicDecomposition {X : Type*} [MeasurableSpace X] [StandardBorelSpace X]
-    (Q : Measure X) (κ : X → Measure X) (m : MeasurableSpace X) : Prop :=
-  IsProbabilityMeasure Q ∧
-  (∀ x, IsProbabilityMeasure (κ x)) ∧
-  (∀ A : Set X, MeasurableSet A → (∫⁻ x, κ x A ∂Q) = Q A) ∧
-  m ≤ ‹MeasurableSpace X› ∧
-  (∀ B : Set X, MeasurableSet[m] B →
-    ∀ x, κ x B = B.indicator (fun _ => (1 : ℝ≥0∞)) x) ∧
-  ∃ K : X → Measure X,
-    (∀ x, IsProbabilityMeasure (K x)) ∧
-    (∀ A : Set X, MeasurableSet A → Measurable[m] fun x => K x A) ∧
-    (∀ A : Set X, MeasurableSet A → ∀ B : Set X, MeasurableSet[m] B →
-      (∫⁻ x in B, K x A ∂Q) = Q (A ∩ B)) ∧
-    (∀ᵐ x ∂Q,
-      (∀ A : Set X, MeasurableSet A → (∫⁻ y, κ y A ∂(K x)) = K x A) ∧
-        (∀ A : Set X, MeasurableSet[m] A → K x A = 0 ∨ K x A = 1))
 
 /-- The Dirac kernel of a map is stationary exactly when the map preserves the
 measure.  This identifies the new vocabulary with the library's
