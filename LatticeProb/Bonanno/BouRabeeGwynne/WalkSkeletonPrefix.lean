@@ -1,6 +1,8 @@
 /- Adapted from Leonardo Bonanno's lean-formalizations (https://github.com/leobon12/lean-formalizations),
-   source module BouRabeeGwynne.WalkSkeletonPrefix at commit fdb5cad; imports are relocated, a linter setting is added, and later exports are omitted. -/
+   source module BouRabeeGwynne.WalkSkeletonPrefix at commit fdb5cad; imports are relocated and a linter setting is added. -/
 import LatticeProb.Bonanno.BouRabeeGwynne.ActualWalkSkeleton
+import LatticeProb.Bonanno.BouRabeeGwynne.WalkSkeletonLaw
+import LatticeProb.Bonanno.BouRabeeGwynne.WalkExcursionRecovery
 import LatticeProb.Bonanno.BouRabeeGwynne.ExcursionTrajectory
 
 /-! Exact recovery of the finite excursion prefix of one original walk.
@@ -81,5 +83,57 @@ lemma actualWalkStage_compatiblePaths (pos : V → Euc d) (B : J → Set V)
   simp only [ClockedWalkExcursion.endPoint, ClockedWalkExcursion.start,
     clockedWalkSegment, min_self, min_eq_left (Nat.zero_le _), Nat.add_zero]
   rw [Nat.add_sub_of_le hle, hij]
+
+/-- The actual pasted walk prefix is the original finite polygonal curve
+composed with a continuous monotone clock. Its knots retain the exact integer
+stage times; repeated times and zero total duration require no exception. -/
+theorem actualWalkStage_concatenate_eq_comp (pos : V → Euc d) (B : J → Set V)
+    (initial : J) (select : ℕ → V → Option J) (n : ℕ) (ω : ℕ → V)
+    (hfinite : (actualWalkStage pos B initial select n ω).1 ≠ ⊤)
+    (P : TimePartition n) :
+    ∃ Q : WeakTimeKnots n,
+      (∀ i, (((actualWalkStage pos B initial select n ω).1.untopD 0 : ℕ) : ℝ) *
+        (Q.knots i : ℝ) = (actualWalkStage_times pos B initial select n ω i : ℝ)) ∧
+      P.concatenate (ExcursionTrajectory.prefixChain n d
+        (fun k => ClockedWalkExcursion.curve (actualWalkStage pos B initial select k ω).2.2)) =
+      (polygonalCurve pos ω ((actualWalkStage pos B initial select n ω).1.untopD 0)).comp
+        (P.weakClock Q) := by
+  let times := actualWalkStage_times pos B initial select n ω
+  have hm : Monotone times := actualWalkStage_times_monotone pos B initial select n ω hfinite
+  have hf : times 0 = 0 := rfl
+  have hl : times (Fin.last (n + 1)) =
+      (actualWalkStage pos B initial select n ω).1.untopD 0 := rfl
+  obtain ⟨Q, hQ⟩ := exists_weakWalkTimeKnots P times hm hf hl
+  refine ⟨Q, hQ, ?_⟩
+  have hchain := clockedWalkSegments_eq_restrictChain Q pos ω times hm hl hQ
+    (ExcursionTrajectory.prefixChain n d
+      (fun k => ClockedWalkExcursion.curve (actualWalkStage pos B initial select k ω).2.2))
+    (by
+      intro i
+      rw [ExcursionTrajectory.prefixChain_apply
+        (actualWalkStage_compatiblePaths pos B initial select n ω hfinite)]
+      exact congrArg ClockedWalkExcursion.curve
+        (actualWalkStage_eq_segment_times pos B initial select n ω hfinite i))
+  rw [hchain, WeakTimeKnots.concatenate_restrictChain]
+
+/-- The same pointwise identity for the rich sequence used by the actual walk
+law and coupling, with spatial selectors acting on each original endpoint. -/
+theorem actualWalkExcursionSequence_concatenate_eq_comp (pos : V → Euc d)
+    (B : J → Set V) (initial : J) (select : ℕ → Euc d → Option J)
+    (n : ℕ) (ω : ℕ → V)
+    (hfinite : (actualWalkStage pos B initial (fun i v => select i (pos v)) n ω).1 ≠ ⊤)
+    (P : TimePartition n) :
+    ∃ Q : WeakTimeKnots n,
+      (∀ i, (((actualWalkStage pos B initial (fun i v => select i (pos v)) n ω).1.untopD 0 : ℕ) : ℝ) *
+        (Q.knots i : ℝ) =
+        (actualWalkStage_times pos B initial (fun i v => select i (pos v)) n ω i : ℝ)) ∧
+      P.concatenate (ExcursionTrajectory.prefixChain n d
+        (fun k => ClockedWalkExcursion.curve
+          (actualWalkExcursionSequence pos B initial select ω k).2)) =
+      (polygonalCurve pos ω
+        ((actualWalkStage pos B initial (fun i v => select i (pos v)) n ω).1.untopD 0)).comp
+        (P.weakClock Q) :=
+  actualWalkStage_concatenate_eq_comp pos B initial (fun i v => select i (pos v))
+    n ω hfinite P
 
 end BouRabeeGwynne.FiniteConductanceNetwork
