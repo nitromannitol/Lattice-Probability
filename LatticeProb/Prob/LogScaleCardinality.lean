@@ -54,4 +54,19 @@ theorem measure_log_scale_card_gt_le {Ω : Type*} [MeasurableSpace Ω]
       (⌊Real.log (s ω) + 1⌋ : ℤ)).card : ℝ) := by exact_mod_cast hω
   exact lt_of_lt_of_le hn h
 
+/-- The scale-count tail bound also holds when the radii are positive and
+ordered almost everywhere. -/
+theorem measure_log_scale_card_gt_le_of_ae {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) (r s : Ω → ℝ) (N : ℕ)
+    (hr : ∀ᵐ ω ∂μ, 0 < r ω) (hrs : ∀ᵐ ω ∂μ, r ω ≤ s ω) :
+    μ {ω | N < (Finset.Icc (⌈Real.log (r ω) - 1⌉ : ℤ)
+      (⌊Real.log (s ω) + 1⌋ : ℤ)).card} ≤
+      μ {ω | (N : ℝ) < Real.log (s ω / r ω) + 3} := by
+  apply measure_mono_ae
+  filter_upwards [hr, hrs] with ω hpos hord hω
+  have h := log_scale_interval_card_le hpos hord
+  have hn : (N : ℝ) < ((Finset.Icc (⌈Real.log (r ω) - 1⌉ : ℤ)
+      (⌊Real.log (s ω) + 1⌋ : ℤ)).card : ℝ) := by exact_mod_cast hω
+  exact lt_of_lt_of_le hn h
+
 end LatticeProb
