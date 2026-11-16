@@ -459,4 +459,30 @@ theorem indepFun_coarse_increment_iSup_normalized_recentred_square_mass
   exact ProbabilityTheory.indep_of_indep_of_le_right hind
     (measurable_iff_comap_le.1 (Measurable.iSup hM))
 
+/-- The exponential moment of a coarse circle increment. -/
+theorem lintegral_exp_coarse_circle_increment
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P) {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1)
+    (z : ℂ) (t : ℝ) :
+    ∫⁻ ω, ENNReal.ofReal (Real.exp (t * (H r z ω - H 1 z ω))) ∂P =
+      ENNReal.ofReal (r ^ (-(t ^ 2 / 2))) := by
+  let : IsProbabilityMeasure P := hH.isProbabilityMeasure
+  have hg : ProbabilityTheory.HasGaussianLaw (fun ω => H r z ω - H 1 z ω) P :=
+    hH.isGaussianProcess.hasGaussianLaw_fun_sub (s := (⟨r, hr⟩, z)) (t := (⟨1, by norm_num⟩, z))
+  have hmean : ∫ ω, (H r z ω - H 1 z ω) ∂P = 0 := by
+    simpa using integral_recentred hH 1 (by norm_num) hr z z
+  have hv : ProbabilityTheory.variance (fun ω => H r z ω - H 1 z ω) P = -Real.log r := by
+    rw [← ProbabilityTheory.covariance_self hg.aemeasurable,
+      cov_recentred hH (by norm_num) hr hr z z z,
+      MatedCRTHarmonic.MoTPort.ConeArea6.circCov_same hr hr,
+      MatedCRTHarmonic.MoTPort.ConeArea6.circCov_same hr (by norm_num),
+      MatedCRTHarmonic.MoTPort.ConeArea6.circCov_same (by norm_num) hr,
+      MatedCRTHarmonic.MoTPort.ConeArea6.circCov_same (by norm_num) (by norm_num)]
+    simp [max_self, max_eq_left hr1, max_eq_right hr1]
+  obtain ⟨hint, he⟩ := integral_exp_mul_of_hasGaussianLaw hg hmean t
+  rw [← ofReal_integral_eq_lintegral_ofReal hint (Filter.Eventually.of_forall fun _ =>
+    (Real.exp_pos _).le), he, hv, Real.rpow_def_of_pos hr]
+  congr 1
+  ring
+
 end LatticeProb.LQG
