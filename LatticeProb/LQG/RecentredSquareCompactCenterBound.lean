@@ -1530,4 +1530,113 @@ theorem ae_exists_compact_center_recentred_and_square_power_bounds
   filter_upwards [hCevent] with m hm z hz n
   exact hm z (hK' hz) n
 
+/-- Almost surely, at each square scale the original approximation masses
+are finite uniformly over compact centers and all dyadic levels. -/
+theorem ae_exists_compact_center_all_level_square_bound
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) (K : Set ℂ) (hK : IsCompact K) :
+    ∀ᵐ ω ∂P, ∀ m, ∃ A : ℝ≥0∞, A < ⊤ ∧ ∀ z ∈ K, ∀ n,
+      lqgApprox γ (fun s w => H s w ω) (radius n)
+        (sqQ (sqCorner z (radius m)) m) ≤ A := by
+  classical
+  obtain ⟨R, hR⟩ := Metric.isBounded_iff_subset_ball (0 : ℂ) |>.1 hK.isBounded
+  filter_upwards [ae_exists_compact_bound_iSup_normalized_recentred_square_mass
+    hH hHm hγ hγ2 hp hpq hq K hK] with ω hω m
+  obtain ⟨A, hA, hnorm⟩ := hω m
+  have hε : 0 < 2 * radius m := mul_pos (by norm_num) (radius_pos m)
+  obtain ⟨B, hB⟩ := hK.bddAbove_image
+    ((Real.continuous_exp.comp (continuous_const.mul (hH.continuous _ hε ω))).continuousOn)
+  let S : Set ℂ := Metric.closedBall 0 (R + radius m)
+  have hS : Bornology.IsBounded S := Metric.isBounded_closedBall
+  have hsub (z : ℂ) (hz : z ∈ K) : sqQ (sqCorner z (radius m)) m ⊆ S := by
+    intro w hw
+    have hz' : ‖z‖ < R := by simpa [Metric.mem_ball, dist_zero_right] using hR hz
+    have hw' := norm_sub_le_of_mem_centred_sqQ z m hw
+    show w ∈ Metric.closedBall 0 (R + radius m)
+    rw [Metric.mem_closedBall, dist_zero_right]
+    have := norm_sub_norm_le w z
+    linarith
+  let D : ℕ → ℝ≥0∞ := fun n => lqgApprox γ (fun s w => H s w ω) (radius n) S
+  have hD (n : ℕ) : D n ≠ ⊤ := by
+    have h := lqgApprox_rescaled_apply_ne_top_of_isBounded hH ω γ
+      (ε := 1) (r := radius n) (by norm_num) (radius_pos n) hS
+    simpa [D] using h
+  let F : ℝ≥0∞ := ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2)) * ENNReal.ofReal B *
+    ENNReal.ofReal ((2 * radius m) ^ 2) * A
+  let E : ℝ≥0∞ := ∑ n ∈ Finset.range m, D n
+  have hF : F ≠ ⊤ := by
+    exact ENNReal.mul_ne_top (ENNReal.mul_ne_top (ENNReal.mul_ne_top ENNReal.ofReal_ne_top
+      ENNReal.ofReal_ne_top) ENNReal.ofReal_ne_top) hA.ne
+  have hE : E ≠ ⊤ := ENNReal.sum_ne_top.mpr (fun n _ => hD n)
+  refine ⟨F + E, lt_top_iff_ne_top.mpr (ENNReal.add_ne_top.mpr ⟨hF, hE⟩), ?_⟩
+  intro z hz n
+  by_cases hn : m ≤ n
+  · obtain ⟨k, rfl⟩ : ∃ k, n = m + k := ⟨n - m, by omega⟩
+    rw [lqgApprox_square_eq_mul_normalized_recentred_square_mass]
+    have hexp : ENNReal.ofReal (Real.exp (γ * H (2 * radius m) z ω)) ≤ ENNReal.ofReal B :=
+      ENNReal.ofReal_le_ofReal (hB ⟨z, hz, rfl⟩)
+    have hc : ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2) *
+        Real.exp (γ * H (2 * radius m) z ω)) ≤
+        ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2)) * ENNReal.ofReal B := by
+      rw [ENNReal.ofReal_mul (Real.rpow_nonneg hε.le _)]
+      exact mul_le_mul' le_rfl hexp
+    calc
+      _ ≤ (ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2)) * ENNReal.ofReal B) *
+          (ENNReal.ofReal ((2 * radius m) ^ 2) * A) :=
+        mul_le_mul' hc (mul_le_mul' le_rfl (hnorm z hz k))
+      _ = F := by dsimp [F]; ring
+      _ ≤ F + E := le_self_add
+  · have hn' : n ∈ Finset.range m := Finset.mem_range.mpr (by omega)
+    calc
+      _ ≤ D n := measure_mono (hsub z hz)
+      _ ≤ E := Finset.single_le_sum (fun _ _ => by positivity) hn'
+      _ ≤ F + E := le_add_self
+
+/-- On one common event, recentred square masses are uniformly finite over
+compact centers at each scale, and the original masses at every level obey
+one positive-power bound at every scale. -/
+theorem ae_exists_compact_center_recentred_and_all_scale_square_power_bounds
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) (K : Set ℂ) (hK : IsCompact K) :
+    ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P,
+      (∀ m, ∃ A : ℝ≥0∞, A < ⊤ ∧ ∀ z ∈ K, ∀ k,
+        normalizedRecentredSquareMass H γ z m k ω ≤ A) ∧
+      ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ m, ∀ z ∈ K, ∀ n,
+        lqgApprox γ (fun s w => H s w ω) (radius n)
+          (sqQ (sqCorner z (radius (m + 1))) (m + 1)) ≤
+            C * ENNReal.ofReal (radius m ^ κ) := by
+  classical
+  obtain ⟨κ, hκ, hevent⟩ := ae_exists_compact_center_recentred_and_square_power_bounds
+    hH hHm hγ hγ2 hp hpq hq K hK
+  refine ⟨κ, hκ, ?_⟩
+  filter_upwards [hevent, ae_exists_compact_center_all_level_square_bound
+    hH hHm hγ hγ2 hp hpq hq K hK] with ω hevent hfixed
+  obtain ⟨hnorm, C₀, hC₀, hCevent⟩ := hevent
+  obtain ⟨N, hN⟩ := Filter.eventually_atTop.mp hCevent
+  choose A hA hbound using hfixed
+  let X : ℕ → ℝ≥0∞ := fun m => ENNReal.ofReal (radius m ^ κ)
+  have hX0 (m : ℕ) : X m ≠ 0 := (ENNReal.ofReal_pos.mpr (Real.rpow_pos_of_pos (radius_pos m) κ)).ne'
+  have hXt (m : ℕ) : X m ≠ ⊤ := ENNReal.ofReal_ne_top
+  let D : ℝ≥0∞ := ∑ m ∈ Finset.range N, A (m + 1) * (X m)⁻¹
+  have hD : D ≠ ⊤ := ENNReal.sum_ne_top.mpr (fun m _ =>
+    ENNReal.mul_ne_top (hA (m + 1)).ne (ENNReal.inv_ne_top.mpr (hX0 m)))
+  refine ⟨hnorm, C₀ + D, ENNReal.add_lt_top.mpr ⟨hC₀, lt_top_iff_ne_top.mpr hD⟩, ?_⟩
+  intro m z hz n
+  by_cases hm : N ≤ m
+  · exact (hN m hm z hz n).trans (mul_le_mul' (le_add_right le_rfl) le_rfl)
+  · have hmem : m ∈ Finset.range N := Finset.mem_range.mpr (by omega)
+    have hsum : A (m + 1) * (X m)⁻¹ ≤ D := by
+      dsimp [D]
+      exact Finset.single_le_sum (f := fun j => A (j + 1) * (X j)⁻¹) (fun _ _ => by positivity) hmem
+    calc
+      _ ≤ A (m + 1) := hbound (m + 1) z hz n
+      _ = (A (m + 1) * (X m)⁻¹) * X m := by rw [mul_assoc, ENNReal.inv_mul_cancel (hX0 m) (hXt m), mul_one]
+      _ ≤ (C₀ + D) * X m := mul_le_mul' (hsum.trans le_add_self) le_rfl
+
 end LatticeProb.LQG
