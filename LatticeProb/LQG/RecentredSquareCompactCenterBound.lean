@@ -647,4 +647,42 @@ theorem exists_square_moment_exponents {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2)
     rw [this]
     linarith
 
+/-- The deterministic factor in the tilted square moment is a single power. -/
+theorem tilted_square_moment_factor_eq {ε p γ : ℝ} (hε : 0 < ε) (hp : 0 ≤ p)
+    (C : ℝ≥0∞) :
+    ENNReal.ofReal (ε ^ (γ ^ 2 / 2) * ε ^ 2) ^ p *
+        (ENNReal.ofReal (ε ^ (-((p * γ) ^ 2 / 2))) * C) =
+      ENNReal.ofReal (ε ^ (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C := by
+  rw [← mul_assoc, ENNReal.ofReal_rpow_of_nonneg (by positivity) hp,
+    ← ENNReal.ofReal_mul (Real.rpow_nonneg (by positivity) _)]
+  congr 1
+  congr 1
+  rw [← Real.rpow_two ε, ← Real.rpow_add hε, ← Real.rpow_mul hε.le,
+    ← Real.rpow_add hε]
+  congr 1
+  ring
+
+/-- The maximal tilted square mass has the exact scale exponent predicted
+by the Gaussian and normalized mass moments. -/
+theorem exists_lintegral_iSup_tilted_square_rpow_le_power
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) :
+    ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ (z : ℂ) (m : ℕ), 2 * radius m ≤ 1 →
+      (∫⁻ ω, (⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+          (sqQ (sqCorner z (radius m)) m)) ^ p ∂P) ≤
+      ENNReal.ofReal ((2 * radius m) ^
+        (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C := by
+  obtain ⟨C, hC, hbound⟩ := exists_lintegral_iSup_tilted_square_rpow_le
+    hH hHm hγ hγ2 hp hpq hq
+  refine ⟨C, hC, ?_⟩
+  intro z m hm
+  have ht := hbound z m hm
+  rw [tilted_square_moment_factor_eq (mul_pos (by norm_num) (radius_pos m))
+    (by linarith : 0 ≤ p) C] at ht
+  exact ht
+
 end LatticeProb.LQG
