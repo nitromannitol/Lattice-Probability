@@ -620,4 +620,31 @@ theorem exists_lintegral_iSup_tilted_square_rpow_le
     (ENNReal.rpow_ne_top_of_nonneg hp0 ENNReal.ofReal_ne_top)]
   exact mul_le_mul' le_rfl (hbound z m hm)
 
+/-- For every subcritical parameter there are admissible moments with a
+strictly positive exponent after a two-dimensional union bound. -/
+theorem exists_square_moment_exponents {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2) :
+    ∃ p q κ : ℝ, 1 < p ∧ p < q ∧ q < 4 / γ ^ 2 ∧ 0 < κ ∧
+      2 + p * κ < 2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2 := by
+  let p : ℝ := 2 / γ
+  let q : ℝ := (p + 4 / γ ^ 2) / 2
+  let κ : ℝ := (2 - γ) ^ 2 / (2 * γ * p)
+  have hp : 1 < p := by dsimp [p]; rw [lt_div_iff₀ hγ]; linarith
+  have hpq : p < 4 / γ ^ 2 := by
+    dsimp [p]
+    rw [div_lt_div_iff₀ hγ (sq_pos_of_pos hγ)]
+    nlinarith
+  have hκ : 0 < κ := by dsimp [κ]; positivity
+  refine ⟨p, q, κ, hp, ?_, ?_, hκ, ?_⟩
+  · dsimp [q]; linarith
+  · dsimp [q]; linarith
+  · have hmargin : 0 < (2 - γ) ^ 2 / γ := by positivity
+    have heq : 2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2 - 2 =
+        (2 - γ) ^ 2 / γ := by dsimp [p]; field_simp; ring
+    have hk : p * κ = (2 - γ) ^ 2 / (2 * γ) := by
+      dsimp [κ]; field_simp
+    rw [hk]
+    have : (2 - γ) ^ 2 / (2 * γ) = ((2 - γ) ^ 2 / γ) / 2 := by ring
+    rw [this]
+    linarith
+
 end LatticeProb.LQG
