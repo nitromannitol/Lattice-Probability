@@ -1389,4 +1389,114 @@ theorem exists_bounded_square_covers_ae_eventually_coarse_unit_tilted_power
     _ ≤ ENNReal.ofReal (D * radius m ^ (-2 : ℝ)) := ENNReal.ofReal_le_ofReal hc
     _ = _ := ENNReal.ofReal_mul hD
 
+/-- Almost surely, original square masses at all coarser levels obey a
+uniform positive-power bound over a bounded disk of centers. -/
+theorem ae_exists_compact_center_coarse_level_square_power_bound
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2)
+    (R : ℝ) (hR : 0 < R) :
+    ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P, ∃ C : ℝ≥0∞, C < ⊤ ∧
+      ∀ᶠ m in Filter.atTop, ∀ z ∈ Metric.ball (0 : ℂ) R, ∀ n, n ≤ m + 1 →
+        lqgApprox γ (fun s w => H s w ω) (radius n)
+          (sqQ (sqCorner z (radius (m + 1))) (m + 1)) ≤
+            C * ENNReal.ofReal (radius m ^ κ) := by
+  classical
+  obtain ⟨S, hbounded, hcover, κ, hκ, hevent⟩ :=
+    exists_bounded_square_covers_ae_eventually_coarse_unit_tilted_power hH hHm hγ hγ2 R hR
+  refine ⟨κ, hκ, ?_⟩
+  filter_upwards [hevent] with ω hω
+  have hcompact : IsCompact (Metric.closedBall (0 : ℂ) (R + 3)) := isCompact_closedBall _ _
+  obtain ⟨M, hM⟩ := hcompact.bddAbove_image
+    ((Real.continuous_exp.comp (continuous_const.mul (hH.continuous 1 (by norm_num) ω))).continuousOn)
+  let C : ℝ≥0∞ := (corners16.card : ℝ≥0∞) * ENNReal.ofReal M
+  have hC : C < ⊤ := ENNReal.mul_lt_top (by simp) ENNReal.ofReal_lt_top
+  refine ⟨C, hC, ?_⟩
+  filter_upwards [hω] with m hm z hz n hn
+  obtain ⟨T, hTS, hTcard, hTcover⟩ := hcover m z hz
+  let μ := lqgApprox γ (fun s w => H s w ω) (radius n)
+  have heq (w : ℂ) : ENNReal.ofReal (radius n ^ (γ ^ 2 / 2) * Real.exp (γ * H (radius n) w ω)) =
+      ENNReal.ofReal (Real.exp (γ * H 1 w ω)) *
+        ENNReal.ofReal (radius n ^ (γ ^ 2 / 2) * Real.exp (γ * (H (radius n) w ω - H 1 w ω))) := by
+    rw [← ENNReal.ofReal_mul (Real.exp_nonneg _)]
+    congr 1
+    calc
+      _ = radius n ^ (γ ^ 2 / 2) * (Real.exp (γ * H 1 w ω) *
+          Real.exp (γ * (H (radius n) w ω - H 1 w ω))) := by
+        rw [← Real.exp_add]
+        congr 2
+        ring
+      _ = _ := by ring
+  have hpoint (v : ℂ) (hv : v ∈ T) :
+      μ (sqQ (sqCorner v (radius (m + 1))) (m + 1)) ≤
+        ENNReal.ofReal M * ENNReal.ofReal (radius m ^ κ) := by
+    have hvS := hTS hv
+    have htilt : unitTiltedSquareMass H γ v (m + 1) n ω ≤ ENNReal.ofReal (radius m ^ κ) := by
+      calc
+        _ ≤ (Finset.range (m + 2)).sup (fun j => unitTiltedSquareMass H γ v (m + 1) j ω) :=
+          Finset.le_sup (Finset.mem_range.mpr (by omega))
+        _ ≤ (S m).sup (fun u => (Finset.range (m + 2)).sup fun j =>
+            unitTiltedSquareMass H γ u (m + 1) j ω) :=
+          Finset.le_sup (f := fun u => (Finset.range (m + 2)).sup fun j =>
+            unitTiltedSquareMass H γ u (m + 1) j ω) hvS
+        _ ≤ _ := hm.le
+    have hμ : μ (sqQ (sqCorner v (radius (m + 1))) (m + 1)) ≤
+        ENNReal.ofReal M * unitTiltedSquareMass H γ v (m + 1) n ω := by
+      dsimp only [μ, unitTiltedSquareMass, lqgApprox]
+      rw [withDensity_apply _ (measurableSet_sqQ _ _), ← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
+      apply setLIntegral_mono' (measurableSet_sqQ _ _)
+      intro w hw
+      have hwv := norm_sub_le_of_mem_centred_sqQ v (m + 1) hw
+      have hr1 : radius (m + 1) ≤ 1 := by unfold radius; exact pow_le_one₀ (by norm_num) (by norm_num)
+      have hwK : w ∈ Metric.closedBall (0 : ℂ) (R + 3) := by
+        rw [Metric.mem_closedBall, dist_zero_right]
+        have h1 := norm_sub_norm_le w v
+        have h2 := hbounded m v hvS
+        linarith
+      rw [heq]
+      exact mul_le_mul' (ENNReal.ofReal_le_ofReal (hM ⟨w, hwK, rfl⟩)) le_rfl
+    exact hμ.trans (mul_le_mul' le_rfl htilt)
+  calc
+    _ ≤ ∑ v ∈ T, μ (sqQ (sqCorner v (radius (m + 1))) (m + 1)) :=
+      (measure_mono hTcover).trans (measure_biUnion_finset_le T _)
+    _ ≤ ∑ _v ∈ T, ENNReal.ofReal M * ENNReal.ofReal (radius m ^ κ) := Finset.sum_le_sum hpoint
+    _ = (T.card : ℝ≥0∞) * (ENNReal.ofReal M * ENNReal.ofReal (radius m ^ κ)) := by simp
+    _ ≤ _ := by
+      have hc : (T.card : ℝ≥0∞) ≤ corners16.card := by exact_mod_cast hTcard
+      dsimp [C]
+      calc
+        _ ≤ (corners16.card : ℝ≥0∞) * (ENNReal.ofReal M * ENNReal.ofReal (radius m ^ κ)) :=
+          mul_le_mul' hc le_rfl
+        _ = _ := by rw [mul_assoc]
+
+/-- Almost surely, all dyadic approximation levels obey one positive-power
+square-mass bound uniformly over a bounded disk of centers. -/
+theorem ae_exists_compact_center_square_power_bound
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2)
+    (R : ℝ) (hR : 0 < R) :
+    ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P, ∃ C : ℝ≥0∞, C < ⊤ ∧
+      ∀ᶠ m in Filter.atTop, ∀ z ∈ Metric.ball (0 : ℂ) R, ∀ n,
+        lqgApprox γ (fun s w => H s w ω) (radius n)
+          (sqQ (sqCorner z (radius (m + 1))) (m + 1)) ≤
+            C * ENNReal.ofReal (radius m ^ κ) := by
+  obtain ⟨κf, hκf, hf⟩ := ae_exists_compact_center_fine_level_square_power_bound hH hHm hγ hγ2 R hR
+  obtain ⟨κc, hκc, hc⟩ := ae_exists_compact_center_coarse_level_square_power_bound hH hHm hγ hγ2 R hR
+  refine ⟨min κf κc, lt_min hκf hκc, ?_⟩
+  filter_upwards [hf, hc] with ω hf hc
+  obtain ⟨Cf, hCf, hf⟩ := hf
+  obtain ⟨Cc, hCc, hc⟩ := hc
+  refine ⟨Cf + Cc, ENNReal.add_lt_top.mpr ⟨hCf, hCc⟩, ?_⟩
+  filter_upwards [hf, hc] with m hf hc z hz n
+  have hr1 : radius m ≤ 1 := by unfold radius; exact pow_le_one₀ (by norm_num) (by norm_num)
+  have hpf : ENNReal.ofReal (radius m ^ κf) ≤ ENNReal.ofReal (radius m ^ min κf κc) :=
+    ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow_of_exponent_ge (radius_pos m) hr1 (min_le_left _ _))
+  have hpc : ENNReal.ofReal (radius m ^ κc) ≤ ENNReal.ofReal (radius m ^ min κf κc) :=
+    ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow_of_exponent_ge (radius_pos m) hr1 (min_le_right _ _))
+  by_cases hn : n ≤ m + 1
+  · exact (hc z hz n hn).trans (mul_le_mul' (le_add_left le_rfl) hpc)
+  · obtain ⟨k, rfl⟩ : ∃ k, n = m + 1 + k := ⟨n - (m + 1), by omega⟩
+    exact (hf z hz k).trans (mul_le_mul' (le_add_right le_rfl) hpf)
+
 end LatticeProb.LQG
