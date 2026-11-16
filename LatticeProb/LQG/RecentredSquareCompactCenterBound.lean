@@ -685,4 +685,54 @@ theorem exists_lintegral_iSup_tilted_square_rpow_le_power
     (by linarith : 0 ≤ p) C] at ht
   exact ht
 
+/-- A uniform tail estimate for maximal tilted square masses. -/
+theorem exists_measure_iSup_tilted_square_le
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) :
+    ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ (z : ℂ) (m : ℕ), 2 * radius m ≤ 1 → ∀ t : ℝ, 0 < t →
+      P {ω | ENNReal.ofReal t ≤ ⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+          (sqQ (sqCorner z (radius m)) m)} ≤
+      (ENNReal.ofReal ((2 * radius m) ^
+        (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C) / ENNReal.ofReal (t ^ p) := by
+  obtain ⟨C, hC, hmoment⟩ := exists_lintegral_iSup_tilted_square_rpow_le_power
+    hH hHm hγ hγ2 hp hpq hq
+  refine ⟨C, hC, ?_⟩
+  intro z m hm t ht
+  have hp0 : 0 < p := by linarith
+  have hε : 0 < 2 * radius m := mul_pos (by norm_num) (radius_pos m)
+  have hM : Measurable (fun ω => ⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+      lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+        (sqQ (sqCorner z (radius m)) m)) := by
+    simp_rw [tilted_lqgApprox_square_eq]
+    apply Measurable.iSup
+    intro k
+    have he : Measurable (fun ω => ENNReal.ofReal
+        (Real.exp (γ * (H (2 * radius m) z ω - H 1 z ω)))) := by fun_prop
+    exact (measurable_const.mul (he.mul
+      ((measurable_recentred_square_mass hH hHm γ (2 * radius m) hε.ne' z m k).const_mul _)))
+  have htpos : 0 < t ^ p := Real.rpow_pos_of_pos ht p
+  have hsub : {ω | ENNReal.ofReal t ≤ ⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+      lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+        (sqQ (sqCorner z (radius m)) m)} ⊆
+      {ω | ENNReal.ofReal (t ^ p) ≤ (⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+          (sqQ (sqCorner z (radius m)) m)) ^ p} := by
+    intro ω hω
+    have h := ENNReal.rpow_le_rpow hω hp0.le
+    rwa [ENNReal.ofReal_rpow_of_nonneg ht.le hp0.le] at h
+  calc
+    _ ≤ P {ω | ENNReal.ofReal (t ^ p) ≤ (⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+          (sqQ (sqCorner z (radius m)) m)) ^ p} := measure_mono hsub
+    _ ≤ (∫⁻ ω, (⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+          (sqQ (sqCorner z (radius m)) m)) ^ p ∂P) / ENNReal.ofReal (t ^ p) :=
+      meas_ge_le_lintegral_div (hM.aemeasurable.pow_const p)
+        (ENNReal.ofReal_pos.mpr htpos).ne' ENNReal.ofReal_ne_top
+    _ ≤ _ := ENNReal.div_le_div_right (hmoment z m hm) _
+
 end LatticeProb.LQG
