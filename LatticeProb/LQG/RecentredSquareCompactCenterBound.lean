@@ -1254,4 +1254,65 @@ theorem exists_lintegral_coarse_unit_tilted_square_rpow_le_power
       dsimp [β]
       ring
 
+/-- The unit-tilted square mass is measurable in the field outcome. -/
+theorem measurable_unitTiltedSquareMass
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) (γ : ℝ) (z : ℂ) (m n : ℕ) :
+    Measurable (unitTiltedSquareMass H γ z m n) := by
+  have hd : Measurable (fun q : ℂ × Ω => ENNReal.ofReal (radius n ^ (γ ^ 2 / 2) *
+      Real.exp (γ * (H (radius n) q.1 q.2 - H 1 q.1 q.2)))) :=
+    ENNReal.measurable_ofReal.comp (((measurable_uncurry_coord hH hHm (radius_pos n)).sub
+      (measurable_uncurry_coord hH hHm (by norm_num))).const_mul γ |>.exp.const_mul _)
+  exact hd.lintegral_prod_left'
+
+/-- A uniform finite-center tail for the maximum over coarse levels. -/
+theorem exists_measure_finset_sup_coarse_unit_tilted_square_le
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p : ℝ} (hγ : 0 < γ) (hp : 1 < p) :
+    ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ (S : Finset ℂ) (m : ℕ) (t : ℝ), 0 < t →
+      P {ω | ENNReal.ofReal t ≤ S.sup fun z =>
+        (Finset.range (m + 1)).sup fun n => unitTiltedSquareMass H γ z m n ω} ≤
+      (S.card : ℝ≥0∞) * ((ENNReal.ofReal (radius m ^
+        (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C) / ENNReal.ofReal (t ^ p)) := by
+  classical
+  obtain ⟨C, hC, hmoment⟩ := exists_lintegral_coarse_unit_tilted_square_rpow_le_power hH hHm hγ hp
+  refine ⟨C, hC, ?_⟩
+  intro S m t ht
+  have hp0 : 0 < p := by linarith
+  let F : ℂ → Ω → ℝ≥0∞ := fun z ω =>
+    (Finset.range (m + 1)).sup fun n => unitTiltedSquareMass H γ z m n ω
+  have hF (z : ℂ) : Measurable (F z) := by
+    dsimp [F]
+    induction (Finset.range (m + 1)) using Finset.induction_on with
+    | empty => simp
+    | @insert n T hn ih =>
+      simpa only [Finset.sup_insert] using (measurable_unitTiltedSquareMass hH hHm γ z m n).max ih
+  have hsingle (z : ℂ) : P {ω | ENNReal.ofReal t ≤ F z ω} ≤
+      (ENNReal.ofReal (radius m ^ (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C) /
+        ENNReal.ofReal (t ^ p) := by
+    have hsub : {ω | ENNReal.ofReal t ≤ F z ω} ⊆ {ω | ENNReal.ofReal (t ^ p) ≤ F z ω ^ p} := by
+      intro ω hω
+      have h := ENNReal.rpow_le_rpow hω hp0.le
+      rwa [ENNReal.ofReal_rpow_of_nonneg ht.le hp0.le] at h
+    calc
+      _ ≤ P {ω | ENNReal.ofReal (t ^ p) ≤ F z ω ^ p} := measure_mono hsub
+      _ ≤ (∫⁻ ω, F z ω ^ p ∂P) / ENNReal.ofReal (t ^ p) :=
+        meas_ge_le_lintegral_div ((hF z).aemeasurable.pow_const p)
+          (ENNReal.ofReal_pos.mpr (Real.rpow_pos_of_pos ht p)).ne' ENNReal.ofReal_ne_top
+      _ ≤ _ := ENNReal.div_le_div_right (hmoment z m) _
+  have hsub : {ω | ENNReal.ofReal t ≤ S.sup fun z => F z ω} ⊆
+      ⋃ z ∈ S, {ω | ENNReal.ofReal t ≤ F z ω} := by
+    intro ω hω
+    obtain ⟨z, hz, hz'⟩ := (Finset.le_sup_iff (ENNReal.ofReal_pos.mpr ht)).mp hω
+    exact Set.mem_iUnion₂.mpr ⟨z, hz, hz'⟩
+  calc
+    _ ≤ P (⋃ z ∈ S, {ω | ENNReal.ofReal t ≤ F z ω}) := measure_mono hsub
+    _ ≤ ∑ z ∈ S, P {ω | ENNReal.ofReal t ≤ F z ω} := measure_biUnion_finset_le S _
+    _ ≤ ∑ _z ∈ S, (ENNReal.ofReal (radius m ^
+        (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C) / ENNReal.ofReal (t ^ p) :=
+      Finset.sum_le_sum fun z _ => hsingle z
+    _ = _ := by simp
+
 end LatticeProb.LQG
