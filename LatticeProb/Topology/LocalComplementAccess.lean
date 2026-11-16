@@ -1,6 +1,7 @@
 import LatticeProb.Topology.BoundaryAccess
 import LatticeProb.Topology.EmbeddedClosedDiskExterior
 import Mathlib.Topology.Algebra.Module.LocallyConvex
+import Mathlib.Topology.Connected.LocallyPathConnected
 
 /-! # Local access to a complementary component -/
 
@@ -88,5 +89,34 @@ theorem exists_embedded_disk_local_access {A B : Set ℂ}
     rcases hzA with rfl | hzA
     · exact hxcl
     · exact subset_closure hzA
+
+/-- Two compact connected sets meeting the same component of an open set can be
+joined by a compact connected set in any common ambient set containing that component. -/
+theorem exists_compact_connected_join_of_component {U S P Q : Set ℂ} (hU : IsOpen U)
+    {p q : ℂ} (hpU : p ∈ U) (hqU : q ∈ connectedComponentIn U p)
+    (hPS : P ⊆ S) (hQS : Q ⊆ S) (hUS : U ⊆ S)
+    (hPc : IsCompact P) (hQc : IsCompact Q) (hPconn : IsConnected P)
+    (hQconn : IsConnected Q) (hpP : p ∈ P) (hqQ : q ∈ Q) :
+    ∃ T : Set ℂ, IsCompact T ∧ IsConnected T ∧ P ∪ Q ⊆ T ∧ T ⊆ S := by
+  let W := connectedComponentIn U p
+  have hpW : p ∈ W := mem_connectedComponentIn hpU
+  have hWo : IsOpen W := hU.connectedComponentIn
+  have hWc : IsConnected W := ⟨⟨p, hpW⟩, isPreconnected_connectedComponentIn⟩
+  obtain ⟨γ, hγ⟩ := (hWo.isConnected_iff_isPathConnected.mp hWc).joinedIn p hpW q hqU
+  let R : Set ℂ := range γ
+  have hRc : IsCompact R := isCompact_range γ.continuous
+  have hRconn : IsConnected R := isConnected_range γ.continuous
+  have hpR : p ∈ R := ⟨0, γ.source⟩
+  have hqR : q ∈ R := ⟨1, γ.target⟩
+  have hRS : R ⊆ S := by
+    rintro z ⟨t, rfl⟩
+    exact hUS (connectedComponentIn_subset U p (hγ t))
+  refine ⟨P ∪ R ∪ Q, (hPc.union hRc).union hQc,
+    (hPconn.union ⟨p, hpP, hpR⟩ hRconn).union ⟨q, Or.inr hqR, hqQ⟩ hQconn, ?_, ?_⟩
+  · intro z hz
+    rcases hz with hz | hz
+    · exact Or.inl (Or.inl hz)
+    · exact Or.inr hz
+  · exact union_subset (union_subset hPS hRS) hQS
 
 end LatticeProb.Topology
