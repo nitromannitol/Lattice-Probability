@@ -3,8 +3,6 @@ import Mathlib.Topology.Connected.Basic
 
 /-! # Fibre localization and components of image intersections -/
 
-set_option autoImplicit false
-
 open Set
 
 namespace LatticeProb
