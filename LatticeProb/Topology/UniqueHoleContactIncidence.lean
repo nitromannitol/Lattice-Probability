@@ -68,4 +68,43 @@ theorem contact_component_meets_frontier_of_unique_bounded_component
   obtain ⟨y, hy, hyF, _⟩ := h
   exact ⟨y, hy, hyF⟩
 
+
+/-- If every component of a set meets a subset, inclusion induces a surjection on
+connected components. -/
+theorem cardinal_components_le_of_components_meet {X : Type*} [TopologicalSpace X]
+    {T F : Set X} (h : ∀ x ∈ T, (connectedComponentIn T x ∩ F).Nonempty) :
+    Cardinal.mk (ConnectedComponents T) ≤ Cardinal.mk (ConnectedComponents ↥(T ∩ F)) := by
+  let f : ↥(T ∩ F) → T := fun x => ⟨x.1, x.2.1⟩
+  have hf : Continuous f := continuous_subtype_val.subtype_mk _
+  apply Cardinal.mk_le_of_surjective (f := hf.connectedComponentsMap)
+  intro c
+  obtain ⟨x, rfl⟩ := ConnectedComponents.surjective_coe c
+  obtain ⟨y, hy, hyF⟩ := h x x.2
+  rw [connectedComponentIn_eq_image x.2] at hy
+  obtain ⟨z, hz, hzval⟩ := hy
+  let w : ↥(T ∩ F) := ⟨y, (connectedComponentIn_subset T x.1 (by
+    rw [connectedComponentIn_eq_image x.2]
+    exact ⟨z, hz, hzval⟩)), hyF⟩
+  refine ⟨ConnectedComponents.mk w, ?_⟩
+  rw [Continuous.connectedComponentsMap_mk, ConnectedComponents.coe_eq_coe]
+  have hzw : z = f w := Subtype.ext hzval
+  rw [← hzw]
+  exact (connectedComponent_eq hz).symm
+
+/-- The number of contact components is bounded by the number of components of
+contact points lying on the boundary of the unique bounded complementary component. -/
+theorem cardinal_contact_components_le_frontier_of_unique_bounded_component
+    {A B U : Set ℂ} (hA : IsCompact A) (hB : IsCompact B)
+    (hAc : IsConnected A) (hBc : IsConnected B)
+    (hAcom : IsPreconnected Aᶜ) (hAu : ¬ IsBounded Aᶜ)
+    (hBcom : IsPreconnected Bᶜ) (hBu : ¬ IsBounded Bᶜ)
+    (hU : U ∈ connectedComponentsIn (A ∪ B)ᶜ) (hUb : IsBounded U)
+    (huniq : ∀ V ∈ connectedComponentsIn (A ∪ B)ᶜ, IsBounded V → V = U) :
+    Cardinal.mk (ConnectedComponents ↥(A ∩ B)) ≤
+      Cardinal.mk (ConnectedComponents ↥((A ∩ B) ∩ frontier U)) := by
+  apply cardinal_components_le_of_components_meet
+  intro x hx
+  exact contact_component_meets_frontier_of_unique_bounded_component
+    hA hB hAc hBc hAcom hAu hBcom hBu hU hUb huniq hx
+
 end LatticeProb.Topology
