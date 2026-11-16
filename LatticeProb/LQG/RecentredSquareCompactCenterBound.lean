@@ -485,4 +485,38 @@ theorem lintegral_exp_coarse_circle_increment
   congr 1
   ring
 
+/-- A joint moment bound for the coarse circle exponential and maximal
+normalized square mass, uniform in the center and scale. -/
+theorem exists_lintegral_exp_coarse_mul_iSup_square_rpow_le
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) :
+    ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ (z : ℂ) (m : ℕ), 2 * radius m ≤ 1 →
+      (∫⁻ ω, ENNReal.ofReal (Real.exp ((p * γ) *
+        (H (2 * radius m) z ω - H 1 z ω))) *
+        (⨆ k, normalizedRecentredSquareMass H γ z m k ω) ^ p ∂P) ≤
+      ENNReal.ofReal ((2 * radius m) ^ (-((p * γ) ^ 2 / 2))) * C := by
+  obtain ⟨C, hC, hbound⟩ :=
+    exists_lintegral_iSup_normalized_recentred_square_rpow_le hH hHm hγ hγ2 hp hpq hq
+  refine ⟨C, hC, ?_⟩
+  intro z m hm
+  have hε : 0 < 2 * radius m := mul_pos (by norm_num) (radius_pos m)
+  have hφ : Measurable (fun x : ℝ => ENNReal.ofReal (Real.exp ((p * γ) * x))) := by
+    fun_prop
+  have hf : AEMeasurable (fun ω => ENNReal.ofReal (Real.exp ((p * γ) *
+      (H (2 * radius m) z ω - H 1 z ω)))) P :=
+    (hφ.comp ((hHm (2 * radius m) z).sub (hHm 1 z))).aemeasurable
+  have hg : AEMeasurable (fun ω => (⨆ k, normalizedRecentredSquareMass H γ z m k ω) ^ p) P := by
+    apply AEMeasurable.pow_const
+    apply AEMeasurable.iSup
+    intro k
+    exact ((measurable_recentred_square_mass hH hHm γ (2 * radius m) hε.ne' z m k).const_mul _).aemeasurable
+  have hi := (indepFun_coarse_increment_iSup_normalized_recentred_square_mass hH γ z m hm).comp
+    hφ (measurable_id.pow_const p)
+  rw [ProbabilityTheory.lintegral_mul_eq_lintegral_mul_lintegral_of_indepFun'' hf hg hi,
+    lintegral_exp_coarse_circle_increment hH hε hm z (p * γ)]
+  exact mul_le_mul' le_rfl (hbound z m).1
+
 end LatticeProb.LQG
