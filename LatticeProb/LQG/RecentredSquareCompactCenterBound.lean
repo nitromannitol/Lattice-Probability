@@ -925,4 +925,58 @@ theorem exists_finset_bounded_centred_sqQ_local_cover_ball (R : ℝ) (hR : 0 < R
     refine Set.mem_iUnion₂.mpr ⟨f a, Finset.mem_image.mpr ⟨a, ha, rfl⟩, ?_⟩
     rwa [hf]
 
+/-- The cardinality bound for the square cover is quadratic in the inverse
+of the preceding dyadic scale. -/
+theorem square_cover_cardinal_scale_le (R : ℝ) (hR : 0 < R) (m : ℕ) :
+    (corners16.card : ℝ) * (4 * R / radius (m + 1) + 1) ^ 2 ≤
+      ((corners16.card : ℝ) * (8 * R + 1) ^ 2) * radius m ^ (-2 : ℝ) := by
+  have hr := radius_pos m
+  have hr1 : radius m ≤ 1 := by unfold radius; exact pow_le_one₀ (by norm_num) (by norm_num)
+  have hscale : radius (m + 1) = radius m / 2 := by unfold radius; rw [pow_succ]; ring
+  have hratio : 4 * R / radius (m + 1) + 1 = (8 * R + radius m) / radius m := by
+    rw [hscale]
+    field_simp
+    ring
+  have hratio_le : 4 * R / radius (m + 1) + 1 ≤ (8 * R + 1) / radius m := by
+    rw [hratio]
+    exact div_le_div_of_nonneg_right (by linarith) hr.le
+  have hrnext := radius_pos (m + 1)
+  have hsq : (4 * R / radius (m + 1) + 1) ^ 2 ≤ ((8 * R + 1) / radius m) ^ 2 := by
+    gcongr
+  calc
+    _ ≤ (corners16.card : ℝ) * ((8 * R + 1) / radius m) ^ 2 := by gcongr
+    _ = _ := by rw [Real.rpow_neg hr.le, Real.rpow_two]; field_simp
+
+/-- On a deterministic sequence of bounded local covers, all tilted
+square masses at finer approximation levels have an eventual power bound. -/
+theorem exists_bounded_square_covers_ae_eventually_tilted_power
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2)
+    (R : ℝ) (hR : 0 < R) :
+    ∃ S : ℕ → Finset ℂ, (∀ m v, v ∈ S m → ‖v‖ ≤ R + 2) ∧
+      (∀ m z, z ∈ Metric.ball (0 : ℂ) R → ∃ T : Finset ℂ,
+        T ⊆ S m ∧ T.card ≤ corners16.card ∧
+          sqQ (sqCorner z (radius (m + 1))) (m + 1) ⊆
+            ⋃ v ∈ T, sqQ (sqCorner v (radius (m + 1))) (m + 1)) ∧
+      ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P, ∀ᶠ m in Filter.atTop,
+        (S m).sup (fun z => ⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+          lqgApprox γ (fun s w => H s w ω) (radius (m + 1 + k))
+            (sqQ (sqCorner z (radius (m + 1))) (m + 1))) <
+          ENNReal.ofReal (radius m ^ κ) := by
+  classical
+  choose S hS using fun m => exists_finset_bounded_centred_sqQ_local_cover_ball R hR (m + 1)
+  refine ⟨S, fun m v hv => (hS m).2.1 v hv, fun m z hz => (hS m).2.2 z hz, ?_⟩
+  let D : ℝ := (corners16.card : ℝ) * (8 * R + 1) ^ 2
+  have hD : 0 ≤ D := by dsimp [D]; positivity
+  apply ae_eventually_finset_tilted_square_power_bound hH hHm hγ hγ2 S
+    (A := ENNReal.ofReal D) ENNReal.ofReal_lt_top
+  intro m
+  have hc : ((S m).card : ℝ) ≤ D * radius m ^ (-2 : ℝ) :=
+    ((hS m).1).trans (square_cover_cardinal_scale_le R hR m)
+  calc
+    ((S m).card : ℝ≥0∞) = ENNReal.ofReal ((S m).card : ℝ) := by simp
+    _ ≤ ENNReal.ofReal (D * radius m ^ (-2 : ℝ)) := ENNReal.ofReal_le_ofReal hc
+    _ = _ := ENNReal.ofReal_mul hD
+
 end LatticeProb.LQG
