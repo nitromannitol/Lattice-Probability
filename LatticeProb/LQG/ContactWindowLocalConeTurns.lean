@@ -3,7 +3,6 @@ import LatticeProb.Prob.CorrelatedBMMixedTimes
 
 /-! # Contact windows and local contour turns -/
 
-set_option autoImplicit false
 
 open Set MeasureTheory
 open scoped NNReal ENNReal

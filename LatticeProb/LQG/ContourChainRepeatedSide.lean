@@ -3,7 +3,6 @@ import LatticeProb.Analysis.LocalMinCountable
 
 /-! # Repeated-side contour links -/
 
-set_option autoImplicit false
 
 open Set Filter
 open scoped Topology

@@ -4,7 +4,6 @@ import LatticeProb.LQG.ContactWindowComponentCount
 
 /-! # Contact components and countable exceptional fibres -/
 
-set_option autoImplicit false
 
 open Set
 

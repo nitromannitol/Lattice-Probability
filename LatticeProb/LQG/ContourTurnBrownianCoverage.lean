@@ -4,7 +4,6 @@ import LatticeProb.Prob.CorrelatedBMConeTimes
 
 /-! # Contact components and Brownian contour turns -/
 
-set_option autoImplicit false
 
 open Set MeasureTheory
 open scoped NNReal ENNReal

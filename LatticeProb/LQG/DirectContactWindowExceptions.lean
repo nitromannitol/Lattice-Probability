@@ -4,7 +4,6 @@ import LatticeProb.Analysis.LocalMinCountable
 
 /-! # Exceptional direct contacts between contour cells -/
 
-set_option autoImplicit false
 
 open Set Filter
 open scoped Topology

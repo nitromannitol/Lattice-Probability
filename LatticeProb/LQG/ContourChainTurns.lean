@@ -4,7 +4,6 @@ import LatticeProb.LQG.ContactWindowCountableCoverage
 
 /-! # Turns in contour identification chains -/
 
-set_option autoImplicit false
 
 open Set
 
