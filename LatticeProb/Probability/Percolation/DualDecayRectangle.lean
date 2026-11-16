@@ -1,3 +1,5 @@
+import LatticeProb.Vendor.FormalMathPercolation.Literature.KestenTheorem
+import LatticeProb.Vendor.FormalMathPercolation.Literature.RSWProofs
 import LatticeProb.Probability.Percolation.EdgeCrossing
 import Mathlib.Probability.Independence.InfinitePi
 
@@ -5,7 +7,8 @@ import Mathlib.Probability.Independence.InfinitePi
 # Square-lattice bond law comparison
 
 The Boolean product law on nearest-neighbor unordered pairs agrees with the
-proposition-valued edge product law after identifying the bond indices.
+proposition-valued edge product law after identifying the bond indices. A dual
+one-arm estimate bounds horizontal crossing failure in an origin rectangle.
 -/
 
 open MeasureTheory ProbabilityTheory Percolation.Literature
@@ -128,5 +131,73 @@ theorem crossing_failure_probability_eq_dual (p : unitInterval) (m n : ℕ) :
   rcases lrCrossing_xor_dualTBCrossing_holds m n hω with h | h
   · exact ⟨fun hn => (hn h.1).elim, fun hd => (h.2 hd).elim⟩
   · exact ⟨fun _ => h.1, fun _ => h.2⟩
+
+
+/-- A horizontal crossing failure is bounded by translated one-arm events. -/
+theorem crossing_failure_real_succ_le (p : unitInterval) (m n : ℕ) :
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p)).real
+        {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing (m + 1) n} ≤
+      ((m : ℝ) + 1) * (bondPercolation (LatticeModels.zdGraph 2)
+        (unitInterval.symm p)).real (siteToBoundary 2 n) := by
+  calc
+    _ = (bondPercolation (LatticeModels.zdGraph 2) p).real (dualTBCrossing (m + 1) n) :=
+      congrArg ENNReal.toReal (crossing_failure_probability_eq_dual p (m + 1) n)
+    _ = crossingProb (unitInterval.symm p) (n + 1) m := real_dualTBCrossing_succ p m n
+    _ ≤ _ := crossingProb_succ_le (unitInterval.symm p) n m
+
+
+/-- A one-arm estimate bounds horizontal crossing failure in a rectangle of positive width. -/
+theorem crossing_failure_succ_le_of_one_arm (p : unitInterval) (C c : ℝ)
+    (hdecay : ∀ n : ℕ,
+      (bondPercolation (LatticeModels.zdGraph 2) (unitInterval.symm p)).real
+        (siteToBoundary 2 n) ≤ C * Real.exp (-(c * n))) (m n : ℕ) :
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p)
+        {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing (m + 1) n}) ≤
+      ENNReal.ofReal (C * ((m : ℝ) + 1) * Real.exp (-(c * n))) := by
+  rw [← ENNReal.ofReal_toReal (measure_ne_top _ _)]
+  apply ENNReal.ofReal_le_ofReal
+  calc
+    _ ≤ ((m : ℝ) + 1) * (bondPercolation (LatticeModels.zdGraph 2)
+        (unitInterval.symm p)).real (siteToBoundary 2 n) := crossing_failure_real_succ_le p m n
+    _ ≤ ((m : ℝ) + 1) * (C * Real.exp (-(c * n))) :=
+      mul_le_mul_of_nonneg_left (hdecay n) (by positivity)
+    _ = _ := by ring
+
+
+/-- A rectangle of zero horizontal width is crossed by the constant walk. -/
+theorem crossing_zero (n : ℕ) (η : (LatticeModels.zdGraph 2).edgeSet → Prop) :
+    η ∈ EdgeCrossing.crossing 0 n := by
+  refine ⟨0, ?_, 0, ?_, .nil, ?_, ?_⟩
+  · simp [leftSide, rectangle, Finset.mem_Icc, Pi.le_def]
+  · simp [rightSide, rectangle, Finset.mem_Icc, Pi.le_def]
+  · simp [rectangle, Finset.mem_Icc, Pi.le_def]
+  · simp
+
+
+/-- One-arm decay bounds horizontal crossing failure for an origin rectangle. -/
+theorem crossing_failure_le_of_one_arm (p : unitInterval) (C c : ℝ) (hC : 0 ≤ C)
+    (hdecay : ∀ n : ℕ,
+      (bondPercolation (LatticeModels.zdGraph 2) (unitInterval.symm p)).real
+        (siteToBoundary 2 n) ≤ C * Real.exp (-(c * n))) (m n : ℕ) :
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p)
+        {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing m n}) ≤
+      ENNReal.ofReal (C * ((m : ℝ) + 1) * Real.exp (-(c * n))) := by
+  cases m with
+  | zero =>
+    have hempty : {ω : Bond → Bool | toEdgeConfig ω ∉ EdgeCrossing.crossing 0 n} = ∅ := by
+      apply Set.eq_empty_iff_forall_notMem.mpr
+      intro ω hω
+      exact hω (crossing_zero n (toEdgeConfig ω))
+    rw [hempty, measure_empty]
+    exact bot_le
+  | succ m =>
+    refine (crossing_failure_succ_le_of_one_arm p C c hdecay m n).trans ?_
+    apply ENNReal.ofReal_le_ofReal
+    push_cast
+    gcongr
+    linarith
 
 end DualDecayRectangle
