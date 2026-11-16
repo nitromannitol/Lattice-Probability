@@ -320,4 +320,115 @@ theorem exists_first_exit_finite_volume_certificates
     exact (hl he').2
 
 
+/-- The set of open edges represented by finite Boolean coordinates. -/
+def finiteBoolEdges (F : Finset (Sym2 V)) (η : F → Bool) : BondConfig V :=
+  {e | ∃ i : F, i.val = e ∧ η i = true}
+
+omit [Countable V] in
+/-- Encoding and decoding a finite edge set preserves it when the coordinates contain it. -/
+theorem finiteBoolEdges_finiteBoolConfig [DecidableEq V] (F K : Finset (Sym2 V))
+    (hKF : K ⊆ F) : finiteBoolEdges F (finiteBoolConfig F (↑K : BondConfig V)) = ↑K := by
+  classical
+  ext e
+  constructor
+  · rintro ⟨i, rfl, hi⟩
+    simpa [finiteBoolConfig, propBool] using hi
+  · intro he
+    refine ⟨⟨e, hKF he⟩, rfl, ?_⟩
+    simp [finiteBoolConfig, propBool, he]
+
+/-- An interior connection together with a specified exit edge. -/
+def exitFiniteEvent (F : Finset (Sym2 V)) (S : Set V) (a x y : V) : Set (F → Bool) :=
+  {η | finiteBoolEdges F η ∈ openConnIn S a x ∧ s(x, y) ∈ finiteBoolEdges F η}
+
+/-- A connection starting at the outer endpoint of an exit edge. -/
+def continuationFiniteEvent (F : Finset (Sym2 V)) (y z : V) : Set (F → Bool) :=
+  {η | (openGraph (finiteBoolEdges F η)).Reachable y z}
+
+omit [Countable V] in
+/-- Adding open Boolean coordinates enlarges the encoded edge set. -/
+theorem finiteBoolEdges_mono (F : Finset (Sym2 V)) : Monotone (finiteBoolEdges F) := by
+  intro η η' h e he
+  obtain ⟨i, rfl, hi⟩ := he
+  refine ⟨i, rfl, ?_⟩
+  have h' := h i
+  rw [hi] at h'
+  cases hv : η' i with
+  | false => exact False.elim ((by decide : ¬ (true ≤ false)) (hv ▸ h'))
+  | true => rfl
+
+omit [Countable V] in
+/-- The finite-coordinate exit event is increasing. -/
+theorem exitFiniteEvent_upper (F : Finset (Sym2 V)) (S : Set V) (a x y : V) :
+    IsUpperSet (exitFiniteEvent F S a x y) := by
+  intro η η' h hη
+  exact ⟨isUpperSet_openConnIn S a x (finiteBoolEdges_mono F h) hη.1,
+    finiteBoolEdges_mono F h hη.2⟩
+
+omit [Countable V] in
+/-- The finite-coordinate continuation event is increasing. -/
+theorem continuationFiniteEvent_upper (F : Finset (Sym2 V)) (y z : V) :
+    IsUpperSet (continuationFiniteEvent F y z) := by
+  intro η η' h hη
+  exact hη.mono (openGraph_mono (finiteBoolEdges_mono F h))
+
+omit [Countable V] in
+/-- A connection leaving a set yields a disjoint occurrence at an exit edge. -/
+theorem first_exit_finite_disjoint_occurrence [DecidableEq V]
+    {ω : BondConfig V} (S : Set V) (T : Finset V) {a z : V}
+    (ha : a ∈ S) (hz : z ∉ S) (h : ω ∈ openConnIn (↑T : Set V) a z) :
+    ∃ x ∈ T, x ∈ S ∧ ∃ y ∈ T, y ∉ S ∧ finiteBoolConfig T.sym2 ω ∈
+      LatticeProb.wit (exitFiniteEvent T.sym2 S a x y) (continuationFiniteEvent T.sym2 y z) := by
+  obtain ⟨x, hx, y, hy, K, L, hd, hk, hl, hkt, hlt, he, hc, hr⟩ :=
+    exists_first_exit_finite_volume_certificates S T ha hz h
+  have hxy := Finset.mk_mem_sym2_iff.mp (hkt he)
+  refine ⟨x, hxy.1, hx, y, hxy.2, hy,
+    finite_bool_witness_of_edge_certificates T.sym2 K L ω hd hk hl ?_ ?_⟩
+  · change finiteBoolEdges T.sym2 (finiteBoolConfig T.sym2 (↑K : BondConfig V)) ∈
+      openConnIn S a x ∧ s(x, y) ∈ finiteBoolEdges T.sym2 (finiteBoolConfig T.sym2 (↑K : BondConfig V))
+    rw [finiteBoolEdges_finiteBoolConfig _ _ hkt]
+    exact ⟨hc, he⟩
+  · change (openGraph (finiteBoolEdges T.sym2 (finiteBoolConfig T.sym2 (↑L : BondConfig V)))).Reachable y z
+    rw [finiteBoolEdges_finiteBoolConfig _ _ hlt]
+    exact hr
+
+/-- Ordered pairs of vertices in the volume crossing the boundary of a set. -/
+def finiteBoundaryPairs [DecidableEq V] (S : Set V) (T : Finset V) : Finset (V × V) := by
+  classical
+  exact (T.product T).filter (fun xy => xy.1 ∈ S ∧ xy.2 ∉ S)
+
+omit [Countable V] in
+/-- The finite-volume first-exit bound obtained from the BK inequality. -/
+theorem finite_volume_first_exit_bk [DecidableEq V]
+    (G : SimpleGraph V) (p : unitInterval) (S : Set V) (T : Finset V) (a z : V)
+    (ha : a ∈ S) (hz : z ∉ S) :
+    (bondPercolation G p) (openConnIn (↑T : Set V) a z) ≤
+      ∑ xy ∈ finiteBoundaryPairs S T,
+        (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 S a xy.1 xy.2) *
+        (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' continuationFiniteEvent T.sym2 xy.2 z) := by
+  classical
+  let A : V × V → Set (BondConfig V) := fun xy =>
+    finiteBoolConfig T.sym2 ⁻¹' LatticeProb.wit
+      (exitFiniteEvent T.sym2 S a xy.1 xy.2) (continuationFiniteEvent T.sym2 xy.2 z)
+  have hsub : openConnIn (↑T : Set V) a z ⊆ ⋃ xy ∈ finiteBoundaryPairs S T, A xy := by
+    intro ω hω
+    obtain ⟨x, hxT, hx, y, hyT, hy, hw⟩ :=
+      first_exit_finite_disjoint_occurrence S T ha hz hω
+    apply Set.mem_iUnion.mpr
+    refine ⟨(x, y), Set.mem_iUnion.mpr ⟨?_, hw⟩⟩
+    simp [finiteBoundaryPairs, hxT, hyT, hx, hy]
+  calc
+    (bondPercolation G p) (openConnIn (↑T : Set V) a z) ≤
+        (bondPercolation G p) (⋃ xy ∈ finiteBoundaryPairs S T, A xy) := measure_mono hsub
+    _ ≤ ∑ xy ∈ finiteBoundaryPairs S T, (bondPercolation G p) (A xy) :=
+      measure_biUnion_finset_le _ _
+    _ ≤ ∑ xy ∈ finiteBoundaryPairs S T,
+        (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 S a xy.1 xy.2) *
+        (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' continuationFiniteEvent T.sym2 xy.2 z) := by
+      apply Finset.sum_le_sum
+      intro xy _
+      exact finite_bool_witness_bk G p T.sym2 (exitFiniteEvent_upper _ _ _ _ _)
+        (continuationFiniteEvent_upper _ _ _)
+
+
 end FiniteSizeOneArm
