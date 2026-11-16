@@ -1,4 +1,5 @@
 import LatticeProb.Topology.CompactConnectedNeighborhood
+import LatticeProb.Topology.JordanDiskIntersectionBoundary
 import LatticeProb.Topology.PlaneExteriorBarrier
 import LatticeProb.Topology.PlaneDomainSimplyConnected
 import LatticeProb.Topology.SimplyConnectedNeighborhoodLog
@@ -96,5 +97,24 @@ theorem cardinal_inter_components_le_one_of_no_bounded_compl {A B : Set ℂ}
     (isPreconnected_compl_of_no_bounded_components (hA.union hB) hcom)
   let : PreconnectedSpace ↥(A ∩ B) := isPreconnected_iff_preconnectedSpace.mp h
   exact Cardinal.le_one_iff_subsingleton.mpr inferInstance
+
+/-- Two embedded closed disks meet in at most one component if their union has no
+bounded complementary component. -/
+theorem cardinal_inter_components_le_one_of_embedded_disks {A B : Set ℂ}
+    (eA : closedBall (0 : ℂ) 1 ≃ₜ A) (eB : closedBall (0 : ℂ) 1 ≃ₜ B)
+    (_hdis : Disjoint (interior A) (interior B))
+    (hcom : IsEmpty (BoundedPlaneComplementComponent (A ∪ B))) :
+    Cardinal.mk (ConnectedComponents ↥(A ∩ B)) ≤ 1 := by
+  have hA := LatticeProb.closure_interior_of_homeomorph_closedDisk eA
+  have hB := LatticeProb.closure_interior_of_homeomorph_closedDisk eB
+  have hAc : IsConnected A := hA ▸ (LatticeProb.isConnected_interior_of_homeomorph_closedDisk eA).closure
+  have hBc : IsConnected B := hB ▸ (LatticeProb.isConnected_interior_of_homeomorph_closedDisk eB).closure
+  have hAk : IsCompact A := by
+    let : CompactSpace A := eA.compactSpace
+    exact isCompact_iff_compactSpace.mpr inferInstance
+  have hBk : IsCompact B := by
+    let : CompactSpace B := eB.compactSpace
+    exact isCompact_iff_compactSpace.mpr inferInstance
+  exact cardinal_inter_components_le_one_of_no_bounded_compl hAk hBk hAc hBc hcom
 
 end LatticeProb.Topology
