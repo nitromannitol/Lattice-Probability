@@ -19,18 +19,18 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- In a finite product model, a pivotal coordinate is closed with probability
 `1 - par i`, independently of its pivotality. -/
-theorem fpr_pivot_and_closed (par : ι → ℝ) (i : ι) (A : Set (ι → Bool)) :
+theorem fpr_pivot_and_closed (par : ι → ℝ) (i : ι) (A : Set (ι → _)) :
     fpr par {ω | ω ∈ Pivot i A ∧ ω i = false} =
       (1 - par i) * fpr par (Pivot i A) := by
   rw [fpr_affine par i {ω | ω ∈ Pivot i A ∧ ω i = false},
     fpr_affine par i (Pivot i A)]
-  have hpiv : ∀ (b : Bool) τ,
-      (Equiv.piSplitAt i (fun _ => Bool)).symm (b, τ) ∈ Pivot i A ↔
-      (Equiv.piSplitAt i (fun _ => Bool)).symm (false, τ) ∈ Pivot i A := by
+  have hpiv : ∀ (b : _) τ,
+      (Equiv.piSplitAt i (fun _ => _)).symm (b, τ) ∈ Pivot i A ↔
+      (Equiv.piSplitAt i (fun _ => _)).symm (false, τ) ∈ Pivot i A := by
     intro b τ
     simp only [Pivot, Set.mem_ofPred_eq, update_symm]
   simp only [Set.mem_ofPred_eq, Equiv.piSplitAt_symm_apply, ne_eq,
-    ↓reduceDIte, Bool.true_eq_false, and_false, ite_false, Finset.sum_const_zero,
+    ↓reduceDIte, reduceCtorEq, and_false, ite_false, Finset.sum_const_zero,
     mul_zero, zero_add, and_true]
   simp only [hpiv true]
   ring
