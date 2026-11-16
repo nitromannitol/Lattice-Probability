@@ -585,4 +585,39 @@ theorem tilted_lqgApprox_square_eq {Ω : Type*}
   simp only [← mul_assoc]
   rw [hf]
 
+/-- The maximal tilted square mass has a uniform scale-dependent positive
+moment bound. -/
+theorem exists_lintegral_iSup_tilted_square_rpow_le
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) :
+    ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ (z : ℂ) (m : ℕ), 2 * radius m ≤ 1 →
+      (∫⁻ ω, (⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+          (sqQ (sqCorner z (radius m)) m)) ^ p ∂P) ≤
+      ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2) * (2 * radius m) ^ 2) ^ p *
+        (ENNReal.ofReal ((2 * radius m) ^ (-((p * γ) ^ 2 / 2))) * C) := by
+  obtain ⟨C, hC, hbound⟩ :=
+    exists_lintegral_exp_coarse_mul_iSup_square_rpow_le hH hHm hγ hγ2 hp hpq hq
+  refine ⟨C, hC, ?_⟩
+  intro z m hm
+  have hp0 : 0 ≤ p := by linarith
+  have heq (ω : Ω) :
+      (⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+          (sqQ (sqCorner z (radius m)) m)) ^ p =
+      ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2) * (2 * radius m) ^ 2) ^ p *
+        (ENNReal.ofReal (Real.exp ((p * γ) * (H (2 * radius m) z ω - H 1 z ω))) *
+          (⨆ k, normalizedRecentredSquareMass H γ z m k ω) ^ p) := by
+    simp_rw [tilted_lqgApprox_square_eq H ω γ z m, ← ENNReal.mul_iSup]
+    rw [ENNReal.mul_rpow_of_nonneg _ _ hp0, ENNReal.mul_rpow_of_nonneg _ _ hp0,
+      ENNReal.ofReal_rpow_of_nonneg (Real.exp_nonneg _) hp0, ← Real.exp_mul]
+    congr 3
+    ring
+  simp_rw [heq, lintegral_const_mul' _ _
+    (ENNReal.rpow_ne_top_of_nonneg hp0 ENNReal.ofReal_ne_top)]
+  exact mul_le_mul' le_rfl (hbound z m hm)
+
 end LatticeProb.LQG
