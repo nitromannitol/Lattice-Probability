@@ -539,4 +539,22 @@ theorem lqgApprox_eq_mul_recentred_rescaled {Ω : Type*}
   congr 1
   ring
 
+/-- An uncentered square approximation is the normalized recentred square
+mass multiplied by its exact scale and circle-average factors. -/
+theorem lqgApprox_square_eq_mul_normalized_recentred_square_mass {Ω : Type*}
+    (H : ℝ → ℂ → Ω → ℝ) (ω : Ω) (γ : ℝ) (z : ℂ) (m k : ℕ) :
+    lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+        (sqQ (sqCorner z (radius m)) m) =
+      ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2) *
+        Real.exp (γ * H (2 * radius m) z ω)) *
+      (ENNReal.ofReal ((2 * radius m) ^ 2) * normalizedRecentredSquareMass H γ z m k ω) := by
+  have hε : 0 < 2 * radius m := mul_pos (by norm_num) (radius_pos m)
+  have hfactor : ENNReal.ofReal ((2 * radius m) ^ 2) *
+      ENNReal.ofReal ((2 * radius m)⁻¹ ^ 2) = 1 := by
+    rw [← ENNReal.ofReal_mul (sq_nonneg _), ← mul_pow, mul_inv_cancel₀ hε.ne', one_pow,
+      ENNReal.ofReal_one]
+  rw [normalizedRecentredSquareMass, ← mul_assoc (ENNReal.ofReal ((2 * radius m) ^ 2)),
+    hfactor, one_mul]
+  exact lqgApprox_eq_mul_recentred_rescaled H ω γ hε (radius_pos _) z (measurableSet_sqQ _ _)
+
 end LatticeProb.LQG
