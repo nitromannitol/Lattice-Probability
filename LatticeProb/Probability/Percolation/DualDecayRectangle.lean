@@ -469,4 +469,71 @@ theorem extended_openGraph_adj_iff_lattice (ω : Bond → Bool) (x y : LatticeMo
   · rintro ⟨h, ho⟩
     exact ⟨(lattice_adj_iff_zdGraph_adj x y).1 h, ho⟩
 
+/-- The inclusive translated rectangle with specified crossing direction. -/
+def coordinateRectangle (v : LatticeModels.Site 2) (m n : ℕ) (i : Fin 2) :
+    Set (LatticeModels.Site 2) :=
+  {y | ∀ j, v j ≤ y j ∧ y j ≤ v j + (if j = i then (m : ℤ) else n)}
+
+/-- Open induced-graph crossing between the two faces orthogonal to the chosen direction. -/
+def coordinateCrossing (ω : Bond → Bool) (v : LatticeModels.Site 2) (m n : ℕ)
+    (i : Fin 2) : Prop :=
+  ∃ (y z : LatticeModels.Site 2) (hy : y ∈ coordinateRectangle v m n i)
+    (hz : z ∈ coordinateRectangle v m n i),
+    y i = v i ∧ z i = v i + m ∧
+      ((openGraph (EdgeCrossing.extend (LatticeModels.zdGraph 2) (toEdgeConfig ω))).induce
+        (coordinateRectangle v m n i)).Reachable ⟨y, hy⟩ ⟨z, hz⟩
+
+/-- One-arm decay bounds failure of a translated crossing in either lattice direction. -/
+theorem coordinate_crossing_failure_le_of_one_arm (p : unitInterval) (C c : ℝ)
+    (hC : 0 ≤ C) (hdecay : ∀ n : ℕ,
+      (bondPercolation (LatticeModels.zdGraph 2) (unitInterval.symm p)).real
+        (siteToBoundary 2 n) ≤ C * Real.exp (-(c * n)))
+    (v : LatticeModels.Site 2) (m n : ℕ) (i : Fin 2) :
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
+        {ω | ¬ coordinateCrossing ω v m n i} ≤
+      ENNReal.ofReal (C * ((m : ℝ) + 1) * Real.exp (-(c * n))) := by
+  fin_cases i
+  · have he : {ω : Bond → Bool | ¬ coordinateCrossing ω v m n 0} =
+        {ω | EdgeCrossing.extend (LatticeModels.zdGraph 2) (toEdgeConfig ω) ∉
+          openCrossing ((rectangle m n).image (· + v)) ((· + v) '' (leftSide m n : Set _))
+            ((· + v) '' (rightSide m n : Set _))} := by
+      ext ω
+      simp only [Set.mem_ofPred_eq, coordinateCrossing]
+      rw [show coordinateRectangle v m n 0 = ((· + v) '' (rectangle m n : Set _)) from
+        coordinate_rectangle_horizontal v m n]
+      simp only [Finset.coe_image, translated_horizontal_crossing_iff]
+    change (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
+        {ω | ¬ coordinateCrossing ω v m n 0} ≤ _
+    rw [he]
+    exact translated_crossing_failure_le_of_one_arm p C c hC hdecay v m n
+  · have he : {ω : Bond → Bool | ¬ coordinateCrossing ω v m n 1} =
+        {ω | EdgeCrossing.extend (LatticeModels.zdGraph 2) (toEdgeConfig ω) ∉
+          openCrossing ((rectangle n m).image (· + v)) ((· + v) '' (bottomSide n m : Set _))
+            ((· + v) '' (topSide n m : Set _))} := by
+      ext ω
+      simp only [Set.mem_ofPred_eq, coordinateCrossing]
+      rw [show coordinateRectangle v m n 1 = ((· + v) '' (rectangle n m : Set _)) from
+        coordinate_rectangle_vertical v m n]
+      simp only [Finset.coe_image, translated_vertical_crossing_iff]
+    change (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
+        {ω | ¬ coordinateCrossing ω v m n 1} ≤ _
+    rw [he]
+    exact translated_vertical_crossing_failure_le_of_one_arm p C c hC hdecay v m n
+
+/-- A positive one-arm decay estimate yields a uniform translated crossing estimate. -/
+theorem exists_coordinate_crossing_failure_bound (p : unitInterval)
+    (hdecay : ∃ C c : ℝ, 0 < C ∧ 0 < c ∧ ∀ n : ℕ,
+      (bondPercolation (LatticeModels.zdGraph 2) (unitInterval.symm p)).real
+        (siteToBoundary 2 n) ≤ C * Real.exp (-(c * n))) :
+    ∃ C c : ℝ, 0 < C ∧ 0 < c ∧ ∀ (v : LatticeModels.Site 2) (m n : ℕ) (i : Fin 2),
+      (Measure.infinitePi (fun _ : Bond =>
+        bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
+          {ω | ¬ coordinateCrossing ω v m n i} ≤
+        ENNReal.ofReal (C * ((m : ℝ) + 1) * Real.exp (-(c * n))) := by
+  obtain ⟨C, c, hC, hc, hdecay⟩ := hdecay
+  exact ⟨C, c, hC, hc, coordinate_crossing_failure_le_of_one_arm p C c hC.le hdecay⟩
+
 end DualDecayRectangle
