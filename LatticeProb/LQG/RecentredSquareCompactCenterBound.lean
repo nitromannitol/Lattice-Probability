@@ -234,6 +234,49 @@ theorem exists_finset_sqQ_cover_ball (R : ℝ) (hR : 0 < R) (m : ℕ) :
     refine ⟨x + radius m • c, ?_, hwc⟩
     exact Finset.mem_biUnion.mpr ⟨x, hx, Finset.mem_image.mpr ⟨c, hc, rfl⟩⟩
 
+/-- A bounded disk has a quantitative square cover in which each centered
+square is covered by a uniformly bounded subfamily. -/
+theorem exists_finset_sqQ_local_cover_ball (R : ℝ) (hR : 0 < R) (m : ℕ) :
+    ∃ A : Finset ℂ, (A.card : ℝ) ≤
+        (corners16.card : ℝ) * (4 * R / radius m + 1) ^ 2 ∧
+      ∀ z ∈ Metric.ball (0 : ℂ) R, ∃ B : Finset ℂ,
+        B ⊆ A ∧ B.card ≤ corners16.card ∧
+          sqQ (sqCorner z (radius m)) m ⊆ ⋃ b ∈ B, sqQ b m := by
+  classical
+  have hr : 0 < radius m := radius_pos m
+  obtain ⟨G, hGcard, hGcov⟩ := LQGBallMassRatioUniform.exists_ball_grid hR hr
+  let A := G.biUnion (fun x => corners16.image fun c => x + radius m • c)
+  refine ⟨A, ?_, ?_⟩
+  · have hc : A.card ≤ G.card * corners16.card := by
+      calc
+        A.card ≤ ∑ x ∈ G, (corners16.image fun c => x + radius m • c).card :=
+          Finset.card_biUnion_le
+        _ ≤ ∑ _x ∈ G, corners16.card :=
+          Finset.sum_le_sum fun _ _ => Finset.card_image_le
+        _ = G.card * corners16.card := by simp
+    have hc' : (A.card : ℝ) ≤ (G.card : ℝ) * (corners16.card : ℝ) := by exact_mod_cast hc
+    calc
+      (A.card : ℝ) ≤ (G.card : ℝ) * (corners16.card : ℝ) := hc'
+      _ ≤ (corners16.card : ℝ) * (4 * R / radius m + 1) ^ 2 := by
+        nlinarith [mul_nonneg (show (0 : ℝ) ≤ corners16.card by positivity)
+          (sub_nonneg.mpr hGcard)]
+  · intro z hz
+    obtain ⟨x, hx, hzx⟩ := hGcov z hz
+    refine ⟨corners16.image (fun c => x + radius m • c), ?_, Finset.card_image_le, ?_⟩
+    · intro b hb
+      exact Finset.mem_biUnion.mpr ⟨x, hx, hb⟩
+    · intro w hw
+      have hzx' : ‖z - x‖ < radius m := by simpa [dist_eq_norm] using hzx
+      have hwz := norm_sub_le_of_mem_centred_sqQ z m hw
+      have hwx : w ∈ Metric.ball x (2 * radius m) := by
+        rw [Metric.mem_ball, dist_eq_norm]
+        calc
+          ‖w - x‖ = ‖(w - z) + (z - x)‖ := by congr 1; abel
+          _ ≤ ‖w - z‖ + ‖z - x‖ := norm_add_le _ _
+          _ < 2 * radius m := by linarith
+      obtain ⟨c, hc, hwc⟩ := Set.mem_iUnion₂.mp (ball_subset_iUnion_sqQ x m hwx)
+      exact Set.mem_iUnion₂.mpr ⟨x + radius m • c, Finset.mem_image.mpr ⟨c, hc, rfl⟩, hwc⟩
+
 /-- Changing the center multiplies the approximation by the exponential of
 the difference of the two circle averages. -/
 theorem lqgApprox_recentred_eq_mul_recentred {Ω : Type*} (H : ℝ → ℂ → Ω → ℝ)
