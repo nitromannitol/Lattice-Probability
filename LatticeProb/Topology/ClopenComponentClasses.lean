@@ -2,6 +2,7 @@ import LatticeProb.Topology.CompactComponentClopenPartition
 import Mathlib.Topology.LocallyConstant.Algebra
 import Mathlib.LinearAlgebra.Quotient.Basic
 import Mathlib.LinearAlgebra.LinearIndependent.Basic
+import Mathlib.LinearAlgebra.Dimension.Finite
 
 /-!
 # Locally constant classes from components
@@ -70,5 +71,37 @@ theorem exists_linearIndependent_classes_of_distinct_components
   · intro i hi
     exact (Set.disjoint_left.mp
       (hdis (mem_univ _) (mem_univ _) (Fin.succ_ne_zero i).symm)) (hxC 0) hi
+
+/-- If locally constant functions modulo constants have finite dimension, the number of
+connected components is at most one more than that dimension. -/
+theorem cardinal_components_le_finrank_succ
+    {X K : Type*} [TopologicalSpace X] [CompactSpace X] [T2Space X] [Field K]
+    [Module.Finite K (LocallyConstant X K ⧸
+      LinearMap.range (LocallyConstant.constₗ K : K →ₗ[K] LocallyConstant X K))] :
+    Cardinal.mk (ConnectedComponents X) ≤
+      (Module.finrank K (LocallyConstant X K ⧸
+        LinearMap.range (LocallyConstant.constₗ K : K →ₗ[K] LocallyConstant X K)) + 1 : ℕ) := by
+  classical
+  let d := Module.finrank K (LocallyConstant X K ⧸
+    LinearMap.range (LocallyConstant.constₗ K : K →ₗ[K] LocallyConstant X K))
+  by_contra h
+  have hc : ((d + 2 : ℕ) : Cardinal) ≤ Cardinal.mk (ConnectedComponents X) := by
+    have := Cardinal.natCast_add_one_le_iff.mpr (lt_of_not_ge h)
+    simpa [d, Nat.cast_add, add_assoc, ← one_add_one_eq_two] using this
+  obtain ⟨s, hs⟩ := Cardinal.exists_finset_eq_card hc
+  let e : Fin (d + 2) ≃ s := (s.equivFinOfCardEq hs.symm).symm
+  let y : Fin (d + 2) → ConnectedComponents X := fun i => (e i).val
+  let x : Fin (d + 2) → X := fun i => Classical.choose (ConnectedComponents.surjective_coe (y i))
+  have hx : Function.Injective (fun i => ConnectedComponents.mk (x i)) := by
+    intro i j hij
+    have heq : y i = y j := by
+      simpa [x, Classical.choose_spec (ConnectedComponents.surjective_coe (y i)),
+        Classical.choose_spec (ConnectedComponents.surjective_coe (y j))] using hij
+    exact e.injective (Subtype.ext heq)
+  obtain ⟨C, hC, hli⟩ :=
+    exists_linearIndependent_classes_of_distinct_components (K := K) (d + 1) x hx
+  have hdim := hli.fintype_card_le_finrank
+  simp only [Fintype.card_fin] at hdim
+  omega
 
 end LatticeProb.Topology
