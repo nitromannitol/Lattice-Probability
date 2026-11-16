@@ -1,6 +1,7 @@
 import LatticeProb.LQG.RecentredSquareMaximalMoment
 import LatticeProb.LQG.CircleIncrementTripleIndependence
 import LatticeProb.LQG.LQGOnePieceScaling
+import LatticeProb.LQG.LQGMassMoment
 import LatticeProb.LQG.RecentredSquareGeometry
 import LatticeProb.Bonanno.MatedCRTHarmonic.GMCFacts.OuterMoment
 import LatticeProb.LQG.RecentredSquareCountableSupFiniteness
@@ -1074,5 +1075,49 @@ theorem lintegral_rpow_unit_tilted_density
   rw [lintegral_const_mul _ hm, lintegral_exp_coarse_circle_increment hH hr hr1 w (p * γ),
     ← ENNReal.ofReal_mul (Real.rpow_nonneg hr.le _), ← Real.rpow_add hr]
   congr 2
+
+/-- Jensen's inequality bounds a square integral of the unit-circle-tilted
+density by its pointwise Gaussian moment. -/
+theorem lintegral_rpow_unit_tilted_square_density_le
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1)
+    (γ : ℝ) {p : ℝ} (hp : 1 ≤ p) (z : ℂ) (m : ℕ) :
+    (∫⁻ ω, (∫⁻ w in sqQ (sqCorner z (radius m)) m,
+      ENNReal.ofReal (r ^ (γ ^ 2 / 2) * Real.exp (γ * (H r w ω - H 1 w ω)))) ^ p ∂P) ≤
+    (volume (sqQ (sqCorner z (radius m)) m)) ^ (p - 1) *
+      (ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) *
+        volume (sqQ (sqCorner z (radius m)) m)) := by
+  let : IsProbabilityMeasure P := hH.isProbabilityMeasure
+  let S := sqQ (sqCorner z (radius m)) m
+  have hS : MeasurableSet S := measurableSet_sqQ _ _
+  let d : ℂ → Ω → ℝ≥0∞ := fun w ω => ENNReal.ofReal
+    (r ^ (γ ^ 2 / 2) * Real.exp (γ * (H r w ω - H 1 w ω)))
+  have hd : Measurable (Function.uncurry d) := by
+    exact ENNReal.measurable_ofReal.comp (((measurable_uncurry_coord hH hHm hr).sub
+      (measurable_uncurry_coord hH hHm (by norm_num))).const_mul γ |>.exp.const_mul _)
+  have hdx (ω : Ω) : Measurable (fun w => d w ω) :=
+    hd.comp (measurable_id.prodMk measurable_const)
+  change (∫⁻ ω, (∫⁻ w in S, d w ω) ^ p ∂P) ≤
+    (volume S) ^ (p - 1) * (ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) * volume S)
+  calc
+    _ ≤ ∫⁻ ω, volume S ^ (p - 1) * (∫⁻ w in S, d w ω ^ p) ∂P := by
+      apply lintegral_mono
+      intro ω
+      simpa [Measure.restrict_apply_univ] using
+        LatticeProb.lintegral_rpow_le_measure_univ_mul (volume.restrict S) hp (hdx ω).aemeasurable
+    _ = volume S ^ (p - 1) * ∫⁻ ω, (∫⁻ w in S, d w ω ^ p) ∂P := by
+      rw [lintegral_const_mul]
+      exact (hd.pow_const p).lintegral_prod_left'
+    _ = volume S ^ (p - 1) * ∫⁻ w in S, (∫⁻ ω, d w ω ^ p ∂P) := by
+      rw [lintegral_lintegral_swap]
+      exact ((hd.pow_const p).comp measurable_swap).aemeasurable
+    _ = _ := by
+      congr 1
+      rw [show (fun w => ∫⁻ ω, d w ω ^ p ∂P) = fun _ =>
+        ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) by
+          funext w
+          exact lintegral_rpow_unit_tilted_density hH hHm hr hr1 γ p (by linarith) w]
+      rw [setLIntegral_const]
 
 end LatticeProb.LQG
