@@ -3,8 +3,6 @@ import LatticeProb.Topology.EmbeddedDiskConnectedInterior
 
 /-! # Bounded complementary components between planar sets -/
 
-set_option autoImplicit false
-
 open Set Bornology
 
 namespace LatticeProb
