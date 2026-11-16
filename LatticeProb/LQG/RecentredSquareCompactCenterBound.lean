@@ -1,4 +1,5 @@
 import LatticeProb.LQG.RecentredSquareMaximalMoment
+import LatticeProb.LQG.CircleIncrementTripleIndependence
 import LatticeProb.LQG.RecentredSquareGeometry
 import LatticeProb.Bonanno.MatedCRTHarmonic.GMCFacts.OuterMoment
 import LatticeProb.LQG.RecentredSquareCountableSupFiniteness
@@ -376,5 +377,35 @@ theorem ae_exists_compact_bound_iSup_normalized_recentred_square_mass
   change _ * normalizedRecentredSquareMass H γ (v a) m k ω ≤ F a
   dsimp only [F]
   exact mul_le_mul' hc (le_iSup (fun k => normalizedRecentredSquareMass H γ (v a) m k ω) k)
+
+/-- A coarse circle increment is independent of the family of recentred
+circle averages whose circles lie inside the smaller circle. -/
+theorem indepFun_coarse_increment_recentred_family
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P) {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1)
+    (z : ℂ) :
+    ProbabilityTheory.IndepFun (fun ω => H r z ω - H 1 z ω)
+      (fun ω (a : {a : ℝ × ℂ // 0 < a.1 ∧ ‖a.2 - z‖ + a.1 ≤ r}) =>
+        H a.1.1 a.1.2 ω - H r z ω) P := by
+  classical
+  let X : Set.Ioi (0 : ℝ) × ℂ → Ω → ℝ := fun a => H a.1 a.2
+  have hX : ProbabilityTheory.IsGaussianProcess X P := hH.isGaussianProcess
+  have hD : (fun ω => H r z ω - H 1 z ω) ∈ Submodule.span ℝ (Set.range X) :=
+    LatticeProb.GaussIndep.fun_sub_mem_span_range X (⟨r, hr⟩, z) (⟨1, by norm_num⟩, z)
+  have hB : ∀ a : {a : ℝ × ℂ // 0 < a.1 ∧ ‖a.2 - z‖ + a.1 ≤ r},
+      (fun ω => H a.1.1 a.1.2 ω - H r z ω) ∈ Submodule.span ℝ (Set.range X) := by
+    intro a
+    exact LatticeProb.GaussIndep.fun_sub_mem_span_range X (⟨a.1.1, a.2.1⟩, a.1.2) (⟨r, hr⟩, z)
+  apply LatticeProb.GaussIndep.indepFun_real_of_mem_span_of_covariance_eq_zero hX hD hB
+  intro a
+  have hinside1 : ‖a.1.2 - z‖ + a.1.1 ≤ (1 : ℝ) := le_trans a.2.2 hr1
+  rw [covariance_increment_recentred hH hr (by norm_num) a.2.1 hr,
+    LQGMetric.CircleAvg.circCov_comm hr a.2.1,
+    LQGMetric.CircleAvg.circCov_comm (by norm_num) a.2.1,
+    circCov_of_inside a.2.1 hr a.2.2,
+    circCov_of_inside a.2.1 (by norm_num) hinside1,
+    MatedCRTHarmonic.MoTPort.ConeArea6.circCov_same hr hr,
+    MatedCRTHarmonic.MoTPort.ConeArea6.circCov_same (by norm_num) hr]
+  simp [max_self, max_eq_right hr1]
 
 end LatticeProb.LQG
