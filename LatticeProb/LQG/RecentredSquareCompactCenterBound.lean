@@ -1639,4 +1639,46 @@ theorem ae_exists_compact_center_recentred_and_all_scale_square_power_bounds
       _ = (A (m + 1) * (X m)⁻¹) * X m := by rw [mul_assoc, ENNReal.inv_mul_cancel (hX0 m) (hXt m), mul_one]
       _ ≤ (C₀ + D) * X m := mul_le_mul' (hsum.trans le_add_self) le_rfl
 
+/-- Simultaneous compact-center bounds for recentred square masses and for
+all original approximations, with the power written at the square scale. -/
+theorem ae_exists_compact_center_recentred_and_square_scale_power_bounds
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) (K : Set ℂ) (hK : IsCompact K) :
+    ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P,
+      (∀ m, ∃ A : ℝ≥0∞, A < ⊤ ∧ ∀ z ∈ K, ∀ k,
+        normalizedRecentredSquareMass H γ z m k ω ≤ A) ∧
+      ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ m, ∀ z ∈ K, ∀ n,
+        lqgApprox γ (fun s w => H s w ω) (radius n)
+          (sqQ (sqCorner z (radius m)) m) ≤ C * ENNReal.ofReal (radius m ^ κ) := by
+  obtain ⟨κ, hκ, hevent⟩ := ae_exists_compact_center_recentred_and_all_scale_square_power_bounds
+    hH hHm hγ hγ2 hp hpq hq K hK
+  refine ⟨κ, hκ, ?_⟩
+  filter_upwards [hevent, ae_exists_compact_center_all_level_square_bound
+    hH hHm hγ hγ2 hp hpq hq K hK] with ω hevent hfixed
+  obtain ⟨hnorm, C, hC, hbound⟩ := hevent
+  obtain ⟨A, hA, hA_bound⟩ := hfixed 0
+  let D := A + C * ENNReal.ofReal ((2 : ℝ) ^ κ)
+  have hD : D < ⊤ := ENNReal.add_lt_top.mpr ⟨hA, ENNReal.mul_lt_top hC ENNReal.ofReal_lt_top⟩
+  refine ⟨hnorm, D, hD, ?_⟩
+  intro m z hz n
+  cases m with
+  | zero =>
+    have hb := hA_bound z hz n
+    have hle : A ≤ D := le_add_right le_rfl
+    simpa [QuantumZipper.radius] using hb.trans hle
+  | succ m =>
+    have hscale : radius m = 2 * radius (m + 1) := by unfold radius; rw [pow_succ]; ring
+    have hr : ENNReal.ofReal (radius m ^ κ) =
+        ENNReal.ofReal ((2 : ℝ) ^ κ) * ENNReal.ofReal (radius (m + 1) ^ κ) := by
+      rw [hscale, Real.mul_rpow (by norm_num) (radius_pos _).le, ENNReal.ofReal_mul (by positivity)]
+    have hb := hbound m z hz n
+    rw [hr] at hb
+    calc
+      _ ≤ C * (ENNReal.ofReal ((2 : ℝ) ^ κ) * ENNReal.ofReal (radius (m + 1) ^ κ)) := hb
+      _ = (C * ENNReal.ofReal ((2 : ℝ) ^ κ)) * ENNReal.ofReal (radius (m + 1) ^ κ) := by rw [mul_assoc]
+      _ ≤ D * ENNReal.ofReal (radius (m + 1) ^ κ) := mul_le_mul' le_add_self le_rfl
+
 end LatticeProb.LQG
