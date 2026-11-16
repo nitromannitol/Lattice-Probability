@@ -1499,4 +1499,35 @@ theorem ae_exists_compact_center_square_power_bound
   · obtain ⟨k, rfl⟩ : ∃ k, n = m + 1 + k := ⟨n - (m + 1), by omega⟩
     exact (hf z hz k).trans (mul_le_mul' (le_add_right le_rfl) hpf)
 
+/-- On one common event, normalized recentred square masses are finite
+uniformly over a compact center set at each scale, while the original masses
+at all approximation levels obey a uniform positive-power bound. -/
+theorem ae_exists_compact_center_recentred_and_square_power_bounds
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) (K : Set ℂ) (hK : IsCompact K) :
+    ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P,
+      (∀ m, ∃ A : ℝ≥0∞, A < ⊤ ∧ ∀ z ∈ K, ∀ k,
+        normalizedRecentredSquareMass H γ z m k ω ≤ A) ∧
+      ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ᶠ m in Filter.atTop, ∀ z ∈ K, ∀ n,
+        lqgApprox γ (fun s w => H s w ω) (radius n)
+          (sqQ (sqCorner z (radius (m + 1))) (m + 1)) ≤
+            C * ENNReal.ofReal (radius m ^ κ) := by
+  obtain ⟨R, hR⟩ := Metric.isBounded_iff_subset_ball (0 : ℂ) |>.1 hK.isBounded
+  let R' := max R 1 + 1
+  have hR' : 0 < R' := by dsimp [R']; linarith [le_max_right R (1 : ℝ)]
+  have hK' : K ⊆ Metric.ball (0 : ℂ) R' :=
+    hR.trans (Metric.ball_subset_ball (by dsimp [R']; linarith [le_max_left R (1 : ℝ)]))
+  obtain ⟨κ, hκ, hevent⟩ := ae_exists_compact_center_square_power_bound hH hHm hγ hγ2 R' hR'
+  refine ⟨κ, hκ, ?_⟩
+  filter_upwards [ae_exists_compact_bound_iSup_normalized_recentred_square_mass
+    hH hHm hγ hγ2 hp hpq hq K hK, hevent] with ω hnorm hpow
+  refine ⟨hnorm, ?_⟩
+  obtain ⟨C, hC, hCevent⟩ := hpow
+  refine ⟨C, hC, ?_⟩
+  filter_upwards [hCevent] with m hm z hz n
+  exact hm z (hK' hz) n
+
 end LatticeProb.LQG
