@@ -3,8 +3,6 @@ import LatticeProb.LQG.ContactWindowComponentCount
 
 /-! # Conditional upper bounds for contact-window component counts -/
 
-set_option autoImplicit false
-
 open MeasureTheory Set
 open scoped NNReal
 
