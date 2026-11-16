@@ -44,23 +44,33 @@ def bondEquiv : Bond ≃ (LatticeModels.zdGraph 2).edgeSet where
 
 /-- A Boolean bond configuration viewed as an edge-indexed proposition. -/
 def toEdgeConfig (ω : Bond → Bool) (e : (LatticeModels.zdGraph 2).edgeSet) : Prop :=
-  ω (bondEquiv.symm e) = true
+  ω (bondEquiv.symm e) = decide ((0 : ℕ) = 0)
 
 /-- Reindexing the Boolean product law yields the edge-indexed product law. -/
 theorem map_bool_product (p : unitInterval) :
-    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p)).map toEdgeConfig =
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p)).map toEdgeConfig =
       Measure.infinitePi (fun _ : (LatticeModels.zdGraph 2).edgeSet =>
         bernoulliMeasure True False p) := by
-  have hm : Measurable (fun b : Bool => b = true) := by fun_prop
+  have hm : Measurable (fun b : Bool => b = decide ((0 : ℕ) = 0)) := by fun_prop
   rw [show toEdgeConfig = (fun f e => f (bondEquiv.symm e)) ∘
-      (fun ω b => ω b = true) by rfl, ← Measure.map_map (by fun_prop) (by fun_prop),
+      (fun ω b => ω b = decide ((0 : ℕ) = 0)) by rfl,
+    ← Measure.map_map (by fun_prop) (by fun_prop),
     Measure.infinitePi_map_pi _ (fun _ => hm)]
-  simp only [map_bernoulliMeasure' _ _ hm, Bool.false_eq_true]
+  have hmap : (bernoulliMeasure (decide ((0 : ℕ) = 0))
+      (decide ((0 : ℕ) = 1)) p).map (fun b : Bool => b = decide ((0 : ℕ) = 0)) =
+        bernoulliMeasure True False p := by
+    rw [map_bernoulliMeasure' _ _ hm p]
+    congr 1 <;> apply propext <;> decide
+  rw [show (fun _ : Bond => (bernoulliMeasure (decide ((0 : ℕ) = 0))
+      (decide ((0 : ℕ) = 1)) p).map (fun b : Bool => b = decide ((0 : ℕ) = 0))) =
+        (fun _ : Bond => bernoulliMeasure True False p) by funext; exact hmap]
   exact Measure.map_infinitePi_infinitePi_of_inj bondEquiv.symm.injective
 
 /-- The Boolean bond law and ambient bond law induce the same law on lattice edges. -/
 theorem map_bool_product_eq_restrict (p : unitInterval) :
-    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p)).map toEdgeConfig =
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p)).map toEdgeConfig =
       (bondPercolation (LatticeModels.zdGraph 2) p).map
         (EdgeCrossing.restrict (LatticeModels.zdGraph 2)) := by
   rw [map_bool_product, EdgeCrossing.edge_product_law]
@@ -68,7 +78,8 @@ theorem map_bool_product_eq_restrict (p : unitInterval) :
 /-- Measurable edge events have the same probability under either bond law. -/
 theorem measure_preimage_eq (p : unitInterval)
     (s : Set ((LatticeModels.zdGraph 2).edgeSet → Prop)) (hs : MeasurableSet s) :
-    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p))
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
         (toEdgeConfig ⁻¹' s) =
       (bondPercolation (LatticeModels.zdGraph 2) p)
         (EdgeCrossing.restrict (LatticeModels.zdGraph 2) ⁻¹' s) := by
@@ -78,7 +89,8 @@ theorem measure_preimage_eq (p : unitInterval)
 
 /-- The two laws assign the same probability to horizontal crossing failure. -/
 theorem crossing_failure_probability (p : unitInterval) (m n : ℕ) :
-    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p))
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
         {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing m n} =
       (bondPercolation (LatticeModels.zdGraph 2) p)
         {ω | EdgeCrossing.restrict (LatticeModels.zdGraph 2) ω ∉
@@ -88,7 +100,8 @@ theorem crossing_failure_probability (p : unitInterval) (m n : ℕ) :
 
 /-- Boolean bond crossing failure has the ambient horizontal failure probability. -/
 theorem crossing_failure_probability_eq_ambient (p : unitInterval) (m n : ℕ) :
-    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p))
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
         {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing m n} =
       (bondPercolation (LatticeModels.zdGraph 2) p) (lrCrossing m n)ᶜ := by
   rw [crossing_failure_probability]
@@ -102,7 +115,8 @@ theorem crossing_failure_probability_eq_ambient (p : unitInterval) (m n : ℕ) :
 
 /-- Horizontal crossing failure has the probability of a dual top-bottom crossing. -/
 theorem crossing_failure_probability_eq_dual (p : unitInterval) (m n : ℕ) :
-    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p))
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
         {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing m n} =
       (bondPercolation (LatticeModels.zdGraph 2) p) (dualTBCrossing m n) := by
   rw [crossing_failure_probability_eq_ambient]
