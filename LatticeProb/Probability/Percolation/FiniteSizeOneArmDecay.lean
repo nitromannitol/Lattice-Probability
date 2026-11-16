@@ -776,4 +776,35 @@ theorem first_exit_to_edge_sum [DecidableEq V]
     exact Finset.mem_biUnion.mpr ⟨x, hx, (G.mem_neighborFinset x y).mpr hxy⟩
 
 
+/-- A connection inside the box is an unrestricted connection to its boundary. -/
+theorem siteToBoundary_subset_openConnTo (d n : ℕ) :
+    siteToBoundary d n ⊆ openConnTo
+      (↑(LatticeModels.innerBoundary (LatticeModels.zdGraph d) (LatticeModels.box d n))) 0 := by
+  intro ω h
+  obtain ⟨z, hz, _, _, ⟨w⟩⟩ := h
+  exact ⟨z, hz, ⟨(w.map (SimpleGraph.Embedding.induce
+    (↑(LatticeModels.box d n) : Set (LatticeModels.Site d))).toHom).copy rfl rfl⟩⟩
+
+/-- The one-arm probability is bounded by the first-exit boundary-edge sum. -/
+theorem siteToBoundary_le_first_exit_sum (d n : ℕ) (p : unitInterval)
+    (S : Finset (LatticeModels.Site d)) (h0 : 0 ∈ S)
+    (hdis : Disjoint (↑(LatticeModels.innerBoundary (LatticeModels.zdGraph d)
+      (LatticeModels.box d n)) : Set (LatticeModels.Site d)) (↑S : Set (LatticeModels.Site d))) :
+    (bondPercolation (LatticeModels.zdGraph d) p) (siteToBoundary d n) ≤
+      ∑ xy ∈ finiteBoundaryEdges (LatticeModels.zdGraph d) (↑S : Set (LatticeModels.Site d))
+          (boundaryCover (LatticeModels.zdGraph d) S),
+        ENNReal.ofReal (p : ℝ) *
+          (bondPercolation (LatticeModels.zdGraph d) p)
+            (openConnIn (↑S : Set (LatticeModels.Site d)) 0 xy.1) *
+          (bondPercolation (LatticeModels.zdGraph d) p)
+            (openConnTo (↑(LatticeModels.innerBoundary (LatticeModels.zdGraph d)
+              (LatticeModels.box d n))) xy.2) := by
+  calc
+    (bondPercolation (LatticeModels.zdGraph d) p) (siteToBoundary d n) ≤
+        (bondPercolation (LatticeModels.zdGraph d) p) (openConnTo
+          (↑(LatticeModels.innerBoundary (LatticeModels.zdGraph d) (LatticeModels.box d n))) 0) :=
+      measure_mono (siteToBoundary_subset_openConnTo d n)
+    _ ≤ _ := first_exit_to_edge_sum (LatticeModels.zdGraph d) p S _ 0 h0 hdis
+
+
 end FiniteSizeOneArm
