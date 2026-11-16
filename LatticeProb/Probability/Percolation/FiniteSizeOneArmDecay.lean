@@ -497,4 +497,69 @@ theorem exitFiniteEvent_measure (G : SimpleGraph V) (p : unitInterval)
   exact h'
 
 
+/-- A nonedge cannot occur in an exit event under the bond law. -/
+theorem exitFiniteEvent_measure_zero (G : SimpleGraph V) (p : unitInterval)
+    (F : Finset (Sym2 V)) (S : Set V) (a x y : V)
+    (he : s(x, y) ∉ G.edgeSet) :
+    (bondPercolation G p) (finiteBoolConfig F ⁻¹' exitFiniteEvent F S a x y) = 0 := by
+  classical
+  have hae : ∀ᵐ ω ∂bondPercolation G p, ω ⊆ G.edgeSet := by
+    simpa [bondPercolation] using
+      (ProbabilityTheory.setBernoulli_ae_subset (u := G.edgeSet) (p := p))
+  have hnull : (bondPercolation G p) {ω | ¬ ω ⊆ G.edgeSet} = 0 := by
+    simpa only [ae_iff, Set.compl_ofPred] using hae
+  apply measure_mono_null _ hnull
+  intro ω hω
+  have hmem : s(x, y) ∈ finiteBoolEdges F (finiteBoolConfig F ω) := hω.2
+  rw [finiteBoolEdges_config] at hmem
+  exact fun hs => he (hs hmem.1)
+
+/-- Oriented graph edges leaving the set inside the finite volume. -/
+def finiteBoundaryEdges [DecidableEq V] (G : SimpleGraph V) (S : Set V)
+    (T : Finset V) : Finset (V × V) := by
+  classical
+  exact (finiteBoundaryPairs S T).filter (fun xy => s(xy.1, xy.2) ∈ G.edgeSet)
+
+/-- A finite-volume connection is bounded by a sum over oriented boundary edges. -/
+theorem finite_volume_first_exit_edge_sum [DecidableEq V]
+    (G : SimpleGraph V) (p : unitInterval) (S T : Finset V) (a z : V)
+    (hST : S ⊆ T) (ha : a ∈ S) (hz : z ∉ S) :
+    (bondPercolation G p) (openConnIn (↑T : Set V) a z) ≤
+      ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) T,
+        ENNReal.ofReal (p : ℝ) *
+          (bondPercolation G p) (openConnIn (↑S : Set V) a xy.1) *
+          (bondPercolation G p) (openConn xy.2 z) := by
+  classical
+  let term : V × V → ENNReal := fun xy =>
+    (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 (↑S : Set V) a xy.1 xy.2) *
+      (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' continuationFiniteEvent T.sym2 xy.2 z)
+  have hfilter : ∑ xy ∈ finiteBoundaryPairs (↑S : Set V) T, term xy =
+      ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) T, term xy := by
+    rw [finiteBoundaryEdges, Finset.sum_filter]
+    apply Finset.sum_congr rfl
+    intro xy _
+    by_cases he : s(xy.1, xy.2) ∈ G.edgeSet
+    · simp [he]
+    · simp [he, term, exitFiniteEvent_measure_zero G p T.sym2 (↑S : Set V) a xy.1 xy.2 he]
+  calc
+    (bondPercolation G p) (openConnIn (↑T : Set V) a z) ≤
+        ∑ xy ∈ finiteBoundaryPairs (↑S : Set V) T, term xy :=
+      finite_volume_first_exit_bk G p (↑S : Set V) T a z ha hz
+    _ = ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) T, term xy := hfilter
+    _ ≤ ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) T,
+        ENNReal.ofReal (p : ℝ) *
+          (bondPercolation G p) (openConnIn (↑S : Set V) a xy.1) *
+          (bondPercolation G p) (openConn xy.2 z) := by
+      apply Finset.sum_le_sum
+      intro xy hxy
+      simp only [finiteBoundaryEdges, Finset.mem_filter, finiteBoundaryPairs,
+        Finset.mem_coe] at hxy
+      have hT := Finset.mem_product.mp hxy.1.1
+      have hy : xy.2 ∉ S := hxy.1.2.2
+      change _ * _ ≤ _ * _
+      rw [exitFiniteEvent_measure G p S T a xy.1 xy.2 hST hT.1 hT.2 hy hxy.2]
+      gcongr
+      exact continuationFiniteEvent_subset T.sym2 xy.2 z
+
+
 end FiniteSizeOneArm
