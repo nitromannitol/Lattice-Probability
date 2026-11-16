@@ -65,4 +65,54 @@ theorem map_bool_product_eq_restrict (p : unitInterval) :
         (EdgeCrossing.restrict (LatticeModels.zdGraph 2)) := by
   rw [map_bool_product, EdgeCrossing.edge_product_law]
 
+/-- Measurable edge events have the same probability under either bond law. -/
+theorem measure_preimage_eq (p : unitInterval)
+    (s : Set ((LatticeModels.zdGraph 2).edgeSet → Prop)) (hs : MeasurableSet s) :
+    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p))
+        (toEdgeConfig ⁻¹' s) =
+      (bondPercolation (LatticeModels.zdGraph 2) p)
+        (EdgeCrossing.restrict (LatticeModels.zdGraph 2) ⁻¹' s) := by
+  rw [← Measure.map_apply (show Measurable toEdgeConfig by unfold toEdgeConfig; fun_prop) hs,
+    map_bool_product_eq_restrict,
+    Measure.map_apply (EdgeCrossing.measurable_restrict _) hs]
+
+/-- The two laws assign the same probability to horizontal crossing failure. -/
+theorem crossing_failure_probability (p : unitInterval) (m n : ℕ) :
+    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p))
+        {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing m n} =
+      (bondPercolation (LatticeModels.zdGraph 2) p)
+        {ω | EdgeCrossing.restrict (LatticeModels.zdGraph 2) ω ∉
+          EdgeCrossing.crossing m n} := by
+  exact measure_preimage_eq p _ (EdgeCrossing.measurableSet_crossing m n).compl
+
+
+/-- Boolean bond crossing failure has the ambient horizontal failure probability. -/
+theorem crossing_failure_probability_eq_ambient (p : unitInterval) (m n : ℕ) :
+    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p))
+        {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing m n} =
+      (bondPercolation (LatticeModels.zdGraph 2) p) (lrCrossing m n)ᶜ := by
+  rw [crossing_failure_probability]
+  apply measure_congr
+  filter_upwards [EdgeCrossing.edge_support_ae (LatticeModels.zdGraph 2) p] with ω hω
+  apply propext
+  change (EdgeCrossing.restrict (LatticeModels.zdGraph 2) ω ∉ EdgeCrossing.crossing m n) ↔
+    ω ∉ lrCrossing m n
+  rw [EdgeCrossing.mem_crossing_iff, EdgeCrossing.extend_restrict, hω]
+
+
+/-- Horizontal crossing failure has the probability of a dual top-bottom crossing. -/
+theorem crossing_failure_probability_eq_dual (p : unitInterval) (m n : ℕ) :
+    (Measure.infinitePi (fun _ : Bond => bernoulliMeasure true false p))
+        {ω | toEdgeConfig ω ∉ EdgeCrossing.crossing m n} =
+      (bondPercolation (LatticeModels.zdGraph 2) p) (dualTBCrossing m n) := by
+  rw [crossing_failure_probability_eq_ambient]
+  apply measure_congr
+  filter_upwards [ProbabilityTheory.setBernoulli_ae_subset
+    (u := (LatticeModels.zdGraph 2).edgeSet) (p := p)] with ω hω
+  apply propext
+  change (ω ∉ lrCrossing m n) ↔ ω ∈ dualTBCrossing m n
+  rcases lrCrossing_xor_dualTBCrossing_holds m n hω with h | h
+  · exact ⟨fun hn => (hn h.1).elim, fun hd => (h.2 hd).elim⟩
+  · exact ⟨fun _ => h.1, fun _ => h.2⟩
+
 end DualDecayRectangle
