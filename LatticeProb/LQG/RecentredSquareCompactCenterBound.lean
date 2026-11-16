@@ -813,4 +813,18 @@ theorem exists_finset_bounded_sqQ_local_cover_ball (R : ℝ) (hR : 0 < R) (m : �
         linarith
       exact Set.mem_iUnion₂.mpr ⟨b, Finset.mem_filter.mpr ⟨hb, hn⟩, hwb⟩
 
+/-- Positive powers of dyadic square scales form a finite geometric series. -/
+theorem tsum_ofReal_radius_rpow_ne_top {δ : ℝ} (hδ : 0 < δ) :
+    (∑' m : ℕ, ENNReal.ofReal (radius m ^ δ)) ≠ ⊤ := by
+  have heq (m : ℕ) : ENNReal.ofReal (radius m ^ δ) =
+      ENNReal.ofReal ((2 : ℝ)⁻¹ ^ δ) ^ m := by
+    rw [← ENNReal.ofReal_pow (Real.rpow_nonneg (by norm_num) _)]
+    congr 1
+    unfold radius
+    rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num), mul_comm,
+      Real.rpow_mul (by norm_num), Real.rpow_natCast]
+  simp_rw [heq]
+  exact (tsum_geometric_lt_top.2
+    (ENNReal.ofReal_lt_one.mpr (Real.rpow_lt_one (by norm_num) (by norm_num) hδ))).ne
+
 end LatticeProb.LQG
