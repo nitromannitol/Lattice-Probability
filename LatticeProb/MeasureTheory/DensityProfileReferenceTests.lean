@@ -5,8 +5,6 @@ import LatticeProb.MeasureTheory.MeasurableProfileReferenceKernelTests
 
 /-! # Observables of finite-kernel density profiles -/
 
-set_option autoImplicit false
-
 open Set MeasureTheory TopologicalSpace Filter ProbabilityTheory
 open scoped ENNReal
 
