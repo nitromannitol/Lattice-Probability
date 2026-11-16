@@ -557,4 +557,32 @@ theorem lqgApprox_square_eq_mul_normalized_recentred_square_mass {Ω : Type*}
     hfactor, one_mul]
   exact lqgApprox_eq_mul_recentred_rescaled H ω γ hε (radius_pos _) z (measurableSet_sqQ _ _)
 
+/-- Removing the unit-circle factor leaves a coarse increment times the
+normalized recentred square mass. -/
+theorem tilted_lqgApprox_square_eq {Ω : Type*}
+    (H : ℝ → ℂ → Ω → ℝ) (ω : Ω) (γ : ℝ) (z : ℂ) (m k : ℕ) :
+    ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+      lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+        (sqQ (sqCorner z (radius m)) m) =
+      ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2) * (2 * radius m) ^ 2) *
+        (ENNReal.ofReal (Real.exp (γ * (H (2 * radius m) z ω - H 1 z ω))) *
+          normalizedRecentredSquareMass H γ z m k ω) := by
+  have hε : 0 < 2 * radius m := mul_pos (by norm_num) (radius_pos m)
+  have hf : ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+      ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2) *
+        Real.exp (γ * H (2 * radius m) z ω)) * ENNReal.ofReal ((2 * radius m) ^ 2) =
+      ENNReal.ofReal ((2 * radius m) ^ (γ ^ 2 / 2) * (2 * radius m) ^ 2) *
+        ENNReal.ofReal (Real.exp (γ * (H (2 * radius m) z ω - H 1 z ω))) := by
+    rw [← ENNReal.ofReal_mul (Real.exp_nonneg _),
+      ← ENNReal.ofReal_mul (mul_nonneg (Real.exp_nonneg _) (by positivity)),
+      ← ENNReal.ofReal_mul (by positivity)]
+    congr 1
+    calc
+      _ = ((2 * radius m) ^ (γ ^ 2 / 2) * (2 * radius m) ^ 2) *
+          (Real.exp (-γ * H 1 z ω) * Real.exp (γ * H (2 * radius m) z ω)) := by ring
+      _ = _ := by rw [← Real.exp_add]; congr 2; ring
+  rw [lqgApprox_square_eq_mul_normalized_recentred_square_mass]
+  simp only [← mul_assoc]
+  rw [hf]
+
 end LatticeProb.LQG
