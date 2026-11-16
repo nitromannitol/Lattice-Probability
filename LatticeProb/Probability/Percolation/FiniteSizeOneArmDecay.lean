@@ -1,6 +1,7 @@
 import LatticeProb.Vendor.FormalMathPercolation.Literature.PlanarDuality
 import LatticeProb.Vendor.FormalMathPercolation.Literature.FiniteEnergy
 import LatticeProb.Prob.BK
+import LatticeProb.Vendor.FormalMathPercolation.Literature.SharpnessDCTProofs
 
 /-!
 # Finite-size connectivity
@@ -804,5 +805,78 @@ theorem siteToBoundary_le_first_exit_sum (d n : ℕ) (p : unitInterval)
       measure_mono (siteToBoundary_subset_openConnTo d n)
     _ ≤ _ := first_exit_to_edge_sum (LatticeModels.zdGraph d) p S _ 0 h0 hdis
 
+
+open Percolation.Literature.LatticeModels
+
+/-- In positive dimension the fully open lattice reaches every box boundary. -/
+theorem full_configuration_mem_siteToBoundary (d n : ℕ) (i : Fin d) :
+    (zdGraph d).edgeSet ∈ siteToBoundary d n := by
+  have hb : ∀ k ≤ n, (Pi.single i (k : ℤ) : Site d) ∈ box d n := by
+    intro k hk
+    rw [mem_box]
+    intro j
+    by_cases h : j = i
+    · subst j; simpa using hk
+    · simp [h]
+  have hp : ∀ k ≤ n, PathIn (openGraph (zdGraph d).edgeSet) (↑(box d n)) 0
+      (Pi.single i (k : ℤ) : Site d) := by
+    intro k hk
+    induction k with
+    | zero => simpa using (PathIn.refl (G := openGraph (zdGraph d).edgeSet)
+        (show (0 : Site d) ∈ (↑(box d n) : Set (Site d)) from zero_mem_box d n))
+    | succ k ih =>
+      apply (ih (by omega)).tail
+      · rw [openGraph_adj]
+        have h : (zdGraph d).Adj (Pi.single i (k : ℤ)) (Pi.single i ((k + 1 : ℕ) : ℤ)) := by
+          apply (zdGraph_adj_iff _ _).2
+          refine ⟨i, Or.inl ?_⟩
+          ext j
+          by_cases h : j = i <;> simp [h]
+        exact ⟨h, (zdGraph d).ne_of_adj h⟩
+      · exact hb _ hk
+  apply Percolation.Literature.DCT16.mem_siteToBoundary_iff.mpr
+  refine ⟨Pi.single i (n : ℤ), ?_, hp n le_rfl⟩
+  exact Percolation.Literature.DCT16.mem_innerBoundary_box_of_natAbs_eq (hb n le_rfl)
+    (i := i) (by simp)
+
+/-- A finite-size criterion implies exponential one-arm decay at every positive radius. -/
+theorem siteToBoundary_exp_decay_of_phi_lt_one (d : ℕ) (p : unitInterval) (S : Finset (Site d))
+    (h0 : 0 ∈ S) (hφ : DCT16.phi p S < 1) :
+    ∃ c > 0, ∀ n : ℕ, 1 ≤ n →
+      (bondPercolation (zdGraph d) p).real (siteToBoundary d n) ≤ Real.exp (-c * n) := by
+  by_cases hd : d = 0
+  · subst d
+    have he (n : ℕ) : siteToBoundary 0 n = ∅ := by
+      apply Set.eq_empty_iff_forall_notMem.mpr
+      intro ω h
+      obtain ⟨x, hx, _⟩ := h
+      obtain ⟨i, _⟩ := DCT16.exists_natAbs_eq_of_mem_innerBoundary_box hx
+      exact Fin.elim0 i
+    refine ⟨1, one_pos, fun n _ => ?_⟩
+    rw [he, measureReal_empty]
+    exact (Real.exp_pos _).le
+  · have hdpos : 0 < d := Nat.pos_of_ne_zero hd
+    let i : Fin d := ⟨0, hdpos⟩
+    have hp : (p : ℝ) < 1 := by
+      by_contra h
+      have hp1 : p = 1 := by
+        apply Subtype.ext
+        change (p : ℝ) = 1
+        exact le_antisymm p.2.2 (le_of_not_gt h)
+      subst p
+      obtain ⟨L, hSL⟩ := DCT16.exists_subset_box S
+      have hstep := DCT16.real_siteToBoundary_le_phi_mul (1 : unitInterval) h0 hSL 0
+      have hfull : (bondPercolation (zdGraph d) (1 : unitInterval)).real
+          (siteToBoundary d (L + 1)) = 1 := by
+        simp [bondPercolation, measureReal_def,
+          DCT16.measurableSet_siteToBoundary, full_configuration_mem_siteToBoundary d (L + 1) i]
+      simp only [zero_add] at hstep
+      rw [hfull] at hstep
+      have hprob : (bondPercolation (zdGraph d) (1 : unitInterval)).real
+          (siteToBoundary d 0) ≤ 1 := measureReal_le_one
+      have hφ0 := DCT16.phi_nonneg (1 : unitInterval) S
+      nlinarith
+    obtain ⟨c, hc, hdec⟩ := DCT16.DCT16_expDecay_of_phi_lt_one_holds p S h0 hφ hp
+    exact ⟨c, hc, fun n _ => hdec n⟩
 
 end FiniteSizeOneArm
