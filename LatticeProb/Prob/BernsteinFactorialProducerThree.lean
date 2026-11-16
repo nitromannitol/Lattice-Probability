@@ -85,7 +85,7 @@ theorem summable_bernsteinMajorant {a v lam : ℝ} (ha : 0 < a) (hlam : 0 ≤ la
       = fun n : ℕ => lam ^ (n + 2) / (Nat.factorial (n + 2) : ℝ)
           * ((Nat.factorial (n + 2) : ℝ) / 2 * a ^ n * v) := by
     funext n
-    rw [if_neg (by omega : ¬ (n + 2 < 2)), (by omega : n + 2 - 2 = n)]
+    rw [ite_eq_right (by omega : ¬ (n + 2 < 2)), (by omega : n + 2 - 2 = n)]
   rw [hiff]
   exact htail
 
@@ -114,7 +114,7 @@ theorem tsum_bernsteinMajorant_eq {a v lam : ℝ} (ha : 0 < a) (hlam : 0 ≤ lam
       = fun n : ℕ => lam ^ (n + 2) / (Nat.factorial (n + 2) : ℝ)
           * ((Nat.factorial (n + 2) : ℝ) / 2 * a ^ n * v) := by
     funext n
-    rw [if_neg (by omega : ¬ (n + 1 + 1 < 2)), (by omega : n + 1 + 1 - 2 = n),
+    rw [ite_eq_right (by omega : ¬ (n + 1 + 1 < 2)), (by omega : n + 1 + 1 - 2 = n),
       (by omega : n + 1 + 1 = n + 2)]
   rw [hiff, tsum_bernsteinTail_eq (v := v) ha hlam hlam_a]
 
@@ -151,7 +151,7 @@ theorem sum_expMomentSeries_le {s : Finset ℕ} {M : ℕ → ℕ → ℝ} {a v l
     intro q
     by_cases hq2 : q < 2
     · simp [hq2]
-    · simp only [if_neg hq2]
+    · simp only [ite_eq_right hq2]
       calc ∑ i ∈ s, (lam ^ q / (Nat.factorial q : ℝ)) * M i q
           = (lam ^ q / (Nat.factorial q : ℝ)) * ∑ i ∈ s, M i q := by rw [Finset.mul_sum]
         _ ≤ (lam ^ q / (Nat.factorial q : ℝ))

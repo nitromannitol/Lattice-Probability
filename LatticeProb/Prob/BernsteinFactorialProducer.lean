@@ -137,7 +137,7 @@ theorem condExp_exp_le_of_momentSeries {m : MeasurableSpace Ω} (hm : m ≤ m₀
   · simp
   · simp
   · intro q hq
-    rw [if_neg (by omega : ¬ q < 2)]
+    rw [ite_eq_right (by omega : ¬ q < 2)]
     exact htermω q hq
 
 end LatticeProb

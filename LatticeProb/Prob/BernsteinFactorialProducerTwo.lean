@@ -98,7 +98,7 @@ theorem summable_expMomentSeries {M : ℕ → ℝ} {a v lam : ℝ} (ha : 0 < a)
       else (lam ^ (q + 2) / (Nat.factorial (q + 2) : ℝ)) * M (q + 2))
       = fun q : ℕ => (lam ^ (q + 2) / (Nat.factorial (q + 2) : ℝ)) * M (q + 2) := by
     funext q
-    rw [if_neg (by omega : ¬ (q + 2 < 2))]
+    rw [ite_eq_right (by omega : ¬ (q + 2 < 2))]
   rw [hiff]
   have hmaj := summable_bernsteinTail (v := v) ha hlam hlam_a
   refine hmaj.of_nonneg_of_le (fun q => ?_) (fun q => ?_)
