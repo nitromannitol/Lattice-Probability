@@ -979,4 +979,76 @@ theorem exists_bounded_square_covers_ae_eventually_tilted_power
     _ ≤ ENNReal.ofReal (D * radius m ^ (-2 : ℝ)) := ENNReal.ofReal_le_ofReal hc
     _ = _ := ENNReal.ofReal_mul hD
 
+/-- Almost surely, original square masses at all finer levels obey a
+uniform positive-power bound over a bounded disk of centers. -/
+theorem ae_exists_compact_center_fine_level_square_power_bound
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2)
+    (R : ℝ) (hR : 0 < R) :
+    ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P, ∃ C : ℝ≥0∞, C < ⊤ ∧
+      ∀ᶠ m in Filter.atTop, ∀ z ∈ Metric.ball (0 : ℂ) R, ∀ k,
+        lqgApprox γ (fun s w => H s w ω) (radius (m + 1 + k))
+          (sqQ (sqCorner z (radius (m + 1))) (m + 1)) ≤
+            C * ENNReal.ofReal (radius m ^ κ) := by
+  classical
+  obtain ⟨S, hbounded, hcover, κ, hκ, hevent⟩ :=
+    exists_bounded_square_covers_ae_eventually_tilted_power hH hHm hγ hγ2 R hR
+  refine ⟨κ, hκ, ?_⟩
+  filter_upwards [hevent] with ω hω
+  have hcompact : IsCompact (Metric.closedBall (0 : ℂ) (R + 2)) := isCompact_closedBall _ _
+  obtain ⟨M, hM⟩ := hcompact.bddAbove_image
+    ((Real.continuous_exp.comp (continuous_const.mul (hH.continuous 1 (by norm_num) ω))).continuousOn)
+  let C : ℝ≥0∞ := (corners16.card : ℝ≥0∞) * ENNReal.ofReal M
+  have hC : C < ⊤ := ENNReal.mul_lt_top (by simp) ENNReal.ofReal_lt_top
+  refine ⟨C, hC, ?_⟩
+  filter_upwards [hω] with m hm z hz k
+  obtain ⟨T, hTS, hTcard, hTcover⟩ := hcover m z hz
+  let μ := lqgApprox γ (fun s w => H s w ω) (radius (m + 1 + k))
+  have hunit (v : ℂ) : ENNReal.ofReal (Real.exp (γ * H 1 v ω)) *
+      ENNReal.ofReal (Real.exp (-γ * H 1 v ω)) = 1 := by
+    rw [← ENNReal.ofReal_mul (Real.exp_nonneg _), ← Real.exp_add,
+      show γ * H 1 v ω + -γ * H 1 v ω = 0 by ring, Real.exp_zero, ENNReal.ofReal_one]
+  have hpoint (v : ℂ) (hv : v ∈ T) :
+      μ (sqQ (sqCorner v (radius (m + 1))) (m + 1)) ≤
+        ENNReal.ofReal M * ENNReal.ofReal (radius m ^ κ) := by
+    have hvS := hTS hv
+    have hvK : v ∈ Metric.closedBall (0 : ℂ) (R + 2) := by
+      rw [Metric.mem_closedBall, dist_zero_right]
+      exact hbounded m v hvS
+    have hvM : ENNReal.ofReal (Real.exp (γ * H 1 v ω)) ≤ ENNReal.ofReal M :=
+      ENNReal.ofReal_le_ofReal (hM ⟨v, hvK, rfl⟩)
+    have htilt : ENNReal.ofReal (Real.exp (-γ * H 1 v ω)) *
+        μ (sqQ (sqCorner v (radius (m + 1))) (m + 1)) ≤ ENNReal.ofReal (radius m ^ κ) := by
+      calc
+        _ ≤ ⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 v ω)) *
+            lqgApprox γ (fun s w => H s w ω) (radius (m + 1 + k))
+              (sqQ (sqCorner v (radius (m + 1))) (m + 1)) := le_iSup _ k
+        _ ≤ (S m).sup (fun z => ⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+            lqgApprox γ (fun s w => H s w ω) (radius (m + 1 + k))
+              (sqQ (sqCorner z (radius (m + 1))) (m + 1))) :=
+          Finset.le_sup (f := fun z => ⨆ j, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+            lqgApprox γ (fun s w => H s w ω) (radius (m + 1 + j))
+              (sqQ (sqCorner z (radius (m + 1))) (m + 1))) hvS
+        _ ≤ _ := hm.le
+    calc
+      _ = ENNReal.ofReal (Real.exp (γ * H 1 v ω)) *
+          (ENNReal.ofReal (Real.exp (-γ * H 1 v ω)) *
+            μ (sqQ (sqCorner v (radius (m + 1))) (m + 1))) := by
+          rw [← mul_assoc, hunit, one_mul]
+      _ ≤ _ := mul_le_mul' hvM htilt
+  calc
+    _ ≤ ∑ v ∈ T, μ (sqQ (sqCorner v (radius (m + 1))) (m + 1)) :=
+      (measure_mono hTcover).trans (measure_biUnion_finset_le T _)
+    _ ≤ ∑ _v ∈ T, ENNReal.ofReal M * ENNReal.ofReal (radius m ^ κ) :=
+      Finset.sum_le_sum hpoint
+    _ = (T.card : ℝ≥0∞) * (ENNReal.ofReal M * ENNReal.ofReal (radius m ^ κ)) := by simp
+    _ ≤ _ := by
+      have hc : (T.card : ℝ≥0∞) ≤ corners16.card := by exact_mod_cast hTcard
+      dsimp [C]
+      calc
+        _ ≤ (corners16.card : ℝ≥0∞) * (ENNReal.ofReal M * ENNReal.ofReal (radius m ^ κ)) :=
+          mul_le_mul' hc le_rfl
+        _ = _ := by rw [mul_assoc]
+
 end LatticeProb.LQG
