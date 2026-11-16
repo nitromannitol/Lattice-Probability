@@ -680,4 +680,100 @@ theorem finite_volume_first_exit_to_edge_sum [DecidableEq V]
       exact continuationFiniteEventTo_subset T.sym2 U xy.2
 
 
+omit [Countable V] in
+/-- Connections are the union of connections inside finite supersets. -/
+theorem openConnTo_eq_iUnion_finite [DecidableEq V] (B : Finset V) (U : Set V) (a : V) :
+    openConnTo U a = ⋃ T : Finset V, openConnInTo (↑(B ∪ T) : Set V) U a := by
+  classical
+  ext ω
+  simp only [openConnTo, openConnInTo, Set.mem_ofPred_eq, Set.mem_iUnion]
+  constructor
+  · rintro ⟨z, hz, ⟨w⟩⟩
+    refine ⟨w.support.toFinset, z, hz, mem_openConnIn_of_walk w ?_ ?_⟩
+    · intro v hv
+      simp [hv]
+    · intro e he
+      exact edgeSet_openGraph_subset ω (w.edges_subset_edgeSet he)
+  · rintro ⟨T, z, hz, _, _, ⟨w⟩⟩
+    exact ⟨z, hz, ⟨(w.map (SimpleGraph.Embedding.induce (↑(B ∪ T) : Set V)).toHom).copy rfl rfl⟩⟩
+
+omit [Countable V] in
+/-- A connection inside a set remains inside any larger set. -/
+theorem openConnInTo_mono {T T' U : Set V} {a : V} (hTT : T ⊆ T') :
+    openConnInTo T U a ⊆ openConnInTo T' U a := by
+  rintro ω ⟨z, hz, hc⟩
+  obtain ⟨ha, hzt, hr⟩ := hc
+  exact ⟨z, hz, hTT ha, hTT hzt, hr.map (SimpleGraph.induceHomOfLE (G := openGraph ω) hTT).toHom⟩
+
+omit [Countable V] in
+/-- A finite set containing all relevant neighbors contains every boundary edge. -/
+theorem finiteBoundaryEdges_union_eq [DecidableEq V] (G : SimpleGraph V)
+    (S B T : Finset V) (hSB : S ⊆ B)
+    (hB : ∀ x ∈ S, ∀ y, G.Adj x y → y ∈ B) :
+    finiteBoundaryEdges G (↑S : Set V) (B ∪ T) = finiteBoundaryEdges G (↑S : Set V) B := by
+  classical
+  ext xy
+  simp only [finiteBoundaryEdges, Finset.mem_filter, finiteBoundaryPairs, Finset.mem_coe]
+  constructor
+  · rintro ⟨⟨_, hxS, hyS⟩, he⟩
+    have hyB : xy.2 ∈ B := hB xy.1 hxS xy.2 ((SimpleGraph.mem_edgeSet _).mp he)
+    exact ⟨⟨Finset.mem_product.mpr ⟨hSB hxS, hyB⟩, hxS, hyS⟩, he⟩
+  · rintro ⟨⟨hxy, hxS, hyS⟩, he⟩
+    have hxyB := Finset.mem_product.mp hxy
+    exact ⟨⟨Finset.mem_product.mpr ⟨Finset.mem_union_left _ hxyB.1,
+      Finset.mem_union_left _ hxyB.2⟩, hxS, hyS⟩, he⟩
+
+/-- The unrestricted first-exit bound when the boundary vertices lie in a finite set. -/
+theorem first_exit_to_edge_sum_of_finite_boundary [DecidableEq V]
+    (G : SimpleGraph V) (p : unitInterval) (S B : Finset V) (U : Set V) (a : V)
+    (hSB : S ⊆ B) (hB : ∀ x ∈ S, ∀ y, G.Adj x y → y ∈ B)
+    (ha : a ∈ S) (hUS : Disjoint U (↑S : Set V)) :
+    (bondPercolation G p) (openConnTo U a) ≤
+      ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) B,
+        ENNReal.ofReal (p : ℝ) *
+          (bondPercolation G p) (openConnIn (↑S : Set V) a xy.1) *
+          (bondPercolation G p) (openConnTo U xy.2) := by
+  classical
+  rw [openConnTo_eq_iUnion_finite B U a]
+  have hd : Directed (· ⊆ ·) (fun T : Finset V => openConnInTo (↑(B ∪ T) : Set V) U a) := by
+    intro T T'
+    refine ⟨T ∪ T', ?_, ?_⟩
+    · apply openConnInTo_mono
+      intro v hv
+      simp only [Finset.coe_union, Set.mem_union] at *
+      tauto
+    · apply openConnInTo_mono
+      intro v hv
+      simp only [Finset.coe_union, Set.mem_union] at *
+      tauto
+  rw [hd.measure_iUnion]
+  apply iSup_le
+  intro T
+  have hST : S ⊆ B ∪ T := fun v hv => Finset.mem_union_left T (hSB hv)
+  have h := finite_volume_first_exit_to_edge_sum G p S (B ∪ T) U a hST ha hUS
+  rw [finiteBoundaryEdges_union_eq G S B T hSB hB] at h
+  exact h
+
+/-- A finite set containing the vertices of a set and all their neighbors. -/
+def boundaryCover [DecidableEq V] (G : SimpleGraph V) [G.LocallyFinite] (S : Finset V) :
+    Finset V := S ∪ S.biUnion (fun x => G.neighborFinset x)
+
+/-- The first-exit inequality for a locally finite graph and a disjoint target. -/
+theorem first_exit_to_edge_sum [DecidableEq V]
+    (G : SimpleGraph V) [G.LocallyFinite] (p : unitInterval) (S : Finset V)
+    (U : Set V) (a : V) (ha : a ∈ S) (hUS : Disjoint U (↑S : Set V)) :
+    (bondPercolation G p) (openConnTo U a) ≤
+      ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) (boundaryCover G S),
+        ENNReal.ofReal (p : ℝ) *
+          (bondPercolation G p) (openConnIn (↑S : Set V) a xy.1) *
+          (bondPercolation G p) (openConnTo U xy.2) := by
+  classical
+  apply first_exit_to_edge_sum_of_finite_boundary G p S (boundaryCover G S) U a _ _ ha hUS
+  · intro x hx
+    exact Finset.mem_union_left _ hx
+  · intro x hx y hxy
+    apply Finset.mem_union_right
+    exact Finset.mem_biUnion.mpr ⟨x, hx, (G.mem_neighborFinset x y).mpr hxy⟩
+
+
 end FiniteSizeOneArm
