@@ -1051,4 +1051,28 @@ theorem ae_exists_compact_center_fine_level_square_power_bound
           mul_le_mul' hc le_rfl
         _ = _ := by rw [mul_assoc]
 
+/-- The positive moment of the unit-circle-tilted approximation density. -/
+theorem lintegral_rpow_unit_tilted_density
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1)
+    (γ p : ℝ) (hp : 0 ≤ p) (w : ℂ) :
+    ∫⁻ ω, ENNReal.ofReal (r ^ (γ ^ 2 / 2) *
+        Real.exp (γ * (H r w ω - H 1 w ω))) ^ p ∂P =
+      ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) := by
+  have heq (ω : Ω) : ENNReal.ofReal (r ^ (γ ^ 2 / 2) *
+        Real.exp (γ * (H r w ω - H 1 w ω))) ^ p =
+      ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2))) *
+        ENNReal.ofReal (Real.exp ((p * γ) * (H r w ω - H 1 w ω))) := by
+    rw [ENNReal.ofReal_rpow_of_nonneg (by positivity) hp,
+      ← ENNReal.ofReal_mul (by positivity), Real.mul_rpow (by positivity) (by positivity),
+      ← Real.rpow_mul hr.le, ← Real.exp_mul]
+    congr 3 <;> ring
+  simp_rw [heq]
+  have hm : Measurable fun ω => ENNReal.ofReal
+      (Real.exp ((p * γ) * (H r w ω - H 1 w ω))) := by fun_prop
+  rw [lintegral_const_mul _ hm, lintegral_exp_coarse_circle_increment hH hr hr1 w (p * γ),
+    ← ENNReal.ofReal_mul (Real.rpow_nonneg hr.le _), ← Real.rpow_add hr]
+  congr 2
+
 end LatticeProb.LQG
