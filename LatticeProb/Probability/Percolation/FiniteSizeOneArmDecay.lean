@@ -431,4 +431,70 @@ theorem finite_volume_first_exit_bk [DecidableEq V]
         (continuationFiniteEvent_upper _ _ _)
 
 
+omit [Countable V] in
+/-- Decoding restricted coordinates keeps exactly the selected edges. -/
+theorem finiteBoolEdges_config (F : Finset (Sym2 V)) (ω : BondConfig V) :
+    finiteBoolEdges F (finiteBoolConfig F ω) = ω ∩ (↑F : Set (Sym2 V)) := by
+  classical
+  ext e
+  constructor
+  · rintro ⟨i, rfl, hi⟩
+    exact ⟨by simpa [finiteBoolConfig, propBool] using hi, i.property⟩
+  · rintro ⟨heω, heF⟩
+    exact ⟨⟨e, heF⟩, rfl, by simpa [finiteBoolConfig, propBool] using heω⟩
+
+omit [Countable V] in
+/-- Restricting to a volume containing the interior set preserves the exit event. -/
+theorem exitFiniteEvent_preimage (S T : Finset V) (a x y : V)
+    (hST : S ⊆ T) (hxT : x ∈ T) (hyT : y ∈ T) :
+    finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 (↑S : Set V) a x y =
+      openConnIn (↑S : Set V) a x ∩ {ω | s(x, y) ∈ ω} := by
+  classical
+  ext ω
+  have hdet := (determinedBy_iff _ _).mp (PlanarDuality.determinedBy_openConnIn S a x)
+  have hint : ω ∩ (↑T.sym2 : Set (Sym2 V)) ∩ (↑S.sym2 : Set (Sym2 V)) =
+      ω ∩ (↑S.sym2 : Set (Sym2 V)) := by
+    ext e
+    simp only [Set.mem_inter_iff, Finset.mem_coe]
+    exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, Finset.sym2_mono hST h.2⟩, h.2⟩⟩
+  have hconn := hdet (ω ∩ (↑T.sym2 : Set (Sym2 V))) ω hint
+  simp only [Set.mem_preimage, exitFiniteEvent, Set.mem_ofPred_eq, Set.mem_inter_iff]
+  rw [finiteBoolEdges_config, hconn]
+  simp [hxT, hyT]
+
+/-- The exit event factors into its interior connection probability and `p`. -/
+theorem exitFiniteEvent_probability (G : SimpleGraph V) (p : unitInterval)
+    (S T : Finset V) (a x y : V) (hST : S ⊆ T) (hxT : x ∈ T) (hyT : y ∈ T)
+    (hy : y ∉ S) (he : s(x, y) ∈ G.edgeSet) :
+    (bondPercolation G p).real
+        (finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 (↑S : Set V) a x y) =
+      (p : ℝ) * (bondPercolation G p).real (openConnIn (↑S : Set V) a x) := by
+  rw [exitFiniteEvent_preimage S T a x y hST hxT hyT]
+  exact interior_connection_inter_boundary_edge G p S a x x y hy he
+
+omit [Countable V] in
+/-- A restricted continuation is also an unrestricted connection. -/
+theorem continuationFiniteEvent_subset (F : Finset (Sym2 V)) (y z : V) :
+    finiteBoolConfig F ⁻¹' continuationFiniteEvent F y z ⊆ openConn y z := by
+  intro ω hω
+  change (openGraph (finiteBoolEdges F (finiteBoolConfig F ω))).Reachable y z at hω
+  change (openGraph ω).Reachable y z
+  rw [finiteBoolEdges_config] at hω
+  exact hω.mono (openGraph_mono Set.inter_subset_left)
+
+/-- The exit-event factorization as an extended nonnegative real equality. -/
+theorem exitFiniteEvent_measure (G : SimpleGraph V) (p : unitInterval)
+    (S T : Finset V) (a x y : V) (hST : S ⊆ T) (hxT : x ∈ T) (hyT : y ∈ T)
+    (hy : y ∉ S) (he : s(x, y) ∈ G.edgeSet) :
+    (bondPercolation G p)
+        (finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 (↑S : Set V) a x y) =
+      ENNReal.ofReal (p : ℝ) * (bondPercolation G p) (openConnIn (↑S : Set V) a x) := by
+  have h := exitFiniteEvent_probability G p S T a x y hST hxT hyT hy he
+  rw [measureReal_def, measureReal_def] at h
+  have h' := congrArg ENNReal.ofReal h
+  rw [ENNReal.ofReal_toReal (measure_ne_top _ _), ENNReal.ofReal_mul p.property.1,
+    ENNReal.ofReal_toReal (measure_ne_top _ _)] at h'
+  exact h'
+
+
 end FiniteSizeOneArm
