@@ -1,5 +1,6 @@
 import LatticeProb.LQG.RecentredSquareMaximalMoment
 import LatticeProb.LQG.CircleIncrementTripleIndependence
+import LatticeProb.LQG.LQGOnePieceScaling
 import LatticeProb.LQG.RecentredSquareGeometry
 import LatticeProb.Bonanno.MatedCRTHarmonic.GMCFacts.OuterMoment
 import LatticeProb.LQG.RecentredSquareCountableSupFiniteness
@@ -407,5 +408,55 @@ theorem indepFun_coarse_increment_recentred_family
     MatedCRTHarmonic.MoTPort.ConeArea6.circCov_same hr hr,
     MatedCRTHarmonic.MoTPort.ConeArea6.circCov_same (by norm_num) hr]
   simp [max_self, max_eq_right hr1]
+
+/-- The coarse circle increment is independent of the maximal normalized
+recentred mass on the centered square. -/
+theorem indepFun_coarse_increment_iSup_normalized_recentred_square_mass
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P) (γ : ℝ) (z : ℂ) (m : ℕ)
+    (hm : 2 * radius m ≤ 1) :
+    ProbabilityTheory.IndepFun (fun ω => H (2 * radius m) z ω - H 1 z ω)
+      (fun ω => ⨆ k, normalizedRecentredSquareMass H γ z m k ω) P := by
+  classical
+  let ε := 2 * radius m
+  have hε : 0 < ε := mul_pos (by norm_num) (radius_pos m)
+  let A := {a : ℝ × ℂ // 0 < a.1 ∧ ‖a.2 - z‖ + a.1 ≤ ε}
+  let Y : Ω → A → ℝ := fun ω a => H a.1.1 a.1.2 ω - H ε z ω
+  have hind := indepFun_coarse_increment_recentred_family hH hε hm z
+  have hcont0 : ∀ k ω, Continuous (fun w : ℂ => H (radius (m + k)) w ω) :=
+    fun k ω => hH.continuous _ (radius_pos (m + k)) ω
+  let 𝒢 : MeasurableSpace Ω := MeasurableSpace.comap Y MeasurableSpace.pi
+  let S := sqQ (sqCorner z (radius m)) m
+  have hS : MeasurableSet S := measurableSet_sqQ _ _
+  have hfinite : IsFiniteMeasure (Measure.comap Subtype.val (volume : Measure ℂ) : Measure S) :=
+    ⟨by rw [(MeasurableEmbedding.subtype_coe hS).comap_apply, Subtype.coe_image_univ]
+        change volume (sqQ (sqCorner z (radius m)) m) < ⊤
+        rw [volume_centred_sqQ]; exact ENNReal.ofReal_lt_top⟩
+  let J (k : ℕ) (w : S) : A := ⟨(radius (m + k), w.1), radius_pos _,
+    norm_add_radius_le_of_mem_centred_sqQ z (by dsimp [ε]; linarith [radius_pos m]) k w.2⟩
+  have hY : ∀ k (w : S), Measurable[𝒢] (fun ω => Y ω (J k w)) := fun k w =>
+    (measurable_pi_apply (J k w)).comp (comap_measurable Y)
+  have hcont : ∀ k ω, Continuous (fun w : S => Y ω (J k w)) := by
+    intro k ω
+    exact ((hcont0 k ω).comp continuous_subtype_val).sub continuous_const
+  have hM : ∀ k, Measurable[𝒢] (normalizedRecentredSquareMass H γ z m k) := by
+    intro k
+    let F : ℝ → ℝ≥0∞ := fun x => ENNReal.ofReal
+      ((radius (m + k) / ε) ^ (γ ^ 2 / 2) * Real.exp (γ * x))
+    have hF : Measurable F := Measurable.ennreal_ofReal (by fun_prop)
+    have hI : Measurable[𝒢] (fun ω => ∫⁻ w : S, F (Y ω (J k w))
+        ∂(Measure.comap Subtype.val (volume : Measure ℂ))) :=
+      LatticeProb.measurable_lintegral_of_continuous _ (hcont k) (hY k) hF
+    have heq : normalizedRecentredSquareMass H γ z m k = fun ω =>
+        ENNReal.ofReal (ε⁻¹ ^ 2) * ∫⁻ w : S, F (Y ω (J k w))
+          ∂(Measure.comap Subtype.val (volume : Measure ℂ)) := by
+      funext ω
+      unfold normalizedRecentredSquareMass lqgApprox
+      rw [withDensity_apply _ hS, ← lintegral_subtype_comap hS]
+      simp only [F, Y, J, ε, mul_div_cancel₀ _ hε.ne']
+    rw [heq]
+    exact hI.const_mul _
+  exact ProbabilityTheory.indep_of_indep_of_le_right hind
+    (measurable_iff_comap_le.1 (Measurable.iSup hM))
 
 end LatticeProb.LQG
