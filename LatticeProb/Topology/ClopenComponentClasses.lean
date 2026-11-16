@@ -3,6 +3,8 @@ import Mathlib.Topology.LocallyConstant.Algebra
 import Mathlib.LinearAlgebra.Quotient.Basic
 import Mathlib.LinearAlgebra.LinearIndependent.Basic
 import Mathlib.LinearAlgebra.Dimension.Finite
+import Mathlib.LinearAlgebra.Dimension.DivisionRing
+import Mathlib.LinearAlgebra.Dimension.Constructions
 
 /-!
 # Locally constant classes from components
@@ -148,5 +150,65 @@ theorem finite_component_classes_iff_finite_components
     let := h
     let := finite_locallyConstant_of_finite_components (X := X) (K := K)
     exact Module.Finite.of_surjective _ (Submodule.mkQ_surjective _)
+
+/-- The dimension of locally constant functions modulo constants is one less than the
+number of components, with natural subtraction including the empty space. -/
+theorem finrank_component_classes_eq_card_sub_one
+    {X K : Type*} [TopologicalSpace X] [CompactSpace X] [T2Space X] [Field K]
+    [Finite (ConnectedComponents X)] :
+    Module.finrank K (LocallyConstant X K ⧸
+      LinearMap.range (LocallyConstant.constₗ K : K →ₗ[K] LocallyConstant X K)) =
+      Nat.card (ConnectedComponents X) - 1 := by
+  classical
+  let := Fintype.ofFinite (ConnectedComponents X)
+  let := finite_locallyConstant_of_finite_components (X := X) (K := K)
+  let P := LinearMap.range (LocallyConstant.constₗ K : K →ₗ[K] LocallyConstant X K)
+  change Module.finrank K (LocallyConstant X K ⧸ P) = _
+  by_cases hX : Nonempty X
+  · let := hX
+    let rep : ConnectedComponents X → X := fun c =>
+      Classical.choose (ConnectedComponents.surjective_coe c)
+    have hrep (c : ConnectedComponents X) : ConnectedComponents.mk (rep c) = c :=
+      Classical.choose_spec (ConnectedComponents.surjective_coe c)
+    let eval : LocallyConstant X K →ₗ[K] (ConnectedComponents X → K) :=
+      { toFun := fun f c => f (rep c)
+        map_add' := by intros; rfl
+        map_smul' := by intros; rfl }
+    have heval : Function.Injective eval := by
+      intro f g h
+      ext x
+      have hx : x ∈ connectedComponent (rep (ConnectedComponents.mk x)) :=
+        ConnectedComponents.coe_eq_coe'.mp (hrep (ConnectedComponents.mk x)).symm
+      have hf := f.apply_eq_of_isPreconnected isPreconnected_connectedComponent hx
+        (mem_connectedComponent)
+      have hg := g.apply_eq_of_isPreconnected isPreconnected_connectedComponent hx
+        (mem_connectedComponent)
+      exact hf.trans ((congrFun h _).trans hg.symm)
+    have hd := LinearMap.finrank_le_finrank_of_injective heval
+    rw [Module.finrank_pi] at hd
+    have hconst : Function.Injective (LocallyConstant.constₗ K : K →ₗ[K] LocallyConstant X K) := by
+      intro a b h
+      have := congrArg (LocallyConstant.evalₗ K (Classical.choice hX)) h
+      simpa using this
+    have hp : Module.finrank K P = 1 := by
+      rw [show P = LinearMap.range (LocallyConstant.constₗ K : K →ₗ[K] LocallyConstant X K) from rfl,
+        LinearMap.finrank_range_of_inj hconst, Module.finrank_self]
+    have hr := P.finrank_quotient_add_finrank
+    rw [hp] at hr
+    have hb := cardinal_components_le_finrank_succ (X := X) (K := K)
+    rw [Cardinal.mk_fintype] at hb
+    have hb' : Fintype.card (ConnectedComponents X) ≤
+        Module.finrank K (LocallyConstant X K ⧸ P) + 1 := by exact_mod_cast hb
+    rw [Nat.card_eq_fintype_card]
+    omega
+  · let : IsEmpty X := not_nonempty_iff.mp hX
+    have : Subsingleton (LocallyConstant X K) := ⟨fun f g => by ext x; exact isEmptyElim x⟩
+    have hz : Module.finrank K (LocallyConstant X K) = 0 := Module.finrank_zero_of_subsingleton
+    have hr := P.finrank_quotient_add_finrank
+    let : IsEmpty (ConnectedComponents X) := not_nonempty_iff.mp
+      (fun h => hX (ConnectedComponents.nonempty_iff_nonempty.mp h))
+    have hn : Nat.card (ConnectedComponents X) = 0 := by simp
+    rw [hn, Nat.zero_sub]
+    omega
 
 end LatticeProb.Topology
