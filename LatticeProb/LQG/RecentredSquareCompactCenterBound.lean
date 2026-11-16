@@ -5,6 +5,7 @@ import LatticeProb.LQG.RecentredSquareGeometry
 import LatticeProb.Bonanno.MatedCRTHarmonic.GMCFacts.OuterMoment
 import LatticeProb.LQG.RecentredSquareCountableSupFiniteness
 import LatticeProb.LQG.LQGBallMassRatioUniform
+import Mathlib.MeasureTheory.OuterMeasure.BorelCantelli
 
 /-! # Spatial dependence of recentred square approximations -/
 
@@ -826,5 +827,73 @@ theorem tsum_ofReal_radius_rpow_ne_top {δ : ℝ} (hδ : 0 < δ) :
   simp_rw [heq]
   exact (tsum_geometric_lt_top.2
     (ENNReal.ofReal_lt_one.mpr (Real.rpow_lt_one (by norm_num) (by norm_num) hδ))).ne
+
+/-- The grid cardinality factor and threshold divide the moment power into
+one residual power. -/
+theorem square_grid_tail_factor_eq {r α κ p : ℝ} (hr : 0 < r) (C : ℝ≥0∞) :
+    ENNReal.ofReal (r ^ (-2 : ℝ)) *
+      ((ENNReal.ofReal (r ^ α) * C) / ENNReal.ofReal ((r ^ κ) ^ p)) =
+    ENNReal.ofReal (r ^ (α - 2 - κ * p)) * C := by
+  have ht : 0 < (r ^ κ) ^ p := Real.rpow_pos_of_pos (Real.rpow_pos_of_pos hr κ) p
+  calc
+    _ = (ENNReal.ofReal (r ^ (-2 : ℝ)) * ENNReal.ofReal (r ^ α) *
+        (ENNReal.ofReal ((r ^ κ) ^ p))⁻¹) * C := by rw [div_eq_mul_inv]; ring
+    _ = ENNReal.ofReal (r ^ (-2 : ℝ) * r ^ α / (r ^ κ) ^ p) * C := by
+      rw [← ENNReal.ofReal_inv_of_pos ht, ← ENNReal.ofReal_mul (Real.rpow_nonneg hr.le _),
+        ← ENNReal.ofReal_mul (mul_nonneg (Real.rpow_nonneg hr.le _) (Real.rpow_nonneg hr.le _))]
+      congr 2
+    _ = _ := by
+      congr 2
+      rw [← Real.rpow_mul hr.le, ← Real.rpow_add hr, ← Real.rpow_sub hr]
+      congr 1
+      ring
+
+/-- A quadratically growing deterministic family of centers has an
+almost-sure eventual power bound for its tilted maximal square masses. -/
+theorem ae_eventually_finset_tilted_square_power_bound
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2)
+    (S : ℕ → Finset ℂ) {A : ℝ≥0∞} (hA : A < ⊤)
+    (hcard : ∀ m, ((S m).card : ℝ≥0∞) ≤ A * ENNReal.ofReal (radius m ^ (-2 : ℝ))) :
+    ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P, ∀ᶠ m in Filter.atTop,
+      (S m).sup (fun z => ⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + 1 + k))
+          (sqQ (sqCorner z (radius (m + 1))) (m + 1))) <
+        ENNReal.ofReal (radius m ^ κ) := by
+  obtain ⟨p, q, κ, hp, hpq, hq, hκ, hexp⟩ := exists_square_moment_exponents hγ hγ2
+  obtain ⟨C, hC, htail⟩ := exists_measure_finset_sup_iSup_tilted_square_le hH hHm hγ hγ2 hp hpq hq
+  let α : ℝ := 2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2
+  have hδ : 0 < α - 2 - κ * p := by dsimp [α]; nlinarith
+  have hscale (m : ℕ) : 2 * radius (m + 1) = radius m := by
+    unfold radius
+    rw [pow_succ]
+    ring
+  have hr1 (m : ℕ) : radius m ≤ 1 := by unfold radius; exact pow_le_one₀ (by norm_num) (by norm_num)
+  let E : ℕ → Set Ω := fun m => {ω | ENNReal.ofReal (radius m ^ κ) ≤
+    (S m).sup fun z => ⨆ k, ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+      lqgApprox γ (fun s w => H s w ω) (radius (m + 1 + k))
+        (sqQ (sqCorner z (radius (m + 1))) (m + 1))}
+  have htail' (m : ℕ) : P (E m) ≤ (A * C) * ENNReal.ofReal (radius m ^ (α - 2 - κ * p)) := by
+    have ht := htail (S m) (m + 1) (by rw [hscale]; exact hr1 m)
+      (radius m ^ κ) (Real.rpow_pos_of_pos (radius_pos m) κ)
+    rw [hscale] at ht
+    calc
+      P (E m) ≤ ((S m).card : ℝ≥0∞) *
+          ((ENNReal.ofReal (radius m ^ α) * C) / ENNReal.ofReal ((radius m ^ κ) ^ p)) := ht
+      _ ≤ (A * ENNReal.ofReal (radius m ^ (-2 : ℝ))) *
+          ((ENNReal.ofReal (radius m ^ α) * C) / ENNReal.ofReal ((radius m ^ κ) ^ p)) :=
+        mul_le_mul' (hcard m) le_rfl
+      _ = (A * C) * ENNReal.ofReal (radius m ^ (α - 2 - κ * p)) := by
+        rw [mul_assoc, square_grid_tail_factor_eq (radius_pos m) C]
+        ring
+  have hfin : (∑' m, P (E m)) ≠ ⊤ := by
+    apply ne_top_of_le_ne_top _ (ENNReal.tsum_le_tsum htail')
+    rw [ENNReal.tsum_mul_left]
+    exact ENNReal.mul_ne_top (ENNReal.mul_ne_top hA.ne hC.ne) (tsum_ofReal_radius_rpow_ne_top hδ)
+  refine ⟨κ, hκ, ?_⟩
+  filter_upwards [MeasureTheory.ae_eventually_notMem hfin] with ω hω
+  filter_upwards [hω] with m hm
+  exact lt_of_not_ge hm
 
 end LatticeProb.LQG
