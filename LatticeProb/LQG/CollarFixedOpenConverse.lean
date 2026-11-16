@@ -1,3 +1,4 @@
+import LatticeProb.LQG.ReciprocalCollarAnchors
 import LatticeProb.LQG.LocalCountablePathGluing
 import LatticeProb.LQG.CollarEventCountablePath
 import LatticeProb.Topology.AnchoredCompactOpenCofinal
@@ -191,5 +192,25 @@ theorem exists_collarFieldCode_comap_eq_fixedOpenCode {Ω : Type}
   have hψV : ∀ n, tsupport (ψ k : ℂ → ℝ) ⊆ V n := hWA
   refine ⟨V, hψV, collarFieldCode_comap_eq_fixedOpenCode h K ψ hp k hψ1 hψK V hψV ?_⟩
   exact hW
+
+/-- A common point of the compact sets supplies an actual anchor family and
+countable fixed-open codes for all reciprocal collar scales. -/
+theorem exists_anchored_collarFixedOpenCode {Ω : Type}
+    [MeasurableSpace (NonemptyCompacts ℂ)] [BorelSpace (NonemptyCompacts ℂ)]
+    (h : Ω → DistC) (K : Ω → NonemptyCompacts ℂ) (z : ℂ)
+    (hz : ∀ ω, z ∈ (K ω : Set ℂ)) {p : ℝ} (hp : 0 < p) :
+    ∃ ψ : ℕ → TestC, ∀ k, ∃ (hψ1 : ∫ x, ψ k x = 1)
+      (V : ℕ → Opens ℂ) (hψV : ∀ n, tsupport (ψ k : ℂ → ℝ) ⊆ V n),
+      (∀ ω, tsupport (ψ k : ℂ → ℝ) ⊆
+        thickening (1 / ((k : ℝ) + 1)) (K ω : Set ℂ)) ∧
+      MeasurableSpace.comap (collarFieldCode h K localDenseTest ψ hp k) inferInstance =
+        MeasurableSpace.comap (collarFixedOpenCode h K (ψ k) hψ1 hp k V hψV) inferInstance := by
+  obtain ⟨ψ, hψ⟩ := exists_reciprocal_collar_anchors z
+  refine ⟨ψ, fun k => ?_⟩
+  have hsupp : ∀ ω, tsupport (ψ k : ℂ → ℝ) ⊆
+      thickening (1 / ((k : ℝ) + 1)) (K ω : Set ℂ) := fun ω => (hψ k).2 _ (hz ω)
+  obtain ⟨V, hψV, heq⟩ := exists_collarFieldCode_comap_eq_fixedOpenCode
+    h K ψ hp k (hψ k).1 hsupp
+  exact ⟨(hψ k).1, V, hψV, hsupp, heq⟩
 
 end LatticeProb.LQG
