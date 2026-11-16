@@ -15,7 +15,8 @@ theorem isPreconnected_compl_of_no_bounded_components {K : Set ℂ} (hK : IsComp
     · intro x hx
       apply (hchar x hx).2
       intro hb
-      exact h.false ⟨⟨connectedComponentIn Kᶜ x, x, hx, rfl⟩, hb⟩
+      exact @isEmptyElim (BoundedPlaneComplementComponent K) h (fun _ => False)
+        ⟨⟨connectedComponentIn Kᶜ x, x, hx, rfl⟩, hb⟩
     · exact connectedComponentIn_subset _ _
   rw [heq]
   exact isPreconnected_connectedComponentIn
