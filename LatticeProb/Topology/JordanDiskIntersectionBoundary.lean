@@ -5,8 +5,6 @@ import LatticeProb.Topology.AreaCurveSharedFrontier
 
 /-! # Intersections of embedded closed disks -/
 
-set_option autoImplicit false
-
 noncomputable section
 
 open Set Metric Bornology
