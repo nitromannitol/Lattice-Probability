@@ -735,4 +735,41 @@ theorem exists_measure_iSup_tilted_square_le
         (ENNReal.ofReal_pos.mpr htpos).ne' ENNReal.ofReal_ne_top
     _ ≤ _ := ENNReal.div_le_div_right (hmoment z m hm) _
 
+/-- A union bound for maximal tilted square masses over finitely many centers. -/
+theorem exists_measure_finset_sup_iSup_tilted_square_le
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p q : ℝ}
+    (hγ : 0 < γ) (hγ2 : γ < 2) (hp : 1 < p) (hpq : p < q)
+    (hq : q < 4 / γ ^ 2) :
+    ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ (S : Finset ℂ) (m : ℕ), 2 * radius m ≤ 1 → ∀ t : ℝ, 0 < t →
+      P {ω | ENNReal.ofReal t ≤ S.sup fun z => ⨆ k,
+        ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+          lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+            (sqQ (sqCorner z (radius m)) m)} ≤
+      (S.card : ℝ≥0∞) * ((ENNReal.ofReal ((2 * radius m) ^
+        (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C) / ENNReal.ofReal (t ^ p)) := by
+  classical
+  obtain ⟨C, hC, htail⟩ := exists_measure_iSup_tilted_square_le hH hHm hγ hγ2 hp hpq hq
+  refine ⟨C, hC, ?_⟩
+  intro S m hm t ht
+  let E : ℂ → Set Ω := fun z => {ω | ENNReal.ofReal t ≤ ⨆ k,
+    ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+      lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+        (sqQ (sqCorner z (radius m)) m)}
+  have hsub : {ω | ENNReal.ofReal t ≤ S.sup fun z => ⨆ k,
+      ENNReal.ofReal (Real.exp (-γ * H 1 z ω)) *
+        lqgApprox γ (fun s w => H s w ω) (radius (m + k))
+          (sqQ (sqCorner z (radius m)) m)} ⊆ ⋃ z ∈ S, E z := by
+    intro ω hω
+    obtain ⟨z, hz, hz'⟩ := (Finset.le_sup_iff (ENNReal.ofReal_pos.mpr ht)).mp hω
+    exact Set.mem_iUnion₂.mpr ⟨z, hz, hz'⟩
+  calc
+    _ ≤ P (⋃ z ∈ S, E z) := measure_mono hsub
+    _ ≤ ∑ z ∈ S, P (E z) := measure_biUnion_finset_le S E
+    _ ≤ ∑ _z ∈ S, (ENNReal.ofReal ((2 * radius m) ^
+        (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C) / ENNReal.ofReal (t ^ p) :=
+      Finset.sum_le_sum fun z _ => htail z m hm t ht
+    _ = _ := by simp
+
 end LatticeProb.LQG
