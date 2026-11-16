@@ -772,4 +772,45 @@ theorem exists_measure_finset_sup_iSup_tilted_square_le
       Finset.sum_le_sum fun z _ => htail z m hm t ht
     _ = _ := by simp
 
+/-- The quantitative local square cover may be chosen with all its square
+centers in one fixed bounded disk, independently of the scale. -/
+theorem exists_finset_bounded_sqQ_local_cover_ball (R : ℝ) (hR : 0 < R) (m : ℕ) :
+    ∃ A : Finset ℂ, (A.card : ℝ) ≤
+        (corners16.card : ℝ) * (4 * R / radius m + 1) ^ 2 ∧
+      (∀ a ∈ A, ‖a + radius m • sqCentre‖ ≤ R + 2) ∧
+      ∀ z ∈ Metric.ball (0 : ℂ) R, ∃ B : Finset ℂ,
+        B ⊆ A ∧ B.card ≤ corners16.card ∧
+          sqQ (sqCorner z (radius m)) m ⊆ ⋃ b ∈ B, sqQ b m := by
+  classical
+  obtain ⟨A, hcard, hcover⟩ := exists_finset_sqQ_local_cover_ball R hR m
+  let A' := A.filter fun a => ‖a + radius m • sqCentre‖ ≤ R + 2
+  refine ⟨A', ?_, ?_, ?_⟩
+  · have hfilter : (A'.card : ℝ) ≤ (A.card : ℝ) := by
+      exact_mod_cast (Finset.card_filter_le A _)
+    exact hfilter.trans hcard
+  · intro a ha
+    exact (Finset.mem_filter.mp ha).2
+  · intro z hz
+    obtain ⟨B, hBA, hBcard, hBcover⟩ := hcover z hz
+    let B' := B.filter fun b => ‖b + radius m • sqCentre‖ ≤ R + 2
+    refine ⟨B', ?_, (Finset.card_filter_le _ _).trans hBcard, ?_⟩
+    · intro b hb
+      obtain ⟨hb, hnorm⟩ := Finset.mem_filter.mp hb
+      exact Finset.mem_filter.mpr ⟨hBA hb, hnorm⟩
+    · intro w hw
+      obtain ⟨b, hb, hwb⟩ := Set.mem_iUnion₂.mp (hBcover hw)
+      have hzR : ‖z‖ < R := by simpa [Metric.mem_ball, dist_zero_right] using hz
+      have hwz := norm_sub_le_of_mem_centred_sqQ z m hw
+      have heq : sqCorner (b + radius m • sqCentre) (radius m) = b := by simp [sqCorner]
+      have hwb' : w ∈ sqQ (sqCorner (b + radius m • sqCentre) (radius m)) m := by
+        rwa [heq]
+      have hwb'' := norm_sub_le_of_mem_centred_sqQ (b + radius m • sqCentre) m hwb'
+      have hr1 : radius m ≤ 1 := by unfold radius; exact pow_le_one₀ (by norm_num) (by norm_num)
+      have hn : ‖b + radius m • sqCentre‖ ≤ R + 2 := by
+        have h1 := norm_sub_norm_le w z
+        have h2 := norm_sub_norm_le (b + radius m • sqCentre) w
+        rw [norm_sub_rev] at h2
+        linarith
+      exact Set.mem_iUnion₂.mpr ⟨b, Finset.mem_filter.mpr ⟨hb, hn⟩, hwb⟩
+
 end LatticeProb.LQG
