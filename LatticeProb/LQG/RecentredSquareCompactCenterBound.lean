@@ -1120,4 +1120,33 @@ theorem lintegral_rpow_unit_tilted_square_density_le
           exact lintegral_rpow_unit_tilted_density hH hHm hr hr1 γ p (by linarith) w]
       rw [setLIntegral_const]
 
+/-- The square-density moment bound in terms of the square side length. -/
+theorem lintegral_rpow_unit_tilted_square_density_le_power
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1)
+    (γ : ℝ) {p : ℝ} (hp : 1 ≤ p) (z : ℂ) (m : ℕ) :
+    (∫⁻ ω, (∫⁻ w in sqQ (sqCorner z (radius m)) m,
+      ENNReal.ofReal (r ^ (γ ^ 2 / 2) * Real.exp (γ * (H r w ω - H 1 w ω)))) ^ p ∂P) ≤
+      ENNReal.ofReal (radius m ^ (2 * p)) *
+        ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) := by
+  have hvol : (volume (sqQ (sqCorner z (radius m)) m)) ^ (p - 1) *
+      volume (sqQ (sqCorner z (radius m)) m) = ENNReal.ofReal (radius m ^ (2 * p)) := by
+    rw [volume_centred_sqQ, ENNReal.ofReal_rpow_of_nonneg (sq_nonneg _) (by linarith),
+      ← ENNReal.ofReal_mul (Real.rpow_nonneg (sq_nonneg _) _)]
+    congr 1
+    rw [← Real.rpow_two (radius m), ← Real.rpow_mul (radius_pos m).le,
+      ← Real.rpow_add (radius_pos m)]
+    congr 1
+    ring
+  calc
+    _ ≤ (volume (sqQ (sqCorner z (radius m)) m)) ^ (p - 1) *
+      (ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) *
+        volume (sqQ (sqCorner z (radius m)) m)) :=
+      lintegral_rpow_unit_tilted_square_density_le hH hHm hr hr1 γ hp z m
+    _ = (volume (sqQ (sqCorner z (radius m)) m) ^ (p - 1) *
+        volume (sqQ (sqCorner z (radius m)) m)) *
+          ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) := by ac_rfl
+    _ = _ := by rw [hvol]
+
 end LatticeProb.LQG
