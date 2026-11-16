@@ -1,14 +1,16 @@
 import LatticeProb.Vendor.FormalMathPercolation.Literature.PlanarDuality
 import LatticeProb.Vendor.FormalMathPercolation.Literature.FiniteEnergy
+import LatticeProb.Prob.BK
 
 /-!
 # Finite-size connectivity
 
-Independence and disjoint path certificates for connections leaving a vertex set
+Independence, disjoint path certificates, and a finite-coordinate BK bound
 under Bernoulli bond percolation.
 -/
 
-open MeasureTheory Percolation.Literature
+open MeasureTheory ProbabilityTheory Percolation.Literature
+open scoped ProbabilityTheory
 
 noncomputable section
 
@@ -191,5 +193,101 @@ theorem exists_first_exit_disjoint_certificates {ω : BondConfig V} (S : Set V) 
       exact ⟨by simpa [L] using he, SimpleGraph.not_isDiag_of_mem_edgeSet _
         (q.edges_subset_edgeSet he)⟩
     exact ⟨q.transfer _ hq⟩
+
+/-- Encode a proposition as a Boolean value. -/
+def propBool (q : Prop) : Bool := by
+  classical
+  exact decide q
+
+/-- Restrict a bond configuration to finitely many Boolean coordinates. -/
+def finiteBoolConfig (F : Finset (Sym2 V)) (ω : BondConfig V) : F → Bool :=
+  fun e => propBool (e.val ∈ ω)
+
+omit [Countable V] in
+/-- The law of finitely many bond coordinates is the product of their laws. -/
+theorem finiteBoolConfig_law (G : SimpleGraph V) (p : unitInterval)
+    (F : Finset (Sym2 V)) :
+    (bondPercolation G p).map (finiteBoolConfig F) =
+      Measure.pi (fun e : F =>
+        (bernoulliMeasure (e.val ∈ G.edgeSet) False p).map propBool) := by
+  classical
+  have hm : Measurable propBool := by fun_prop
+  rw [bondPercolation, setBernoulli_eq_map, Measure.map_map]
+  · have heq : (finiteBoolConfig F ∘ fun χ : Sym2 V → Prop => {i | χ i}) =
+        (fun χ : Sym2 V → Prop => fun e : F => propBool (χ e)) := by rfl
+    rw [heq]
+    rw [show (fun χ : Sym2 V → Prop => fun e : F => propBool (χ e)) =
+        (fun χ : F → Prop => fun e : F => propBool (χ e)) ∘ F.restrict by rfl]
+    rw [← Measure.map_map (by fun_prop) (by fun_prop), Measure.infinitePi_map_restrict]
+    exact Measure.pi_map_pi (fun _ => hm.aemeasurable)
+  · unfold finiteBoolConfig
+    fun_prop
+  · fun_prop
+
+omit [Countable V] in
+/-- The BK inequality for increasing events depending on finitely many bonds. -/
+theorem finite_bool_bk (G : SimpleGraph V) (p : unitInterval)
+    (F : Finset (Sym2 V)) {A B : Set (F → Bool)}
+    (hA : IsUpperSet A) (hB : IsUpperSet B) :
+    (bondPercolation G p) (finiteBoolConfig F ⁻¹' LatticeProb.disjointOccSet A B) ≤
+      (bondPercolation G p) (finiteBoolConfig F ⁻¹' A) *
+      (bondPercolation G p) (finiteBoolConfig F ⁻¹' B) := by
+  classical
+  have hm : Measurable (finiteBoolConfig F) := by unfold finiteBoolConfig; fun_prop
+  have hmap := finiteBoolConfig_law G p F
+  have h := LatticeProb.measure_pi_disjointOccSet_le
+    (fun e : F => (bernoulliMeasure (e.val ∈ G.edgeSet) False p).map
+      propBool) hA hB
+  rw [← hmap, Measure.map_apply hm (MeasurableSet.of_discrete),
+    Measure.map_apply hm (MeasurableSet.of_discrete),
+    Measure.map_apply hm (MeasurableSet.of_discrete)] at h
+  exact h
+
+omit [Countable V] in
+/-- Disjoint open-coordinate witnesses for increasing events satisfy the BK bound. -/
+theorem finite_bool_witness_bk [DecidableEq V] (G : SimpleGraph V) (p : unitInterval)
+    (F : Finset (Sym2 V)) {A B : Set (F → Bool)}
+    (hA : IsUpperSet A) (hB : IsUpperSet B) :
+    (bondPercolation G p) (finiteBoolConfig F ⁻¹' LatticeProb.wit A B) ≤
+      (bondPercolation G p) (finiteBoolConfig F ⁻¹' A) *
+      (bondPercolation G p) (finiteBoolConfig F ⁻¹' B) := by
+  classical
+  rw [← LatticeProb.disjointOcc_eq_wit hA hB, ← LatticeProb.disjointOccSet_eq]
+  exact finite_bool_bk G p F hA hB
+
+omit [Countable V] in
+/-- Disjoint open edge certificates induce disjoint Boolean witnesses. -/
+theorem finite_bool_witness_of_edge_certificates [DecidableEq V]
+    (F K L : Finset (Sym2 V)) (ω : BondConfig V) {A B : Set (F → Bool)}
+    (hKL : Disjoint K L)
+    (hKω : (↑K : Set (Sym2 V)) ⊆ ω) (hLω : (↑L : Set (Sym2 V)) ⊆ ω)
+    (hKA : finiteBoolConfig F (↑K : BondConfig V) ∈ A)
+    (hLB : finiteBoolConfig F (↑L : BondConfig V) ∈ B) :
+    finiteBoolConfig F ω ∈ LatticeProb.wit A B := by
+  classical
+  let K' : Finset F := F.attach.filter (fun i => i.val ∈ K)
+  let L' : Finset F := F.attach.filter (fun i => i.val ∈ L)
+  have hmemK (i : F) : i ∈ K' ↔ i.val ∈ K := by simp [K']
+  have hmemL (i : F) : i ∈ L' ↔ i.val ∈ L := by simp [L']
+  refine ⟨K', L', ?_, ?_, ?_, ?_, ?_⟩
+  · rw [Finset.disjoint_left]
+    intro i hi hj
+    exact (Finset.disjoint_left.mp hKL) ((hmemK i).mp hi) ((hmemL i).mp hj)
+  · intro i hi
+    change propBool (i.val ∈ ω) = true
+    simp [propBool, hKω ((hmemK i).mp hi)]
+  · intro i hi
+    change propBool (i.val ∈ ω) = true
+    simp [propBool, hLω ((hmemL i).mp hi)]
+  · have heq : LatticeProb.indic K' = finiteBoolConfig F (↑K : BondConfig V) := by
+      funext i
+      simp [LatticeProb.indic, finiteBoolConfig, propBool, hmemK]
+    rw [heq]
+    exact hKA
+  · have heq : LatticeProb.indic L' = finiteBoolConfig F (↑L : BondConfig V) := by
+      funext i
+      simp [LatticeProb.indic, finiteBoolConfig, propBool, hmemL]
+    rw [heq]
+    exact hLB
 
 end FiniteSizeOneArm
