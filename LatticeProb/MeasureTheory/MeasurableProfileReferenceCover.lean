@@ -3,8 +3,6 @@ import LatticeProb.MeasureTheory.SeparableReferenceCover
 
 /-! # Countable reference covers for measurable profiles -/
 
-set_option autoImplicit false
-
 open Set MeasureTheory TopologicalSpace
 
 namespace LatticeProb.MeasurableProfile
