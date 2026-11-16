@@ -8,7 +8,7 @@ import Mathlib.Probability.Independence.InfinitePi
 
 The Boolean product law on nearest-neighbor unordered pairs agrees with the
 proposition-valued edge product law after identifying the bond indices. A dual
-one-arm estimate bounds horizontal crossing failure in an origin rectangle.
+one-arm estimate bounds crossing failure in translated rectangles in either direction.
 -/
 
 open MeasureTheory ProbabilityTheory Percolation.Literature
@@ -199,5 +199,106 @@ theorem crossing_failure_le_of_one_arm (p : unitInterval) (C c : ℝ) (hC : 0 �
     push_cast
     gcongr
     linarith
+
+/-- Boolean bond crossing failure in a finite region has the ambient probability. -/
+theorem finite_crossing_failure_probability (p : unitInterval)
+    (S : Finset (LatticeModels.Site 2)) (A B : Set (LatticeModels.Site 2)) :
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
+        {ω | EdgeCrossing.extend (LatticeModels.zdGraph 2) (toEdgeConfig ω) ∉
+          openCrossing S A B} =
+      (bondPercolation (LatticeModels.zdGraph 2) p) (openCrossing S A B)ᶜ := by
+  have hm : MeasurableSet
+      {η : (LatticeModels.zdGraph 2).edgeSet → Prop |
+        EdgeCrossing.extend (LatticeModels.zdGraph 2) η ∉ openCrossing S A B} :=
+    ((measurableSet_openCrossing S A B).preimage (EdgeCrossing.measurable_extend _)).compl
+  change (Measure.infinitePi (fun _ : Bond =>
+    bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
+      (toEdgeConfig ⁻¹' {η | EdgeCrossing.extend (LatticeModels.zdGraph 2) η ∉
+        openCrossing S A B}) = _
+  rw [measure_preimage_eq p _ hm]
+  apply measure_congr
+  filter_upwards [EdgeCrossing.edge_support_ae (LatticeModels.zdGraph 2) p] with ω hω
+  apply propext
+  change (EdgeCrossing.extend (LatticeModels.zdGraph 2)
+    (EdgeCrossing.restrict (LatticeModels.zdGraph 2) ω) ∉ openCrossing S A B) ↔
+      ω ∉ openCrossing S A B
+  rw [EdgeCrossing.extend_restrict, hω]
+
+/-- Translation preserves finite-region crossing-failure probabilities. -/
+theorem finite_crossing_failure_probability_shift (p : unitInterval)
+    (v : LatticeModels.Site 2) (S : Finset (LatticeModels.Site 2))
+    (A B : Set (LatticeModels.Site 2)) :
+    (bondPercolation (LatticeModels.zdGraph 2) p)
+      (openCrossing ((· + v) '' (S : Set _)) ((· + v) '' A) ((· + v) '' B))ᶜ =
+    (bondPercolation (LatticeModels.zdGraph 2) p) (openCrossing S A B)ᶜ := by
+  apply (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).mp
+  change (bondPercolation (LatticeModels.zdGraph 2) p).real _ =
+    (bondPercolation (LatticeModels.zdGraph 2) p).real _
+  have hs : MeasurableSet
+      (openCrossing ((· + v) '' (S : Set _)) ((· + v) '' A) ((· + v) '' B)) := by
+    simpa only [Finset.coe_image] using
+      (measurableSet_openCrossing (S.image (· + v)) ((· + v) '' A) ((· + v) '' B))
+  rw [measureReal_compl hs, measureReal_compl (measurableSet_openCrossing S A B),
+    real_openCrossing_shift]
+
+/-- The ambient failure probability satisfies the horizontal one-arm bound. -/
+theorem ambient_crossing_failure_le_of_one_arm (p : unitInterval) (C c : ℝ) (hC : 0 ≤ C)
+    (hdecay : ∀ n : ℕ,
+      (bondPercolation (LatticeModels.zdGraph 2) (unitInterval.symm p)).real
+        (siteToBoundary 2 n) ≤ C * Real.exp (-(c * n))) (m n : ℕ) :
+    (bondPercolation (LatticeModels.zdGraph 2) p) (lrCrossing m n)ᶜ ≤
+      ENNReal.ofReal (C * ((m : ℝ) + 1) * Real.exp (-(c * n))) := by
+  rw [← crossing_failure_probability_eq_ambient]
+  exact crossing_failure_le_of_one_arm p C c hC hdecay m n
+
+/-- The translated horizontal crossing failure obeys the one-arm bound. -/
+theorem translated_crossing_failure_le_of_one_arm (p : unitInterval) (C c : ℝ)
+    (hC : 0 ≤ C) (hdecay : ∀ n : ℕ,
+      (bondPercolation (LatticeModels.zdGraph 2) (unitInterval.symm p)).real
+        (siteToBoundary 2 n) ≤ C * Real.exp (-(c * n)))
+    (v : LatticeModels.Site 2) (m n : ℕ) :
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
+      {ω | EdgeCrossing.extend (LatticeModels.zdGraph 2) (toEdgeConfig ω) ∉
+        openCrossing ((rectangle m n).image (· + v)) ((· + v) '' (leftSide m n : Set _))
+          ((· + v) '' (rightSide m n : Set _))} ≤
+      ENNReal.ofReal (C * ((m : ℝ) + 1) * Real.exp (-(c * n))) := by
+  rw [finite_crossing_failure_probability]
+  simp only [Finset.coe_image]
+  rw [finite_crossing_failure_probability_shift]
+  exact ambient_crossing_failure_le_of_one_arm p C c hC hdecay m n
+
+/-- Exchanging coordinates preserves the ambient failure probability. -/
+theorem vertical_crossing_failure_probability (p : unitInterval) (m n : ℕ) :
+    (bondPercolation (LatticeModels.zdGraph 2) p) (tbCrossing n m)ᶜ =
+      (bondPercolation (LatticeModels.zdGraph 2) p) (lrCrossing m n)ᶜ := by
+  apply (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).mp
+  change (bondPercolation (LatticeModels.zdGraph 2) p).real _ =
+    (bondPercolation (LatticeModels.zdGraph 2) p).real _
+  have ht : MeasurableSet (tbCrossing n m) :=
+    measurableSet_openCrossing (rectangle n m) _ _
+  have hl : MeasurableSet (lrCrossing m n) :=
+    measurableSet_openCrossing (rectangle m n) _ _
+  rw [measureReal_compl ht, measureReal_compl hl, real_tbCrossing, crossingProb]
+
+/-- The translated vertical crossing failure obeys the one-arm bound. -/
+theorem translated_vertical_crossing_failure_le_of_one_arm (p : unitInterval) (C c : ℝ)
+    (hC : 0 ≤ C) (hdecay : ∀ n : ℕ,
+      (bondPercolation (LatticeModels.zdGraph 2) (unitInterval.symm p)).real
+        (siteToBoundary 2 n) ≤ C * Real.exp (-(c * n)))
+    (v : LatticeModels.Site 2) (m n : ℕ) :
+    (Measure.infinitePi (fun _ : Bond =>
+      bernoulliMeasure (decide ((0 : ℕ) = 0)) (decide ((0 : ℕ) = 1)) p))
+      {ω | EdgeCrossing.extend (LatticeModels.zdGraph 2) (toEdgeConfig ω) ∉
+        openCrossing ((rectangle n m).image (· + v)) ((· + v) '' (bottomSide n m : Set _))
+          ((· + v) '' (topSide n m : Set _))} ≤
+      ENNReal.ofReal (C * ((m : ℝ) + 1) * Real.exp (-(c * n))) := by
+  rw [finite_crossing_failure_probability]
+  simp only [Finset.coe_image]
+  rw [finite_crossing_failure_probability_shift]
+  change (bondPercolation (LatticeModels.zdGraph 2) p) (tbCrossing n m)ᶜ ≤ _
+  rw [vertical_crossing_failure_probability]
+  exact ambient_crossing_failure_le_of_one_arm p C c hC hdecay m n
 
 end DualDecayRectangle
