@@ -1315,4 +1315,78 @@ theorem exists_measure_finset_sup_coarse_unit_tilted_square_le
       Finset.sum_le_sum fun z _ => hsingle z
     _ = _ := by simp
 
+/-- A quadratically growing family of centers has an almost-sure eventual
+power bound for the unit-tilted masses at all coarse levels. -/
+theorem ae_eventually_finset_coarse_unit_tilted_square_power_bound
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2)
+    (S : ℕ → Finset ℂ) {A : ℝ≥0∞} (hA : A < ⊤)
+    (hcard : ∀ m, ((S m).card : ℝ≥0∞) ≤ A * ENNReal.ofReal (radius m ^ (-2 : ℝ))) :
+    ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P, ∀ᶠ m in Filter.atTop,
+      (S m).sup (fun z => (Finset.range (m + 2)).sup fun n =>
+        unitTiltedSquareMass H γ z (m + 1) n ω) < ENNReal.ofReal (radius m ^ κ) := by
+  obtain ⟨p, q, κ, hp, hpq, hq, hκ, hexp⟩ := exists_square_moment_exponents hγ hγ2
+  obtain ⟨C, hC, htail⟩ := exists_measure_finset_sup_coarse_unit_tilted_square_le hH hHm hγ hp
+  let α : ℝ := 2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2
+  have hp0 : 0 < p := by linarith
+  have hα : 0 ≤ α := by dsimp [α]; nlinarith [mul_pos hp0 hκ]
+  have hδ : 0 < α - 2 - κ * p := by dsimp [α]; nlinarith
+  let E : ℕ → Set Ω := fun m => {ω | ENNReal.ofReal (radius m ^ κ) ≤
+    (S m).sup fun z => (Finset.range (m + 2)).sup fun n =>
+      unitTiltedSquareMass H γ z (m + 1) n ω}
+  have htail' (m : ℕ) : P (E m) ≤ (A * C) * ENNReal.ofReal (radius m ^ (α - 2 - κ * p)) := by
+    have ht := htail (S m) (m + 1) (radius m ^ κ) (Real.rpow_pos_of_pos (radius_pos m) κ)
+    have hpow : ENNReal.ofReal (radius (m + 1) ^ α) ≤ ENNReal.ofReal (radius m ^ α) := by
+      apply ENNReal.ofReal_le_ofReal
+      exact Real.rpow_le_rpow (radius_pos (m + 1)).le
+        (QuantumZipper.AreaExist.aradius_anti (by omega)) hα
+    calc
+      P (E m) ≤ ((S m).card : ℝ≥0∞) *
+          ((ENNReal.ofReal (radius (m + 1) ^ α) * C) / ENNReal.ofReal ((radius m ^ κ) ^ p)) := ht
+      _ ≤ (A * ENNReal.ofReal (radius m ^ (-2 : ℝ))) *
+          ((ENNReal.ofReal (radius m ^ α) * C) / ENNReal.ofReal ((radius m ^ κ) ^ p)) :=
+        mul_le_mul' (hcard m) (ENNReal.div_le_div_right (mul_le_mul' hpow le_rfl) _)
+      _ = (A * C) * ENNReal.ofReal (radius m ^ (α - 2 - κ * p)) := by
+        rw [mul_assoc, square_grid_tail_factor_eq (radius_pos m) C]
+        ring
+  have hfin : (∑' m, P (E m)) ≠ ⊤ := by
+    apply ne_top_of_le_ne_top _ (ENNReal.tsum_le_tsum htail')
+    rw [ENNReal.tsum_mul_left]
+    exact ENNReal.mul_ne_top (ENNReal.mul_ne_top hA.ne hC.ne) (tsum_ofReal_radius_rpow_ne_top hδ)
+  refine ⟨κ, hκ, ?_⟩
+  filter_upwards [MeasureTheory.ae_eventually_notMem hfin] with ω hω
+  filter_upwards [hω] with m hm
+  exact lt_of_not_ge hm
+
+/-- On bounded local square covers, all coarse unit-tilted masses satisfy
+an almost-sure eventual power bound. -/
+theorem exists_bounded_square_covers_ae_eventually_coarse_unit_tilted_power
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ : ℝ} (hγ : 0 < γ) (hγ2 : γ < 2)
+    (R : ℝ) (hR : 0 < R) :
+    ∃ S : ℕ → Finset ℂ, (∀ m v, v ∈ S m → ‖v‖ ≤ R + 2) ∧
+      (∀ m z, z ∈ Metric.ball (0 : ℂ) R → ∃ T : Finset ℂ,
+        T ⊆ S m ∧ T.card ≤ corners16.card ∧
+          sqQ (sqCorner z (radius (m + 1))) (m + 1) ⊆
+            ⋃ v ∈ T, sqQ (sqCorner v (radius (m + 1))) (m + 1)) ∧
+      ∃ κ : ℝ, 0 < κ ∧ ∀ᵐ ω ∂P, ∀ᶠ m in Filter.atTop,
+        (S m).sup (fun z => (Finset.range (m + 2)).sup fun n =>
+          unitTiltedSquareMass H γ z (m + 1) n ω) < ENNReal.ofReal (radius m ^ κ) := by
+  classical
+  choose S hS using fun m => exists_finset_bounded_centred_sqQ_local_cover_ball R hR (m + 1)
+  refine ⟨S, fun m v hv => (hS m).2.1 v hv, fun m z hz => (hS m).2.2 z hz, ?_⟩
+  let D : ℝ := (corners16.card : ℝ) * (8 * R + 1) ^ 2
+  have hD : 0 ≤ D := by dsimp [D]; positivity
+  apply ae_eventually_finset_coarse_unit_tilted_square_power_bound hH hHm hγ hγ2 S
+    (A := ENNReal.ofReal D) ENNReal.ofReal_lt_top
+  intro m
+  have hc : ((S m).card : ℝ) ≤ D * radius m ^ (-2 : ℝ) :=
+    ((hS m).1).trans (square_cover_cardinal_scale_le R hR m)
+  calc
+    ((S m).card : ℝ≥0∞) = ENNReal.ofReal ((S m).card : ℝ) := by simp
+    _ ≤ ENNReal.ofReal (D * radius m ^ (-2 : ℝ)) := ENNReal.ofReal_le_ofReal hc
+    _ = _ := ENNReal.ofReal_mul hD
+
 end LatticeProb.LQG
