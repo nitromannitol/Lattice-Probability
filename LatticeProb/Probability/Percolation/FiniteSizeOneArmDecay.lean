@@ -290,4 +290,34 @@ theorem finite_bool_witness_of_edge_certificates [DecidableEq V]
     rw [heq]
     exact hLB
 
+omit [Countable V] in
+/-- A connection inside a finite volume has disjoint first-exit certificates
+supported on the volume's internal edges. -/
+theorem exists_first_exit_finite_volume_certificates
+    {ω : BondConfig V} (S : Set V) (T : Finset V) {a z : V}
+    (ha : a ∈ S) (hz : z ∉ S) (h : ω ∈ openConnIn (↑T : Set V) a z) :
+    ∃ (x : V) (_ : x ∈ S) (y : V) (_ : y ∉ S) (K L : Finset (Sym2 V)),
+      Disjoint K L ∧ (↑K : Set (Sym2 V)) ⊆ ω ∧ (↑L : Set (Sym2 V)) ⊆ ω ∧
+      K ⊆ T.sym2 ∧ L ⊆ T.sym2 ∧ s(x, y) ∈ K ∧
+      (↑K : BondConfig V) ∈ openConnIn S a x ∧
+      (openGraph (↑L : BondConfig V)).Reachable y z := by
+  classical
+  let ω' : BondConfig V := ω ∩ (↑T.sym2 : Set (Sym2 V))
+  have hconn : ω' ∈ openConnIn (↑T : Set V) a z := by
+    apply ((determinedBy_iff _ _).mp (PlanarDuality.determinedBy_openConnIn T a z) ω ω' ?_).mp h
+    simp [ω', Set.inter_assoc]
+  obtain ⟨_, _, ⟨q⟩⟩ := hconn
+  have hreach : (openGraph ω').Reachable a z :=
+    ⟨(q.map (SimpleGraph.Embedding.induce (↑T : Set V)).toHom).copy rfl rfl⟩
+  obtain ⟨x, hx, y, hy, K, L, hd, hk, hl, he, hc, hr⟩ :=
+    exists_first_exit_disjoint_certificates S ha hz hreach
+  refine ⟨x, hx, y, hy, K, L, hd, ?_, ?_, ?_, ?_, he, hc, hr⟩
+  · exact hk.trans Set.inter_subset_left
+  · exact hl.trans Set.inter_subset_left
+  · intro e he'
+    exact (hk he').2
+  · intro e he'
+    exact (hl he').2
+
+
 end FiniteSizeOneArm
