@@ -2,6 +2,7 @@ import LatticeProb.Vendor.FormalMathPercolation.Literature.KestenTheorem
 import LatticeProb.Vendor.FormalMathPercolation.Literature.RSWProofs
 import LatticeProb.Probability.Percolation.EdgeCrossing
 import Mathlib.Probability.Independence.InfinitePi
+import LatticeProb.Site
 
 /-!
 # Square-lattice bond law comparison
@@ -446,5 +447,26 @@ theorem translated_vertical_crossing_iff (ω : BondConfig (LatticeModels.Site 2)
     exact ⟨y, z, hy, hz, hy0, hz0, h⟩
   · rintro ⟨y, z, hy, hz, hy0, hz0, h⟩
     exact ⟨y, ⟨hy, hy0⟩, z, ⟨hz, hz0⟩, hy, hz, h⟩
+
+/-- The unit-vector lattice and the square lattice have the same adjacency. -/
+theorem lattice_adj_iff_zdGraph_adj (x y : LatticeModels.Site 2) :
+    (LatticeProb.lattice 2).Adj x y ↔ (LatticeModels.zdGraph 2).Adj x y := by
+  rw [zdGraph_two_adj_iff]
+  simp [LatticeProb.lattice, LatticeProb.unit, Fin.exists_fin_two, funext_iff,
+    Fin.forall_fin_two, Pi.single_apply]
+  omega
+
+/-- The extended open graph has the unit-vector lattice bond adjacency. -/
+theorem extended_openGraph_adj_iff_lattice (ω : Bond → Bool) (x y : LatticeModels.Site 2) :
+    (openGraph (EdgeCrossing.extend (LatticeModels.zdGraph 2) (toEdgeConfig ω))).Adj x y ↔
+      ∃ h : (LatticeProb.lattice 2).Adj x y,
+        ω ⟨s(x, y), x, y, rfl, (adj_iff_l1 x y).1 ((lattice_adj_iff_zdGraph_adj x y).1 h)⟩ =
+          decide ((0 : ℕ) = 0) := by
+  rw [extended_openGraph_adj_iff]
+  constructor
+  · rintro ⟨h, ho⟩
+    exact ⟨(lattice_adj_iff_zdGraph_adj x y).2 h, ho⟩
+  · rintro ⟨h, ho⟩
+    exact ⟨(lattice_adj_iff_zdGraph_adj x y).1 h, ho⟩
 
 end DualDecayRectangle
