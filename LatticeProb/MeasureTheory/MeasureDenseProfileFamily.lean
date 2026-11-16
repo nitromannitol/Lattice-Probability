@@ -15,8 +15,6 @@ measurable simple profiles with labels in a prescribed countable dense set.
   second-countable topological space, where separability holds automatically.
 -/
 
-set_option autoImplicit false
-
 open Set MeasureTheory TopologicalSpace
 
 namespace LatticeProb.MeasurableProfile
