@@ -126,4 +126,34 @@ theorem siteToBoundary_exp_decay_of_lt_criticalProb (d : ℕ) (p : unitInterval)
   obtain ⟨c, hc, hdec⟩ := DCT16.DCT16_expDecay_of_phi_lt_one_holds p S hS hphi' hp1
   exact ⟨c, hc, fun n _ => hdec n⟩
 
+/-- An unrestricted connection to the box boundary has the same probability
+as a connection contained in the box. -/
+theorem real_unrestricted_boundary_connection (d n : ℕ) (p : unitInterval) :
+    (bondPercolation (zdGraph d) p).real
+      {ω | ∃ z ∈ innerBoundary (zdGraph d) (box d n), (openGraph ω).Reachable 0 z} =
+    (bondPercolation (zdGraph d) p).real (siteToBoundary d n) := by
+  apply le_antisymm
+  · apply DCT16.real_mono_of_forall_subset_edgeSet
+    intro ω hω h
+    obtain ⟨z, hz, hzconn⟩ := h
+    rw [← DCT16.armEvent_zero]
+    apply DCT16.armEvent_of_pathIn hω (DCT16.pathIn_univ_of_reachable hzconn)
+    exact Or.inr (by simpa using hz)
+  · apply DCT16.real_mono_of_forall_subset_edgeSet
+    intro ω _ h
+    obtain ⟨z, hz, hzconn⟩ := DCT16.mem_siteToBoundary_iff.mp h
+    exact ⟨z, hz, DCT16.reachable_of_pathIn hzconn⟩
+
+/-- Below criticality, the unrestricted one-arm probability decays exponentially. -/
+theorem unrestricted_boundary_exp_decay_of_lt_criticalProb (d : ℕ) (p : unitInterval)
+    (hp : (p : ℝ) < criticalProb (zdGraph d) 0) :
+    ∃ c > 0, ∀ n : ℕ, 1 ≤ n →
+      (bondPercolation (zdGraph d) p).real
+        {ω | ∃ z ∈ innerBoundary (zdGraph d) (box d n), (openGraph ω).Reachable 0 z} ≤
+          Real.exp (-c * n) := by
+  obtain ⟨c, hc, hdec⟩ := siteToBoundary_exp_decay_of_lt_criticalProb d p hp
+  refine ⟨c, hc, fun n hn => ?_⟩
+  rw [real_unrestricted_boundary_connection]
+  exact hdec n hn
+
 end FiniteSizeCriticalThreshold
