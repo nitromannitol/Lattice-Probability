@@ -562,4 +562,122 @@ theorem finite_volume_first_exit_edge_sum [DecidableEq V]
       exact continuationFiniteEvent_subset T.sym2 xy.2 z
 
 
+/-- Connection to at least one vertex of a target set. -/
+def openConnTo (U : Set V) (a : V) : Set (BondConfig V) :=
+  {ω | ∃ z ∈ U, (openGraph ω).Reachable a z}
+
+/-- Connection to a target set by a path inside a specified set. -/
+def openConnInTo (T U : Set V) (a : V) : Set (BondConfig V) :=
+  {ω | ∃ z ∈ U, ω ∈ openConnIn T a z}
+
+/-- A finite-coordinate connection to a target set. -/
+def continuationFiniteEventTo (F : Finset (Sym2 V)) (U : Set V) (y : V) :
+    Set (F → Bool) :=
+  {η | ∃ z ∈ U, (openGraph (finiteBoolEdges F η)).Reachable y z}
+
+omit [Countable V] in
+/-- Finite-coordinate connection to a target set is increasing. -/
+theorem continuationFiniteEventTo_upper (F : Finset (Sym2 V)) (U : Set V) (y : V) :
+    IsUpperSet (continuationFiniteEventTo F U y) := by
+  intro η η' h hη
+  obtain ⟨z, hz, hconn⟩ := hη
+  exact ⟨z, hz, hconn.mono (openGraph_mono (finiteBoolEdges_mono F h))⟩
+
+omit [Countable V] in
+/-- A finite-coordinate connection to a target is an unrestricted connection. -/
+theorem continuationFiniteEventTo_subset (F : Finset (Sym2 V)) (U : Set V) (y : V) :
+    finiteBoolConfig F ⁻¹' continuationFiniteEventTo F U y ⊆ openConnTo U y := by
+  intro ω hω
+  obtain ⟨z, hz, hconn⟩ := hω
+  exact ⟨z, hz, continuationFiniteEvent_subset F y z hconn⟩
+
+omit [Countable V] in
+/-- A finite-volume connection to a disjoint target gives disjoint exit witnesses. -/
+theorem first_exit_finite_disjoint_occurrence_to [DecidableEq V]
+    {ω : BondConfig V} (S U : Set V) (T : Finset V) {a : V}
+    (ha : a ∈ S) (hUS : Disjoint U S) (h : ω ∈ openConnInTo (↑T : Set V) U a) :
+    ∃ x ∈ T, x ∈ S ∧ ∃ y ∈ T, y ∉ S ∧ finiteBoolConfig T.sym2 ω ∈
+      LatticeProb.wit (exitFiniteEvent T.sym2 S a x y) (continuationFiniteEventTo T.sym2 U y) := by
+  classical
+  obtain ⟨z, hz, hconn⟩ := h
+  have hzS : z ∉ S := fun hzS => (Set.disjoint_left.mp hUS) hz hzS
+  obtain ⟨x, hxT, hxS, y, hyT, hyS, K, L, hd, hk, hl, hKA, hLB⟩ :=
+    first_exit_finite_disjoint_occurrence S T ha hzS hconn
+  exact ⟨x, hxT, hxS, y, hyT, hyS, K, L, hd, hk, hl, hKA, z, hz, hLB⟩
+
+omit [Countable V] in
+/-- The BK first-exit bound for a connection to a disjoint target set. -/
+theorem finite_volume_first_exit_to_bk [DecidableEq V]
+    (G : SimpleGraph V) (p : unitInterval) (S U : Set V) (T : Finset V) (a : V)
+    (ha : a ∈ S) (hUS : Disjoint U S) :
+    (bondPercolation G p) (openConnInTo (↑T : Set V) U a) ≤
+      ∑ xy ∈ finiteBoundaryPairs S T,
+        (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 S a xy.1 xy.2) *
+        (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' continuationFiniteEventTo T.sym2 U xy.2) := by
+  classical
+  let A : V × V → Set (BondConfig V) := fun xy =>
+    finiteBoolConfig T.sym2 ⁻¹' LatticeProb.wit
+      (exitFiniteEvent T.sym2 S a xy.1 xy.2) (continuationFiniteEventTo T.sym2 U xy.2)
+  have hsub : openConnInTo (↑T : Set V) U a ⊆ ⋃ xy ∈ finiteBoundaryPairs S T, A xy := by
+    intro ω hω
+    obtain ⟨x, hxT, hx, y, hyT, hy, hw⟩ :=
+      first_exit_finite_disjoint_occurrence_to S U T ha hUS hω
+    apply Set.mem_iUnion.mpr
+    refine ⟨(x, y), Set.mem_iUnion.mpr ⟨?_, hw⟩⟩
+    simp [finiteBoundaryPairs, hxT, hyT, hx, hy]
+  calc
+    (bondPercolation G p) (openConnInTo (↑T : Set V) U a) ≤
+        (bondPercolation G p) (⋃ xy ∈ finiteBoundaryPairs S T, A xy) := measure_mono hsub
+    _ ≤ ∑ xy ∈ finiteBoundaryPairs S T, (bondPercolation G p) (A xy) :=
+      measure_biUnion_finset_le _ _
+    _ ≤ ∑ xy ∈ finiteBoundaryPairs S T,
+        (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 S a xy.1 xy.2) *
+        (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' continuationFiniteEventTo T.sym2 U xy.2) := by
+      apply Finset.sum_le_sum
+      intro xy _
+      exact finite_bool_witness_bk G p T.sym2 (exitFiniteEvent_upper _ _ _ _ _)
+        (continuationFiniteEventTo_upper _ _ _)
+
+/-- A finite-volume target connection is bounded by a boundary-edge sum. -/
+theorem finite_volume_first_exit_to_edge_sum [DecidableEq V]
+    (G : SimpleGraph V) (p : unitInterval) (S T : Finset V) (U : Set V) (a : V)
+    (hST : S ⊆ T) (ha : a ∈ S) (hUS : Disjoint U (↑S : Set V)) :
+    (bondPercolation G p) (openConnInTo (↑T : Set V) U a) ≤
+      ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) T,
+        ENNReal.ofReal (p : ℝ) *
+          (bondPercolation G p) (openConnIn (↑S : Set V) a xy.1) *
+          (bondPercolation G p) (openConnTo U xy.2) := by
+  classical
+  let term : V × V → ENNReal := fun xy =>
+    (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' exitFiniteEvent T.sym2 (↑S : Set V) a xy.1 xy.2) *
+      (bondPercolation G p) (finiteBoolConfig T.sym2 ⁻¹' continuationFiniteEventTo T.sym2 U xy.2)
+  have hfilter : ∑ xy ∈ finiteBoundaryPairs (↑S : Set V) T, term xy =
+      ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) T, term xy := by
+    rw [finiteBoundaryEdges, Finset.sum_filter]
+    apply Finset.sum_congr rfl
+    intro xy _
+    by_cases he : s(xy.1, xy.2) ∈ G.edgeSet
+    · simp [he]
+    · simp [he, term, exitFiniteEvent_measure_zero G p T.sym2 (↑S : Set V) a xy.1 xy.2 he]
+  calc
+    (bondPercolation G p) (openConnInTo (↑T : Set V) U a) ≤
+        ∑ xy ∈ finiteBoundaryPairs (↑S : Set V) T, term xy :=
+      finite_volume_first_exit_to_bk G p (↑S : Set V) U T a ha hUS
+    _ = ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) T, term xy := hfilter
+    _ ≤ ∑ xy ∈ finiteBoundaryEdges G (↑S : Set V) T,
+        ENNReal.ofReal (p : ℝ) *
+          (bondPercolation G p) (openConnIn (↑S : Set V) a xy.1) *
+          (bondPercolation G p) (openConnTo U xy.2) := by
+      apply Finset.sum_le_sum
+      intro xy hxy
+      simp only [finiteBoundaryEdges, Finset.mem_filter, finiteBoundaryPairs,
+        Finset.mem_coe] at hxy
+      have hT := Finset.mem_product.mp hxy.1.1
+      have hy : xy.2 ∉ S := hxy.1.2.2
+      change _ * _ ≤ _ * _
+      rw [exitFiniteEvent_measure G p S T a xy.1 xy.2 hST hT.1 hT.2 hy hxy.2]
+      gcongr
+      exact continuationFiniteEventTo_subset T.sym2 U xy.2
+
+
 end FiniteSizeOneArm
