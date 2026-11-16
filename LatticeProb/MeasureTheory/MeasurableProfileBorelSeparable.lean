@@ -7,8 +7,6 @@ The integrated truncated-distance topology on measurable profiles is separable w
 reference measure is finite and the domain and label spaces are second countable.
 -/
 
-set_option autoImplicit false
-
 open MeasureTheory TopologicalSpace
 
 namespace LatticeProb.MeasurableProfile
