@@ -896,4 +896,33 @@ theorem ae_eventually_finset_tilted_square_power_bound
   filter_upwards [hω] with m hm
   exact lt_of_not_ge hm
 
+/-- A bounded quantitative cover expressed by square centers, with a
+uniformly bounded local subcover. -/
+theorem exists_finset_bounded_centred_sqQ_local_cover_ball (R : ℝ) (hR : 0 < R) (m : ℕ) :
+    ∃ S : Finset ℂ, (S.card : ℝ) ≤
+        (corners16.card : ℝ) * (4 * R / radius m + 1) ^ 2 ∧
+      (∀ v ∈ S, ‖v‖ ≤ R + 2) ∧
+      ∀ z ∈ Metric.ball (0 : ℂ) R, ∃ T : Finset ℂ,
+        T ⊆ S ∧ T.card ≤ corners16.card ∧
+          sqQ (sqCorner z (radius m)) m ⊆ ⋃ v ∈ T, sqQ (sqCorner v (radius m)) m := by
+  classical
+  obtain ⟨A, hcard, hbounded, hcover⟩ := exists_finset_bounded_sqQ_local_cover_ball R hR m
+  let f : ℂ → ℂ := fun a => a + radius m • sqCentre
+  let S := A.image f
+  have hf (a : ℂ) : sqCorner (f a) (radius m) = a := by simp [f, sqCorner]
+  refine ⟨S, ?_, ?_, ?_⟩
+  · have hsc : (S.card : ℝ) ≤ A.card := by exact_mod_cast Finset.card_image_le (s := A) (f := f)
+    exact hsc.trans hcard
+  · intro v hv
+    obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hv
+    exact hbounded a ha
+  · intro z hz
+    obtain ⟨B, hBA, hBcard, hBcover⟩ := hcover z hz
+    refine ⟨B.image f, Finset.image_subset_image hBA,
+      (Finset.card_image_le).trans hBcard, ?_⟩
+    intro w hw
+    obtain ⟨a, ha, hwa⟩ := Set.mem_iUnion₂.mp (hBcover hw)
+    refine Set.mem_iUnion₂.mpr ⟨f a, Finset.mem_image.mpr ⟨a, ha, rfl⟩, ?_⟩
+    rwa [hf]
+
 end LatticeProb.LQG
