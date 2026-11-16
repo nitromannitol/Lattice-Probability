@@ -135,6 +135,9 @@ of 31e7483e), from its directories BouRabeeGwynne, HigherDimLFPP, LQGDimension, 
 SupercriticalLQGUniqueness. Where only some declarations of a source file
 are used, the copied file keeps those in their source order, with statements and proofs unchanged, and its header states
 that the others are omitted; every edit made for Lean v4.35 is listed in the header of the file concerned.
+LatticeProb/Bonanno/QuantumZipper/Proofs/GMC/BdryMomentsSup.lean copies the full
+source module at commit fdb5cad17d11550228cf8dbaf6216e69fc3d2d82; its header
+describes the Mathlib compatibility changes.
 The modules under LatticeProb/Bonanno/MatedCRTHarmonic/Planar/Topology/Jordan/ are that repository's port of code by
 R. Kirov, https://github.com/rkirov/jordan_pick, commit b3c9b7cf7358bf81a077d78ad67e6e8247869ddd, files
 JordanPick/JordanCurve.lean, JordanPick/JordanCurve/Arcs.lean and JordanPick/JordanCurve/Brouwer.lean, under Apache-2.0 (see LICENSE). The module docstrings name the
