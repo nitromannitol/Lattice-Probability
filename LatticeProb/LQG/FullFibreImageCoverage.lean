@@ -2,8 +2,6 @@ import Mathlib.Data.Set.Image
 
 /-! # Image intersection coverage and fibre localization -/
 
-set_option autoImplicit false
-
 namespace LatticeProb
 
 /-- Coverage of an intersection of images is equivalent to finding a point in
