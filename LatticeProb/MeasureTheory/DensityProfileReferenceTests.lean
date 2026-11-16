@@ -1,12 +1,14 @@
 import LatticeProb.MeasureTheory.MeasurableDensityProfile
 import LatticeProb.MeasureTheory.JointProfileReferenceDiscrepancy
 import LatticeProb.MeasureTheory.MeasurableProfileReferenceTests
+import LatticeProb.MeasureTheory.MeasurableProfileReferenceKernelTests
 
-/-! # Scalar observables of finite-kernel density profiles -/
+/-! # Observables of finite-kernel density profiles -/
 
 set_option autoImplicit false
 
 open Set MeasureTheory TopologicalSpace Filter ProbabilityTheory
+open scoped ENNReal
 
 namespace LatticeProb.MeasurableProfile
 
@@ -48,5 +50,45 @@ theorem measurable_scalar_of_finite_kernel_densities
     · intro f hf f' hf'
       exact (hbound f hf f' hf').trans (mul_le_mul_of_nonneg_left (hδ f hf f' hf') hC)
   simpa only [hgq] using hm
+
+/-- Uniformly controlled measure-valued observables of nonnegative density profiles
+of a finite kernel form a finite kernel. -/
+theorem exists_finite_kernel_of_finite_kernel_densities
+    {Y Ω X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    (μ : Measure ℝ) [IsFiniteMeasure μ]
+    {D : Set ℝ} (hDc : D.Countable) (hD : Dense D)
+    {𝒜 : Set (Set ℝ)} (hAc : 𝒜.Countable) (h𝒜 : IsSetAlgebra 𝒜)
+    (hA : μ.MeasureDense 𝒜) (V : Set (MeasurableProfile (E := ℝ) μ))
+    (hV : V.Nonempty) (q : MeasurableProfile (E := ℝ) μ → Y) (δ : Y → Y → ℝ)
+    (hδ : ∀ f ∈ V, ∀ g ∈ V, δ (q f) (q g) ≤ (integralDist μ f g).toReal)
+    (z : Ω → Y) (g : Ω → MeasurableProfile (E := ℝ) μ)
+    (hgV : ∀ ω, g ω ∈ V) (hgq : ∀ ω, q (g ω) = z ω)
+    (κ : Kernel Ω ℝ) [IsFiniteKernel κ]
+    (hgpos : ∀ ω, ∀ᵐ t ∂μ, 0 ≤ (g ω).1 t)
+    (hgκ : ∀ ω, κ ω = μ.withDensity (fun t => ENNReal.ofReal ((g ω).1 t)))
+    (M : Y → Measure X) (K : ℝ≥0∞) (hK : K < ∞)
+    (hfinite : ∀ ω, M (z ω) univ ≤ K) (C : ℝ) (hC : 0 ≤ C)
+    (hbound : ∀ s, MeasurableSet s → ∀ f ∈ V, ∀ g ∈ V,
+      |(M (q g) s).toReal - (M (q f) s).toReal| ≤ C * δ (q f) (q g)) :
+    ∃ η : Kernel Ω X, IsFiniteKernel η ∧ ∀ ω, η ω = M (z ω) := by
+  obtain ⟨G, hG, hGeq⟩ := exists_measurable_real_density_profile μ κ
+  let g' : Ω → MeasurableProfile (E := ℝ) μ := fun ω =>
+    ⟨fun t => G (ω, t), (hG.comp (measurable_const.prodMk measurable_id)).aemeasurable⟩
+  have hgj : Measurable (fun p : Ω × ℝ => (g' p.1).1 p.2) := hG
+  have hdist (f : MeasurableProfile (E := ℝ) μ) (ω : Ω) :
+      integralDist μ f (g' ω) = integralDist μ f (g ω) := by
+    apply lintegral_congr_ae
+    filter_upwards [hGeq ω (g ω).1 (g ω).2 (hgpos ω) (hgκ ω)] with t ht
+    simp only [g', ht]
+  have hf : ∀ ω, M (q (g ω)) univ ≤ K := by simpa only [hgq] using hfinite
+  obtain ⟨η, hη, hηeq⟩ := exists_finite_kernel_of_valid_reference_tests μ hDc hD hAc h𝒜 hA
+    V hV id (fun f g => (integralDist μ f g).toReal) (by intros; rfl)
+    g (fun f => M (q f)) K hK hf C hC (fun ω => ⟨g ω, hgV ω, rfl⟩)
+    (fun f _ => by
+      have h := measurable_integralDist_toReal μ f g' hgj
+      simpa only [id_eq, hdist] using h)
+    (fun s hs f hf f' hf' =>
+      (hbound s hs f hf f' hf').trans (mul_le_mul_of_nonneg_left (hδ f hf f' hf') hC))
+  exact ⟨η, hη, fun ω => (hηeq ω).trans (congrArg M (hgq ω))⟩
 
 end LatticeProb.MeasurableProfile
