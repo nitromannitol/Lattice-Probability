@@ -2,8 +2,6 @@ import LatticeProb.MeasureTheory.CountableProfileDensity
 
 /-! # Separability of measurable profiles -/
 
-set_option autoImplicit false
-
 open Set MeasureTheory TopologicalSpace
 
 namespace LatticeProb.MeasurableProfile
