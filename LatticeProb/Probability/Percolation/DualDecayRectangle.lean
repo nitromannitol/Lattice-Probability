@@ -301,4 +301,150 @@ theorem translated_vertical_crossing_failure_le_of_one_arm (p : unitInterval) (C
   rw [vertical_crossing_failure_probability]
   exact ambient_crossing_failure_le_of_one_arm p C c hC hdecay m n
 
+/-- Membership in a translated inclusive rectangle in coordinates. -/
+theorem mem_translated_rectangle (v y : LatticeModels.Site 2) (m n : ℕ) :
+    y ∈ ((· + v) '' (rectangle m n : Set (LatticeModels.Site 2))) ↔
+      v 0 ≤ y 0 ∧ y 0 ≤ v 0 + m ∧ v 1 ≤ y 1 ∧ y 1 ≤ v 1 + n := by
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    simp only [Finset.mem_coe, mem_rectangle_iff] at hx
+    simp only [Pi.add_apply]
+    omega
+  · intro hy
+    refine ⟨y - v, ?_, sub_add_cancel y v⟩
+    simp only [Finset.mem_coe, mem_rectangle_iff, Pi.sub_apply]
+    omega
+
+/-- The translated left face consists of rectangle vertices with minimal first coordinate. -/
+theorem mem_translated_left (v y : LatticeModels.Site 2) (m n : ℕ) :
+    y ∈ ((· + v) '' (leftSide m n : Set (LatticeModels.Site 2))) ↔
+      y ∈ ((· + v) '' (rectangle m n : Set (LatticeModels.Site 2))) ∧ y 0 = v 0 := by
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    simp only [Finset.mem_coe, leftSide, Finset.mem_filter] at hx
+    refine ⟨⟨x, hx.1, rfl⟩, ?_⟩
+    simp [hx.2]
+  · rintro ⟨⟨x, hx, rfl⟩, h⟩
+    refine ⟨x, ?_, rfl⟩
+    simp only [Finset.mem_coe, leftSide, Finset.mem_filter]
+    refine ⟨hx, ?_⟩
+    simp only [Pi.add_apply] at h
+    omega
+
+/-- The translated right face consists of rectangle vertices with maximal first coordinate. -/
+theorem mem_translated_right (v y : LatticeModels.Site 2) (m n : ℕ) :
+    y ∈ ((· + v) '' (rightSide m n : Set (LatticeModels.Site 2))) ↔
+      y ∈ ((· + v) '' (rectangle m n : Set (LatticeModels.Site 2))) ∧
+        y 0 = v 0 + m := by
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    simp only [Finset.mem_coe, rightSide, Finset.mem_filter] at hx
+    refine ⟨⟨x, hx.1, rfl⟩, ?_⟩
+    simp [hx.2, add_comm]
+  · rintro ⟨⟨x, hx, rfl⟩, h⟩
+    refine ⟨x, ?_, rfl⟩
+    simp only [Finset.mem_coe, rightSide, Finset.mem_filter]
+    refine ⟨hx, ?_⟩
+    simp only [Pi.add_apply] at h
+    omega
+
+/-- The translated bottom face consists of rectangle vertices with minimal second coordinate. -/
+theorem mem_translated_bottom (v y : LatticeModels.Site 2) (m n : ℕ) :
+    y ∈ ((· + v) '' (bottomSide m n : Set (LatticeModels.Site 2))) ↔
+      y ∈ ((· + v) '' (rectangle m n : Set (LatticeModels.Site 2))) ∧ y 1 = v 1 := by
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    simp only [Finset.mem_coe, bottomSide, Finset.mem_filter] at hx
+    refine ⟨⟨x, hx.1, rfl⟩, ?_⟩
+    simp [hx.2]
+  · rintro ⟨⟨x, hx, rfl⟩, h⟩
+    refine ⟨x, ?_, rfl⟩
+    simp only [Finset.mem_coe, bottomSide, Finset.mem_filter]
+    refine ⟨hx, ?_⟩
+    simp only [Pi.add_apply] at h
+    omega
+
+/-- The translated top face consists of rectangle vertices with maximal second coordinate. -/
+theorem mem_translated_top (v y : LatticeModels.Site 2) (m n : ℕ) :
+    y ∈ ((· + v) '' (topSide m n : Set (LatticeModels.Site 2))) ↔
+      y ∈ ((· + v) '' (rectangle m n : Set (LatticeModels.Site 2))) ∧
+        y 1 = v 1 + n := by
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    simp only [Finset.mem_coe, topSide, Finset.mem_filter] at hx
+    refine ⟨⟨x, hx.1, rfl⟩, ?_⟩
+    simp [hx.2, add_comm]
+  · rintro ⟨⟨x, hx, rfl⟩, h⟩
+    refine ⟨x, ?_, rfl⟩
+    simp only [Finset.mem_coe, topSide, Finset.mem_filter]
+    refine ⟨hx, ?_⟩
+    simp only [Pi.add_apply] at h
+    omega
+
+/-- Coordinate rectangles agree with translated origin rectangles in the first direction. -/
+theorem coordinate_rectangle_horizontal (v : LatticeModels.Site 2) (m n : ℕ) :
+    {y : LatticeModels.Site 2 | ∀ j, v j ≤ y j ∧
+      y j ≤ v j + (if j = (0 : Fin 2) then (m : ℤ) else n)} =
+      ((· + v) '' (rectangle m n : Set (LatticeModels.Site 2))) := by
+  ext y
+  rw [mem_translated_rectangle]
+  simp [Fin.forall_fin_two, and_assoc]
+
+/-- Coordinate rectangles agree with translated origin rectangles in the second direction. -/
+theorem coordinate_rectangle_vertical (v : LatticeModels.Site 2) (m n : ℕ) :
+    {y : LatticeModels.Site 2 | ∀ j, v j ≤ y j ∧
+      y j ≤ v j + (if j = (1 : Fin 2) then (m : ℤ) else n)} =
+      ((· + v) '' (rectangle n m : Set (LatticeModels.Site 2))) := by
+  ext y
+  rw [mem_translated_rectangle]
+  simp [Fin.forall_fin_two, and_assoc]
+
+/-- The extended configuration opens exactly the lattice bonds selected by the Boolean law. -/
+theorem extended_openGraph_adj_iff (ω : Bond → Bool) (x y : LatticeModels.Site 2) :
+    (openGraph (EdgeCrossing.extend (LatticeModels.zdGraph 2) (toEdgeConfig ω))).Adj x y ↔
+      ∃ h : (LatticeModels.zdGraph 2).Adj x y,
+        toEdgeConfig ω ⟨s(x, y), (SimpleGraph.mem_edgeSet _).2 h⟩ := by
+  rw [openGraph_adj]
+  constructor
+  · rintro ⟨⟨he, ho⟩, _⟩
+    exact ⟨(SimpleGraph.mem_edgeSet _).1 he, ho⟩
+  · rintro ⟨h, ho⟩
+    exact ⟨⟨(SimpleGraph.mem_edgeSet _).2 h, ho⟩, h.ne⟩
+
+/-- A translated horizontal crossing is induced-graph reachability between its two faces. -/
+theorem translated_horizontal_crossing_iff (ω : BondConfig (LatticeModels.Site 2))
+    (v : LatticeModels.Site 2) (m n : ℕ) :
+    ω ∈ openCrossing ((· + v) '' (rectangle m n : Set _))
+        ((· + v) '' (leftSide m n : Set _)) ((· + v) '' (rightSide m n : Set _)) ↔
+      ∃ (y z : LatticeModels.Site 2)
+        (hy : y ∈ ((· + v) '' (rectangle m n : Set _)))
+        (hz : z ∈ ((· + v) '' (rectangle m n : Set _))),
+        y 0 = v 0 ∧ z 0 = v 0 + m ∧
+          ((openGraph ω).induce ((· + v) '' (rectangle m n : Set _))).Reachable ⟨y, hy⟩ ⟨z, hz⟩ := by
+  simp only [mem_openCrossing_iff, mem_translated_left, mem_translated_right,
+    openConnIn, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨y, ⟨hy, hy0⟩, z, ⟨hz, hz0⟩, _, _, h⟩
+    exact ⟨y, z, hy, hz, hy0, hz0, h⟩
+  · rintro ⟨y, z, hy, hz, hy0, hz0, h⟩
+    exact ⟨y, ⟨hy, hy0⟩, z, ⟨hz, hz0⟩, hy, hz, h⟩
+
+/-- A translated vertical crossing is induced-graph reachability between its two faces. -/
+theorem translated_vertical_crossing_iff (ω : BondConfig (LatticeModels.Site 2))
+    (v : LatticeModels.Site 2) (m n : ℕ) :
+    ω ∈ openCrossing ((· + v) '' (rectangle n m : Set _))
+        ((· + v) '' (bottomSide n m : Set _)) ((· + v) '' (topSide n m : Set _)) ↔
+      ∃ (y z : LatticeModels.Site 2)
+        (hy : y ∈ ((· + v) '' (rectangle n m : Set _)))
+        (hz : z ∈ ((· + v) '' (rectangle n m : Set _))),
+        y 1 = v 1 ∧ z 1 = v 1 + m ∧
+          ((openGraph ω).induce ((· + v) '' (rectangle n m : Set _))).Reachable ⟨y, hy⟩ ⟨z, hz⟩ := by
+  simp only [mem_openCrossing_iff, mem_translated_bottom, mem_translated_top,
+    openConnIn, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨y, ⟨hy, hy0⟩, z, ⟨hz, hz0⟩, _, _, h⟩
+    exact ⟨y, z, hy, hz, hy0, hz0, h⟩
+  · rintro ⟨y, z, hy, hz, hy0, hz0, h⟩
+    exact ⟨y, ⟨hy, hy0⟩, z, ⟨hz, hz0⟩, hy, hz, h⟩
+
 end DualDecayRectangle
