@@ -119,4 +119,25 @@ theorem exists_compact_connected_join_of_component {U S P Q : Set ℂ} (hU : IsO
     · exact Or.inr hz
   · exact union_subset (union_subset hPS hRS) hQS
 
+/-- A continuous interval whose endpoints lie in different components of a set has
+an interior point outside the set. -/
+theorem exists_interior_point_outside_of_distinct_components {T : Set ℂ} {f : ℝ → ℂ}
+    {a b : ℝ} (hab : a < b) (hf : ContinuousOn f (Icc a b))
+    (ha : f a ∈ T) (hb : f b ∈ T) (hdiff : f b ∉ connectedComponentIn T (f a)) :
+    ∃ t ∈ Ioo a b, f t ∉ T := by
+  by_contra hgap
+  have hsub : f '' Icc a b ⊆ T := by
+    rintro z ⟨t, ht, rfl⟩
+    by_cases hta : t = a
+    · simpa only [hta] using ha
+    by_cases htb : t = b
+    · simpa only [htb] using hb
+    by_contra hnot
+    apply hgap
+    exact ⟨t, ⟨lt_of_le_of_ne ht.1 (Ne.symm hta), lt_of_le_of_ne ht.2 htb⟩, hnot⟩
+  have hconn : IsPreconnected (f '' Icc a b) := isPreconnected_Icc.image f hf
+  have haimage : f a ∈ f '' Icc a b := ⟨a, ⟨le_rfl, hab.le⟩, rfl⟩
+  have hbimage : f b ∈ f '' Icc a b := ⟨b, ⟨hab.le, le_rfl⟩, rfl⟩
+  exact hdiff (hconn.subset_connectedComponentIn haimage hsub hbimage)
+
 end LatticeProb.Topology
