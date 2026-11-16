@@ -4,8 +4,8 @@ import LatticeProb.Vendor.FormalMathPercolation.Literature.FiniteEnergy
 /-!
 # Finite-size connectivity
 
-A connection inside a finite vertex set and the state of an edge leaving the set
-are independent under Bernoulli bond percolation.
+Independence and disjoint path certificates for connections leaving a vertex set
+under Bernoulli bond percolation.
 -/
 
 open MeasureTheory Percolation.Literature
@@ -103,5 +103,93 @@ theorem exists_first_exit_edge {ω : BondConfig V} (S : Finset V) {a z : V}
         (openConnIn_of_adj ha hv (openGraph_adj ω u v |>.mp huv).1 huv.ne) hc
     · exact ⟨u, ha, v, hv, (openGraph_adj ω u v |>.mp huv).1,
         openConnIn_refl ha, ⟨w⟩⟩
+
+
+omit [Countable V] in
+/-- A walk leaving a set splits at its first exit into a walk within the set,
+an exit edge, and a remaining walk. -/
+theorem walk_first_exit_split {G : SimpleGraph V} (S : Set V) {a z : V}
+    (w : G.Walk a z) (ha : a ∈ S) (hz : z ∉ S) :
+    ∃ (x : V) (_ : x ∈ S) (y : V) (_ : y ∉ S) (hxy : G.Adj x y)
+      (p : G.Walk a x) (q : G.Walk y z),
+      (∀ v ∈ p.support, v ∈ S) ∧ w = p.append (SimpleGraph.Walk.cons hxy q) := by
+  induction w with
+  | nil => exact (hz ha).elim
+  | @cons u v z huv w ih =>
+    by_cases hv : v ∈ S
+    · obtain ⟨x, hx, y, hy, hxy, p, q, hp, hw⟩ := ih hv hz
+      refine ⟨x, hx, y, hy, hxy, p.cons huv, q, ?_, ?_⟩
+      · intro t ht
+        simp only [SimpleGraph.Walk.support_cons, List.mem_cons] at ht
+        rcases ht with rfl | ht
+        · exact ha
+        · exact hp t ht
+      · simpa only [SimpleGraph.Walk.cons_append] using congrArg (SimpleGraph.Walk.cons huv) hw
+    · refine ⟨u, ha, v, hv, huv, SimpleGraph.Walk.nil, w, ?_, ?_⟩
+      · simpa using ha
+      · rfl
+
+
+omit [Countable V] in
+/-- An open connection leaving a set admits an interior prefix, an exit edge,
+and a continuation with pairwise disjoint edge sets. -/
+theorem exists_first_exit_edge_disjoint_walks {ω : BondConfig V} (S : Set V) {a z : V}
+    (ha : a ∈ S) (hz : z ∉ S) (h : (openGraph ω).Reachable a z) :
+    ∃ (x : V) (_ : x ∈ S) (y : V) (_ : y ∉ S)
+      (_hxy : (openGraph ω).Adj x y) (p : (openGraph ω).Walk a x)
+      (q : (openGraph ω).Walk y z),
+      (∀ v ∈ p.support, v ∈ S) ∧
+      p.edges.Disjoint (s(x, y) :: q.edges) ∧ s(x, y) ∉ q.edges := by
+  classical
+  obtain ⟨w⟩ := h
+  let t := w.toPath
+  obtain ⟨x, hx, y, hy, hxy, p, q, hp, hsplit⟩ :=
+    walk_first_exit_split S t.val ha hz
+  have ht : t.val.IsTrail := t.property.isTrail
+  rw [hsplit, SimpleGraph.Walk.isTrail_append] at ht
+  refine ⟨x, hx, y, hy, hxy, p, q, hp, ?_, ?_⟩
+  · simpa only [SimpleGraph.Walk.edges_cons] using ht.2.2
+  · exact (SimpleGraph.Walk.isTrail_cons hxy q).mp ht.2.1 |>.2
+
+
+omit [Countable V] in
+/-- An open connection leaving a set has disjoint finite certificates for its
+interior connection and exit edge, and for the continuation. -/
+theorem exists_first_exit_disjoint_certificates {ω : BondConfig V} (S : Set V) {a z : V}
+    (ha : a ∈ S) (hz : z ∉ S) (h : (openGraph ω).Reachable a z) :
+    ∃ (x : V) (_ : x ∈ S) (y : V) (_ : y ∉ S) (K L : Finset (Sym2 V)),
+      Disjoint K L ∧ (↑K : Set (Sym2 V)) ⊆ ω ∧ (↑L : Set (Sym2 V)) ⊆ ω ∧
+      s(x, y) ∈ K ∧ (↑K : BondConfig V) ∈ openConnIn S a x ∧
+      (openGraph (↑L : BondConfig V)).Reachable y z := by
+  classical
+  obtain ⟨x, hx, y, hy, hxy, p, q, hp, hdis, hed⟩ :=
+    exists_first_exit_edge_disjoint_walks S ha hz h
+  let K := insert s(x, y) p.edges.toFinset
+  let L := q.edges.toFinset
+  refine ⟨x, hx, y, hy, K, L, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [Finset.disjoint_left]
+    intro e heK heL
+    simp only [K, Finset.mem_insert, List.mem_toFinset] at heK
+    simp only [L, List.mem_toFinset] at heL
+    rcases heK with rfl | heK
+    · exact hed heL
+    · exact (List.disjoint_left.mp hdis) heK (List.mem_cons_of_mem _ heL)
+  · intro e he
+    simp only [Finset.mem_coe, K, Finset.mem_insert, List.mem_toFinset] at he
+    rcases he with rfl | he
+    · exact (openGraph_adj ω x y).mp hxy |>.1
+    · exact edgeSet_openGraph_subset ω (p.edges_subset_edgeSet he)
+  · intro e he
+    exact edgeSet_openGraph_subset ω (q.edges_subset_edgeSet (by simpa [L] using he))
+  · simp [K]
+  · apply mem_openConnIn_of_walk p hp
+    intro e he
+    simp [K, he]
+  · have hq : ∀ e ∈ q.edges, e ∈ (openGraph (↑L : BondConfig V)).edgeSet := by
+      intro e he
+      rw [openGraph, SimpleGraph.edgeSet_fromEdgeSet]
+      exact ⟨by simpa [L] using he, SimpleGraph.not_isDiag_of_mem_edgeSet _
+        (q.edges_subset_edgeSet he)⟩
+    exact ⟨q.transfer _ hq⟩
 
 end FiniteSizeOneArm
