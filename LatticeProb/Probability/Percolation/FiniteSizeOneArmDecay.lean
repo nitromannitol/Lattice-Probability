@@ -353,9 +353,7 @@ theorem finiteBoolEdges_mono (F : Finset (Sym2 V)) : Monotone (finiteBoolEdges F
   refine ⟨i, rfl, ?_⟩
   have h' := h i
   rw [hi] at h'
-  cases hv : η' i with
-  | false => exact False.elim ((by decide : ¬ (true ≤ false)) (hv ▸ h'))
-  | true => rfl
+  exact top_unique h'
 
 omit [Countable V] in
 /-- The finite-coordinate exit event is increasing. -/
