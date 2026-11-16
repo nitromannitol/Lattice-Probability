@@ -83,4 +83,25 @@ theorem interior_connection_inter_edge_inter_exterior_connection
     (PlanarDuality.determinedBy_openConnIn T c d).measurableSet_of_finset,
     interior_connection_inter_boundary_edge G p S a b x y hy he]
 
+
+omit [Countable V] in
+/-- An open walk leaving a set contains an open edge leaving it, preceded by
+an interior connection and followed by an open connection to the endpoint. -/
+theorem exists_first_exit_edge {ω : BondConfig V} (S : Finset V) {a z : V}
+    (ha : a ∈ S) (hz : z ∉ S) (h : (openGraph ω).Reachable a z) :
+    ∃ x ∈ S, ∃ y ∉ S, s(x, y) ∈ ω ∧
+      ω ∈ openConnIn (↑S : Set V) a x ∧ (openGraph ω).Reachable y z := by
+  classical
+  obtain ⟨w⟩ := h
+  induction w with
+  | nil => exact (hz ha).elim
+  | @cons u v z huv w ih =>
+    by_cases hv : v ∈ S
+    · obtain ⟨x, hx, y, hy, he, hc, hr⟩ := ih hv hz
+      refine ⟨x, hx, y, hy, he, ?_, hr⟩
+      exact PlanarDuality.openConnIn_trans
+        (openConnIn_of_adj ha hv (openGraph_adj ω u v |>.mp huv).1 huv.ne) hc
+    · exact ⟨u, ha, v, hv, (openGraph_adj ω u v |>.mp huv).1,
+        openConnIn_refl ha, ⟨w⟩⟩
+
 end FiniteSizeOneArm
