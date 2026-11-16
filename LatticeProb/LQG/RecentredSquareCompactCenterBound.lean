@@ -1192,4 +1192,66 @@ theorem lintegral_finset_sup_unit_tilted_square_mass_rpow_le
       exact lintegral_rpow_unit_tilted_square_density_le_power hH hHm (radius_pos n) hr1 γ hp.le z m
     _ = _ := (Finset.mul_sum _ _ _).symm
 
+/-- A finite sum of negative scale powers is bounded by the last power
+times a fixed positive-power geometric series. -/
+theorem sum_radius_rpow_le_last_mul_tsum (β : ℝ) (m : ℕ) :
+    (∑ n ∈ Finset.range (m + 1), ENNReal.ofReal (radius n ^ β)) ≤
+      ENNReal.ofReal (radius m ^ β) * ∑' j : ℕ, ENNReal.ofReal (radius j ^ (-β)) := by
+  have heq (j : ℕ) (hj : j ≤ m) :
+      ENNReal.ofReal (radius (m - j) ^ β) =
+        ENNReal.ofReal (radius m ^ β) * ENNReal.ofReal (radius j ^ (-β)) := by
+    rw [← ENNReal.ofReal_mul (Real.rpow_nonneg (radius_pos m).le _)]
+    congr 1
+    have hrad : radius m = radius (m - j) * radius j := by
+      unfold radius
+      rw [← pow_add, Nat.sub_add_cancel hj]
+    rw [hrad, Real.mul_rpow (radius_pos (m - j)).le (radius_pos j).le,
+      Real.rpow_neg (radius_pos j).le]
+    have hne := (Real.rpow_pos_of_pos (radius_pos j) β).ne'
+    field_simp
+  calc
+    _ = ∑ j ∈ Finset.range (m + 1), ENNReal.ofReal (radius (m - j) ^ β) := by
+      simpa using (Finset.sum_range_reflect (fun n => ENNReal.ofReal (radius n ^ β)) (m + 1)).symm
+    _ = ENNReal.ofReal (radius m ^ β) *
+        ∑ j ∈ Finset.range (m + 1), ENNReal.ofReal (radius j ^ (-β)) := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro j hj
+      exact heq j (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj))
+    _ ≤ _ := mul_le_mul' le_rfl (ENNReal.sum_le_tsum _)
+
+/-- The maximal moment over all coarser levels has the same square-scale
+exponent as the maximal moment over finer levels. -/
+theorem exists_lintegral_coarse_unit_tilted_square_rpow_le_power
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) {γ p : ℝ} (hγ : 0 < γ) (hp : 1 < p) :
+    ∃ C : ℝ≥0∞, C < ⊤ ∧ ∀ (z : ℂ) (m : ℕ),
+      (∫⁻ ω, ((Finset.range (m + 1)).sup fun n => unitTiltedSquareMass H γ z m n ω) ^ p ∂P) ≤
+        ENNReal.ofReal (radius m ^ (2 * p + γ ^ 2 * p / 2 - (p * γ) ^ 2 / 2)) * C := by
+  let β : ℝ := p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2
+  have hβeq : β = -(γ ^ 2 * p * (p - 1)) / 2 := by dsimp [β]; ring
+  have hp0 : 0 < p := by linarith
+  have hp1 : 0 < p - 1 := by linarith
+  have hβ : β < 0 := by
+    rw [hβeq]
+    have hpos : 0 < γ ^ 2 * p * (p - 1) := by positivity
+    linarith
+  let C : ℝ≥0∞ := ∑' j : ℕ, ENNReal.ofReal (radius j ^ (-β))
+  have hC : C < ⊤ := lt_top_iff_ne_top.mpr (tsum_ofReal_radius_rpow_ne_top (by linarith : 0 < -β))
+  refine ⟨C, hC, ?_⟩
+  intro z m
+  calc
+    _ ≤ ENNReal.ofReal (radius m ^ (2 * p)) *
+        ∑ n ∈ Finset.range (m + 1), ENNReal.ofReal (radius n ^ β) :=
+      lintegral_finset_sup_unit_tilted_square_mass_rpow_le hH hHm γ hp z m _
+    _ ≤ ENNReal.ofReal (radius m ^ (2 * p)) * (ENNReal.ofReal (radius m ^ β) * C) :=
+      mul_le_mul' le_rfl (sum_radius_rpow_le_last_mul_tsum β m)
+    _ = _ := by
+      rw [← mul_assoc, ← ENNReal.ofReal_mul (Real.rpow_nonneg (radius_pos m).le _),
+        ← Real.rpow_add (radius_pos m)]
+      congr 2
+      dsimp [β]
+      ring
+
 end LatticeProb.LQG
