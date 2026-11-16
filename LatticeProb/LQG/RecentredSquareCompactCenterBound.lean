@@ -519,4 +519,24 @@ theorem exists_lintegral_exp_coarse_mul_iSup_square_rpow_le
     lintegral_exp_coarse_circle_increment hH hε hm z (p * γ)]
   exact mul_le_mul' le_rfl (hbound z m).1
 
+/-- Rescaling and recentering express the original approximation on the same set. -/
+theorem lqgApprox_eq_mul_recentred_rescaled {Ω : Type*}
+    (H : ℝ → ℂ → Ω → ℝ) (ω : Ω) (γ : ℝ) {ε r : ℝ}
+    (hε : 0 < ε) (hr : 0 < r) (z : ℂ) {S : Set ℂ} (hS : MeasurableSet S) :
+    lqgApprox γ (fun s w => H s w ω) r S =
+      ENNReal.ofReal (ε ^ (γ ^ 2 / 2) * Real.exp (γ * H ε z ω)) *
+        lqgApprox γ (fun s w => H (ε * s) w ω - H ε z ω) (r / ε) S := by
+  rw [lqgApprox, lqgApprox, withDensity_apply _ hS, withDensity_apply _ hS,
+    ← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
+  apply lintegral_congr
+  intro w
+  rw [← ENNReal.ofReal_mul (by positivity)]
+  congr 1
+  rw [mul_div_cancel₀ r hε.ne', Real.div_rpow hr.le hε.le,
+    Real.rpow_def_of_pos hr, Real.rpow_def_of_pos hε]
+  rw [← Real.exp_sub]
+  simp only [← Real.exp_add]
+  congr 1
+  ring
+
 end LatticeProb.LQG
