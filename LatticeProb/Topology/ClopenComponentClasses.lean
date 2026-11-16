@@ -104,4 +104,49 @@ theorem cardinal_components_le_finrank_succ
   simp only [Fintype.card_fin] at hdim
   omega
 
+/-- A space with finitely many connected components has a finite-dimensional space of
+locally constant functions. -/
+theorem finite_locallyConstant_of_finite_components
+    {X K : Type*} [TopologicalSpace X] [Field K] [Finite (ConnectedComponents X)] :
+    Module.Finite K (LocallyConstant X K) := by
+  classical
+  let := Fintype.ofFinite (ConnectedComponents X)
+  let rep : ConnectedComponents X → X := fun c =>
+    Classical.choose (ConnectedComponents.surjective_coe c)
+  have hrep (c : ConnectedComponents X) : ConnectedComponents.mk (rep c) = c :=
+    Classical.choose_spec (ConnectedComponents.surjective_coe c)
+  let eval : LocallyConstant X K →ₗ[K] (ConnectedComponents X → K) :=
+    { toFun := fun f c => f (rep c)
+      map_add' := by intros; rfl
+      map_smul' := by intros; rfl }
+  apply Module.Finite.of_injective eval
+  intro f g h
+  ext x
+  have hx : x ∈ connectedComponent (rep (ConnectedComponents.mk x)) :=
+    ConnectedComponents.coe_eq_coe'.mp (hrep (ConnectedComponents.mk x)).symm
+  have hf := f.apply_eq_of_isPreconnected isPreconnected_connectedComponent hx
+    (mem_connectedComponent)
+  have hg := g.apply_eq_of_isPreconnected isPreconnected_connectedComponent hx
+    (mem_connectedComponent)
+  have he := congrFun h (ConnectedComponents.mk x)
+  exact hf.trans (he.trans hg.symm)
+
+/-- For compact Hausdorff spaces, the quotient of locally constant functions by constants
+is finite-dimensional exactly when there are finitely many connected components. -/
+theorem finite_component_classes_iff_finite_components
+    {X K : Type*} [TopologicalSpace X] [CompactSpace X] [T2Space X] [Field K] :
+    Module.Finite K (LocallyConstant X K ⧸
+      LinearMap.range (LocallyConstant.constₗ K : K →ₗ[K] LocallyConstant X K)) ↔
+      Finite (ConnectedComponents X) := by
+  constructor
+  · intro h
+    let := h
+    apply Cardinal.mk_lt_aleph0_iff.mp
+    exact lt_of_le_of_lt (cardinal_components_le_finrank_succ (K := K))
+      Cardinal.natCast_lt_aleph0
+  · intro h
+    let := h
+    let := finite_locallyConstant_of_finite_components (X := X) (K := K)
+    exact Module.Finite.of_surjective _ (Submodule.mkQ_surjective _)
+
 end LatticeProb.Topology
