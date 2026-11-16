@@ -5,8 +5,6 @@ import Mathlib.Topology.UnitInterval
 
 /-! Compact connected proper subsets of a Jordan curve are points or arcs. -/
 
-set_option autoImplicit false
-
 noncomputable section
 
 open Set Metric
