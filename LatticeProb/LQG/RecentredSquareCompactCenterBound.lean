@@ -1149,4 +1149,47 @@ theorem lintegral_rpow_unit_tilted_square_density_le_power
           ENNReal.ofReal (r ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) := by ac_rfl
     _ = _ := by rw [hvol]
 
+/-- The square integral of the approximation density after removing the
+unit-circle average at each integration point. -/
+noncomputable def unitTiltedSquareMass {Ω : Type*} (H : ℝ → ℂ → Ω → ℝ)
+    (γ : ℝ) (z : ℂ) (m n : ℕ) (ω : Ω) : ℝ≥0∞ :=
+  ∫⁻ w in sqQ (sqCorner z (radius m)) m,
+    ENNReal.ofReal (radius n ^ (γ ^ 2 / 2) * Real.exp (γ * (H (radius n) w ω - H 1 w ω)))
+
+/-- Finite families of unit-tilted square masses have a maximal moment
+bounded by the sum of their single-level moments. -/
+theorem lintegral_finset_sup_unit_tilted_square_mass_rpow_le
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {H : ℝ → ℂ → Ω → ℝ}
+    (hH : LQGDimension.IsGFFCircleAverage H P)
+    (hHm : ∀ r z, Measurable (H r z)) (γ : ℝ) {p : ℝ} (hp : 1 < p)
+    (z : ℂ) (m : ℕ) (T : Finset ℕ) :
+    (∫⁻ ω, (T.sup fun n => unitTiltedSquareMass H γ z m n ω) ^ p ∂P) ≤
+      ENNReal.ofReal (radius m ^ (2 * p)) * ∑ n ∈ T,
+        ENNReal.ofReal (radius n ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) := by
+  have hp0 : 0 < p := by linarith
+  have hmeas (n : ℕ) : Measurable (unitTiltedSquareMass H γ z m n) := by
+    have hd : Measurable (fun q : ℂ × Ω => ENNReal.ofReal (radius n ^ (γ ^ 2 / 2) *
+        Real.exp (γ * (H (radius n) q.1 q.2 - H 1 q.1 q.2)))) :=
+      ENNReal.measurable_ofReal.comp (((measurable_uncurry_coord hH hHm (radius_pos n)).sub
+        (measurable_uncurry_coord hH hHm (by norm_num))).const_mul γ |>.exp.const_mul _)
+    exact hd.lintegral_prod_left'
+  calc
+    _ ≤ ∫⁻ ω, ∑ n ∈ T, unitTiltedSquareMass H γ z m n ω ^ p ∂P := by
+      apply lintegral_mono
+      intro ω
+      apply Finset.apply_sup_le_sum (f := fun x : ℝ≥0∞ => x ^ p) (ENNReal.zero_rpow_of_pos hp0)
+      intro a b
+      rw [(show Monotone (fun x : ℝ≥0∞ => x ^ p) from
+        fun _ _ h => ENNReal.rpow_le_rpow h hp0.le).map_sup]
+      exact sup_le (self_le_add_right _ _) (self_le_add_left _ _)
+    _ = ∑ n ∈ T, ∫⁻ ω, unitTiltedSquareMass H γ z m n ω ^ p ∂P :=
+      lintegral_finsetSum' T (fun n _ => (hmeas n).aemeasurable.pow_const p)
+    _ ≤ ∑ n ∈ T, ENNReal.ofReal (radius m ^ (2 * p)) *
+        ENNReal.ofReal (radius n ^ (p * (γ ^ 2 / 2) - (p * γ) ^ 2 / 2)) := by
+      apply Finset.sum_le_sum
+      intro n hn
+      have hr1 : radius n ≤ 1 := by unfold radius; exact pow_le_one₀ (by norm_num) (by norm_num)
+      exact lintegral_rpow_unit_tilted_square_density_le_power hH hHm (radius_pos n) hr1 γ hp.le z m
+    _ = _ := (Finset.mul_sum _ _ _).symm
+
 end LatticeProb.LQG
