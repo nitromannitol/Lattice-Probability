@@ -7,8 +7,6 @@ The represented components of a plane complement are equivalent to the connected
 of the complement as a subspace.
 -/
 
-set_option autoImplicit false
-
 open Set Bornology
 
 namespace LatticeProb.Topology
