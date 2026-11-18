@@ -15,6 +15,12 @@ Auxiliary facts for applying it: small-radius bounds plus a total-mass bound giv
 radii (`measure_ball_le_rpow_of_le_one`), a closed ball in a proper space has mass controlled by
 finitely many unit balls (`exists_measure_closedBall_le_of_measure_ball_le`), and
 `∫_{(0,t]} s^{a-1} ds = t^a / a` (`lintegral_Ioc_rpow_sub_one`).
+
+On `ℂ`, the planar Gaussian law with mean `z` and covariance `s · I₂` (the image of the product of
+two real Gaussians) has density `(2π s)⁻¹ exp (-‖y - z‖² / (2 s))`
+(`lintegral_map_prod_gaussianReal_eq`); hence a density whose integrals over the balls `B(z, r)` are
+at most `A r^β` has Gaussian average at most `(1024 / 7) (2π)⁻¹ A s^{β/2 - 1}`
+(`lintegral_map_prod_gaussianReal_le_of_setLIntegral_ball_le`).
 -/
 
 open MeasureTheory Metric Set
@@ -183,5 +189,86 @@ theorem lintegral_Ioc_rpow_sub_one {a t : ℝ} (ha : 0 < a) (ht : 0 ≤ t) :
       (ae_restrict_of_forall_mem measurableSet_Ioc fun s hs => Real.rpow_nonneg hs.1.le _),
     ← intervalIntegral.integral_of_le ht, integral_rpow (Or.inl hr), sub_add_cancel,
     Real.zero_rpow ha.ne', sub_zero]
+
+section PlanarGaussian
+
+open ProbabilityTheory
+open scoped NNReal
+
+/-- The planar Gaussian law with mean `z` and covariance `s · I₂`, realized as the image on `ℂ` of
+the product of the real Gaussians `𝒩(Re z, s)` and `𝒩(Im z, s)`, has density
+`(2π s)⁻¹ exp (-‖y - z‖² / (2 s))` with respect to Lebesgue measure. -/
+theorem lintegral_map_prod_gaussianReal_eq (z : ℂ) {s : ℝ≥0} (hs : s ≠ 0) {g : ℂ → ℝ≥0∞}
+    (hg : Measurable g) :
+    ∫⁻ y, g y ∂(((gaussianReal z.re s).prod (gaussianReal z.im s)).map
+        Complex.measurableEquivRealProd.symm) =
+      ∫⁻ y, ENNReal.ofReal ((2 * Real.pi * s)⁻¹ * Real.exp (-(‖y - z‖ ^ 2) / (2 * s))) * g y := by
+  have hpres : MeasurePreserving Complex.measurableEquivRealProd.symm volume volume :=
+    Complex.volume_preserving_equiv_real_prod.symm _
+  rw [lintegral_map_equiv, gaussianReal_of_var_ne_zero _ hs, gaussianReal_of_var_ne_zero _ hs,
+    prod_withDensity (measurable_gaussianPDF _ _) (measurable_gaussianPDF _ _),
+    lintegral_withDensity_eq_lintegral_mul _
+      (f := fun p : ℝ × ℝ => gaussianPDF z.re s p.1 * gaussianPDF z.im s p.2)
+      (((measurable_gaussianPDF _ _).comp measurable_fst).mul
+        ((measurable_gaussianPDF _ _).comp measurable_snd))
+      (g := fun p => g (Complex.measurableEquivRealProd.symm p))
+      (hg.comp Complex.measurableEquivRealProd.symm.measurable),
+    ← hpres.lintegral_comp_emb Complex.measurableEquivRealProd.symm.measurableEmbedding,
+    Measure.volume_eq_prod]
+  refine lintegral_congr fun p => ?_
+  simp only [Pi.mul_apply, gaussianPDF]
+  rw [← ENNReal.ofReal_mul (gaussianPDFReal_nonneg _ _ _)]
+  congr 2
+  have h2 : 0 ≤ 2 * Real.pi * (s : ℝ) := by positivity
+  have hnorm : ‖Complex.measurableEquivRealProd.symm p - z‖ ^ 2 =
+      (p.1 - z.re) ^ 2 + (p.2 - z.im) ^ 2 := by
+    rw [Complex.sq_norm, Complex.normSq_apply, Complex.measurableEquivRealProd_symm_apply]
+    simp only [Complex.sub_re, Complex.sub_im]
+    ring
+  have hsq : (Real.sqrt (2 * Real.pi * s))⁻¹ * (Real.sqrt (2 * Real.pi * s))⁻¹ =
+      (2 * Real.pi * s)⁻¹ := by
+    rw [← mul_inv, Real.mul_self_sqrt h2]
+  have hexp : Real.exp (-((p.1 - z.re) ^ 2 + (p.2 - z.im) ^ 2) / (2 * s)) =
+      Real.exp (-(p.1 - z.re) ^ 2 / (2 * s)) * Real.exp (-(p.2 - z.im) ^ 2 / (2 * s)) := by
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  rw [gaussianPDFReal, gaussianPDFReal, hnorm, hexp, ← hsq]
+  ring
+
+/-- Gaussian smoothing of a density with power-law ball masses: if `∫_{B(z, r)} g ≤ A r^β` for every
+`r > 0`, where `β ≤ 1`, then the planar Gaussian law with mean `z` and covariance `s · I₂`
+integrates `g` to at most `(1024 / 7) (2π)⁻¹ A s^{β/2 - 1}`. -/
+theorem lintegral_map_prod_gaussianReal_le_of_setLIntegral_ball_le (z : ℂ) {s : ℝ≥0}
+    (hs : s ≠ 0) {g : ℂ → ℝ≥0∞} (hg : Measurable g) {A β : ℝ} (hβ1 : β ≤ 1) (hA : 0 ≤ A)
+    (hball : ∀ r, 0 < r → ∫⁻ y in ball z r, g y ≤ ENNReal.ofReal (A * r ^ β)) :
+    ∫⁻ y, g y ∂(((gaussianReal z.re s).prod (gaussianReal z.im s)).map
+        Complex.measurableEquivRealProd.symm) ≤
+      ENNReal.ofReal (1024 / 7 / (2 * Real.pi) * A * (s : ℝ) ^ (β / 2 - 1)) := by
+  have hs' : (0 : ℝ) < s := lt_of_le_of_ne s.2 (by exact_mod_cast hs.symm)
+  have hmeas : Measurable fun x : ℂ => ENNReal.ofReal (Real.exp (-(dist x z ^ 2) / (2 * s))) := by
+    fun_prop
+  have hL1 := lintegral_exp_neg_dist_sq_le_of_measure_ball_le (μ := volume.withDensity g) (z := z)
+    hβ1 hA hs' fun r hr => by rw [withDensity_apply _ measurableSet_ball]; exact hball r hr
+  rw [lintegral_withDensity_eq_lintegral_mul _ hg hmeas] at hL1
+  rw [lintegral_map_prod_gaussianReal_eq z hs hg]
+  calc ∫⁻ y, ENNReal.ofReal ((2 * Real.pi * s)⁻¹ * Real.exp (-(‖y - z‖ ^ 2) / (2 * s))) * g y
+      = ∫⁻ y, ENNReal.ofReal ((2 * Real.pi * s)⁻¹) *
+          (g * fun x => ENNReal.ofReal (Real.exp (-(dist x z ^ 2) / (2 * s)))) y := by
+        refine lintegral_congr fun y => ?_
+        simp only [Pi.mul_apply, dist_eq_norm]
+        rw [ENNReal.ofReal_mul (by positivity)]
+        ring
+    _ = ENNReal.ofReal ((2 * Real.pi * s)⁻¹) *
+          ∫⁻ y, (g * fun x => ENNReal.ofReal (Real.exp (-(dist x z ^ 2) / (2 * s)))) y :=
+        lintegral_const_mul' _ _ ENNReal.ofReal_ne_top
+    _ ≤ ENNReal.ofReal ((2 * Real.pi * s)⁻¹) *
+          ENNReal.ofReal (1024 / 7 * A * (s : ℝ) ^ (β / 2)) := by gcongr
+    _ = ENNReal.ofReal (1024 / 7 / (2 * Real.pi) * A * (s : ℝ) ^ (β / 2 - 1)) := by
+        rw [← ENNReal.ofReal_mul (by positivity), Real.rpow_sub_one hs'.ne']
+        congr 1
+        field_simp
+
+end PlanarGaussian
 
 end LatticeProb
