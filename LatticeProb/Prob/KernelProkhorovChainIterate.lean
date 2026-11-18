@@ -26,6 +26,22 @@ is the comparison for every starting point.
 * `prokhorovLE_refl`: `ProkhorovLE μ μ r 0` for `0 < r`.
 * `prokhorovLE_chainStepLaw`: the `n`-step comparison.
 * `prokhorovLE_chainStepLaw_same_start`: the `n`-step comparison from a common initial law.
+* `chainSeqLaw`, `chainSeqLaw_zero`, `chainSeqLaw_succ`, `isProbabilityMeasure_chainSeqLaw`,
+  `chainSeqLaw_const`: the time-inhomogeneous chain, with kernel `κ n` at step `n`.
+* `prokhorovLE_chainSeqLaw`: the `n`-step comparison of two time-inhomogeneous chains with
+  step-dependent closeness `ε n`, continuity radius `r n`, mass errors `η n` and `ρ n`; the radius
+  follows `R (n + 1) = ε n + r n` and the error `e (n + 1) = ε n + η n + ρ n + e n`.
+* `prokhorovLE_chainSeqLaw_sum`: the same with the error in closed form
+  `e₀ + ∑_{m < n} (ε m + η m + ρ m)`.
+
+## Time-inhomogeneous chains
+
+When the continuity of `κ'` is only available with an error proportional to the distance of the
+starting points (a Lipschitz modulus of harmonic measure in the base point, say), the comparison
+radius must be allowed to grow from step to step: the continuity scale at step `n` is the radius
+`R n` reached after `n` steps, and the thickening radius `r n` may be as large as `R n`, so that
+`R (n + 1) = ε n + R n`. The kernels may also depend on the step, which covers chains on
+histories of a fixed length whose `n`-th step only changes the coordinates after `n`.
 -/
 
 open MeasureTheory Metric Set
@@ -58,6 +74,41 @@ theorem isProbabilityMeasure_chainStepLaw {κ : E → Measure E} (hκ : Measurab
     rw [chainStepLaw_succ]
     constructor
     rw [Measure.bind_apply MeasurableSet.univ hκ.aemeasurable]
+    simp
+
+/-- The law after `n` steps of the time-inhomogeneous Markov chain that uses the kernel `κ m` at
+step `m`, started from the law `μ`. -/
+noncomputable def chainSeqLaw (κ : ℕ → E → Measure E) (μ : Measure E) : ℕ → Measure E
+  | 0 => μ
+  | n + 1 => (chainSeqLaw κ μ n).bind (κ n)
+
+@[simp]
+theorem chainSeqLaw_zero (κ : ℕ → E → Measure E) (μ : Measure E) : chainSeqLaw κ μ 0 = μ :=
+  rfl
+
+theorem chainSeqLaw_succ (κ : ℕ → E → Measure E) (μ : Measure E) (n : ℕ) :
+    chainSeqLaw κ μ (n + 1) = (chainSeqLaw κ μ n).bind (κ n) :=
+  rfl
+
+/-- With the same kernel at every step, the time-inhomogeneous chain is the chain of
+`chainStepLaw`. -/
+theorem chainSeqLaw_const (κ : E → Measure E) (μ : Measure E) (n : ℕ) :
+    chainSeqLaw (fun _ => κ) μ n = chainStepLaw κ μ n := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [chainSeqLaw_succ, chainStepLaw_succ, ih]
+
+/-- The `n`-step laws of a time-inhomogeneous chain of Markov kernels started from a probability
+measure are probability measures. -/
+theorem isProbabilityMeasure_chainSeqLaw {κ : ℕ → E → Measure E} (hκ : ∀ n, Measurable (κ n))
+    [∀ n y, IsProbabilityMeasure (κ n y)] {μ : Measure E} [IsProbabilityMeasure μ] (n : ℕ) :
+    IsProbabilityMeasure (chainSeqLaw κ μ n) := by
+  induction n with
+  | zero => rw [chainSeqLaw_zero]; infer_instance
+  | succ n ih =>
+    rw [chainSeqLaw_succ]
+    constructor
+    rw [Measure.bind_apply MeasurableSet.univ (hκ n).aemeasurable]
     simp
 
 variable [PseudoMetricSpace E]
@@ -117,5 +168,61 @@ theorem prokhorovLE_chainStepLaw_same_start {μ : Measure E} [IsProbabilityMeasu
   have h := prokhorovLE_chainStepLaw hκ hκ' hε hη hρ0 le_rfl (prokhorovLE_refl μ hr) hK hH hμH
     hG hcont n
   rwa [add_zero] at h
+
+/-- **`n` steps of two time-inhomogeneous Markov chains in the one-sided Prokhorov sense.** At
+step `m` the kernels `κ m, κ' m` are uniformly `ε m`-close, the `m`-step law of the first chain is
+carried by the measurable set `H m`, the `m`-step law of the second chain gives mass at most `ρ m`
+to `(G m)ᶜ`, and `κ' m` is continuous at the thickening radius `r m` with mass error `η m` between
+starting points `y ∈ H m` and `b ∈ G m` at distance less than the current radius `R m`. If the
+initial laws are `(R 0, e 0)`-close, `R (m + 1) = ε m + r m` and
+`e (m + 1) = ε m + η m + ρ m + e m`, then the `n`-step laws are `(R n, e n)`-close. -/
+theorem prokhorovLE_chainSeqLaw {μ ν : Measure E} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] {κ κ' : ℕ → E → Measure E} (hκ : ∀ n, Measurable (κ n))
+    (hκ' : ∀ n, Measurable (κ' n)) [∀ n y, IsProbabilityMeasure (κ n y)]
+    [∀ n y, IsProbabilityMeasure (κ' n y)] {ε r η ρ R e : ℕ → ℝ} (hε : ∀ n, 0 ≤ ε n)
+    (hη : ∀ n, 0 ≤ η n) (hρ : ∀ n, 0 ≤ ρ n) (he0 : 0 ≤ e 0) (hR : ∀ n, R (n + 1) = ε n + r n)
+    (he : ∀ n, e (n + 1) = ε n + η n + ρ n + e n) (hP : ProkhorovLE μ ν (R 0) (e 0))
+    (hK : ∀ n y, ProkhorovLE (κ n y) (κ' n y) (ε n) (ε n)) {H G : ℕ → Set E}
+    (hH : ∀ n, MeasurableSet (H n)) (hμH : ∀ n, chainSeqLaw κ μ n (H n)ᶜ = 0)
+    (hG : ∀ n, chainSeqLaw κ' ν n (G n)ᶜ ≤ ENNReal.ofReal (ρ n))
+    (hcont : ∀ n, ∀ b ∈ G n, ∀ y ∈ H n, dist y b < R n → ∀ A : Set E, MeasurableSet A →
+      κ' n y A ≤ κ' n b (thickening (r n) A) + ENNReal.ofReal (η n)) (n : ℕ) :
+    ProkhorovLE (chainSeqLaw κ μ n) (chainSeqLaw κ' ν n) (R n) (e n) := by
+  have hen : ∀ m, 0 ≤ e m := by
+    intro m
+    induction m with
+    | zero => exact he0
+    | succ m ih =>
+      rw [he m]
+      exact add_nonneg (add_nonneg (add_nonneg (hε m) (hη m)) (hρ m)) ih
+  induction n with
+  | zero => exact hP
+  | succ n ih =>
+    have hμn := isProbabilityMeasure_chainSeqLaw hκ (μ := μ) n
+    have hνn := isProbabilityMeasure_chainSeqLaw hκ' (μ := ν) n
+    have h := prokhorovLE_bind_split (hκ n) (hκ' n) (hε n) (hη n) (hρ n) (hen n) ih (hK n)
+      (hH n) (hμH n) (hG n) (hcont n)
+    rw [chainSeqLaw_succ, chainSeqLaw_succ, hR n, he n]
+    exact h
+
+/-- **Closed form of the error.** As `prokhorovLE_chainSeqLaw`, with initial error `e₀` and the
+error after `n` steps written as `e₀ + ∑_{m < n} (ε m + η m + ρ m)`. -/
+theorem prokhorovLE_chainSeqLaw_sum {μ ν : Measure E} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] {κ κ' : ℕ → E → Measure E} (hκ : ∀ n, Measurable (κ n))
+    (hκ' : ∀ n, Measurable (κ' n)) [∀ n y, IsProbabilityMeasure (κ n y)]
+    [∀ n y, IsProbabilityMeasure (κ' n y)] {ε r η ρ R : ℕ → ℝ} {e₀ : ℝ} (hε : ∀ n, 0 ≤ ε n)
+    (hη : ∀ n, 0 ≤ η n) (hρ : ∀ n, 0 ≤ ρ n) (he₀ : 0 ≤ e₀) (hR : ∀ n, R (n + 1) = ε n + r n)
+    (hP : ProkhorovLE μ ν (R 0) e₀) (hK : ∀ n y, ProkhorovLE (κ n y) (κ' n y) (ε n) (ε n))
+    {H G : ℕ → Set E} (hH : ∀ n, MeasurableSet (H n)) (hμH : ∀ n, chainSeqLaw κ μ n (H n)ᶜ = 0)
+    (hG : ∀ n, chainSeqLaw κ' ν n (G n)ᶜ ≤ ENNReal.ofReal (ρ n))
+    (hcont : ∀ n, ∀ b ∈ G n, ∀ y ∈ H n, dist y b < R n → ∀ A : Set E, MeasurableSet A →
+      κ' n y A ≤ κ' n b (thickening (r n) A) + ENNReal.ofReal (η n)) (n : ℕ) :
+    ProkhorovLE (chainSeqLaw κ μ n) (chainSeqLaw κ' ν n) (R n)
+      (e₀ + ∑ m ∈ Finset.range n, (ε m + η m + ρ m)) := by
+  refine prokhorovLE_chainSeqLaw (e := fun n => e₀ + ∑ m ∈ Finset.range n, (ε m + η m + ρ m))
+    hκ hκ' hε hη hρ (by simpa using he₀) hR (fun m => ?_) (by simpa using hP) hK hH hμH hG
+    hcont n
+  simp only [Finset.sum_range_succ]
+  ring
 
 end LatticeProb
