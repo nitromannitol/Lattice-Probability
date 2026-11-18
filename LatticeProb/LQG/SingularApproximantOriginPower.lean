@@ -24,7 +24,7 @@ open LatticeProb.Gauss
 
 /-- Every radius `0 < s ≤ 2^{-J₁}` lies in a dyadic bracket `2^{-(J+1)} < s ≤ 2^{-J}`
 with `J₁ ≤ J`. -/
-theorem exists_dyadicScale_bracket {J₁ : ℕ} {s : ℝ} (hs : 0 < s)
+theorem exists_dyadicScale_bracket_of_le {J₁ : ℕ} {s : ℝ} (hs : 0 < s)
     (hsJ : s ≤ dyadicScale J₁) :
     ∃ J : ℕ, J₁ ≤ J ∧ dyadicScale (J + 1) < s ∧ s ≤ dyadicScale J := by
   have key : ∀ j : ℕ, dyadicScale (J₁ + j) * 2 ^ j = dyadicScale J₁ := by
@@ -122,7 +122,7 @@ theorem exists_rpow_bound_of_dyadic_geometric_bound
           mul_le_mul_of_nonneg_right (le_max_right _ _) (Real.rpow_nonneg (hdpos J).le _)
   refine ⟨a, 2 * B, ha0, ha1, by positivity, ?_⟩
   intro i s hs hsJ
-  obtain ⟨J, hJ₁, hlt, hle⟩ := exists_dyadicScale_bracket hs hsJ
+  obtain ⟨J, hJ₁, hlt, hle⟩ := exists_dyadicScale_bracket_of_le hs hsJ
   have hdouble : dyadicScale J = 2 * dyadicScale (J + 1) := by
     unfold dyadicScale
     ring
