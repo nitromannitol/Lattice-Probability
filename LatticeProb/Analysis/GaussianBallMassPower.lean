@@ -20,7 +20,12 @@ On `ℂ`, the planar Gaussian law with mean `z` and covariance `s · I₂` (the 
 two real Gaussians) has density `(2π s)⁻¹ exp (-‖y - z‖² / (2 s))`
 (`lintegral_map_prod_gaussianReal_eq`); hence a density whose integrals over the balls `B(z, r)` are
 at most `A r^β` has Gaussian average at most `(1024 / 7) (2π)⁻¹ A s^{β/2 - 1}`
-(`lintegral_map_prod_gaussianReal_le_of_setLIntegral_ball_le`).
+(`lintegral_map_prod_gaussianReal_le_of_setLIntegral_ball_le`). Integrating over the variances
+`s ∈ (0, t]` gives `(1024 / 7) (2π)⁻¹ A (β/2)⁻¹ t^{β/2}`
+(`lintegral_Ioc_lintegral_map_prod_gaussianReal_le`). For a density with small-radius ball bounds
+at all centres of a closed ball, its restriction to the open ball has all-radius bounds there
+(`exists_setLIntegral_ball_indicator_le`), which yields the heat bound
+`exists_lintegral_Ioc_lintegral_map_prod_gaussianReal_indicator_le`.
 -/
 
 open MeasureTheory Metric Set
@@ -190,6 +195,35 @@ theorem lintegral_Ioc_rpow_sub_one {a t : ℝ} (ha : 0 < a) (ht : 0 ≤ t) :
     ← intervalIntegral.integral_of_le ht, integral_rpow (Or.inl hr), sub_add_cancel,
     Real.zero_rpow ha.ne', sub_zero]
 
+/-- **Localized all-radius ball bounds.** In a proper space there is `N`, depending only on
+`closedBall x₀ R`, such that: if `∫_{B(c, r)} g dμ ≤ A r^β` for all centres `c ∈ closedBall x₀ R`
+and all `0 < r ≤ 1`, then the restriction of `g` to `ball x₀ R` satisfies
+`∫_{B(z, r)} 1_{B(x₀, R)} g dμ ≤ max A (N A) · r^{min β 1}` for all `z ∈ closedBall x₀ R` and all
+`r > 0`. -/
+theorem exists_setLIntegral_ball_indicator_le {α : Type*} [PseudoMetricSpace α] [ProperSpace α]
+    [MeasurableSpace α] [OpensMeasurableSpace α] (x₀ : α) (R : ℝ) :
+    ∃ N : ℕ, ∀ (μ : Measure α) (g : α → ℝ≥0∞) (A β : ℝ), 0 ≤ A → 0 ≤ β →
+      (∀ c ∈ closedBall x₀ R, ∀ r, 0 < r → r ≤ 1 →
+        ∫⁻ y in ball c r, g y ∂μ ≤ ENNReal.ofReal (A * r ^ β)) →
+      ∀ z ∈ closedBall x₀ R, ∀ r, 0 < r →
+        ∫⁻ y in ball z r, (ball x₀ R).indicator g y ∂μ ≤
+          ENNReal.ofReal (max A (N * A) * r ^ min β 1) := by
+  obtain ⟨N, hN⟩ := exists_measure_closedBall_le_of_measure_ball_le x₀ R
+  refine ⟨N, fun μ g A β hA hβ hsmall z hz r hr => ?_⟩
+  have hball : ∀ c r, (μ.withDensity g) (ball c r) = ∫⁻ y in ball c r, g y ∂μ := fun c r =>
+    withDensity_apply _ measurableSet_ball
+  have hmass : (μ.withDensity g) (closedBall x₀ R) ≤ ENNReal.ofReal (N * A) :=
+    hN _ A hA fun c hc => by
+      rw [hball]
+      simpa using hsmall c hc 1 one_pos le_rfl
+  have key := measure_ball_le_rpow_of_le_one (μ := (μ.withDensity g).restrict (ball x₀ R))
+    (z := z) (M := N * A) hβ hA
+    (by rw [Measure.restrict_apply_univ]; exact (measure_mono ball_subset_closedBall).trans hmass)
+    (fun r hr hr1 => (Measure.restrict_apply_le _ _).trans
+      ((hball z r).trans_le (hsmall z hz r hr hr1))) r hr
+  rwa [restrict_withDensity measurableSet_ball, ← withDensity_indicator measurableSet_ball,
+    withDensity_apply _ measurableSet_ball] at key
+
 section PlanarGaussian
 
 open ProbabilityTheory
@@ -268,6 +302,55 @@ theorem lintegral_map_prod_gaussianReal_le_of_setLIntegral_ball_le (z : ℂ) {s 
         rw [← ENNReal.ofReal_mul (by positivity), Real.rpow_sub_one hs'.ne']
         congr 1
         field_simp
+
+/-- **Time integral of Gaussian averages.** Under the hypotheses of
+`lintegral_map_prod_gaussianReal_le_of_setLIntegral_ball_le` with `0 < β ≤ 1`, the Gaussian averages
+of `g` with mean `z` over the variances `s ∈ (0, t]` integrate to at most
+`(1024 / 7) (2π)⁻¹ A (β / 2)⁻¹ t^{β/2}`. -/
+theorem lintegral_Ioc_lintegral_map_prod_gaussianReal_le (z : ℂ) {g : ℂ → ℝ≥0∞}
+    (hg : Measurable g) {A β : ℝ} (hβ0 : 0 < β) (hβ1 : β ≤ 1) (hA : 0 ≤ A)
+    (hball : ∀ r, 0 < r → ∫⁻ y in ball z r, g y ≤ ENNReal.ofReal (A * r ^ β)) {t : ℝ}
+    (ht : 0 ≤ t) :
+    ∫⁻ s in Ioc 0 t, ∫⁻ y, g y ∂(((gaussianReal z.re s.toNNReal).prod
+        (gaussianReal z.im s.toNNReal)).map Complex.measurableEquivRealProd.symm) ≤
+      ENNReal.ofReal (1024 / 7 / (2 * Real.pi) * A / (β / 2) * t ^ (β / 2)) := by
+  have hc : 0 ≤ 1024 / 7 / (2 * Real.pi) * A := mul_nonneg (by positivity) hA
+  calc ∫⁻ s in Ioc 0 t, ∫⁻ y, g y ∂(((gaussianReal z.re s.toNNReal).prod
+        (gaussianReal z.im s.toNNReal)).map Complex.measurableEquivRealProd.symm)
+      ≤ ∫⁻ s in Ioc 0 t, ENNReal.ofReal (1024 / 7 / (2 * Real.pi) * A) *
+          ENNReal.ofReal (s ^ (β / 2 - 1)) := by
+        refine setLIntegral_mono' measurableSet_Ioc fun s hs => ?_
+        have hs0 : s.toNNReal ≠ 0 := (Real.toNNReal_pos.2 hs.1).ne'
+        refine (lintegral_map_prod_gaussianReal_le_of_setLIntegral_ball_le z hs0 hg hβ1 hA
+          hball).trans_eq ?_
+        rw [Real.coe_toNNReal _ hs.1.le, ← ENNReal.ofReal_mul hc]
+    _ = ENNReal.ofReal (1024 / 7 / (2 * Real.pi) * A) *
+          ∫⁻ s in Ioc 0 t, ENNReal.ofReal (s ^ (β / 2 - 1)) :=
+        lintegral_const_mul' _ _ ENNReal.ofReal_ne_top
+    _ = ENNReal.ofReal (1024 / 7 / (2 * Real.pi) * A / (β / 2) * t ^ (β / 2)) := by
+        rw [lintegral_Ioc_rpow_sub_one (half_pos hβ0) ht, ← ENNReal.ofReal_mul hc]
+        congr 1
+        ring
+
+/-- **Heat bound for a locally power-law density.** For every closed ball `closedBall x₀ R` of `ℂ`
+there is `N` such that: if `∫_{B(c, r)} g ≤ A r^β` for all centres `c ∈ closedBall x₀ R` and all
+`0 < r ≤ 1`, with `A ≥ 0` and `β > 0`, then for every `z ∈ closedBall x₀ R` and `t ≥ 0` the planar
+Gaussian averages of `1_{B(x₀, R)} g` with mean `z` over the variances `s ∈ (0, t]` integrate to at
+most `(1024 / 7) (2π)⁻¹ max A (N A) (β' / 2)⁻¹ t^{β'/2}`, where `β' = min β 1`. -/
+theorem exists_lintegral_Ioc_lintegral_map_prod_gaussianReal_indicator_le (x₀ : ℂ) (R : ℝ) :
+    ∃ N : ℕ, ∀ g : ℂ → ℝ≥0∞, Measurable g → ∀ A β : ℝ, 0 ≤ A → 0 < β →
+      (∀ c ∈ closedBall x₀ R, ∀ r, 0 < r → r ≤ 1 →
+        ∫⁻ y in ball c r, g y ≤ ENNReal.ofReal (A * r ^ β)) →
+      ∀ z ∈ closedBall x₀ R, ∀ t, 0 ≤ t →
+        ∫⁻ s in Ioc 0 t, ∫⁻ y, (ball x₀ R).indicator g y ∂(((gaussianReal z.re s.toNNReal).prod
+            (gaussianReal z.im s.toNNReal)).map Complex.measurableEquivRealProd.symm) ≤
+          ENNReal.ofReal (1024 / 7 / (2 * Real.pi) * max A (N * A) / (min β 1 / 2) *
+            t ^ (min β 1 / 2)) := by
+  obtain ⟨N, hN⟩ := exists_setLIntegral_ball_indicator_le x₀ R
+  exact ⟨N, fun g hg A β hA hβ hsmall z hz t ht =>
+    lintegral_Ioc_lintegral_map_prod_gaussianReal_le z (hg.indicator measurableSet_ball)
+      (lt_min hβ one_pos) (min_le_right β 1) (le_max_of_le_left hA)
+      (hN volume g A β hA hβ.le hsmall z hz) ht⟩
 
 end PlanarGaussian
 
