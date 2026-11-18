@@ -1,6 +1,7 @@
 import LatticeProb.Prob.BrownianExitKelvin
 import LatticeProb.Prob.BrownianExitPosition
 import LatticeProb.Prob.BrownianOpenExitFinite
+import LatticeProb.Prob.BrownianRestartCanonical
 
 /-!
 # Points are polar for planar Brownian motion
@@ -28,6 +29,12 @@ circle tends to `1`, so `B` almost surely visits the closed disc of radius `ε` 
   never visits a point `y ≠ x` (points are polar).
 * `LatticeProb.IsBrownianSpace.ae_exists_norm_sub_le`: a planar Brownian motion almost surely
   visits every closed disc of positive radius (neighbourhood recurrence).
+* `LatticeProb.IsBrownianSpace.exists_continuous_modification`: a Brownian motion has an
+  indistinguishable modification with continuous paths and measurable values, which is again a
+  Brownian motion (`LatticeProb.IsBrownianSpace.congr_ae`).
+* `LatticeProb.IsBrownianSpace.ae_exists_le_norm_sub_lt`: almost surely, a planar Brownian motion
+  comes within any `ε > 0` of `y` after any time `T` (restart at `T` by the Markov property, then
+  neighbourhood recurrence from the random position `B_T`).
 -/
 
 open MeasureTheory Filter Topology Set Metric
@@ -251,5 +258,140 @@ theorem IsBrownianSpace.ae_exists_norm_sub_le {x y : EuclideanSpace ℝ (Fin 2)}
   have h0 := ge_of_tendsto' hlim hbound
   exact ae_iff.2 ((measureReal_eq_zero_iff (measure_ne_top P _)).1
     (le_antisymm h0 measureReal_nonneg))
+
+/-- **Indistinguishable modifications.** A process whose paths almost surely agree with those of
+a Brownian motion on `ℝ ^ d` is a Brownian motion on `ℝ ^ d`. -/
+theorem IsBrownianSpace.congr_ae {d : ℕ} {x : EuclideanSpace ℝ (Fin d)}
+    {B B' : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)} (hB : IsBrownianSpace d x B P)
+    (h : ∀ᵐ ω ∂P, ∀ t, B' t ω = B t ω) : IsBrownianSpace d x B' P where
+  start := by
+    filter_upwards [hB.start, h] with ω h0 hω
+    rw [hω, h0]
+  coord i :=
+    { toIsPreBrownianReal := (hB.coord i).toIsPreBrownianReal.congr fun t => by
+        filter_upwards [h] with ω hω
+        rw [hω]
+      cont := by
+        filter_upwards [(hB.coord i).cont, h] with ω hc hω
+        simpa only [hω] using hc }
+  indep := (ProbabilityTheory.iIndepFun_congr fun i => by
+    filter_upwards [h] with ω hω
+    funext t
+    rw [hω]).1 hB.indep
+
+/-- **A continuous modification.** A Brownian motion on `ℝ ^ d`, `d ≥ 1`, has an
+indistinguishable modification whose paths are all continuous and whose values are measurable. -/
+theorem IsBrownianSpace.exists_continuous_modification {d : ℕ} (hd : 1 ≤ d)
+    {x : EuclideanSpace ℝ (Fin d)} {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d)}
+    (hB : IsBrownianSpace d x B P) :
+    ∃ B' : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin d), (∀ t, Measurable (B' t)) ∧
+      (∀ ω, Continuous fun t => B' t ω) ∧ ∀ᵐ ω ∂P, ∀ t, B' t ω = B t ω := by
+  obtain ⟨C, hCm, hC, -, hCW, -⟩ := hB.exists_continuousVersion
+  have hs : Real.sqrt d ≠ 0 :=
+    Real.sqrt_ne_zero'.2 (Nat.cast_pos.2 (Nat.lt_of_lt_of_le Nat.zero_lt_one hd))
+  refine ⟨fun t ω => x + (Real.sqrt d)⁻¹ • C t ω, fun t => by have := hCm t; fun_prop, fun ω => by have := hC ω; fun_prop, ?_⟩
+  filter_upwards [hCW] with ω hω t
+  rw [hω t, smul_smul, inv_mul_cancel₀ hs, one_smul]
+  abel
+
+/-- **Recurrence after a fixed time, for a continuous measurable version.** -/
+theorem IsBrownianSpace.ae_exists_le_norm_sub_lt_of_continuous {x y : EuclideanSpace ℝ (Fin 2)}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin 2)} (hB : IsBrownianSpace 2 x B P)
+    (hm : ∀ t, StronglyMeasurable (B t)) (hcont : ∀ ω, Continuous fun t => B t ω)
+    {ε : ℝ} (hε : 0 < ε) (T : ℝ≥0) :
+    ∀ᵐ ω ∂P, ∃ t, T ≤ t ∧ ‖B t ω - y‖ < ε := by
+  have := hB.isProbabilityMeasure
+  obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense ℝ≥0
+  let S : Set (EuclideanSpace ℝ (Fin 2) × BrownianPath 2) :=
+    ⋃ q ∈ D, {p | ‖p.1 + p.2 q - y‖ < ε}
+  have hevm : ∀ q : ℝ≥0, Measurable fun w : BrownianPath 2 => w q := fun q =>
+    ContinuousMapBorel.ContinuousMap.measurable_iff_eval.1 measurable_id q
+  have hSm : MeasurableSet S := by
+    refine MeasurableSet.biUnion hDc fun q _ => ?_
+    exact measurableSet_lt
+      ((measurable_fst.add ((hevm q).comp measurable_snd)).sub_const y).norm measurable_const
+  have hdense : ∀ (v : EuclideanSpace ℝ (Fin 2)) (w : BrownianPath 2) (t : ℝ≥0),
+      ‖v + w t - y‖ < ε → (v, w) ∈ S := by
+    intro v w t ht
+    have hU : IsOpen {s : ℝ≥0 | ‖v + w s - y‖ < ε} :=
+      isOpen_lt ((continuous_const.add w.continuous).sub continuous_const).norm continuous_const
+    obtain ⟨q, hqD, hqU⟩ := hDd.exists_mem_open hU ⟨t, ht⟩
+    exact mem_iUnion₂.2 ⟨q, hqD, hqU⟩
+  have hR0 := measurable_restartPath hm hcont (measurable_const (a := (0 : ℝ≥0)))
+  have hinner : ∀ v : EuclideanSpace ℝ (Fin 2),
+      ∀ᵐ w ∂(P.map (restartPath B hcont fun _ => 0)), (v, w) ∈ S := by
+    intro v
+    rw [ae_map_iff hR0.aemeasurable (measurable_prodMk_left hSm)]
+    filter_upwards [hB.ae_exists_norm_sub_le (y := y - v + x) (half_pos hε), hB.start]
+      with ω ⟨t, ht⟩ h0
+    refine hdense v _ t ?_
+    have heq : v + (restartPath B hcont (fun _ => 0) ω) t - y = B t ω - (y - v + x) := by
+      change v + (B (0 + t) ω - B 0 ω) - y = _
+      rw [zero_add, h0]
+      abel
+    rw [heq]
+    exact lt_of_le_of_lt ht (half_lt_self hε)
+  have hτ := isStoppingTime_const (natFiltration B hm) T
+  have hY : Measurable[hτ.measurableSpace] (B T) := by
+    rw [IsStoppingTime.measurableSpace_const]
+    exact (Filtration.stronglyAdapted_natural hm T).measurable
+  have hlaw := hB.map_prod_restartPath hm hcont (τ := fun _ => T) hτ hY MeasurableSet.univ
+  rw [Measure.restrict_univ] at hlaw
+  have hprod : ∀ᵐ p ∂((P.map (B T)).prod (P.map (restartPath B hcont fun _ => 0))), p ∈ S :=
+    (Measure.ae_prod_iff_ae_ae hSm).2 (Eventually.of_forall hinner)
+  rw [← hlaw] at hprod
+  have hpair := (ae_map_iff (p := fun p => p ∈ S) ((hm T).measurable.prodMk
+    (measurable_restartPath hm hcont (measurable_const (a := T)))).aemeasurable hSm).1 hprod
+  filter_upwards [hpair] with ω hω
+  obtain ⟨q, -, hq⟩ := mem_iUnion₂.1 hω
+  refine ⟨T + q, le_self_add, ?_⟩
+  have heq : B T ω + (restartPath B hcont (fun _ => T) ω) q - y = B (T + q) ω - y := by
+    change B T ω + (B (T + q) ω - B T ω) - y = _
+    abel
+  rw [← heq]
+  exact hq
+
+/-- **Neighbourhood recurrence after any time.** A planar Brownian motion almost surely comes
+within distance `ε > 0` of any point `y` after any time `T`: restart at the deterministic time `T`
+(the restarted path is a Brownian motion independent of `B_T`) and apply neighbourhood recurrence
+from the position `B_T`. -/
+theorem IsBrownianSpace.ae_exists_le_norm_sub_lt {x y : EuclideanSpace ℝ (Fin 2)}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin 2)} (hB : IsBrownianSpace 2 x B P)
+    {ε : ℝ} (hε : 0 < ε) (T : ℝ≥0) :
+    ∀ᵐ ω ∂P, ∃ t, T ≤ t ∧ ‖B t ω - y‖ < ε := by
+  obtain ⟨B', hm, hc, hBB'⟩ := hB.exists_continuous_modification (by norm_num)
+  filter_upwards [(hB.congr_ae hBB').ae_exists_le_norm_sub_lt_of_continuous
+    (fun t => (hm t).stronglyMeasurable) hc (y := y) hε T, hBB'] with ω ⟨t, hTt, ht⟩ hω
+  exact ⟨t, hTt, by rwa [hω t] at ht⟩
+
+/-- **Planar Brownian motion is neighbourhood recurrent.** Almost surely, for every point `y`,
+every `ε > 0` and every time `T`, the path comes within distance `ε` of `y` after time `T`. -/
+theorem IsBrownianSpace.ae_forall_exists_le_norm_sub_lt {x : EuclideanSpace ℝ (Fin 2)}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin 2)} (hB : IsBrownianSpace 2 x B P) :
+    ∀ᵐ ω ∂P, ∀ (y : EuclideanSpace ℝ (Fin 2)) (ε : ℝ), 0 < ε → ∀ T : ℝ≥0,
+      ∃ t, T ≤ t ∧ ‖B t ω - y‖ < ε := by
+  obtain ⟨Y, hYc, hYd⟩ := TopologicalSpace.exists_countable_dense (EuclideanSpace ℝ (Fin 2))
+  have hall : ∀ᵐ ω ∂P, ∀ y ∈ Y, ∀ n m : ℕ,
+      ∃ t, (n : ℝ≥0) ≤ t ∧ ‖B t ω - y‖ < 1 / ((m : ℝ) + 1) := by
+    rw [ae_ball_iff hYc]
+    intro y _
+    rw [ae_all_iff]
+    intro n
+    rw [ae_all_iff]
+    intro m
+    exact hB.ae_exists_le_norm_sub_lt (y := y) Nat.one_div_pos_of_nat (n : ℝ≥0)
+  filter_upwards [hall] with ω hω y ε hε T
+  obtain ⟨m, hm⟩ := exists_nat_one_div_lt (half_pos hε)
+  obtain ⟨y', hy'Y, hy'⟩ := hYd.exists_dist_lt y (half_pos hε)
+  obtain ⟨n, hn⟩ := exists_nat_ge (T : ℝ)
+  obtain ⟨t, hnt, ht⟩ := hω y' hy'Y n m
+  refine ⟨t, ?_, ?_⟩
+  · exact le_trans (by exact_mod_cast hn) hnt
+  · calc ‖B t ω - y‖ ≤ ‖B t ω - y'‖ + ‖y' - y‖ := norm_sub_le_norm_sub_add_norm_sub _ _ _
+      _ < ε / 2 + ε / 2 := by
+          gcongr
+          · exact ht.trans hm
+          · rw [← dist_eq_norm, dist_comm]; exact hy'
+      _ = ε := add_halves ε
 
 end LatticeProb
