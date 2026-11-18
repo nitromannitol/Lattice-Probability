@@ -10,6 +10,11 @@ Let `μ` be a measure on a pseudometric space with `μ (ball z r) ≤ A r^β` fo
 The proof splits space into the dyadic shells `2^{j-1} √s ≤ d(x, z) < 2^j √s`: on the `j`-th shell
 the weight is at most `128 / 16^j` (from `exp y ≥ y² / 2`), the shell has mass at most
 `A 2^j s^{β/2}`, and the resulting series is geometric with ratio `1/8`.
+
+Auxiliary facts for applying it: small-radius bounds plus a total-mass bound give bounds at all
+radii (`measure_ball_le_rpow_of_le_one`), a closed ball in a proper space has mass controlled by
+finitely many unit balls (`exists_measure_closedBall_le_of_measure_ball_le`), and
+`∫_{(0,t]} s^{a-1} ds = t^a / a` (`lintegral_Ioc_rpow_sub_one`).
 -/
 
 open MeasureTheory Metric Set
@@ -129,5 +134,54 @@ theorem lintegral_exp_neg_dist_sq_le_of_measure_ball_le {α : Type*} [PseudoMetr
           tsum_mul_left, tsum_geometric_of_lt_one (by norm_num) (by norm_num)]
         congr 1
         ring
+
+/-- **From small balls to all balls.** If `μ (ball z r) ≤ A r^β` for `0 < r ≤ 1` and `μ` has total
+mass at most `M`, then `μ (ball z r) ≤ max A M · r^{min β 1}` for every `r > 0`. -/
+theorem measure_ball_le_rpow_of_le_one {α : Type*} [PseudoMetricSpace α] [MeasurableSpace α]
+    {μ : Measure α} {z : α} {A M β : ℝ} (hβ : 0 ≤ β) (hA : 0 ≤ A)
+    (huniv : μ univ ≤ ENNReal.ofReal M)
+    (hsmall : ∀ r, 0 < r → r ≤ 1 → μ (ball z r) ≤ ENNReal.ofReal (A * r ^ β)) :
+    ∀ r, 0 < r → μ (ball z r) ≤ ENNReal.ofReal (max A M * r ^ min β 1) := by
+  intro r hr
+  have hmax : 0 ≤ max A M := le_max_of_le_left hA
+  rcases le_or_gt r 1 with h1 | h1
+  · refine (hsmall r hr h1).trans (ENNReal.ofReal_le_ofReal ?_)
+    exact mul_le_mul (le_max_left A M)
+      (Real.rpow_le_rpow_of_exponent_ge hr h1 (min_le_left β 1))
+      (Real.rpow_nonneg hr.le _) hmax
+  · refine (measure_mono (subset_univ _)).trans (huniv.trans (ENNReal.ofReal_le_ofReal ?_))
+    calc M ≤ max A M := le_max_right A M
+      _ ≤ max A M * r ^ min β 1 :=
+        le_mul_of_one_le_right hmax (Real.one_le_rpow h1.le (le_min hβ zero_le_one))
+
+/-- **Mass of a closed ball from unit balls.** In a proper space, a closed ball is covered by
+finitely many unit balls centred in it; hence there is `N` such that every measure giving mass at
+most `C` to the unit balls centred in `closedBall x₀ R` gives mass at most `N C` to the closed ball. -/
+theorem exists_measure_closedBall_le_of_measure_ball_le {α : Type*} [PseudoMetricSpace α]
+    [ProperSpace α] [MeasurableSpace α] (x₀ : α) (R : ℝ) :
+    ∃ N : ℕ, ∀ (μ : Measure α) (C : ℝ), 0 ≤ C →
+      (∀ c ∈ closedBall x₀ R, μ (ball c 1) ≤ ENNReal.ofReal C) →
+        μ (closedBall x₀ R) ≤ ENNReal.ofReal (N * C) := by
+  obtain ⟨t, hts, hcov⟩ := (isCompact_closedBall x₀ R).elim_nhds_subcover (fun x => ball x 1)
+    (fun x _ => ball_mem_nhds x one_pos)
+  refine ⟨t.card, fun μ C hC hball => ?_⟩
+  calc μ (closedBall x₀ R) ≤ μ (⋃ x ∈ t, ball x 1) := measure_mono hcov
+    _ ≤ ∑ x ∈ t, μ (ball x 1) := measure_biUnion_finset_le t _
+    _ ≤ ∑ _x ∈ t, ENNReal.ofReal C := Finset.sum_le_sum fun x hx => hball x (hts x hx)
+    _ = ENNReal.ofReal (t.card * C) := by
+      rw [Finset.sum_const, nsmul_eq_mul, ENNReal.ofReal_mul (Nat.cast_nonneg _),
+        ENNReal.ofReal_natCast]
+
+/-- `∫_{(0, t]} s^{a-1} ds = t^a / a` for `a > 0`, as a lower Lebesgue integral. -/
+theorem lintegral_Ioc_rpow_sub_one {a t : ℝ} (ha : 0 < a) (ht : 0 ≤ t) :
+    ∫⁻ s in Ioc 0 t, ENNReal.ofReal (s ^ (a - 1)) = ENNReal.ofReal (t ^ a / a) := by
+  have hr : -1 < a - 1 := by linarith
+  have hint : IntegrableOn (fun s : ℝ => s ^ (a - 1)) (Ioc 0 t) :=
+    (intervalIntegrable_iff_integrableOn_Ioc_of_le ht).1
+      (intervalIntegral.intervalIntegrable_rpow' hr)
+  rw [← ofReal_integral_eq_lintegral_ofReal hint
+      (ae_restrict_of_forall_mem measurableSet_Ioc fun s hs => Real.rpow_nonneg hs.1.le _),
+    ← intervalIntegral.integral_of_le ht, integral_rpow (Or.inl hr), sub_add_cancel,
+    Real.zero_rpow ha.ne', sub_zero]
 
 end LatticeProb
