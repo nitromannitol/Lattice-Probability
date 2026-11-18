@@ -15,6 +15,8 @@ circles almost surely, which gives the classical harmonic measure of the inner c
 If the path visits `y` at time `t₀`, then for `R` larger than `sup_{s ≤ t₀} ‖B_s - y‖` the path
 leaves every such annulus through the inner circle. Letting `ε → 0` for fixed `R`, and then taking
 the union over integer `R`, shows that `B` almost surely never visits `y`.
+Letting instead `R → ∞` for fixed `ε`, the probability of leaving through the inner
+circle tends to `1`, so `B` almost surely visits the closed disc of radius `ε` about `y`.
 
 ## Main results
 
@@ -24,6 +26,8 @@ the union over integer `R`, shows that `B` almost surely never visits `y`.
   circle of an annulus around `y`.
 * `LatticeProb.IsBrownianSpace.ae_forall_ne`: a planar Brownian motion started at `x` almost surely
   never visits a point `y ≠ x` (points are polar).
+* `LatticeProb.IsBrownianSpace.ae_exists_norm_sub_le`: a planar Brownian motion almost surely
+  visits every closed disc of positive radius (neighbourhood recurrence).
 -/
 
 open MeasureTheory Filter Topology Set Metric
@@ -197,5 +201,55 @@ theorem IsBrownianSpace.ae_forall_ne {x y : EuclideanSpace ℝ (Fin 2)}
   filter_upwards [hincl, hN] with ω h1 h2 t ht
   obtain ⟨R, hR, hmem⟩ := h1 ⟨t, ht⟩
   exact h2 R hR (mem_iInter.2 hmem)
+
+
+/-- **Neighbourhood recurrence of planar Brownian motion.** A Brownian motion on `ℝ²` almost
+surely visits the closed disc of radius `ε > 0` about any point `y`: the probability of leaving
+the annulus `{ε < ‖z - y‖ < R}` through the outer circle is
+`(log ‖x - y‖ - log ε) / (log R - log ε)`, which tends to `0` as `R → ∞`. -/
+theorem IsBrownianSpace.ae_exists_norm_sub_le {x y : EuclideanSpace ℝ (Fin 2)}
+    {B : ℝ≥0 → Ω → EuclideanSpace ℝ (Fin 2)} (hB : IsBrownianSpace 2 x B P) {ε : ℝ}
+    (hε : 0 < ε) :
+    ∀ᵐ ω ∂P, ∃ t, ‖B t ω - y‖ ≤ ε := by
+  have := hB.isProbabilityMeasure
+  rcases le_or_gt ‖x - y‖ ε with hxε | hxε
+  · filter_upwards [hB.start] with ω h
+    exact ⟨0, by rw [h]; exact hxε⟩
+  let R : ℕ → ℝ := fun n ↦ ‖x - y‖ + n + 1
+  have hR : ∀ n, ‖x - y‖ < R n := fun n ↦ by
+    simp only [R]
+    linarith [(Nat.cast_nonneg n : (0 : ℝ) ≤ n)]
+  let E : ℕ → Set Ω := fun n ↦
+    {ω | ‖B (openExitTime B {z | ε < ‖z - y‖ ∧ ‖z - y‖ < R n} ω).toNNReal ω - y‖ ≤ ε}
+  have hsub : ∀ n, {ω | ¬ ∃ t, ‖B t ω - y‖ ≤ ε} ⊆ (E n)ᶜ := fun n _ hω hE ↦ hω ⟨_, hE⟩
+  have hcompl : ∀ n, P.real (E n)ᶜ =
+      (Real.log ‖x - y‖ - Real.log ε) / (Real.log (R n) - Real.log ε) := by
+    intro n
+    have hFm := hB.aemeasurable_openExitPosition (by norm_num) (isOpen_setOf_annulus y ε (R n))
+    have hS : MeasurableSet {z : EuclideanSpace ℝ (Fin 2) | ‖z - y‖ ≤ ε} :=
+      measurableSet_le (by fun_prop) measurable_const
+    have hnm : NullMeasurableSet (E n) P := hFm.nullMeasurable hS
+    have hadd : P.real (E n) + P.real (E n)ᶜ = 1 := by
+      rw [measureReal_def, measureReal_def, ← ENNReal.toReal_add (measure_ne_top _ _)
+        (measure_ne_top _ _), measure_add_measure_compl₀ hnm, measure_univ, ENNReal.toReal_one]
+    have hc : 0 < Real.log (R n) - Real.log ε :=
+      sub_pos.2 (Real.log_lt_log hε (hxε.trans (hR n)))
+    have hp' : P.real (E n) * (Real.log (R n) - Real.log ε) =
+        Real.log (R n) - Real.log ‖x - y‖ :=
+      (eq_div_iff hc.ne').1 (hB.measureReal_annulus_exit_inner hε hxε (hR n))
+    rw [eq_div_iff hc.ne']
+    linear_combination (Real.log (R n) - Real.log ε) * hadd - hp'
+  have hlog : Tendsto (fun n : ℕ ↦ Real.log (R n)) atTop atTop :=
+    Real.tendsto_log_atTop.comp (tendsto_atTop_add_const_right _ 1
+      (tendsto_atTop_add_const_left _ ‖x - y‖ tendsto_natCast_atTop_atTop))
+  have hden : Tendsto (fun n : ℕ ↦ Real.log (R n) - Real.log ε) atTop atTop :=
+    (tendsto_atTop_add_const_right _ (-Real.log ε) hlog).congr fun n ↦ (sub_eq_add_neg _ _).symm
+  have hlim := (tendsto_const_nhds (x := Real.log ‖x - y‖ - Real.log ε)).div_atTop hden
+  have hbound : ∀ n, P.real {ω | ¬ ∃ t, ‖B t ω - y‖ ≤ ε} ≤
+      (Real.log ‖x - y‖ - Real.log ε) / (Real.log (R n) - Real.log ε) := fun n ↦
+    (measureReal_mono (hsub n)).trans_eq (hcompl n)
+  have h0 := ge_of_tendsto' hlim hbound
+  exact ae_iff.2 ((measureReal_eq_zero_iff (measure_ne_top P _)).1
+    (le_antisymm h0 measureReal_nonneg))
 
 end LatticeProb
