@@ -10,14 +10,20 @@ exponential bound for the failure of a first-exit trace to absorb a ball, proved
 continuous curves in Euclidean space, holds for curves in any isometric copy of it, in
 particular in `ℂ`.
 
-The last theorem is the ball-absorption estimate of Gwynne–Holden–Miller (*An almost sure
-KPZ relation for SLE and Brownian motion*, Lemma 3.6) in their form: the curve starts at its
-first hitting time of `z`, the trials are the traces between the first exits from
-`B_{(k+1) C ε ρ}(z)` and `B_{(k+2) C ε ρ}(z)`, and a success is a ball of radius `ε ρ`. If
-each trial succeeds with conditional probability at least `p` given a history containing the
-completed σ-algebra of the curve stopped at the inner exit (their (3.6)), then the trace up to
-the first exit from `B_ρ(z)` misses every ball of radius `ε ρ` with probability at most
-`exp (p ^ 2) * exp (-(p ^ 2 / 2) * (C ε)⁻¹)`.
+The last theorem is a variant of the ball-absorption estimate of Gwynne–Holden–Miller
+(*An almost sure KPZ relation for SLE and Brownian motion*, Lemma 3.6) with their trials: the
+curve starts at its first hitting time of `z`, the trials are the traces between the first
+exits from `B_{(k+1) C ε ρ}(z)` and `B_{(k+2) C ε ρ}(z)`, and a success is a ball of radius
+`ε ρ`. If each trial succeeds with conditional probability at least `p` given a history
+containing the completed σ-algebra of the hitting time, the inner exit time and the curve
+stopped at the inner exit, then the trace up to the first exit from `B_ρ(z)` misses every ball
+of radius `ε ρ` with probability at most `exp (p ^ 2) * exp (-(p ^ 2 / 2) * (C ε)⁻¹)`.
+
+The curve is indexed by `ℝ` and stopped on all of `ℝ`, so this history contains the whole
+past of the curve before the inner exit (including negative times) and the absolute times.
+It is larger than the history in their (3.6), which is the curve on `[0, τ_z(ρ_ε(k))]`
+only; the conditional success hypothesis here is therefore stronger than (3.6) and is not
+implied by it.
 
 ## Main statements
 
@@ -25,7 +31,7 @@ the first exit from `B_ρ(z)` misses every ball of radius `ε ρ` with probabili
   equivalences.
 * `measureReal_firstExitTrace_failure_le_floor_inv_of_isometryEquiv`: the completed-history
   failure bound for curves in an isometric copy of Euclidean space.
-* `measureReal_firstHit_ballAbsorption_failure_le`: the first-hit form in `ℂ`.
+* `measureReal_firstHit_ballAbsorption_failure_le`: a first-hit form in `ℂ`.
 -/
 
 set_option autoImplicit false
@@ -191,15 +197,20 @@ theorem measureReal_firstExitTrace_failure_le_floor_inv_of_isometryEquiv
   rw [← hfail]
   exact key
 
-/-- **Ball absorption after the first hit** (Gwynne–Holden–Miller, Lemma 3.6, from their
-(3.6)). Let `c` be a measurable random continuous curve in `ℂ`, `τ_z` its first hitting time
+/-- **Ball absorption after the first hit** (a variant of Gwynne–Holden–Miller, Lemma 3.6, from
+a conditional success bound that is stronger than their (3.6), see the module docstring).
+Let `c` be a measurable random continuous curve in `ℂ`, `τ_z` its first hitting time
 of `z`, and `ρ, C, ε > 0`. Suppose the curve almost surely leaves `B_ρ(z)` after `τ_z`, and,
 for every `k < ⌊(C ε)⁻¹⌋₊ - 1`, the trace of `c` between its first exits after `τ_z` from
 `B_{(k+1) C ε ρ}(z)` and `B_{(k+2) C ε ρ}(z)` contains a ball of radius `ε ρ` with
 conditional probability at least `p` given a sub-σ-algebra `G k` containing the completed
 σ-algebra of `τ_z`, the inner exit time and the curve stopped there. Then the trace
 `c([τ_z, τ_z(ρ)])` misses every ball of radius `ε ρ` with probability at most
-`exp (p ^ 2) * exp (-(p ^ 2 / 2) * (C ε)⁻¹)`. -/
+`exp (p ^ 2) * exp (-(p ^ 2 / 2) * (C ε)⁻¹)`.
+
+For an index `k` in range, `hG k` and `hGO k` together force `m` to contain every `μ`-null
+set (the completion enters through `eventuallyMeasurableSpace`), so with a nonempty range of
+trials the hypotheses can hold only when `m` is complete for `μ`. -/
 theorem measureReal_firstHit_ballAbsorption_failure_le
     {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     (G : ℕ → MeasurableSpace Ω) {c : Ω → C(ℝ, ℂ)} (hc : Measurable c) (z : ℂ)

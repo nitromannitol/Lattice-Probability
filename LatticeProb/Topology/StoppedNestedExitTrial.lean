@@ -253,7 +253,11 @@ theorem nestedExitTrialEvent_mem_completed_stopped_history {Ω : Type*} [Measura
 yield the inverse-scale exponential bound for the failure of the first-exit trace from
 `ball z R`, provided each trial succeeds with conditional probability at least `p` given a
 history that contains the completed σ-algebra of the start time, the first exit time from the
-inner ball of the trial and the curve stopped at that exit. -/
+inner ball of the trial and the curve stopped at that exit.
+
+For an index `k` in range, `hG k` and `hGO k` together force `m` to contain every `μ`-null
+set (the completion enters through `eventuallyMeasurableSpace`), so with a nonempty range of
+trials the hypotheses can hold only when `m` is complete for `μ`. -/
 theorem measureReal_firstExitTrace_failure_le_floor_inv_of_completed_stopped_history
     {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     (G : ℕ → MeasurableSpace Ω) {g : Ω → C(ℝ, EuclideanSpace ℝ (Fin d))} {t₀ : Ω → ℝ}
